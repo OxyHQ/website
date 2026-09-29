@@ -3,12 +3,11 @@ import { useSiteSettings, useLocales, type SiteSettings } from '../../../api/hoo
 import { apiFetch } from '../../../api/client'
 import { Button } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
-import { LabeledTextField } from '../LabeledTextField'
-import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
 import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import MediaPicker from '../MediaPicker'
+import { AdminField } from '../AdminField'
 
 const EMPTY_SETTINGS: SiteSettings = {
   siteTitle: '',
@@ -53,8 +52,8 @@ export default function SiteSettingsAdmin() {
 
       {isDefault ? (
         <div className="mt-6 flex flex-col gap-4">
-          <Field label="Site Title" value={form.siteTitle} onChange={(v) => setForm({ ...form, siteTitle: v })} />
-          <Field label="Site Description" value={form.siteDescription} onChange={(v) => setForm({ ...form, siteDescription: v })} textarea />
+          <AdminField label="Site Title" value={form.siteTitle} onChange={(v) => setForm({ ...form, siteTitle: v })} />
+          <AdminField label="Site Description" value={form.siteDescription} onChange={(v) => setForm({ ...form, siteDescription: v })} textarea />
           <MediaPicker
             value={form.ogImage}
             onChange={(id) => setForm({ ...form, ogImage: id || '' })}
@@ -66,8 +65,8 @@ export default function SiteSettingsAdmin() {
           <div className="mt-4 rounded-xl border border-border p-4">
             <h3 className="text-sm font-medium text-foreground">Banner</h3>
             <div className="mt-3 flex flex-col gap-3">
-              <Field label="Text" value={form.banner?.text ?? ''} onChange={(v) => setForm({ ...form, banner: { ...form.banner, text: v } })} />
-              <Field label="Link" value={form.banner?.href ?? ''} onChange={(v) => setForm({ ...form, banner: { ...form.banner, href: v } })} />
+              <AdminField label="Text" value={form.banner?.text ?? ''} onChange={(v) => setForm({ ...form, banner: { ...form.banner, text: v } })} />
+              <AdminField label="Link" value={form.banner?.href ?? ''} onChange={(v) => setForm({ ...form, banner: { ...form.banner, href: v } })} />
               <div className="flex items-center gap-2"><Switch checked={form.banner?.visible ?? false} onCheckedChange={(val) => setForm({ ...form, banner: { ...form.banner, visible: val } })} /><Label>Visible</Label></div>
             </div>
           </div>
@@ -95,11 +94,4 @@ export default function SiteSettingsAdmin() {
       )}
     </div>
   )
-}
-
-function Field({ label, value, onChange, textarea }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean }) {
-  if (textarea) {
-    return <Textarea label={label} value={value} onValueChange={onChange} rows={3} />
-  }
-  return <LabeledTextField label={label} value={value} onValueChange={onChange} />
 }

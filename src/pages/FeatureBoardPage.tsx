@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '@oxy.so/services/ui/client'
+import { Button } from '@oxy.so/bloom/button'
+import { Pagination } from '@oxy.so/bloom/pagination'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { RiAddLine } from '@oxy.so/bloom/icons/RiAddLine'
 import Navbar from '../components/layout/Navbar'
@@ -88,13 +90,9 @@ export default function FeatureBoardPage() {
   }
 
   const proposeButton = canPropose ? (
-    <button
-      onClick={handleProposeClick}
-      className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-    >
-      <RiAddLine width={14} height={14} fill="currentColor" aria-hidden />
+    <Button appearance="solid" tone="action" leadingIcon={RiAddLine} onPress={handleProposeClick}>
       Propose
-    </button>
+    </Button>
   ) : undefined
 
   return (
@@ -205,22 +203,8 @@ export default function FeatureBoardPage() {
               ))}
 
               {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 px-4 py-6">
-                  <button
-                    onClick={() => setPage((current) => Math.max(1, current - 1))}
-                    disabled={page <= 1}
-                    className="cursor-pointer rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground disabled:cursor-default disabled:opacity-40"
-                  >
-                    Previous
-                  </button>
-                  <span className="text-sm text-muted-foreground">Page {page} of {totalPages}</span>
-                  <button
-                    onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-                    disabled={page >= totalPages}
-                    className="cursor-pointer rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground disabled:cursor-default disabled:opacity-40"
-                  >
-                    Next
-                  </button>
+                <div className="px-4 py-6">
+                  <Pagination page={page} totalPages={totalPages} onChange={setPage} />
                 </div>
               )}
             </>

@@ -1,5 +1,12 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Button } from '@oxy.so/bloom/button'
+import { Pagination } from '@oxy.so/bloom/pagination'
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+  SegmentedControlItemText,
+} from '@oxy.so/bloom/segmented-control'
 import { apiFetch } from '../../../api/client'
 import type { FeatureListResponse } from '../../../api/hooks'
 
@@ -10,6 +17,9 @@ interface ReconcileReport {
   changes: Array<{ repo: string; issueNumber: number; totalVotes: number; from: string | null; to: string | null }>
   errors: Array<{ scope: string; message: string }>
 }
+
+/** A segmented control reads '' as "nothing selected", so "All" has a value of its own here. */
+const ALL_STATUSES = 'all'
 
 const STATUS_COLORS: Record<string, string> = {
   open: 'bg-muted text-muted-foreground',
@@ -64,20 +74,12 @@ export default function FeaturesAdmin() {
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <button
-            onClick={() => reconcile.mutate()}
-            disabled={reconcile.isPending}
-            className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
-          >
+          <Button appearance="outline" tone="neutral" onPress={() => reconcile.mutate()} disabled={reconcile.isPending}>
             {reconcile.isPending ? 'Reconciling...' : 'Reconcile priorities'}
-          </button>
-          <button
-            onClick={() => clearCache.mutate()}
-            disabled={clearCache.isPending}
-            className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
-          >
+          </Button>
+          <Button appearance="outline" tone="neutral" onPress={() => clearCache.mutate()} disabled={clearCache.isPending}>
             {clearCache.isPending ? 'Clearing...' : 'Clear Cache'}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -110,26 +112,22 @@ export default function FeaturesAdmin() {
       )}
 
       {/* Status tabs */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        <button
-          onClick={() => { setStatusFilter(''); setCurrentPage(1) }}
-          className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
-            !statusFilter ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground border border-border'
-          }`}
+      <div className="mt-4 max-w-full overflow-x-auto">
+        <SegmentedControl
+          label="Status"
+          type="radio"
+          value={statusFilter || ALL_STATUSES}
+          onValueChange={(next) => { setStatusFilter(next === ALL_STATUSES ? '' : next); setCurrentPage(1) }}
         >
-          All
-        </button>
-        {statuses.map(s => (
-          <button
-            key={s}
-            onClick={() => { setStatusFilter(s); setCurrentPage(1) }}
-            className={`rounded-lg px-3 py-1.5 text-sm capitalize transition-colors ${
-              statusFilter === s ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground border border-border'
-            }`}
-          >
-            {s.replace('_', ' ')}
-          </button>
-        ))}
+          <SegmentedControlItem value={ALL_STATUSES}>
+            <SegmentedControlItemText>All</SegmentedControlItemText>
+          </SegmentedControlItem>
+          {statuses.map(s => (
+            <SegmentedControlItem key={s} value={s}>
+              <SegmentedControlItemText style={{ textTransform: 'capitalize' }}>{s.replace('_', ' ')}</SegmentedControlItemText>
+            </SegmentedControlItem>
+          ))}
+        </SegmentedControl>
       </div>
 
       {/* Feature list */}
@@ -192,25 +190,12 @@ export default function FeaturesAdmin() {
 
       {/* Pagination */}
       {data && data.pages > 1 && (
-        <div className="mt-6 flex items-center justify-center gap-2">
-          <button
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage <= 1}
-            className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground disabled:opacity-40"
-          >
-            Previous
-          </button>
-          <span className="text-sm text-muted-foreground">
-            Page {currentPage} of {data.pages}
-          </span>
-          <button
-            onClick={() => setCurrentPage(p => Math.min(data.pages, p + 1))}
-            disabled={currentPage >= data.pages}
-            className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground disabled:opacity-40"
-          >
-            Next
-          </button>
-        </div>
+        <Pagination
+          page={currentPage}
+          totalPages={data.pages}
+          onChange={setCurrentPage}
+          style={{ marginTop: 24 }}
+        />
       )}
     </div>
   )

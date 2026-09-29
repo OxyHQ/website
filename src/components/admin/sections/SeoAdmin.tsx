@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { useAdminSeo, useUpsertSeo, useDeleteSeo, type SeoBrand, type SeoMeta, type SeoData } from '../../../api/hooks'
 import { Button } from '@oxy.so/bloom/button'
-import { LabeledTextField } from '../LabeledTextField'
-import { Textarea } from '@oxy.so/bloom/textarea'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
+import { AdminField } from '../AdminField'
 
 const BRANDS: { id: SeoBrand; label: string }[] = [
   { id: 'oxy', label: 'Oxy' },
@@ -153,9 +152,9 @@ export default function SeoAdmin() {
         </div>
         <p className="mt-1 text-xs text-muted-foreground">Used for any route without a specific entry below.</p>
         <div className="mt-4 flex flex-col gap-4">
-          <Field label="Title" value={defaultForm.title} onChange={(v) => setDefaultForm({ ...defaultForm, title: v })} />
-          <Field label="Description" value={defaultForm.description} onChange={(v) => setDefaultForm({ ...defaultForm, description: v })} textarea />
-          <Field
+          <AdminField label="Title" value={defaultForm.title} onChange={(v) => setDefaultForm({ ...defaultForm, title: v })} />
+          <AdminField label="Description" value={defaultForm.description} onChange={(v) => setDefaultForm({ ...defaultForm, description: v })} textarea />
+          <AdminField
             label="OG Image"
             value={defaultForm.ogImage}
             onChange={(v) => setDefaultForm({ ...defaultForm, ogImage: v })}
@@ -181,16 +180,16 @@ export default function SeoAdmin() {
           return (
             <div key={row.savedPath || `new-${idx}`} className="rounded-xl border border-border p-4">
               <div className="flex flex-col gap-4">
-                <Field
+                <AdminField
                   label="Path"
                   value={row.path}
                   onChange={(v) => updateRow(idx, { path: v })}
                   placeholder="/pricing"
                   mono
                 />
-                <Field label="Title" value={row.title} onChange={(v) => updateRow(idx, { title: v })} />
-                <Field label="Description" value={row.description} onChange={(v) => updateRow(idx, { description: v })} textarea />
-                <Field
+                <AdminField label="Title" value={row.title} onChange={(v) => updateRow(idx, { title: v })} />
+                <AdminField label="Description" value={row.description} onChange={(v) => updateRow(idx, { description: v })} textarea />
+                <AdminField
                   label="OG Image"
                   value={row.ogImage}
                   onChange={(v) => updateRow(idx, { ogImage: v })}
@@ -223,34 +222,5 @@ export default function SeoAdmin() {
         onConfirm={deleteAction.confirm}
       />
     </div>
-  )
-}
-
-function Field({
-  label,
-  value,
-  onChange,
-  textarea,
-  placeholder,
-  mono,
-}: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  textarea?: boolean
-  placeholder?: string
-  mono?: boolean
-}) {
-  if (textarea) {
-    return <Textarea label={label} value={value} onValueChange={onChange} rows={3} placeholder={placeholder} />
-  }
-  return (
-    <LabeledTextField
-      label={label}
-      value={value}
-      onValueChange={onChange}
-      placeholder={placeholder}
-      style={mono ? { fontFamily: 'monospace' } : undefined}
-    />
   )
 }

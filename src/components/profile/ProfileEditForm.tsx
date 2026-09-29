@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { Button } from '@oxy.so/bloom/button'
+import { Checkbox } from '@oxy.so/bloom/checkbox'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { useUpdateMyProfile } from '../../api/hooks'
 
 interface ProfileEditFormProps {
@@ -30,19 +33,16 @@ export default function ProfileEditForm({ currentBio, currentShowActivity, onSuc
 
       {/* Bio textarea */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="profile-bio" className="text-sm font-medium text-foreground">
-          Bio
-        </label>
-        <textarea
-          id="profile-bio"
+        <Textarea
+          label="Bio"
           value={bio}
-          onChange={(e) => {
-            if (e.target.value.length <= BIO_MAX_LENGTH) {
-              setBio(e.target.value)
+          onValueChange={(next) => {
+            if (next.length <= BIO_MAX_LENGTH) {
+              setBio(next)
             }
           }}
           rows={3}
-          className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          resize="none"
           placeholder="Tell the community about yourself..."
         />
         <p className={`text-right text-xs ${charsRemaining < 20 ? 'text-error-text' : 'text-muted-foreground'}`}>
@@ -51,16 +51,11 @@ export default function ProfileEditForm({ currentBio, currentShowActivity, onSuc
       </div>
 
       {/* Show activity toggle */}
-      <label htmlFor="profile-show-activity" className="flex cursor-pointer items-center gap-3">
-        <input
-          id="profile-show-activity"
-          type="checkbox"
-          checked={showActivity}
-          onChange={(e) => setShowActivity(e.target.checked)}
-          className="h-4 w-4 rounded border-border text-primary accent-primary"
-        />
-        <span className="text-sm text-foreground">Show my activity publicly</span>
-      </label>
+      <Checkbox
+        label="Show my activity publicly"
+        checked={showActivity}
+        onCheckedChange={setShowActivity}
+      />
 
       {/* Error message */}
       {updateProfile.isError && (
@@ -71,22 +66,12 @@ export default function ProfileEditForm({ currentBio, currentShowActivity, onSuc
 
       {/* Actions */}
       <div className="flex items-center justify-end gap-3">
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={updateProfile.isPending}
-          className="rounded-full border border-border px-4 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-surface disabled:opacity-50"
-        >
+        <Button appearance="outline" tone="neutral" onPress={onCancel} disabled={updateProfile.isPending}>
           Cancel
-        </button>
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={updateProfile.isPending}
-          className="rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-        >
+        </Button>
+        <Button appearance="solid" tone="accent" onPress={handleSave} disabled={updateProfile.isPending}>
           {updateProfile.isPending ? 'Saving...' : 'Save'}
-        </button>
+        </Button>
       </div>
     </div>
   )

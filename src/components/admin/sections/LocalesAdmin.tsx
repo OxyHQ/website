@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
 import { useLocales, type Locale } from '../../../api/hooks'
+import { Badge } from '@oxy.so/bloom/badge'
 import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import { Switch } from '@oxy.so/bloom/switch'
@@ -73,33 +74,37 @@ export default function LocalesAdmin() {
               {locale.nativeName !== locale.name && (
                 <span className="text-sm text-muted-foreground">({locale.nativeName})</span>
               )}
-              {locale.isDefault && (
-                <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary-text">Default</span>
-              )}
-              {!locale.enabled && (
-                <span className="rounded-full bg-warning-subtle px-2 py-0.5 text-xs font-medium text-warning-text">Disabled</span>
-              )}
+              {locale.isDefault && <Badge content="Default" tone="accent" appearance="subtle" />}
+              {!locale.enabled && <Badge content="Disabled" tone="warning" appearance="subtle" />}
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={() => startEdit(locale)} className="rounded-md p-1.5 text-muted-foreground hover:text-foreground">
+              <Button appearance="plain" tone="neutral" onPress={() => startEdit(locale)}>
                 Edit
-              </button>
+              </Button>
               {!locale.isDefault && (
-                <button onClick={() => deleteAction.request(locale)} className="rounded-md p-1.5 text-muted-foreground hover:text-error-text">
-                  <RiDeleteBinLine width={16} height={16} fill="currentColor" />
-                </button>
+                <Button
+                  appearance="plain"
+                  tone="neutral"
+                  iconOnly
+                  leadingIcon={RiDeleteBinLine}
+                  accessibilityLabel={`Delete ${locale.name}`}
+                  onPress={() => deleteAction.request(locale)}
+                />
               )}
             </div>
           </div>
         ))}
 
         {!adding && (
-          <button
-            onClick={() => { setAdding(true); setEditingCode(null); setForm(emptyForm) }}
-            className="flex items-center gap-2 rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+          <Button
+            appearance="outline"
+            tone="neutral"
+            leadingIcon={RiAddLine}
+            onPress={() => { setAdding(true); setEditingCode(null); setForm(emptyForm) }}
+            style={{ alignSelf: 'flex-start' }}
           >
-            <RiAddLine width={16} height={16} fill="currentColor" /> Add locale
-          </button>
+            Add locale
+          </Button>
         )}
 
         {adding && (
@@ -131,9 +136,9 @@ export default function LocalesAdmin() {
                 <Button appearance="solid" tone="accent" onPress={save} disabled={saving || !form.code || !form.name}>
                   {saving ? 'Saving...' : editingCode ? 'Update' : 'Add'}
                 </Button>
-                <button onClick={() => { setAdding(false); setEditingCode(null); setForm(emptyForm) }} className="rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground">
+                <Button appearance="plain" tone="neutral" onPress={() => { setAdding(false); setEditingCode(null); setForm(emptyForm) }}>
                   Cancel
-                </button>
+                </Button>
               </div>
             </div>
           </div>

@@ -4,9 +4,8 @@ import { type NewsroomPost, type NewsroomProductRef } from '../../../data/newsro
 import { apiFetch } from '../../../api/client'
 import { Button } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
+import { Checkbox } from '@oxy.so/bloom/checkbox'
 import { Badge } from '@oxy.so/bloom/badge'
-import { LabeledTextField } from '../LabeledTextField'
-import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
@@ -15,6 +14,7 @@ import { TranslationFields } from '../TranslationEditor'
 import MediaPicker from '../MediaPicker'
 import { NEWSROOM_THEME_PRESETS } from '../../../lib/newsroom-theme'
 import OptionSelect from '../../ui/OptionSelect'
+import { AdminField } from '../AdminField'
 
 function productIdOf(ref: string | NewsroomProductRef): string {
   if (typeof ref === 'string') return ref
@@ -101,10 +101,10 @@ export default function NewsroomAdmin() {
         <h2 className="text-xl font-semibold text-foreground">{editing._id ? 'Edit Post' : 'New Post'}</h2>
 
         <div className="mt-6 flex flex-col gap-4">
-          <Field label="Title" value={editing.title} onChange={(v) => setEditing({ ...editing, title: v, ...(!editing._id ? { slug: v.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '') } : {}) })} />
-          <Field label="Slug" value={editing.slug} onChange={(v) => setEditing({ ...editing, slug: v })} />
-          <Field label="Resume" value={editing.resume} onChange={(v) => setEditing({ ...editing, resume: v })} textarea />
-          <Field label="Content (Markdown)" value={editing.content} onChange={(v) => setEditing({ ...editing, content: v })} textarea rows={12} />
+          <AdminField label="Title" value={editing.title} onChange={(v) => setEditing({ ...editing, title: v, ...(!editing._id ? { slug: v.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '') } : {}) })} />
+          <AdminField label="Slug" value={editing.slug} onChange={(v) => setEditing({ ...editing, slug: v })} />
+          <AdminField label="Resume" value={editing.resume} onChange={(v) => setEditing({ ...editing, resume: v })} textarea />
+          <AdminField label="Content (Markdown)" value={editing.content} onChange={(v) => setEditing({ ...editing, content: v })} textarea rows={12} />
           <MediaPicker
             value={editing.coverImage}
             onChange={(id) => setEditing({ ...editing, coverImage: id || '' })}
@@ -112,8 +112,8 @@ export default function NewsroomAdmin() {
             folder="newsroom"
             accept="image/*"
           />
-          <Field label="Categories (comma-separated)" value={(editing.categories ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, categories: v.split(',').map((c: string) => c.trim()).filter(Boolean) })} />
-          <Field label="Tags (comma-separated)" value={(editing.tags ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })} />
+          <AdminField label="Categories (comma-separated)" value={(editing.categories ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, categories: v.split(',').map((c: string) => c.trim()).filter(Boolean) })} />
+          <AdminField label="Tags (comma-separated)" value={(editing.tags ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })} />
 
           <div className="flex flex-col gap-1.5">
             <Label>Bloom recipe</Label>
@@ -138,16 +138,14 @@ export default function NewsroomAdmin() {
                     if (!product._id) return null
                     const checked = selectedProductIds.has(product._id)
                     return (
-                      <label key={product._id} className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-                        <input
-                          type="checkbox"
+                      <div key={product._id} className="flex items-center gap-2">
+                        <Checkbox
+                          label={product.name}
                           checked={checked}
-                          onChange={() => toggleProduct(product)}
-                          className="size-4 rounded border border-border"
+                          onCheckedChange={() => toggleProduct(product)}
                         />
-                        <span className="font-medium">{product.name}</span>
                         <span className="font-mono text-xs text-muted-foreground">{product.productId}</span>
-                      </label>
+                      </div>
                     )
                   })}
                 </div>
@@ -163,8 +161,8 @@ export default function NewsroomAdmin() {
           <div className="mt-4 border-t border-border pt-4">
             <h3 className="mb-3 text-sm font-medium text-muted-foreground">SEO</h3>
             <div className="flex flex-col gap-4">
-              <Field label="Meta Title (optional)" value={editing.metaTitle ?? ''} onChange={(v) => setEditing({ ...editing, metaTitle: v })} />
-              <Field label="Meta Description (optional)" value={editing.metaDescription ?? ''} onChange={(v) => setEditing({ ...editing, metaDescription: v })} textarea />
+              <AdminField label="Meta Title (optional)" value={editing.metaTitle ?? ''} onChange={(v) => setEditing({ ...editing, metaTitle: v })} />
+              <AdminField label="Meta Description (optional)" value={editing.metaDescription ?? ''} onChange={(v) => setEditing({ ...editing, metaDescription: v })} textarea />
               <MediaPicker
                 value={editing.ogImage}
                 onChange={(id) => setEditing({ ...editing, ogImage: id || '' })}
@@ -280,11 +278,4 @@ export default function NewsroomAdmin() {
       />
     </div>
   )
-}
-
-function Field({ label, value, onChange, textarea, rows }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean; rows?: number }) {
-  if (textarea) {
-    return <Textarea label={label} value={value} onValueChange={onChange} rows={rows ?? 3} />
-  }
-  return <LabeledTextField label={label} value={value} onValueChange={onChange} />
 }

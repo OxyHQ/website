@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@oxy.so/bloom/button'
+import { Checkbox } from '@oxy.so/bloom/checkbox'
 import { apiFetch } from '../../../api/client'
 import { LabeledTextField } from '../LabeledTextField'
 import ConfirmDialog from '../ConfirmDialog'
@@ -141,35 +142,26 @@ export default function ReposAdmin() {
           </div>
 
           <div className="mt-4 flex flex-wrap gap-4">
-            <label className="flex items-center gap-2 text-sm text-muted-foreground">
-              <input
-                type="checkbox"
-                checked={draft.active}
-                onChange={(e) => setDraft({ ...draft, active: e.target.checked })}
-              />
-              Sync releases to the changelog
-            </label>
-            <label className="flex items-center gap-2 text-sm text-muted-foreground">
-              <input
-                type="checkbox"
-                checked={draft.featureBoard}
-                onChange={(e) => setDraft({
-                  ...draft,
-                  featureBoard: e.target.checked,
-                  acceptsProposals: e.target.checked && draft.acceptsProposals,
-                })}
-              />
-              Show on the feature board
-            </label>
-            <label className="flex items-center gap-2 text-sm text-muted-foreground">
-              <input
-                type="checkbox"
-                checked={draft.acceptsProposals}
-                disabled={!draft.featureBoard}
-                onChange={(e) => setDraft({ ...draft, acceptsProposals: e.target.checked })}
-              />
-              Accept proposals from the site
-            </label>
+            <Checkbox
+              label="Sync releases to the changelog"
+              checked={draft.active}
+              onCheckedChange={(active) => setDraft({ ...draft, active })}
+            />
+            <Checkbox
+              label="Show on the feature board"
+              checked={draft.featureBoard}
+              onCheckedChange={(featureBoard) => setDraft({
+                ...draft,
+                featureBoard,
+                acceptsProposals: featureBoard && draft.acceptsProposals,
+              })}
+            />
+            <Checkbox
+              label="Accept proposals from the site"
+              checked={draft.acceptsProposals}
+              disabled={!draft.featureBoard}
+              onCheckedChange={(acceptsProposals) => setDraft({ ...draft, acceptsProposals })}
+            />
           </div>
 
           <div className="mt-4 flex items-center gap-2">
@@ -202,33 +194,26 @@ export default function ReposAdmin() {
                 )}
               </div>
 
-              <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
-                <input
-                  type="checkbox"
+              <div className="flex shrink-0 items-center gap-4">
+                <Checkbox
+                  label="Sync"
                   checked={repo.active}
                   disabled={savingId === repo._id}
-                  onChange={(e) => patch(repo, { active: e.target.checked })}
+                  onCheckedChange={(active) => patch(repo, { active })}
                 />
-                Sync
-              </label>
-              <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
-                <input
-                  type="checkbox"
+                <Checkbox
+                  label="Board"
                   checked={repo.featureBoard}
                   disabled={savingId === repo._id}
-                  onChange={(e) => patch(repo, { featureBoard: e.target.checked })}
+                  onCheckedChange={(featureBoard) => patch(repo, { featureBoard })}
                 />
-                Board
-              </label>
-              <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
-                <input
-                  type="checkbox"
+                <Checkbox
+                  label="Proposals"
                   checked={repo.acceptsProposals}
                   disabled={savingId === repo._id || !repo.featureBoard}
-                  onChange={(e) => patch(repo, { acceptsProposals: e.target.checked })}
+                  onCheckedChange={(acceptsProposals) => patch(repo, { acceptsProposals })}
                 />
-                Proposals
-              </label>
+              </div>
 
               <div className="shrink-0">
                 <Button appearance="subtle" onPress={() => deleteAction.request(repo)}>Remove</Button>

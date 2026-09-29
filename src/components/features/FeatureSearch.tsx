@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Button } from '@oxy.so/bloom/button'
 import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
 
@@ -55,13 +56,16 @@ export default function FeatureSearch({ value, onChange, placeholder = 'Search p
         className="w-full rounded-full border border-border bg-surface py-2 pl-9 pr-9 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-muted-foreground"
       />
       {text && (
-        <button
-          onClick={clear}
-          aria-label="Clear search"
-          className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <RiCloseLine width={16} height={16} fill="currentColor" />
-        </button>
+        <span className="absolute right-1 top-1/2 inline-flex -translate-y-1/2">
+          <Button
+            appearance="plain"
+            tone="neutral"
+            iconOnly
+            leadingIcon={RiCloseLine}
+            accessibilityLabel="Clear search"
+            onPress={clear}
+          />
+        </span>
       )}
     </div>
   )
