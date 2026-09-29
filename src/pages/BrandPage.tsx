@@ -236,6 +236,8 @@ function TypeStudio() {
 /** The specimen's rhythm: room above the question, the rule close under it. */
 const DISCLOSURE_TRIGGER_STYLE = { paddingTop: 48, paddingBottom: 24, paddingHorizontal: 0 }
 
+const MARKS_TRIGGER_STYLE = { paddingVertical: 24, paddingHorizontal: 0 }
+
 function MotionStudio() {
   const [replay, setReplay] = useState(0)
   const [open, setOpen] = useState<string | string[] | undefined>(undefined)
@@ -297,6 +299,7 @@ function MotionStudio() {
 
 export default function BrandPage() {
   const [voice, setVoice] = useState<keyof typeof voices>('Principles')
+  const [marksOpen, setMarksOpen] = useState<string | string[] | undefined>(undefined)
   const headerBottom = useSiteHeaderBottom()
   const example = voices[voice]
   return (
@@ -684,20 +687,26 @@ export default function BrandPage() {
             Our charter <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
           </Link>
         </div>
-        <details>
-          <summary>
-            Product marks <RiAddLine width={22} height={22} fill="currentColor" aria-hidden />
-          </summary>
-          <div className="brand-download-list">
-            {Object.entries(BRAND_MARKS).map(([name, src]) => (
-              <a key={name} href={src} download>
-                <img src={src} alt="" loading="lazy" />
-                <span>{name}</span>
-                <span>Download</span>
-              </a>
-            ))}
-          </div>
-        </details>
+        <div className="mt-12 border-t border-current">
+          <Accordion type="single" value={marksOpen} onValueChange={setMarksOpen}>
+            <AccordionItem value="marks">
+              <AccordionTrigger style={MARKS_TRIGGER_STYLE}>
+                <span className="text-xl">Product marks</span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div inert={marksOpen !== 'marks'} className="brand-download-list">
+                  {Object.entries(BRAND_MARKS).map(([name, src]) => (
+                    <a key={name} href={src} download>
+                      <img src={src} alt="" loading="lazy" />
+                      <span>{name}</span>
+                      <span>Download</span>
+                    </a>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
         <p className="brand-resource-note">
           Use the original assets. Check small sizes, contrast and clear space in the actual
           composition. This guide evolves alongside the products.
