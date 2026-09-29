@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { useMedia, type MediaItem } from '../../../api/hooks'
 import { Button } from '@oxy.so/bloom/button'
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+  SegmentedControlItemText,
+} from '@oxy.so/bloom/segmented-control'
 import { LabeledTextField } from '../LabeledTextField'
 import { apiFetch } from '../../../api/client'
 import ConfirmDialog from '../ConfirmDialog'
@@ -12,6 +17,16 @@ function formatBytes(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
+
+/** A segmented control reads '' as "nothing selected", so "All" has a value of its own here. */
+const ALL_TYPES = 'all'
+
+const TYPE_FILTERS = [
+  { value: ALL_TYPES, label: 'All' },
+  { value: 'image', label: 'Images' },
+  { value: 'video', label: 'Videos' },
+  { value: 'document', label: 'Docs' },
+] as const
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
@@ -132,7 +147,7 @@ export default function MediaAdmin() {
       </div>
 
       {/* Search + filters */}
-      <div className="flex gap-3">
+      <div className="flex items-end gap-3">
         <LabeledTextField
           label="Search"
           placeholder="Search..."
@@ -140,17 +155,18 @@ export default function MediaAdmin() {
           onValueChange={(v) => { setSearch(v); setPage(1) }}
           style={{ maxWidth: 320 }}
         />
-        <div className="flex gap-1">
-          {[['', 'All'], ['image', 'Images'], ['video', 'Videos'], ['document', 'Docs']].map(([val, label]) => (
-            <button
-              key={val}
-              onClick={() => { setTypeFilter(val); setPage(1) }}
-              className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${typeFilter === val ? 'bg-foreground text-background' : 'bg-surface text-muted-foreground hover:text-foreground'}`}
-            >
-              {label}
-            </button>
+        <SegmentedControl
+          type="radio"
+          label="Media type"
+          value={typeFilter || ALL_TYPES}
+          onValueChange={(next) => { setTypeFilter(next === ALL_TYPES ? '' : next); setPage(1) }}
+        >
+          {TYPE_FILTERS.map((filter) => (
+            <SegmentedControlItem key={filter.value} value={filter.value}>
+              <SegmentedControlItemText>{filter.label}</SegmentedControlItemText>
+            </SegmentedControlItem>
           ))}
-        </div>
+        </SegmentedControl>
       </div>
 
       {/* Grid */}
