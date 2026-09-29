@@ -10,6 +10,7 @@ import DotPattern from '../components/ui/DotPattern'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { usePage, useFundingProgress, type PageSection, type FundingProgress } from '../api/hooks'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import { DashedHLine, DashedVLines } from '../components/ui/GridDecoration'
 
 /* ──────────────────────────────────────────────
  * /sustain
@@ -102,32 +103,6 @@ function parseCommitments(sections: PageSection[], fallback: Commitment[]): Comm
 }
 
 /* ── Layout primitives (copied from CompanyPage) ── */
-
-function DashedHLine() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function DashedVLines({ height = 'h-5' }: { height?: string }) {
-  return (
-    <div className={`grid w-full grid-cols-12 overflow-hidden ${height}`}>
-      <div className="col-span-full flex justify-between">
-        <svg width="1" height="100%" className="text-border">
-          <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-        </svg>
-        <svg width="1" height="100%" className="text-border">
-          <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-        </svg>
-        <svg width="1" height="100%" className="text-border">
-          <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-        </svg>
-      </div>
-    </div>
-  )
-}
 
 /* ── Funding bar ── */
 

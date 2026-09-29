@@ -6,6 +6,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import { useServiceStatus, useServiceUptime, useIncidentHistory, type ServiceStatusEntry, type ServiceStatusValue, type UptimeDay } from '../api/hooks'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import { DashedHLine } from '../components/ui/GridDecoration'
 import { STATUS_DOT, STATUS_LABEL, STATUS_SURFACE } from '../lib/statusTheme'
 import UptimeBar from '../components/status/UptimeBar'
 import IncidentCard from '../components/status/IncidentCard'
@@ -22,14 +23,6 @@ const OVERALL_KICKER: Record<ServiceStatusValue, string> = {
   degraded: 'At least one service is responding slower than usual.',
   down: 'At least one service is unreachable. Our team is on it.',
   unknown: 'Running the first probe batch now.',
-}
-
-function DashedHLine() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-    </svg>
-  )
 }
 
 function StatusDot({ status, pulse = false, size = 'md' }: { status: ServiceStatusValue; pulse?: boolean; size?: 'sm' | 'md' | 'lg' }) {

@@ -42,6 +42,11 @@ function VerticalLine({
   );
 }
 
+/** A full-width dashed rule in the border colour, the horizontal partner of `DashedVLines`. */
+export function DashedHLine() {
+  return <HorizontalLine dashed className="text-border" />;
+}
+
 /**
  * Three evenly-spaced dashed vertical lines spanning the section width.
  *

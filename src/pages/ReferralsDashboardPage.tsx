@@ -11,6 +11,7 @@ import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useReferralDashboard, type ReferralDashboard } from '../api/hooks'
 import { brandConfig } from '../lib/seo'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import { DashedHLine } from '../components/ui/GridDecoration'
 import { useTranslation } from '../lib/i18n'
 import { useCopyToClipboard } from '../lib/useCopyToClipboard'
 
@@ -24,14 +25,6 @@ import { useCopyToClipboard } from '../lib/useCopyToClipboard'
  * something else entirely; this page lives under /referrals so admins
  * and ambassadors have one focused surface.
  * ──────────────────────────────────────────── */
-
-function DashedHLine() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-    </svg>
-  )
-}
 
 function CopyIcon({ copied }: { copied: boolean }) {
   if (copied) {
