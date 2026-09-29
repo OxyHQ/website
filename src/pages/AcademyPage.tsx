@@ -82,7 +82,7 @@ function Catalog({ courses, progress }: { courses: CourseWithLessons[]; progress
                   <h2 id={`academy-track-${track.key}`} className="text-lg font-semibold tracking-tight text-foreground">
                     {label}
                   </h2>
-                  {soon ? <Badge content={t('academy.comingSoon')} variant="subtle" color="default" size="label-small" /> : null}
+                  {soon ? <Badge content={t('academy.comingSoon')} appearance="subtle" tone="neutral" size="label-small" /> : null}
                 </div>
                 <p className="text-sm text-muted-foreground">{blurb}</p>
               </div>

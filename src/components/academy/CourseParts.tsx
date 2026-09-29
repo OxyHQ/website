@@ -25,7 +25,7 @@ export function LevelBadge({ level }: { level: CourseLevel }) {
       : level === 'intermediate'
         ? t('academy.levelIntermediate')
         : t('academy.levelAdvanced')
-  return <Badge content={label} variant="subtle" color={level === 'beginner' ? 'success' : level === 'intermediate' ? 'info' : 'warning'} size="label-small" />
+  return <Badge content={label} appearance="subtle" tone={level === 'beginner' ? 'success' : level === 'intermediate' ? 'info' : 'warning'} size="label-small" />
 }
 
 
@@ -110,13 +110,13 @@ export function CourseCard({
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-base font-semibold leading-snug text-foreground group-hover:text-primary">{course.title}</h3>
           {!available ? (
-            <Badge content={t('academy.comingSoon')} variant="subtle" color="default" size="label-small" />
+            <Badge content={t('academy.comingSoon')} appearance="subtle" tone="neutral" size="label-small" />
           ) : summary.status === 'completed' ? (
-            <Badge content={t('academy.statusCompleted')} variant="subtle" color="success" size="label-small" />
+            <Badge content={t('academy.statusCompleted')} appearance="subtle" tone="success" size="label-small" />
           ) : summary.status === 'in-progress' ? (
-            <Badge content={t('academy.statusInProgress')} variant="subtle" color="primary" size="label-small" />
+            <Badge content={t('academy.statusInProgress')} appearance="subtle" tone="accent" size="label-small" />
           ) : startHere ? (
-            <Badge content={t('academy.startHere')} variant="solid" color="primary" size="label-small" />
+            <Badge content={t('academy.startHere')} appearance="solid" tone="accent" size="label-small" />
           ) : null}
         </div>
         <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{course.summary}</p>

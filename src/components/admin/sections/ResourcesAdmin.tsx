@@ -325,8 +325,8 @@ export default function ResourcesAdmin() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="truncate text-sm font-medium text-foreground">{resource.title}</span>
-                  {resource.featured && <Badge color="primary">Featured</Badge>}
-                  {resource.status === 'draft' && <Badge color="warning">Draft</Badge>}
+                  {resource.featured && <Badge tone="accent" content="Featured" />}
+                  {resource.status === 'draft' && <Badge tone="warning" content="Draft" />}
                 </div>
                 <div className="mt-0.5 text-xs text-muted-foreground">
                   <span className="capitalize">{resource.type}</span>

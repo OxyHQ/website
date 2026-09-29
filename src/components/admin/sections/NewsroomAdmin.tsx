@@ -237,8 +237,8 @@ export default function NewsroomAdmin() {
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="truncate text-sm font-medium text-foreground">{post.title}</span>
-                {post.featured && <Badge color="primary">Featured</Badge>}
-                {post.status === 'draft' && <Badge color="warning">Draft</Badge>}
+                {post.featured && <Badge tone="accent" content="Featured" />}
+                {post.status === 'draft' && <Badge tone="warning" content="Draft" />}
               </div>
               <div className="mt-0.5 text-xs text-muted-foreground">
                 {new Date(post.publishedAt).toLocaleDateString()}
