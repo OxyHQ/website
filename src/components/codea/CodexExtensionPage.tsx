@@ -65,8 +65,10 @@ export default function CodexExtensionContent() {
         </div>
 
         {/* IDE Demo */}
-        <div className="relative mx-auto h-[480px] w-full max-w-[1180px] overflow-hidden rounded-xl px-6 sm:h-[500px] lg:h-[720px]">
-          <IDEDemoMockup />
+        <div className="container">
+          <div className="relative h-[480px] overflow-hidden rounded-xl sm:h-[500px] lg:h-[720px]">
+            <IDEDemoMockup />
+          </div>
         </div>
       </section>
 
@@ -144,11 +146,11 @@ export default function CodexExtensionContent() {
 
       {/* ── 5. Testimonials ── */}
       {FEATURES.SHOW_TESTIMONIALS && testimonials.length > 0 && (
-        <section className="flex w-full flex-col items-center text-center">
-          <h2 className="text-foreground text-[clamp(1.75rem,1.5rem+1.5vw,2.5rem)] font-semibold leading-tight tracking-[-0.02em] text-balance px-4">
+        <section className="container flex flex-col items-center text-center">
+          <h2 className="text-foreground text-[clamp(1.75rem,1.5rem+1.5vw,2.5rem)] font-semibold leading-tight tracking-[-0.02em] text-balance">
             What builders are saying
           </h2>
-          <div className="mt-12 grid w-full grid-cols-1 gap-6 px-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl">
+          <div className="mt-12 grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((t) => (
               <div key={t.name} className="bg-muted flex flex-col justify-between rounded-lg p-6">
                 <p className="text-foreground text-sm leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
