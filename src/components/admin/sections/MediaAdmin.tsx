@@ -11,6 +11,7 @@ import { apiFetch } from '../../../api/client'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 import MediaPickerDialog from '../MediaPickerDialog'
+import { formatShortDate } from '../../../lib/utils'
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -27,10 +28,6 @@ const TYPE_FILTERS = [
   { value: 'video', label: 'Videos' },
   { value: 'document', label: 'Docs' },
 ] as const
-
-function formatDate(d: string) {
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-}
 
 export default function MediaAdmin() {
   const [search, setSearch] = useState('')
@@ -94,7 +91,7 @@ export default function MediaAdmin() {
               <p><strong>Type:</strong> {editing.mimeType}</p>
               <p><strong>Size:</strong> {formatBytes(editing.size)}</p>
               {editing.width && editing.height && <p><strong>Dimensions:</strong> {editing.width} &times; {editing.height}</p>}
-              <p><strong>Uploaded:</strong> {formatDate(editing.createdAt)}</p>
+              <p><strong>Uploaded:</strong> {formatShortDate(editing.createdAt)}</p>
               <p><strong>URL:</strong> <a href={editing.url} target="_blank" rel="noopener noreferrer" className="break-all text-primary-text underline">{editing.url}</a></p>
             </div>
 

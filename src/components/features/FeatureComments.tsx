@@ -1,6 +1,7 @@
 import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
 import FeatureMarkdown from './FeatureMarkdown'
 import { useFeatureComments } from '../../api/hooks'
+import { formatShortDate } from '../../lib/utils'
 
 interface FeatureCommentsProps {
   owner: string
@@ -10,10 +11,6 @@ interface FeatureCommentsProps {
   commentCount: number
   /** The issue on GitHub, where replying happens. */
   threadUrl: string
-}
-
-function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 /**
@@ -88,7 +85,7 @@ export default function FeatureComments({ owner, repo, number, commentCount, thr
                     Maintainer
                   </span>
                 )}
-                <span className="text-xs text-muted-foreground">{formatDate(comment.createdAt)}</span>
+                <span className="text-xs text-muted-foreground">{formatShortDate(comment.createdAt)}</span>
               </div>
               <div className="mt-2">
                 <FeatureMarkdown content={comment.body} />
