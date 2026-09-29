@@ -1,6 +1,5 @@
 import Button from '../ui/Button'
 import FaqSection, { type FaqEntry } from '../sections/FaqSection'
-import { FEATURES } from '../../constants'
 
 const featureCards = [
   {
@@ -63,11 +62,6 @@ const screenshots = [
   '/images/oxyos/screenshot-3.png',
   '/images/oxyos/screenshot-4.png',
 ]
-
-// NOTE: testimonials below were fabricated placeholder copy and are kept
-// only behind FEATURES.SHOW_TESTIMONIALS. Cleared until real OxyOS user
-// quotes can be sourced.
-const testimonials: { quote: string; author: string; role: string; hidden?: boolean }[] = []
 
 const faqItems: readonly FaqEntry[] = [
   {
@@ -254,43 +248,7 @@ export default function OxyOSContent() {
         ))}
       </section>
 
-      {/* ── 4. "The new way to run Linux" + Testimonials ── */}
-      {FEATURES.SHOW_TESTIMONIALS && testimonials.length > 0 && (
-        <section className="section bg-background text-foreground overflow-hidden">
-          <div className="container">
-            <div className="text-center mx-auto mb-v2.5 max-w-prose-medium-wide">
-              <h2 className="type-lg text-balance mx-auto">Lightweight Linux, done right.</h2>
-            </div>
-          </div>
-          <div className="container">
-            <div className="grid grid-cols-1 gap-g1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
-              {testimonials.map((t) => (
-                <div key={t.author} className={t.hidden ? 'hidden md:block' : ''}>
-                  <div className="card relative flex h-full min-h-[180px] w-full shrink-0 flex-col">
-                    <figure className="flex h-full flex-col">
-                      <blockquote className="grow overflow-hidden">
-                        <p className="type-base line-clamp-4 whitespace-pre-wrap md:line-clamp-5">
-                          {t.quote}
-                        </p>
-                      </blockquote>
-                      <div className="mt-v2 flex items-center gap-g1">
-                        <figcaption>
-                          <div className="type-sm">
-                            {t.author}{' '}
-                            <span className="type-sm text-muted-foreground block">{t.role}</span>
-                          </div>
-                        </figcaption>
-                      </div>
-                    </figure>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── 5. What's New (feature grid cards) ── */}
+      {/* ── 4. What's New (feature grid cards) ── */}
       <section className="section bg-background text-foreground">
         <div className="container my-v2">
           <div className="text-left mb-v1 max-w-prose-narrow">
@@ -320,7 +278,7 @@ export default function OxyOSContent() {
         </div>
       </section>
 
-      {/* ── 6. Screenshots ── */}
+      {/* ── 5. Screenshots ── */}
       <section className="section bg-background text-foreground">
         <div className="container">
           <div className="gap-g1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
@@ -337,7 +295,7 @@ export default function OxyOSContent() {
         </div>
       </section>
 
-      {/* ── 7. Supported Hardware (large card) ── */}
+      {/* ── 6. Supported Hardware (large card) ── */}
       <section className="section bg-background text-foreground" id="hardware">
         <div className="container mb-v4">
           <div className="grid grid-rows-[auto_1fr]">
@@ -378,7 +336,7 @@ export default function OxyOSContent() {
         </div>
       </section>
 
-      {/* ── 8. Hardware Specs (3-col grid) ── */}
+      {/* ── 7. Hardware Specs (3-col grid) ── */}
       <section className="section bg-surface text-foreground">
         <div className="container">
           <div className="grid gap-g1 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 items-stretch">
@@ -410,7 +368,7 @@ export default function OxyOSContent() {
         </div>
       </section>
 
-      {/* ── 9. FAQ ── */}
+      {/* ── 8. FAQ ── */}
       <FaqSection
         title="Frequently asked questions"
         items={faqItems}
@@ -429,7 +387,7 @@ export default function OxyOSContent() {
         className="oxyos-theme flex min-h-[100svh] items-center bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
       />
 
-      {/* ── 10. Recent Highlights ── */}
+      {/* ── 9. Recent Highlights ── */}
       <section className="section bg-surface text-foreground">
         <div className="container">
           <div className="grid-cursor gap-0">
@@ -463,7 +421,7 @@ export default function OxyOSContent() {
         </div>
       </section>
 
-      {/* ── 11. CTA ── */}
+      {/* ── 10. CTA ── */}
       <section className="section bg-background text-foreground section--headline">
         <div className="container">
           <div className="text-center mx-auto max-w-prose-medium-wide">
