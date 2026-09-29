@@ -12,7 +12,6 @@ import { Button } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Badge } from '@oxy.so/bloom/badge'
 import { LabeledTextField } from '../LabeledTextField'
-import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
@@ -20,6 +19,7 @@ import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import MediaPicker from '../MediaPicker'
 import OptionSelect from '../../ui/OptionSelect'
+import { AdminField } from '../AdminField'
 
 function slugify(input: string): string {
   return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
@@ -159,7 +159,7 @@ export default function HelpAdmin() {
 
         <div className="mt-6 flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
-            <Field
+            <AdminField
               label="Title"
               value={editing.title}
               onChange={(v) => setEditing({
@@ -180,7 +180,7 @@ export default function HelpAdmin() {
             </div>
           </div>
 
-          <Field
+          <AdminField
             label="Summary"
             value={editing.summary}
             onChange={(v) => setEditing({ ...editing, summary: v })}
@@ -188,7 +188,7 @@ export default function HelpAdmin() {
             rows={3}
           />
 
-          <Field
+          <AdminField
             label="Content (Markdown)"
             value={editing.content}
             onChange={(v) => setEditing({ ...editing, content: v })}
@@ -237,7 +237,7 @@ export default function HelpAdmin() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field
+            <AdminField
               label="Tags (comma-separated)"
               value={editing.tags.join(', ')}
               onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t) => t.trim()).filter(Boolean) })}
@@ -376,17 +376,4 @@ export default function HelpAdmin() {
       />
     </div>
   )
-}
-
-function Field({ label, value, onChange, textarea, rows }: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  textarea?: boolean
-  rows?: number
-}) {
-  if (textarea) {
-    return <Textarea label={label} value={value} onValueChange={onChange} rows={rows ?? 3} />
-  }
-  return <LabeledTextField label={label} value={value} onValueChange={onChange} />
 }

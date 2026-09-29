@@ -22,6 +22,7 @@ import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
 import OptionSelect from '../../ui/OptionSelect'
+import { AdminField } from '../AdminField'
 
 function slugify(input: string): string {
   return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
@@ -210,7 +211,7 @@ export default function CoursesAdmin() {
 
         <div className="mt-6 flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
-            <Field
+            <AdminField
               label="Title"
               value={editing.title}
               onChange={(v) => setEditing({
@@ -219,20 +220,20 @@ export default function CoursesAdmin() {
                 ...(isNew && !editing.slug ? { slug: slugify(v) } : {}),
               })}
             />
-            <Field
+            <AdminField
               label="Slug"
               value={editing.slug}
               onChange={(v) => setEditing({ ...editing, slug: slugify(v) })}
             />
           </div>
 
-          <Field
+          <AdminField
             label="Summary"
             value={editing.summary}
             onChange={(v) => setEditing({ ...editing, summary: v })}
             textarea
           />
-          <Field
+          <AdminField
             label="Description (Markdown)"
             value={editing.description}
             onChange={(v) => setEditing({ ...editing, description: v })}
@@ -287,7 +288,7 @@ export default function CoursesAdmin() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field
+            <AdminField
               label="Tags (comma-separated)"
               value={editing.tags.join(', ')}
               onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t) => t.trim()).filter(Boolean) })}
@@ -346,7 +347,7 @@ export default function CoursesAdmin() {
                   </div>
 
                   <div className="mt-3 grid grid-cols-2 gap-3">
-                    <Field
+                    <AdminField
                       label="Title"
                       value={lesson.title}
                       onChange={(v) => updateLesson(index, {
@@ -354,14 +355,14 @@ export default function CoursesAdmin() {
                         ...(lesson.slug ? {} : { slug: slugify(v) }),
                       })}
                     />
-                    <Field
+                    <AdminField
                       label="Slug"
                       value={lesson.slug}
                       onChange={(v) => updateLesson(index, { slug: slugify(v) })}
                     />
                   </div>
                   <div className="mt-3 grid grid-cols-2 gap-3">
-                    <Field
+                    <AdminField
                       label="Video URL (optional)"
                       value={lesson.videoUrl ?? ''}
                       onChange={(v) => updateLesson(index, { videoUrl: v })}
@@ -496,17 +497,4 @@ export default function CoursesAdmin() {
       />
     </div>
   )
-}
-
-function Field({ label, value, onChange, textarea, rows }: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  textarea?: boolean
-  rows?: number
-}) {
-  if (textarea) {
-    return <Textarea label={label} value={value} onValueChange={onChange} rows={rows ?? 3} />
-  }
-  return <LabeledTextField label={label} value={value} onValueChange={onChange} />
 }
