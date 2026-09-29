@@ -104,16 +104,6 @@ const ar: Translations = {
     allInOneHeadingLine2: 'ليس لنفسك فقط.',
     allInOneBody:
       'وُجدت Oxy لأننا نؤمن بأن التقنية يجب أن تخدم الإنسانية، لا أن تستغلها. ومن خلال مشاريع مدفوعة بالمجتمع وأدوات مفتوحة المصدر، نُثبت أن مساعدة الناس وبناء أنظمة مستدامة ليسا هدفين متعارضين.',
-    statsOpenSource: 'مفتوح المصدر',
-    statsOpenSourceDesc: 'من شيفرتنا متاحة للعموم',
-    statsCommunity: 'مجتمع',
-    statsCommunityDesc: 'مطورون ومساهمون',
-    statsProducts: 'منتجات',
-    statsProductsDesc: 'منصات تخدم احتياجات حقيقية',
-    statsDataSold: 'بيانات تم بيعها',
-    statsDataSoldDesc: 'نحن لا نبيع بيانات المستخدمين أبدًا',
-    statsCountries: 'دول',
-    statsCountriesDesc: 'مجتمعات حول العالم',
 
     // ── The falling-tag card (HomeTagPhysics) ──────────────
     tagsHeading: 'كل ما هنا ملك لك.',

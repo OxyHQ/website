@@ -104,16 +104,6 @@ const de: Translations = {
     allInOneHeadingLine2: 'nicht nur für dich.',
     allInOneBody:
       'Oxy existiert, weil wir glauben, dass Technologie der Menschheit dienen soll und sie nicht ausbeuten. Durch gemeinschaftsgetriebene Projekte und Open-Source-Werkzeuge zeigen wir, dass Menschen zu helfen und nachhaltige Systeme zu bauen keine konkurrierenden Ziele sind.',
-    statsOpenSource: 'Open Source',
-    statsOpenSourceDesc: 'unseres Codes ist öffentlich',
-    statsCommunity: 'Community',
-    statsCommunityDesc: 'Entwickler und Mitwirkende',
-    statsProducts: 'Produkte',
-    statsProductsDesc: 'Plattformen für echte Bedürfnisse',
-    statsDataSold: 'Verkaufte Daten',
-    statsDataSoldDesc: 'wir verkaufen niemals Nutzerdaten',
-    statsCountries: 'Länder',
-    statsCountriesDesc: 'Communities weltweit',
 
     // ── The falling-tag card (HomeTagPhysics) ──────────────
     tagsHeading: 'Alles hier gehört dir.',
