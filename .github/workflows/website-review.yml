@@ -6,6 +6,15 @@ on:
       - 'src/**'
       - 'public/**'
       - 'scripts/**'
+      # Everything else `bun run build` reads: the HTML entry, the tsconfigs
+      # `tsc -b` builds, the Pages functions `tsconfig.scripts.json` includes,
+      # and the docs registries the prebuild syncs from. A change to any of
+      # these can break the build this job exists to run.
+      - 'index.html'
+      - 'tsconfig*.json'
+      - 'functions/**'
+      - 'docs.config.json'
+      - 'docs-registry.json'
       - 'package.json'
       - 'bun.lock'
       - 'vite.config.ts'
