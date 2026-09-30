@@ -1,15 +1,14 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { migrate } from 'drizzle-orm/postgres-js/migrator'
-import { closeDatabase, rootDb } from './postgres.js'
+import { migrateUnderLock } from './migrationLock.js'
+import { closeDatabase, databaseUrl } from './postgres.js'
 
 /**
- * Applies every pending migration, then exits. Run by `bun run db:migrate` and
- * by the container at boot, so a deploy can never serve a schema older than the
- * code that shipped with it.
+ * Applies every pending migration, then exits. Run by `bun run db:migrate`, under the
+ * same lock the server takes at boot, so it cannot race a task that is starting.
  */
 const migrationsFolder = path.join(path.dirname(fileURLToPath(import.meta.url)), 'migrations')
 
-await migrate(rootDb, { migrationsFolder })
+await migrateUnderLock({ connectionString: databaseUrl, migrationsFolder })
 console.log('[db] migrations applied')
 await closeDatabase()

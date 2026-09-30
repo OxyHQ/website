@@ -19,6 +19,9 @@ if (!connectionString) {
   throw new Error('DATABASE_URL is not set. The website API cannot start without a database.')
 }
 
+/** For the one connection that must not come from the pool: the migration lock's. */
+export const databaseUrl: string = connectionString
+
 /**
  * `prepare: false` because the shared instance sits behind a connection pooler
  * for other tenants; prepared statements do not survive a pooled connection

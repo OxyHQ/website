@@ -110,7 +110,6 @@ mock.module('../services/remoteDownload.js', () => ({
 
 // ── Schema ─────────────────────────────────────────────────────────────────
 
-const { migrate } = await import('drizzle-orm/postgres-js/migrator')
-const { rootDb } = await import('../db/postgres.js')
+const { migrateUnderLock } = await import('../db/migrationLock.js')
 const path = await import('node:path')
-await migrate(rootDb, { migrationsFolder: path.join(import.meta.dir, '..', 'db', 'migrations') })
+await migrateUnderLock({ connectionString: url, migrationsFolder: path.join(import.meta.dir, '..', 'db', 'migrations') })
