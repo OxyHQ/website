@@ -5,15 +5,25 @@ name: Checks
 # The deploy workflows run on push to main, so before this existed a broken
 # change was found by the deploy rather than by review. The other PR workflows
 # are deliberately narrow — `website-review.yml` builds the frontend for
-# frontend paths, `server-tests.yml` runs the backend suite for `server/**`,
-# `no-mongo.yml` guards one regression — so a change to `functions/`, a config
-# file or a workflow could still reach main with nothing having run.
+# frontend paths, `server-tests.yml` runs the backend suite for `server/**` —
+# so a change to `functions/`, a config file or a workflow could still reach
+# main with nothing having run.
 #
 # Lint and typecheck are cheap and cover the whole tree, so they carry no path
 # filter: every pull request gets them. `tsc -b` is deliberate rather than
 # `tsc --noEmit` — it is what `bun run build` uses, and it sees errors the flat
 # check does not (a locale missing a key, an unused declaration), including the
 # server project that `bun run typecheck:server` covers.
+#
+# ONE job, not three. The Mongo/AGENTS.md guards and the Bloom catalog gate were
+# workflows of their own (`no-mongo.yml`, `bloom-catalog.yml`), each a runner of
+# its own on every pull request and every push. This org is on GitHub Free: 20
+# concurrent jobs shared by EVERY repository, so a job is a queue slot other
+# repos wait for, and two of the three paid for the same checkout and bun setup
+# — the catalog gate for the same `bun install` as well. Each guard is still
+# its own named step, so a red run still says which check failed. The guards
+# that need no dependencies run BEFORE the install, so they still answer in
+# seconds.
 
 on:
   pull_request:
@@ -35,9 +45,53 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
+          # Matches the pin in deploy.yml and the Dockerfile.
           bun-version: 1.3.14
+
+      # This repository has no other pull-request gate for these: `deploy.yml`
+      # and `deploy-aws.yml` both run on push to main, and a guard that only
+      # runs post-merge is a report, not a gate.
+      #
+      # Runs the guard AND its own mutation self-test. The self-test is not
+      # optional here: every part of this guard is a regex or a file listing,
+      # and both fail quiet — a broken one reports a clean tree. Needs no
+      # install: it reads the tracked file listing and the files themselves.
+      - name: Guard against MongoDB returning
+        run: bun run validate:no-mongo
+
+      # AGENTS.md is prepended to EVERY agent session, so its bytes are paid on
+      # every task forever, and it grows by accretion — one reasonable paragraph
+      # at a time, invisible per-commit. Nothing breaks when it grows, which is
+      # why a gate rather than a convention. Reads the tracked file listing only.
+      - name: Guard the AGENTS.md budget
+        run: bun run validate:agents-md
+
+      # `--frozen-lockfile` so the Bloom catalog below is checked against the
+      # Bloom version the lockfile pins, not whatever resolves today.
       - run: bun install --frozen-lockfile
       - name: Lint
         run: bun run lint
       - name: Typecheck every project (app, scripts, node, server)
         run: bunx tsc -b
+
+      # `src/content/bloom-catalog.generated.ts` is committed, so a plain `vite
+      # build` is never left without a catalog. That leaves exactly one silent
+      # way for it to go wrong: somebody bumps `@oxy.so/bloom` and does not
+      # re-run the generator. Nothing breaks — the docs keep rendering the
+      # PREVIOUS version's component list. A bump that changes the catalog has
+      # to arrive with the regenerated file in the same commit.
+      #
+      # Runs the gate AND its own mutation self-test. The self-test is not
+      # optional: every part of this gate fails quiet — a README table that
+      # stops parsing, an exports walk that stops early and a TypeScript program
+      # that resolved nothing all look exactly like a package with less in it.
+      - name: Check the catalog against the installed Bloom
+        run: bun run validate:bloom-catalog
+
+      # The playground's evaluation scope is generated from the demos' own
+      # import statements by the same kind of committed-artifact generator, and
+      # goes stale the same silent way: a demo grows an import, nobody re-runs
+      # it, the build stays green and one snippet fails in the browser on a page
+      # CI never opens. Runs its own mutation self-test too.
+      - name: Check the playground scope against the demos
+        run: bun run validate:bloom-live-scope
