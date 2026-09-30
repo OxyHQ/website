@@ -92,12 +92,36 @@ jobs:
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
 
+      # A plain `docker build` starts cold on every runner. Buildx with the
+      # GitHub Actions cache reuses every layer whose inputs did not change
+      # (the base image and, unless package.json/bun.lock moved, the
+      # `bun install` layer). Only this push-to-main / dispatch workflow writes
+      # the `website-api` scope; no pull_request workflow does.
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # `--cache-from/--cache-to type=gha` need the Actions runtime token and
+      # cache URL, which GitHub gives to JavaScript actions and NOT to `run:`
+      # steps; without them buildx skips the cache silently.
+      - name: Expose the Actions cache to buildx
+        uses: crazy-max/ghaction-github-runtime@v4
+
+      # --provenance=false keeps what reaches ECR a single linux/arm64 image
+      # manifest, the same shape `docker build` + `docker push` produced, rather
+      # than an index carrying an attestation.
       - name: Build and push (linux/arm64)
         run: |
           IMG=$ECR_REGISTRY/oxy/$APP
-          docker build -f "$DOCKERFILE" -t "$IMG:${{ github.sha }}" -t "$IMG:latest" .
-          docker push "$IMG:${{ github.sha }}"
-          docker push "$IMG:latest"
+          docker buildx build \
+            --platform linux/arm64 \
+            --provenance=false \
+            --cache-from type=gha,scope=$APP \
+            --cache-to type=gha,scope=$APP,mode=max,ignore-error=true \
+            -f "$DOCKERFILE" \
+            -t "$IMG:${{ github.sha }}" \
+            -t "$IMG:latest" \
+            --push \
+            .
 
       # The check lives in `scripts/deploy-ecs.sh`, where it can be read and run
       # outside a workflow run — and where editing it does not re-open the
