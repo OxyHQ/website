@@ -22,7 +22,7 @@ bun run dev / build / server / sync-docs / sync-changelog
 
 ## Database (PostgreSQL, drizzle + postgres.js)
 
-`DATABASE_URL` is the only knob and there is no fallback host — a missing URL must fail at boot rather than quietly connect somewhere else. Schema in `server/db/schema/`, one file per domain; `bun run db:generate` writes SQL into `server/db/migrations/`, which are committed and applied by `connectWithRetry` at boot, so a task can never serve a schema older than its code.
+`DATABASE_URL` is the only knob and there is no fallback host — a missing URL fails at boot, never connects elsewhere. Schema in `server/db/schema/`, one file per domain; `bun run db:generate` writes SQL into `server/db/migrations/`, committed and applied at boot by `migrateUnderLock` (bare `migrate()` takes no lock), so no task serves a schema older than its code.
 
 - **Primary keys are 24-character hex ids under the name `_id`** — the admin UI, every API response and every cross-table reference speak in them. New rows get the same shape from `newObjectId()`.
 - **`.populate()` is `server/db/refs.ts`** — one query per referenced TABLE for a whole page of rows, never one per row. The API hands the frontend the referenced ROW in that field.

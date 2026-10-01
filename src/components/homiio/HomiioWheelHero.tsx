@@ -191,7 +191,7 @@ function TrustScene({ deck }: { deck: readonly HomiioListing[] }) {
       <div className="text-center sm:max-w-[230px] sm:text-left">
         <SceneHeading>Trusted Score system</SceneHeading>
         <SceneText>
-          Powered by Oxy&rsquo;s karma, Homiio highlights trustworthy users and properties, and
+          Powered by Oxy reputation, Homiio highlights trustworthy users and properties, and
           reveals unethical behavior.
         </SceneText>
       </div>

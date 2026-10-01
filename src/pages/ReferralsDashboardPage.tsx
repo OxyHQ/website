@@ -136,7 +136,7 @@ function DashboardContent({ referral }: { referral: ReferralDashboard }) {
             <li>Ambassadors get early access, swag drops, and an Ambassador badge — no cash payouts.</li>
           )}
           {referral.type === 'user' && (
-            <li>Casual share links don't earn commission, but you still earn our gratitude (and karma).</li>
+            <li>Casual share links don't earn commission, but you still earn our gratitude.</li>
           )}
         </ul>
       </section>

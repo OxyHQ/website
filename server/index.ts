@@ -2,10 +2,10 @@ import { startWebsiteActivity } from './services/ecosystemActivity.js'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { and, eq, isNull, sql } from 'drizzle-orm'
-import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { config } from './config.js'
 
-import { db, rootDb, sql as pgClient } from './db/postgres.js'
+import { databaseUrl, db, sql as pgClient } from './db/postgres.js'
+import { migrateUnderLock } from './db/migrationLock.js'
 import { categories, navigationDropdowns, products } from './db/schema/index.js'
 import { startSyncInterval } from './services/githubSync.js'
 import { startFeaturePriorityInterval } from './services/featurePriority.js'
@@ -102,9 +102,12 @@ async function connectWithRetry(): Promise<void> {
       console.log('Connected to PostgreSQL')
 
       // The schema comes first: a task that starts against an older schema
-      // would serve 500s from every route that reads a new column.
-      await migrate(rootDb, { migrationsFolder: MIGRATIONS_DIR })
-      console.log('[db] migrations applied')
+      // would serve 500s from every route that reads a new column. Under the
+      // migration lock, so a task booting beside this one waits instead of
+      // applying the same migrations concurrently (`db/migrationLock.ts`).
+      // `/api/health` stays 503 until this returned.
+      const run = await migrateUnderLock({ connectionString: databaseUrl, migrationsFolder: MIGRATIONS_DIR })
+      console.log(`[db] migrations applied under the migration lock (backend pid ${run.backendPid}, waited ${run.waitedMs}ms)`)
 
       await migrateEcosystemDropdown()
       await migrateProductCategoryRefs()
