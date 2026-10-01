@@ -53,6 +53,7 @@ import type { SeoData } from '../src/lib/seo'
 import type { SEOLocaleSeed } from '../src/entry-server'
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, interpolate, isRtlLocale, type Locale } from '../src/lib/i18n/types'
 import en from '../src/lib/i18n/locales/en'
+import { BLOOM_SEO } from '../src/content/bloom-landing'
 import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest'
 import { ACADEMY_COURSES } from '../src/content/academy-courses'
 import { bloomComponentRoutes } from './bloom-component-routes.ts'
@@ -259,6 +260,7 @@ async function buildSsrBundle(): Promise<SsrRenderers> {
  * SPA fallback.
  */
 const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
+  '/bloom': BLOOM_SEO,
   '/': {
     title: 'Oxy, an open-source ecosystem of ethical technology',
     description:
@@ -529,12 +531,6 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description:
       'Every Oxy API endpoint, versioned, with request and response shapes and the auth each one expects.',
     canonicalPath: '/developers/docs/api',
-  },
-  '/developers/docs/bloom/playground': {
-    title: 'Bloom playground',
-    description:
-      'Try the components behind every Oxy app: live props, theming and the code to paste into your project.',
-    canonicalPath: '/developers/docs/bloom/playground',
   },
   '/developers/docs/bloom/color-system': {
     title: 'Bloom color system playground',

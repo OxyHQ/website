@@ -1,6 +1,193 @@
 import en, { type Translations } from './en'
 
 const ar: Translations = {
+  bloom: {
+    board: {"backlog": "قائمة الانتظار", "todo": "للتنفيذ", "inProgress": "قيد التنفيذ", "inReview": "قيد المراجعة", "done": "مكتمل"},
+    "seoTitle": "Bloom UI، نظام تصميم React لكل المنصات",
+    "eyebrow": "لكل المنصات",
+    "title": "نظام تصميم React",
+    "for": "لـ",
+    "description": "مكتبة واجهات لـ React وReact Native وExpo. أنشئ باستخدام مكونات فعلية وواجهات وكلاء ورسوم تفاعلية ونظام سمات مشترك.",
+    "componentsTitle": "مكونات تفاعلية جاهزة للبناء.",
+    "componentsDescription": "واجهات وكلاء وتقويمات ونماذج ومكونات لوحات معلومات. جرّب المكونات الفعلية.",
+    "agentsTitle": "أنشئ واجهة وكلائك في ثوانٍ.",
+    "agentsDescription": "ابدأ بالمحادثات والتقدم وعناصر الإدخال. اربط وكلاءك.",
+    "loaderTitle": "حالة تحميل تستحق المشاهدة.",
+    "loaderDescription": "ضوء يدور حول حقل الإدخال. اختر لوحة Bloom وجرّبها.",
+    "examplesTitle": "مكتبة واحدة. إمكانات عديدة.",
+    "examplesDescription": "استكشف أمثلة Bloom، من محادثات الوكلاء إلى لوحات الرعاية الصحية.",
+    "chartsTitle": "رسوم تجعل بياناتك جديرة بالقراءة.",
+    "chartsDescription": "رسوم تفاعلية وحالات مرور المؤشر وبطاقات إحصائية، على نفس الرموز.",
+    "installTitle": "ابدأ البناء مع Bloom.",
+    "installDescription": "ثبّت الحزمة واتبع دليل الإعداد لمنصتك واعتمادياتها.",
+    "githubTitle": "تطوير في العلن.",
+    "githubDescription": "استكشف الشيفرة والإصدارات والنقاشات في مستودع Bloom.",
+    "faqTitle": "أسئلة شائعة",
+    "faqDescription": "التثبيت والمنصات والسمات والترخيص. كل ما تحتاجه لبدء البناء باستخدام Bloom.",
+    "searchSummary": "تم إجراء {count} عمليات بحث",
+    "qInstall": "كيف أثبّت Bloom؟",
+    "aInstall": "ثبّت @oxy.so/bloom باستخدام Bun أو npm. اتبع التوثيق لإعداد المزوّد والأنماط والاعتماديات المطلوبة.",
+    "qPlatforms": "ما المنصات المدعومة؟",
+    "aPlatforms": "يدعم Bloom تطبيقات React على الويب وReact Native وExpo بتطبيقات خاصة بكل منصة.",
+    "qTheme": "هل يمكنني تغيير السمة؟",
+    "aTheme": "نعم. يقدم Bloom رموزًا مشتركة وإعدادات مسبقة ووضعين فاتحًا وداكنًا عبر مزوّد السمات.",
+    "qLicense": "ما ترخيص Bloom؟",
+    "aLicense": "يستخدم Bloom ترخيص Breathe License 1.0. راجع الصلاحيات والشروط في المستودع.",
+    "updatesTitle": "تابع جديد Bloom.",
+    "updatesDescription": "استكشف ملاحظات الإصدارات وأحدث توثيق للمكونات.",
+    "closingTitle": "أنشئ واجهات باستخدام Bloom.",
+    "closingDescription": "مكونات وكلاء ورسوم تفاعلية وعناصر الواجهة المحيطة بها. مكتبة واحدة لفكرتك القادمة.",
+    "demo": "عرض تفاعلي · محلي فقط",
+    "demoPrompt": "أنشئ واجهة باستخدام Bloom.",
+    "demoReply": "هذا عرض محلي. اربط خدماتك في تطبيقك.",
+    "components": "تصفح المكونات",
+    "install": "تثبيت Bloom",
+    "docs": "التوثيق",
+    "playground": "ساحة التجربة",
+    "interactive": "مكونات تفاعلية",
+    "chat": "محادثات الوكلاء",
+    "dashboard": "لوحات المعلومات",
+    "health": "الرعاية الصحية",
+    "profile": "الملفات الشخصية",
+    "projects": "لوحات المشاريع",
+    "calendar": "التقويم",
+    "desktop": "سطح المكتب",
+    "tablet": "جهاز لوحي",
+    "mobile": "هاتف",
+    "view": "عرض",
+    "thinking": "جارٍ التفكير",
+    "color": "لوحة الألوان",
+    "viewport": "حجم المعاينة",
+    "setup": "دليل الإعداد",
+    "name": "الاسم",
+    "status": "الحالة",
+    "all": "الكل",
+    "filter": "تصفية",
+    "steps": "الخطوات",
+    "duration": "المدة",
+    "bedtime": "وقت النوم",
+    "interruptions": "الانقطاعات",
+    "move": "الحركة",
+    "exercise": "التمرين",
+    "running": "الجري",
+    "birthDate": "تاريخ الميلاد",
+    "gender": "الجنس",
+    "female": "أنثى",
+    "bloodType": "فصيلة الدم",
+    "doctor": "الطبيب",
+    "primaryButton": "الزر الأساسي",
+    "secondaryButton": "الزر الثانوي",
+    "lifetimeTokens": "إجمالي الرموز",
+    "peakTokens": "ذروة الرموز",
+    "longestTask": "أطول مهمة",
+    "streak": "أفضل تتابع",
+    "usersWithAccess": "المستخدمون المصرّح لهم",
+    "addUser": "إضافة مستخدم",
+    "manage": "إدارة",
+    "models": "النماذج",
+    "effort": "الجهد",
+    "day": "يوم",
+    "week": "أسبوع",
+    "month": "شهر",
+    "year": "سنة",
+    "readFiles": "قراءة ملفات المشروع",
+    "lightTheme": "إعداد رموز الوضع الفاتح",
+    "darkTheme": "إعداد رموز الوضع الداكن",
+    "verifyBuild": "التحقق من بناء الإنتاج",
+    "messages": "الرسائل",
+    "files": "الملفات",
+    "tools": "الأدوات",
+    "cards": {
+      "attachments": {
+        "title": "مرفقات المحرر",
+        "description": "ملفات مع تقدم الرفع فوق حقل الإدخال."
+      },
+      "search": {
+        "title": "بحث الويب",
+        "description": "عمليات البحث والمصادر أثناء عمل الوكيل."
+      },
+      "limits": {
+        "title": "حدود الوكيل",
+        "description": "استخدام السياق والرموز وحدود الخطة."
+      },
+      "table": {
+        "title": "جدول البيانات",
+        "description": "تصفية وفرز وتصفح جدول متجاوب."
+      },
+      "widgets": {
+        "title": "عناصر تفاعلية",
+        "description": "رسوم صحية وحلقات نشاط وتنبيهات."
+      },
+      "sidebar": {
+        "title": "الشريط الجانبي",
+        "description": "تنقل وبحث وعناصر تحكم الحساب."
+      },
+      "profile": {
+        "title": "ملف المساهم",
+        "description": "نشاط المساهمات وإحصاءات الرموز والتتابع."
+      },
+      "progress": {
+        "title": "تقدم الوكيل",
+        "description": "تقدم متعدد الخطوات وحالات الاكتمال."
+      },
+      "loader": {
+        "title": "تحميل المحرر",
+        "description": "ضوء يدور أثناء عمل الوكيل."
+      },
+      "thinking": {
+        "title": "نشاط الوكيل",
+        "description": "مؤشرات التفكير والبحث والكتابة."
+      },
+      "image": {
+        "title": "تحميل الصور",
+        "description": "عد تنازلي متحرك وكشف الصورة."
+      },
+      "calendar": {
+        "title": "التقويم",
+        "description": "تقويم شهري وعناصر اختيار التاريخ."
+      },
+      "auth": {
+        "title": "المصادقة",
+        "description": "نماذج تسجيل الدخول وأزرار المزودين."
+      },
+      "meeting": {
+        "title": "جدولة اجتماع",
+        "description": "اختر تاريخ الاجتماع ووقته."
+      },
+      "earnings": {
+        "title": "الرسوم البيانية",
+        "description": "رسوم تفاعلية وعناصر اختيار الفترة."
+      },
+      "upload": {
+        "title": "رفع الملفات",
+        "description": "اختيار الملفات والتحقق وتقدم الرفع."
+      }
+    },
+    "agents": {
+      "design": "وكيل التصميم",
+      "review": "وكيل المراجعة",
+      "research": "وكيل البحث",
+      "code": "وكيل البرمجة"
+    },
+    "table": {
+      "results": "إجمالي النتائج",
+      "customers": "عملاء",
+      "purchase": "الشراء",
+      "updated": "آخر تحديث",
+      "price": "السعر",
+      "waiting": "بانتظار المعالجة",
+      "completed": "مكتمل",
+      "processing": "قيد المعالجة",
+      "failed": "فشل التسليم",
+      "delivered": "تم التسليم",
+      "pending": "معلق",
+      "prices": "كل الأسعار",
+      "products": "كل المنتجات",
+      "regions": "كل المناطق",
+      "search": "بحث"
+    }
+  },
+
   common: {
     signIn: 'تسجيل الدخول',
     signOut: 'تسجيل الخروج',

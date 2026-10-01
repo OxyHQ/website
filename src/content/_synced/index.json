@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-29T19:17:41.807Z",
+  "generatedAt": "2026-09-30T23:14:06.082Z",
   "packages": [
     {
       "package": "@oxy.so/bloom",
@@ -1244,9 +1244,23 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/AgentAvatar",
+              "title": "AgentAvatar()",
+              "file": "bloom/2.0.0/api/functions/AgentAvatar.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/AgentChatMessage",
               "title": "AgentChatMessage()",
               "file": "bloom/2.0.0/api/functions/AgentChatMessage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/AgentCreator",
+              "title": "AgentCreator()",
+              "file": "bloom/2.0.0/api/functions/AgentCreator.md",
               "order": 10000,
               "section": "api"
             },
@@ -1825,6 +1839,20 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/directionForLocale",
+              "title": "directionForLocale()",
+              "file": "bloom/2.0.0/api/functions/directionForLocale.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/DirectionProvider",
+              "title": "DirectionProvider()",
+              "file": "bloom/2.0.0/api/functions/DirectionProvider.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/DropdownMenu",
               "title": "DropdownMenu()",
               "file": "bloom/2.0.0/api/functions/DropdownMenu.md",
@@ -2035,6 +2063,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/MultiAgentChat",
+              "title": "MultiAgentChat()",
+              "file": "bloom/2.0.0/api/functions/MultiAgentChat.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/MultiAxisPlot",
               "title": "MultiAxisPlot()",
               "file": "bloom/2.0.0/api/functions/MultiAxisPlot.md",
@@ -2045,6 +2080,13 @@
               "slug": "api/functions/native",
               "title": "native()",
               "file": "bloom/2.0.0/api/functions/native.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/normalizeAgentPreferences",
+              "title": "normalizeAgentPreferences()",
+              "file": "bloom/2.0.0/api/functions/normalizeAgentPreferences.md",
               "order": 10000,
               "section": "api"
             },
@@ -2073,6 +2115,13 @@
               "slug": "api/functions/paginationRange",
               "title": "paginationRange()",
               "file": "bloom/2.0.0/api/functions/paginationRange.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/parsePreset",
+              "title": "parsePreset()",
+              "file": "bloom/2.0.0/api/functions/parsePreset.md",
               "order": 10000,
               "section": "api"
             },
@@ -2185,6 +2234,13 @@
               "slug": "api/functions/ProgressiveBlur",
               "title": "ProgressiveBlur()",
               "file": "bloom/2.0.0/api/functions/ProgressiveBlur.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/ProjectBoard",
+              "title": "ProjectBoard()",
+              "file": "bloom/2.0.0/api/functions/ProjectBoard.md",
               "order": 10000,
               "section": "api"
             },
@@ -2637,6 +2693,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/TemplateCopyProvider",
+              "title": "TemplateCopyProvider()",
+              "file": "bloom/2.0.0/api/functions/TemplateCopyProvider.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/Textarea",
               "title": "Textarea()",
               "file": "bloom/2.0.0/api/functions/Textarea.md",
@@ -2728,6 +2791,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/translateTemplateCopy",
+              "title": "translateTemplateCopy()",
+              "file": "bloom/2.0.0/api/functions/translateTemplateCopy.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/Typography.Blockquote",
               "title": "Blockquote()",
               "file": "bloom/2.0.0/api/functions/Typography.Blockquote.md",
@@ -2805,6 +2875,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useBloomLocale",
+              "title": "useBloomLocale()",
+              "file": "bloom/2.0.0/api/functions/useBloomLocale.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useBloomTheme",
               "title": "useBloomTheme()",
               "file": "bloom/2.0.0/api/functions/useBloomTheme.md",
@@ -2871,6 +2948,13 @@
               "slug": "api/functions/useDialogHeader",
               "title": "useDialogHeader()",
               "file": "bloom/2.0.0/api/functions/useDialogHeader.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useDirection",
+              "title": "useDirection()",
+              "file": "bloom/2.0.0/api/functions/useDirection.md",
               "order": 10000,
               "section": "api"
             },
@@ -2976,6 +3060,13 @@
               "slug": "api/functions/useSurface",
               "title": "useSurface()",
               "file": "bloom/2.0.0/api/functions/useSurface.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useTemplateCopy",
+              "title": "useTemplateCopy()",
+              "file": "bloom/2.0.0/api/functions/useTemplateCopy.md",
               "order": 10000,
               "section": "api"
             },
@@ -3200,6 +3291,13 @@
               "slug": "api/interfaces/AgentChatUsageRow",
               "title": "AgentChatUsageRow",
               "file": "bloom/2.0.0/api/interfaces/AgentChatUsageRow.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AgentCreatorProps",
+              "title": "AgentCreatorProps",
+              "file": "bloom/2.0.0/api/interfaces/AgentCreatorProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -4520,6 +4618,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/DirectionProviderProps",
+              "title": "DirectionProviderProps",
+              "file": "bloom/2.0.0/api/interfaces/DirectionProviderProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/DividerProps",
               "title": "DividerProps",
               "file": "bloom/2.0.0/api/interfaces/DividerProps.md",
@@ -4842,6 +4947,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/MultiAgentChatProps",
+              "title": "MultiAgentChatProps",
+              "file": "bloom/2.0.0/api/interfaces/MultiAgentChatProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/MultiAxisPlotAxis",
               "title": "MultiAxisPlotAxis",
               "file": "bloom/2.0.0/api/interfaces/MultiAxisPlotAxis.md",
@@ -5034,6 +5146,13 @@
               "slug": "api/interfaces/PressableScaleProps",
               "title": "PressableScaleProps",
               "file": "bloom/2.0.0/api/interfaces/PressableScaleProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ProjectBoardProps",
+              "title": "ProjectBoardProps",
+              "file": "bloom/2.0.0/api/interfaces/ProjectBoardProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -5913,6 +6032,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/TemplateCopyProviderProps",
+              "title": "TemplateCopyProviderProps",
+              "file": "bloom/2.0.0/api/interfaces/TemplateCopyProviderProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/TextFieldIconProps",
               "title": "TextFieldIconProps",
               "file": "bloom/2.0.0/api/interfaces/TextFieldIconProps.md",
@@ -6186,9 +6312,37 @@
               "section": "api"
             },
             {
+              "slug": "api/types/AgentAvatarProps",
+              "title": "AgentAvatarProps",
+              "file": "bloom/2.0.0/api/types/AgentAvatarProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/AgentChatStatus",
               "title": "AgentChatStatus",
               "file": "bloom/2.0.0/api/types/AgentChatStatus.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/AgentCreatorAgent",
+              "title": "AgentCreatorAgent",
+              "file": "bloom/2.0.0/api/types/AgentCreatorAgent.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/AgentLanguage",
+              "title": "AgentLanguage",
+              "file": "bloom/2.0.0/api/types/AgentLanguage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/AgentPreferences",
+              "title": "AgentPreferences",
+              "file": "bloom/2.0.0/api/types/AgentPreferences.md",
               "order": 10000,
               "section": "api"
             },
@@ -6203,6 +6357,13 @@
               "slug": "api/types/AgentThinkingVariant",
               "title": "AgentThinkingVariant",
               "file": "bloom/2.0.0/api/types/AgentThinkingVariant.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/AgentVoice",
+              "title": "AgentVoice",
+              "file": "bloom/2.0.0/api/types/AgentVoice.md",
               "order": 10000,
               "section": "api"
             },
@@ -6305,6 +6466,27 @@
               "section": "api"
             },
             {
+              "slug": "api/types/AvatarConfig",
+              "title": "AvatarConfig",
+              "file": "bloom/2.0.0/api/types/AvatarConfig.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/AvatarFamily",
+              "title": "AvatarFamily",
+              "file": "bloom/2.0.0/api/types/AvatarFamily.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/AvatarPreset",
+              "title": "AvatarPreset",
+              "file": "bloom/2.0.0/api/types/AvatarPreset.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/AvatarRingGradientDirection",
               "title": "AvatarRingGradientDirection",
               "file": "bloom/2.0.0/api/types/AvatarRingGradientDirection.md",
@@ -6343,6 +6525,13 @@
               "slug": "api/types/BadgeSize",
               "title": "BadgeSize",
               "file": "bloom/2.0.0/api/types/BadgeSize.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/BoardSort",
+              "title": "BoardSort",
+              "file": "bloom/2.0.0/api/types/BoardSort.md",
               "order": 10000,
               "section": "api"
             },
@@ -6753,6 +6942,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/Direction",
+              "title": "Direction",
+              "file": "bloom/2.0.0/api/types/Direction.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/DividerAlign",
               "title": "DividerAlign",
               "file": "bloom/2.0.0/api/types/DividerAlign.md",
@@ -7110,6 +7306,41 @@
               "section": "api"
             },
             {
+              "slug": "api/types/MultiAgentChatAgent",
+              "title": "MultiAgentChatAgent",
+              "file": "bloom/2.0.0/api/types/MultiAgentChatAgent.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/MultiAgentChatConversation",
+              "title": "MultiAgentChatConversation",
+              "file": "bloom/2.0.0/api/types/MultiAgentChatConversation.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/MultiAgentChatMessage",
+              "title": "MultiAgentChatMessage",
+              "file": "bloom/2.0.0/api/types/MultiAgentChatMessage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/MultiAgentChatWorkspace",
+              "title": "MultiAgentChatWorkspace",
+              "file": "bloom/2.0.0/api/types/MultiAgentChatWorkspace.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/NewProjectTicket",
+              "title": "NewProjectTicket",
+              "file": "bloom/2.0.0/api/types/NewProjectTicket.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/NotificationAvatar",
               "title": "NotificationAvatar",
               "file": "bloom/2.0.0/api/types/NotificationAvatar.md",
@@ -7246,6 +7477,27 @@
               "slug": "api/types/ProgressiveBlurProps",
               "title": "ProgressiveBlurProps",
               "file": "bloom/2.0.0/api/types/ProgressiveBlurProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/ProjectColumn",
+              "title": "ProjectColumn",
+              "file": "bloom/2.0.0/api/types/ProjectColumn.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/ProjectMember",
+              "title": "ProjectMember",
+              "file": "bloom/2.0.0/api/types/ProjectMember.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/ProjectTicket",
+              "title": "ProjectTicket",
+              "file": "bloom/2.0.0/api/types/ProjectTicket.md",
               "order": 10000,
               "section": "api"
             },
@@ -7600,6 +7852,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/TemplateCopyTranslator",
+              "title": "TemplateCopyTranslator",
+              "file": "bloom/2.0.0/api/types/TemplateCopyTranslator.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/TextareaProps",
               "title": "TextareaProps",
               "file": "bloom/2.0.0/api/types/TextareaProps.md",
@@ -7680,6 +7939,27 @@
               "slug": "api/types/ThemeToggleAppearance",
               "title": "ThemeToggleAppearance",
               "file": "bloom/2.0.0/api/types/ThemeToggleAppearance.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/TicketComment",
+              "title": "TicketComment",
+              "file": "bloom/2.0.0/api/types/TicketComment.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/TicketPriority",
+              "title": "TicketPriority",
+              "file": "bloom/2.0.0/api/types/TicketPriority.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/TicketSubtask",
+              "title": "TicketSubtask",
+              "file": "bloom/2.0.0/api/types/TicketSubtask.md",
               "order": 10000,
               "section": "api"
             },
@@ -7810,6 +8090,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/AGENT_LANGUAGES",
+              "title": "AGENT\\_LANGUAGES",
+              "file": "bloom/2.0.0/api/variables/AGENT_LANGUAGES.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/AGENT_LOG_BRANCH",
               "title": "AGENT\\_LOG\\_BRANCH",
               "file": "bloom/2.0.0/api/variables/AGENT_LOG_BRANCH.md",
@@ -7834,6 +8121,13 @@
               "slug": "api/variables/AGENT_LOG_UNIT_MOTION",
               "title": "AGENT\\_LOG\\_UNIT\\_MOTION",
               "file": "bloom/2.0.0/api/variables/AGENT_LOG_UNIT_MOTION.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/AGENT_SPEECH_RATES",
+              "title": "AGENT\\_SPEECH\\_RATES",
+              "file": "bloom/2.0.0/api/variables/AGENT_SPEECH_RATES.md",
               "order": 10000,
               "section": "api"
             },
@@ -7974,6 +8268,27 @@
               "slug": "api/variables/AlertDialog",
               "title": "AlertDialog",
               "file": "bloom/2.0.0/api/variables/AlertDialog.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/ALIEN_CONFIG",
+              "title": "ALIEN\\_CONFIG",
+              "file": "bloom/2.0.0/api/variables/ALIEN_CONFIG.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/ALIEN_PRESETS",
+              "title": "ALIEN\\_PRESETS",
+              "file": "bloom/2.0.0/api/variables/ALIEN_PRESETS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/ALIEN_SHAPES",
+              "title": "ALIEN\\_SHAPES",
+              "file": "bloom/2.0.0/api/variables/ALIEN_SHAPES.md",
               "order": 10000,
               "section": "api"
             },
@@ -8461,6 +8776,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/DEFAULT_AGENT_PREFERENCES",
+              "title": "DEFAULT\\_AGENT\\_PREFERENCES",
+              "file": "bloom/2.0.0/api/variables/DEFAULT_AGENT_PREFERENCES.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/DEFAULT_AGENT_PROGRESS_STEPS",
               "title": "DEFAULT\\_AGENT\\_PROGRESS\\_STEPS",
               "file": "bloom/2.0.0/api/variables/DEFAULT_AGENT_PROGRESS_STEPS.md",
@@ -8471,6 +8793,13 @@
               "slug": "api/variables/DEFAULT_COMPOSER_LOADER_COLORS",
               "title": "DEFAULT\\_COMPOSER\\_LOADER\\_COLORS",
               "file": "bloom/2.0.0/api/variables/DEFAULT_COMPOSER_LOADER_COLORS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/DEFAULT_CONFIG",
+              "title": "DEFAULT\\_CONFIG",
+              "file": "bloom/2.0.0/api/variables/DEFAULT_CONFIG.md",
               "order": 10000,
               "section": "api"
             },
@@ -8587,9 +8916,23 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/EYES",
+              "title": "EYES",
+              "file": "bloom/2.0.0/api/variables/EYES.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Fab",
               "title": "Fab",
               "file": "bloom/2.0.0/api/variables/Fab.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/FAMILIES",
+              "title": "FAMILIES",
+              "file": "bloom/2.0.0/api/variables/FAMILIES.md",
               "order": 10000,
               "section": "api"
             },
@@ -8618,6 +8961,41 @@
               "slug": "api/variables/FILL_ROLES",
               "title": "FILL\\_ROLES",
               "file": "bloom/2.0.0/api/variables/FILL_ROLES.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/FOLD_CONFIG",
+              "title": "FOLD\\_CONFIG",
+              "file": "bloom/2.0.0/api/variables/FOLD_CONFIG.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/FOLD_DIRECTIONS",
+              "title": "FOLD\\_DIRECTIONS",
+              "file": "bloom/2.0.0/api/variables/FOLD_DIRECTIONS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/FOLD_MATERIALS",
+              "title": "FOLD\\_MATERIALS",
+              "file": "bloom/2.0.0/api/variables/FOLD_MATERIALS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/FOLD_PRESETS",
+              "title": "FOLD\\_PRESETS",
+              "file": "bloom/2.0.0/api/variables/FOLD_PRESETS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/FOLD_SHAPES",
+              "title": "FOLD\\_SHAPES",
+              "file": "bloom/2.0.0/api/variables/FOLD_SHAPES.md",
               "order": 10000,
               "section": "api"
             },
@@ -10687,9 +11065,23 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiSidebarFoldLine",
+              "title": "RiSidebarFoldLine",
+              "file": "bloom/2.0.0/api/variables/Icons.RiSidebarFoldLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiSideBarLine",
               "title": "RiSideBarLine",
               "file": "bloom/2.0.0/api/variables/Icons.RiSideBarLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiSidebarUnfoldLine",
+              "title": "RiSidebarUnfoldLine",
+              "file": "bloom/2.0.0/api/variables/Icons.RiSidebarUnfoldLine.md",
               "order": 10000,
               "section": "api"
             },
@@ -11156,6 +11548,62 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/LOOKS",
+              "title": "LOOKS",
+              "file": "bloom/2.0.0/api/variables/LOOKS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/MASCOT_ACTIVITIES",
+              "title": "MASCOT\\_ACTIVITIES",
+              "file": "bloom/2.0.0/api/variables/MASCOT_ACTIVITIES.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/MASCOT_BUILDS",
+              "title": "MASCOT\\_BUILDS",
+              "file": "bloom/2.0.0/api/variables/MASCOT_BUILDS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/MASCOT_CONFIG",
+              "title": "MASCOT\\_CONFIG",
+              "file": "bloom/2.0.0/api/variables/MASCOT_CONFIG.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/MASCOT_FINISHES",
+              "title": "MASCOT\\_FINISHES",
+              "file": "bloom/2.0.0/api/variables/MASCOT_FINISHES.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/MASCOT_OUTFITS",
+              "title": "MASCOT\\_OUTFITS",
+              "file": "bloom/2.0.0/api/variables/MASCOT_OUTFITS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/MASCOT_PRESETS",
+              "title": "MASCOT\\_PRESETS",
+              "file": "bloom/2.0.0/api/variables/MASCOT_PRESETS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/MATERIALS",
+              "title": "MATERIALS",
+              "file": "bloom/2.0.0/api/variables/MATERIALS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/MenubarCheckboxItem",
               "title": "MenubarCheckboxItem",
               "file": "bloom/2.0.0/api/variables/MenubarCheckboxItem.md",
@@ -11373,6 +11821,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/PRESETS",
+              "title": "PRESETS",
+              "file": "bloom/2.0.0/api/variables/PRESETS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/PRESS_LAYER_ALPHA",
               "title": "PRESS\\_LAYER\\_ALPHA",
               "file": "bloom/2.0.0/api/variables/PRESS_LAYER_ALPHA.md",
@@ -11523,6 +11978,13 @@
               "slug": "api/variables/SHADOW_BOX",
               "title": "SHADOW\\_BOX",
               "file": "bloom/2.0.0/api/variables/SHADOW_BOX.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/SHAPES",
+              "title": "SHAPES",
+              "file": "bloom/2.0.0/api/variables/SHAPES.md",
               "order": 10000,
               "section": "api"
             },
@@ -19013,10 +19475,18 @@
             },
             {
               "slug": "model-abstraction",
-              "title": "Kaana model abstraction",
-              "description": "How Alia names product choices while Oxy authorizes routes and Kaana executes them.",
+              "title": "Models in Alia",
+              "description": "Alia has no models of its own: it offers real models from Oxy's catalogue and chooses the rest automatically.",
               "file": "alia/main/model-abstraction.mdx",
               "order": 2,
+              "section": "guides"
+            },
+            {
+              "slug": "app-architecture",
+              "title": "App architecture",
+              "description": "How packages/app is laid out: the shell, one folder per feature with ui/runtime/model layers, the shared layers under them, which feature may import which, and the test that keeps it that way.",
+              "file": "alia/main/app-architecture.mdx",
+              "order": 3,
               "section": "guides"
             },
             {
@@ -19054,17 +19524,9 @@
             {
               "slug": "bloom-adoption",
               "title": "Bloom adoption",
-              "description": "Alia composes Bloom's AI Chat template literally; how, and how it was verified.",
+              "description": "The map from Alia to Bloom after #608: what each feature is built from, every AI family evaluated, the contract gaps and the release that closed each, what stays Alia's, and the code and dependencies the rebuild removed.",
               "file": "alia/main/bloom-adoption.mdx",
               "order": 7,
-              "section": "guides"
-            },
-            {
-              "slug": "bloom-template-pending",
-              "title": "Bloom AI Chat template: what is still to come back",
-              "description": "Features removed when the app adopted Bloom's AI Chat template literally, and the Bloom slot each returns through.",
-              "file": "alia/main/bloom-template-pending.mdx",
-              "order": 8,
               "section": "guides"
             },
             {
@@ -19086,9 +19548,17 @@
             {
               "slug": "runtime-baseline",
               "title": "Runtime baseline",
-              "description": "What booting Alia's web surface costs on the real clock: time to a hittable button, script and main-thread cost, settled memory, the cost of a screen that never stops animating, and what twelve route changes do to listeners, timers and the heap. With the run count, the spread, and the threshold below which a later difference is noise.",
+              "description": "What booting Alia's web surface costs on the real clock: time to a hittable button, script and main-thread cost, settled memory, the cost of a screen that never stops animating, and what twelve route changes do to listeners, timers and the heap — plus the chat workspace on a 1,000-message fixture: opening it, typing, streaming, scrolling and switching. With the run count, the spread, and the threshold below which a later difference is noise.",
               "file": "alia/main/runtime-baseline.mdx",
               "order": 9,
+              "section": "guides"
+            },
+            {
+              "slug": "native-validation",
+              "title": "Native validation (Android)",
+              "description": "Alia's Expo app built locally as a release APK and driven on an Android 16 emulator and then a Pixel 8a for #608: what was run, what each screen showed, the defects the devices found and how they were fixed (some in Bloom, some still open there), and what has not been validated.",
+              "file": "alia/main/native-validation.mdx",
+              "order": 10,
               "section": "guides"
             },
             {
@@ -19173,6 +19643,20 @@
               "slug": "adr/0011-autonomous-agents-run-durably-and-speak-first",
               "title": "ADR 0011: Autonomous agents run durably and may speak first",
               "file": "alia/main/adr/0011-autonomous-agents-run-durably-and-speak-first.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0012-alia-uses-real-models",
+              "title": "12. Alia uses real models from Oxy's catalogue",
+              "file": "alia/main/adr/0012-alia-uses-real-models.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0013-voice-runs-on-the-device-livekit-and-cohost-are-retired",
+              "title": "ADR 0013: Voice runs on the device; LiveKit, cohost and voice minutes are retired",
+              "file": "alia/main/adr/0013-voice-runs-on-the-device-livekit-and-cohost-are-retired.md",
               "order": 1000,
               "section": "guides"
             },
@@ -19529,6 +20013,21 @@
               "description": "Deep-link into the Mention composer with prefilled content — text, URLs, hashtags, polls, quotes, and more.",
               "file": "mention/main/compose-intent.mdx",
               "order": 4,
+              "section": "guides"
+            },
+            {
+              "slug": "import",
+              "title": "Content import",
+              "description": "The ingest API Oxy Move uses to bring a user's old posts into Mention, and what Mention guarantees about them.",
+              "file": "mention/main/import.mdx",
+              "order": 5,
+              "section": "guides"
+            },
+            {
+              "slug": "account-erasure",
+              "title": "Account erasure",
+              "file": "mention/main/account-erasure.md",
+              "order": 1000,
               "section": "guides"
             },
             {

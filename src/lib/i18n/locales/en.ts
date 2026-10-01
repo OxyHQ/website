@@ -17,6 +17,193 @@
  * ──────────────────────────────────────────── */
 
 const en = {
+  bloom: {
+    board: {"backlog": "Backlog", "todo": "To do", "inProgress": "In progress", "inReview": "In review", "done": "Done"},
+    "seoTitle": "Bloom UI, a React design system for every platform",
+    "eyebrow": "Built for every platform",
+    "title": "React Design System",
+    "for": "for",
+    "description": "One UI library for React, React Native and Expo. Build with real components, agent interfaces, interactive charts and a shared theme system.",
+    "componentsTitle": "Install interactive dashboard components",
+    "componentsDescription": "Agent interfaces, calendars, forms and dashboard components. Explore the real thing.",
+    "agentsTitle": "Build your agent interface in seconds.",
+    "agentsDescription": "Start with conversations, progress and composer controls. Connect your own agents.",
+    "loaderTitle": "A loading state worth staring at.",
+    "loaderDescription": "An orbiting light around your composer. Choose a Bloom palette and try it.",
+    "examplesTitle": "One library. Many possibilities.",
+    "examplesDescription": "Explore compositions built with Bloom, from agent chat to healthcare dashboards.",
+    "chartsTitle": "Charts that make your data worth reading.",
+    "chartsDescription": "Interactive charts, hover states and stat tiles. All on the same tokens.",
+    "installTitle": "Start building with Bloom.",
+    "installDescription": "Install the package, then follow the setup guide for your platform and peer dependencies.",
+    "githubTitle": "Built in the open.",
+    "githubDescription": "Explore the source, releases and discussions in the Bloom repository.",
+    "faqTitle": "Frequently asked questions",
+    "faqDescription": "Installation, platforms, themes and licensing. Everything you need to start building with Bloom.",
+    "searchSummary": "Ran {count} searches",
+    "qInstall": "How do I install Bloom?",
+    "aInstall": "Install @oxy.so/bloom with Bun or npm. Follow the documentation to configure the provider, styling and required peer dependencies.",
+    "qPlatforms": "Which platforms does Bloom support?",
+    "aPlatforms": "Bloom supports React on the web, React Native and Expo, with platform-specific implementations.",
+    "qTheme": "Can I change the theme?",
+    "aTheme": "Yes. Bloom provides shared tokens, presets and light and dark modes through its theme provider.",
+    "qLicense": "Which license does Bloom use?",
+    "aLicense": "Bloom uses Breathe License 1.0. Read the license in the repository for its permissions and conditions.",
+    "updatesTitle": "Keep up with Bloom.",
+    "updatesDescription": "Explore release notes and the latest component documentation.",
+    "closingTitle": "Start building interfaces with Bloom.",
+    "closingDescription": "Agent components, interactive charts and the UI around them. One library for your next idea.",
+    "demo": "Interactive demo · local only",
+    "demoPrompt": "Build an interface with Bloom.",
+    "demoReply": "This is a local demo. Connect your own services in your application.",
+    "components": "Browse components",
+    "install": "Install Bloom",
+    "docs": "Documentation",
+    "playground": "Playground",
+    "interactive": "Interactive components",
+    "chat": "Agentic Interfaces",
+    "dashboard": "Dashboards",
+    "health": "Healthcare Interfaces",
+    "profile": "Contributor Profiles",
+    "projects": "Project Management",
+    "calendar": "Calendar",
+    "desktop": "Desktop",
+    "tablet": "Tablet",
+    "mobile": "Mobile",
+    "view": "View",
+    "thinking": "Thinking",
+    "color": "Color palette",
+    "viewport": "Preview size",
+    "setup": "Full setup guide",
+    "name": "Name",
+    "status": "Status",
+    "all": "All",
+    "filter": "Filter",
+    "steps": "Steps",
+    "duration": "Duration",
+    "bedtime": "Bedtime",
+    "interruptions": "Interruptions",
+    "move": "Move",
+    "exercise": "Exercise",
+    "running": "Running",
+    "birthDate": "Date of birth",
+    "gender": "Gender",
+    "female": "Female",
+    "bloodType": "Blood type",
+    "doctor": "GP doctor",
+    "primaryButton": "Primary button",
+    "secondaryButton": "Secondary button",
+    "lifetimeTokens": "Lifetime tokens",
+    "peakTokens": "Peak tokens",
+    "longestTask": "Longest task",
+    "streak": "Top streak",
+    "usersWithAccess": "Users with access",
+    "addUser": "Add user",
+    "manage": "Manage",
+    "models": "Models",
+    "effort": "Effort",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "year": "Year",
+    "readFiles": "Read project files",
+    "lightTheme": "Configure light mode tokens",
+    "darkTheme": "Configure dark mode tokens",
+    "verifyBuild": "Verify the production build",
+    "messages": "Messages",
+    "files": "Files",
+    "tools": "Tools",
+    "cards": {
+      "attachments": {
+        "title": "Composer attachments",
+        "description": "File tiles with upload progress above the prompt."
+      },
+      "search": {
+        "title": "Web search",
+        "description": "Searches and sources revealed as an agent works."
+      },
+      "limits": {
+        "title": "Agent limits",
+        "description": "Context usage, token breakdown and plan limits."
+      },
+      "table": {
+        "title": "Data table",
+        "description": "Filter, sort and paginate a responsive data table."
+      },
+      "widgets": {
+        "title": "Playful widgets",
+        "description": "Health charts, activity rings and alert cards."
+      },
+      "sidebar": {
+        "title": "Sidebar",
+        "description": "Navigation, search, badges and account controls."
+      },
+      "profile": {
+        "title": "Contributor profile",
+        "description": "Contribution activity, token statistics and streaks."
+      },
+      "progress": {
+        "title": "Agent progress",
+        "description": "Multi-step progress and completion states."
+      },
+      "loader": {
+        "title": "Composer loader",
+        "description": "An orbiting light while your agent works."
+      },
+      "thinking": {
+        "title": "Agent thinking",
+        "description": "Thinking, searching and writing indicators."
+      },
+      "image": {
+        "title": "Image generation loader",
+        "description": "An animated countdown and image reveal."
+      },
+      "calendar": {
+        "title": "Calendar",
+        "description": "Month calendar with date and event controls."
+      },
+      "auth": {
+        "title": "Auth card",
+        "description": "Sign-in forms and social provider buttons."
+      },
+      "meeting": {
+        "title": "Meeting schedule",
+        "description": "Choose a date and time for a meeting."
+      },
+      "earnings": {
+        "title": "Charts",
+        "description": "Interactive charts with hover and period controls."
+      },
+      "upload": {
+        "title": "File upload",
+        "description": "File selection, validation and progress states."
+      }
+    },
+    "agents": {
+      "design": "Design agent",
+      "review": "Review agent",
+      "research": "Research agent",
+      "code": "Code agent"
+    },
+    "table": {
+      "results": "Total Results",
+      "customers": "customers",
+      "purchase": "Purchase",
+      "updated": "Last updated",
+      "price": "Price",
+      "waiting": "Waiting",
+      "completed": "Completed",
+      "processing": "Processing",
+      "failed": "Delivery failed",
+      "delivered": "Delivered",
+      "pending": "Pending",
+      "prices": "All prices",
+      "products": "All products",
+      "regions": "All regions",
+      "search": "Search"
+    }
+  },
+
   // ── Common UI ─────────────────────────────────────────────
   common: {
     signIn: 'Sign in',

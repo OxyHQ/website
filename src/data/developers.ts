@@ -164,9 +164,9 @@ export const resources: ResourceCard[] = [
     href: '/developers/docs/bloom/color-system',
   },
   {
-    title: 'Bloom component playground',
-    description: 'Try live component props and inspect the generated code.',
-    href: '/developers/docs/bloom/playground',
+    title: 'Bloom components',
+    description: 'Browse interactive examples, usage and props for every Bloom component.',
+    href: '/developers/docs/bloom/components/',
   },
   {
     title: 'Changelog',

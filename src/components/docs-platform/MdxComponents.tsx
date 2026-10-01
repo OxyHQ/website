@@ -1,4 +1,13 @@
 import type { ReactNode } from 'react'
+import {
+  AdmonitionRoot,
+  AdmonitionRow,
+  AdmonitionIcon,
+  AdmonitionContent,
+} from '@oxy.so/bloom/admonition'
+import { DocsExample } from '../docs/DocsExample'
+import { DocsInstall } from '../docs/DocsInstall'
+import { reactNodeToText } from '../../lib/useCopyToClipboard'
 import { cn } from '../../lib/utils'
 import CodeBlock from '../../content/_components/CodeBlock'
 
@@ -10,16 +19,7 @@ interface CodeProps {
 }
 
 export function Code({ language, children }: CodeProps) {
-  return (
-    <pre className="not-prose my-4 overflow-x-auto rounded-2xl border border-border bg-surface p-4 text-sm leading-relaxed text-foreground">
-      {language ? (
-        <div className="mb-2 text-label-sm uppercase tracking-wider text-muted-foreground">
-          {language}
-        </div>
-      ) : null}
-      <code className="font-mono">{children}</code>
-    </pre>
-  )
+  return <CodeBlock language={language}>{children}</CodeBlock>
 }
 
 /* ------------------------------- Callout ------------------------------ */
@@ -30,24 +30,25 @@ interface CalloutProps {
   children: ReactNode
 }
 
-const calloutStyles: Record<NonNullable<CalloutProps['variant']>, string> = {
-  info: 'border-info/30 bg-info-subtle text-foreground',
-  warning: 'border-warning/30 bg-warning-subtle text-foreground',
-  danger: 'border-error/30 bg-error-subtle text-foreground',
-  success: 'border-success/30 bg-success-subtle text-foreground',
-}
-
 export function Callout({ variant = 'info', title, children }: CalloutProps) {
+  const type =
+    variant === 'danger' ? 'error' : variant === 'success' ? 'tip' : variant
   return (
-    <aside
-      className={cn(
-        'not-prose my-6 rounded-2xl border p-4 text-sm leading-relaxed',
-        calloutStyles[variant],
-      )}
-    >
-      {title ? <div className="mb-1 font-semibold">{title}</div> : null}
-      <div className="opacity-90">{children}</div>
-    </aside>
+    <div className="not-prose my-6 text-sm leading-[22px]" role="note">
+      <AdmonitionRoot type={type} style={{ borderRadius: 16, padding: 16 }}>
+        <AdmonitionRow>
+          <AdmonitionIcon />
+          <AdmonitionContent>
+            {title ? (
+              <p className="mb-1 font-medium text-foreground">{title}</p>
+            ) : null}
+            <div className="text-muted-foreground [&>p:first-child]:mt-0 [&>p:last-child]:mb-0">
+              {children}
+            </div>
+          </AdmonitionContent>
+        </AdmonitionRow>
+      </AdmonitionRoot>
+    </div>
   )
 }
 
@@ -91,21 +92,11 @@ interface LiveExampleProps {
 
 export function LiveExample({ title, children, source }: LiveExampleProps) {
   return (
-    <section className="not-prose my-6 overflow-hidden rounded-2xl border border-border">
-      {title ? (
-        <header className="border-b border-border bg-surface px-4 py-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          {title}
-        </header>
-      ) : null}
-      <div className="flex min-h-[120px] items-center justify-center bg-background p-6">
+    <div className="my-6">
+      <DocsExample title={title} code={source}>
         {children}
-      </div>
-      {source ? (
-        <pre className="border-t border-border bg-surface px-4 py-3 overflow-x-auto text-xs leading-relaxed">
-          <code>{source}</code>
-        </pre>
-      ) : null}
-    </section>
+      </DocsExample>
+    </div>
   )
 }
 
@@ -121,8 +112,31 @@ export function LiveExample({ title, children, source }: LiveExampleProps) {
 export function MdxPre({ children }: { children?: ReactNode }) {
   let language: string | undefined
   if (children && typeof children === 'object' && 'props' in children) {
-    const className = (children as { props?: { className?: string } }).props?.className ?? ''
+    const className =
+      (children as { props?: { className?: string } }).props?.className ?? ''
     language = /language-([\w-]+)/.exec(className)?.[1]
+  }
+  // Plain package installation commands use the same manager switcher as the
+  // component reference. Scripts, flags and multiline commands stay verbatim.
+  const command = reactNodeToText(children).trim()
+  const install = /^(?:npm (?:install|i)|(?:pnpm|yarn|bun) add) ([^\n]+)$/.exec(
+    command,
+  )
+  if (install && (!language || ['sh', 'bash', 'shell'].includes(language))) {
+    const packages = install[1].split(/\s+/)
+    if (
+      packages.every(
+        (name) =>
+          /^(?:@[\w.-]+\/)?[\w.-]+(?:@[\w.^~*+-]+)?$/.test(name) &&
+          !name.startsWith('-'),
+      )
+    ) {
+      return (
+        <div className="my-5">
+          <DocsInstall packageName={packages.join(' ')} />
+        </div>
+      )
+    }
   }
   return (
     <CodeBlock language={language} className="my-5">

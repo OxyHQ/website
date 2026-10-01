@@ -1,6 +1,193 @@
 import en, { type Translations } from './en'
 
 const ko: Translations = {
+  bloom: {
+    board: {"backlog": "백로그", "todo": "할 일", "inProgress": "진행 중", "inReview": "검토 중", "done": "완료"},
+    "seoTitle": "Bloom UI, 모든 플랫폼을 위한 React 디자인 시스템",
+    "eyebrow": "모든 플랫폼을 위해",
+    "title": "React 디자인 시스템",
+    "for": "용도:",
+    "description": "React, React Native, Expo를 위한 UI 라이브러리. 실제 컴포넌트, 에이전트 인터페이스, 대화형 차트와 공통 테마로 구축하세요.",
+    "componentsTitle": "바로 사용할 수 있는 대화형 컴포넌트.",
+    "componentsDescription": "에이전트 인터페이스, 달력, 폼, 대시보드 컴포넌트를 직접 살펴보세요.",
+    "agentsTitle": "에이전트 인터페이스를 빠르게 만드세요.",
+    "agentsDescription": "대화, 진행 상태, 입력 컨트롤로 시작하고 직접 에이전트를 연결하세요.",
+    "loaderTitle": "시선을 끄는 로딩 상태.",
+    "loaderDescription": "입력창을 도는 빛. Bloom 팔레트를 선택하고 사용해 보세요.",
+    "examplesTitle": "하나의 라이브러리. 다양한 가능성.",
+    "examplesDescription": "에이전트 채팅부터 의료 대시보드까지 Bloom 구성 예제를 살펴보세요.",
+    "chartsTitle": "데이터를 읽고 싶게 하는 차트.",
+    "chartsDescription": "대화형 차트, 호버 상태, 통계 카드. 모두 같은 토큰으로.",
+    "installTitle": "Bloom으로 개발을 시작하세요.",
+    "installDescription": "패키지를 설치하고 플랫폼과 의존성 설정 가이드를 따르세요.",
+    "githubTitle": "공개적으로 개발됩니다.",
+    "githubDescription": "Bloom 저장소에서 소스, 릴리스, 토론을 확인하세요.",
+    "faqTitle": "자주 묻는 질문",
+    "faqDescription": "설치, 플랫폼, 테마, 라이선스. Bloom으로 개발을 시작하는 데 필요한 모든 정보.",
+    "searchSummary": "검색 {count}회 실행",
+    "qInstall": "Bloom을 어떻게 설치하나요?",
+    "aInstall": "Bun이나 npm으로 @oxy.so/bloom을 설치하세요. 프로바이더, 스타일, 필수 의존성 설정은 문서를 따르세요.",
+    "qPlatforms": "어떤 플랫폼을 지원하나요?",
+    "aPlatforms": "Bloom은 웹 React, React Native, Expo를 플랫폼별 구현으로 지원합니다.",
+    "qTheme": "테마를 바꿀 수 있나요?",
+    "aTheme": "네. 테마 프로바이더를 통해 공통 토큰, 프리셋, 밝은 모드와 어두운 모드를 제공합니다.",
+    "qLicense": "Bloom은 어떤 라이선스를 사용하나요?",
+    "aLicense": "Bloom은 Breathe License 1.0을 사용합니다. 허용 사항과 조건은 저장소의 라이선스를 확인하세요.",
+    "updatesTitle": "Bloom 소식을 확인하세요.",
+    "updatesDescription": "릴리스 노트와 최신 컴포넌트 문서를 살펴보세요.",
+    "closingTitle": "Bloom으로 인터페이스를 만드세요.",
+    "closingDescription": "에이전트 컴포넌트, 대화형 차트와 주변 UI. 다음 아이디어를 위한 하나의 라이브러리.",
+    "demo": "대화형 데모 · 로컬 전용",
+    "demoPrompt": "Bloom으로 인터페이스를 만드세요.",
+    "demoReply": "로컬 데모입니다. 애플리케이션에 직접 서비스를 연결하세요.",
+    "components": "컴포넌트 보기",
+    "install": "Bloom 설치",
+    "docs": "문서",
+    "playground": "플레이그라운드",
+    "interactive": "대화형 컴포넌트",
+    "chat": "에이전트 채팅",
+    "dashboard": "대시보드",
+    "health": "의료",
+    "profile": "프로필",
+    "projects": "프로젝트 보드",
+    "calendar": "달력",
+    "desktop": "데스크톱",
+    "tablet": "태블릿",
+    "mobile": "모바일",
+    "view": "보기",
+    "thinking": "생각 중",
+    "color": "색상 팔레트",
+    "viewport": "미리보기 크기",
+    "setup": "설정 가이드",
+    "name": "이름",
+    "status": "상태",
+    "all": "전체",
+    "filter": "필터",
+    "steps": "걸음 수",
+    "duration": "시간",
+    "bedtime": "취침 시간",
+    "interruptions": "중단",
+    "move": "움직임",
+    "exercise": "운동",
+    "running": "달리기",
+    "birthDate": "생년월일",
+    "gender": "성별",
+    "female": "여성",
+    "bloodType": "혈액형",
+    "doctor": "주치의",
+    "primaryButton": "기본 버튼",
+    "secondaryButton": "보조 버튼",
+    "lifetimeTokens": "전체 토큰",
+    "peakTokens": "최대 토큰",
+    "longestTask": "가장 긴 작업",
+    "streak": "최고 연속 기록",
+    "usersWithAccess": "접근 가능한 사용자",
+    "addUser": "사용자 추가",
+    "manage": "관리",
+    "models": "모델",
+    "effort": "처리 수준",
+    "day": "일",
+    "week": "주",
+    "month": "월",
+    "year": "년",
+    "readFiles": "프로젝트 파일 읽기",
+    "lightTheme": "밝은 모드 토큰 설정",
+    "darkTheme": "어두운 모드 토큰 설정",
+    "verifyBuild": "프로덕션 빌드 검증",
+    "messages": "메시지",
+    "files": "파일",
+    "tools": "도구",
+    "cards": {
+      "attachments": {
+        "title": "첨부 파일",
+        "description": "입력창 위 파일과 업로드 진행 상태."
+      },
+      "search": {
+        "title": "웹 검색",
+        "description": "에이전트의 검색과 출처 표시."
+      },
+      "limits": {
+        "title": "에이전트 한도",
+        "description": "컨텍스트 사용량, 토큰 내역과 한도."
+      },
+      "table": {
+        "title": "데이터 테이블",
+        "description": "반응형 테이블 필터, 정렬과 페이지 이동."
+      },
+      "widgets": {
+        "title": "대화형 위젯",
+        "description": "건강 차트, 활동 링과 알림 카드."
+      },
+      "sidebar": {
+        "title": "사이드바",
+        "description": "탐색, 검색과 계정 컨트롤."
+      },
+      "profile": {
+        "title": "기여자 프로필",
+        "description": "기여 활동, 토큰 통계와 연속 기록."
+      },
+      "progress": {
+        "title": "에이전트 진행 상태",
+        "description": "여러 단계의 진행과 완료 상태."
+      },
+      "loader": {
+        "title": "입력창 로딩",
+        "description": "에이전트 작업 중 도는 빛."
+      },
+      "thinking": {
+        "title": "에이전트 활동",
+        "description": "생각, 검색과 작성 표시."
+      },
+      "image": {
+        "title": "이미지 로딩",
+        "description": "애니메이션 카운트다운과 이미지 표시."
+      },
+      "calendar": {
+        "title": "달력",
+        "description": "월간 달력과 날짜 선택."
+      },
+      "auth": {
+        "title": "인증 폼",
+        "description": "로그인과 소셜 제공자 버튼."
+      },
+      "meeting": {
+        "title": "회의 예약",
+        "description": "회의 날짜와 시간 선택."
+      },
+      "earnings": {
+        "title": "차트",
+        "description": "대화형 차트와 기간 컨트롤."
+      },
+      "upload": {
+        "title": "파일 업로드",
+        "description": "파일 선택, 검증과 진행 상태."
+      }
+    },
+    "agents": {
+      "design": "디자인 에이전트",
+      "review": "검토 에이전트",
+      "research": "연구 에이전트",
+      "code": "코드 에이전트"
+    },
+    "table": {
+      "results": "전체 결과",
+      "customers": "고객",
+      "purchase": "구매",
+      "updated": "최근 업데이트",
+      "price": "가격",
+      "waiting": "대기 중",
+      "completed": "완료",
+      "processing": "처리 중",
+      "failed": "배송 실패",
+      "delivered": "배송 완료",
+      "pending": "보류 중",
+      "prices": "모든 가격",
+      "products": "모든 제품",
+      "regions": "모든 지역",
+      "search": "검색"
+    }
+  },
+
   common: {
     signIn: '로그인',
     signOut: '로그아웃',

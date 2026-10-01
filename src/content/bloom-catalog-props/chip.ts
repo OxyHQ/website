@@ -33,6 +33,8 @@ export const props: BloomSurfaceProps = {
         { name: 'onKeyDown', type: '(event: { key: string; preventDefault: () => void; }) => void', optional: true, description: 'Web only: key handling for a roving-tabindex row (arrows move focus). Inert on native.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true },
+        { name: 'className', type: 'string', optional: true, description: 'NativeWind recipe override; omitted keeps the standard pill.' },
+        { name: 'textClassName', type: 'string', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

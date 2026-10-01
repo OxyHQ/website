@@ -82,8 +82,8 @@ const HelpArticlePage = lazy(() => import('./pages/HelpArticlePage'))
 const ChangelogPage = lazy(() => import('./pages/ChangelogPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
+const BloomPage = lazy(() => import('./pages/BloomPage'))
 const BloomDemoIsolationPage = lazy(() => import('./pages/BloomDemoIsolationPage'))
-const BloomPlayground = lazy(() => import('./components/docs/BloomPlayground'))
 const BloomColorSystemPage = lazy(() => import('./components/docs/BloomColorSystemPage'))
 const BloomComponentPage = lazy(() => import('./components/docs/BloomComponentPage'))
 const BloomComponentsHub = lazy(() =>
@@ -340,10 +340,10 @@ function PublicRoutes() {
         DocsPage (which would return a 404 since there's no MDX file
         with that slug in the typedoc output).
       */}
-      <Route path="developers/docs/bloom/playground" element={<BloomPlayground />} />
+      <Route path="developers/docs/bloom/playground" element={<Navigate to="/developers/docs/bloom/components/" replace />} />
       <Route
         path="developers/docs/bloom/:version/playground"
-        element={<Navigate to="/developers/docs/bloom/playground" replace />}
+        element={<Navigate to="/developers/docs/bloom/components/" replace />}
       />
       <Route path="developers/docs/bloom/color-system" element={<BloomColorSystemPage />} />
       <Route
@@ -421,6 +421,7 @@ function PublicRoutes() {
           so the legacy URL redirects rather than returning a 404. */}
       <Route path="pay" element={<Navigate to="/peable" replace />} />
       <Route path="commons" element={<CommonsPage />} />
+      <Route path="bloom" element={<BloomPage />} />
       <Route path="apps" element={<AppsPage />} />
       <Route path="apps/:name" element={<AppDetailPage />} />
       <Route path="faqs" element={<FaqsPage />} />

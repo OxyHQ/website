@@ -26,8 +26,12 @@ const tabs: DocsTab[] = [
     isActive: (pathname) =>
       pathname.startsWith('/developers/docs/services') ||
       pathname.startsWith('/developers/docs/core') ||
-      pathname.startsWith('/developers/docs/auth-sdk') ||
-      pathname.startsWith('/developers/docs/bloom'),
+      pathname.startsWith('/developers/docs/auth-sdk'),
+  },
+  {
+    label: 'Bloom',
+    to: '/developers/docs/bloom/components/',
+    isActive: (pathname) => pathname.startsWith('/developers/docs/bloom'),
   },
   {
     label: 'REST API',
@@ -41,7 +45,11 @@ const tabs: DocsTab[] = [
   },
 ]
 
-export default function DocsSubNav() {
+export default function DocsSubNav({
+  overview = false,
+}: {
+  overview?: boolean
+}) {
   const headerBottom = useSiteHeaderBottom()
   const { pathname } = useLocation()
   /*
@@ -51,33 +59,44 @@ export default function DocsSubNav() {
    * hairline of the page showing through between the two while scrolling.
    */
   return (
-    <div className="sticky z-40 border-b border-border/60 bg-background/90 backdrop-blur-md" style={{ top: headerBottom }}>
+    <div
+      className="sticky z-40 border-b border-border/60 bg-background/90 backdrop-blur-md"
+      style={{ top: headerBottom }}
+    >
       <div className="w-full">
         {/* Docs run edge to edge, so the tabs start where the content column
             does: past the sidebar, not past a page gutter as well. */}
-        <div className="hidden h-12 lg:flex lg:pl-[19.5rem]">
-          <div className="h-full flex text-sm gap-x-6">
-            {tabs.map((tab) => {
-              const active = tab.isActive(pathname)
-              return active ? (
-                <NavLink
-                  key={tab.label}
-                  className="group relative h-full gap-2 flex items-center font-medium text-foreground [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]"
-                  to={tab.to}
-                >
-                  {tab.label}
-                  <div className="absolute bottom-0 h-[1.5px] w-full left-0 bg-primary" />
-                </NavLink>
-              ) : (
-                <NavLink
-                  key={tab.label}
-                  className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground"
-                  to={tab.to}
-                >
-                  {tab.label}
-                </NavLink>
-              )
-            })}
+        <div
+          className={
+            overview
+              ? 'hidden h-12 lg:flex lg:pl-[19.5rem]'
+              : 'flex h-12 overflow-x-auto px-6 lg:pl-[324px]'
+          }
+        >
+          <div className="flex h-full shrink-0 gap-x-6 text-sm">
+            {tabs
+              .filter((tab) => !overview || tab.label !== 'Bloom')
+              .map((tab) => {
+                const active = tab.isActive(pathname.replace(/\/+$/, ''))
+                return active ? (
+                  <NavLink
+                    key={tab.label}
+                    className="group relative h-full gap-2 flex items-center font-medium text-foreground [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]"
+                    to={tab.to}
+                  >
+                    {tab.label}
+                    <div className="absolute bottom-0 h-[1.5px] w-full left-0 bg-primary" />
+                  </NavLink>
+                ) : (
+                  <NavLink
+                    key={tab.label}
+                    className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground"
+                    to={tab.to}
+                  >
+                    {tab.label}
+                  </NavLink>
+                )
+              })}
           </div>
         </div>
       </div>

@@ -1,6 +1,193 @@
 import en, { type Translations } from './en'
 
 const zh: Translations = {
+  bloom: {
+    board: {"backlog": "待规划", "todo": "待办", "inProgress": "进行中", "inReview": "审核中", "done": "已完成"},
+    "seoTitle": "Bloom UI，面向所有平台的 React 设计系统",
+    "eyebrow": "为所有平台而生",
+    "title": "React 设计系统",
+    "for": "适用于",
+    "description": "一个面向 React、React Native 和 Expo 的 UI 库。使用真实组件、智能体界面、交互式图表和共享主题进行构建。",
+    "componentsTitle": "交互式组件，随时开始构建。",
+    "componentsDescription": "智能体界面、日历、表单和仪表盘组件。体验真实组件。",
+    "agentsTitle": "快速构建智能体界面。",
+    "agentsDescription": "从对话、进度和输入控件开始，连接你自己的智能体。",
+    "loaderTitle": "值得欣赏的加载状态。",
+    "loaderDescription": "环绕输入框的光效。选择 Bloom 配色并试用。",
+    "examplesTitle": "一个库，无限可能。",
+    "examplesDescription": "探索 Bloom 组合示例，从智能体聊天到医疗仪表盘。",
+    "chartsTitle": "让数据值得阅读的图表。",
+    "chartsDescription": "交互式图表、悬停状态和指标卡片，采用统一设计令牌。",
+    "installTitle": "开始使用 Bloom 构建。",
+    "installDescription": "安装软件包，然后按照平台和依赖项的设置指南操作。",
+    "githubTitle": "开放开发。",
+    "githubDescription": "在 Bloom 仓库中探索源码、版本和讨论。",
+    "faqTitle": "常见问题",
+    "faqDescription": "安装、平台、主题和许可证。开始使用 Bloom 构建应用所需的信息。",
+    "searchSummary": "已执行 {count} 次搜索",
+    "qInstall": "如何安装 Bloom？",
+    "aInstall": "使用 Bun 或 npm 安装 @oxy.so/bloom。按照文档配置提供程序、样式和必需的对等依赖项。",
+    "qPlatforms": "Bloom 支持哪些平台？",
+    "aPlatforms": "Bloom 支持网页 React、React Native 和 Expo，并提供平台专用实现。",
+    "qTheme": "可以更改主题吗？",
+    "aTheme": "可以。Bloom 通过主题提供程序提供共享令牌、预设以及明暗模式。",
+    "qLicense": "Bloom 使用什么许可证？",
+    "aLicense": "Bloom 使用 Breathe License 1.0。请查看仓库中的许可权限和条件。",
+    "updatesTitle": "关注 Bloom 动态。",
+    "updatesDescription": "查看发行说明和最新组件文档。",
+    "closingTitle": "使用 Bloom 构建界面。",
+    "closingDescription": "智能体组件、交互式图表及其周边 UI。用一个库实现你的下一个创意。",
+    "demo": "交互式演示 · 仅本地",
+    "demoPrompt": "使用 Bloom 构建界面。",
+    "demoReply": "这是本地演示。请在应用程序中连接自己的服务。",
+    "components": "浏览组件",
+    "install": "安装 Bloom",
+    "docs": "文档",
+    "playground": "试验场",
+    "interactive": "交互式组件",
+    "chat": "智能体聊天",
+    "dashboard": "仪表盘",
+    "health": "医疗",
+    "profile": "个人资料",
+    "projects": "项目看板",
+    "calendar": "日历",
+    "desktop": "桌面",
+    "tablet": "平板",
+    "mobile": "手机",
+    "view": "查看",
+    "thinking": "思考中",
+    "color": "配色方案",
+    "viewport": "预览尺寸",
+    "setup": "完整设置指南",
+    "name": "姓名",
+    "status": "状态",
+    "all": "全部",
+    "filter": "筛选",
+    "steps": "步数",
+    "duration": "时长",
+    "bedtime": "就寝时间",
+    "interruptions": "中断",
+    "move": "活动",
+    "exercise": "锻炼",
+    "running": "跑步",
+    "birthDate": "出生日期",
+    "gender": "性别",
+    "female": "女性",
+    "bloodType": "血型",
+    "doctor": "医生",
+    "primaryButton": "主要按钮",
+    "secondaryButton": "次要按钮",
+    "lifetimeTokens": "累计令牌",
+    "peakTokens": "峰值令牌",
+    "longestTask": "最长任务",
+    "streak": "最长连续记录",
+    "usersWithAccess": "有权限的用户",
+    "addUser": "添加用户",
+    "manage": "管理",
+    "models": "模型",
+    "effort": "推理力度",
+    "day": "日",
+    "week": "周",
+    "month": "月",
+    "year": "年",
+    "readFiles": "读取项目文件",
+    "lightTheme": "配置浅色模式令牌",
+    "darkTheme": "配置深色模式令牌",
+    "verifyBuild": "验证生产构建",
+    "messages": "消息",
+    "files": "文件",
+    "tools": "工具",
+    "cards": {
+      "attachments": {
+        "title": "输入框附件",
+        "description": "输入框上方的文件和上传进度。"
+      },
+      "search": {
+        "title": "网页搜索",
+        "description": "显示智能体的搜索和来源。"
+      },
+      "limits": {
+        "title": "智能体限制",
+        "description": "上下文用量、令牌分布和计划限制。"
+      },
+      "table": {
+        "title": "数据表格",
+        "description": "响应式表格的筛选、排序和分页。"
+      },
+      "widgets": {
+        "title": "交互式小组件",
+        "description": "健康图表、活动圆环和警报卡片。"
+      },
+      "sidebar": {
+        "title": "侧边栏",
+        "description": "导航、搜索和账户控件。"
+      },
+      "profile": {
+        "title": "贡献者资料",
+        "description": "贡献记录、令牌统计和连续记录。"
+      },
+      "progress": {
+        "title": "智能体进度",
+        "description": "多步进度与完成状态。"
+      },
+      "loader": {
+        "title": "输入框加载",
+        "description": "智能体工作时环绕输入框的光效。"
+      },
+      "thinking": {
+        "title": "智能体活动",
+        "description": "思考、搜索和写作指示器。"
+      },
+      "image": {
+        "title": "图片加载",
+        "description": "动画倒计时与图片展示。"
+      },
+      "calendar": {
+        "title": "日历",
+        "description": "月度日历和日期控件。"
+      },
+      "auth": {
+        "title": "认证表单",
+        "description": "登录表单和社交提供程序按钮。"
+      },
+      "meeting": {
+        "title": "预约会议",
+        "description": "选择会议的日期和时间。"
+      },
+      "earnings": {
+        "title": "图表",
+        "description": "交互式图表和时间段控件。"
+      },
+      "upload": {
+        "title": "文件上传",
+        "description": "文件选择、验证和进度状态。"
+      }
+    },
+    "agents": {
+      "design": "设计代理",
+      "review": "审查代理",
+      "research": "研究代理",
+      "code": "代码代理"
+    },
+    "table": {
+      "results": "结果总数",
+      "customers": "客户",
+      "purchase": "购买",
+      "updated": "最近更新",
+      "price": "价格",
+      "waiting": "等待中",
+      "completed": "已完成",
+      "processing": "处理中",
+      "failed": "配送失败",
+      "delivered": "已送达",
+      "pending": "待处理",
+      "prices": "所有价格",
+      "products": "所有产品",
+      "regions": "所有地区",
+      "search": "搜索"
+    }
+  },
+
   common: {
     signIn: '登录',
     signOut: '退出登录',

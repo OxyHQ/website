@@ -21,10 +21,16 @@ export function DocsMdxBody({ file }: { file: string }) {
   // built at module init in `docs-loader.ts` so identities stay stable across
   // renders.
   return (
-    <MDXProvider components={mdxComponents}>
-      <Suspense fallback={<div className="text-sm text-muted-foreground">Loading…</div>}>
-        {createElement(lazyComponent)}
-      </Suspense>
-    </MDXProvider>
+    <div className="docs-prose-body min-w-0 [&>h1:first-child]:hidden">
+      <MDXProvider components={mdxComponents}>
+        <Suspense
+          fallback={
+            <div className="text-sm text-muted-foreground">Loading…</div>
+          }
+        >
+          {createElement(lazyComponent)}
+        </Suspense>
+      </MDXProvider>
+    </div>
   )
 }

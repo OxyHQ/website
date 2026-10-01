@@ -2,6 +2,9 @@ import type { ComponentPropsWithoutRef } from 'react'
 import { cn } from '../../lib/utils'
 import { BloomDemo } from './BloomDemo'
 import { Badge, Callout, Code, LiveExample, MdxPre } from './MdxComponents'
+import Steps, { Step } from '../../content/_components/Steps'
+import CodeBlock from '../../content/_components/CodeBlock'
+import { DocsInstall } from '../docs/DocsInstall'
 import { canonicalHref } from '../../lib/canonicalPath'
 
 /**
@@ -30,7 +33,7 @@ export const mdxComponents = {
     <h2
       {...props}
       className={cn(
-        'mt-8 mb-2.5 scroll-mt-24 text-xl font-semibold tracking-tight text-foreground',
+        'mt-10 mb-3 scroll-mt-[calc(var(--site-header-occlusion-bottom,64px)+80px)] text-xl font-medium text-foreground',
         props.className,
       )}
     />
@@ -38,45 +41,69 @@ export const mdxComponents = {
   h3: (props: ComponentPropsWithoutRef<'h3'>) => (
     <h3
       {...props}
-      className={cn('mt-6 mb-2 scroll-mt-24 text-lg font-semibold text-foreground', props.className)}
+      className={cn(
+        'mt-8 mb-2.5 scroll-mt-[calc(var(--site-header-occlusion-bottom,64px)+80px)] text-lg font-medium text-foreground',
+        props.className,
+      )}
     />
   ),
   h4: (props: ComponentPropsWithoutRef<'h4'>) => (
     <h4
       {...props}
-      className={cn('mt-5 mb-1.5 scroll-mt-24 text-base font-semibold text-foreground', props.className)}
+      className={cn(
+        'mt-5 mb-1.5 scroll-mt-24 text-base font-semibold text-foreground',
+        props.className,
+      )}
     />
   ),
   p: (props: ComponentPropsWithoutRef<'p'>) => (
-    <p {...props} className={cn('my-3 leading-7 text-foreground', props.className)} />
+    <p
+      {...props}
+      className={cn(
+        'my-3 text-base leading-[24px] text-muted-foreground',
+        props.className,
+      )}
+    />
   ),
   ul: (props: ComponentPropsWithoutRef<'ul'>) => (
     <ul
       {...props}
-      className={cn('my-3 list-disc pl-5 space-y-1 text-foreground', props.className)}
+      className={cn(
+        'my-3 list-disc pl-5 space-y-1 text-foreground',
+        props.className,
+      )}
     />
   ),
   ol: (props: ComponentPropsWithoutRef<'ol'>) => (
     <ol
       {...props}
-      className={cn('my-3 list-decimal pl-5 space-y-1 text-foreground', props.className)}
+      className={cn(
+        'my-3 list-decimal pl-5 space-y-1 text-foreground',
+        props.className,
+      )}
     />
   ),
   li: (props: ComponentPropsWithoutRef<'li'>) => (
-    <li {...props} className={cn('leading-6 [&>ul]:my-1 [&>ol]:my-1', props.className)} />
+    <li
+      {...props}
+      className={cn('leading-6 [&>ul]:my-1 [&>ol]:my-1', props.className)}
+    />
   ),
   a: (props: ComponentPropsWithoutRef<'a'>) => (
     <a
       {...props}
       href={canonicalHref(props.href)}
-      className={cn('font-medium text-primary underline-offset-4 hover:underline', props.className)}
+      className={cn(
+        'font-medium text-primary underline-offset-4 hover:underline',
+        props.className,
+      )}
     />
   ),
   blockquote: (props: ComponentPropsWithoutRef<'blockquote'>) => (
     <blockquote
       {...props}
       className={cn(
-        'my-5 border-l-2 border-primary/40 pl-4 text-foreground/90 italic',
+        'not-prose my-6 rounded-2xl border border-border bg-surface p-4 text-sm leading-[22px] text-muted-foreground',
         props.className,
       )}
     />
@@ -100,7 +127,7 @@ export const mdxComponents = {
     <th
       {...props}
       className={cn(
-        'border-b border-border bg-surface px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground',
+        'border-b border-border bg-surface px-3 py-2 text-left text-sm font-medium text-muted-foreground',
         props.className,
       )}
     />
@@ -108,12 +135,19 @@ export const mdxComponents = {
   td: (props: ComponentPropsWithoutRef<'td'>) => (
     <td
       {...props}
-      className={cn('border-b border-border px-3 py-1.5 align-top text-foreground', props.className)}
+      className={cn(
+        'border-b border-border px-4 py-3 align-top text-foreground',
+        props.className,
+      )}
     />
   ),
   hr: (props: ComponentPropsWithoutRef<'hr'>) => (
     <hr {...props} className={cn('my-6 border-border', props.className)} />
   ),
+  Steps,
+  Step,
+  CodeBlock,
+  DocsInstall,
   Callout,
   Code,
   Badge,
