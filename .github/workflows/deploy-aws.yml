@@ -34,6 +34,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Keep build setup ahead of the production credential boundary. Using the
+      # runner's installed buildx also avoids executing another mutable action.
+      - name: Set up Docker Buildx
+        run: |
+          docker buildx create --use --driver docker-container
+          docker buildx inspect --bootstrap
+
+      # A local JavaScript action can read GitHub's action-only runtime values
+      # and export them for the later buildx `run:` step without adding another
+      # third-party action to this production job.
+      - name: Expose the Actions cache to buildx
+        uses: ./.github/actions/expose-actions-runtime
+
       - name: Configure AWS credentials (OIDC, no stored keys)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -97,15 +110,6 @@ jobs:
       # (the base image and, unless package.json/bun.lock moved, the
       # `bun install` layer). Only this push-to-main / dispatch workflow writes
       # the `website-api` scope; no pull_request workflow does.
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      # `--cache-from/--cache-to type=gha` need the Actions runtime token and
-      # cache URL, which GitHub gives to JavaScript actions and NOT to `run:`
-      # steps; without them buildx skips the cache silently.
-      - name: Expose the Actions cache to buildx
-        uses: crazy-max/ghaction-github-runtime@v4
-
       # --provenance=false keeps what reaches ECR a single linux/arm64 image
       # manifest, the same shape `docker build` + `docker push` produced, rather
       # than an index carrying an attestation.
