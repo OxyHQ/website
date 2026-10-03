@@ -93,7 +93,7 @@ export const HELP_CATEGORIES: HelpCategoryMeta[] = [
   {
     id: 'auth',
     label: 'Auth & sign-in',
-    description: 'FedCM, sign-in flow, two-factor authentication.',
+    description: 'Device sessions, sign-in flow, two-factor authentication.',
     icon: 'shield-check',
     order: 50,
   },
