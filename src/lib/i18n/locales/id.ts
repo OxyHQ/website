@@ -262,7 +262,7 @@ const id: Translations = {
     company: 'Perusahaan',
     developers: 'Pengembang',
     resources: 'Sumber daya',
-    bannerDefault: 'Alia. Berpikir lebih baik, bersama.',
+    bannerDefault: 'Kenali Bloom, sistem desain Oxy.',
   },
   home: {
     ...en.home,

@@ -952,7 +952,7 @@ export default function Navbar({
             <div className="relative flex size-full items-stretch justify-center px-12 max-md:justify-start max-md:pl-0">
               <Link
                 className="group relative flex size-full items-center justify-center gap-1.5 text-primary-foreground max-md:justify-start"
-                to={banner?.href ?? '/ai'}
+                to={banner?.href ?? '/bloom/'}
               >
                 <span className="group-hover-underline relative truncate text-body-sm">
                   {banner?.text ?? t('navbar.bannerDefault')}

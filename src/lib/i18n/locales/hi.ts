@@ -262,7 +262,7 @@ const hi: Translations = {
     company: 'कंपनी',
     developers: 'डेवलपर',
     resources: 'संसाधन',
-    bannerDefault: 'Alia। साथ मिलकर बेहतर सोचें।',
+    bannerDefault: 'मिलिए Bloom से, Oxy का डिज़ाइन सिस्टम।',
   },
   home: {
     ...en.home,

@@ -25,7 +25,7 @@ export default function ChartPreview({
       <div
         ref={ref}
         className="relative w-full"
-        style={{ height: height * scale }}
+        style={{ height: Math.round(height * scale) }}
       >
         <div
           className="absolute top-0 left-1/2"

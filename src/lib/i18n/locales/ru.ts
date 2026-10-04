@@ -262,7 +262,7 @@ const ru: Translations = {
     company: 'Компания',
     developers: 'Разработчикам',
     resources: 'Ресурсы',
-    bannerDefault: 'Alia. Думайте лучше — вместе.',
+    bannerDefault: 'Знакомьтесь: Bloom — дизайн-система Oxy.',
   },
   home: {
     ...en.home,

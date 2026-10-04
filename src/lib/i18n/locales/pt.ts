@@ -261,7 +261,7 @@ const pt: Translations = {
     company: 'Empresa',
     developers: 'Programadores',
     resources: 'Recursos',
-    bannerDefault: 'Alia. Pensar melhor, juntos.',
+    bannerDefault: 'Conheça Bloom, o sistema de design da Oxy.',
   },
   footer: {
     description:

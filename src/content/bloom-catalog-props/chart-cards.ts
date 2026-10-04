@@ -611,6 +611,7 @@ export const props: BloomSurfaceProps = {
         { name: 'delta', type: 'string', optional: true, description: 'The chip beside the number, e.g. `"+9.4%"`. No chip when omitted.' },
         { name: 'startLabel', type: 'string', optional: true, description: 'Axis labels under the plot\'s edges. Default `"Jun 14"` / `"Today"` — pass your own.' },
         { name: 'endLabel', type: 'string', optional: true },
+        { name: 'animate', type: 'boolean', optional: true, description: 'Animate the plot reveal. False paints the complete plot without scheduling frames.' },
         { name: 'plotHeight', type: 'number', optional: true, description: 'Plot height. Default 200.' },
         { name: 'color', type: 'string', optional: true, description: "Line colour (and the area's). Default purple-400." },
         { name: 'activeColor', type: 'string', optional: true, description: 'Active dot colour. Default purple-500.' },

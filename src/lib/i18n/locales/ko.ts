@@ -261,7 +261,7 @@ const ko: Translations = {
     company: '회사',
     developers: '개발자',
     resources: '리소스',
-    bannerDefault: 'Alia. 함께, 더 잘 생각하기.',
+    bannerDefault: 'Oxy의 디자인 시스템, Bloom을 만나보세요.',
   },
   footer: {
     description:

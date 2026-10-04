@@ -1,5 +1,8 @@
-import { join } from 'node:path'
+import { readdirSync, readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
+import { dirname, join, relative } from 'node:path'
 import { chromium, type Page } from 'playwright'
+import { BLOOM_CHARACTER_BASE } from '../src/lib/bloomCharacterRuntime'
 
 const ROOT = join(import.meta.dir, '..')
 const reservation = Bun.serve({
@@ -40,6 +43,20 @@ async function assertNoOverflow(page: Page) {
 }
 
 try {
+  if (!process.env.BLOOM_TEST_ORIGIN) {
+    const require = createRequire(import.meta.url)
+    const source = join(dirname(require.resolve('@oxy.so/bloom/package.json')), 'assets/character-runtime')
+    for (const file of readdirSync(source, { recursive: true, withFileTypes: true })) {
+      if (!file.isFile()) continue
+      const name = relative(source, join(file.parentPath, file.name))
+      invariant(
+        readFileSync(join(file.parentPath, file.name)).equals(
+          readFileSync(join(ROOT, 'dist', BLOOM_CHARACTER_BASE, name)),
+        ),
+        `published Bloom runtime asset was modified: ${name}`,
+      )
+    }
+  }
   for (let attempt = 0; attempt < 50; attempt++) {
     try {
       if ((await fetch(origin)).ok) break
@@ -47,6 +64,16 @@ try {
       /* preview starting */
     }
     await Bun.sleep(100)
+  }
+  for (const [file, mime] of [
+    ['runtime.mjs', 'text/javascript'],
+    ['orbit-characters.wasm', 'application/wasm'],
+  ] as const) {
+    const response = await fetch(`${origin}${BLOOM_CHARACTER_BASE}${file}`, { method: 'HEAD' })
+    invariant(
+      response.ok && response.headers.get('content-type')?.includes(mime),
+      `Bloom runtime asset is missing or served with the wrong MIME type: ${file}`,
+    )
   }
   for (const mode of ['light', 'dark'] as const) {
     const context = await browser.newContext({
@@ -119,7 +146,10 @@ try {
     // Explicitly enter these lazy previews: a fast sweep can pass the row
     // while another composition is still changing the document's height.
     await cards.nth(11).scrollIntoViewIfNeeded()
-    await cards.nth(11).getByRole('button', { name: 'Inbox', exact: true }).waitFor()
+    await cards
+      .nth(11)
+      .getByRole('button', { name: 'Inbox', exact: true })
+      .waitFor()
     invariant(
       (await cards
         .nth(11)
@@ -173,6 +203,21 @@ try {
       }),
       'empty composer loses width or wraps its prompt in the scaled preview',
     )
+    const lightPalette = loader.getByRole('group', {
+      name: 'Composer light colour',
+    })
+    const gradient = loader.locator('linearGradient stop').first()
+    const originalLight = await gradient.getAttribute('stop-color')
+    await lightPalette
+      .getByRole('button', { name: 'blue light', exact: true })
+      .click()
+    invariant(
+      (await gradient.getAttribute('stop-color')) !== originalLight,
+      'loader palette does not change its light',
+    )
+    await lightPalette
+      .getByRole('button', { name: 'iridescent light', exact: true })
+      .click()
     const composerField = composer.getByRole('textbox')
     await composerField.fill('Build with Bloom')
     await composer
@@ -184,6 +229,63 @@ try {
     )
     await page.emulateMedia({ reducedMotion: 'reduce' })
     const sidebar = page.locator('[data-bloom-preview="sidebar"]').first()
+    await sidebar.scrollIntoViewIfNeeded()
+    const mosaic = sidebar.locator('xpath=ancestor::section')
+    await page.setViewportSize({ width: 2560, height: 1200 })
+    await mosaic
+      .locator('[data-bloom-preview="accounts"]')
+      .getByText('Maya Collins', { exact: true })
+      .waitFor()
+    await mosaic
+      .locator('[data-bloom-preview="auth"]')
+      .getByRole('textbox', { name: 'Email', exact: false })
+      .waitFor()
+    async function assertMosaicFits() {
+      const overlaps = await mosaic
+        .locator('[data-bloom-preview]')
+        .evaluateAll((nodes) => {
+          const boxes = nodes.map((node) => ({
+            name: node.getAttribute('data-bloom-preview'),
+            rect: node.getBoundingClientRect(),
+          }))
+          return boxes.flatMap((a, i) =>
+            boxes
+              .slice(i + 1)
+              .filter(
+                (b) =>
+                  Math.min(a.rect.right, b.rect.right) -
+                    Math.max(a.rect.left, b.rect.left) >
+                    1 &&
+                  Math.min(a.rect.bottom, b.rect.bottom) -
+                    Math.max(a.rect.top, b.rect.top) >
+                    1,
+              )
+              .map((b) => `${a.name}/${b.name}`),
+          )
+        })
+      invariant(
+        overlaps.length === 0,
+        `mosaic cards overlap: ${overlaps.join(', ')}`,
+      )
+    }
+    await assertMosaicFits()
+    const accounts = mosaic.locator('[data-bloom-preview="accounts"]')
+    const auth = mosaic.locator('[data-bloom-preview="auth"]')
+    const accountsBox = await accounts.boundingBox()
+    const authBox = await auth.boundingBox()
+    invariant(
+      accountsBox?.height === 235 &&
+        authBox &&
+        authBox.y - accountsBox.y - accountsBox.height === 22,
+      'access card does not fit the reference row and gap',
+    )
+    await accounts
+      .getByRole('button', { name: 'Add user', exact: true })
+      .click()
+    await assertMosaicFits()
+    await page.setViewportSize({ width: 375, height: 900 })
+    await assertMosaicFits()
+    await page.setViewportSize({ width: 1440, height: 1100 })
     await sidebar.scrollIntoViewIfNeeded()
     const progress = page.locator('[data-bloom-preview="progress"]').first()
     const models = page.locator('[data-bloom-preview="models"]').first()
@@ -228,30 +330,135 @@ try {
       'table search does not filter rows',
     )
     await search.fill('')
-    await page.locator('[data-bloom-preview="multi-agent"]').scrollIntoViewIfNeeded()
+    await page
+      .locator('[data-bloom-preview="multi-agent"]')
+      .scrollIntoViewIfNeeded()
     const chat = page.getByTestId('multi-agent-chat')
-    await chat.getByRole('textbox', { name: 'Agent name', exact: true }).fill('Launch planner')
-    await chat.getByRole('button', { name: 'Happy', exact: true }).click()
-    invariant(await chat.getByRole('button', { name: 'Happy', exact: true }).getAttribute('aria-pressed') === 'true', 'agent expression does not change')
-    await chat.getByRole('button', { name: 'Create bot or chat', exact: true }).click()
+    await chat
+      .getByRole('textbox', { name: 'Agent name', exact: true })
+      .fill('Launch planner')
+    await chat.getByRole('button', { name: 'Sparkle capsules', exact: true }).click()
+    invariant(
+      (await chat
+        .getByRole('button', { name: 'Sparkle capsules', exact: true })
+        .getAttribute('aria-pressed')) === 'true',
+      'agent eye style does not change',
+    )
+    await chat
+      .getByRole('button', { name: 'Create bot or chat', exact: true })
+      .click()
     await page.getByRole('menuitem', { name: /Chat with your agents/ }).click()
-    await page.getByRole('button', { name: 'landing page designer', exact: true }).last().click()
-    await page.getByRole('button', { name: 'content reviewer', exact: true }).last().click()
+    await page
+      .getByRole('button', { name: 'Launch planner', exact: true })
+      .last()
+      .click()
+    await page
+      .getByRole('button', { name: 'content reviewer', exact: true })
+      .last()
+      .click()
     await page.getByRole('button', { name: /Start chat.*2 agents/ }).click()
-    await chat.getByText('A few minds. One conversation.', { exact: true }).waitFor()
-    await chat.getByPlaceholder('Hi, what do you need today?', { exact: true }).fill('Help me plan the release')
-    await chat.getByRole('button', { name: 'Send message', exact: true }).click()
-    await chat.getByRole('button', { name: 'Stop generating', exact: true }).click()
-    await page.locator('section[aria-labelledby="bloom-examples"]').getByRole('radio', { name: 'Project Management', exact: true }).click()
+    await chat
+      .getByText('A few minds. One conversation.', { exact: true })
+      .waitFor()
+    await chat
+      .getByPlaceholder('Hi, what do you need today?', { exact: true })
+      .fill('Help me plan the release')
+    await chat
+      .getByRole('button', { name: 'Send message', exact: true })
+      .click()
+    await chat
+      .getByRole('button', { name: 'Stop generating', exact: true })
+      .click()
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.waitForTimeout(400)
+    invariant(
+      (await page.getByRole('dialog').count()) === 0,
+      'resizing opens the agent editor over the page',
+    )
+    await chat
+      .getByLabel('Agent conversation', { exact: true })
+      .getByText('Help me plan the release', { exact: true })
+      .waitFor()
+    await page.setViewportSize({ width: 1440, height: 1100 })
+    await chat
+      .getByLabel('Agent conversation', { exact: true })
+      .getByText('Help me plan the release', { exact: true })
+      .waitFor()
+    const templates = page.locator('section[aria-labelledby="bloom-examples"]')
+    await templates.scrollIntoViewIfNeeded()
+    const templateChat = templates.locator(
+      '[data-bloom-preview="template-chat"]',
+    )
+    await templateChat
+      .getByRole('textbox')
+      .last()
+      .fill('Build a release dashboard')
+    await templateChat
+      .getByRole('button', { name: 'Send message', exact: true })
+      .click()
+    await templateChat
+      .getByText('Build a release dashboard', { exact: true })
+      .waitFor()
+    await templateChat
+      .getByRole('button', { name: 'Dashboards', exact: true })
+      .click()
+    await templateChat
+      .getByRole('heading', { name: 'Dashboards', exact: true })
+      .waitFor()
+    const chartPreviews = page.locator(
+      'section[aria-labelledby="bloom-charts"] [data-bloom-preview]',
+    )
+    for (const chart of await chartPreviews.all()) {
+      await chart.scrollIntoViewIfNeeded()
+      await chart.locator('> div:not(.bloom-preview-placeholder)').waitFor()
+      invariant(
+        await chart.evaluate((node) => {
+          const card = node.firstElementChild!
+          const reserved = node.parentElement!.parentElement!.parentElement!
+          return (
+            card.getBoundingClientRect().bottom <=
+            reserved.getBoundingClientRect().bottom + 1
+          )
+        }),
+        `chart clips its content: ${await chart.getAttribute('data-bloom-preview')}`,
+      )
+    }
+    const earnings = page.locator(
+      'section[aria-labelledby="bloom-charts"] [data-bloom-preview="earnings"]',
+    )
+    await earnings.scrollIntoViewIfNeeded()
+    await earnings.getByRole('radio', { name: 'Month', exact: true }).click()
+    await earnings.getByText('$18,240', { exact: true }).waitFor()
+    await page
+      .locator('section[aria-labelledby="bloom-examples"]')
+      .getByRole('tab', { name: 'Project Management', exact: true })
+      .click()
     const board = page.getByTestId('project-board')
     await board.getByRole('button', { name: 'New ticket', exact: true }).click()
-    await page.getByRole('textbox', { name: 'Ticket title', exact: true }).fill('Ship the Bloom page')
-    await page.getByRole('button', { name: 'Create ticket', exact: true }).click()
-    await board.getByRole('button', { name: /Open .*Ship the Bloom page/ }).waitFor()
-    await board.getByRole('button', { name: 'Open BL-1: Composer attachments', exact: true }).click()
-    await page.getByRole('button', { name: 'Add to favorites', exact: true }).click()
-    await page.getByRole('button', { name: 'Remove from favorites', exact: true }).waitFor()
-    await page.getByRole('button', { name: 'Close ticket details', exact: true }).click()
+    await page
+      .getByRole('textbox', { name: 'Ticket title', exact: true })
+      .fill('Ship the Bloom page')
+    await page
+      .getByRole('button', { name: 'Create ticket', exact: true })
+      .click()
+    await board
+      .getByRole('button', { name: /Open .*Ship the Bloom page/ })
+      .waitFor()
+    await board
+      .getByRole('button', {
+        name: 'Open BL-1: Composer attachments',
+        exact: true,
+      })
+      .click()
+    await page
+      .getByRole('button', { name: 'Add to favorites', exact: true })
+      .click()
+    await page
+      .getByRole('button', { name: 'Remove from favorites', exact: true })
+      .waitFor()
+    await page
+      .getByRole('button', { name: 'Close ticket details', exact: true })
+      .click()
     const faq = page.locator('#bloom-faq').locator('xpath=ancestor::section')
     const question = faq.getByRole('button', {
       name: 'How do I install Bloom?',

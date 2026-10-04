@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-29T19:17:47.897Z",
+  "generatedAt": "2026-10-02T15:32:51.089Z",
   "repos": [
     {
       "owner": "OxyHQ",
@@ -48,6 +48,53 @@
     }
   ],
   "entries": [
+    {
+      "_id": "gh-401920668",
+      "title": "@oxy.so/bloom@7.1.0",
+      "content": "Bloom 7.1.0 adds a unified 3D avatar editor and improves chat, search and Project Board interactions.\n\n- Original and migrated avatar shapes share the recovered 3D renderer, furry materials, original eyes, eyewear and accessories.\n- Migrated shapes support pointer interaction, the original wave and working animation. Intact presets retain their authored signature reactions.\n- Fixed avatar preparation failures when changing eyes; fitted headwear, Bulb, bow and Tuft to migrated contours.\n- Static silhouettes in the shape wheel avoid mounting extra avatar renderers. The runtime also pauses offscreen rendering, caches static portraits and releases unused resources.\n- Updated the central chat profile header, search motion and Project Board transitions.\n\nThe character runtime assets ship in `assets/character-runtime`. Serve that directory and pass its `runtime.mjs` URL to `AgentAvatarProvider`; see the agent-avatar guide. The optional native WebView bridge has not yet been verified on physical devices.\n\nValidation: focused component and structural tests, geometry checks, real-browser eye/accessory/animation checks, package integrity and consumer type checks.\n",
+      "tags": [],
+      "date": "2026-10-02T15:08:29Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 401920668,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%407.1.0",
+      "tagName": "@oxy.so/bloom@7.1.0"
+    },
+    {
+      "_id": "gh-400483198",
+      "title": "@oxy.so/bloom@7.0.1",
+      "content": "Fixes two issues in the new agent-chat UI:\n\n- Avatar handoff animations pass only plain geometry and the agent id into Reanimated worklets. The rendered drawing stays on the JavaScript side, preventing native runtime serialization failures while preserving the exact avatar frame.\n- Sidebar search mirrors its padding, close control and action transition in right-to-left layouts.\n\nValidation: both repository-wide regression gates and four focused sidebar/avatar suites pass (30 tests). TypeScript and consumer checks pass. Real Chromium checks confirm search layout and interaction in LTR and RTL. Package build and export/freshness verification are part of publication.",
+      "tags": [],
+      "date": "2026-09-30T22:28:34Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 400483198,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%407.0.1",
+      "tagName": "@oxy.so/bloom@7.0.1"
+    },
+    {
+      "_id": "gh-400474782",
+      "title": "@oxy.so/bloom@7.0.0",
+      "content": "Bloom 7 adds Agent Avatar, Agent Creator, Multi Agent Chat and Project Board, with native and web implementations, component guides and Storybook examples.\n\n- Multi Agent Chat reuses Bloom Sidebar, its new searchable toolbar and enriched items, the existing composer, settings, menus and dialogs.\n- Component spacing, shapes, artwork, responsive layouts and interactions follow the shared design while retaining Bloom themes and NativeWind support.\n- Native utility geometry now preserves the same spacing and radii as the web build, including utilities resolved through CSS variables.\n- Locale catalogs cover the new components in all supported languages.\n\nBreaking change: the retired meter component and its public exports are removed. Use the supported Meter or MeterRing primitives from `@oxy.so/bloom/stat-bar` for determinate progress, or StatBar for comparisons.\n\nValidation: all 504 current test suites passed across shards and targeted reruns; package build, export verification, TypeScript and consumer type checks passed. Android and iOS bundles were generated. Browser checks include chat streaming, dialogs, sidebar search and menus, and real pointer dragging in Project Board. Physical-device visual validation remains pending; native dialog transitions approximate the web distortion effect.",
+      "tags": [
+        "Breaking"
+      ],
+      "date": "2026-09-30T22:12:11Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 400474782,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%407.0.0",
+      "tagName": "@oxy.so/bloom@7.0.0"
+    },
     {
       "_id": "gh-398732517",
       "title": "@oxy.so/bloom@6.2.0",
@@ -741,36 +788,6 @@
       "tagName": "@oxy.so/bloom@4.13.1"
     },
     {
-      "_id": "gh-395133067",
-      "title": "@oxy.so/bloom@4.13.0",
-      "content": "AiChatShell `scroll=\"document\"`: the page scrolls, not the card; the floating footer no longer walls off the composer (#183).",
-      "tags": [],
-      "date": "2026-09-23T23:13:33Z",
-      "items": [],
-      "media": null,
-      "githubReleaseId": 395133067,
-      "repoOwner": "OxyHQ",
-      "repoName": "Bloom",
-      "repoDisplayName": "Bloom",
-      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.13.0",
-      "tagName": "@oxy.so/bloom@4.13.0"
-    },
-    {
-      "_id": "gh-395125589",
-      "title": "@oxy.so/bloom@4.12.0",
-      "content": "**OutlineNav (#182):** `OutlineHeading.href` — on web a heading with an href renders as a real `<a href>` (open in new tab, copy link, middle-click); a plain press still goes to `onSelect`, a modified click is left to the browser.",
-      "tags": [],
-      "date": "2026-09-23T22:56:06Z",
-      "items": [],
-      "media": null,
-      "githubReleaseId": 395125589,
-      "repoOwner": "OxyHQ",
-      "repoName": "Bloom",
-      "repoDisplayName": "Bloom",
-      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.12.0",
-      "tagName": "@oxy.so/bloom@4.12.0"
-    },
-    {
       "_id": "gh-395074918",
       "title": "@oxy.so/bloom@4.9.0",
       "content": "* feat(ai-chat): `floatingChrome` — the transcript scrolls behind the header and the composer (#179)",
@@ -835,21 +852,6 @@
       "repoDisplayName": "Bloom",
       "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.6.1",
       "tagName": "@oxy.so/bloom@4.6.1"
-    },
-    {
-      "_id": "gh-394992648",
-      "title": "@oxy.so/bloom@4.6.0",
-      "content": "## What's new\n\n- **Icons (#174):** fourteen Remix glyphs — `RiServerLine`, `RiCpuLine`, `RiPlayCircleLine`, `RiBugLine`, `RiCloudLine`, `RiRocket2Line`, `RiLockUnlockLine`, `RiMoneyDollarCircleLine`, `RiShareBoxLine`, `RiTv2Line`, `RiFloodLine`, `RiBookReadLine`, `RiChat1Line`, `RiCodeLine`.\n- **Code (#174):** `useCodePalette()`, `tokenColor(kind, palette)` and `CodePalette` are exported from `@oxy.so/bloom/code`, so a surface that lays out `tokenizeCode` output itself paints tokens exactly as `CodeBlock` does.\n- **Web keyboard (#175):** Select focuses its list and takes arrows/Home/End/Enter/Space; Tabs is a `tablist` with one tab stop and arrow keys; SegmentedControl has one tab stop, arrows and Space; DropdownMenu, ContextMenu and Menubar are fully keyboard-operable; Escape closes only the innermost surface (a Select in a Dialog no longer closes the Dialog).\n\nAlso includes everything merged since 4.5.0, including #172 (native/web structure: generated web barrels, menubar/select/popover refactors).\n",
-      "tags": [],
-      "date": "2026-09-23T19:32:37Z",
-      "items": [],
-      "media": null,
-      "githubReleaseId": 394992648,
-      "repoOwner": "OxyHQ",
-      "repoName": "Bloom",
-      "repoDisplayName": "Bloom",
-      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.6.0",
-      "tagName": "@oxy.so/bloom@4.6.0"
     },
     {
       "_id": "gh-345863387",

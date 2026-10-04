@@ -49,10 +49,10 @@
   mask-image: linear-gradient(to bottom, var(--foreground), transparent);
 }
 .landing-glow {
-  background: var(--primary);
+  background: radial-gradient(ellipse, var(--primary), transparent 70%);
+  border-radius: 50%;
   filter: blur(25px);
   opacity: 0.14;
-  mask-image: linear-gradient(to bottom, var(--foreground), transparent);
 }
 .animate-landing-marquee {
   animation: landing-marquee 50s linear infinite;
@@ -180,5 +180,54 @@
   .bloom-fan-card,
   .landing-showcase-card {
     transition: none;
+  }
+}
+
+.landing-hero-dither-character::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 6px;
+  background: radial-gradient(
+      circle,
+      var(--muted-foreground) 3px,
+      transparent 3.5px
+    )
+    left center / 13px 6px repeat-x;
+  opacity: 0.25;
+}
+/* The reference's cards have round corners and a flat surface. Keep Bloom's
+   resolved fill, but remove the glass sheen on these preview cards only. */
+.bloom-landing
+  .bloom-preview:is(
+    [data-bloom-preview='patient'],
+    [data-bloom-preview='steps'],
+    [data-bloom-preview='sleep'],
+    [data-bloom-preview='profile'],
+    [data-bloom-preview='days'],
+    [data-bloom-preview='activity'],
+    [data-bloom-preview='funnel'],
+    [data-bloom-preview='earnings'],
+    [data-bloom-preview='radar'],
+    [data-bloom-preview='comparison'],
+    [data-bloom-preview='sankey'],
+    [data-bloom-preview='stages'],
+    [data-bloom-preview='radial'],
+    [data-bloom-preview='gauge'],
+    [data-bloom-preview='area'],
+    [data-bloom-preview='combo']
+  )
+  > div {
+  corner-shape: round !important;
+  > .bloom-surface-paint {
+    corner-shape: round !important;
+    &::before {
+      display: none;
+    }
+    &::after {
+      background-image: none;
+      box-shadow: none;
+    }
   }
 }
