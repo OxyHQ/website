@@ -1,0 +1,332 @@
+review	Full build and existing browser gates	﻿2026-10-04T02:05:15.8165868Z ##[group]Run bun run build
+review	Full build and existing browser gates	2026-10-04T02:05:15.8166177Z [36;1mbun run build[0m
+review	Full build and existing browser gates	2026-10-04T02:05:15.8235171Z shell: /usr/bin/bash -e {0}
+review	Full build and existing browser gates	2026-10-04T02:05:15.8235446Z env:
+review	Full build and existing browser gates	2026-10-04T02:05:15.8235714Z   VITE_API_URL: https://website-api.oxy.so
+review	Full build and existing browser gates	2026-10-04T02:05:15.8236015Z ##[endgroup]
+review	Full build and existing browser gates	2026-10-04T02:05:15.8346490Z $ bun scripts/sync-ai-catalog.ts && bun scripts/generate-theme-css.ts && bun run test:theme && bun run test:links && bun test scripts/seo-contract.test.ts scripts/sitemap.test.ts scripts/mdx-literal-tags.test.ts scripts/mcp-docs.test.ts && bun test scripts/kaana-brand.test.ts && bun run test:ai && bun scripts/generate-bloom-catalog.ts && bun scripts/generate-bloom-live-scope.ts && bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts && bun scripts/build-help-og-images.ts && rm -rf node_modules/.tmp
+review	Full build and existing browser gates	2026-10-04T02:05:15.9002524Z [ai-catalog] OXY_PUBLIC_CATALOG_URL unset — keeping the committed snapshot (0 entries, source "placeholder")
+review	Full build and existing browser gates	2026-10-04T02:05:19.7026694Z [generate-theme-css] wrote /home/runner/work/website/website/src/styles/theme.generated.css
+review	Full build and existing browser gates	2026-10-04T02:05:19.7131768Z $ bun test scripts/theme-contract.test.ts
+review	Full build and existing browser gates	2026-10-04T02:05:19.7161861Z bun test v1.3.14 (0d9b296a)
+review	Full build and existing browser gates	2026-10-04T02:05:19.7441263Z 
+review	Full build and existing browser gates	2026-10-04T02:05:19.7444056Z ##[group]scripts/theme-contract.test.ts:
+review	Full build and existing browser gates	2026-10-04T02:05:19.7755247Z (pass) Bloom theme contract > publishes every preset name exactly once [0.19ms]
+review	Full build and existing browser gates	2026-10-04T02:05:19.7756390Z (pass) Bloom theme contract > groups the same recipes that the website picker renders [0.22ms]
+review	Full build and existing browser gates	2026-10-04T02:05:19.7758800Z (pass) Bloom theme contract > offers only free recipes without inventing entitlement state [0.22ms]
+review	Full build and existing browser gates	2026-10-04T02:05:19.7929516Z (pass) Bloom theme contract > generates prepaint selectors for exactly the public presets [16.98ms]
+review	Full build and existing browser gates	2026-10-04T02:05:19.7930749Z (pass) Bloom theme contract > keeps the website brand presets in Bloom [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:22.4756224Z (pass) Bloom theme contract > resolves the paired light and dark roles used by the settings previews [2682.56ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.8289953Z (pass) Bloom theme contract > keeps the color lab role projection on Bloom resolved tokens [5353.32ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.8294660Z (pass) Bloom theme contract > does not add a local palette to the color lab chrome [0.56ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.8297610Z (pass) Bloom theme contract > keeps color lab media on versioned local assets [0.30ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.8303763Z (pass) Bloom theme contract > provisions Chromium before Cloudflare runs the browser-gated build [0.59ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.8304493Z 
+review	Full build and existing browser gates	2026-10-04T02:05:27.8305090Z ##[endgroup]
+review	Full build and existing browser gates	2026-10-04T02:05:27.8305256Z 
+review	Full build and existing browser gates	2026-10-04T02:05:27.8305355Z  10 pass
+review	Full build and existing browser gates	2026-10-04T02:05:27.8305556Z  0 fail
+review	Full build and existing browser gates	2026-10-04T02:05:27.8305767Z  1812 expect() calls
+review	Full build and existing browser gates	2026-10-04T02:05:27.8306018Z Ran 10 tests across 1 file. [8.11s]
+review	Full build and existing browser gates	2026-10-04T02:05:27.8435970Z $ bun scripts/internal-links.test.ts
+review	Full build and existing browser gates	2026-10-04T02:05:27.8973993Z [internal-links] ok — every internal link points at its canonical URL
+review	Full build and existing browser gates	2026-10-04T02:05:27.9000921Z bun test v1.3.14 (0d9b296a)
+review	Full build and existing browser gates	2026-10-04T02:05:27.9272330Z 
+review	Full build and existing browser gates	2026-10-04T02:05:27.9273726Z ##[group]scripts/seo-contract.test.ts:
+review	Full build and existing browser gates	2026-10-04T02:05:27.9400918Z (pass) internal links point at the canonical URL > adds the trailing slash Cloudflare would 308 to [0.48ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9415226Z (pass) internal links point at the canonical URL > keeps the slash outside the query and the fragment [0.32ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9416595Z (pass) internal links point at the canonical URL > leaves alone what Cloudflare serves verbatim or does not serve at all [0.14ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9417876Z (pass) internal links point at the canonical URL > normalises the object form react-router also accepts [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9418832Z (pass) internal links point at the canonical URL > canonicalHref covers prose links rendered outside the router [0.08ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9419875Z (pass) locale mirrors only where a translation exists > marketing and content routes are mirrored [0.08ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9421728Z (pass) locale mirrors only where a translation exists > synced developer documentation is not — it has no translated source [0.03ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9423477Z (pass) locale mirrors only where a translation exists > the prefix match is on a whole segment [0.02ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9424700Z (pass) locale mirrors only where a translation exists > the sitemap drops the alternates for a route with no mirror [0.34ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9425843Z (pass) _redirects > ends in a real 404, not a 200 copy of the home page [0.09ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9426690Z (pass) _redirects > contains no rewrite rule that could shadow a document [0.14ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9427597Z (pass) _redirects > the only splat that can reach a document is the catch-all Pages skips [0.17ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9428546Z (pass) _redirects > covers the trailing-slash form of every literal rule [0.08ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9429426Z (pass) _redirects > collapses locale prefixes this build wrote no documents for [0.04ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9430402Z (pass) _redirects > sends the unmirrored docs tree back to its single English copy [0.03ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9431604Z (pass) _redirects > keeps the asset guards ahead of everything else [0.02ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9432405Z (pass) _redirects > retires the old ecosystem URLs at the edge [0.02ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9433627Z (pass) _redirects > redirects the retired Bloom playground and versioned aliases to the catalog [0.07ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9434728Z (pass) _redirects > sends Bloom surfaces removed in 2.0 to their named successor only [0.20ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9435712Z (pass) _redirects > never 301s a locale away because the readiness API timed out [0.38ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9436866Z (pass) _redirects > stays inside Cloudflare’s ceiling for dynamic rules [0.09ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9441884Z (pass) _redirects > the real locale list stays well inside the ceiling [1.70ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9488874Z (pass) _redirects > refuses to emit a file Cloudflare would reject [4.67ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9495419Z (pass) synced docs links > rewrites a source repo’s own root-relative link onto this site [0.20ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9496781Z (pass) synced docs links > leaves a link that is not a sibling page alone [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9497902Z (pass) SPA fallback (edge middleware) > claims the surfaces that have no build-time document [0.45ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9498775Z (pass) SPA fallback (edge middleware) > leaves everything else to the 404 [0.12ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9499946Z (pass) synced docs links that name a version this site does not serve > repoints an upstream branch name onto the synced version [0.24ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9501398Z (pass) synced docs links that name a version this site does not serve > leaves a link alone when dropping the segment does not name a page [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9502413Z (pass) synced docs links that name a version this site does not serve > a link already on the right version is normalised, not mangled [0.03ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9503822Z (pass) synced docs links that name a version this site does not serve > recovers a link that dropped the package segment [0.23ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9505159Z (pass) synced docs links that name a version this site does not serve > never captures a genuine cross-package link [0.03ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9506412Z (pass) cross-package documentation roots > repoints a branch-named package root using the complete synced index [0.11ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9507198Z (pass) cross-package documentation roots > does not invent a destination for an unsynced package or nested page [0.02ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9508031Z (pass) academy titles come from the dictionary the SPA reads > the default-locale strings are the ones prerender has always emitted [0.10ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9970079Z (pass) academy titles come from the dictionary the SPA reads > every locale keeps the placeholders its template is filled with [46.28ms]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9971031Z 
+review	Full build and existing browser gates	2026-10-04T02:05:27.9971615Z ##[endgroup]
+review	Full build and existing browser gates	2026-10-04T02:05:27.9971823Z 
+review	Full build and existing browser gates	2026-10-04T02:05:27.9972215Z ##[group]scripts/mdx-literal-tags.test.ts:
+review	Full build and existing browser gates	2026-10-04T02:05:28.1135451Z (pass) escapeUnclosedProseTags > escapes a placeholder tag in prose so the document compiles [25.92ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1159452Z (pass) escapeUnclosedProseTags > escapes every stray tag, not only the first [2.47ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1194608Z (pass) escapeUnclosedProseTags > leaves real JSX, code and frontmatter untouched [3.51ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1205521Z (pass) escapeUnclosedProseTags > does not paper over an unrelated syntax error [1.09ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1205932Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.1206388Z ##[endgroup]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1206529Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.1206815Z ##[group]scripts/mcp-docs.test.ts:
+review	Full build and existing browser gates	2026-10-04T02:05:28.1258076Z (pass) MCP docs drift > no retired MCP architecture outside a migration section [2.80ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1260489Z (pass) MCP docs drift > documents the current endpoint and OAuth sign-in [0.25ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1261895Z (pass) MCP docs drift > the detector allows a migration section and nothing after it [0.14ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1262282Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.1262601Z ##[endgroup]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1262730Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.1262996Z ##[group]scripts/sitemap.test.ts:
+review	Full build and existing browser gates	2026-10-04T02:05:28.1271281Z (pass) sitemap presentation > associates the generated sitemap with its human-readable stylesheet [0.15ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1273273Z (pass) sitemap presentation > ships an XSLT 1.0 view that understands the sitemap namespace [0.22ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1273872Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.1274288Z ##[endgroup]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1274494Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.1274891Z  45 pass
+review	Full build and existing browser gates	2026-10-04T02:05:28.1275178Z  0 fail
+review	Full build and existing browser gates	2026-10-04T02:05:28.1275482Z  204 expect() calls
+review	Full build and existing browser gates	2026-10-04T02:05:28.1275843Z Ran 45 tests across 4 files. [227.00ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1370398Z bun test v1.3.14 (0d9b296a)
+review	Full build and existing browser gates	2026-10-04T02:05:28.1641538Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.1642720Z ##[group]scripts/kaana-brand.test.ts:
+review	Full build and existing browser gates	2026-10-04T02:05:28.1757082Z (pass) Kaana public brand contract > ships the exact canonical source logo [0.99ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1768760Z (pass) Kaana public brand contract > uses the source SVG without recoloring or optimization [1.18ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1776566Z (pass) Kaana public brand contract > rejects changed logo bytes [0.81ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1777042Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.1777528Z ##[endgroup]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1777734Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.1777865Z  3 pass
+review	Full build and existing browser gates	2026-10-04T02:05:28.1778152Z  0 fail
+review	Full build and existing browser gates	2026-10-04T02:05:28.1778409Z  14 expect() calls
+review	Full build and existing browser gates	2026-10-04T02:05:28.1778648Z Ran 3 tests across 1 file. [40.00ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.1827870Z $ bun test scripts/ai-catalog.test.ts scripts/ai-claims.test.ts scripts/ai-quickstart.test.ts scripts/sales-inquiry.test.ts
+review	Full build and existing browser gates	2026-10-04T02:05:28.1856435Z bun test v1.3.14 (0d9b296a)
+review	Full build and existing browser gates	2026-10-04T02:05:28.2149761Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.2151025Z ##[group]scripts/ai-catalog.test.ts:
+review	Full build and existing browser gates	2026-10-04T02:05:28.2651798Z (pass) availability is one vocabulary > every state maps to exactly one call-to-action intent [0.07ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2653054Z (pass) availability is one vocabulary > a state that is not open for purchase cannot produce a purchase CTA [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2654220Z (pass) availability is one vocabulary > internal_only renders no action at all [0.03ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2655383Z (pass) availability is one vocabulary > deprecated stays listable so its sunset and replacement remain readable [0.01ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2656752Z (pass) availability is one vocabulary > no published service claims an availability the vocabulary does not have [0.09ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2657955Z (pass) catalogue schema > rejects an unknown schema version rather than parsing leniently [0.13ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2658919Z (pass) catalogue schema > rejects a payload that is not an object [0.06ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2666785Z (pass) catalogue schema > rejects a malformed price rather than coercing it [1.21ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2673285Z (pass) catalogue schema > the committed snapshot parses and carries nothing internal [0.30ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2682721Z (pass) internal-only filtering > drops an entry whose commercial permission is internal_only [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2689008Z (pass) internal-only filtering > drops an internal deployment and the references to it [0.04ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2692018Z (pass) internal-only filtering > drops a price that only applied to a dropped deployment [0.03ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2693238Z (pass) internal-only filtering > drops publishers and providers left with nothing behind them [0.03ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2694520Z (pass) internal-only filtering > the leakage guard catches what the filter would have missed [0.38ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2695631Z (pass) model ids survive a URL round trip > every shape decodes back to itself [0.33ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2696832Z (pass) model ids survive a URL round trip > a slash inside the model half does not become a second route segment [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2698075Z (pass) model ids survive a URL round trip > a literal tilde survives the slash encoding [0.02ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2699415Z (pass) model ids survive a URL round trip > a malformed id yields no path rather than a broken one [0.02ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2701357Z (pass) cost arithmetic is exact > decimal strings become nano-dollars without a float in between [0.10ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2702529Z (pass) cost arithmetic is exact > excess precision is truncated, never rounded up [0.02ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2704143Z (pass) cost arithmetic is exact > a per-million price times a large volume stays exact [0.62ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2705292Z (pass) cost arithmetic is exact > an unpriced unit is reported, never counted as free [0.29ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2706506Z (pass) cost arithmetic is exact > quantities from a form are integers, clamped, and never NaN [0.16ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2707698Z (pass) cost arithmetic is exact > formatting truncates rather than rounding the price up [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2708923Z (pass) the committed snapshot is honest about being empty > the placeholder carries no entries [0.03ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2711884Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.2712728Z ##[endgroup]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2713121Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.2713711Z ##[group]scripts/ai-quickstart.test.ts:
+review	Full build and existing browser gates	2026-10-04T02:05:28.2861413Z (pass) quickstart snippets > there is at least one runnable first snippet per documented language [0.06ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2862573Z (pass) quickstart snippets > sample keys are unique [0.07ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2891841Z (pass) quickstart snippets > the first snippet in every language points at the documented base URL [0.07ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2893937Z (pass) quickstart snippets > the base URL is the versioned one, not the API root [0.02ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2895500Z (pass) quickstart snippets > every credential comes from the environment [0.04ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2896822Z (pass) quickstart snippets > no snippet contains anything shaped like a real key [0.13ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2898259Z (pass) quickstart snippets > the model id stays a placeholder until the catalogue is published [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2899434Z (pass) console deep links > every link is under the Console origin [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2900971Z (pass) console deep links > the root is available as the fallback for a target that is not deployed yet [0.02ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2902659Z (pass) console deep links > no deep link carries a credential or a token in the URL [0.08ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.2903891Z (pass) sales links preselect an option the form actually has > every service that routes to sales names a real interest [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3047992Z (pass) sales links preselect an option the form actually has > no page hand-writes a `?interest=` the form would silently drop [19.37ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3048678Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.3049126Z ##[endgroup]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3049269Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.3049549Z ##[group]scripts/ai-claims.test.ts:
+review	Full build and existing browser gates	2026-10-04T02:05:28.3089564Z (pass) the claims registry is maintained > every claim has an evidence owner [0.07ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3090887Z (pass) the claims registry is maintained > every approved claim has an unexpired review date [0.15ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3092491Z (pass) the claims registry is maintained > every claim names at least one surface it appears on [0.04ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3093499Z (pass) the claims registry is maintained > claim ids are unique [0.07ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3095405Z (pass) the claims registry is maintained > an approved claim carries its qualifier in the sentence itself [0.33ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3096716Z (pass) published AI copy avoids unqualified claims > the canonical English AI namespace was actually found [0.06ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3114866Z (pass) published AI copy avoids unqualified claims > no prohibited term appears without a scope qualifier beside it [1.82ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3118823Z (pass) published AI copy avoids unqualified claims > no retired Alia alias is presented as a model [0.42ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3119540Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.3120022Z ##[endgroup]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3120485Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.3121238Z ##[group]scripts/sales-inquiry.test.ts:
+review	Full build and existing browser gates	2026-10-04T02:05:28.3153033Z (pass) sales inquiry validation > accepts the minimum a useful inquiry needs and nothing less [2.15ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3156896Z (pass) sales inquiry validation > marketing consent is off unless it is ticked [0.20ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3157814Z (pass) sales inquiry validation > rejects a submission with no reply address [0.19ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3158768Z (pass) sales inquiry validation > rejects an unknown interest rather than storing it [0.10ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3161123Z (pass) sales inquiry validation > a website must be a full URL or absent [0.32ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3169469Z (pass) sales inquiry validation > a message longer than the cap is rejected, not truncated [0.27ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3170916Z (pass) sales inquiry validation > unknown fields are dropped rather than stored [0.08ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3172026Z (pass) idempotency > the same submission twice produces the same key [0.12ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3173044Z (pass) idempotency > a different use case is a different inquiry [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3174117Z (pass) idempotency > a different person at the same company is a different inquiry [0.05ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3175349Z (pass) the record holds nothing it should not > there is no column an IP address could be written to [0.04ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3176656Z (pass) the record holds nothing it should not > there is no column a secret could be typed into [0.03ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3177870Z (pass) the record holds nothing it should not > retention is a column, not a convention [0.02ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3179018Z (pass) status vocabulary > stays small enough to be a lifecycle rather than a CRM [0.03ms]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3179780Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.3180297Z ##[endgroup]
+review	Full build and existing browser gates	2026-10-04T02:05:28.3180450Z 
+review	Full build and existing browser gates	2026-10-04T02:05:28.3180557Z  59 pass
+review	Full build and existing browser gates	2026-10-04T02:05:28.3180970Z  0 fail
+review	Full build and existing browser gates	2026-10-04T02:05:28.3181227Z  211 expect() calls
+review	Full build and existing browser gates	2026-10-04T02:05:28.3181467Z Ran 59 tests across 4 files. [131.00ms]
+review	Full build and existing browser gates	2026-10-04T02:05:31.8236188Z [generate-bloom-catalog] upstream drift: 50 typed surface(s) are absent from Bloom's README component table and remain visible under Uncategorized: activity-feed, address, agent-avatar, agent-creator, appearance, bottom-bar, card-form, carrier-quote, cart-panel, checkout-summary, contact-card, delivery-slot, directions, earnings, empty-state, job-board, lead-score, locale, location-puck, mail-compose, mail-list, mail-thread, map-attribution, map-controls, menu-item, multi-agent-chat, navigation-banner, note-card, note-editor, order-confirmation, order-status, outline-nav, payment-method, payment-status, pipeline, place-card, place-details, place-list, price-breakdown, project-board, proof-of-delivery, route-stops, screen, shipment-request, sticker, surface, swipe-row, tag-field, vehicle-picker, vendor-card.
+review	Full build and existing browser gates	2026-10-04T02:05:31.8242274Z [generate-bloom-catalog] wrote /home/runner/work/website/website/src/content/bloom-catalog.generated.ts and 220 prop modules (220 surfaces, 1229 components, 711 distinct props types carrying 8492 props, 78039 inherited and named rather than listed)
+review	Full build and existing browser gates	2026-10-04T02:05:32.1136213Z [generate-bloom-live-scope] wrote /home/runner/work/website/website/src/components/docs/BloomLiveScope.generated.ts (19 modules from 17 demos)
+review	Full build and existing browser gates	2026-10-04T02:05:32.2131134Z [sync-docs] building docs content tree...
+review	Full build and existing browser gates	2026-10-04T02:05:32.2161908Z [sync-docs] localPath '/home/nate/Oxy/Bloom' not found for Bloom; falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:05:32.2164245Z [sync-docs] cloning https://github.com/OxyHQ/Bloom.git (main) into /home/runner/work/website/website/node_modules/.docs-cache/Bloom...
+review	Full build and existing browser gates	2026-10-04T02:05:36.4946273Z [sync-docs] bloom/2.0.0/auth-card.mdx: escaped prose tag(s) <Brand> that MDX would read as unclosed elements.
+review	Full build and existing browser gates	2026-10-04T02:05:39.8371967Z [sync-docs] @oxy.so/bloom: 236 version(s) skipped (no matching git tag) — samples: 3.0.1, 3.0.0, 0.89.0.
+review	Full build and existing browser gates	2026-10-04T02:05:39.8373119Z [sync-docs] localPath '/home/nate/Oxy/OxyHQServices' not found for OxyHQServices; falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:05:39.8374507Z [sync-docs] cloning https://github.com/OxyHQ/OxyHQServices.git (main) into /home/runner/work/website/website/node_modules/.docs-cache/OxyHQServices...
+review	Full build and existing browser gates	2026-10-04T02:05:55.5106731Z [sync-docs] localPath '/home/nate/Oxy/Alia' not found for Alia; falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:05:55.5107642Z [sync-docs] cloning https://github.com/OxyHQ/Alia.git (main) into /home/runner/work/website/website/node_modules/.docs-cache/Alia...
+review	Full build and existing browser gates	2026-10-04T02:05:58.9012814Z [sync-docs] localPath '/home/nate/Oxy/Allo' not found for Allo; falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:05:58.9013810Z [sync-docs] cloning https://github.com/OxyHQ/Allo.git (main) into /home/runner/work/website/website/node_modules/.docs-cache/Allo...
+review	Full build and existing browser gates	2026-10-04T02:05:59.8251035Z [sync-docs] localPath '/home/nate/Oxy/Mention' not found for Mention; falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:05:59.8252428Z [sync-docs] cloning https://github.com/OxyHQ/Mention.git (main) into /home/runner/work/website/website/node_modules/.docs-cache/Mention...
+review	Full build and existing browser gates	2026-10-04T02:06:02.1336234Z [sync-docs] localPath '/home/nate/Oxy/Homiio' not found for Homiio; falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:06:02.1337576Z [sync-docs] cloning https://github.com/OxyHQ/Homiio.git (main) into /home/runner/work/website/website/node_modules/.docs-cache/Homiio...
+review	Full build and existing browser gates	2026-10-04T02:06:03.6941597Z [sync-docs] localPath '/home/nate/FairCoinWorkspace/FairCoin' not found for FairCoin; falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:06:03.6942812Z [sync-docs] cloning https://github.com/FairCoinOfficial/FairCoin.git (ae09510ceea4a393a74ad6f4bd6855e716f77bf3) into /home/runner/work/website/website/node_modules/.docs-cache/FairCoin...
+review	Full build and existing browser gates	2026-10-04T02:06:05.7949163Z [sync-docs] localPath '/home/nate/Oxy/tnp' not found for TNP; falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:06:05.7950382Z [sync-docs] cloning https://github.com/OxyHQ/tnp.git (main) into /home/runner/work/website/website/node_modules/.docs-cache/TNP...
+review	Full build and existing browser gates	2026-10-04T02:06:06.6790896Z [sync-docs] localPath '/home/nate/Oxy/Astro' not found for Astro; falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:06:06.6791901Z [sync-docs] cloning https://github.com/OxyHQ/Astro.git (master) into /home/runner/work/website/website/node_modules/.docs-cache/Astro...
+review	Full build and existing browser gates	2026-10-04T02:06:08.2030969Z [sync-docs] localPath '/home/nate/Oxy/Clarity' not found for Clarity; falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:06:08.2032283Z [sync-docs] cloning https://github.com/OxyHQ/Clarity.git (main) into /home/runner/work/website/website/node_modules/.docs-cache/Clarity...
+review	Full build and existing browser gates	2026-10-04T02:06:09.9476867Z [sync-docs] localPath '/home/nate/Oxy/OxyOS' not found for OxyOS; falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:06:09.9477862Z [sync-docs] cloning https://github.com/OxyHQ/OxyOS.git (main) into /home/runner/work/website/website/node_modules/.docs-cache/OxyOS...
+review	Full build and existing browser gates	2026-10-04T02:06:11.2371895Z [sync-docs] no localPath for OxyFont and skipIfNoLocal is set; skipping.
+review	Full build and existing browser gates	2026-10-04T02:06:11.2373003Z [sync-docs] localPath '/home/nate/Oxy/website' not found for Website (MCP); falling back to git.
+review	Full build and existing browser gates	2026-10-04T02:06:11.2374306Z [sync-docs] cloning https://github.com/OxyHQ/website.git (main) into /home/runner/work/website/website/node_modules/.docs-cache/Website-MCP...
+review	Full build and existing browser gates	2026-10-04T02:06:13.1094141Z [sync-docs] wrote 17 packages, 1264 pages.
+review	Full build and existing browser gates	2026-10-04T02:06:13.1536666Z [sync-changelog] no GITHUB_TOKEN set — anonymous rate limit applies (60 req/hr)
+review	Full build and existing browser gates	2026-10-04T02:06:13.4341572Z [sync-changelog] OxyHQ/website: 0 release(s)
+review	Full build and existing browser gates	2026-10-04T02:06:13.9599488Z [sync-changelog] OxyHQ/OxyHQServices: 1 release(s)
+review	Full build and existing browser gates	2026-10-04T02:06:14.3274505Z [sync-changelog] OxyHQ/Bloom: 50 release(s)
+review	Full build and existing browser gates	2026-10-04T02:06:14.5732195Z [sync-changelog] OxyHQ/Mention: 0 release(s)
+review	Full build and existing browser gates	2026-10-04T02:06:14.8030957Z [sync-changelog] OxyHQ/Allo: 0 release(s)
+review	Full build and existing browser gates	2026-10-04T02:06:15.0677022Z [sync-changelog] OxyHQ/Alia: 0 release(s)
+review	Full build and existing browser gates	2026-10-04T02:06:15.3302950Z [sync-changelog] OxyHQ/Homiio: 0 release(s)
+review	Full build and existing browser gates	2026-10-04T02:06:15.5925002Z [sync-changelog] OxyHQ/tnp: 2 release(s)
+review	Full build and existing browser gates	2026-10-04T02:06:15.8206530Z [sync-changelog] OxyHQ/Astro: 0 release(s)
+review	Full build and existing browser gates	2026-10-04T02:06:15.8215661Z [sync-changelog] wrote 53 entries from 9 repo(s) (0 cached) -> src/content/_changelog/index.json
+review	Full build and existing browser gates	2026-10-04T02:06:16.3118239Z [help-og] es/account/add-recovery-email.png (46050 B)
+review	Full build and existing browser gates	2026-10-04T02:06:16.5898926Z [help-og] account/add-recovery-email.png (35168 B)
+review	Full build and existing browser gates	2026-10-04T02:06:16.8644069Z [help-og] account/change-password.png (36467 B)
+review	Full build and existing browser gates	2026-10-04T02:06:17.1378933Z [help-og] account/delete-account.png (38346 B)
+review	Full build and existing browser gates	2026-10-04T02:06:17.4205082Z [help-og] auth/2fa-setup.png (37200 B)
+review	Full build and existing browser gates	2026-10-04T02:06:17.6917623Z [help-og] auth/fedcm-overview.png (39599 B)
+review	Full build and existing browser gates	2026-10-04T02:06:17.9615078Z [help-og] auth/sign-in-flow.png (38447 B)
+review	Full build and existing browser gates	2026-10-04T02:06:18.2250411Z [help-og] console/api-keys.png (36014 B)
+review	Full build and existing browser gates	2026-10-04T02:06:18.4944395Z [help-og] console/create-app.png (41887 B)
+review	Full build and existing browser gates	2026-10-04T02:06:18.7643259Z [help-og] console/usage-metrics.png (40562 B)
+review	Full build and existing browser gates	2026-10-04T02:06:19.0332368Z [help-og] getting-started/install-apps.png (43627 B)
+review	Full build and existing browser gates	2026-10-04T02:06:19.2967276Z [help-og] es/getting-started/welcome.png (36511 B)
+review	Full build and existing browser gates	2026-10-04T02:06:19.5615788Z [help-og] getting-started/welcome.png (38242 B)
+review	Full build and existing browser gates	2026-10-04T02:06:19.8335629Z [help-og] inbox/compose-message.png (34214 B)
+review	Full build and existing browser gates	2026-10-04T02:06:20.0982551Z [help-og] es/inbox/encryption.png (40508 B)
+review	Full build and existing browser gates	2026-10-04T02:06:20.3629190Z [help-og] inbox/encryption.png (44377 B)
+review	Full build and existing browser gates	2026-10-04T02:06:20.6211270Z [help-og] inbox/manage-labels.png (36888 B)
+review	Full build and existing browser gates	2026-10-04T02:06:20.6212032Z [help-og] done — 17 generated, 0 skipped (author-set), in 4676ms
+review	Full build and existing browser gates	2026-10-04T02:06:20.6386536Z $ tsc -b && vite build
+review	Full build and existing browser gates	2026-10-04T02:06:48.5318614Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(7,75): error TS2307: Cannot find module 'vitest' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5320888Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(25,55): error TS2307: Cannot find module '../../db/index.js' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5322703Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(26,56): error TS2307: Cannot find module '../../db/schema/index.js' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5324757Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(27,36): error TS2307: Cannot find module '../../db/subscription-repository.js' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5326908Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(28,27): error TS2307: Cannot find module '../../middleware/auth.js' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5329011Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(29,26): error TS2307: Cannot find module '../../lib/product-catalogue.js' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5331158Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(30,21): error TS2307: Cannot find module '../billing.js' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5332838Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(92,71): error TS7006: Parameter 'sessionId' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5334228Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(121,105): error TS7006: Parameter 'row' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5335224Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(127,41): error TS7006: Parameter 'call' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5336221Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(138,105): error TS7006: Parameter 'product' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5337206Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(143,43): error TS7006: Parameter 'call' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5338157Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(144,41): error TS7006: Parameter 'call' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5339179Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(153,143): error TS7006: Parameter 'status' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5340240Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(168,100): error TS7006: Parameter 'status' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5342074Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(175,190): error TS7006: Parameter 'input' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5343213Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(188,111): error TS7006: Parameter 'planId' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5344240Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(214,73): error TS7031: Binding element 'filter' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5345272Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(214,81): error TS7031: Binding element 'expected' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5346289Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(216,21): error TS7006: Parameter 'row' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5347270Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(216,69): error TS7006: Parameter 'index' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5348234Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(223,21): error TS7006: Parameter 'row' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5349204Z src/content/_synced/clarity/main/audits/2026-10-02-billing-free-filter/frozen-harness.ts(225,109): error TS7006: Parameter 'route' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5350445Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(4,42): error TS2307: Cannot find module '@testing-library/react-native' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5352005Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(6,33): error TS2307: Cannot find module 'expo-document-picker' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5353427Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(7,44): error TS2307: Cannot find module '../hooks/useSindiAuthenticatedFetch' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5354906Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(8,38): error TS2307: Cannot find module '../hooks/useSindiConversation' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5356289Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(9,57): error TS2307: Cannot find module '../store/conversationStore' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5357697Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(14,1): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5358774Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(15,1): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5359893Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(16,1): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5361888Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(17,1): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5379059Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(17,62): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5381466Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(18,1): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5383804Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(18,59): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5385769Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(19,1): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5387736Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(20,1): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5389694Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(20,74): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5391862Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(20,91): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5393866Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(20,114): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5395868Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(20,137): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5397862Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(21,1): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5399817Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(21,55): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5401438Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(21,73): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5402523Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(31,1): error TS2304: Cannot find name 'beforeAll'.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5403592Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(42,1): error TS2304: Cannot find name 'afterAll'.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5405237Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(43,1): error TS2593: Cannot find name 'beforeEach'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5407670Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(59,1): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5409291Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(59,122): error TS7006: Parameter 'operation' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5410391Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(62,25): error TS2304: Cannot find name 'expect'.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5411654Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(76,5): error TS2304: Cannot find name 'expect'.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5412705Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(77,5): error TS2304: Cannot find name 'expect'.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5414281Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(80,1): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5415959Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(83,25): error TS2304: Cannot find name 'expect'.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5417015Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(85,25): error TS2304: Cannot find name 'expect'.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5418611Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(88,1): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5420248Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(88,120): error TS7006: Parameter 'operation' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5421611Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(90,3): error TS2708: Cannot use namespace 'jest' as a value.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5422681Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(94,5): error TS2304: Cannot find name 'expect'.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5423694Z src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(101,5): error TS2304: Cannot find name 'expect'.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5424899Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(2,21): error TS2307: Cannot find module 'supertest' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5426755Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(4,86): error TS2307: Cannot find module 'vitest' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5429090Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(43,32): error TS7006: Parameter 'importOriginal' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5431534Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(44,24): error TS2347: Untyped function calls may not accept type arguments.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5433912Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(44,53): error TS2307: Cannot find module '../../config' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5436561Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(82,54): error TS7006: Parameter 'importOriginal' implicitly has an 'any' type.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5438823Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(83,24): error TS2347: Untyped function calls may not accept type arguments.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5441503Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(83,53): error TS2307: Cannot find module '../../services/profileLinkMentions' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5444183Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(101,32): error TS2307: Cannot find module '@mention/shared-types' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5446749Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(103,55): error TS2307: Cannot find module '../../db/postgres' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5449589Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(104,31): error TS2307: Cannot find module '../../db/schema/discovery' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5452329Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(105,29): error TS2307: Cannot find module '../../db/schema/imports' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5454855Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(106,23): error TS2307: Cannot find module '../../db/schema/posts' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5457482Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(107,80): error TS2307: Cannot find module '../helpers/serviceFixtures' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:06:48.5460117Z src/content/_synced/mention/main/audits/2026-10-04-imports-explicit-authority-fixture/records/imports-before.test.ts(108,27): error TS2307: Cannot find module '../../routes/imports' or its corresponding type declarations.
+review	Full build and existing browser gates	2026-10-04T02:07:00.0213059Z ##[error]Process completed with exit code 2.
