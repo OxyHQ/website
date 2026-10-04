@@ -60,12 +60,12 @@
     "@gsap/react": "^2.1.2",
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
-    "@oxy.so/bloom": "^7.1.0",
-    "@oxy.so/contracts": "^4.3.0",
-    "@oxy.so/core": "^3.2.0",
-    "@oxy.so/mcp": "^1.0.0",
-    "@oxy.so/services": "^10.0.0",
-    "@oxy.so/telemetry": "^1.2.0",
+    "@oxy.so/bloom": "7.1.2",
+    "@oxy.so/contracts": "4.9.0",
+    "@oxy.so/core": "4.2.0",
+    "@oxy.so/mcp": "1.1.0",
+    "@oxy.so/services": "11.1.0",
+    "@oxy.so/telemetry": "1.2.0",
     "@react-native-async-storage/async-storage": "^3.1.1",
     "@scalar/api-reference-react": "^0.9.55",
     "@tailwindcss/typography": "^0.5.20",
@@ -156,6 +156,12 @@
   },
   "overrides": {
     "d3-color": ">=3.1.0",
-    "@oxy.so/contracts": "^4.3.0"
+    "@oxy.so/contracts": "4.9.0",
+    "@oxy.so/protocol": "1.2.2",
+    "@oxy.so/core": "4.2.0",
+    "@oxy.so/services": "11.1.0",
+    "@oxy.so/mcp": "1.1.0",
+    "@oxy.so/bloom": "7.1.2",
+    "@oxy.so/telemetry": "1.2.0"
   }
 }

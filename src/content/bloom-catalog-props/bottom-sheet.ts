@@ -16,7 +16,7 @@ export const props: BloomSurfaceProps = {
         { name: 'backdropComponent', type: '(props: { style?: StyleProp<ViewStyle>; onPress?: () => void; }) => React.ReactElement | null', optional: true },
         { name: 'style', type: 'StyleProp<AnimatedStyle<ViewStyle>>', optional: true, description: 'Style applied to the sheet container (the outer Animated.View positioned at the bottom of the screen). Use this to override `maxWidth`, `height`, background color, border radius, etc. Composed AFTER the internal sheet styles so it can override them.' },
         { name: 'enableHandlePanningGesture', type: 'boolean', optional: true },
-        { name: 'onDismissAttempt', type: '() => boolean', optional: true },
+        { name: 'onDismissAttempt', type: '() => boolean', optional: true, description: 'Veto user Back/backdrop/Escape/pan requests before closing; imperative dismiss bypasses it.' },
         { name: 'detached', type: 'boolean', optional: true },
         { name: 'showHandle', type: 'boolean', optional: true, description: 'Whether to render the built-in (non-interactive) drag handle bar at the top of the sheet. Defaults to `true`. Set to `false` when the consumer renders its own handle (e.g. an interactive close affordance) inside `children`.' },
         { name: 'backdropOpacity', type: 'number', optional: true, description: 'Opacity of the dimming backdrop behind the sheet (0–1). Defaults to `0.5`. Set to a higher value (e.g. `0.7`) when the sheet is presented over another bottom sheet (Dialog cases) so the underlying handle/content does not bleed through.' },
