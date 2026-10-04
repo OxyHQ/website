@@ -262,7 +262,7 @@ const bn: Translations = {
     company: 'কোম্পানি',
     developers: 'ডেভেলপার',
     resources: 'রিসোর্স',
-    bannerDefault: 'Alia। একসাথে আরও ভালো ভাবুন।',
+    bannerDefault: 'পরিচয় হোক Bloom-এর সঙ্গে, Oxy-এর ডিজাইন সিস্টেম।',
   },
   home: {
     ...en.home,

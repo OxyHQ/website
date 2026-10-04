@@ -261,7 +261,7 @@ const ja: Translations = {
     company: '会社情報',
     developers: '開発者',
     resources: 'リソース',
-    bannerDefault: 'Alia. みんなで、もっと良く考える。',
+    bannerDefault: 'Oxyのデザインシステム、Bloomをご紹介。',
   },
   footer: {
     description:

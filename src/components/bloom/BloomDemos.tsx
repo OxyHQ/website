@@ -22,13 +22,12 @@ import { AiProfileCard } from '@oxy.so/bloom/ai-profile-card'
 import { Avatar } from '@oxy.so/bloom/avatar'
 import { Card } from '@oxy.so/bloom/card'
 import { RadioGroup } from '@oxy.so/bloom/radio'
+import { ButtonGroup, ButtonGroupItem } from '@oxy.so/bloom/button-group'
 import TemplateDemo from './TemplateDemo'
 import ProjectBoardDemo from './ProjectBoardDemo'
 import {
   ComposerAttachments,
   ComposerPanelStatusTab,
-  ComposerPill,
-  ComposerStatusBar,
 } from '@oxy.so/bloom/composer-panel'
 import { CalendarView } from '@oxy.so/bloom/calendar'
 import { AiChatImageGeneration } from '@oxy.so/bloom/ai-chat'
@@ -37,7 +36,7 @@ import { AgentProgress } from '@oxy.so/bloom/agent-progress'
 import { AgentThinking } from '@oxy.so/bloom/agent-thinking'
 import { AgentLimitsCard } from '@oxy.so/bloom/agent-limits-card'
 import { WebSearch } from '@oxy.so/bloom/web-search'
-import { ComposerLoader } from '@oxy.so/bloom/composer-loader'
+import LoaderDemo from './LoaderDemo'
 import { AgentChat, type AgentChatMessageData } from '@oxy.so/bloom/agent-chat'
 import { Calendar, MeetingScheduler } from '@oxy.so/bloom/date-picker'
 import { AuthCard } from '@oxy.so/bloom/auth-card'
@@ -47,11 +46,6 @@ import TableDemo from './TableDemo'
 import { Slider } from '@oxy.so/bloom/slider'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Checkbox } from '@oxy.so/bloom/checkbox'
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-  SegmentedControlItemText,
-} from '@oxy.so/bloom/segmented-control'
 import { RiHeartPulseLine } from '@oxy.so/bloom/icons/RiHeartPulseLine'
 import { RiCalendarLine } from '@oxy.so/bloom/icons/RiCalendarLine'
 import { RiUserLine } from '@oxy.so/bloom/icons/RiUserLine'
@@ -88,11 +82,15 @@ export default function BloomDemos({
     }),
     [mode],
   )
-  const medicalFit = { ...fit, backgroundColor: colors.background }
+  const medicalFit = {
+    ...fit,
+    backgroundColor: colors.background,
+    borderRadius: 20,
+  }
   const [value, setValue] = useState('')
   const [selected, setSelected] = useState('home')
   const [collapsed, setCollapsed] = useState(false)
-  const [slider, setSlider] = useState(64)
+  const [slider, setSlider] = useState(1)
   const [toggle, setToggle] = useState(true)
   const [date, setDate] = useState<Date | null>(month)
   const [file, setFile] = useState<FileUploadFile | null>(null)
@@ -103,18 +101,26 @@ export default function BloomDemos({
     { id: '2', role: 'assistant', text: t('bloom.demoReply') },
   ])
   const n = new Intl.NumberFormat(locale)
-  const stats = ['chat', 'dashboard', 'health', 'projects'].map((key, i) => ({
-    label: t(`bloom.${key}`),
-    value: [12480, 9240, 6480, 3210][i]!,
-    ...tones[i]!,
-  }))
-  const chartData = Array.from({ length: 7 }, (_, i) => ({
+  const chartData = Array.from({ length: 12 }, (_, i) => ({
     label: new Intl.DateTimeFormat(locale, { month: 'short' }).format(
       new Date(2026, i, 1),
     ),
-    value: 1200 + ((i * 719) % 2400),
-    a: 1600 + ((i * 817) % 2600),
-    b: 900 + ((i * 389) % 2100),
+    value: [420, 510, 480, 620, 590, 710, 680, 540, 760, 650, 720, 782][i]!,
+    organic: [
+      2800, 3100, 3600, 3200, 3800, 4300, 3900, 4600, 4800, 5100, 5400, 5900,
+    ][i]!,
+    referral: [
+      1200, 1500, 1600, 1700, 1900, 2100, 2200, 2400, 2300, 2700, 3000, 3300,
+    ][i]!,
+    paid: [
+      800, 900, 1100, 1000, 1200, 1400, 1500, 1700, 1800, 2000, 2300, 2600,
+    ][i]!,
+    sessions: [
+      4200, 5100, 4800, 6200, 5900, 7100, 6800, 5400, 7600, 9200, 9700, 11200,
+    ][i]!,
+    conversion: [2.1, 2.4, 2.8, 2.6, 3.1, 3.4, 3.2, 3.8, 4.1, 4.6, 5.1, 5.4][
+      i
+    ]!,
   }))
   const title = (key: string) => t(`bloom.${key}`)
   const localNotice = notice && (
@@ -365,7 +371,7 @@ export default function BloomDemos({
             { value: '12h 54m', label: title('longestTask') },
             { value: '62', label: title('streak') },
           ]}
-          style={medicalFit}
+          style={{ ...fit, backgroundColor: colors.backgroundSecondary }}
         />
       )
     case 'ai-profile':
@@ -434,9 +440,11 @@ export default function BloomDemos({
               },
               { key: 'health', label: title('health'), icon: RiHeartPulseLine },
               { key: 'profile', label: title('profile'), icon: RiUserLine },
-            ]}
+            ].map((item) => ({
+              ...item,
+              onPress: () => setSelected(item.key),
+            }))}
             selected={selected}
-            onNavigate={(item) => setSelected(item.key)}
             showThemeToggle={false}
             showSearch
             searchShortcut={false}
@@ -531,7 +539,7 @@ export default function BloomDemos({
       return (
         <WebSearch
           run={active}
-          revealed={active ? undefined : 1}
+          revealed={active ? undefined : 2}
           reduce={!active}
           steps={[
             { label: t('bloom.searchSummary', { count: 3 }), heading: true },
@@ -663,44 +671,8 @@ export default function BloomDemos({
         />
       )
     case 'loader':
-      return (
-        <div className="bloom-loader-demo">
-          <ComposerLoader
-            active={active}
-            colors={[
-              accents.purple,
-              accents.pink,
-              tones[0]!.color,
-              accents.blue,
-            ]}
-            style={{ width: '100%' }}
-          >
-            <ComposerPill
-              value={value}
-              onValueChange={setValue}
-              maxLines={1}
-              onAddMenuSelect={() => setNotice(!notice)}
-              onListeningChange={() => setNotice(!notice)}
-              models={['Bloom', 'Design agent', 'Review agent']}
-              surface={false}
-              glass={active}
-              onSubmit={() => {
-                setValue('')
-                setNotice(true)
-              }}
-              style={{ width: '100%' }}
-            />
-          </ComposerLoader>
-          <ComposerStatusBar
-            branch="Main"
-            folders={[{ prefix: '', name: 'bloom-ui' }]}
-            mode={title('agents.design')}
-            onBranchPress={() => setNotice(!notice)}
-            onModePress={() => setNotice(!notice)}
-            style={{ width: '100%' }}
-          />
-        </div>
-      )
+    case 'loader-feature':
+      return <LoaderDemo active={active} controls={name === 'loader-feature'} />
     case 'widgets':
       return (
         <div className="flex gap-5">
@@ -727,36 +699,53 @@ export default function BloomDemos({
       return (
         <Card
           radius="radius-16"
+          cornerCurve="round"
           elevation="none"
           border="thin"
-          style={{ ...fit, padding: 16 }}
+          style={{ ...fit, padding: 10, minHeight: 235 }}
         >
-          <div className="flex flex-col gap-5">
-            <span className="text-body-medium text-text-secondary">
-              {title('usersWithAccess')}
-            </span>
-            {['Maya Collins', 'Steven Raule', 'Lauren Proso'].map((name, i) => (
-              <div className="flex items-center gap-3" key={name}>
-                <Avatar
-                  initials={name[0]}
-                  color={(['neutral', 'blue', 'lime'] as const)[i]}
-                  size={32}
-                />
-                <span className="text-body-medium">{name}</span>
+          <div className="relative z-10 flex flex-1 flex-col">
+            <div className="flex w-full flex-col gap-1.5 pt-[5px]">
+              <span className="px-2 text-body-medium text-text-secondary">
+                {title('usersWithAccess')}
+              </span>
+              <div className="flex w-full flex-col gap-1">
+                {['Maya Collins', 'Steven Raule', 'Lauren Proso'].map(
+                  (name, i) => (
+                    <div
+                      className="flex w-full items-center gap-2 rounded-2lg px-2 py-1.5"
+                      key={name}
+                    >
+                      <Avatar
+                        initials={name[0]}
+                        color={(['neutral', 'lime', 'pink'] as const)[i]}
+                        size={20}
+                      />
+                      <span className="truncate text-body-medium text-text-primary">
+                        {name}
+                      </span>
+                    </div>
+                  ),
+                )}
               </div>
-            ))}
-            <div className="flex gap-3">
+            </div>
+            <div className="-mx-2.5 mt-3.5 mb-2.5 h-px bg-border-button-default" />
+            <div className="flex flex-1 items-center gap-3 px-2">
               <Button
                 appearance="outline"
+                tone="neutral"
                 size="sm"
                 onPress={() => setNotice(true)}
+                style={{ flex: 1, borderRadius: 8 }}
               >
                 {title('addUser')}
               </Button>
               <Button
-                appearance="plain"
+                appearance="outline"
+                tone="neutral"
                 size="sm"
                 onPress={() => setNotice(true)}
+                style={{ flex: 1, borderRadius: 8 }}
               >
                 {title('manage')}
               </Button>
@@ -769,11 +758,12 @@ export default function BloomDemos({
       return (
         <Card
           radius="radius-16"
+          cornerCurve="round"
           elevation="none"
           border="thin"
           style={{ ...fit, padding: 16 }}
         >
-          <div className="flex flex-col gap-4">
+          <div className="relative z-10 flex flex-col gap-4">
             <span className="text-body-medium text-text-secondary">
               {title('models')}
             </span>
@@ -790,6 +780,9 @@ export default function BloomDemos({
             />
             <span className="text-body-medium">{title('effort')}</span>
             <Slider
+              showTooltip={false}
+              max={5}
+              step={1}
               value={slider}
               onValueChange={setSlider}
               accessibilityLabel={title('effort')}
@@ -799,18 +792,17 @@ export default function BloomDemos({
       )
     case 'segments':
       return (
-        <SegmentedControl
-          label={title('calendar')}
-          type="radio"
-          value={filter === 'all' ? 'day' : filter}
-          onValueChange={setFilter}
-        >
+        <ButtonGroup accessibilityLabel={title('calendar')}>
           {['day', 'week', 'month', 'year'].map((key) => (
-            <SegmentedControlItem key={key} value={key}>
-              <SegmentedControlItemText>{title(key)}</SegmentedControlItemText>
-            </SegmentedControlItem>
+            <ButtonGroupItem
+              key={key}
+              selected={filter === key || (filter === 'all' && key === 'day')}
+              onPress={() => setFilter(key)}
+            >
+              {title(key)}
+            </ButtonGroupItem>
           ))}
-        </SegmentedControl>
+        </ButtonGroup>
       )
     case 'checks':
       return (
@@ -860,8 +852,12 @@ export default function BloomDemos({
     case 'funnel':
       return (
         <FunnelChartCard
-          stages={stats}
-          title={title('dashboard')}
+          stages={['Link opened', 'Started', 'Completed', 'Converted'].map(
+            (label, i) => ({ label, value: [197, 110, 77, 38][i]! }),
+          )}
+          title="Sign-up funnel"
+          delta={0.052}
+          range="Last 7 days"
           format={n.format}
           style={fit}
         />
@@ -905,8 +901,8 @@ export default function BloomDemos({
           {...tones[0]!}
           data={chartData.map((d) => ({
             label: d.label,
-            current: d.a,
-            previous: d.b,
+            current: d.organic,
+            previous: d.referral,
           }))}
           style={fit}
         />
@@ -915,21 +911,29 @@ export default function BloomDemos({
     case 'comparison':
       return (
         <RadarChartCard
+          title="Visitors"
           variant={name === 'comparison' ? 'lines' : 'filled'}
-          data={stats.map((s, i) => ({
-            label: s.label,
-            a: [82, 76, 91, 68][i]!,
-            b: [64, 89, 72, 86][i]!,
+          legend="overlay"
+          data={chartData.slice(0, 6).map((_, i) => ({
+            label: new Intl.DateTimeFormat(locale, { month: 'long' }).format(
+              new Date(2026, i, 1),
+            ),
+            desktop: [186, 305, 237, 273, 209, 214][i]!,
+            mobile: [80, 200, 120, 190, 130, 140][i]!,
           }))}
           series={
             name === 'comparison'
               ? [
-                  { key: 'a', label: 'A', ...tones[0]! },
-                  { key: 'b', label: 'B', ...tones[1]! },
+                  { key: 'desktop', label: 'Desktop' },
+                  { key: 'mobile', label: 'Mobile' },
                 ]
-              : [{ key: 'a', label: 'Bloom', ...tones[0]! }]
+              : [{ key: 'desktop', label: 'Visitors' }]
           }
-          max={100}
+          headline={1424}
+          delta={0.052}
+          range="H1 2024"
+          tiles
+          format={n.format}
           style={fit}
         />
       )
@@ -937,34 +941,81 @@ export default function BloomDemos({
       return (
         <SankeyChartCard
           nodes={[
-            { name: 'Web', ...tones[0]! },
-            { name: 'Expo', ...tones[1]! },
-            { name: 'React Native', ...tones[2]! },
-            { name: 'Bloom', ...tones[3]! },
-          ]}
+            'Focus',
+            'Meetings',
+            'Breaks',
+            'Admin',
+            'Learning',
+            'Browsing',
+            'Writing',
+            'Messaging',
+            'Productivity',
+            'Email',
+            'Video calls',
+            'Everything else',
+          ].map((name) => ({ name }))}
           links={[
-            { source: 0, target: 3, value: 48 },
-            { source: 1, target: 3, value: 32 },
-            { source: 2, target: 3, value: 20 },
+            { source: 0, target: 5, value: 10 },
+            { source: 0, target: 6, value: 12 },
+            { source: 0, target: 8, value: 10 },
+            { source: 1, target: 7, value: 6 },
+            { source: 1, target: 10, value: 12 },
+            { source: 2, target: 5, value: 4 },
+            { source: 2, target: 11, value: 8 },
+            { source: 3, target: 7, value: 5 },
+            { source: 3, target: 9, value: 7 },
+            { source: 3, target: 11, value: 2 },
+            { source: 4, target: 5, value: 5 },
+            { source: 4, target: 6, value: 4 },
+            { source: 4, target: 11, value: 1 },
           ]}
-          height={360}
+          range="This week"
+          height={430}
           style={fit}
         />
       )
     case 'stages':
       return (
-        <StageBarsCard stages={stats} title={title('projects')} style={fit} />
+        <StageBarsCard
+          stages={[
+            'Visits',
+            'Signup',
+            'Active',
+            'Pro',
+            'Team',
+            'Enterprise',
+          ].map((label, i) => ({
+            label,
+            value: [1180, 790, 460, 250, 120, 40][i]!,
+          }))}
+          delta={0.024}
+          range="Last 7 days"
+          format={n.format}
+          style={fit}
+        />
       )
     case 'radial':
     case 'gauge':
       return (
         <RadialChartCard
-          data={stats.map((s, i) => ({
-            label: s.label,
-            value: [82, 64, 91, 46][i]!,
-          }))}
-          max={100}
-          variant={name === 'gauge' ? 'gauge' : 'labels'}
+          data={
+            name === 'gauge'
+              ? ['Desktop', 'Mobile', 'Tablet', 'TV'].map((label, i) => ({
+                  label,
+                  value: [1180, 620, 380, 320][i]!,
+                }))
+              : ['Other', 'Edge', 'Firefox', 'Safari', 'Chrome'].map(
+                  (label, i) => ({
+                    label,
+                    value: [90, 173, 187, 200, 275][i]!,
+                  }),
+                )
+          }
+          variant={name === 'gauge' ? 'stacked' : 'labels'}
+          delta={0.052}
+          range="Last 7 days"
+          tiles
+          format={n.format}
           style={fit}
         />
       )
@@ -973,9 +1024,13 @@ export default function BloomDemos({
         <AreaChartCard
           data={chartData}
           series={[
-            { key: 'a', label: 'Web', ...tones[0]! },
-            { key: 'b', label: 'Expo', ...tones[1]! },
+            { key: 'organic', label: 'Organic' },
+            { key: 'referral', label: 'Referral' },
+            { key: 'paid', label: 'Paid' },
           ]}
+          delta={0.082}
+          range="This year"
+          tiles
           style={fit}
         />
       )
@@ -983,8 +1038,15 @@ export default function BloomDemos({
       return (
         <ComboChartCard
           data={chartData}
-          bar={{ key: 'a', label: 'Web', ...tones[0]! }}
-          line={{ key: 'b', label: 'Expo', ...tones[1]! }}
+          bar={{ key: 'sessions', label: 'Sessions' }}
+          line={{
+            key: 'conversion',
+            label: 'Conversion',
+            format: (value) => `${value.toFixed(1)}%`,
+          }}
+          delta={0.094}
+          range="This year"
+          tiles
           style={fit}
         />
       )

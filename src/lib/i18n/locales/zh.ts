@@ -261,7 +261,7 @@ const zh: Translations = {
     company: '公司',
     developers: '开发者',
     resources: '资源',
-    bannerDefault: 'Alia。一起,更好地思考。',
+    bannerDefault: '认识 Bloom，Oxy 的设计系统。',
   },
   footer: {
     description:

@@ -13,6 +13,7 @@ import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import rehypeSlug from 'rehype-slug'
 import mdxHeadings from './scripts/vite-mdx-headings'
+import bloomCharacterAssets from './scripts/vite-bloom-character-assets'
 import reactNativeWeb from 'vite-plugin-react-native-web'
 import { visualizer } from 'rollup-plugin-visualizer'
 
@@ -94,6 +95,7 @@ function mdxExceptRaw(options: Parameters<typeof mdx>[0]): Plugin {
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
+    bloomCharacterAssets(),
     reactNativeWeb(),
     tailwindcss(),
     svgr(),
@@ -145,7 +147,8 @@ export default defineConfig(({ mode }) => ({
       // The canonical Kaana SVG is a byte-pinned source asset. Running it
       // through SVGO would both invalidate that identity and crash on its
       // referenced compositing groups.
-      exclude: /kaana\.svg$/,
+      // Bloom's optional runtime must ship byte-for-byte as published.
+      exclude: /kaana\.svg$|(?:^|\/)bloom-character\//,
       jpg: { quality: 80, progressive: true },
       jpeg: { quality: 80, progressive: true },
       png: { quality: 80, effort: 4 },

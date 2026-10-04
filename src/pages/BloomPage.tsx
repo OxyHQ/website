@@ -1,4 +1,11 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
+import {
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react'
 import { useReducedMotion } from 'framer-motion'
 import { Button, type ButtonProps } from '@oxy.so/bloom/button'
 import {
@@ -7,12 +14,26 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@oxy.so/bloom/accordion'
-import { AgentAvatar, FOLD_PRESETS } from '@oxy.so/bloom/agent-avatar'
+import {
+  AgentAvatar,
+  FOLD_CONFIG,
+  FOLD_PRESETS,
+} from '@oxy.so/bloom/agent-avatar'
 import {
   SegmentedControl,
   SegmentedControlItem,
   SegmentedControlItemText,
 } from '@oxy.so/bloom/segmented-control'
+import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs'
+import { Chip } from '@oxy.so/bloom/chip'
+import { RiComputerLine } from '@oxy.so/bloom/icons/RiComputerLine'
+import { RiTabletLine } from '@oxy.so/bloom/icons/RiTabletLine'
+import { RiSmartphoneLine } from '@oxy.so/bloom/icons/RiSmartphoneLine'
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
+import { RiChat3Line } from '@oxy.so/bloom/icons/RiChat3Line'
+import { RiHeartPulseLine } from '@oxy.so/bloom/icons/RiHeartPulseLine'
+import { RiUserLine } from '@oxy.so/bloom/icons/RiUserLine'
+import { RiBox3Line } from '@oxy.so/bloom/icons/RiBox3Line'
 import { BloomColorScope } from '@oxy.so/bloom/theme'
 import { LocaleProvider as BloomLocaleProvider } from '@oxy.so/bloom/locale'
 import { RiCodeSSlashLine } from '@oxy.so/bloom/icons/RiCodeSSlashLine'
@@ -31,6 +52,18 @@ import '../styles/bloom-landing.css'
 
 const DOCS = '/developers/docs/bloom/components/'
 const CASES = ['chat', 'dashboard', 'health', 'projects', 'profile'] as const
+const DEVICE_ICONS = {
+  desktop: RiComputerLine,
+  tablet: RiTabletLine,
+  mobile: RiSmartphoneLine,
+} as const
+const TEMPLATE_ICONS = {
+  chat: RiChat3Line,
+  dashboard: RiLayoutGridLine,
+  health: RiHeartPulseLine,
+  projects: RiLayoutGridLine,
+  profile: RiUserLine,
+} as const
 const TEMPLATE_DOCS = {
   chat: 'ai-chat',
   dashboard: 'chart-cards',
@@ -177,6 +210,24 @@ const CHARTS: { name: BloomDemoName; title: string }[] = [
   { name: 'combo', title: 'Combo chart' },
 ]
 
+const CHART_CAPTIONS: Partial<Record<BloomDemoName, string>> = {
+  funnel:
+    'Follow conversion through each stage, with totals and percentages below.',
+  earnings:
+    'Compare earnings across periods. Hover a bar to inspect its value.',
+  radar: 'Compare six dimensions on a filled radar with individual stat tiles.',
+  comparison: 'Compare two series on the same axes with an interactive legend.',
+  sankey:
+    'Trace how time moves between activities and see each destination’s share.',
+  stages:
+    'Read the pipeline as horizontal bars, percentages and individual totals.',
+  radial:
+    'Explore concentric rings with labels and a stat tile for each category.',
+  gauge: 'Compare device shares in a half-circle gauge with a central summary.',
+  area: 'Explore stacked monthly series and their totals below the chart.',
+  combo: 'Compare volume and conversion rate using two scales on one chart.',
+}
+
 function ComponentPreview({ item }: { item: (typeof COMPONENTS)[number] }) {
   if (item.name === 'widgets' || item.name === 'earnings') {
     const names: BloomDemoName[] =
@@ -250,11 +301,28 @@ function ComponentPreview({ item }: { item: (typeof COMPONENTS)[number] }) {
 /** Bloom renders the action; the geometry is the reference's h-9 / rounded-2lg. */
 function Action({
   secondary = false,
+  children,
+  leadingIcon: Icon,
   ...props
 }: ButtonProps & { secondary?: boolean }) {
   const button = (
     <Button
       {...props}
+      leadingIcon={props.asChild ? undefined : Icon}
+      children={
+        props.asChild &&
+        Icon &&
+        isValidElement<{ children?: ReactNode }>(children)
+          ? cloneElement(
+              children,
+              {},
+              <span className="inline-flex items-center gap-1.5">
+                <Icon width={18} height={18} fill="currentColor" />
+                {children.props.children}
+              </span>,
+            )
+          : children
+      }
       appearance={secondary ? 'outline' : 'solid'}
       tone={secondary ? 'neutral' : 'accent'}
       className="bloom-landing-action h-9 rounded-2lg p-2"
@@ -276,14 +344,33 @@ function Heading({
   description,
   id,
   children,
+  badge = false,
 }: {
   title: string
   description: string
   id?: string
+  badge?: boolean
   children?: ReactNode
 }) {
   return (
     <div className="flex w-full max-w-[635px] flex-col items-center text-center">
+      {badge && (
+        <div className="mb-[11px]">
+          <Chip
+            appearance="outline"
+            tone="neutral"
+            leadingIcon={RiBox3Line}
+            style={{
+              height: 36,
+              borderRadius: 10,
+              backgroundColor: 'var(--card)',
+              paddingHorizontal: 8,
+            }}
+          >
+            @oxy.so/bloom
+          </Chip>
+        </div>
+      )}
       <h2
         id={id}
         className="text-[32px] leading-[38px] font-medium tracking-[-0.02em] text-balance text-text-primary sm:text-[48px] sm:leading-[53px]"
@@ -297,17 +384,28 @@ function Heading({
     </div>
   )
 }
-function AgentMarks({ size = 44 }: { size?: number }) {
+function AgentMarks() {
   return (
-    <div className="flex items-center justify-center -space-x-1" aria-hidden>
-      {FOLD_PRESETS.slice(0, 4).map((preset, i) => (
+    <div className="relative h-[104px] w-[120px]" aria-hidden>
+      {[
+        [40, 0],
+        [0, 34],
+        [80, 34],
+        [40, 64],
+      ].map(([left, top], i) => (
         <div
-          key={preset.name}
-          style={{
-            transform: `translateY(${i % 2 ? 10 : -8}px) rotate(${i % 2 ? 12 : -10}deg)`,
-          }}
+          key={i}
+          className="absolute"
+          style={{ left, top, transform: `rotate(${i % 2 ? 10 : -10}deg)` }}
         >
-          <AgentAvatar config={preset.config} size={size} label={preset.name} />
+          <AgentAvatar
+            config={{
+              ...FOLD_PRESETS[i].config,
+              foldShape: (['pocket', 'cloud', 'star', 'flower'] as const)[i],
+            }}
+            size={44}
+            label={FOLD_PRESETS[i].name}
+          />
         </div>
       ))}
     </div>
@@ -375,7 +473,7 @@ export default function BloomPage() {
                 <span className="shrink-0">{text('for')}&nbsp;</span>
                 <span
                   key={currentCase}
-                  className="landing-hero-dither-character flex min-w-0 flex-1 flex-wrap gap-x-[0.25em] sm:inline-flex sm:flex-none sm:flex-nowrap"
+                  className="landing-hero-dither-character relative flex min-w-0 flex-1 flex-wrap gap-x-[0.25em] sm:inline-flex sm:flex-none sm:flex-nowrap"
                 >
                   {text(CASES[currentCase]!)
                     .split(' ')
@@ -502,11 +600,13 @@ export default function BloomPage() {
                   <div className="landing-reveal absolute top-[752px] -left-[246px] w-[341px] sm:top-0 sm:left-0">
                     <BloomPreview name="progress" />
                   </div>
-                  <div className="landing-reveal absolute top-0 left-[361px] w-[265px]">
-                    <BloomPreview name="accounts" />
-                  </div>
-                  <div className="landing-reveal absolute top-[257px] left-[286px] w-[340px]">
-                    <BloomPreview name="auth" />
+                  <div className="absolute top-0 left-[286px] flex w-[340px] flex-col items-end gap-[22px]">
+                    <div className="landing-reveal w-[265px]">
+                      <BloomPreview name="accounts" />
+                    </div>
+                    <div className="landing-reveal w-full">
+                      <BloomPreview name="auth" />
+                    </div>
                   </div>
                   <div className="landing-reveal absolute top-[255px] left-0 w-[266px]">
                     <BloomPreview name="models" />
@@ -614,10 +714,29 @@ export default function BloomPage() {
             style={{ '--preview-radius': '31.45px' } as CSSProperties}
           >
             <div
-              className="pointer-events-none absolute -top-[85px] left-14 z-20"
+              className="pointer-events-none absolute -top-[85px] left-5 z-20 sm:left-14"
               aria-hidden
             >
-              <AgentMarks size={68} />
+              <AgentAvatar
+                config={{ ...FOLD_CONFIG, hue: 157, saturation: 37 }}
+                size={110}
+                label="Bloom agent"
+              />
+            </div>
+            <div
+              className="pointer-events-none absolute -top-[85px] right-5 z-20 sm:right-14"
+              aria-hidden
+            >
+              <AgentAvatar
+                config={{
+                  ...FOLD_CONFIG,
+                  foldShape: 'star',
+                  hue: 255,
+                  saturation: 65,
+                }}
+                size={110}
+                label="Bloom agent"
+              />
             </div>
             <div className="relative z-10 rounded-[calc(var(--preview-radius)+var(--preview-inset)+1px)] border border-border-button-default bg-background-secondary-default p-1.5 shadow-lg sm:p-2">
               <BloomPreview name="multi-agent" />
@@ -643,7 +762,7 @@ export default function BloomPage() {
           </Heading>
           <div className="mt-10 flex h-[120px] w-full justify-center sm:h-[150px] lg:h-[200px] xl:h-[230px]">
             <div className="w-[560px] max-w-[calc(100vw-24px)] origin-top sm:scale-125 lg:scale-[1.75] xl:scale-200">
-              <BloomPreview name="loader" />
+              <BloomPreview name="loader-feature" />
             </div>
           </div>
         </section>
@@ -654,14 +773,13 @@ export default function BloomPage() {
         >
           <Heading
             id="bloom-examples"
+            badge
             title={text('examplesTitle')}
             description={text('examplesDescription')}
           >
             <div className="mt-6">
               <Action asChild>
-                <Link to={DOCS}>
-                  {text('components')}
-                </Link>
+                <Link to={DOCS}>{text('components')}</Link>
               </Action>
             </div>
             <div className="mt-7 hidden sm:block">
@@ -671,36 +789,44 @@ export default function BloomPage() {
                 value={device}
                 onValueChange={setDevice}
               >
-                {['desktop', 'tablet', 'mobile'].map((name) => (
-                  <SegmentedControlItem key={name} value={name}>
-                    <SegmentedControlItemText>
-                      {text(name)}
-                    </SegmentedControlItemText>
-                  </SegmentedControlItem>
-                ))}
+                {(['desktop', 'tablet', 'mobile'] as const).map((name) => {
+                  const Icon = DEVICE_ICONS[name]
+                  return (
+                    <SegmentedControlItem
+                      key={name}
+                      value={name}
+                      style={{ gap: 6 }}
+                    >
+                      <Icon width={16} height={16} fill="currentColor" />
+                      <SegmentedControlItemText>
+                        {text(name)}
+                      </SegmentedControlItemText>
+                    </SegmentedControlItem>
+                  )
+                })}
               </SegmentedControl>
             </div>
           </Heading>
           <div className="mt-[18px] w-full rounded-[28px] border border-border-button-default bg-background-primary-default p-1.5 sm:rounded-t-[38px] sm:rounded-br-[38px] sm:rounded-bl-[52px] sm:p-[18px]">
             <div className="mb-2 flex w-full items-center gap-1 sm:mb-3 sm:gap-2 lg:mb-[18px] lg:gap-3">
               <div className="-m-1 flex min-w-0 flex-1 flex-nowrap items-center justify-start gap-0.5 overflow-x-auto p-1 [scrollbar-width:none] sm:gap-1 [&::-webkit-scrollbar]:hidden">
-                <SegmentedControl
+                <Tabs
                   label={text('examplesTitle')}
-                  type="radio"
-                  variant="plain"
+                  variant="pill"
                   value={example}
-                  onValueChange={setExample}
+                  onValueChange={(value) => setExample(value as typeof example)}
                 >
                   {CASES.map((name) => (
-                    <SegmentedControlItem key={name} value={name}>
-                      <SegmentedControlItemText>
-                        {text(name)}
-                      </SegmentedControlItemText>
-                    </SegmentedControlItem>
+                    <TabsTrigger
+                      key={name}
+                      value={name}
+                      label={text(name)}
+                      leadingIcon={TEMPLATE_ICONS[name]}
+                    />
                   ))}
-                </SegmentedControl>
+                </Tabs>
               </div>
-              <Action secondary asChild>
+              <Action secondary asChild leadingIcon={RiExternalLinkLine}>
                 <Link to={`${DOCS}${TEMPLATE_DOCS[example]}/`}>
                   {text('view')}
                 </Link>
@@ -722,6 +848,7 @@ export default function BloomPage() {
         >
           <Heading
             id="bloom-charts"
+            badge
             title={text('chartsTitle')}
             description={text('chartsDescription')}
           >
@@ -734,7 +861,7 @@ export default function BloomPage() {
           <div className="mt-10 grid w-full grid-cols-1 items-start gap-x-5 gap-y-3 sm:grid-cols-2 sm:gap-5">
             {CHARTS.map((item) => (
               <article
-                className="landing-showcase-card group/card relative overflow-hidden rounded-[28px] border border-border-button-default bg-background-primary-default"
+                className="landing-showcase-card group/card relative h-auto cursor-default overflow-hidden rounded-[28px] border border-transparent bg-background-primary-default [container-type:inline-size] dark:bg-transparent xl:h-auto"
                 key={item.name}
               >
                 <ChartPreview
@@ -749,22 +876,22 @@ export default function BloomPage() {
                           : 465
                   }
                 />
-                <div className="flex flex-col gap-1 px-5 pt-3 pb-5">
+                <div className="relative flex flex-col gap-1 px-5 pt-3 pb-5">
                   <h3 className="text-headline-medium text-text-primary">
                     {item.title}
                   </h3>
-                  <p className="line-clamp-2 text-headline-regular text-pretty text-text-secondary">
-                    {text('chartsDescription')}
+                  <p className="text-headline-regular text-pretty text-text-secondary">
+                    {CHART_CAPTIONS[item.name]}
                   </p>
+                  <Link
+                    className="absolute inset-0 z-50 rounded-b-[25px] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-border-focus-ring"
+                    to={`${DOCS}chart-cards/`}
+                  >
+                    <span className="sr-only">
+                      {text('view')} {item.title}
+                    </span>
+                  </Link>
                 </div>
-                <Link
-                  className="absolute inset-0 z-50 rounded-[25px] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-border-focus-ring"
-                  to={`${DOCS}chart-cards/`}
-                >
-                  <span className="sr-only">
-                    {text('view')} {item.title}
-                  </span>
-                </Link>
               </article>
             ))}
           </div>

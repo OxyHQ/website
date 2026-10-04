@@ -42,6 +42,7 @@ export type BloomDemoName =
   | 'meeting'
   | 'chat'
   | 'loader'
+  | 'loader-feature'
   | 'funnel'
   | 'earnings'
   | 'revenue'
@@ -111,7 +112,13 @@ export default function BloomPreview({
           }
         >
           {ready ? (
-            <BloomDemos name={name} active={visible && !reduce} />
+            <BloomDemos
+              name={name}
+              active={
+                visible &&
+                (!reduce || name === 'loader' || name === 'loader-feature')
+              }
+            />
           ) : (
             <div className="bloom-preview-placeholder" />
           )}

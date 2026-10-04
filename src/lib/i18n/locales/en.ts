@@ -280,7 +280,7 @@ const en = {
     company: 'Company',
     developers: 'Developers',
     resources: 'Resources',
-    bannerDefault: 'Alia. Think better, together.',
+    bannerDefault: 'Meet Bloom, Oxy’s design system.',
   },
 
   // ── Footer ────────────────────────────────────────────────
