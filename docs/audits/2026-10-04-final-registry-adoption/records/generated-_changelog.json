@@ -1,0 +1,902 @@
+{
+  "generatedAt": "2026-10-04T01:53:16.377Z",
+  "repos": [
+    {
+      "owner": "OxyHQ",
+      "name": "website",
+      "displayName": "Website"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "OxyHQServices",
+      "displayName": "Oxy SDK"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Bloom",
+      "displayName": "Bloom"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Mention",
+      "displayName": "Mention"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Allo",
+      "displayName": "Allo"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Alia",
+      "displayName": "Alia"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Homiio",
+      "displayName": "Homiio"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "tnp",
+      "displayName": "TNP"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Astro",
+      "displayName": "Astro"
+    }
+  ],
+  "entries": [
+    {
+      "_id": "gh-402002247",
+      "title": "@oxy.so/bloom@7.1.1",
+      "content": "Fixes disappearing 3D avatars in crowded chats.\n\n- Limits web avatars to four live graphics renderers per document. Other avatars retain their real 3D image and reactivate for pointer interaction and working animations.\n- Releases renderers outside the viewport, in background tabs and on unmount. Caches duplicate appearances and bounds the rendering work per frame.\n- Avoids gallery-wide React updates when one avatar reports its available parts.\n- Adds a 48-avatar Storybook stress example and regression checks for actual graphics-context counts, reactions, work and cleanup.\n\nServe the updated complete `assets/character-runtime` directory with this package: the adapter now imports `managed-avatar.mjs` and `render-budget.mjs`. Update/invalidate cached runtime assets as part of deployment.\n\nInitial preparation of uncached shapes can still be expensive. The four-renderer budget is per web document; native WebViews do not share it across the app. Physical-device validation remains pending.\n\nValidation: browser gates covering 48 mixed avatars (four actual contexts maximum), migrated eyes/accessories/animations, cold reactivation and rapid unmount cleanup; all 512 test suites passing in CI (suite union verified), TypeScript, build and package verification.\n",
+      "tags": [],
+      "date": "2026-10-02T17:00:54Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 402002247,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%407.1.1",
+      "tagName": "@oxy.so/bloom@7.1.1"
+    },
+    {
+      "_id": "gh-401920668",
+      "title": "@oxy.so/bloom@7.1.0",
+      "content": "Bloom 7.1.0 adds a unified 3D avatar editor and improves chat, search and Project Board interactions.\n\n- Original and migrated avatar shapes share the recovered 3D renderer, furry materials, original eyes, eyewear and accessories.\n- Migrated shapes support pointer interaction, the original wave and working animation. Intact presets retain their authored signature reactions.\n- Fixed avatar preparation failures when changing eyes; fitted headwear, Bulb, bow and Tuft to migrated contours.\n- Static silhouettes in the shape wheel avoid mounting extra avatar renderers. The runtime also pauses offscreen rendering, caches static portraits and releases unused resources.\n- Updated the central chat profile header, search motion and Project Board transitions.\n\nThe character runtime assets ship in `assets/character-runtime`. Serve that directory and pass its `runtime.mjs` URL to `AgentAvatarProvider`; see the agent-avatar guide. The optional native WebView bridge has not yet been verified on physical devices.\n\nValidation: focused component and structural tests, geometry checks, real-browser eye/accessory/animation checks, package integrity and consumer type checks.\n",
+      "tags": [],
+      "date": "2026-10-02T15:08:29Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 401920668,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%407.1.0",
+      "tagName": "@oxy.so/bloom@7.1.0"
+    },
+    {
+      "_id": "gh-400483198",
+      "title": "@oxy.so/bloom@7.0.1",
+      "content": "Fixes two issues in the new agent-chat UI:\n\n- Avatar handoff animations pass only plain geometry and the agent id into Reanimated worklets. The rendered drawing stays on the JavaScript side, preventing native runtime serialization failures while preserving the exact avatar frame.\n- Sidebar search mirrors its padding, close control and action transition in right-to-left layouts.\n\nValidation: both repository-wide regression gates and four focused sidebar/avatar suites pass (30 tests). TypeScript and consumer checks pass. Real Chromium checks confirm search layout and interaction in LTR and RTL. Package build and export/freshness verification are part of publication.",
+      "tags": [],
+      "date": "2026-09-30T22:28:34Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 400483198,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%407.0.1",
+      "tagName": "@oxy.so/bloom@7.0.1"
+    },
+    {
+      "_id": "gh-400474782",
+      "title": "@oxy.so/bloom@7.0.0",
+      "content": "Bloom 7 adds Agent Avatar, Agent Creator, Multi Agent Chat and Project Board, with native and web implementations, component guides and Storybook examples.\n\n- Multi Agent Chat reuses Bloom Sidebar, its new searchable toolbar and enriched items, the existing composer, settings, menus and dialogs.\n- Component spacing, shapes, artwork, responsive layouts and interactions follow the shared design while retaining Bloom themes and NativeWind support.\n- Native utility geometry now preserves the same spacing and radii as the web build, including utilities resolved through CSS variables.\n- Locale catalogs cover the new components in all supported languages.\n\nBreaking change: the retired meter component and its public exports are removed. Use the supported Meter or MeterRing primitives from `@oxy.so/bloom/stat-bar` for determinate progress, or StatBar for comparisons.\n\nValidation: all 504 current test suites passed across shards and targeted reruns; package build, export verification, TypeScript and consumer type checks passed. Android and iOS bundles were generated. Browser checks include chat streaming, dialogs, sidebar search and menus, and real pointer dragging in Project Board. Physical-device visual validation remains pending; native dialog transitions approximate the web distortion effect.",
+      "tags": [
+        "Breaking"
+      ],
+      "date": "2026-09-30T22:12:11Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 400474782,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%407.0.0",
+      "tagName": "@oxy.so/bloom@7.0.0"
+    },
+    {
+      "_id": "gh-398732517",
+      "title": "@oxy.so/bloom@6.2.0",
+      "content": "### Features\n- **cover-header:** `CoverHeader`, a cover band with content rising into its bottom edge (a profile's banner and the avatar that overlaps it). The overlap is made by layout: an absolute cover band plus `paddingTop: coverHeight - overlap` on the content. It uses no negative margin, transform or zIndex. `AiProfileCard` is now built on it. (#248)",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-29T00:38:46Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 398732517,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%406.2.0",
+      "tagName": "@oxy.so/bloom@6.2.0"
+    },
+    {
+      "_id": "gh-398699680",
+      "title": "@oxy.so/bloom@6.0.0",
+      "content": "Bloom 6 unifies material, visual scope, controls and motion across the library while preserving the approved subtle glass treatment.\n\n- Shared surface resolution and composited backing for nested surfaces.\n- BloomScope inheritance for control size and semantic tone.\n- Canonical control APIs, field constraints and controlled/uncontrolled selection.\n- Shared motion intents, grouped selection and overlay/screen ownership.\n- Composition stories, browser verification and an import-aware migration tool.\n- Includes the 5.4.1 fix that keeps translated loading screens inside the theme.\n\n## Breaking migration\n\nControlSurface and legacy size/variant aliases are removed. Follow docs/unified-api.mdx and preview the shipped migration tool before writing:\n\n```sh\nnode node_modules/@oxy.so/bloom/scripts/migrations/unify-bloom-api.mjs path/to/app\n```\n\nAmbiguous expressions need manual review and consumer typechecking. This is a major release; update consumers deliberately.\n\n## Validation and limits\n\nBuild, packed exports, build freshness and consumer typechecking pass. All 59 template stories rendered and real-browser composition/pixel checks passed. Current-main integration passed 198 focused tests plus the translated-loading regression suite. All nine CI test shards passed on the final integrated revision. The two suites that hit the documented V8 VM failure locally also passed in CI.\n\nThe 100-post development stress fixture measured a p95 frame interval of 33.4 ms with optical filters versus 16.7–16.8 ms without. Updating one post caused no DOM mutations in its 99 siblings. These are local browser measurements, not production or native performance guarantees.\n\nPR: https://github.com/OxyHQ/Bloom/pull/246\n",
+      "tags": [
+        "Breaking"
+      ],
+      "date": "2026-09-28T23:19:57Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 398699680,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%406.0.0",
+      "tagName": "@oxy.so/bloom@6.0.0"
+    },
+    {
+      "_id": "gh-398695540",
+      "title": "@oxy.so/bloom@5.4.1",
+      "content": "Fix (#245): 5.3.0 and 5.4.0 held a translated first paint on `onFontsLoading` OUTSIDE `BloomThemeProvider`, so an app whose loading screen reads the theme (a Bloom spinner, a themed surface) crashed with `useTheme must be used within a <BloomThemeProvider>` on every non-English cold load. The wait now lives inside the theme, like the font wait.",
+      "tags": [],
+      "date": "2026-09-28T23:10:08Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 398695540,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%405.4.1",
+      "tagName": "@oxy.so/bloom@5.4.1"
+    },
+    {
+      "_id": "gh-398681344",
+      "title": "@oxy.so/bloom@5.4.0",
+      "content": "Applications can compose responsive list/detail panels inside AiChatShell using the public AppShellSplitPanes component. The separated variant provides 12px Bloom gutters, centered pointer and keyboard resize controls, and retained detail state across responsive transitions.\n\nAiChatShell now optionally owns all four native safe-area edges with `safeArea`, including drawer content and BottomBar inset coordination. Standard underline, strikethrough, ordered-list and clear-format editor icons are exported for toolbar composition.\n\nMail rows support the spacious cozy density and optional sender avatars while retaining selection controls. Pointer activation across row content is restored. SettingsModal shares modal keyboard/focus ownership, including Escape handling from React Native inputs and nested controls.\n\nValidation includes package/type/freshness checks, library CI, and Inbox consumer tests, web/Android exports and real-browser navigation/layout/editor checks.\n",
+      "tags": [],
+      "date": "2026-09-28T22:40:15Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 398681344,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%405.4.0",
+      "tagName": "@oxy.so/bloom@5.4.0"
+    },
+    {
+      "_id": "gh-398669547",
+      "title": "@oxy.so/bloom@5.3.0",
+      "content": "An app downloads Bloom's strings in its own language only (#244): English stays inline per family, every other language is one on-demand module. No component API changes; additive `loadBloomLocale`, `LocaleProvider` `fallback`. A non-English first paint waits for its one language chunk behind `onFontsLoading`.",
+      "tags": [],
+      "date": "2026-09-28T22:16:44Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 398669547,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%405.3.0",
+      "tagName": "@oxy.so/bloom@5.3.0"
+    },
+    {
+      "_id": "gh-398614001",
+      "title": "@oxy.so/bloom@5.2.0",
+      "content": "Lean entries so one import does not link a whole family (#241): `@oxy.so/bloom/settings-modal/rows`, `@oxy.so/bloom/chat-people/contact-row`, and the app shell no longer links the AI chat shell. Additive.",
+      "tags": [],
+      "date": "2026-09-28T20:49:49Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 398614001,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%405.2.0",
+      "tagName": "@oxy.so/bloom@5.2.0"
+    },
+    {
+      "_id": "gh-398585939",
+      "title": "@oxy.so/bloom@5.1.1",
+      "content": "Fixes 15 confirmed review findings across chat, controls, payments, places and delivery components.\n\n- Correct browser implementations throughout chat-composer; preserve native mixed-content labels and busy button focus.\n- Restore payment selection and required-field accessibility, amenity expansion and surface colors, and consistent chart/day/period state.\n- Require completed delivery photos, honor required-label overrides and block custom actions when unavailable.\n- Add CI for all tests, build, published exports and consumer types.\n\nIncludes regression tests and real Chrome interaction checks. See #240 for details.\n",
+      "tags": [],
+      "date": "2026-09-28T20:09:25Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 398585939,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%405.1.1",
+      "tagName": "@oxy.so/bloom@5.1.1"
+    },
+    {
+      "_id": "gh-398343492",
+      "title": "@oxy.so/bloom@5.1.0",
+      "content": "## Features\n- **Every Bloom family now speaks the app's language** (#225–#235). Set it once with `BloomProvider locale={…}`. All 15 Bloom languages are covered (en, es, ca, de, fr, it, pt, ru, tr, ja, zh, ar, hi, bn, id), with correct plurals and no English connectors. A family's `labels` / `*Label` props still override any string.\n- **Numbers, money, percentages, file sizes and playback speeds** follow the locale too (#238). German charts read `1.234`, a Spanish price `385.000 €`, a Turkish percentage `%25`, and a French file size `2,4 Mo`. A caller's `format` prop still wins.\n- **New shared helpers** in `src/locale/`: `formatNumber`, `formatCurrency`, `formatPercent`, `formatFileSize`, `formatClock`, `monthNames` and others. They go through `Intl.NumberFormat`, which Hermes implements, and fall back to English formatting.\n- **Two new gates** keep this in place: an English-literal census and a message-catalog check (#224).\n\n## Fixes\n- Calendar dates always use the Gregorian calendar. `fa-IR`/`th-TH` locales used to title a Gregorian grid with Persian or Buddhist years.\n- The mail compose gutter grows to fit its widest label, so Russian and Arabic \"Bcc\" are no longer clipped.\n- Mail day sections keep their own date west of UTC.\n- A count that arrives pre-formatted (\"1,234\", \"٢١\", \"2.1K\") gets the right plural form.\n- Several English plurals are fixed: \"1 minutes\", \"1 files\", \"1 reviews\", \"1 chats\" now read \"1 minute\", \"1 file\", \"1 review\", \"1 chat\".\n\n## Internal\n- `withAlpha`, `clamp`/`clamp01` and clipboard access each have a single copy now.\n\nEnglish output is otherwise unchanged.",
+      "tags": [
+        "Feature",
+        "Bug Fix"
+      ],
+      "date": "2026-09-28T14:44:16Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 398343492,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%405.1.0",
+      "tagName": "@oxy.so/bloom@5.1.0"
+    },
+    {
+      "_id": "gh-398290865",
+      "title": "@oxy.so/bloom@5.0.0",
+      "content": "Bloom now uses shared Surface paint and parent-relative layers across cards, overlays, sidebars, composer panels and media controls. Buttons compose the Bloom Button bases, including social actions and grouped controls. BottomBar is translucent by default without a material variant.\n\nBreaking changes:\n- Replace the old GlassSurface API with Surface or SurfacePaint.\n- Remove BottomBar.material and AppShell.navigationMaterial; BottomBar owns its translucency.\n- Use Card radius, cornerCurve, border and clipContent/contentStyle for geometry and clipping.\n\nThe default Surface material is solid with a shared gradient and rim. Surface and Card can explicitly opt into glass. Nested surfaces derive their backing from their actual parent. Includes the latest main localization and Shapes work.\n\nValidation: 474/474 Jest suites, TypeScript plus consumer typecheck, build and packed-export/freshness checks. Chrome: 24 story/mode combinations, five real-pointer overlay stacking cases and measured BottomBar translucency. Native visuals were not verified on a device.\n",
+      "tags": [
+        "Breaking"
+      ],
+      "date": "2026-09-28T13:43:58Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 398290865,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%405.0.0",
+      "tagName": "@oxy.so/bloom@5.0.0"
+    },
+    {
+      "_id": "gh-398286959",
+      "title": "@oxy.so/bloom@4.35.0",
+      "content": "## Features\n- **text-field:** `TextFieldInput revealable` on a `secureTextEntry` input draws an eye / eye-off button that shows and hides the password (#232).\n  - The button is named \"Show password\" / \"Hide password\" in all 15 Bloom languages and follows `BloomProvider locale` / `LocaleProvider`, or the input's own `locale`. `revealLabels={{ show, hide }}` overrides either name.\n  - Focus stays in the input, so a caller's `onBlur` doesn't run mid-typing. The button dims with a disabled field, reddens with an invalid field or input, and does nothing without `secureTextEntry`.\n  - `TextFieldLabel`'s required asterisk is now named in the locale too.\n\nThis is a 4.x maintenance release cut from `release/4.35.0` (4.34.0 + #232). `main` holds an unreleased breaking change (shapes), which will ship in the next major.\n",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-28T13:39:35Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 398286959,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.35.0",
+      "tagName": "@oxy.so/bloom@4.35.0"
+    },
+    {
+      "_id": "gh-397720919",
+      "title": "@oxy.so/bloom@4.34.0",
+      "content": "## Features\n- **locale:** one catalogue of common words (`COMMON_MESSAGES`, `useCommonMessages`), shared by about 45 families (#223). Close, Dismiss, Back, Loading, More options, Cancel, Search, Show more, Next and Previous now follow `BloomProvider locale` in all 15 Bloom languages. Where a family has its own label prop, that prop still wins.\n  - Previously hard-coded, now translated: `Dialog`'s close, back, overflow menu and \"Step 2 of 5\"; the sheet handle; `Toast`'s close; the `FloatingPanel` and `ComposerPopover` backdrops; \"Loading\" on card skeletons.\n  - Defaults now translated: `Backdrop`, `AlertDialog`, `DropdownMenu`, `Pagination`, `PageHeader`, `Wizard`, `Stepper`, `DataTable`, and the `*Label` defaults of about 25 more families.\n  - A menu's name is joined to its item in each language's own words (\"Más acciones de Ana\"). Before, the English connector stayed (\"Más acciones for Ana\").\n\nEnglish output is unchanged.",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-27T16:23:30Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 397720919,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.34.0",
+      "tagName": "@oxy.so/bloom@4.34.0"
+    },
+    {
+      "_id": "gh-397670425",
+      "title": "@oxy.so/bloom@4.33.0",
+      "content": "## Features\n- **locale:** Bloom now shows its own built-in text in the app's language (#222). Set `BloomProvider locale={...}` once. A component's own `locale` prop wins over it, and with neither set Bloom follows the device or browser language. New `@oxy.so/bloom/locale` subpath: `LocaleProvider`, `useBloomLocale`, `BLOOM_LANGUAGES` (en, es, ca, de, fr, it, pt, ru, tr, ja, zh, ar, hi, bn, id) and `resolveBloomLanguage`.\n- **date-picker:** the first family translated this way. `DatePicker`, `DateRangePicker`, `Calendar`, `RangeCalendar` and `MeetingScheduler` show all their built-in text in all 15 languages, with correct plurals (\"14 días seleccionados\", \"Выбрано 14 дней\"). `labels` still overrides any string.\n\n## Fixes\n- Calendars always format dates in the Gregorian calendar, keeping the locale's language and digits. Before this, a `fa-IR` or `th-TH` locale showed Persian or Buddhist years over a Gregorian grid, so the day on screen didn't match the day the app received.\n- `MeetingScheduler` now says \"1 minute\" instead of \"1 minutes\".\n\n## Behaviour change\n- If an app sets no locale, the date-picker's built-in text follows the device language. This is the same language its month names already used.",
+      "tags": [
+        "Feature",
+        "Bug Fix"
+      ],
+      "date": "2026-09-27T13:56:55Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 397670425,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.33.0",
+      "tagName": "@oxy.so/bloom@4.33.0"
+    },
+    {
+      "_id": "gh-397638450",
+      "title": "@oxy.so/bloom@4.32.0",
+      "content": "## Features\n- **date-picker:** a `labels` prop so every fixed string can be translated (#221, closes #207). `DatePicker` / `DateRangePicker` take `cancel`, `apply`, and the range picker also `daysSelected(n)` (a function, for the app's own plural rules), `startDate`, `endDate` and a partial `presets` map; `Calendar`, `RangeCalendar` and `MeetingScheduler` take `previousMonth` / `nextMonth`. Defaults are unchanged. New types: `CalendarLabels`, `DatePickerLabels`, `DateRangePickerLabels`, `DateRangePreset`.",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-27T12:20:38Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 397638450,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.32.0",
+      "tagName": "@oxy.so/bloom@4.32.0"
+    },
+    {
+      "_id": "gh-397603392",
+      "title": "@oxy.so/bloom@4.31.0",
+      "content": "- `InputOtp` gets `type=\"alphanumeric\"` for codes with letters (upper-cased, A-Z/0-9, a pasted `XXXXX-XXXXX` fills every box, letters keyboard), boxes narrow to fit a phone, and a paste with its separator arrives whole. `cleanInputOtpValue` exported. (#218)",
+      "tags": [],
+      "date": "2026-09-27T10:28:45Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 397603392,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.31.0",
+      "tagName": "@oxy.so/bloom@4.31.0"
+    },
+    {
+      "_id": "gh-397589312",
+      "title": "@oxy.so/bloom@4.29.2",
+      "content": "Carousel: one list of distinct stops drives the arrows, dots, snaps and active slide — no dead dots with narrow slides, and the active slide honours inset/centring (#216, #217).",
+      "tags": [],
+      "date": "2026-09-27T09:43:56Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 397589312,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.29.2",
+      "tagName": "@oxy.so/bloom@4.29.2"
+    },
+    {
+      "_id": "gh-397506545",
+      "title": "@oxy.so/bloom@4.29.1",
+      "content": "Carousel: the arrows step from where the track is, so Previous works from the end (#215).",
+      "tags": [],
+      "date": "2026-09-27T04:19:17Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 397506545,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.29.1",
+      "tagName": "@oxy.so/bloom@4.29.1"
+    },
+    {
+      "_id": "gh-397473627",
+      "title": "@oxy.so/bloom@4.29.0",
+      "content": "Carousel: `header` shares the arrows row; `inset` pads the track and snaps slides to it (#214).",
+      "tags": [],
+      "date": "2026-09-27T02:12:16Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 397473627,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.29.0",
+      "tagName": "@oxy.so/bloom@4.29.0"
+    },
+    {
+      "_id": "gh-397027814",
+      "title": "@oxy.so/bloom@4.28.0",
+      "content": "### Theme\n- **The `oxy` preset renders the Oxy logo's own scheme** (#213)\n  - Magenta secondary (`#8f3987`) and terracotta tertiary (`#a0392b`) replace the derived teal and lime accents.\n  - The page and surfaces are plum/pink.\n- **New optional preset field `tokens: { light?, dark? }`**: hand-authored `#rrggbb` values per canonical token that win over the engine.\n  - Only `oxy` uses it.\n  - Text roles, borders and status fills stay derived, so they stay at AA.\n  - An app-wide `secondaryColor`/`tertiaryColor` still overrides the authored accent.\n\n### Tooling\n- Storybook's dev server ignores `.worktrees/` (fixes an inotify ENOSPC crash).",
+      "tags": [],
+      "date": "2026-09-26T01:53:57Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 397027814,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.28.0",
+      "tagName": "@oxy.so/bloom@4.28.0"
+    },
+    {
+      "_id": "gh-397023358",
+      "title": "@oxy.so/bloom@4.27.0",
+      "content": "Brand icons: `RiMastodonFill`, `RiThreadsFill`, `RiInstagramFill` and `RiMediumFill` (Remix), plus `SiSubstack` (Simple Icons, CC0) at `@oxy.so/bloom/icons/SiSubstack`. (#212)",
+      "tags": [],
+      "date": "2026-09-26T01:40:09Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 397023358,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.27.0",
+      "tagName": "@oxy.so/bloom@4.27.0"
+    },
+    {
+      "_id": "gh-396939259",
+      "title": "@oxy.so/bloom@4.26.0",
+      "content": "FollowButton takes `accessibilityLabel` and `accessibilityHint` overrides, so a caller can name it by state (\"Following @nate\") (#211, OxyHQ/oxy#1375 item 22).",
+      "tags": [],
+      "date": "2026-09-25T21:31:47Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396939259,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.26.0",
+      "tagName": "@oxy.so/bloom@4.26.0"
+    },
+    {
+      "_id": "gh-396801034",
+      "title": "@oxy.so/bloom@4.25.1",
+      "content": "* fix(composer-panel): the permission chip grows with the system font instead of clipping its label (#210) (4e21d30)",
+      "tags": [
+        "Bug Fix"
+      ],
+      "date": "2026-09-25T17:30:57Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396801034,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.25.1",
+      "tagName": "@oxy.so/bloom@4.25.1"
+    },
+    {
+      "_id": "gh-396707203",
+      "title": "@oxy.so/bloom@4.25.0",
+      "content": "Native AI chat fixes from the Android pass (#209): drawer puts the keyboard away on open (and Android back closes it — test); ContextMenu long press no longer blocks a horizontal ScrollView inside the trigger; composer model chip truncates instead of displacing + and voice, and grows at large fonts; native prompt sizes to a value set from outside; composer popover clamps to the safe area; AiChatThread keeps following a streamed answer and reports unfollowed growth through onScroll; bottom Dialog folds its gesture-bar spacer under the keyboard; settings pages scroll the focused field above the keyboard; sidebar rows grow with the system font.",
+      "tags": [],
+      "date": "2026-09-25T15:07:10Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396707203,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.25.0",
+      "tagName": "@oxy.so/bloom@4.25.0"
+    },
+    {
+      "_id": "gh-396680353",
+      "title": "@oxy.so/bloom@4.24.1",
+      "content": "fix(worklets): no mapper copies app data to the UI runtime, so a sidebar tree holding a Date no longer crashes native (#208)",
+      "tags": [
+        "Bug Fix"
+      ],
+      "date": "2026-09-25T14:31:16Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396680353,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.24.1",
+      "tagName": "@oxy.so/bloom@4.24.1"
+    },
+    {
+      "_id": "gh-396646248",
+      "title": "@oxy.so/bloom@4.24.0",
+      "content": "* fix(a11y): modal surfaces own the keyboard on web, and the chat header never shows a turn through it (#206)",
+      "tags": [
+        "Bug Fix"
+      ],
+      "date": "2026-09-25T13:47:23Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396646248,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.24.0",
+      "tagName": "@oxy.so/bloom@4.24.0"
+    },
+    {
+      "_id": "gh-396583819",
+      "title": "@oxy.so/bloom@4.23.0",
+      "content": "* perf(composer): the web autosize collapses the field only when the draft may have shrunk (#205). Typing and pasting no longer collapse the field; ComposerPill now shrinks back on web after a deletion or a cleared draft.",
+      "tags": [],
+      "date": "2026-09-25T12:26:32Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396583819,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.23.0",
+      "tagName": "@oxy.so/bloom@4.23.0"
+    },
+    {
+      "_id": "gh-396569033",
+      "title": "@oxy.so/bloom@4.22.2",
+      "content": "### Fixes\n- **sidebar:** a collapsed row keeps its badge — it fades in off the icon's top-end corner, small and capped at `99+`, instead of disappearing with the label. New optional `collapsedBadge` prop on `SidebarItem`. (#204)",
+      "tags": [
+        "Bug Fix"
+      ],
+      "date": "2026-09-25T12:04:03Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396569033,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.22.2",
+      "tagName": "@oxy.so/bloom@4.22.2"
+    },
+    {
+      "_id": "gh-396559653",
+      "title": "@oxy.so/bloom@4.22.0",
+      "content": "- feat(ai-chat): panel controls render only when they can act (#202)",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-25T11:48:35Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396559653,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.22.0",
+      "tagName": "@oxy.so/bloom@4.22.0"
+    },
+    {
+      "_id": "gh-396553597",
+      "title": "@oxy.so/bloom@4.21.1",
+      "content": "The Dialog nav bar now paints its own background on native: an SVG scrim that is solid across the nav row and fades below it. The old Tailwind gradient compiled to an 'in oklab' CSS gradient that React Native cannot parse, so the collapsed title overlapped rows scrolling under it. See #200 and OxyHQ/oxy#1375 item 12.",
+      "tags": [],
+      "date": "2026-09-25T11:38:18Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396553597,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.21.1",
+      "tagName": "@oxy.so/bloom@4.21.1"
+    },
+    {
+      "_id": "gh-396532914",
+      "title": "@oxy.so/bloom@4.21.0",
+      "content": "Native type-scale line-heights are unitless ratios, so text-body renders at 22 and not 330 on Android. Bottom-placement Dialogs clear the gesture bar. A header row holding only the close button shares its row with the large title. AccordionTrigger labels keep their natural width, and Button targets reach 48dp on Android. See #199 and OxyHQ/oxy#1375.",
+      "tags": [],
+      "date": "2026-09-25T11:03:19Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396532914,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.21.0",
+      "tagName": "@oxy.so/bloom@4.21.0"
+    },
+    {
+      "_id": "gh-396496404",
+      "title": "@oxy.so/bloom@4.20.0",
+      "content": "* Merge pull request #198 from OxyHQ/feat/ai-chat-turn-actions (8d97b0a)\n* feat(ai-chat): turn actions, a copy that confirms only once it happened, and failed attachment tiles (e841805)",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-25T10:01:06Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396496404,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.20.0",
+      "tagName": "@oxy.so/bloom@4.20.0"
+    },
+    {
+      "_id": "gh-396473431",
+      "title": "@oxy.so/bloom@4.19.1",
+      "content": "- fix(input-otp): typing into a filled box replaces its digit on Android (#197)",
+      "tags": [
+        "Bug Fix"
+      ],
+      "date": "2026-09-25T09:25:25Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396473431,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.19.1",
+      "tagName": "@oxy.so/bloom@4.19.1"
+    },
+    {
+      "_id": "gh-396257492",
+      "title": "@oxy.so/bloom@4.19.0",
+      "content": "* fix(rating): numeric `fillValue` and locale-robust parse (bidi marks, comma / Arabic decimal, Arabic-Indic digits) for `variant=\"stars\"` (#196)",
+      "tags": [
+        "Bug Fix"
+      ],
+      "date": "2026-09-25T03:05:42Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396257492,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.19.0",
+      "tagName": "@oxy.so/bloom@4.19.0"
+    },
+    {
+      "_id": "gh-396238466",
+      "title": "@oxy.so/bloom@4.18.1",
+      "content": "Android QA fixes from OxyHQ/Mention#1126 (items 4, 6, 7, 11, 12): hardware back on portaled surfaces through `OverlayRoot onRequestClose`, the settings modal back in the accessibility tree (zero-height centring box from the removed `StyleSheet.absoluteFillObject`), `OverlayRoot modal`, gallery chrome inside the safe area, Search select-on-focus without dropped keystrokes, and a compact Select trigger recipe that does not clip. PR #194.",
+      "tags": [],
+      "date": "2026-09-25T02:34:38Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396238466,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.18.1",
+      "tagName": "@oxy.so/bloom@4.18.1"
+    },
+    {
+      "_id": "gh-396233046",
+      "title": "@oxy.so/bloom@4.18.0",
+      "content": "* feat: commerce gaps from the Mercaria migration — RTL breadcrumb separator, checkbox Chip, Stepper remove at min, Rating colour + five-star variant, Dialog start/end placement, secondary amounts on price-breakdown / cart-panel / checkout-summary, Loading accessibilityLabel (#193)",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-25T02:21:48Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396233046,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.18.0",
+      "tagName": "@oxy.so/bloom@4.18.0"
+    },
+    {
+      "_id": "gh-396167301",
+      "title": "@oxy.so/bloom@4.17.0",
+      "content": "## What's Changed\n* fix: native tab viewport sizing and overlay header layer (4.5.1) by @NateIsern in https://github.com/OxyHQ/Bloom/pull/171\n* feat(icons): an app's own icon set reaches a Bloom icon slot, and follows the state by @NateIsern in https://github.com/OxyHQ/Bloom/pull/173\n* fix(app-shell): a plain content-aligned shell is flush on native too by @NateIsern in https://github.com/OxyHQ/Bloom/pull/192\n\n\n**Full Changelog**: https://github.com/OxyHQ/Bloom/compare/@oxy.so/bloom@4.16.1...@oxy.so/bloom@4.17.0",
+      "tags": [
+        "Feature",
+        "Bug Fix"
+      ],
+      "date": "2026-09-24T23:55:34Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396167301,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.17.0",
+      "tagName": "@oxy.so/bloom@4.17.0"
+    },
+    {
+      "_id": "gh-396155780",
+      "title": "@oxy.so/bloom@4.16.1",
+      "content": "* fix(tab-bar): one tap is one selection on web (#191)",
+      "tags": [
+        "Bug Fix"
+      ],
+      "date": "2026-09-24T23:31:22Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396155780,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.16.1",
+      "tagName": "@oxy.so/bloom@4.16.1"
+    },
+    {
+      "_id": "gh-396149804",
+      "title": "@oxy.so/bloom@4.16.0",
+      "content": "* feat(app-shell): mirror AppShell, Sidebar and BottomBar for right-to-left layouts, and make every built-in label overridable (#190)",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-24T23:20:02Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396149804,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.16.0",
+      "tagName": "@oxy.so/bloom@4.16.0"
+    },
+    {
+      "_id": "gh-396070096",
+      "title": "@oxy.so/bloom@4.15.0",
+      "content": "feat(web-search): a source can show its site's favicon (#189)",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-24T20:52:06Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 396070096,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.15.0",
+      "tagName": "@oxy.so/bloom@4.15.0"
+    },
+    {
+      "_id": "gh-395787755",
+      "title": "@oxy.so/bloom@4.14.1",
+      "content": "fix(ai-chat): a closed drawer is inert, so its controls leave the tab order (#188)",
+      "tags": [
+        "Bug Fix"
+      ],
+      "date": "2026-09-24T14:46:20Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 395787755,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.14.1",
+      "tagName": "@oxy.so/bloom@4.14.1"
+    },
+    {
+      "_id": "gh-395660145",
+      "title": "@oxy.so/bloom@4.14.0",
+      "content": "Controls take no text selection on web (base rule adopted by the theme provider); breadcrumb and web-search trail not selectable; AiChatMessageLine `selectable` (#187).",
+      "tags": [],
+      "date": "2026-09-24T12:28:01Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 395660145,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.14.0",
+      "tagName": "@oxy.so/bloom@4.14.0"
+    },
+    {
+      "_id": "gh-395633454",
+      "title": "@oxy.so/bloom@4.13.3",
+      "content": "AI Chat: the document card has no edge, like the template's card (#186).",
+      "tags": [],
+      "date": "2026-09-24T12:00:19Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 395633454,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.13.3",
+      "tagName": "@oxy.so/bloom@4.13.3"
+    },
+    {
+      "_id": "gh-395569542",
+      "title": "@oxy.so/bloom@4.13.2",
+      "content": "AI Chat: a document-scrolled card is a ContentPanel — its mask, radius and edge (#185).",
+      "tags": [],
+      "date": "2026-09-24T10:35:12Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 395569542,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.13.2",
+      "tagName": "@oxy.so/bloom@4.13.2"
+    },
+    {
+      "_id": "gh-395562145",
+      "title": "@oxy.so/bloom@4.13.1",
+      "content": "AI Chat: the conversation is one layer under the chrome and the document frame (#184).",
+      "tags": [],
+      "date": "2026-09-24T10:23:36Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 395562145,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.13.1",
+      "tagName": "@oxy.so/bloom@4.13.1"
+    },
+    {
+      "_id": "gh-395074918",
+      "title": "@oxy.so/bloom@4.9.0",
+      "content": "* feat(ai-chat): `floatingChrome` — the transcript scrolls behind the header and the composer (#179)",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-23T21:29:51Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 395074918,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.9.0",
+      "tagName": "@oxy.so/bloom@4.9.0"
+    },
+    {
+      "_id": "gh-395062532",
+      "title": "@oxy.so/bloom@4.8.0",
+      "content": "* feat(settings-modal): `upload={false}` makes the Storage page a read-only store (#178)",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-23T21:10:41Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 395062532,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.8.0",
+      "tagName": "@oxy.so/bloom@4.8.0"
+    },
+    {
+      "_id": "gh-395048221",
+      "title": "@oxy.so/bloom@4.7.0",
+      "content": "* feat(composer-panel): `emptyAction`, the pill's slot for a voice button, on the panel too (#177)",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-09-23T20:50:18Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 395048221,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%404.7.0",
+      "tagName": "@oxy.so/bloom@4.7.0"
+    },
+    {
+      "_id": "gh-345863387",
+      "title": "Oxy ID v1.0 — self-sovereign civic identity + decentralization",
+      "content": "# Oxy ID — self-sovereign civic identity + decentralization\n\nThis milestone turns **Commons by Oxy** into a citizen-identity app (\"Oxy ID\") with cryptographically-owned, verifiable reputation, and lays the foundation for user-run data nodes. The civic engine lives in `oxy-api`; ownership comes from **cryptography** (per-user hash-chained signed records) — Oxy is the fast read copy, the user owns the truth.\n\nFull technical documentation: [`docs/`](./docs/) · chronological detail: [`docs/CHANGELOG.md`](./docs/CHANGELOG.md).\n\n## Identity foundation (F0–F1)\n- **`did:web:api.oxy.so:u:<id>`** account-anchored DIDs (custodial ↔ self-sovereign, reversible via `authMethods`).\n- **Signed records v2** — a per-subject hash chain (`version/seq/prev/collection/rkey`, `RepoHead` O(1) head, shared `canonicalize`/`signedRecordSigningInput`). `verifyEnvelope` branches self-issued / Oxy-custodial / untrusted.\n- **Oxy Trust reputation** — crypto-owned via Oxy-signed attestations; users never self-award.\n\n## Anti-gaming + personhood + credentials (F2–F4)\n- **Real-life QR attestation** (HIGH) + **random validator jury** (weighted-reservoir selection, graph/device/IP exclusion, slashing).\n- **Proof-of-personhood** — web-of-trust vouches + staking + sybil clustering + random audits + on-device biometric (`evidence = 0.50·vouch + 0.35·real-life + 0.15·biometric`, θ=0.6 → verified tier).\n- **Verifiable credentials** — issue / verify-against-current-issuer-VM / revoke.\n\n## Decentralization — user nodes (F5)\n- **`@oxyhq/node`** — self-hostable data-node server (signed-record log + blobs, reuses `@oxyhq/core` verification).\n- **Oxy↔node**: public signed-log export; background **ingest** that re-verifies every record (signature + owner-DID + chain), **LWW** per `(collection,rkey)`, keeps forks, and **Oxy counter-signs** each ingested record (anti-rewrite witness).\n- **Managed vault** — Oxy operates a node for non-technical users (custodial `controller:'oxy'`).\n- **Invariant: reads NEVER touch a node** — a node down is stale, never slow.\n\n## Product + SDK\n- Clean rename **DNI → \"Oxy ID\"** everywhere; Commons nav restructured (merged ID landing, scan FAB, 3 tabs).\n- App-wide clean UI pass (Apple/World App aesthetic) + redesigned Reputation screen.\n- `@oxyhq/core` mixins: `identity`, `civic`, `reputation`, `nodes`. Full Commons UI for all of the above. **i18n en/es at 100% parity.**\n\n## Notes\n- npm packages are **not** published in this release (the SDK is consumed in-repo via `workspace:*`; civic/node contracts stay internal until the surface stabilizes).\n- Deferred (infra): managed-vault container orchestration; seed personhood verifiers; karma→reputation migration; `REC_SCORING_V2`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n",
+      "tags": [],
+      "date": "2026-06-28T07:59:02Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 345863387,
+      "repoOwner": "OxyHQ",
+      "repoName": "OxyHQServices",
+      "repoDisplayName": "Oxy SDK",
+      "htmlUrl": "https://github.com/OxyHQ/oxy/releases/tag/oxy-id-v1.0",
+      "tagName": "oxy-id-v1.0"
+    },
+    {
+      "_id": "gh-305356646",
+      "title": "TNP Client v0.2.0",
+      "content": "TNP Client v0.2.0 — overlay network with encrypted tunnels\n\n**Install (one command):**\n```bash\n# macOS / Linux\ncurl -fsSL https://get.tnp.network | sh\n\n# Windows (PowerShell)\nirm https://get.tnp.network/ps | iex\n```\n\n**Platforms:** linux-x64, linux-arm64, darwin-x64, darwin-arm64, windows-x64\n\n**What's new:**\n- Interactive CLI menu (`tnp` with no args)\n- Overlay network: SOCKS5 proxy + encrypted WebSocket tunnels\n- Service node mode (`tnp serve`)\n- Become a relay node from the menu\n- Cross-platform installer scripts\n",
+      "tags": [],
+      "date": "2026-04-05T01:18:24Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 305356646,
+      "repoOwner": "OxyHQ",
+      "repoName": "tnp",
+      "repoDisplayName": "TNP",
+      "htmlUrl": "https://github.com/OxyHQ/tnp/releases/tag/v0.2.0",
+      "tagName": "v0.2.0"
+    },
+    {
+      "_id": "gh-302179662",
+      "title": "TNP Client v0.1.0",
+      "content": "TNP DNS resolver daemon v0.1.0\n\n**Install:**\n```\n# macOS / Linux\ncurl -fsSL https://tnp.network/install.sh | sh\n\n# Windows (PowerShell as Administrator)\nirm https://tnp.network/install.ps1 | iex\n```\n",
+      "tags": [],
+      "date": "2026-03-27T02:51:32Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 302179662,
+      "repoOwner": "OxyHQ",
+      "repoName": "tnp",
+      "repoDisplayName": "TNP",
+      "htmlUrl": "https://github.com/OxyHQ/tnp/releases/tag/v0.1.0",
+      "tagName": "v0.1.0"
+    }
+  ]
+}
