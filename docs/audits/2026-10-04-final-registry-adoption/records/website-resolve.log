@@ -1,0 +1,9 @@
+bun install v1.3.14 (0d9b296a)
+Resolving dependencies
+Resolved, downloaded and extracted [17]
+warn: incorrect peer dependency "react-native-gesture-handler@3.0.2"
+
+warn: incorrect peer dependency "@react-native-async-storage/async-storage@3.1.1"
+Saved lockfile
+
+Checked 2138 installs across 1583 packages (no changes) [739.00ms]

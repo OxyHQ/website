@@ -1,0 +1,177 @@
+{
+  "source": "ce8a96ef04cc7c7c28faca379d3529d0ae360c9b",
+  "sources": [
+    {
+      "path": "bun.lock",
+      "sha256": "b89e15bc7b216fea5a33191fd3d1beffdbdd203295ecef02764c81d305e4c436"
+    },
+    {
+      "path": "package.json",
+      "sha256": "5c762b24c46f967621180b23f71b10b7e25582e2f00853d0714434ba4a4aee38"
+    },
+    {
+      "path": "scripts/kaana-brand.test.ts",
+      "sha256": "3723f959999fcacb8c4cc43193a97aaea8ec90aa02debfa82a0f149ed6298090"
+    },
+    {
+      "path": "src/content/bloom-catalog-props/bottom-sheet.ts",
+      "sha256": "08a85cac9d33a6773ca53505644d7eff762f6e0c589bf52fd8f31a7c0ff9d6c1"
+    },
+    {
+      "path": "src/content/bloom-catalog.generated.ts",
+      "sha256": "19385ebdfa1fcdfc1791511423a3ff4a0a138342d43cebd623c067a2ca0e66b8"
+    }
+  ],
+  "records": [
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/bloom-final-importers.json",
+      "sha256": "fbe5a12802f7c359be8bfa89deba5c0a67175735711798ec86423acf0c93c3e9",
+      "bytes": 345
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/build-final.log",
+      "sha256": "15c48ab035fb5b1e3b8488ab5f9d7522fbff33918efa743189b50b558bbe828b",
+      "bytes": 906065
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/build.log",
+      "sha256": "3c4339347658a4f6bf5ea4eff88cd02f018282e84a1457a1dcf0a4471817af40",
+      "bytes": 26845
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/checks-build-final.json",
+      "sha256": "06cc97c739cfb2d6e62b11e49dc6adb247edd0ea1341c3262770eebbcf31373a",
+      "bytes": 357
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/checks-final.json",
+      "sha256": "72cd179cba37876eb01d73451617791450fcd844ce970b84e3342b813dc5f04d",
+      "bytes": 463
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/contracts-registry.json",
+      "sha256": "fb1ded2797bdbd0ca31460f3cba087f078a86dc201365c923da9fcc23b07ed7b",
+      "bytes": 380
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/core-registry.json",
+      "sha256": "99b7f8a1cc87cf46ff54b3113a1911a938f39b4f086537e0a4138ee38dd035b7",
+      "bytes": 375
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/failed.json",
+      "sha256": "e45a08861b705a4bd04a1ac5bec7dfdc902621991070d99debf9062f9e6cfe3d",
+      "bytes": 89
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/generated-_changelog.json",
+      "sha256": "4d263d5bb4fdf77bf39ea408a7bc394f3b9bc3c02a4d05af32a4c5d6840ccebb",
+      "bytes": 50864
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/generated-_synced.json",
+      "sha256": "5c9b83cbeb0a8b4a8abb6ca7c5e75aa67a211ccf38ab6279ec2f2ae8636163a8",
+      "bytes": 823126
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/intent.json",
+      "sha256": "d5bb80a7f397e8dac0b7bdba22980b2635abeb227c3339b7bf86a6e55f23b764",
+      "bytes": 151
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/kaana-brand-green.log",
+      "sha256": "bee15b09356e3733b90c495b5d5e88b746cc9325984f1e239cfab19a83d18526",
+      "bytes": 389
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/local-build-final.json",
+      "sha256": "417b7540c40337f99bd3d2464ae3e5c8da153b9cf89b82a1fb82bcdcb755291b",
+      "bytes": 158
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/local-final-checks.json",
+      "sha256": "1ea67a3f221a12bca2a052bc73ea9a614431dccb9d3639fcacff21d1458ebb99",
+      "bytes": 302
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/materialization-frozen.log",
+      "sha256": "48954f892c4920a06a6dc8fd524c3a44f29c678ac10db50926ac3a026ec75cfc",
+      "bytes": 111
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/materialization-repair-intent.json",
+      "sha256": "afabd3a72f9f5b908def6c17f75f447fe44ac6798dbf42108419388820eddd22",
+      "bytes": 2448
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/mcp-registry.json",
+      "sha256": "cc279f4f5b1ca68041f6f0d3583e4d9dc218bd7c0b77846207aa3b981086d7ac",
+      "bytes": 373
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/preflight.json",
+      "sha256": "d68d4fe9d65e2dfdcfa2fd7cfd8cc8c760f9357d24278da002d4aecedafd8337",
+      "bytes": 252
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/protocol-registry.json",
+      "sha256": "cc0b427dca92d55ea5e1debe7e76580618a26f997b2c888b8484537b64b70bbd",
+      "bytes": 379
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/registry.json",
+      "sha256": "a39da224fafeec388f0ac27e08ea13cf666427a0177b67f7b077c65cadb59df0",
+      "bytes": 415373
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/services-registry.json",
+      "sha256": "444599f0eb56d104d64c288ed3a6544163e54430c0f275c2feec219d5f624611",
+      "bytes": 381
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/theme-final.log",
+      "sha256": "97850fb1e8c54027d168baddc2f0b578a665931aa7aebfb23b8a842913499efc",
+      "bytes": 1133
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/theme.log",
+      "sha256": "f93a7366a0b864b19b0851e2971ede32363daed0e72789a74946d98488360aeb",
+      "bytes": 1134
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/verify-bloom.py",
+      "sha256": "41c199a4d2e8e6113b926244b222d0217fe37691aabe41d64e60ca7efee5001f",
+      "bytes": 1314
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/website-frozen.log",
+      "sha256": "80291769be863767d44d76ba65ff2f9d4147ba050c3977f713c91bbb2a70dd0f",
+      "bytes": 98
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/website-installed.json",
+      "sha256": "44600d6fb1d53f9c41b24d104f8706e195f5c8a4483f43e4bd9ec92274f710bf",
+      "bytes": 1311
+    },
+    {
+      "path": "docs/audits/2026-10-04-final-registry-adoption/records/website-resolve.log",
+      "sha256": "483034b3c576404f12f7b98fa3f227a4a64817961fa62e434dfcf988b1a55f04",
+      "bytes": 329
+    }
+  ],
+  "validation": {
+    "sdkImporterMembers": 3238,
+    "bloomImporterMembers": 21941,
+    "canonicalBuild": "passed",
+    "bloomDemos": 17,
+    "kaanaBrandTests": 3,
+    "browserThemeDocsLanding": "passed"
+  },
+  "limits": [
+    "Published registry archives and installed members were compared byte for byte. Same-version stale candidate materializations and the first failing frozen/setup runs remain recorded.",
+    "Fresh main 07c01d7 was merged without dropping its Bloom landing/demos. Its expanded image exclusion caused an obsolete literal-string test failure; the test now checks actual Kaana exclusion behavior while preserving canonical SVG byte checks. Runtime image processing was not changed.",
+    "Full canonical build included tsc -b, Vite, prerender, Pagefind, routing/CSP checks and browser theme/docs/17-demo/landing checks. This is local website behavior, not deployed authentication acceptance.",
+    "Generated changelog and synced-doc index refreshes were retained privately and restored to the source baseline after build; generated Bloom catalog version/props changes are included.",
+    "No production database, provider writes, grants, credentials or auth fixtures were changed. Required CI and root promotion remain separate."
+  ]
+}

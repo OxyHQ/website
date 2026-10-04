@@ -1,18 +1,40 @@
 name: Deploy to Cloudflare Pages
 
 on:
+  workflow_dispatch:
+    inputs:
+      expected_sha:
+        description: Exact reviewed current main SHA
+        required: true
+        type: string
+      ci_run_id:
+        description: Successful push CI run for this exact main SHA
+        required: true
+        type: string
   push:
     branches: [main]
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/main' && vars.OXY_1519_ROLLOUT_HOLD != 'true'
     runs-on: ubuntu-latest
     environment: production
     permissions:
       contents: read
       deployments: write
+      actions: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Verify manual release source and CI
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+          EXPECTED_CI_RUN_ID: ${{ inputs.ci_run_id }}
+          EXPECTED_CI_WORKFLOW: .github/workflows/checks.yml
+          OXY_1519_ROLLOUT_HOLD: ${{ vars.OXY_1519_ROLLOUT_HOLD }}
+        run: python3 .github/scripts/verify-manual-frontend.py
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
@@ -52,6 +74,16 @@ jobs:
       # publishes nothing. Pinned to a major so the deploy path cannot change with
       # no diff to show for it; wrangler reads its credentials from the
       # environment, hence `env:`.
+      - name: Verify manual release source and CI
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+          EXPECTED_CI_RUN_ID: ${{ inputs.ci_run_id }}
+          EXPECTED_CI_WORKFLOW: .github/workflows/checks.yml
+          OXY_1519_ROLLOUT_HOLD: ${{ vars.OXY_1519_ROLLOUT_HOLD }}
+        run: python3 .github/scripts/verify-manual-frontend.py
+
       - run: bunx wrangler@4 pages deploy dist --project-name=oxy-website --branch=main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

@@ -1,0 +1,13 @@
+[
+  {
+    "name": "build-final",
+    "cwd": ".",
+    "argv": [
+      "bun",
+      "run",
+      "build"
+    ],
+    "exitCode": 0,
+    "seconds": 299.933
+  }
+]

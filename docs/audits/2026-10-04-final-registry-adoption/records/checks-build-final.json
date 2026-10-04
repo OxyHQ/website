@@ -1,0 +1,15 @@
+{
+  "worktree": "/home/nate/Oxy/website/.worktrees/1519-final-sdk-adoption-20261003",
+  "output": "/home/nate/Oxy/.agent-evidence/i04-consumer-final-prs/registry-website-current-20261004",
+  "receipt": "local-build-final.json",
+  "jobs": [
+    {
+      "name": "build-final",
+      "argv": [
+        "bun",
+        "run",
+        "build"
+      ]
+    }
+  ]
+}

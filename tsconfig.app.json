@@ -25,5 +25,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  // Synced repository documentation contains preserved foreign source fixtures.
+  // It is content, not website compilation input; imported app code remains checked.
+  "exclude": ["src/content/_synced"]
 }
