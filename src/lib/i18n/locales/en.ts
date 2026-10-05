@@ -17,7 +17,7 @@
  * ──────────────────────────────────────────── */
 
 const en = {
-  one: {"credits": "credits", "title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version", "monthly": "per month", "billingTerms": "No trial. Monthly only; no annual plan."},
+  one: {"credits": "credits", "title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version", "monthly": "per month", "billingTerms": "No trial. Monthly only; no annual plan.", "taxInclusive": "Final price, including applicable purchase taxes."},
 
 
   bloom: {

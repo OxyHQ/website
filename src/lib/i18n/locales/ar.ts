@@ -1,7 +1,7 @@
 import en, { type Translations } from './en'
 
 const ar: Translations = {
-  one: {"credits": "credits", "title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version", "monthly": "شهريًا", "billingTerms": "لا توجد فترة تجريبية. اشتراك شهري فقط؛ لا توجد خطة سنوية."},
+  one: {"credits": "credits", "title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version", "monthly": "شهريًا", "billingTerms": "لا توجد فترة تجريبية. اشتراك شهري فقط؛ لا توجد خطة سنوية.", "taxInclusive": "السعر النهائي، شامل ضرائب الشراء المطبّقة."},
 
   bloom: {
     board: {"backlog": "قائمة الانتظار", "todo": "للتنفيذ", "inProgress": "قيد التنفيذ", "inReview": "قيد المراجعة", "done": "مكتمل"},

@@ -28,6 +28,7 @@ export default function OnePage() {
                 return formatter.format(plan.price.amountMinorUnits / 10 ** digits)
               })()}</span> <span className="text-base font-normal text-muted-foreground">{t('one.monthly')}</span></p>
               <p className="mt-2 text-sm text-muted-foreground">{t('one.billingTerms')}</p>
+              {plan.price.taxTreatment === 'inclusive' && plan.price.merchantTotal === 'final' && <p data-testid="one-tax-terms" className="mt-2 text-sm text-muted-foreground">{t('one.taxInclusive')}</p>}
             </div>}
             <p className="mt-2 text-sm text-muted-foreground">{t('one.version')} {plan.offerVersion}</p>
             <ul className="mt-5 space-y-3">{plan.benefits.map((entry, index) => <li key={index}>

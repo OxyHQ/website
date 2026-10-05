@@ -4,7 +4,7 @@ import en, { type Translations } from './en'
 const id: Translations = {
 
   ...en,
-  one: { ...en.one, monthly: "per bulan", billingTerms: "Tanpa masa uji coba. Hanya bulanan; tanpa paket tahunan." },
+  one: { ...en.one, monthly: "per bulan", billingTerms: "Tanpa masa uji coba. Hanya bulanan; tanpa paket tahunan.", taxInclusive: "Harga akhir, termasuk pajak pembelian yang berlaku." },
   bloom: {
     board: {"backlog": "Daftar tertunda", "todo": "Akan dikerjakan", "inProgress": "Sedang dikerjakan", "inReview": "Dalam peninjauan", "done": "Selesai"},
     "seoTitle": "Bloom UI, sistem desain React untuk semua platform",

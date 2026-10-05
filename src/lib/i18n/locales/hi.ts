@@ -4,7 +4,7 @@ import en, { type Translations } from './en'
 const hi: Translations = {
 
   ...en,
-  one: { ...en.one, monthly: "प्रति माह", billingTerms: "कोई परीक्षण अवधि नहीं। केवल मासिक; कोई वार्षिक योजना नहीं।" },
+  one: { ...en.one, monthly: "प्रति माह", billingTerms: "कोई परीक्षण अवधि नहीं। केवल मासिक; कोई वार्षिक योजना नहीं।", taxInclusive: "अंतिम कीमत, जिसमें लागू खरीद कर शामिल हैं।" },
   bloom: {
     board: {"backlog": "लंबित कार्य", "todo": "करना है", "inProgress": "प्रगति में", "inReview": "समीक्षा में", "done": "पूरा हुआ"},
     "seoTitle": "Bloom UI, हर प्लेटफ़ॉर्म के लिए React डिज़ाइन सिस्टम",

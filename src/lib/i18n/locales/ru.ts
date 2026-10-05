@@ -4,7 +4,7 @@ import en, { type Translations } from './en'
 const ru: Translations = {
 
   ...en,
-  one: { ...en.one, monthly: "в месяц", billingTerms: "Без пробного периода. Только помесячно; годового плана нет." },
+  one: { ...en.one, monthly: "в месяц", billingTerms: "Без пробного периода. Только помесячно; годового плана нет.", taxInclusive: "Окончательная цена с учетом применимых налогов на покупку." },
   bloom: {
     board: {"backlog": "Очередь", "todo": "К выполнению", "inProgress": "В работе", "inReview": "На проверке", "done": "Готово"},
     "seoTitle": "Bloom UI, дизайн-система React для любой платформы",

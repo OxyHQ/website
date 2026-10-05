@@ -17,7 +17,7 @@ try {
  await page.route('**/*',route=>{
   const url=new URL(route.request().url())
   if(url.pathname.endsWith('/billing/personal-plans'))return route.fulfill({json:configured?
-   {schemaVersion:1,state:'configured',purchase:'unavailable',plans:[{offerId:'synthetic-qa-only',offerVersion:1,displayName:'Synthetic QA · Oxy One Personal',audience:'personal',kind:'oxy_one',...(priceMinorUnits===undefined?{}:{price:{currency:'USD',amountMinorUnits:priceMinorUnits,interval:'month',trial:'none'}}),benefits:[
+   {schemaVersion:1,state:'configured',purchase:'unavailable',plans:[{offerId:'synthetic-qa-only',offerVersion:1,displayName:'Synthetic QA · Oxy One Personal',audience:'personal',kind:'oxy_one',...(priceMinorUnits===undefined?{}:{price:{currency:'USD',amountMinorUnits:priceMinorUnits,interval:'month',trial:'none',taxTreatment:'inclusive',merchantTotal:'final'}}),benefits:[
     {displayName:'Alia · monthly credits; existing daily refill remains',benefit:{kind:'quota',productId:'synthetic-alia',key:'monthly_credits',unit:'alia_credit',included:10000,combination:'maximum'}},
     {displayName:'Shared storage · including Noted attachments',benefit:{kind:'quota',productId:'synthetic-storage',key:'storage_bytes',unit:'byte',included:100000000000,combination:'maximum'}},
     {displayName:'Mention · mono personalization',benefit:{kind:'capability',productId:'synthetic-mention',key:'mono_theme'}}]}]}:
@@ -34,6 +34,7 @@ try {
  assert((await page.getByTestId('one-price').innerText()).replace(/\s/g,' ')==='USD 29.99','SDK monthly price missing')
  await page.getByText('No trial. Monthly only; no annual plan.',{exact:true}).waitFor()
  await page.getByText('per month',{exact:true}).waitFor()
+ await page.getByTestId('one-tax-terms').getByText('Final price, including applicable purchase taxes.',{exact:true}).waitFor()
  await page.getByText('Mention · mono personalization',{exact:true}).waitFor()
  await page.getByText('Shared storage · including Noted attachments',{exact:true}).waitFor()
  await page.getByText('Purchasing is unavailable',{exact:true}).waitFor()
@@ -43,6 +44,7 @@ try {
  priceMinorUnits=undefined;await page.reload({waitUntil:'networkidle'})
  await page.getByText('Synthetic QA · Oxy One Personal',{exact:true}).waitFor()
  assert(await page.getByTestId('one-price').count()===0,'A catalogue without price must not invent one')
+ assert(await page.getByTestId('one-tax-terms').count()===0,'A catalogue without price must not claim inclusive taxes')
  priceMinorUnits=2999;await page.reload({waitUntil:'networkidle'})
  await page.getByTestId('one-price').getByText('USD 29.99',{exact:true}).waitFor()
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Desktop overflow')
@@ -52,5 +54,5 @@ try {
  await page.setViewportSize({width:390,height:844})
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile overflow')
  if(process.env.ONE_QA_SCREENSHOT_DIR)await page.screenshot({path:join(process.env.ONE_QA_SCREENSHOT_DIR,'oxy-one-configured-qa-mobile.png'),fullPage:true,animations:'disabled'})
- console.log('[one-catalogue] passed: production route, SDK fixtures, disabled checkout, SDK monthly price, no trial/annual option, desktop/mobile limits')
+ console.log('[one-catalogue] passed: production route, SDK fixtures, disabled checkout, SDK final tax-inclusive monthly price, no trial/annual option, desktop/mobile limits')
 }finally {await browser?.close();preview.kill();await preview.exited}
