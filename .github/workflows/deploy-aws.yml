@@ -32,10 +32,34 @@ jobs:
   deploy:
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@v4
+      # Every action this job runs is pinned to a full commit SHA, so an
+      # upstream tag move cannot change what executes beside the deploy role.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      # A plain `docker build` starts cold on every runner. Buildx with the
+      # GitHub Actions cache reuses every layer whose inputs did not change
+      # (the base image and, unless package.json/bun.lock moved, the
+      # `bun install` layer). Only this push-to-main / dispatch workflow and
+      # refresh-build-cache.yml write the `website-api` scope; no pull_request
+      # workflow does.
+      #
+      # Both steps run BEFORE the AWS role is assumed, and neither is a
+      # third-party action: the builder is the runner's own buildx (the same
+      # docker-container builder docker/setup-buildx-action created), and the
+      # cache credentials come from a repo-local action.
+      - name: Set up Docker Buildx
+        run: |
+          docker buildx create --use --driver docker-container
+          docker buildx inspect --bootstrap
+
+      # `--cache-from/--cache-to type=gha` need the Actions runtime token and
+      # cache URLs, which GitHub gives to JavaScript actions and NOT to `run:`
+      # steps; without them buildx skips the cache silently.
+      - name: Expose the Actions cache to buildx
+        uses: ./.github/actions/expose-actions-runtime
 
       - name: Configure AWS credentials (OIDC, no stored keys)
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
           role-to-assume: arn:aws:iam::237343248947:role/oxy-github-deploy
           aws-region: ${{ env.AWS_REGION }}
@@ -90,21 +114,7 @@ jobs:
           # write is gone.
 
       - name: Login to ECR
-        uses: aws-actions/amazon-ecr-login@v2
-
-      # A plain `docker build` starts cold on every runner. Buildx with the
-      # GitHub Actions cache reuses every layer whose inputs did not change
-      # (the base image and, unless package.json/bun.lock moved, the
-      # `bun install` layer). Only this push-to-main / dispatch workflow writes
-      # the `website-api` scope; no pull_request workflow does.
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      # `--cache-from/--cache-to type=gha` need the Actions runtime token and
-      # cache URL, which GitHub gives to JavaScript actions and NOT to `run:`
-      # steps; without them buildx skips the cache silently.
-      - name: Expose the Actions cache to buildx
-        uses: crazy-max/ghaction-github-runtime@v4
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
 
       # --provenance=false keeps what reaches ECR a single linux/arm64 image
       # manifest, the same shape `docker build` + `docker push` produced, rather

@@ -33,15 +33,19 @@ jobs:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      # Pinned and first-party only: the layers this job writes are the ones the
+      # production deploy builds on, so it trusts nothing deploy-aws.yml does not.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        run: |
+          docker buildx create --use --driver docker-container
+          docker buildx inspect --bootstrap
 
-      # `--cache-to type=gha` needs the Actions runtime token and cache URL,
+      # `--cache-to type=gha` needs the Actions runtime token and cache URLs,
       # which GitHub gives to JavaScript actions and NOT to `run:` steps.
       - name: Expose the Actions cache to buildx
-        uses: crazy-max/ghaction-github-runtime@v4
+        uses: ./.github/actions/expose-actions-runtime
 
       # No output: the result lives only in the exported cache. A failed export
       # fails the job, since writing the cache is the whole point.
