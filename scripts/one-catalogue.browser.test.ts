@@ -18,7 +18,8 @@ try {
   if(url.pathname.endsWith('/billing/personal-plans'))return route.fulfill({json:configured?
    {schemaVersion:1,state:'configured',purchase:'unavailable',plans:[{offerId:'synthetic-qa-only',offerVersion:1,displayName:'Synthetic QA · Oxy One Personal',audience:'personal',kind:'oxy_one',benefits:[
     {displayName:'Alia · monthly credits; existing daily refill remains',benefit:{kind:'quota',productId:'synthetic-alia',key:'monthly_credits',unit:'alia_credit',included:10000,combination:'maximum'}},
-    {displayName:'Storage',benefit:{kind:'quota',productId:'synthetic-storage',key:'storage_bytes',unit:'byte',included:100000000000,combination:'maximum'}}]}]}:
+    {displayName:'Shared storage · including Noted attachments',benefit:{kind:'quota',productId:'synthetic-storage',key:'storage_bytes',unit:'byte',included:100000000000,combination:'maximum'}},
+    {displayName:'Mention · mono personalization',benefit:{kind:'capability',productId:'synthetic-mention',key:'mono_theme'}}]}]}:
    {schemaVersion:1,state:'unconfigured',purchase:'unavailable',plans:[]}})
   return url.origin===origin?route.continue():route.abort()
  })
@@ -28,6 +29,8 @@ try {
  configured=true;await page.reload({waitUntil:'networkidle'})
  await page.getByText('Synthetic QA · Oxy One Personal',{exact:true}).waitFor()
  await page.getByText('100 GB',{exact:true}).waitFor()
+ await page.getByText('Mention · mono personalization',{exact:true}).waitFor()
+ await page.getByText('Shared storage · including Noted attachments',{exact:true}).waitFor()
  await page.getByText('Purchasing is unavailable',{exact:true}).waitFor()
  assert(await page.locator('a[href*="checkout"],button:has-text("Buy")').count()===0,'Checkout must remain unavailable')
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Desktop overflow')
