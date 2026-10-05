@@ -24,7 +24,7 @@ export default function OnePage() {
             <p className="mt-2 text-sm text-muted-foreground">{t('one.version')} {plan.offerVersion}</p>
             <ul className="mt-5 space-y-3">{plan.benefits.map((entry, index) => <li key={index}>
               <span className="font-medium">{entry.displayName}</span>
-              {entry.benefit.kind === 'quota' && <span className="ml-2 text-muted-foreground">{entry.benefit.included} {entry.benefit.unit}</span>}
+              {entry.benefit.kind === 'quota' && <span className="ml-2 text-muted-foreground">{entry.benefit.unit === 'byte' ? `${entry.benefit.included / 1_000_000_000} GB` : `${entry.benefit.included.toLocaleString()} ${entry.benefit.unit === 'alia_credit' ? t('one.credits') : entry.benefit.unit}`}</span>}
             </li>)}</ul>
             <p className="mt-6 text-sm text-muted-foreground">{t('one.status')}</p>
           </article>)}
