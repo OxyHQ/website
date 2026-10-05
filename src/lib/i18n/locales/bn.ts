@@ -4,6 +4,7 @@ import en, { type Translations } from './en'
 const bn: Translations = {
 
   ...en,
+  one: { ...en.one, monthly: "প্রতি মাসে", billingTerms: "কোনো ট্রায়াল নেই। শুধু মাসিক; বার্ষিক প্ল্যান নেই।" },
   bloom: {
     board: {"backlog": "অপেক্ষমাণ", "todo": "করণীয়", "inProgress": "চলমান", "inReview": "পর্যালোচনাধীন", "done": "সম্পন্ন"},
     "seoTitle": "Bloom UI, প্রতিটি প্ল্যাটফর্মের জন্য React ডিজাইন সিস্টেম",

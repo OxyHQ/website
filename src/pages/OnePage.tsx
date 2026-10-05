@@ -5,7 +5,7 @@ import { useTranslation } from '../lib/i18n'
 
 /** Public catalogue only; account-specific sources belong to Accounts. */
 export default function OnePage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const { oxyServices } = useOxy()
   const catalogue = useQuery({ queryKey: ['personal-plan-catalogue'],
     queryFn: () => oxyServices.billing.personalPlans(), staleTime: 0 })
@@ -21,6 +21,14 @@ export default function OnePage() {
           : catalogue.data?.state === 'unconfigured' ? <p className="text-lg text-muted-foreground">{t('one.unavailable')}</p>
           : catalogue.data?.plans.map(plan => <article key={`${plan.offerId}:${plan.offerVersion}`} className="mb-6 last:mb-0">
             <h2 className="text-heading-responsive-md">{plan.displayName}</h2>
+            {plan.price && <div className="mt-4">
+              <p className="text-3xl font-semibold text-foreground"><span data-testid="one-price">{(() => {
+                const formatter = new Intl.NumberFormat(locale, { style: 'currency', currency: plan.price.currency, currencyDisplay: 'code' })
+                const digits = formatter.resolvedOptions().maximumFractionDigits ?? 2
+                return formatter.format(plan.price.amountMinorUnits / 10 ** digits)
+              })()}</span> <span className="text-base font-normal text-muted-foreground">{t('one.monthly')}</span></p>
+              <p className="mt-2 text-sm text-muted-foreground">{t('one.billingTerms')}</p>
+            </div>}
             <p className="mt-2 text-sm text-muted-foreground">{t('one.version')} {plan.offerVersion}</p>
             <ul className="mt-5 space-y-3">{plan.benefits.map((entry, index) => <li key={index}>
               <span className="font-medium">{entry.displayName}</span>
