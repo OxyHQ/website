@@ -357,8 +357,12 @@ try {
       .last()
       .click()
     await page.getByRole('button', { name: /Start chat.*2 agents/ }).click()
+    // Wait for THIS conversation. The team chat that was active is also an
+    // empty group chat with the same headline, and Start chat measures the
+    // picker before switching: typing on the generic headline raced into
+    // the previous chat's composer and the send never happened.
     await chat
-      .getByText('A few minds. One conversation.', { exact: true })
+      .getByText(/^Launch planner, content reviewer are here\./)
       .waitFor()
     await chat
       .getByPlaceholder('Hi, what do you need today?', { exact: true })
