@@ -1,6 +1,193 @@
 import en, { type Translations } from './en'
 
 const ja: Translations = {
+  bloom: {
+    board: {"backlog": "バックログ", "todo": "未着手", "inProgress": "進行中", "inReview": "レビュー中", "done": "完了"},
+    "seoTitle": "Bloom UI、あらゆるプラットフォーム向けのReactデザインシステム",
+    "eyebrow": "あらゆるプラットフォームに",
+    "title": "Reactデザインシステム",
+    "for": "用途：",
+    "description": "React、React Native、ExpoのためのUIライブラリ。実際のコンポーネント、エージェントUI、インタラクティブなチャート、共通のテーマで構築できます。",
+    "componentsTitle": "すぐに使えるインタラクティブなコンポーネント。",
+    "componentsDescription": "エージェントUI、カレンダー、フォーム、ダッシュボード。実際のコンポーネントを試せます。",
+    "agentsTitle": "エージェントUIをすぐに構築。",
+    "agentsDescription": "会話、進捗表示、入力コントロールから始め、自分のエージェントを接続できます。",
+    "loaderTitle": "見とれるローディング表示。",
+    "loaderDescription": "入力欄を巡る光。Bloomのパレットを選んで試してください。",
+    "examplesTitle": "ひとつのライブラリ。広がる可能性。",
+    "examplesDescription": "エージェントチャットから医療ダッシュボードまで、Bloomによる構成例をご覧ください。",
+    "chartsTitle": "データを読みたくなるチャート。",
+    "chartsDescription": "インタラクティブなチャート、ホバー表示、指標カード。共通のトークンで統一。",
+    "installTitle": "Bloomで構築を始めよう。",
+    "installDescription": "パッケージをインストールし、プラットフォームと依存関係の設定ガイドに従ってください。",
+    "githubTitle": "開かれた開発。",
+    "githubDescription": "Bloomのリポジトリでソース、リリース、議論をご覧ください。",
+    "faqTitle": "よくある質問",
+    "faqDescription": "インストール、対応プラットフォーム、テーマ、ライセンス。Bloomで開発を始めるために必要な情報。",
+    "searchSummary": "{count}件の検索を実行",
+    "qInstall": "Bloomのインストール方法は？",
+    "aInstall": "Bunまたはnpmで@oxy.so/bloomをインストールしてください。プロバイダー、スタイル、必要な依存関係はドキュメントを参照してください。",
+    "qPlatforms": "対応プラットフォームは？",
+    "aPlatforms": "BloomはWebのReact、React Native、Expoに対応し、それぞれに専用実装を提供します。",
+    "qTheme": "テーマは変更できますか？",
+    "aTheme": "はい。テーマプロバイダーを通じて共通トークン、プリセット、ライト・ダークモードを提供します。",
+    "qLicense": "Bloomのライセンスは？",
+    "aLicense": "BloomはBreathe License 1.0を使用します。許可事項と条件はリポジトリのライセンスをご確認ください。",
+    "updatesTitle": "Bloomの最新情報。",
+    "updatesDescription": "リリースノートと最新のコンポーネントドキュメントをご覧ください。",
+    "closingTitle": "Bloomでインターフェースを構築。",
+    "closingDescription": "エージェントコンポーネント、チャート、周辺UI。次のアイデアにひとつのライブラリ。",
+    "demo": "インタラクティブデモ · ローカルのみ",
+    "demoPrompt": "Bloomでインターフェースを作成。",
+    "demoReply": "これはローカルデモです。アプリケーションで自分のサービスを接続してください。",
+    "components": "コンポーネントを見る",
+    "install": "Bloomをインストール",
+    "docs": "ドキュメント",
+    "playground": "プレイグラウンド",
+    "interactive": "インタラクティブなコンポーネント",
+    "chat": "エージェントチャット",
+    "dashboard": "ダッシュボード",
+    "health": "医療",
+    "profile": "プロフィール",
+    "projects": "プロジェクト管理",
+    "calendar": "カレンダー",
+    "desktop": "デスクトップ",
+    "tablet": "タブレット",
+    "mobile": "モバイル",
+    "view": "見る",
+    "thinking": "思考中",
+    "color": "カラーパレット",
+    "viewport": "プレビューサイズ",
+    "setup": "設定ガイド",
+    "name": "名前",
+    "status": "状態",
+    "all": "すべて",
+    "filter": "絞り込み",
+    "steps": "歩数",
+    "duration": "時間",
+    "bedtime": "就寝時間",
+    "interruptions": "中断",
+    "move": "運動量",
+    "exercise": "運動",
+    "running": "ランニング",
+    "birthDate": "生年月日",
+    "gender": "性別",
+    "female": "女性",
+    "bloodType": "血液型",
+    "doctor": "担当医",
+    "primaryButton": "主要ボタン",
+    "secondaryButton": "補助ボタン",
+    "lifetimeTokens": "総トークン",
+    "peakTokens": "最大トークン",
+    "longestTask": "最長タスク",
+    "streak": "最長連続記録",
+    "usersWithAccess": "アクセス権のあるユーザー",
+    "addUser": "ユーザーを追加",
+    "manage": "管理",
+    "models": "モデル",
+    "effort": "処理量",
+    "day": "日",
+    "week": "週",
+    "month": "月",
+    "year": "年",
+    "readFiles": "プロジェクトファイルを読む",
+    "lightTheme": "ライトモードを設定",
+    "darkTheme": "ダークモードを設定",
+    "verifyBuild": "本番ビルドを検証",
+    "messages": "メッセージ",
+    "files": "ファイル",
+    "tools": "ツール",
+    "cards": {
+      "attachments": {
+        "title": "添付ファイル",
+        "description": "入力欄の上にファイルとアップロード状況を表示。"
+      },
+      "search": {
+        "title": "Web検索",
+        "description": "エージェントの検索と参照元を表示。"
+      },
+      "limits": {
+        "title": "エージェントの上限",
+        "description": "コンテキスト使用量、トークン内訳、プラン上限。"
+      },
+      "table": {
+        "title": "データテーブル",
+        "description": "絞り込み、並べ替え、ページ切り替え。"
+      },
+      "widgets": {
+        "title": "インタラクティブなウィジェット",
+        "description": "健康チャート、活動リング、アラート。"
+      },
+      "sidebar": {
+        "title": "サイドバー",
+        "description": "ナビゲーション、検索、アカウント操作。"
+      },
+      "profile": {
+        "title": "貢献者プロフィール",
+        "description": "貢献履歴、トークン統計、連続記録。"
+      },
+      "progress": {
+        "title": "エージェントの進捗",
+        "description": "複数ステップの進捗と完了状態。"
+      },
+      "loader": {
+        "title": "入力欄のローディング",
+        "description": "エージェントの作業中に巡る光。"
+      },
+      "thinking": {
+        "title": "エージェントの活動",
+        "description": "思考、検索、執筆のインジケーター。"
+      },
+      "image": {
+        "title": "画像のローディング",
+        "description": "カウントダウンと画像の表示。"
+      },
+      "calendar": {
+        "title": "カレンダー",
+        "description": "月間カレンダーと日付選択。"
+      },
+      "auth": {
+        "title": "認証フォーム",
+        "description": "ログインとソーシャルプロバイダー。"
+      },
+      "meeting": {
+        "title": "会議を予約",
+        "description": "会議の日付と時間を選択。"
+      },
+      "earnings": {
+        "title": "チャート",
+        "description": "インタラクティブなチャートと期間選択。"
+      },
+      "upload": {
+        "title": "ファイルアップロード",
+        "description": "ファイル選択、検証、進捗表示。"
+      }
+    },
+    "agents": {
+      "design": "デザインエージェント",
+      "review": "レビューエージェント",
+      "research": "調査エージェント",
+      "code": "コードエージェント"
+    },
+    "table": {
+      "results": "合計結果",
+      "customers": "顧客",
+      "purchase": "購入",
+      "updated": "最終更新",
+      "price": "価格",
+      "waiting": "待機中",
+      "completed": "完了",
+      "processing": "処理中",
+      "failed": "配送失敗",
+      "delivered": "配送済み",
+      "pending": "保留中",
+      "prices": "すべての価格",
+      "products": "すべての商品",
+      "regions": "すべての地域",
+      "search": "検索"
+    }
+  },
+
   common: {
     signIn: 'サインイン',
     signOut: 'サインアウト',
@@ -74,7 +261,7 @@ const ja: Translations = {
     company: '会社情報',
     developers: '開発者',
     resources: 'リソース',
-    bannerDefault: 'Alia. みんなで、もっと良く考える。',
+    bannerDefault: 'Oxyのデザインシステム、Bloomをご紹介。',
   },
   footer: {
     description:

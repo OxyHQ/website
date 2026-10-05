@@ -1,6 +1,193 @@
 import en, { type Translations } from './en'
 
 const it: Translations = {
+  bloom: {
+    board: {"backlog": "Da pianificare", "todo": "Da fare", "inProgress": "In corso", "inReview": "In revisione", "done": "Completato"},
+    "seoTitle": "Bloom UI, un sistema di design React per ogni piattaforma",
+    "eyebrow": "Per ogni piattaforma",
+    "title": "Sistema di design React",
+    "for": "per",
+    "description": "Una libreria UI per React, React Native ed Expo. Crea con componenti reali, interfacce per agenti, grafici interattivi e temi condivisi.",
+    "componentsTitle": "Componenti interattivi. Pronti per creare.",
+    "componentsDescription": "Interfacce per agenti, calendari, moduli e dashboard. Esplora i componenti reali.",
+    "agentsTitle": "Crea la tua interfaccia per agenti in pochi secondi.",
+    "agentsDescription": "Inizia con conversazioni, avanzamento e controlli di composizione. Collega i tuoi agenti.",
+    "loaderTitle": "Uno stato di caricamento da ammirare.",
+    "loaderDescription": "Una luce intorno al compositore. Scegli una palette Bloom e provala.",
+    "examplesTitle": "Una libreria. Tante possibilità.",
+    "examplesDescription": "Esplora composizioni Bloom, dalle chat di agenti ai dashboard sanitari.",
+    "chartsTitle": "Grafici che rendono i dati interessanti.",
+    "chartsDescription": "Grafici interattivi, stati al passaggio del mouse e metriche. Con gli stessi token.",
+    "installTitle": "Inizia a creare con Bloom.",
+    "installDescription": "Installa il pacchetto e segui la guida per la tua piattaforma e le dipendenze.",
+    "githubTitle": "Sviluppato apertamente.",
+    "githubDescription": "Esplora codice, versioni e discussioni nel repository Bloom.",
+    "faqTitle": "Domande frequenti",
+    "faqDescription": "Installazione, piattaforme, temi e licenza. Tutto per iniziare a creare con Bloom.",
+    "searchSummary": "{count} ricerche eseguite",
+    "qInstall": "Come installo Bloom?",
+    "aInstall": "Installa @oxy.so/bloom con Bun o npm. Segui la documentazione per configurare provider, stili e dipendenze richieste.",
+    "qPlatforms": "Quali piattaforme supporta Bloom?",
+    "aPlatforms": "Bloom supporta React sul web, React Native ed Expo con implementazioni specifiche.",
+    "qTheme": "Posso cambiare il tema?",
+    "aTheme": "Sì. Bloom offre token condivisi, preset e modalità chiara e scura tramite il provider dei temi.",
+    "qLicense": "Quale licenza usa Bloom?",
+    "aLicense": "Bloom usa Breathe License 1.0. Leggi permessi e condizioni nel repository.",
+    "updatesTitle": "Segui le novità di Bloom.",
+    "updatesDescription": "Esplora le note di rilascio e la documentazione aggiornata.",
+    "closingTitle": "Crea interfacce con Bloom.",
+    "closingDescription": "Componenti per agenti, grafici interattivi e la UI che li circonda. Una libreria per la tua prossima idea.",
+    "demo": "Demo interattiva · solo locale",
+    "demoPrompt": "Crea un’interfaccia con Bloom.",
+    "demoReply": "Questa è una demo locale. Collega i tuoi servizi nella tua applicazione.",
+    "components": "Vedi componenti",
+    "install": "Installa Bloom",
+    "docs": "Documentazione",
+    "playground": "Playground",
+    "interactive": "Componenti interattivi",
+    "chat": "chat di agenti",
+    "dashboard": "dashboard",
+    "health": "salute",
+    "profile": "profili",
+    "projects": "bacheche di progetto",
+    "calendar": "Calendario",
+    "desktop": "Desktop",
+    "tablet": "Tablet",
+    "mobile": "Mobile",
+    "view": "Vedi",
+    "thinking": "Elaborazione",
+    "color": "Palette di colori",
+    "viewport": "Dimensione anteprima",
+    "setup": "Guida alla configurazione",
+    "name": "Nome",
+    "status": "Stato",
+    "all": "Tutti",
+    "filter": "Filtra",
+    "steps": "Passi",
+    "duration": "Durata",
+    "bedtime": "Ora di dormire",
+    "interruptions": "Interruzioni",
+    "move": "Movimento",
+    "exercise": "Esercizio",
+    "running": "Corsa",
+    "birthDate": "Data di nascita",
+    "gender": "Genere",
+    "female": "Donna",
+    "bloodType": "Gruppo sanguigno",
+    "doctor": "Medico",
+    "primaryButton": "Pulsante primario",
+    "secondaryButton": "Pulsante secondario",
+    "lifetimeTokens": "Token totali",
+    "peakTokens": "Picco di token",
+    "longestTask": "Attività più lunga",
+    "streak": "Serie migliore",
+    "usersWithAccess": "Utenti autorizzati",
+    "addUser": "Aggiungi utente",
+    "manage": "Gestisci",
+    "models": "Modelli",
+    "effort": "Impegno",
+    "day": "Giorno",
+    "week": "Settimana",
+    "month": "Mese",
+    "year": "Anno",
+    "readFiles": "Leggi i file del progetto",
+    "lightTheme": "Configura i token chiari",
+    "darkTheme": "Configura i token scuri",
+    "verifyBuild": "Verifica il build di produzione",
+    "messages": "Messaggi",
+    "files": "File",
+    "tools": "Strumenti",
+    "cards": {
+      "attachments": {
+        "title": "Allegati",
+        "description": "File con avanzamento sopra il messaggio."
+      },
+      "search": {
+        "title": "Ricerca web",
+        "description": "Ricerche e fonti mentre l’agente lavora."
+      },
+      "limits": {
+        "title": "Limiti agente",
+        "description": "Uso del contesto, token e limiti del piano."
+      },
+      "table": {
+        "title": "Tabella dati",
+        "description": "Filtra, ordina e sfoglia una tabella adattiva."
+      },
+      "widgets": {
+        "title": "Widget interattivi",
+        "description": "Grafici sanitari, anelli e avvisi."
+      },
+      "sidebar": {
+        "title": "Barra laterale",
+        "description": "Navigazione, ricerca e controlli account."
+      },
+      "profile": {
+        "title": "Profilo collaboratore",
+        "description": "Contributi, statistiche di token e serie."
+      },
+      "progress": {
+        "title": "Avanzamento agente",
+        "description": "Progressi per fasi e stati di completamento."
+      },
+      "loader": {
+        "title": "Caricamento compositore",
+        "description": "Una luce orbita mentre l’agente lavora."
+      },
+      "thinking": {
+        "title": "Attività agente",
+        "description": "Indicatori di pensiero, ricerca e scrittura."
+      },
+      "image": {
+        "title": "Caricamento immagini",
+        "description": "Conto alla rovescia e rivelazione dell’immagine."
+      },
+      "calendar": {
+        "title": "Calendario",
+        "description": "Calendario mensile e selezione delle date."
+      },
+      "auth": {
+        "title": "Autenticazione",
+        "description": "Moduli di accesso e pulsanti social."
+      },
+      "meeting": {
+        "title": "Pianifica riunione",
+        "description": "Scegli la data e l’ora di una riunione."
+      },
+      "earnings": {
+        "title": "Grafici",
+        "description": "Grafici interattivi e controlli del periodo."
+      },
+      "upload": {
+        "title": "Caricamento file",
+        "description": "Selezione, validazione e avanzamento dei file."
+      }
+    },
+    "agents": {
+      "design": "Agente di design",
+      "review": "Agente di revisione",
+      "research": "Agente di ricerca",
+      "code": "Agente di codice"
+    },
+    "table": {
+      "results": "Risultati totali",
+      "customers": "clienti",
+      "purchase": "Acquisto",
+      "updated": "Ultimo aggiornamento",
+      "price": "Prezzo",
+      "waiting": "In attesa",
+      "completed": "Completato",
+      "processing": "In elaborazione",
+      "failed": "Consegna fallita",
+      "delivered": "Consegnato",
+      "pending": "Da elaborare",
+      "prices": "Tutti i prezzi",
+      "products": "Tutti i prodotti",
+      "regions": "Tutte le regioni",
+      "search": "Cerca"
+    }
+  },
+
   common: {
     signIn: 'Accedi',
     signOut: 'Esci',
@@ -74,7 +261,7 @@ const it: Translations = {
     company: 'Azienda',
     developers: 'Sviluppatori',
     resources: 'Risorse',
-    bannerDefault: 'Alia. Pensa meglio, insieme.',
+    bannerDefault: 'Scopri Bloom, il sistema di design di Oxy.',
   },
   footer: {
     description:

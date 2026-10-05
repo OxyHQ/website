@@ -159,9 +159,9 @@ function ColourStudio() {
             <h3>Make it yours.</h3>
             <p>Explore the details that make an interface feel right.</p>
             <Link
-              to={`/developers/docs/bloom/playground?component=Button&recipe=${recipe}&mode=${mode}`}
+              to="/developers/docs/bloom/color-system/"
             >
-              Try this recipe <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
+              Explore colour recipes <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
             </Link>
             <div className="brand-ui-secondary">Built with Bloom.</div>
           </div>
@@ -680,8 +680,8 @@ export default function BrandPage() {
           <Link to="/developers/docs/bloom/components">
             Bloom components <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
           </Link>
-          <Link to="/developers/docs/bloom/playground">
-            Interactive playground <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
+          <Link to="/developers/docs/bloom/color-system/">
+            Colour recipes <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
           </Link>
           <Link to="/company/charter">
             Our charter <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />

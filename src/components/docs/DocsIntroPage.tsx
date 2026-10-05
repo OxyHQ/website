@@ -69,11 +69,11 @@ export default function DocsIntroPage() {
 
   return (
     <div className="relative antialiased bg-[color-mix(in_srgb,var(--primary)_5%,var(--background))]">
-      <DocsSubNav />
+      <DocsSubNav overview />
 
       {/* Sidebar (shared with detail pages) + Content */}
       <div className="flex w-full">
-        <DocsPackageSidebar sections={sections} />
+        <DocsPackageSidebar sections={sections} overview />
 
         {/* Main content */}
         <main className="relative grow box-border flex-col w-full min-w-0 bg-[color-mix(in_srgb,var(--primary)_5%,var(--background))] py-6">

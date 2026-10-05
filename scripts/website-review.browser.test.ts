@@ -70,10 +70,9 @@ try {
     'Appearance did not change',
   )
   invariant(
-    (await page.getByRole('link', { name: 'Try this recipe' }).getAttribute('href'))?.includes(
-      'recipe=orange&mode=dark',
-    ),
-    'Recipe link lost state',
+    (await page.getByRole('link', { name: 'Explore colour recipes', exact: true }).getAttribute('href')) ===
+      '/developers/docs/bloom/color-system/',
+    'Colour recipes link must target the current Bloom colour documentation',
   )
   await capture('.brand-colour-composition', 'brand-colour-dark.png')
   await page.getByLabel('Try a headline', { exact: true }).fill('An open world.')
@@ -101,6 +100,10 @@ try {
     'Motion disclosure did not open',
   )
   await capture('#voice', 'brand-voice.png')
+  await page.getByRole('link', { name: 'Explore colour recipes', exact: true }).click()
+  await page.waitForURL(`${origin}/developers/docs/bloom/color-system/`)
+  await page.getByRole('heading', { level: 1, name: 'Color system playground', exact: true }).waitFor()
+  invariant(new URL(page.url()).search === '', 'Colour documentation link unexpectedly carries playground state')
   for (const width of [390, 768, 1440, 1920]) {
     await page.setViewportSize({ width, height: 1000 })
     await page.goto(`${origin}/brand/`)

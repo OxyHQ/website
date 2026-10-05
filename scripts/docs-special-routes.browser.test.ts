@@ -51,7 +51,7 @@ const pageErrors: string[] = []
 page.on('pageerror', (error) => pageErrors.push(error.message))
 
 async function assertGlobalChrome(activePage: Page): Promise<void> {
-  await activePage.locator('header nav').waitFor()
+  await activePage.getByRole('banner').locator('nav').waitFor()
   const footer = activePage.locator('footer')
   await footer.waitFor({ state: 'attached' })
   await footer.scrollIntoViewIfNeeded()
@@ -82,22 +82,6 @@ async function assertCurrentSidebarLink(href: string): Promise<void> {
   )
 }
 
-async function assertComponentWorkbench(activePage: Page): Promise<void> {
-  await activePage.getByRole('heading', { name: 'Playground', exact: true }).waitFor()
-  await activePage.getByRole('link', { name: 'All components', exact: true }).waitFor()
-  const library = activePage.getByRole('complementary', { name: 'Component library' })
-  await library.getByRole('button', { name: 'Button', exact: true, pressed: true }).waitFor()
-  invariant(
-    await library.getByRole('button', { pressed: true }).count() === 1,
-    `expected exactly one selected component at ${activePage.url()}`,
-  )
-  await activePage.getByRole('complementary', { name: 'Component properties' }).waitFor()
-  await activePage.getByLabel('Recipe', { exact: true }).waitFor()
-  await activePage.getByLabel('Appearance', { exact: true }).waitFor()
-  await activePage.getByLabel('Canvas', { exact: true }).waitFor()
-  await activePage.locator('iframe[title="Interactive Bloom preview"]').waitFor()
-}
-
 async function assertContained(selector: string): Promise<void> {
   const measurement = await page.locator(selector).evaluate((element) => {
     const rect = element.getBoundingClientRect()
@@ -110,25 +94,12 @@ async function assertContained(selector: string): Promise<void> {
 }
 
 try {
-  await openRoute('/developers/docs/bloom/playground')
-  await assertComponentWorkbench(page)
-  await page.getByText('Example source', { exact: true }).click()
-  await page.getByRole('textbox', { name: 'Bloom example source' }).waitFor()
-  invariant(
-    await page.getByRole('button', { name: /^Switch version/ }).count() === 0,
-    'latest component playground must not expose historical docs version controls',
-  )
-
-  await openRoute('/developers/docs/bloom/playground/')
-  invariant(
-    new URL(page.url()).pathname === '/developers/docs/bloom/playground/',
-    'trailing-slash component playground must remain canonical instead of redirecting',
-  )
-  await assertComponentWorkbench(page)
-
-  await openRoute(`/developers/docs/bloom/${bloom.latestVersion}/playground`)
-  await page.waitForURL(`${origin}/developers/docs/bloom/playground/`)
-  await assertComponentWorkbench(page)
+  for (const path of ['/developers/docs/bloom/playground', '/developers/docs/bloom/playground/', `/developers/docs/bloom/${bloom.latestVersion}/playground`]) {
+    await openRoute(path)
+    await page.waitForURL(`${origin}/developers/docs/bloom/components/`)
+    await page.getByPlaceholder('Search buttons, composers, calendars…').waitFor()
+    invariant(await page.locator('main a[href*="/playground"]').count() === 0, 'catalog links to the retired playground')
+  }
 
   await openRoute('/developers/docs/bloom/color-system')
   await page.locator('[data-testid="color-system-playground"]').waitFor()
@@ -179,12 +150,12 @@ try {
     await page.locator('main a[href="/developers/docs/bloom/color-system/"]').count() === 1,
     'Bloom overview must render one color-system hub link',
   )
-  await page.locator('main a[href="/developers/docs/bloom/playground/"]').waitFor()
+  await page.locator('main a[href="/developers/docs/bloom/components/"]').waitFor()
 
   await page.goto(`${origin}/developers`, { waitUntil: 'domcontentloaded' })
   await assertGlobalChrome(page)
   await page.getByRole('link', { name: /^Bloom color system/ }).waitFor()
-  await page.getByRole('link', { name: /^Bloom component playground/ }).waitFor()
+  await page.locator('main').getByRole('link', { name: /^Bloom components/ }).waitFor()
 
   for (const width of [1440, 1200, 1024, 768, 390]) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 })
@@ -223,10 +194,76 @@ try {
   }
 
   await openRoute('/developers/docs/bloom/playground')
-  await assertComponentWorkbench(page)
+  await page.waitForURL(`${origin}/developers/docs/bloom/components/`)
+  await page.getByPlaceholder('Search buttons, composers, calendars…').waitFor()
+
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await openRoute(`/developers/docs/bloom/${bloom.latestVersion}/getting-started/`)
+  const articleInstall = page.locator('[data-docs-install]').first()
+  await articleInstall.getByRole('tab', { name: 'pnpm', exact: true }).click()
+  invariant((await articleInstall.innerText()).includes('pnpm add @oxy.so/bloom'), 'MDX install blocks must use the shared package manager switcher')
+  await page.getByRole('note').first().waitFor()
+  invariant(await page.locator('main h1:visible').count() === 1, 'article duplicates the page title')
+
+  for (const mode of ['light', 'dark']) {
+    await page.setViewportSize({ width: 1440, height: 1000 })
+    await page.addInitScript((mode) => localStorage.setItem('theme', mode), mode)
+    await page.route('**/*.js', (route) => route.abort())
+    await page.goto(`${origin}/developers/docs/bloom/components/`)
+    const prepaint = await page.evaluate(() => {
+      const probe = document.createElement('div')
+      probe.className = 'docs-theme'
+      probe.style.backgroundColor = 'color-mix(in srgb, var(--primary) 4%, var(--background))'
+      document.body.appendChild(probe)
+      return getComputedStyle(probe).backgroundColor
+    })
+    await page.unroute('**/*.js')
+    await page.reload()
+    const cards = page.locator('[data-catalog-card]')
+    await cards.first().waitFor()
+    invariant(await cards.count() >= 36, 'catalog omits existing Bloom compositions')
+    invariant(await page.locator('main').evaluate((node) => getComputedStyle(node).backgroundColor) === prepaint,
+      `${mode} catalog palette changes after JavaScript loads`)
+    const search = page.getByPlaceholder('Search buttons, composers, calendars…')
+    await search.fill('composer loader')
+    await page.locator('[data-catalog-card="composer-loader"]').waitFor()
+    invariant(await cards.count() === 1, 'catalog search does not filter visual examples')
+    await page.getByRole('link', { name: 'Composer loader', exact: true }).click()
+    await page.getByRole('heading', { name: 'Preview', exact: true }).waitFor()
+    await page.locator('main [data-bloom-composer-pill]').waitFor()
+    await assertCurrentSidebarLink('/developers/docs/bloom/components/composer-loader/')
+    invariant(await page.locator('main .bloom-preview-fallback').count() === 0, 'catalog detail demo failed')
+    const example = page.locator('[data-docs-example]').first()
+    await example.getByRole('tab', { name: 'Code', exact: true }).click()
+    invariant((await example.innerText()).includes('ComposerLoader'), 'example code must document the rendered composer')
+    await example.getByRole('tab', { name: 'Preview', exact: true }).click()
+    await page.locator('main [data-bloom-composer-pill]').waitFor()
+    const install = page.locator('[data-docs-install]')
+    await install.getByRole('tab', { name: 'bun', exact: true }).click()
+    invariant((await install.innerText()).includes('bun add @oxy.so/bloom'), 'package-manager tab did not update the install command')
+
+    for (const width of [1440, 768, 390]) {
+      await page.setViewportSize({ width, height: 900 })
+      await assertGlobalDocsChrome(page)
+    }
+    const navigationToggle = page.getByRole('button', { name: 'Documentation navigation', exact: true })
+    await navigationToggle.click()
+    await page.getByPlaceholder('Quick search…').fill('Calendar')
+    await page.locator('[data-docs-navigation] a[href="/developers/docs/bloom/components/calendar/"]').click()
+    await page.getByRole('heading', { name: 'Calendar', exact: true }).waitFor()
+    invariant(await navigationToggle.getAttribute('aria-expanded') === 'false', 'mobile navigation must close after selecting a search result')
+    await assertGlobalDocsChrome(page)
+    await openRoute('/developers/docs/bloom/components/')
+    await cards.first().waitFor()
+    await assertGlobalDocsChrome(page)
+    await search.fill('no-matching-component-xyz')
+    await page.getByRole('heading', { name: 'No matching components' }).waitFor()
+    await page.getByRole('button', { name: 'Clear filters', exact: true }).click()
+    await cards.first().waitFor()
+  }
 
   invariant(pageErrors.length === 0, `browser page errors: ${pageErrors.join('; ')}`)
-  console.info('[docs-special-routes] global chrome, both playgrounds, 64/47/17 filters and responsive overflow passed')
+  console.info('[docs-special-routes] global chrome, playgrounds, catalog previews/search, example tabs, install commands, mobile navigation, light/dark prepaint and responsive overflow passed')
 } finally {
   await context.close()
   await browser.close()

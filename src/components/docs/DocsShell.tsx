@@ -1,3 +1,5 @@
+import { Link } from '../../lib/navigation'
+import { buildDocsHref } from '../../content/docs-loader'
 import type { SyncedPackage } from '../../../scripts/types'
 import VersionSelector from '../docs-platform/VersionSelector'
 import VersionBanner from '../docs-platform/VersionBanner'
@@ -98,91 +100,143 @@ export function DocsShell({
       <div className="docs-theme relative antialiased bg-[color-mix(in_srgb,var(--primary)_4%,var(--background))]">
         <DocsSubNav />
 
-        <div className="flex w-full">
-          {hideSidebar
-            ? null
-            : sections
-              ? (
-                <DocsPackageSidebar
-                  sections={sections}
-                  activePkg={activePkg}
-                  versionSelector={
-                    showVersionSelector && pkg && currentVersion ? (
-                      <VersionSelector pkg={pkg} currentVersion={currentVersion} slug={slug} />
-                    ) : null
-                  }
-                />
-              )
-              : null}
+        <div className="flex w-full flex-col lg:flex-row">
+          {hideSidebar ? null : sections ? (
+            <DocsPackageSidebar
+              sections={sections}
+              activePkg={activePkg}
+              versionSelector={
+                showVersionSelector && pkg && currentVersion ? (
+                  <VersionSelector
+                    pkg={pkg}
+                    currentVersion={currentVersion}
+                    slug={slug}
+                  />
+                ) : null
+              }
+            />
+          ) : null}
 
-          <main className="relative grow box-border flex-col w-full min-w-0 bg-[color-mix(in_srgb,var(--primary)_4%,var(--background))] px-6 py-10 lg:px-12">
-          <div
-            className={
-              showRail
-                ? 'mx-auto grid w-full max-w-4xl grid-cols-1 gap-x-12 xl:grid-cols-[minmax(0,1fr)_200px]'
-                : wideContent
-                  ? 'mx-auto w-full max-w-[1480px]'
-                  : 'w-full'
-            }
-          >
-            {/*
+          <main className="relative grow box-border flex-col w-full min-w-0 bg-[color-mix(in_srgb,var(--primary)_4%,var(--background))] px-6 pt-10 pb-14 sm:px-10">
+            <div
+              className={
+                showRail
+                  ? 'mx-auto grid w-full max-w-[1200px] grid-cols-1 gap-x-12 xl:grid-cols-[minmax(0,900px)_180px]'
+                  : wideContent
+                    ? 'mx-auto w-full max-w-[1480px]'
+                    : 'w-full'
+              }
+            >
+              {/*
               The contents rail. `col-start-2 row-start-1` puts it beside the
               article rather than after it, so it pins against the whole column
               instead of scrolling away with its own height.
             */}
-            {showRail ? (
-              <aside
-                className="sticky hidden self-start pb-6 xl:col-start-2 xl:row-start-1 xl:block"
-                style={{ top: railTop + 24, maxHeight: `calc(100vh - ${railTop + 24}px)` }}
-              >
-                <div className="min-h-0 overflow-y-auto pr-1">
-                  <TableOfContents headings={headings} variant="list" sticky={false} />
-                </div>
-              </aside>
-            ) : null}
-
-            <div className="min-w-0 xl:col-start-1 xl:row-start-1">
-            {hideHeader ? null : (
-              <header className="relative leading-none">
-                <div className="mt-0.5 space-y-2.5">
-                  <div className="h-5 text-primary text-sm font-semibold">{eyebrow}</div>
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center relative gap-2 min-w-0">
-                    <h1 className="text-2xl sm:text-3xl text-foreground tracking-tight [overflow-wrap:anywhere] font-bold break-all">
-                      {title}
-                    </h1>
-                    <DocsCopyPageMenu title={title} sourceFile={sourceFile} />
-                  </div>
-                </div>
-                {subtitle ? (
-                  <div className="mt-2 text-lg text-muted-foreground">
-                    <p>{subtitle}</p>
-                  </div>
-                ) : null}
-              </header>
-            )}
-
-            <div
-              className={
-                hideHeader
-                  ? 'relative isolate mb-14 [contain:inline-size] prose max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-foreground prose-pre:bg-card prose-pre:text-card-foreground'
-                  : 'relative isolate mt-8 mb-14 [contain:inline-size] prose max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-foreground prose-pre:bg-card prose-pre:text-card-foreground'
-              }
-              data-docs-content
-              ref={contentRef}
-            >
-              {/* Below the rail's breakpoint the contents become a jump-to. */}
               {showRail ? (
-                <div className="not-prose xl:hidden">
-                  <TableOfContents headings={headings} variant="select" />
+                <aside
+                  className="sticky hidden self-start pb-6 xl:col-start-2 xl:row-start-1 xl:block"
+                  style={{
+                    top: railTop + 24,
+                    maxHeight: `calc(100vh - ${railTop + 24}px)`,
+                  }}
+                >
+                  <div
+                    className="min-h-0 overflow-y-auto pr-1"
+                    style={{ maxHeight: `calc(100dvh - ${railTop + 48}px)` }}
+                  >
+                    <TableOfContents
+                      headings={headings}
+                      variant="list"
+                      sticky={false}
+                    />
+                  </div>
+                </aside>
+              ) : null}
+
+              <div className="min-w-0 xl:col-start-1 xl:row-start-1">
+                {hideHeader ? null : (
+                  <header className="relative flex flex-col gap-3">
+                    <nav
+                      aria-label="Breadcrumb"
+                      className="mb-2 flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-muted-foreground"
+                    >
+                      <Link
+                        to="/developers/docs/"
+                        className="hover:text-foreground"
+                      >
+                        Docs
+                      </Link>
+                      <span aria-hidden>›</span>
+                      {pkg && title !== pkg.displayName ? (
+                        <>
+                          <Link
+                            to={buildDocsHref(
+                              pkg,
+                              currentVersion ?? pkg.latestVersion,
+                              '',
+                            )}
+                            className="hover:text-foreground"
+                          >
+                            {pkg.displayName}
+                          </Link>
+                          <span aria-hidden>›</span>
+                        </>
+                      ) : null}
+                      <span
+                        className="min-w-0 break-words text-foreground"
+                        aria-current="page"
+                      >
+                        {title}
+                      </span>
+                    </nav>
+                    <div className="space-y-2.5">
+                      <div className="text-xs text-muted-foreground">
+                        {eyebrow}
+                      </div>
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center relative gap-2 min-w-0">
+                        <h1 className="text-2xl leading-8 font-medium text-foreground [overflow-wrap:anywhere]">
+                          {title}
+                        </h1>
+                        <DocsCopyPageMenu
+                          title={title}
+                          sourceFile={sourceFile}
+                        />
+                      </div>
+                    </div>
+                    {subtitle ? (
+                      <div className="max-w-[900px] text-base leading-[22px] text-muted-foreground">
+                        <p>{subtitle}</p>
+                      </div>
+                    ) : null}
+                  </header>
+                )}
+
+                <div
+                  className={
+                    hideHeader
+                      ? 'docs-article relative isolate mb-14 [contain:inline-size] prose max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-foreground prose-code:before:content-none prose-code:after:content-none prose-pre:bg-card prose-pre:text-card-foreground'
+                      : 'docs-article relative isolate mt-8 mb-14 [contain:inline-size] prose max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-foreground prose-code:before:content-none prose-code:after:content-none prose-pre:bg-card prose-pre:text-card-foreground'
+                  }
+                  data-docs-content
+                  ref={contentRef}
+                >
+                  {/* Below the rail's breakpoint the contents become a jump-to. */}
+                  {showRail ? (
+                    <div className="not-prose xl:hidden">
+                      <TableOfContents headings={headings} variant="select" />
+                    </div>
+                  ) : null}
+                  {pkg && currentVersion && !versionAgnostic ? (
+                    <VersionBanner
+                      pkg={pkg}
+                      currentVersion={currentVersion}
+                      slug={slug}
+                    />
+                  ) : null}
+                  {children}
                 </div>
-              ) : null}
-              {pkg && currentVersion && !versionAgnostic ? (
-                <VersionBanner pkg={pkg} currentVersion={currentVersion} slug={slug} />
-              ) : null}
-              {children}
+              </div>
             </div>
-            </div>
-           </div>
           </main>
         </div>
       </div>

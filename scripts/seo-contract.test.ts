@@ -152,6 +152,14 @@ describe('_redirects', () => {
     expect(rules).toContainEqual(['/pay', '/peable/', '301'])
   })
 
+  test('redirects the retired Bloom playground and versioned aliases to the catalog', () => {
+    for (const base of ['/developers/docs/bloom/playground', '/developers/docs/bloom/:version/playground']) {
+      for (const from of [base, `${base}/`]) {
+        expect(rules).toContainEqual([from, '/developers/docs/bloom/components/', '301'])
+      }
+    }
+  })
+
   test('sends Bloom surfaces removed in 2.0 to their named successor only', () => {
     const base = '/developers/docs/bloom/components'
     for (const from of [`${base}/prompt-input`, `${base}/prompt-input/`]) {

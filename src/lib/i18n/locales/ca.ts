@@ -1,6 +1,193 @@
 import en, { type Translations } from './en'
 
 const ca: Translations = {
+  bloom: {
+    board: {"backlog": "Pendent", "todo": "Per fer", "inProgress": "En curs", "inReview": "En revisió", "done": "Fet"},
+    "seoTitle": "Bloom UI, un sistema de disseny React per a totes les plataformes",
+    "eyebrow": "Per a totes les plataformes",
+    "title": "Sistema de disseny React",
+    "for": "per a",
+    "description": "Una biblioteca UI per a React, React Native i Expo. Crea amb components reals, interfícies d’agents, gràfics interactius i temes compartits.",
+    "componentsTitle": "Components interactius. A punt per crear.",
+    "componentsDescription": "Interfícies d’agents, calendaris, formularis i dashboards. Explora els components reals.",
+    "agentsTitle": "Crea la teva interfície d’agents en segons.",
+    "agentsDescription": "Comença amb converses, progrés i controls de composició. Connecta els teus agents.",
+    "loaderTitle": "Un estat de càrrega que val la pena mirar.",
+    "loaderDescription": "Una llum al voltant del compositor. Tria una paleta de Bloom i prova-la.",
+    "examplesTitle": "Una biblioteca. Moltes possibilitats.",
+    "examplesDescription": "Explora composicions amb Bloom, des de xats d’agents fins a panells de salut.",
+    "chartsTitle": "Gràfics que conviden a llegir les dades.",
+    "chartsDescription": "Gràfics interactius, estats en passar el cursor i mètriques. Amb els mateixos tokens.",
+    "installTitle": "Comença a crear amb Bloom.",
+    "installDescription": "Instal·la el paquet i segueix la guia de configuració per a la plataforma i les dependències.",
+    "githubTitle": "Construït en obert.",
+    "githubDescription": "Explora el codi, les versions i les converses al repositori de Bloom.",
+    "faqTitle": "Preguntes freqüents",
+    "faqDescription": "Instal·lació, plataformes, temes i llicència. Tot el que necessites per començar a crear amb Bloom.",
+    "searchSummary": "S’han fet {count} cerques",
+    "qInstall": "Com instal·lo Bloom?",
+    "aInstall": "Instal·la @oxy.so/bloom amb Bun o npm. Segueix la documentació per configurar el proveïdor, els estils i les dependències necessàries.",
+    "qPlatforms": "Quines plataformes admet Bloom?",
+    "aPlatforms": "Bloom admet React al web, React Native i Expo, amb implementacions específiques.",
+    "qTheme": "Puc canviar el tema?",
+    "aTheme": "Sí. Bloom ofereix tokens compartits, presets i modes clar i fosc mitjançant el proveïdor de temes.",
+    "qLicense": "Quina llicència fa servir Bloom?",
+    "aLicense": "Bloom fa servir Breathe License 1.0. Consulta els permisos i les condicions al repositori.",
+    "updatesTitle": "Segueix les novetats de Bloom.",
+    "updatesDescription": "Explora les notes de versió i la documentació actualitzada.",
+    "closingTitle": "Comença a crear interfícies amb Bloom.",
+    "closingDescription": "Components d’agents, gràfics interactius i la UI que els envolta. Una biblioteca per a la teva propera idea.",
+    "demo": "Demo interactiva · només local",
+    "demoPrompt": "Crea una interfície amb Bloom.",
+    "demoReply": "Aquesta és una demo local. Connecta els teus serveis a l’aplicació.",
+    "components": "Veure components",
+    "install": "Instal·lar Bloom",
+    "docs": "Documentació",
+    "playground": "Playground",
+    "interactive": "Components interactius",
+    "chat": "xats d’agents",
+    "dashboard": "dashboards",
+    "health": "salut",
+    "profile": "perfils",
+    "projects": "taulers de projectes",
+    "calendar": "Calendari",
+    "desktop": "Escriptori",
+    "tablet": "Tauleta",
+    "mobile": "Mòbil",
+    "view": "Veure",
+    "thinking": "Pensant",
+    "color": "Paleta de colors",
+    "viewport": "Mida de previsualització",
+    "setup": "Guia de configuració",
+    "name": "Nom",
+    "status": "Estat",
+    "all": "Tots",
+    "filter": "Filtrar",
+    "steps": "Passos",
+    "duration": "Durada",
+    "bedtime": "Hora de dormir",
+    "interruptions": "Interrupcions",
+    "move": "Moviment",
+    "exercise": "Exercici",
+    "running": "Cursa",
+    "birthDate": "Data de naixement",
+    "gender": "Gènere",
+    "female": "Dona",
+    "bloodType": "Grup sanguini",
+    "doctor": "Metge",
+    "primaryButton": "Botó primari",
+    "secondaryButton": "Botó secundari",
+    "lifetimeTokens": "Tokens totals",
+    "peakTokens": "Màxim de tokens",
+    "longestTask": "Tasca més llarga",
+    "streak": "Millor ratxa",
+    "usersWithAccess": "Usuaris amb accés",
+    "addUser": "Afegir usuari",
+    "manage": "Gestionar",
+    "models": "Models",
+    "effort": "Esforç",
+    "day": "Dia",
+    "week": "Setmana",
+    "month": "Mes",
+    "year": "Any",
+    "readFiles": "Llegir fitxers del projecte",
+    "lightTheme": "Configurar tokens clars",
+    "darkTheme": "Configurar tokens foscos",
+    "verifyBuild": "Verificar el build de producció",
+    "messages": "Missatges",
+    "files": "Fitxers",
+    "tools": "Eines",
+    "cards": {
+      "attachments": {
+        "title": "Fitxers del compositor",
+        "description": "Fitxers amb progrés de càrrega sobre el missatge."
+      },
+      "search": {
+        "title": "Cerca web",
+        "description": "Cerques i fonts mentre treballa l’agent."
+      },
+      "limits": {
+        "title": "Límits de l’agent",
+        "description": "Ús del context, tokens i límits del pla."
+      },
+      "table": {
+        "title": "Taula de dades",
+        "description": "Filtra, ordena i pagina una taula adaptable."
+      },
+      "widgets": {
+        "title": "Widgets interactius",
+        "description": "Gràfics de salut, anells i alertes."
+      },
+      "sidebar": {
+        "title": "Barra lateral",
+        "description": "Navegació, cerca i controls del compte."
+      },
+      "profile": {
+        "title": "Perfil de col·laborador",
+        "description": "Contribucions, estadístiques de tokens i ratxes."
+      },
+      "progress": {
+        "title": "Progrés de l’agent",
+        "description": "Progrés per passos i estats de finalització."
+      },
+      "loader": {
+        "title": "Càrrega del compositor",
+        "description": "Una llum orbita mentre treballa l’agent."
+      },
+      "thinking": {
+        "title": "Activitat de l’agent",
+        "description": "Indicadors de pensament, cerca i escriptura."
+      },
+      "image": {
+        "title": "Càrrega d’imatges",
+        "description": "Compte enrere i aparició de la imatge."
+      },
+      "calendar": {
+        "title": "Calendari",
+        "description": "Calendari mensual i selecció de dates."
+      },
+      "auth": {
+        "title": "Autenticació",
+        "description": "Formularis d’accés i botons socials."
+      },
+      "meeting": {
+        "title": "Programar reunió",
+        "description": "Tria la data i hora d’una reunió."
+      },
+      "earnings": {
+        "title": "Gràfics",
+        "description": "Gràfics interactius i controls de període."
+      },
+      "upload": {
+        "title": "Càrrega de fitxers",
+        "description": "Selecció, validació i progrés dels fitxers."
+      }
+    },
+    "agents": {
+      "design": "Agent de disseny",
+      "review": "Agent de revisió",
+      "research": "Agent de recerca",
+      "code": "Agent de codi"
+    },
+    "table": {
+      "results": "Resultats totals",
+      "customers": "clients",
+      "purchase": "Compra",
+      "updated": "Darrera actualització",
+      "price": "Preu",
+      "waiting": "En espera",
+      "completed": "Completada",
+      "processing": "En procés",
+      "failed": "Lliurament fallit",
+      "delivered": "Lliurat",
+      "pending": "Pendent",
+      "prices": "Tots els preus",
+      "products": "Tots els productes",
+      "regions": "Totes les regions",
+      "search": "Cerca"
+    }
+  },
+
   common: {
     signIn: 'Inicia sessió',
     signOut: 'Tanca la sessió',
@@ -74,7 +261,7 @@ const ca: Translations = {
     company: 'Empresa',
     developers: 'Desenvolupadors',
     resources: 'Recursos',
-    bannerDefault: 'Alia. Pensa millor, junts.',
+    bannerDefault: 'Descobreix Bloom, el sistema de disseny d’Oxy.',
   },
   footer: {
     description:

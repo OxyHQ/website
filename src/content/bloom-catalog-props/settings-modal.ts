@@ -23,6 +23,7 @@ export const props: BloomSurfaceProps = {
     },
     'SettingsCardProps': {
       props: [
+        { name: 'className', type: 'string', optional: true },
         { name: 'children', type: 'ReactNode', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },

@@ -74,9 +74,21 @@ if [ "$SERVICE" = "website-api" ]; then
   fi
 fi
 
+# Start both replacement tasks at once, next to the old ones: 200% with a 100%
+# healthy floor. At 150% they were replaced one at a time — two waves of start,
+# health checks and drain, ~470 s (2026-09-30). Two new tasks booting together
+# is safe because boot migrations run under an advisory lock
+# (server/db/migrationLock.ts): the second waits, then finds nothing pending.
+# Set here rather than by a terraform apply, which for this service would drag
+# unrelated task-definition drift along; oxy-infra declares the same 200/100.
 read -r ID STARTED <<<"$(aws ecs update-service --cluster "$CLUSTER" --service "$SERVICE" \
   --region "$AWS_REGION" \
   --task-definition "$TASK_DEFINITION" \
+  --deployment-configuration '{
+    "deploymentCircuitBreaker": {"enable": true, "rollback": true},
+    "minimumHealthyPercent": 100,
+    "maximumPercent": 200
+  }' \
   --force-new-deployment \
   --query 'service.deployments[?status==`PRIMARY`].[id,createdAt] | [0]' --output text)"
 echo "deployment $ID started $STARTED"

@@ -128,6 +128,7 @@ export const props: BloomSurfaceProps = {
     },
     'CloseButtonProps': {
       props: [
+        { name: 'className', type: 'string', optional: true, description: 'Utility classes applied to the control laid out by its parent.' },
         { name: 'onPress', type: '() => void', optional: true },
         { name: 'size', type: "'2xs' | 'xs' | 'sm' | 'md' | 'lg'", options: ['2xs', 'xs', 'sm', 'md', 'lg'], optional: true, description: '`2xs` 16 · `xs` 20 (default) · `sm` 24 · `md` 32.' },
         { name: 'disabled', type: 'boolean', optional: true },

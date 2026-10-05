@@ -3,6 +3,193 @@ import en, { type Translations } from './en'
 /** Hindi translations. English remains the structural source of truth. */
 const hi: Translations = {
   ...en,
+  bloom: {
+    board: {"backlog": "लंबित कार्य", "todo": "करना है", "inProgress": "प्रगति में", "inReview": "समीक्षा में", "done": "पूरा हुआ"},
+    "seoTitle": "Bloom UI, हर प्लेटफ़ॉर्म के लिए React डिज़ाइन सिस्टम",
+    "eyebrow": "हर प्लेटफ़ॉर्म के लिए",
+    "title": "React डिज़ाइन सिस्टम",
+    "for": "इनके लिए",
+    "description": "React, React Native और Expo के लिए एक UI लाइब्रेरी। वास्तविक कॉम्पोनेंट, एजेंट इंटरफ़ेस, इंटरैक्टिव चार्ट और साझा थीम से बनाएं।",
+    "componentsTitle": "इंटरैक्टिव कॉम्पोनेंट। बनाने के लिए तैयार।",
+    "componentsDescription": "एजेंट इंटरफ़ेस, कैलेंडर, फ़ॉर्म और डैशबोर्ड कॉम्पोनेंट। वास्तविक कॉम्पोनेंट देखें।",
+    "agentsTitle": "अपना एजेंट इंटरफ़ेस कुछ ही सेकंड में बनाएं।",
+    "agentsDescription": "बातचीत, प्रगति और इनपुट कंट्रोल से शुरू करें। अपने एजेंट जोड़ें।",
+    "loaderTitle": "देखते रहने लायक लोडिंग स्थिति।",
+    "loaderDescription": "इनपुट के चारों ओर घूमती रोशनी। Bloom पैलेट चुनकर आज़माएं।",
+    "examplesTitle": "एक लाइब्रेरी। कई संभावनाएं।",
+    "examplesDescription": "एजेंट चैट से स्वास्थ्य डैशबोर्ड तक Bloom के उदाहरण देखें।",
+    "chartsTitle": "ऐसे चार्ट जो डेटा पढ़ने योग्य बनाएं।",
+    "chartsDescription": "इंटरैक्टिव चार्ट, होवर स्थिति और आँकड़ों के कार्ड। एक ही टोकन पर।",
+    "installTitle": "Bloom के साथ बनाना शुरू करें।",
+    "installDescription": "पैकेज इंस्टॉल करें और अपने प्लेटफ़ॉर्म व निर्भरताओं की सेटअप गाइड पढ़ें।",
+    "githubTitle": "खुले तौर पर विकसित।",
+    "githubDescription": "Bloom रिपॉज़िटरी में सोर्स, रिलीज़ और चर्चा देखें।",
+    "faqTitle": "अक्सर पूछे जाने वाले सवाल",
+    "faqDescription": "इंस्टॉलेशन, प्लेटफ़ॉर्म, थीम और लाइसेंस। Bloom के साथ काम शुरू करने के लिए ज़रूरी जानकारी।",
+    "searchSummary": "{count} खोजें की गईं",
+    "qInstall": "Bloom कैसे इंस्टॉल करें?",
+    "aInstall": "Bun या npm से @oxy.so/bloom इंस्टॉल करें। प्रोवाइडर, स्टाइल और ज़रूरी निर्भरताएं सेट करने के लिए दस्तावेज़ पढ़ें।",
+    "qPlatforms": "कौन से प्लेटफ़ॉर्म समर्थित हैं?",
+    "aPlatforms": "Bloom वेब पर React, React Native और Expo को प्लेटफ़ॉर्म विशेष कार्यान्वयन के साथ समर्थन देता है।",
+    "qTheme": "क्या थीम बदल सकते हैं?",
+    "aTheme": "हाँ। Bloom थीम प्रोवाइडर के माध्यम से साझा टोकन, प्रीसेट और लाइट व डार्क मोड देता है।",
+    "qLicense": "Bloom का लाइसेंस क्या है?",
+    "aLicense": "Bloom Breathe License 1.0 का उपयोग करता है। अनुमतियां और शर्तें रिपॉज़िटरी में पढ़ें।",
+    "updatesTitle": "Bloom की खबरें देखें।",
+    "updatesDescription": "रिलीज़ नोट्स और नवीनतम कॉम्पोनेंट दस्तावेज़ देखें।",
+    "closingTitle": "Bloom से इंटरफ़ेस बनाएं।",
+    "closingDescription": "एजेंट कॉम्पोनेंट, इंटरैक्टिव चार्ट और आसपास का UI। आपके अगले विचार के लिए एक लाइब्रेरी।",
+    "demo": "इंटरैक्टिव डेमो · केवल स्थानीय",
+    "demoPrompt": "Bloom से एक इंटरफ़ेस बनाएं।",
+    "demoReply": "यह स्थानीय डेमो है। अपने ऐप में अपनी सेवाएं जोड़ें।",
+    "components": "कॉम्पोनेंट देखें",
+    "install": "Bloom इंस्टॉल करें",
+    "docs": "दस्तावेज़",
+    "playground": "प्लेग्राउंड",
+    "interactive": "इंटरैक्टिव कॉम्पोनेंट",
+    "chat": "एजेंट चैट",
+    "dashboard": "डैशबोर्ड",
+    "health": "स्वास्थ्य",
+    "profile": "प्रोफ़ाइल",
+    "projects": "प्रोजेक्ट बोर्ड",
+    "calendar": "कैलेंडर",
+    "desktop": "डेस्कटॉप",
+    "tablet": "टैबलेट",
+    "mobile": "मोबाइल",
+    "view": "देखें",
+    "thinking": "सोच रहा है",
+    "color": "रंग पैलेट",
+    "viewport": "पूर्वावलोकन आकार",
+    "setup": "सेटअप गाइड",
+    "name": "नाम",
+    "status": "स्थिति",
+    "all": "सभी",
+    "filter": "फ़िल्टर",
+    "steps": "कदम",
+    "duration": "अवधि",
+    "bedtime": "सोने का समय",
+    "interruptions": "बाधाएं",
+    "move": "गतिविधि",
+    "exercise": "व्यायाम",
+    "running": "दौड़",
+    "birthDate": "जन्म तिथि",
+    "gender": "लिंग",
+    "female": "महिला",
+    "bloodType": "रक्त समूह",
+    "doctor": "चिकित्सक",
+    "primaryButton": "प्राथमिक बटन",
+    "secondaryButton": "द्वितीयक बटन",
+    "lifetimeTokens": "कुल टोकन",
+    "peakTokens": "अधिकतम टोकन",
+    "longestTask": "सबसे लंबा कार्य",
+    "streak": "सर्वश्रेष्ठ निरंतरता",
+    "usersWithAccess": "प्रवेश वाले उपयोगकर्ता",
+    "addUser": "उपयोगकर्ता जोड़ें",
+    "manage": "प्रबंधन",
+    "models": "मॉडल",
+    "effort": "प्रयास",
+    "day": "दिन",
+    "week": "सप्ताह",
+    "month": "महीना",
+    "year": "वर्ष",
+    "readFiles": "प्रोजेक्ट फ़ाइलें पढ़ें",
+    "lightTheme": "लाइट मोड टोकन सेट करें",
+    "darkTheme": "डार्क मोड टोकन सेट करें",
+    "verifyBuild": "प्रोडक्शन बिल्ड जाँचें",
+    "messages": "संदेश",
+    "files": "फ़ाइलें",
+    "tools": "उपकरण",
+    "cards": {
+      "attachments": {
+        "title": "अटैचमेंट",
+        "description": "इनपुट के ऊपर फ़ाइलें और अपलोड प्रगति।"
+      },
+      "search": {
+        "title": "वेब खोज",
+        "description": "एजेंट की खोज और स्रोतों का प्रदर्शन।"
+      },
+      "limits": {
+        "title": "एजेंट सीमाएं",
+        "description": "कॉन्टेक्स्ट उपयोग, टोकन विवरण और सीमाएं।"
+      },
+      "table": {
+        "title": "डेटा टेबल",
+        "description": "टेबल को फ़िल्टर, सॉर्ट और पेज करें।"
+      },
+      "widgets": {
+        "title": "इंटरैक्टिव विजेट",
+        "description": "स्वास्थ्य चार्ट, गतिविधि रिंग और अलर्ट।"
+      },
+      "sidebar": {
+        "title": "साइडबार",
+        "description": "नेविगेशन, खोज और अकाउंट कंट्रोल।"
+      },
+      "profile": {
+        "title": "योगदानकर्ता प्रोफ़ाइल",
+        "description": "योगदान, टोकन आँकड़े और लगातार गतिविधि।"
+      },
+      "progress": {
+        "title": "एजेंट प्रगति",
+        "description": "कई चरणों की प्रगति और पूर्णता स्थिति।"
+      },
+      "loader": {
+        "title": "इनपुट लोडिंग",
+        "description": "एजेंट के काम करते समय घूमती रोशनी।"
+      },
+      "thinking": {
+        "title": "एजेंट गतिविधि",
+        "description": "सोचने, खोजने और लिखने के संकेत।"
+      },
+      "image": {
+        "title": "छवि लोडिंग",
+        "description": "एनिमेटेड काउंटडाउन और छवि प्रदर्शन।"
+      },
+      "calendar": {
+        "title": "कैलेंडर",
+        "description": "मासिक कैलेंडर और तारीख चुनना।"
+      },
+      "auth": {
+        "title": "प्रमाणीकरण",
+        "description": "साइन-इन फ़ॉर्म और सोशल बटन।"
+      },
+      "meeting": {
+        "title": "मीटिंग शेड्यूल",
+        "description": "मीटिंग की तारीख और समय चुनें।"
+      },
+      "earnings": {
+        "title": "चार्ट",
+        "description": "इंटरैक्टिव चार्ट और अवधि कंट्रोल।"
+      },
+      "upload": {
+        "title": "फ़ाइल अपलोड",
+        "description": "फ़ाइल चयन, जाँच और प्रगति स्थिति।"
+      }
+    },
+    "agents": {
+      "design": "डिज़ाइन एजेंट",
+      "review": "समीक्षा एजेंट",
+      "research": "शोध एजेंट",
+      "code": "कोड एजेंट"
+    },
+    "table": {
+      "results": "कुल परिणाम",
+      "customers": "ग्राहक",
+      "purchase": "खरीद",
+      "updated": "अंतिम अपडेट",
+      "price": "कीमत",
+      "waiting": "प्रतीक्षा में",
+      "completed": "पूर्ण",
+      "processing": "प्रक्रिया में",
+      "failed": "डिलीवरी विफल",
+      "delivered": "डिलीवर किया गया",
+      "pending": "लंबित",
+      "prices": "सभी कीमतें",
+      "products": "सभी उत्पाद",
+      "regions": "सभी क्षेत्र",
+      "search": "खोजें"
+    }
+  },
+
   common: {
     ...en.common,
     signIn: 'साइन इन करें',
@@ -75,7 +262,7 @@ const hi: Translations = {
     company: 'कंपनी',
     developers: 'डेवलपर',
     resources: 'संसाधन',
-    bannerDefault: 'Alia। साथ मिलकर बेहतर सोचें।',
+    bannerDefault: 'मिलिए Bloom से, Oxy का डिज़ाइन सिस्टम।',
   },
   home: {
     ...en.home,

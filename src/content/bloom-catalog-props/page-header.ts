@@ -31,8 +31,16 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'EdgeScrimProps': {
+      props: [
+        { name: 'color', type: 'string', optional: false, description: 'The page colour the ramp starts from — opaque, alpha travels separately.' },
+        { name: 'edge', type: "'top' | 'bottom'", options: ['top', 'bottom'], optional: true, description: "The edge the colour is solid at. `top` (default) fades downward; `bottom` fades upward. Mirrored in the gradient's own axis rather than with a `rotate` transform on the host, so the scrim's box stays where its layout put it on every platform." },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'PageHeader', propsType: 'PageHeaderProps' },
+    { name: 'EdgeScrim', propsType: 'EdgeScrimProps' },
   ],
 }

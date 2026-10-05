@@ -3,6 +3,193 @@ import en, { type Translations } from './en'
 /** Indonesian translations. English remains the structural source of truth. */
 const id: Translations = {
   ...en,
+  bloom: {
+    board: {"backlog": "Daftar tertunda", "todo": "Akan dikerjakan", "inProgress": "Sedang dikerjakan", "inReview": "Dalam peninjauan", "done": "Selesai"},
+    "seoTitle": "Bloom UI, sistem desain React untuk semua platform",
+    "eyebrow": "Untuk semua platform",
+    "title": "Sistem desain React",
+    "for": "untuk",
+    "description": "Satu pustaka UI untuk React, React Native, dan Expo. Bangun dengan komponen nyata, antarmuka agen, grafik interaktif, dan tema bersama.",
+    "componentsTitle": "Komponen interaktif. Siap digunakan.",
+    "componentsDescription": "Antarmuka agen, kalender, formulir, dan dasbor. Jelajahi komponen nyata.",
+    "agentsTitle": "Bangun antarmuka agen dalam hitungan detik.",
+    "agentsDescription": "Mulai dengan percakapan, progres, dan kontrol input. Hubungkan agen Anda sendiri.",
+    "loaderTitle": "Status pemuatan yang menarik dilihat.",
+    "loaderDescription": "Cahaya mengitari input. Pilih palet Bloom dan coba.",
+    "examplesTitle": "Satu pustaka. Banyak kemungkinan.",
+    "examplesDescription": "Jelajahi komposisi Bloom, dari obrolan agen hingga dasbor kesehatan.",
+    "chartsTitle": "Grafik yang membuat data layak dibaca.",
+    "chartsDescription": "Grafik interaktif, status hover, dan kartu statistik. Dengan token yang sama.",
+    "installTitle": "Mulai membangun dengan Bloom.",
+    "installDescription": "Instal paket dan ikuti panduan konfigurasi platform serta dependensinya.",
+    "githubTitle": "Dikembangkan secara terbuka.",
+    "githubDescription": "Jelajahi kode, rilis, dan diskusi di repositori Bloom.",
+    "faqTitle": "Pertanyaan umum",
+    "faqDescription": "Instalasi, platform, tema, dan lisensi. Semua yang diperlukan untuk mulai membangun dengan Bloom.",
+    "searchSummary": "{count} pencarian dijalankan",
+    "qInstall": "Bagaimana cara menginstal Bloom?",
+    "aInstall": "Instal @oxy.so/bloom dengan Bun atau npm. Ikuti dokumentasi untuk menyiapkan provider, gaya, dan dependensi yang diperlukan.",
+    "qPlatforms": "Platform apa yang didukung?",
+    "aPlatforms": "Bloom mendukung React di web, React Native, dan Expo dengan implementasi khusus platform.",
+    "qTheme": "Bisakah tema diubah?",
+    "aTheme": "Ya. Bloom menyediakan token bersama, preset, serta mode terang dan gelap melalui provider tema.",
+    "qLicense": "Lisensi apa yang digunakan Bloom?",
+    "aLicense": "Bloom menggunakan Breathe License 1.0. Baca izin dan ketentuannya di repositori.",
+    "updatesTitle": "Ikuti kabar Bloom.",
+    "updatesDescription": "Jelajahi catatan rilis dan dokumentasi komponen terbaru.",
+    "closingTitle": "Bangun antarmuka dengan Bloom.",
+    "closingDescription": "Komponen agen, grafik interaktif, dan UI di sekitarnya. Satu pustaka untuk ide Anda berikutnya.",
+    "demo": "Demo interaktif · hanya lokal",
+    "demoPrompt": "Bangun antarmuka dengan Bloom.",
+    "demoReply": "Ini demo lokal. Hubungkan layanan Anda sendiri dalam aplikasi.",
+    "components": "Lihat komponen",
+    "install": "Instal Bloom",
+    "docs": "Dokumentasi",
+    "playground": "Playground",
+    "interactive": "Komponen interaktif",
+    "chat": "obrolan agen",
+    "dashboard": "dasbor",
+    "health": "kesehatan",
+    "profile": "profil",
+    "projects": "papan proyek",
+    "calendar": "Kalender",
+    "desktop": "Desktop",
+    "tablet": "Tablet",
+    "mobile": "Ponsel",
+    "view": "Lihat",
+    "thinking": "Berpikir",
+    "color": "Palet warna",
+    "viewport": "Ukuran pratinjau",
+    "setup": "Panduan konfigurasi",
+    "name": "Nama",
+    "status": "Status",
+    "all": "Semua",
+    "filter": "Filter",
+    "steps": "Langkah",
+    "duration": "Durasi",
+    "bedtime": "Waktu tidur",
+    "interruptions": "Gangguan",
+    "move": "Gerakan",
+    "exercise": "Olahraga",
+    "running": "Lari",
+    "birthDate": "Tanggal lahir",
+    "gender": "Jenis kelamin",
+    "female": "Perempuan",
+    "bloodType": "Golongan darah",
+    "doctor": "Dokter",
+    "primaryButton": "Tombol utama",
+    "secondaryButton": "Tombol sekunder",
+    "lifetimeTokens": "Total token",
+    "peakTokens": "Puncak token",
+    "longestTask": "Tugas terlama",
+    "streak": "Rangkaian terbaik",
+    "usersWithAccess": "Pengguna dengan akses",
+    "addUser": "Tambah pengguna",
+    "manage": "Kelola",
+    "models": "Model",
+    "effort": "Upaya",
+    "day": "Hari",
+    "week": "Minggu",
+    "month": "Bulan",
+    "year": "Tahun",
+    "readFiles": "Baca berkas proyek",
+    "lightTheme": "Atur token mode terang",
+    "darkTheme": "Atur token mode gelap",
+    "verifyBuild": "Verifikasi build produksi",
+    "messages": "Pesan",
+    "files": "Berkas",
+    "tools": "Alat",
+    "cards": {
+      "attachments": {
+        "title": "Lampiran",
+        "description": "Berkas dan progres unggahan di atas input."
+      },
+      "search": {
+        "title": "Pencarian web",
+        "description": "Pencarian dan sumber selama agen bekerja."
+      },
+      "limits": {
+        "title": "Batas agen",
+        "description": "Penggunaan konteks, token dan batas paket."
+      },
+      "table": {
+        "title": "Tabel data",
+        "description": "Filter, urutkan dan buka halaman tabel."
+      },
+      "widgets": {
+        "title": "Widget interaktif",
+        "description": "Grafik kesehatan, cincin aktivitas dan peringatan."
+      },
+      "sidebar": {
+        "title": "Bilah samping",
+        "description": "Navigasi, pencarian dan kontrol akun."
+      },
+      "profile": {
+        "title": "Profil kontributor",
+        "description": "Kontribusi, statistik token dan rangkaian."
+      },
+      "progress": {
+        "title": "Progres agen",
+        "description": "Progres beberapa langkah dan penyelesaian."
+      },
+      "loader": {
+        "title": "Pemuatan input",
+        "description": "Cahaya mengitari input saat agen bekerja."
+      },
+      "thinking": {
+        "title": "Aktivitas agen",
+        "description": "Indikator berpikir, mencari dan menulis."
+      },
+      "image": {
+        "title": "Pemuatan gambar",
+        "description": "Hitung mundur animasi dan tampilan gambar."
+      },
+      "calendar": {
+        "title": "Kalender",
+        "description": "Kalender bulanan dan pemilihan tanggal."
+      },
+      "auth": {
+        "title": "Autentikasi",
+        "description": "Formulir masuk dan tombol penyedia sosial."
+      },
+      "meeting": {
+        "title": "Jadwal rapat",
+        "description": "Pilih tanggal dan waktu rapat."
+      },
+      "earnings": {
+        "title": "Grafik",
+        "description": "Grafik interaktif dan kontrol periode."
+      },
+      "upload": {
+        "title": "Unggah berkas",
+        "description": "Pemilihan, validasi dan progres berkas."
+      }
+    },
+    "agents": {
+      "design": "Agen desain",
+      "review": "Agen peninjau",
+      "research": "Agen riset",
+      "code": "Agen kode"
+    },
+    "table": {
+      "results": "Total hasil",
+      "customers": "pelanggan",
+      "purchase": "Pembelian",
+      "updated": "Pembaruan terakhir",
+      "price": "Harga",
+      "waiting": "Menunggu",
+      "completed": "Selesai",
+      "processing": "Diproses",
+      "failed": "Pengiriman gagal",
+      "delivered": "Terkirim",
+      "pending": "Tertunda",
+      "prices": "Semua harga",
+      "products": "Semua produk",
+      "regions": "Semua wilayah",
+      "search": "Cari"
+    }
+  },
+
   common: {
     ...en.common,
     signIn: 'Masuk',
@@ -75,7 +262,7 @@ const id: Translations = {
     company: 'Perusahaan',
     developers: 'Pengembang',
     resources: 'Sumber daya',
-    bannerDefault: 'Alia. Berpikir lebih baik, bersama.',
+    bannerDefault: 'Kenali Bloom, sistem desain Oxy.',
   },
   home: {
     ...en.home,

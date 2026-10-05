@@ -15,6 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onValueChange', type: '(value: T) => void', optional: true },
         { name: 'onChange', type: '(value: T) => void', optional: true },
         { name: 'children', type: 'React.ReactNode', optional: false },
+        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Disables every segment.' },
         { name: 'accessibilityHint', type: 'string', optional: true },
@@ -26,6 +27,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'value', type: 'string', optional: false },
         { name: 'children', type: 'React.ReactNode', optional: false },
+        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'onPress', type: '() => void', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true },

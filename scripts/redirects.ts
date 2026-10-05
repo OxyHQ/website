@@ -49,6 +49,8 @@ const LEGACY_REDIRECTS: ReadonlyArray<readonly [from: string, to: string]> = [
   // successor: they 404 through the catch-all, because pointing them at the
   // hub would publish an unrelated page as their replacement (a soft 404).
   ['/developers/docs/bloom/components/prompt-input', '/developers/docs/bloom/components/composer-panel/'],
+  ['/developers/docs/bloom/playground', '/developers/docs/bloom/components/'],
+  ['/developers/docs/bloom/:version/playground', '/developers/docs/bloom/components/'],
   ['/developers/docs/bloom/components/combobox', '/developers/docs/bloom/components/select/'],
 ]
 

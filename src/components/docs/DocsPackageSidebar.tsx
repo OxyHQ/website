@@ -1,8 +1,21 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
+import { Search } from '@oxy.so/bloom/search'
+import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom'
 import { useLocation } from 'react-router-dom'
 import { Link } from '../../lib/navigation'
 import { buildDocsHref, getPackages } from '../../content/docs-loader'
-import type { SyncedPackage, SyncedPage, SyncedVersion } from '../../../scripts/types'
+import type {
+  SyncedPackage,
+  SyncedPage,
+  SyncedVersion,
+} from '../../../scripts/types'
 import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
 import { getPackageLogo } from './getPackageLogo'
 import {
@@ -29,7 +42,10 @@ function formatGroupLabel(segment: string): string {
   const head = words[0]
   const headCased = head.charAt(0).toUpperCase() + head.slice(1).toLowerCase()
   if (words.length === 1) return headCased
-  const tail = words.slice(1).map((w) => w.toLowerCase()).join(' ')
+  const tail = words
+    .slice(1)
+    .map((w) => w.toLowerCase())
+    .join(' ')
   return `${headCased} ${tail}`
 }
 
@@ -45,7 +61,10 @@ function formatGroupLabel(segment: string): string {
  * `api/functions/...`), we convert the leaf to a group in-place — the
  * `Map` slot is reused, preserving insertion order.
  */
-function buildPageTree(pkg: SyncedPackage, version: SyncedVersion): SidebarNode[] {
+function buildPageTree(
+  pkg: SyncedPackage,
+  version: SyncedVersion,
+): SidebarNode[] {
   interface TreeGroup {
     /** Raw slug segment (pre-formatting). */
     segment: string
@@ -66,8 +85,7 @@ function buildPageTree(pkg: SyncedPackage, version: SyncedVersion): SidebarNode[
     slug: string
   }
   type TreeNode =
-    | { kind: 'leaf'; leaf: TreeLeafEntry }
-    | { kind: 'group'; group: TreeGroup }
+    { kind: 'leaf'; leaf: TreeLeafEntry } | { kind: 'group'; group: TreeGroup }
 
   const root: TreeGroup = {
     segment: '',
@@ -75,7 +93,11 @@ function buildPageTree(pkg: SyncedPackage, version: SyncedVersion): SidebarNode[
     children: new Map(),
   }
 
-  function ensureGroup(parent: TreeGroup, segment: string, fullPath: string): TreeGroup {
+  function ensureGroup(
+    parent: TreeGroup,
+    segment: string,
+    fullPath: string,
+  ): TreeGroup {
     const existing = parent.children.get(segment)
     if (existing && existing.kind === 'group') {
       return existing.group
@@ -235,24 +257,24 @@ export function buildSidebar(
       const version =
         isActive && activeVersion
           ? activeVersion
-          : pkg.versions.find((v) => v.version === pkg.latestVersion) ??
+          : (pkg.versions.find((v) => v.version === pkg.latestVersion) ??
             pkg.versions.find((v) => v.version === pkg.defaultVersion) ??
-            pkg.versions[0]
+            pkg.versions[0])
       if (!version) continue
       const children = collapseSingleWrapper(buildPageTree(pkg, version))
       if (pkg.shortName === 'bloom') {
         children.unshift(
           {
             kind: 'leaf',
-            label: 'Color system playground',
-            href: '/developers/docs/bloom/color-system',
-            slug: 'color-system',
+            label: 'Components',
+            href: '/developers/docs/bloom/components/',
+            slug: 'components',
           },
           {
             kind: 'leaf',
-            label: 'Component playground',
-            href: '/developers/docs/bloom/playground',
-            slug: 'playground',
+            label: 'Color system playground',
+            href: '/developers/docs/bloom/color-system',
+            slug: 'color-system',
           },
         )
       }
@@ -284,7 +306,10 @@ export function buildSidebar(
  * added — so users see the full table of contents on first paint. For
  * deep leaves only the ancestor groups are expanded.
  */
-function collectActivePath(nodes: SidebarNode[], activePath: string): Set<string> {
+function collectActivePath(
+  nodes: SidebarNode[],
+  activePath: string,
+): Set<string> {
   const out = new Set<string>()
   function addAllGroupKeys(children: SidebarNode[]): void {
     for (const child of children) {
@@ -297,7 +322,8 @@ function collectActivePath(nodes: SidebarNode[], activePath: string): Set<string
     if (node.kind === 'leaf') {
       return normalizeDocsPath(node.href) === activePath
     }
-    const selfMatches = node.kind === 'package' && normalizeDocsPath(node.href) === activePath
+    const selfMatches =
+      node.kind === 'package' && normalizeDocsPath(node.href) === activePath
     let containsActive = selfMatches
     for (const child of node.children) {
       if (visit(child)) containsActive = true
@@ -317,7 +343,13 @@ function collectActivePath(nodes: SidebarNode[], activePath: string): Set<string
 /* -------------------------- Sidebar UI -------------------------------- */
 
 /** Letter avatar fallback used when no logo asset exists for a package. */
-function PackageLogo({ shortName, label }: { shortName: string; label: string }) {
+function PackageLogo({
+  shortName,
+  label,
+}: {
+  shortName: string
+  label: string
+}) {
   const src = getPackageLogo(shortName)
   if (src) {
     return (
@@ -331,7 +363,11 @@ function PackageLogo({ shortName, label }: { shortName: string; label: string })
       />
     )
   }
-  const letter = label.replace(/^@[^/]+\//, '').charAt(0).toUpperCase() || '?'
+  const letter =
+    label
+      .replace(/^@[^/]+\//, '')
+      .charAt(0)
+      .toUpperCase() || '?'
   return (
     <span
       aria-hidden="true"
@@ -344,18 +380,18 @@ function PackageLogo({ shortName, label }: { shortName: string; label: string })
 
 /**
  * Indent class for a tree node at the given depth. Depth 0 (top-level) uses
- * `pl-4`; each additional level adds 4 Tailwind spacing units. Listed
+ * `pl-2`; each additional level adds 2 Tailwind spacing units. Listed
  * explicitly so the Tailwind JIT scanner sees every class string.
  */
 const depthPaddingClasses: Record<number, string> = {
-  0: 'pl-4',
-  1: 'pl-8',
-  2: 'pl-12',
-  3: 'pl-16',
-  4: 'pl-20',
-  5: 'pl-24',
-  6: 'pl-28',
-  7: 'pl-32',
+  0: 'pl-2',
+  1: 'pl-4',
+  2: 'pl-6',
+  3: 'pl-8',
+  4: 'pl-10',
+  5: 'pl-12',
+  6: 'pl-14',
+  7: 'pl-16',
 }
 
 function paddingForDepth(depth: number): string {
@@ -378,29 +414,37 @@ function SidebarTreeNode({
   expanded,
   toggle,
   activePath,
+  overview = false,
 }: {
   node: SidebarNode
   depth: number
   expanded: ReadonlySet<string>
   toggle: (key: string) => void
   activePath: string
+  overview?: boolean
 }) {
   if (node.kind === 'leaf') {
     const isActive = activePath === normalizeDocsPath(node.href)
-    const pad = paddingForDepth(depth)
+    const pad = overview
+      ? ['pl-4', 'pl-8', 'pl-12', 'pl-16', 'pl-20', 'pl-24', 'pl-28', 'pl-32'][
+          Math.min(depth, 7)
+        ]
+      : paddingForDepth(depth)
     return (
       <li>
         <Link
           aria-current={isActive ? 'page' : undefined}
           className={
             isActive
-              ? `group flex items-start pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]`
-              : `group flex items-start pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground`
+              ? `group flex items-start pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left break-words hyphens-auto ${overview ? 'rounded-xl' : 'rounded-lg'} w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]`
+              : `group flex items-start pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left ${overview ? 'rounded-xl' : 'rounded-lg'} w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground`
           }
           to={node.href}
         >
           <div className="flex-1 flex items-start space-x-2.5">
-            <div className="break-words [word-break:break-word]">{node.label}</div>
+            <div className="break-words [word-break:break-word]">
+              {node.label}
+            </div>
           </div>
         </Link>
       </li>
@@ -413,7 +457,11 @@ function SidebarTreeNode({
     // clicking the chevron never triggers navigation. Hover styling is
     // shared across the row via a peer-group pattern using `group/row`.
     const isActive = activePath === normalizeDocsPath(node.href)
-    const pad = paddingForDepth(depth)
+    const pad = overview
+      ? ['pl-4', 'pl-8', 'pl-12', 'pl-16', 'pl-20', 'pl-24', 'pl-28', 'pl-32'][
+          Math.min(depth, 7)
+        ]
+      : paddingForDepth(depth)
     // Show a chevron when the package has any non-leaf descendant, or more
     // than one child total — i.e. anything worth expanding. A single leaf
     // child stands on its own without an extra wrapper toggle.
@@ -426,18 +474,20 @@ function SidebarTreeNode({
         <div
           className={
             isActive
-              ? `group/row flex items-stretch rounded-xl bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]`
-              : `group/row flex items-stretch rounded-xl hover:bg-surface text-muted-foreground hover:text-foreground`
+              ? `group/row flex items-stretch ${overview ? 'rounded-xl' : 'rounded-lg'} bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]`
+              : `group/row flex items-stretch ${overview ? 'rounded-xl' : 'rounded-lg'} hover:bg-surface text-muted-foreground hover:text-foreground`
           }
         >
           <Link
             aria-current={isActive ? 'page' : undefined}
             to={node.href}
-            className={`flex-1 min-w-0 flex items-start ${hasChevron ? 'pr-2' : 'pr-3'} py-1.5 ${pad} cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl outline-offset-[-1px]`}
+            className={`flex-1 min-w-0 flex items-start ${hasChevron ? 'pr-2' : 'pr-3'} py-1.5 ${pad} cursor-pointer gap-x-3 text-left break-words hyphens-auto ${overview ? 'rounded-xl' : 'rounded-lg'} outline-offset-[-1px]`}
           >
             <div className="flex-1 flex items-start space-x-2.5">
               <PackageLogo shortName={node.shortName} label={node.label} />
-              <div className="break-words [word-break:break-word]">{node.label}</div>
+              <div className="break-words [word-break:break-word]">
+                {node.label}
+              </div>
             </div>
           </Link>
           {hasChevron ? (
@@ -446,7 +496,7 @@ function SidebarTreeNode({
               onClick={() => toggle(node.key)}
               aria-expanded={isOpen}
               aria-label={`Toggle ${node.label} pages`}
-              className="shrink-0 flex items-center justify-center pr-3 pl-2 py-1.5 rounded-xl cursor-pointer"
+              className="shrink-0 flex items-center justify-center pr-3 pl-2 py-1.5 ${overview ? 'rounded-xl' : 'rounded-lg'} cursor-pointer"
             >
               <span
                 aria-hidden="true"
@@ -471,6 +521,7 @@ function SidebarTreeNode({
                 expanded={expanded}
                 toggle={toggle}
                 activePath={activePath}
+                overview={overview}
               />
             ))}
           </ul>
@@ -479,18 +530,26 @@ function SidebarTreeNode({
     )
   }
   const isOpen = expanded.has(node.key)
-  const pad = paddingForDepth(depth)
+  const pad = overview
+    ? ['pl-4', 'pl-8', 'pl-12', 'pl-16', 'pl-20', 'pl-24', 'pl-28', 'pl-32'][
+        Math.min(depth, 7)
+      ]
+    : paddingForDepth(depth)
   return (
     <li>
       <button
         type="button"
         onClick={() => toggle(node.key)}
         aria-expanded={isOpen}
-        className={`group flex items-center justify-between pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground`}
+        className={`group flex items-center justify-between pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left ${overview ? 'rounded-xl' : 'rounded-lg'} w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground`}
       >
-        <span className="break-words [word-break:break-word]">{node.label}</span>
+        <span className="break-words [word-break:break-word]">
+          {node.label}
+        </span>
         <span className="flex items-center gap-2 shrink-0">
-          <span className="text-xs text-muted-foreground/70 tabular-nums">({node.leafCount})</span>
+          <span className="text-xs text-muted-foreground/70 tabular-nums">
+            ({node.leafCount})
+          </span>
           <span
             aria-hidden="true"
             className={
@@ -518,6 +577,7 @@ function SidebarTreeNode({
               expanded={expanded}
               toggle={toggle}
               activePath={activePath}
+              overview={overview}
             />
           ) : null}
           {node.children.map((child) => (
@@ -528,6 +588,7 @@ function SidebarTreeNode({
               expanded={expanded}
               toggle={toggle}
               activePath={activePath}
+              overview={overview}
             />
           ))}
         </ul>
@@ -540,17 +601,55 @@ export function DocsPackageSidebar({
   sections,
   activePkg,
   versionSelector,
+  overview = false,
 }: {
   sections: SidebarSection[]
   activePkg?: SyncedPackage
   versionSelector?: ReactNode
+  /** Preserve the docs overview design independently of the article layout. */
+  overview?: boolean
 }) {
   const location = useLocation()
+  const [query, setQuery] = useState('')
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const panelId = useId()
+  const searchRef = useRef<HTMLDivElement>(null)
+  const railTop = useSiteHeaderBottom() + 60
+  useEffect(() => {
+    if (overview) return
+    const shortcut = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        setMobileOpen(true)
+        requestAnimationFrame(() =>
+          searchRef.current?.querySelector('input')?.focus(),
+        )
+      }
+    }
+    window.addEventListener('keydown', shortcut)
+    return () => window.removeEventListener('keydown', shortcut)
+  }, [overview])
+  const matches = useMemo(() => {
+    const leaves: Array<{ label: string; href: string; parent: string }> = []
+    const visit = (nodes: SidebarNode[], parent = '') =>
+      nodes.forEach((node) => {
+        if (node.kind !== 'group')
+          leaves.push({ label: node.label, href: node.href, parent })
+        if (node.kind !== 'leaf') visit(node.children, node.label)
+      })
+    sections.forEach((section) => visit(section.nodes, section.title))
+    const needle = query.trim().toLowerCase()
+    return leaves.filter((item) =>
+      `${item.label} ${item.parent}`.toLowerCase().includes(needle),
+    )
+  }, [sections, query])
   const activePath = normalizeDocsPath(location.pathname)
   // Default expansion: only the category containing the active package is
   // expanded; all others collapsed. Computed once per `activePkg`/`sections`
   // shape change via `useMemo` — no `useEffect`.
-  const initialExpanded = useMemo<Record<SyncedPackage['category'], boolean>>(() => {
+  const initialExpanded = useMemo<
+    Record<SyncedPackage['category'], boolean>
+  >(() => {
     const out: Record<SyncedPackage['category'], boolean> = {
       'ui-library': false,
       sdk: false,
@@ -593,6 +692,14 @@ export function DocsPackageSidebar({
   const [prevActivePath, setPrevActivePath] = useState<string>(activePath)
   if (prevActivePath !== activePath) {
     setPrevActivePath(activePath)
+    setMobileOpen(false)
+    setQuery('')
+    setExpanded((previous) => ({
+      ...previous,
+      ...Object.fromEntries(
+        Object.entries(initialExpanded).filter(([, open]) => open),
+      ),
+    }))
     setTreeExpanded((prev) => {
       const next = new Set(prev)
       for (const key of activePathKeys) next.add(key)
@@ -609,50 +716,192 @@ export function DocsPackageSidebar({
     })
   }
 
-  return (
-    <aside className="hidden w-[19.5rem] shrink-0 border-r border-border/60 bg-[color-mix(in_srgb,var(--primary)_3%,var(--background))] lg:block">
-      <div className="sticky top-[calc(var(--site-header-height,64px)+48px)] h-[calc(100vh-var(--site-header-height,64px)-48px)] overflow-y-auto relative text-sm leading-6 pt-6 pb-10 pl-6 pr-6">
-        {versionSelector ? <div className="mb-5 pl-1">{versionSelector}</div> : null}
-        {sections.map((section, sectionIdx) => {
-          const isOpen = expanded[section.category]
-          return (
-            <div key={section.category} className={sectionIdx === 0 ? '' : 'mt-6'}>
-              <button
-                type="button"
-                onClick={() => toggle(section.category)}
-                aria-expanded={isOpen}
-                className="group mb-2.5 flex w-full items-center justify-between rounded-lg py-1 pl-4 pr-3 hover:bg-primary/8"
+  if (overview) {
+    return (
+      <aside className="hidden w-[19.5rem] shrink-0 border-r border-border/60 bg-[color-mix(in_srgb,var(--primary)_3%,var(--background))] lg:block">
+        <div className="sticky top-[calc(var(--site-header-height,64px)+48px)] h-[calc(100vh-var(--site-header-height,64px)-48px)] overflow-y-auto relative text-sm leading-6 pt-6 pb-10 pl-6 pr-6">
+          {versionSelector ? (
+            <div className="mb-5 pl-1">{versionSelector}</div>
+          ) : null}
+          {sections.map((section, sectionIdx) => {
+            const isOpen = expanded[section.category]
+            return (
+              <div
+                key={section.category}
+                className={sectionIdx === 0 ? '' : 'mt-6'}
               >
-                <span className="text-left font-semibold text-primary">{section.title}</span>
-                <span
-                  aria-hidden="true"
-                  className={
-                    isOpen
-                      ? 'inline-flex rotate-0 transition-transform text-muted-foreground group-hover:text-foreground'
-                      : 'inline-flex -rotate-90 transition-transform text-muted-foreground group-hover:text-foreground'
-                  }
+                <button
+                  type="button"
+                  onClick={() => toggle(section.category)}
+                  aria-expanded={isOpen}
+                  className="group mb-2.5 flex w-full items-center justify-between rounded-lg py-1 pl-4 pr-3 hover:bg-primary/8"
                 >
-                  <RiArrowDownSLine width={16} height={16} fill="currentColor" />
-                </span>
-              </button>
-              {isOpen ? (
-                <ul className="space-y-px">
-                  {section.nodes.map((node) => (
-                    <SidebarTreeNode
-                      key={childKey(node)}
-                      node={node}
-                      depth={0}
-                      expanded={treeExpanded}
-                      toggle={toggleTree}
-                      activePath={activePath}
+                  <span className="text-left font-semibold text-primary">
+                    {section.title}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className={
+                      isOpen
+                        ? 'inline-flex rotate-0 transition-transform text-muted-foreground group-hover:text-foreground'
+                        : 'inline-flex -rotate-90 transition-transform text-muted-foreground group-hover:text-foreground'
+                    }
+                  >
+                    <RiArrowDownSLine
+                      width={16}
+                      height={16}
+                      fill="currentColor"
                     />
-                  ))}
-                </ul>
-              ) : null}
+                  </span>
+                </button>
+                {isOpen ? (
+                  <ul className="space-y-px">
+                    {section.nodes.map((node) => (
+                      <SidebarTreeNode
+                        key={childKey(node)}
+                        node={node}
+                        depth={0}
+                        expanded={treeExpanded}
+                        toggle={toggleTree}
+                        activePath={activePath}
+                        overview
+                      />
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            )
+          })}
+        </div>
+      </aside>
+    )
+  }
+
+  return (
+    <div
+      className="w-full shrink-0 px-3 pt-3 lg:w-[284px] lg:self-stretch"
+      data-docs-navigation
+    >
+      <button
+        type="button"
+        aria-expanded={mobileOpen}
+        aria-controls={panelId}
+        className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground lg:hidden"
+        onClick={() => setMobileOpen((open) => !open)}
+      >
+        Documentation navigation
+        <RiArrowDownSLine width={16} height={16} fill="currentColor" />
+      </button>
+      <aside
+        id={panelId}
+        aria-label="Documentation navigation"
+        className={`${mobileOpen ? 'flex' : 'hidden'} sticky mt-3 max-h-[60dvh] flex-col gap-3 overflow-hidden rounded-3xl border border-border/60 bg-[color-mix(in_srgb,var(--primary)_3%,var(--background))] p-3 shadow-sm lg:mt-0 lg:flex lg:max-h-none`}
+        style={{ top: railTop, height: `calc(100dvh - ${railTop + 12}px)` }}
+      >
+        <Link
+          to="/developers/docs/"
+          className="px-1 text-base font-medium text-foreground"
+        >
+          Oxy Docs
+        </Link>
+        <div ref={searchRef} className="relative">
+          <Search
+            label="Search documentation"
+            accessibilityLabel="Search documentation"
+            placeholder="Quick search…"
+            value={query}
+            onChangeText={setQuery}
+            onClearText={() => setQuery('')}
+          />
+        </div>
+        {versionSelector ? <div>{versionSelector}</div> : null}
+        <div
+          className="min-h-0 overflow-y-auto overscroll-contain text-sm leading-5"
+          data-docs-sidebar-scroll
+        >
+          {query.trim() ? (
+            <div>
+              <p
+                className="px-2 py-2 text-xs text-muted-foreground"
+                role="status"
+              >
+                {matches.length} results
+              </p>
+              <ul className="space-y-1">
+                {matches.slice(0, 80).map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      to={item.href}
+                      className="block rounded-lg px-2 py-2 text-foreground hover:bg-surface"
+                    >
+                      <span className="block break-words">{item.label}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {item.parent}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              {!matches.length && (
+                <p className="px-2 py-3 text-sm text-muted-foreground">
+                  No matching pages. Try another search.
+                </p>
+              )}
             </div>
-          )
-        })}
-      </div>
-    </aside>
+          ) : (
+            <>
+              {sections.map((section, sectionIdx) => {
+                const isOpen = expanded[section.category]
+                return (
+                  <div
+                    key={section.category}
+                    className={sectionIdx === 0 ? '' : 'mt-5'}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggle(section.category)}
+                      aria-expanded={isOpen}
+                      className="group mb-1 flex w-full items-center justify-between rounded-lg px-2 py-2 hover:bg-primary/8"
+                    >
+                      <span className="text-left text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        {section.title}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className={
+                          isOpen
+                            ? 'inline-flex rotate-0 transition-transform text-muted-foreground group-hover:text-foreground'
+                            : 'inline-flex -rotate-90 transition-transform text-muted-foreground group-hover:text-foreground'
+                        }
+                      >
+                        <RiArrowDownSLine
+                          width={16}
+                          height={16}
+                          fill="currentColor"
+                        />
+                      </span>
+                    </button>
+                    {isOpen ? (
+                      <ul className="space-y-px">
+                        {section.nodes.map((node) => (
+                          <SidebarTreeNode
+                            key={childKey(node)}
+                            node={node}
+                            depth={0}
+                            expanded={treeExpanded}
+                            toggle={toggleTree}
+                            activePath={activePath}
+                          />
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
+                )
+              })}
+            </>
+          )}
+        </div>
+      </aside>
+    </div>
   )
 }

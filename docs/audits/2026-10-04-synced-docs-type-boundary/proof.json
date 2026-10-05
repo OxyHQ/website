@@ -1,0 +1,38 @@
+{
+  "source": "9525feb376d9d1894db9b0001d32fe2695e62e5a",
+  "sources": [
+    {
+      "path": "tsconfig.app.json",
+      "sha256": "3bf2edafd68b8c39185dfef38e38104574c4e1637300ef889c1b8dcf0d5c48e2"
+    }
+  ],
+  "records": [
+    {
+      "path": "docs/audits/2026-10-04-synced-docs-type-boundary/records/ci-failed.log",
+      "sha256": "25dabb1378ab73fd77697c21f3a102c88b35eed3241336d765bf7eebae70020a"
+    },
+    {
+      "path": "docs/audits/2026-10-04-synced-docs-type-boundary/records/synced-types-red.log",
+      "sha256": "52222c3f83d1ed58ac4eee2b5f542da67736c608c56df1d733b5a6b7e3e510a3"
+    },
+    {
+      "path": "docs/audits/2026-10-04-synced-docs-type-boundary/records/synced-types-green.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/audits/2026-10-04-synced-docs-type-boundary/records/synced-build-green.log",
+      "sha256": "9d31ffe1e578a5e21fed83d701d7a5aca5f320a2c86cb47832a5793e7ca3aeb3"
+    }
+  ],
+  "reproductionFixture": {
+    "source": "/home/nate/Oxy/Homiio/.worktrees/1519-final-sdk-adoption-20261003/docs/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx",
+    "sha256": "d86e168cb8aac58f3579b6b1d421d7f96674dda19ab6de50426f73b04d530983",
+    "copiedTo": "src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx"
+  },
+  "result": "tsc -b RED to GREEN with the same foreign fixture; full canonical build/browser gates passed",
+  "limits": [
+    "Exclude is only generated foreign documentation content; imported application TypeScript remains checked by TypeScript normally.",
+    "No docs were removed from sync, rendering or search. Generated index freshness changes were preserved privately and restored after build.",
+    "CI required; no deployment claim."
+  ]
+}

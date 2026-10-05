@@ -5,6 +5,27 @@
 @import "@oxy.so/bloom/design-tokens/theme.css";
 @plugin "@tailwindcss/typography";
 
+/* Reference-layout vocabulary, resolved exclusively from Bloom's roles. */
+@theme inline {
+  --color-text-primary: var(--foreground);
+  --color-text-secondary: var(--muted-foreground);
+  --color-text-tertiary: var(--muted-foreground);
+  --color-background-primary-default: var(--card);
+  --color-background-secondary-default: var(--background);
+  --color-background-inner-default: var(--card);
+  --color-border-button-default: var(--border);
+  --color-separator-border: var(--border);
+  --color-border-focus-ring: var(--ring);
+  --radius-2lg: 10px;
+  --text-headline-medium: 16px;
+  --text-headline-medium--line-height: 22px;
+  --text-headline-regular: 16px;
+  --text-headline-regular--line-height: 22px;
+  --text-body-medium: 14px;
+  --text-body-medium--line-height: 20px;
+}
+
+
 /* Scan the Oxy SDK packages so their react-native-css className LAYOUT utilities
  * (flex-1 / flex-row / gap-* / arbitrary [Npx]) are generated on web. Tailwind v4
  * auto-detects this app's own src/ but excludes node_modules by default, so without

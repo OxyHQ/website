@@ -1,0 +1,24 @@
+[
+  {
+    "name": "theme",
+    "cwd": ".",
+    "argv": [
+      "bun",
+      "run",
+      "test:theme"
+    ],
+    "exitCode": 0,
+    "seconds": 4.525
+  },
+  {
+    "name": "build",
+    "cwd": ".",
+    "argv": [
+      "bun",
+      "run",
+      "build"
+    ],
+    "exitCode": 1,
+    "seconds": 7.081
+  }
+]

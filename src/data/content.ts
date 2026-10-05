@@ -460,7 +460,7 @@ export const platformNavDropdown: NavDropdown = {
         {
           title: 'Bloom',
           description: 'The design system behind every app',
-          href: '/developers/docs/bloom/playground',
+          href: '/bloom/',
           image: '/images/apps/bloom.png',
         },
       ],
@@ -485,7 +485,7 @@ export const resourcesNavCard: NavDropdownCard = {
 }
 
 export const resourcesBloomCard: NavDropdownCard = {
-  href: '/developers/docs/bloom/playground',
+  href: '/bloom/',
   image: '/images/nav-bloom-ui.webp',
   title: 'Bloom UI',
   description: 'The open design system behind the Oxy ecosystem',
@@ -514,7 +514,7 @@ export const defaultFooterColumns: FooterColumn[] = [
     title: 'Platform',
     links: [
       { label: 'Commons', href: '/commons' },
-      { label: 'Bloom UI', href: '/developers/docs/bloom/playground' },
+      { label: 'Bloom UI', href: '/bloom/' },
       { label: 'All apps', href: '/apps' },
       { label: 'Changelog', href: '/changelog' },
       { label: 'Status', href: '/status' },
@@ -565,7 +565,7 @@ export const defaultFooterColumns: FooterColumn[] = [
       { label: 'Documentation', href: '/developers/docs' },
       { label: 'API reference', href: '/developers/docs/api' },
       { label: 'Academy', href: '/academy' },
-      { label: 'Bloom playground', href: '/developers/docs/bloom/playground' },
+      { label: 'Bloom components', href: '/developers/docs/bloom/components/' },
       { label: 'Open source', href: 'https://github.com/OxyHQ', isExternal: true },
     ],
   },

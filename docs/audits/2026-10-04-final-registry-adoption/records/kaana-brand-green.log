@@ -1,0 +1,11 @@
+bun test v1.4.2 (744846f84)
+
+scripts/kaana-brand.test.ts:
+(pass) Kaana public brand contract > ships the exact canonical source logo [0.68ms]
+(pass) Kaana public brand contract > uses the source SVG without recoloring or optimization [0.70ms]
+(pass) Kaana public brand contract > rejects changed logo bytes [0.59ms]
+
+ 3 pass
+ 0 fail
+ 14 expect() calls
+Ran 3 tests across 1 file. [10.00ms]

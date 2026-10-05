@@ -1,0 +1,37 @@
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(4,42): error TS2307: Cannot find module '@testing-library/react-native' or its corresponding type declarations.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(6,33): error TS2307: Cannot find module 'expo-document-picker' or its corresponding type declarations.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(7,44): error TS2307: Cannot find module '../hooks/useSindiAuthenticatedFetch' or its corresponding type declarations.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(8,38): error TS2307: Cannot find module '../hooks/useSindiConversation' or its corresponding type declarations.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(9,57): error TS2307: Cannot find module '../store/conversationStore' or its corresponding type declarations.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(14,1): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(15,1): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(16,1): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(17,1): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(17,62): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(18,1): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(18,59): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(19,1): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(20,1): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(20,74): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(20,91): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(20,114): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(20,137): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(21,1): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(21,55): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(21,73): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(31,1): error TS2304: Cannot find name 'beforeAll'.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(42,1): error TS2304: Cannot find name 'afterAll'.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(43,1): error TS2593: Cannot find name 'beforeEach'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(59,1): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(59,122): error TS7006: Parameter 'operation' implicitly has an 'any' type.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(62,25): error TS2304: Cannot find name 'expect'.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(76,5): error TS2304: Cannot find name 'expect'.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(77,5): error TS2304: Cannot find name 'expect'.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(80,1): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(83,25): error TS2304: Cannot find name 'expect'.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(85,25): error TS2304: Cannot find name 'expect'.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(88,1): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(88,120): error TS7006: Parameter 'operation' implicitly has an 'any' type.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(90,3): error TS2708: Cannot use namespace 'jest' as a value.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(94,5): error TS2304: Cannot find name 'expect'.
+src/content/_synced/homiio/main/audits/2026-10-03-final-sdk-source-compat/deferred-owner/red-final-fixture.tsx(101,5): error TS2304: Cannot find name 'expect'.

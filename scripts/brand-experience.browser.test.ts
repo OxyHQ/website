@@ -74,38 +74,15 @@ try {
   console.log('PASS brand guide: chapters, voice examples and recipes')
 
   await page.goto(`${origin}/developers/docs/bloom/components/`)
-  await page.getByPlaceholder('Search buttons, navigation, forms…').fill('button')
+  await page.getByPlaceholder('Search buttons, composers, calendars…').fill('button')
   await page.getByRole('link', { name: 'Button', exact: true }).waitFor()
   invariant(
     (await page.getByText('Example pending', { exact: true }).count()) === 0,
     'Empty preview tiles remain',
   )
-  await page.getByRole('link', { name: 'Open playground', exact: true }).click()
-  const frame = page.frameLocator('iframe[title="Interactive Bloom preview"]')
-  await frame.getByRole('button', { name: 'Click me', exact: true }).waitFor({ timeout: 60000 })
-  await page.getByLabel('children', { exact: true }).fill('A working Bloom button')
-  await frame.getByRole('button', { name: 'A working Bloom button', exact: true }).waitFor()
-  // The playground's pickers are Bloom Selects: open the trigger, pick the row.
-  await page.getByLabel('Recipe', { exact: true }).click()
-  await page.getByRole('radio', { name: 'grove', exact: true }).click()
-  await page.getByLabel('Appearance', { exact: true }).click()
-  await page.getByRole('radio', { name: 'Dark', exact: true }).click()
-  invariant(
-    new URL(page.url()).searchParams.get('recipe') === 'grove',
-    'Recipe did not persist in URL',
-  )
-  await page.getByText('Example source', { exact: true }).click()
-  await page
-    .getByLabel('Bloom example source')
-    .fill(
-      `export default function Example() { let isolated = false; try { window.parent.document.body } catch { isolated = true }; return <p>{isolated ? 'Isolated preview works' : 'Isolation failed'}</p> }`,
-    )
-  await frame.getByText('Isolated preview works', { exact: true }).waitFor()
-  await page.getByLabel('Bloom example source').fill('export default function Broken( {')
-  await frame.getByText('Showing the last version that compiled.').waitFor()
-  await page.getByRole('button', { name: 'Reset example', exact: true }).click()
-  await frame.getByRole('button', { name: 'Click me', exact: true }).waitFor()
-  console.log('PASS playground: controls, URL recipe, isolated code execution, errors and reset')
+  await page.goto(`${origin}/developers/docs/bloom/playground/`)
+  await page.waitForURL(`${origin}/developers/docs/bloom/components/`)
+  console.log('PASS retired playground redirects to the component catalog')
 
   await page.goto(`${origin}/inbox/`)
   await page.getByRole('heading', { name: 'Email. Room to think.' }).waitFor()

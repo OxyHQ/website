@@ -6,11 +6,6 @@ const links = [
     description: 'Browse every surface Bloom publishes and the props it declares.',
   },
   {
-    href: '/developers/docs/bloom/playground',
-    title: 'Component playground',
-    description: 'Edit working Bloom code and watch it compile in your browser.',
-  },
-  {
     href: '/developers/docs/bloom/color-system',
     title: 'Color system playground',
     description: 'Compare every dynamic color recipe in light and dark.',
@@ -20,7 +15,7 @@ const links = [
 /** Stable entry points from the versioned Bloom overview into live docs tools. */
 export function BloomOverviewLinks() {
   return (
-    <nav aria-label="Bloom interactive documentation" className="not-prose my-8 grid gap-3 sm:grid-cols-3">
+    <nav aria-label="Bloom interactive documentation" className="not-prose my-8 grid gap-3 sm:grid-cols-2">
       {links.map((link) => (
         <Link
           key={link.href}

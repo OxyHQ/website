@@ -7,6 +7,8 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'DialogProps': {
       props: [
+        { name: 'presentation', type: "'default' | 'custom'", options: ['default', 'custom'], optional: true, description: 'Content owns paint and motion; shared overlay, focus and dismissal remain.' },
+        { name: 'exitDuration', type: 'number', optional: true, description: 'Custom presentation exit lifetime, in milliseconds.' },
         { name: 'control', type: 'DialogControlProps', optional: true, description: 'Imperative open/close handle from `useDialogControl()`. Optional — omit it when driving the dialog with the controlled `open` prop instead.' },
         { name: 'open', type: 'boolean', optional: true, description: 'Controlled open state (opt-in). When provided, the dialog is driven by this boolean and `onClose`, and `control` is ignored.' },
         { name: 'onClose', type: '() => void', optional: true, description: 'Fires after the dialog has finished closing. In controlled mode it is the close request the host must answer by flipping `open` to `false`.' },
