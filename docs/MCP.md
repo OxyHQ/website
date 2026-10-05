@@ -160,4 +160,4 @@ between tests). Object storage and remote downloads are in-memory doubles
 (`server/test/setup.ts`). `server/mcp/http.test.ts` drives the real Express app
 with a fake Oxy introspection endpoint: CORS, host, body limit, revoked/expired/
 wrong-resource tokens, scopes and the active account. CI runs it in
-`.github/workflows/server-tests.yml` for any change under `server/`.
+`.github/workflows/checks.yml` (job `server`) for any change under `server/`.
