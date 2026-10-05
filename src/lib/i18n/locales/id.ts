@@ -2,6 +2,7 @@ import en, { type Translations } from './en'
 
 /** Indonesian translations. English remains the structural source of truth. */
 const id: Translations = {
+
   ...en,
   bloom: {
     board: {"backlog": "Daftar tertunda", "todo": "Akan dikerjakan", "inProgress": "Sedang dikerjakan", "inReview": "Dalam peninjauan", "done": "Selesai"},

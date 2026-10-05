@@ -1,6 +1,8 @@
 import en, { type Translations } from './en'
 
 const ko: Translations = {
+  one: {"title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version"},
+
   bloom: {
     board: {"backlog": "백로그", "todo": "할 일", "inProgress": "진행 중", "inReview": "검토 중", "done": "완료"},
     "seoTitle": "Bloom UI, 모든 플랫폼을 위한 React 디자인 시스템",

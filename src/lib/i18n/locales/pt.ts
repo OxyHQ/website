@@ -1,6 +1,8 @@
 import en, { type Translations } from './en'
 
 const pt: Translations = {
+  one: {"title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version"},
+
   bloom: {
     board: {"backlog": "Pendências", "todo": "A fazer", "inProgress": "Em andamento", "inReview": "Em revisão", "done": "Concluído"},
     "seoTitle": "Bloom UI, um sistema de design React para todas as plataformas",

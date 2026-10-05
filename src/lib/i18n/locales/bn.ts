@@ -2,6 +2,7 @@ import en, { type Translations } from './en'
 
 /** Bengali translations. English remains the structural source of truth. */
 const bn: Translations = {
+
   ...en,
   bloom: {
     board: {"backlog": "অপেক্ষমাণ", "todo": "করণীয়", "inProgress": "চলমান", "inReview": "পর্যালোচনাধীন", "done": "সম্পন্ন"},

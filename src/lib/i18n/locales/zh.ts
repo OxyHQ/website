@@ -1,6 +1,8 @@
 import en, { type Translations } from './en'
 
 const zh: Translations = {
+  one: {"title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version"},
+
   bloom: {
     board: {"backlog": "待规划", "todo": "待办", "inProgress": "进行中", "inReview": "审核中", "done": "已完成"},
     "seoTitle": "Bloom UI，面向所有平台的 React 设计系统",

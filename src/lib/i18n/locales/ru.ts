@@ -2,6 +2,7 @@ import en, { type Translations } from './en'
 
 /** Russian translations. English remains the structural source of truth. */
 const ru: Translations = {
+
   ...en,
   bloom: {
     board: {"backlog": "Очередь", "todo": "К выполнению", "inProgress": "В работе", "inReview": "На проверке", "done": "Готово"},

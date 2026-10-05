@@ -1,6 +1,8 @@
 import en, { type Translations } from './en'
 
 const ar: Translations = {
+  one: {"title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version"},
+
   bloom: {
     board: {"backlog": "قائمة الانتظار", "todo": "للتنفيذ", "inProgress": "قيد التنفيذ", "inReview": "قيد المراجعة", "done": "مكتمل"},
     "seoTitle": "Bloom UI، نظام تصميم React لكل المنصات",

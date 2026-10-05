@@ -2,6 +2,7 @@ import en, { type Translations } from './en'
 
 /** Hindi translations. English remains the structural source of truth. */
 const hi: Translations = {
+
   ...en,
   bloom: {
     board: {"backlog": "लंबित कार्य", "todo": "करना है", "inProgress": "प्रगति में", "inReview": "समीक्षा में", "done": "पूरा हुआ"},
