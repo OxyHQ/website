@@ -195,6 +195,13 @@ jobs:
           VITE_API_URL: https://website-api.oxy.so
       - name: Review brand interactions and landing layouts
         run: bun scripts/website-review.browser.test.ts
+      # /one against synthetic SDK catalogues only: unconfigured, priced,
+      # re-priced and unpriced, checkout absent, no desktop/mobile overflow.
+      # Every network request outside the preview's static files is blocked.
+      - name: Oxy One catalogue page
+        run: bun run test:one:browser
+        env:
+          ONE_QA_SCREENSHOT_DIR: review-artifacts
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
