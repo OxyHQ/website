@@ -8,7 +8,8 @@ const origin=`http://127.0.0.1:${port}`
 let browser: Awaited<ReturnType<typeof chromium.launch>> | undefined
 function assert(value:unknown,message:string):asserts value {if(!value)throw new Error(message)}
 try {
- for(let i=0;i<50;i++){try{if((await fetch(origin)).ok)break}catch{}await Bun.sleep(100)}
+ // The preview server is not listening yet on the first attempts; keep polling.
+ for(let i=0;i<50;i++){try{if((await fetch(origin)).ok)break}catch{/* not ready */}await Bun.sleep(100)}
  browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_EXECUTABLE||undefined,args:['--no-sandbox']})
  const page=await browser.newPage({viewport:{width:1440,height:1000}})
  await page.emulateMedia({reducedMotion:'reduce'})
