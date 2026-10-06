@@ -1,7 +1,7 @@
 import en, { type Translations } from './en'
 
 const zh: Translations = {
-  one: {"credits": "credits", "title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version", "monthly": "每月", "billingTerms": "无试用期。仅提供月付方案，无年付方案。", "taxInclusive": "最终价格，包含适用的购买税费。"},
+  one: {"credits": "积分", "title": "Oxy One", "lead": "Alia 与存储空间，汇聚于你的个人 Oxy 账户。", "unavailable": "Oxy One 暂不可购买。配置方案后，权益和额度将显示在这里。", "error": "无法加载方案，请稍后重试。", "loading": "正在加载方案…", "manage": "管理你的账户", "status": "暂不可购买", "path": "了解 Oxy One", "version": "方案版本", "monthly": "每月", "billingTerms": "无试用期。仅提供月付方案，无年付方案。", "taxInclusive": "最终价格，包含适用的购买税费。"},
 
   bloom: {
     board: {"backlog": "待规划", "todo": "待办", "inProgress": "进行中", "inReview": "审核中", "done": "已完成"},

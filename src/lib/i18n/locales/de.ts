@@ -1,7 +1,7 @@
 import en, { type Translations } from './en'
 
 const de: Translations = {
-  one: {"credits": "credits", "title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version", "monthly": "pro Monat", "billingTerms": "Kein Testzeitraum. Nur monatlich; kein Jahresplan.", "taxInclusive": "Endpreis inklusive anwendbarer Steuern auf den Kauf."},
+  one: {"credits": "Credits", "title": "Oxy One", "lead": "Alia und Speicher, gemeinsam in deinem persönlichen Oxy-Konto.", "unavailable": "Oxy One kann noch nicht gekauft werden. Leistungen und Limits erscheinen hier, sobald ein Plan eingerichtet ist.", "error": "Die Pläne konnten nicht geladen werden. Bitte versuche es später erneut.", "loading": "Pläne werden geladen …", "manage": "Konto verwalten", "status": "Kauf nicht verfügbar", "path": "Oxy One entdecken", "version": "Angebotsversion", "monthly": "pro Monat", "billingTerms": "Kein Testzeitraum. Nur monatlich; kein Jahresplan.", "taxInclusive": "Endpreis inklusive anwendbarer Steuern auf den Kauf."},
 
   bloom: {
     board: {"backlog": "Vorgemerkt", "todo": "Zu erledigen", "inProgress": "In Arbeit", "inReview": "In Prüfung", "done": "Erledigt"},

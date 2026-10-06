@@ -35,7 +35,8 @@ export default function OnePage() {
               <span className="font-medium">{entry.displayName}</span>
               {entry.benefit.kind === 'quota' && <span className="ml-2 text-muted-foreground">{entry.benefit.unit === 'byte' ? `${entry.benefit.included / 1_000_000_000} GB` : `${entry.benefit.included.toLocaleString()} ${entry.benefit.unit === 'alia_credit' ? t('one.credits') : entry.benefit.unit}`}</span>}
             </li>)}</ul>
-            <p className="mt-6 text-sm text-muted-foreground">{t('one.status')}</p>
+            {/* Derived from the catalogue, not fixed copy; the published contract has no purchasable state yet. */}
+            {catalogue.data?.purchase === 'unavailable' && <p className="mt-6 text-sm text-muted-foreground">{t('one.status')}</p>}
           </article>)}
       </div>
       <a className="mt-8 inline-flex rounded-full border border-border px-6 py-3 font-medium text-foreground hover:bg-accent" href="https://accounts.oxy.so/payments">{t('one.manage')}</a>

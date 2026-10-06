@@ -267,7 +267,8 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'One identity you hold yourself, and a family of open apps built on it: social, messaging, housing, payments, AI and an operating system. No ads, no data sales.',
     canonicalPath: '/',
   },
-  '/one': { title: 'Oxy One', description: 'Alia and storage on one personal Oxy account. See configured benefits and availability.', canonicalPath: '/one' },
+  // The same strings OnePage sets at runtime, so crawlers and visitors see one description.
+  '/one': { title: en.one.title, description: en.one.lead, canonicalPath: '/one' },
   '/pricing': {
     title: 'Pricing',
     description:

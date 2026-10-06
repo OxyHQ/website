@@ -1,7 +1,7 @@
 import en, { type Translations } from './en'
 
 const ca: Translations = {
-  one: {"credits": "credits", "title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version", "monthly": "al mes", "billingTerms": "Sense període de prova. Només mensual; sense pla anual.", "taxInclusive": "Preu final, inclosos els impostos aplicables a la compra."},
+  one: {"credits": "crèdits", "title": "Oxy One", "lead": "Alia i emmagatzematge, junts al teu compte personal d’Oxy.", "unavailable": "Oxy One encara no es pot comprar. Els beneficis i els límits apareixeran aquí quan es configuri un pla.", "error": "No s’han pogut carregar els plans. Torna-ho a provar més tard.", "loading": "S’estan carregant els plans…", "manage": "Gestiona el teu compte", "status": "La compra no està disponible", "path": "Descobreix Oxy One", "version": "Versió de l’oferta", "monthly": "al mes", "billingTerms": "Sense període de prova. Només mensual; sense pla anual.", "taxInclusive": "Preu final, inclosos els impostos aplicables a la compra."},
 
   bloom: {
     board: {"backlog": "Pendent", "todo": "Per fer", "inProgress": "En curs", "inReview": "En revisió", "done": "Fet"},

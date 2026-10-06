@@ -1,7 +1,7 @@
 import en, { type Translations } from './en'
 
 const ar: Translations = {
-  one: {"credits": "credits", "title": "Oxy One", "lead": "Alia and storage, together on your personal Oxy account.", "unavailable": "Oxy One is not available to purchase yet. Benefits and limits will appear here when a plan is configured.", "error": "Plans could not be loaded. Please try again later.", "loading": "Loading plans…", "manage": "Manage your account", "status": "Purchasing is unavailable", "path": "Explore Oxy One", "version": "Offer version", "monthly": "شهريًا", "billingTerms": "لا توجد فترة تجريبية. اشتراك شهري فقط؛ لا توجد خطة سنوية.", "taxInclusive": "السعر النهائي، شامل ضرائب الشراء المطبّقة."},
+  one: {"credits": "أرصدة", "title": "Oxy One", "lead": "Alia والتخزين معًا في حسابك الشخصي على Oxy.", "unavailable": "Oxy One غير متاح للشراء بعد. ستظهر المزايا والحدود هنا عند إعداد خطة.", "error": "تعذّر تحميل الخطط. يُرجى المحاولة لاحقًا.", "loading": "جارٍ تحميل الخطط…", "manage": "إدارة حسابك", "status": "الشراء غير متاح", "path": "استكشف Oxy One", "version": "إصدار العرض", "monthly": "شهريًا", "billingTerms": "لا توجد فترة تجريبية. اشتراك شهري فقط؛ لا توجد خطة سنوية.", "taxInclusive": "السعر النهائي، شامل ضرائب الشراء المطبّقة."},
 
   bloom: {
     board: {"backlog": "قائمة الانتظار", "todo": "للتنفيذ", "inProgress": "قيد التنفيذ", "inReview": "قيد المراجعة", "done": "مكتمل"},
