@@ -2,7 +2,9 @@ import en, { type Translations } from './en'
 
 /** Russian translations. English remains the structural source of truth. */
 const ru: Translations = {
+
   ...en,
+  one: { ...en.one, credits: "кредитов", lead: "Alia и хранилище — вместе в вашем личном аккаунте Oxy.", unavailable: "Oxy One пока нельзя купить. Преимущества и лимиты появятся здесь, когда тариф будет настроен.", error: "Не удалось загрузить тарифы. Повторите попытку позже.", loading: "Загрузка тарифов…", manage: "Управление аккаунтом", status: "Покупка недоступна", path: "Узнать об Oxy One", version: "Версия предложения", monthly: "в месяц", billingTerms: "Без пробного периода. Только помесячно; годового плана нет.", taxInclusive: "Окончательная цена с учетом применимых налогов на покупку." },
   bloom: {
     board: {"backlog": "Очередь", "todo": "К выполнению", "inProgress": "В работе", "inReview": "На проверке", "done": "Готово"},
     "seoTitle": "Bloom UI, дизайн-система React для любой платформы",

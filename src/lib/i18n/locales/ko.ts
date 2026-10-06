@@ -1,6 +1,8 @@
 import en, { type Translations } from './en'
 
 const ko: Translations = {
+  one: {"credits": "크레딧", "title": "Oxy One", "lead": "Alia와 저장 공간을 개인 Oxy 계정 하나에서 함께 이용하세요.", "unavailable": "Oxy One은 아직 구매할 수 없습니다. 요금제가 구성되면 혜택과 한도가 여기에 표시됩니다.", "error": "요금제를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.", "loading": "요금제를 불러오는 중…", "manage": "계정 관리", "status": "구매할 수 없음", "path": "Oxy One 살펴보기", "version": "오퍼 버전", "monthly": "월", "billingTerms": "체험 기간 없음. 월간 요금제만 제공하며 연간 요금제는 없습니다.", "taxInclusive": "구매에 적용되는 세금이 포함된 최종 가격입니다."},
+
   bloom: {
     board: {"backlog": "백로그", "todo": "할 일", "inProgress": "진행 중", "inReview": "검토 중", "done": "완료"},
     "seoTitle": "Bloom UI, 모든 플랫폼을 위한 React 디자인 시스템",

@@ -1,6 +1,8 @@
 import en, { type Translations } from './en'
 
 const fr: Translations = {
+  one: {"credits": "crédits", "title": "Oxy One", "lead": "Alia et le stockage, réunis sur votre compte Oxy personnel.", "unavailable": "Oxy One n’est pas encore disponible à l’achat. Les avantages et les limites apparaîtront ici lorsqu’une offre sera configurée.", "error": "Impossible de charger les offres. Veuillez réessayer plus tard.", "loading": "Chargement des offres…", "manage": "Gérer votre compte", "status": "Achat indisponible", "path": "Découvrir Oxy One", "version": "Version de l’offre", "monthly": "par mois", "billingTerms": "Sans période d’essai. Mensuel uniquement ; aucune offre annuelle.", "taxInclusive": "Prix final, taxes applicables à l’achat comprises."},
+
   bloom: {
     board: {"backlog": "À prévoir", "todo": "À faire", "inProgress": "En cours", "inReview": "En révision", "done": "Terminé"},
     "seoTitle": "Bloom UI, un système de design React pour toutes les plateformes",

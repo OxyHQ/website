@@ -22,6 +22,7 @@ interface PricingPath {
 }
 
 const PATHS: readonly PricingPath[] = [
+  { titleKey: 'one.title', bodyKey: 'one.lead', ctaKey: 'one.path', href: '/one' },
   {
     titleKey: 'ai.pricing.pathEcosystem',
     bodyKey: 'ai.pricing.pathEcosystemBody',

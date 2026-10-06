@@ -1,6 +1,8 @@
 import en, { type Translations } from './en'
 
 const ja: Translations = {
+  one: {"credits": "クレジット", "title": "Oxy One", "lead": "Alia とストレージを、あなたの個人用 Oxy アカウントにまとめて。", "unavailable": "Oxy One はまだ購入できません。プランが設定されると、特典と上限がここに表示されます。", "error": "プランを読み込めませんでした。しばらくしてから再度お試しください。", "loading": "プランを読み込んでいます…", "manage": "アカウントを管理", "status": "購入はまだできません", "path": "Oxy One を見る", "version": "オファーのバージョン", "monthly": "月額", "billingTerms": "無料体験なし。月額プランのみで、年額プランはありません。", "taxInclusive": "購入に適用される税金を含む最終価格です。"},
+
   bloom: {
     board: {"backlog": "バックログ", "todo": "未着手", "inProgress": "進行中", "inReview": "レビュー中", "done": "完了"},
     "seoTitle": "Bloom UI、あらゆるプラットフォーム向けのReactデザインシステム",

@@ -1,6 +1,8 @@
 import en, { type Translations } from './en'
 
 const ar: Translations = {
+  one: {"credits": "أرصدة", "title": "Oxy One", "lead": "Alia والتخزين معًا في حسابك الشخصي على Oxy.", "unavailable": "Oxy One غير متاح للشراء بعد. ستظهر المزايا والحدود هنا عند إعداد خطة.", "error": "تعذّر تحميل الخطط. يُرجى المحاولة لاحقًا.", "loading": "جارٍ تحميل الخطط…", "manage": "إدارة حسابك", "status": "الشراء غير متاح", "path": "استكشف Oxy One", "version": "إصدار العرض", "monthly": "شهريًا", "billingTerms": "لا توجد فترة تجريبية. اشتراك شهري فقط؛ لا توجد خطة سنوية.", "taxInclusive": "السعر النهائي، شامل ضرائب الشراء المطبّقة."},
+
   bloom: {
     board: {"backlog": "قائمة الانتظار", "todo": "للتنفيذ", "inProgress": "قيد التنفيذ", "inReview": "قيد المراجعة", "done": "مكتمل"},
     "seoTitle": "Bloom UI، نظام تصميم React لكل المنصات",

@@ -2,7 +2,9 @@ import en, { type Translations } from './en'
 
 /** Hindi translations. English remains the structural source of truth. */
 const hi: Translations = {
+
   ...en,
+  one: { ...en.one, credits: "क्रेडिट", lead: "Alia और स्टोरेज, एक साथ आपके निजी Oxy खाते में।", unavailable: "Oxy One अभी खरीदने के लिए उपलब्ध नहीं है। कोई योजना कॉन्फ़िगर होने पर लाभ और सीमाएँ यहाँ दिखेंगी।", error: "योजनाएँ लोड नहीं हो सकीं। कृपया बाद में फिर से कोशिश करें।", loading: "योजनाएँ लोड हो रही हैं…", manage: "अपना खाता प्रबंधित करें", status: "खरीदारी उपलब्ध नहीं है", path: "Oxy One देखें", version: "ऑफ़र संस्करण", monthly: "प्रति माह", billingTerms: "कोई परीक्षण अवधि नहीं। केवल मासिक; कोई वार्षिक योजना नहीं।", taxInclusive: "अंतिम कीमत, जिसमें लागू खरीद कर शामिल हैं।" },
   bloom: {
     board: {"backlog": "लंबित कार्य", "todo": "करना है", "inProgress": "प्रगति में", "inReview": "समीक्षा में", "done": "पूरा हुआ"},
     "seoTitle": "Bloom UI, हर प्लेटफ़ॉर्म के लिए React डिज़ाइन सिस्टम",

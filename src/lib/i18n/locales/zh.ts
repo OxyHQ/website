@@ -1,6 +1,8 @@
 import en, { type Translations } from './en'
 
 const zh: Translations = {
+  one: {"credits": "积分", "title": "Oxy One", "lead": "Alia 与存储空间，汇聚于你的个人 Oxy 账户。", "unavailable": "Oxy One 暂不可购买。配置方案后，权益和额度将显示在这里。", "error": "无法加载方案，请稍后重试。", "loading": "正在加载方案…", "manage": "管理你的账户", "status": "暂不可购买", "path": "了解 Oxy One", "version": "方案版本", "monthly": "每月", "billingTerms": "无试用期。仅提供月付方案，无年付方案。", "taxInclusive": "最终价格，包含适用的购买税费。"},
+
   bloom: {
     board: {"backlog": "待规划", "todo": "待办", "inProgress": "进行中", "inReview": "审核中", "done": "已完成"},
     "seoTitle": "Bloom UI，面向所有平台的 React 设计系统",

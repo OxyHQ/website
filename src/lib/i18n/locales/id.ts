@@ -2,7 +2,9 @@ import en, { type Translations } from './en'
 
 /** Indonesian translations. English remains the structural source of truth. */
 const id: Translations = {
+
   ...en,
+  one: { ...en.one, credits: "kredit", lead: "Alia dan penyimpanan, bersama di akun Oxy pribadi Anda.", unavailable: "Oxy One belum tersedia untuk dibeli. Manfaat dan batasnya akan muncul di sini setelah paket dikonfigurasi.", error: "Paket tidak dapat dimuat. Silakan coba lagi nanti.", loading: "Memuat paket…", manage: "Kelola akun Anda", status: "Pembelian belum tersedia", path: "Jelajahi Oxy One", version: "Versi penawaran", monthly: "per bulan", billingTerms: "Tanpa masa uji coba. Hanya bulanan; tanpa paket tahunan.", taxInclusive: "Harga akhir, termasuk pajak pembelian yang berlaku." },
   bloom: {
     board: {"backlog": "Daftar tertunda", "todo": "Akan dikerjakan", "inProgress": "Sedang dikerjakan", "inReview": "Dalam peninjauan", "done": "Selesai"},
     "seoTitle": "Bloom UI, sistem desain React untuk semua platform",

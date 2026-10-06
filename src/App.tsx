@@ -46,6 +46,7 @@ const FairCoinWalletPage = lazy(() => import('./pages/FairCoinWallet'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 const PartnersPage = lazy(() => import('./pages/PartnersPage'))
 const CareersPage = lazy(() => import('./pages/CareersPage'))
+const OnePage = lazy(() => import('./pages/OnePage'))
 const PricingPage = lazy(() => import('./pages/PricingPage'))
 const NewsroomPage = lazy(loadNewsroomPage)
 const NewsroomPostPage = lazy(loadNewsroomPostPage)
@@ -305,6 +306,7 @@ function PublicRoutes() {
       />
       <Route path="company/careers" element={<CareersPage />} />
       <Route path="company/careers/:id" element={<CareerDetailPage />} />
+      <Route path="one" element={<OnePage />} />
       <Route path="pricing" element={<PricingPage />} />
       <Route
         path="newsroom"
