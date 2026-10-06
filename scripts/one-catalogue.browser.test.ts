@@ -9,7 +9,9 @@ let browser: Awaited<ReturnType<typeof chromium.launch>> | undefined
 function assert(value:unknown,message:string):asserts value {if(!value)throw new Error(message)}
 try {
  // The preview server is not listening yet on the first attempts; keep polling.
- for(let i=0;i<50;i++){try{if((await fetch(origin)).ok)break}catch{/* not ready */}await Bun.sleep(100)}
+ let ready=false
+ for(let i=0;i<50&&!ready;i++){try{ready=(await fetch(origin)).ok}catch{/* not ready */}if(!ready)await Bun.sleep(100)}
+ assert(ready,'vite preview did not start')
  browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_EXECUTABLE||undefined,args:['--no-sandbox']})
  const page=await browser.newPage({viewport:{width:1440,height:1000}})
  await page.emulateMedia({reducedMotion:'reduce'})
@@ -23,6 +25,10 @@ try {
     {displayName:'Shared storage · including Noted attachments',benefit:{kind:'quota',productId:'synthetic-storage',key:'storage_bytes',unit:'byte',included:100000000000,combination:'maximum'}},
     {displayName:'Mention · mono personalization',benefit:{kind:'capability',productId:'synthetic-mention',key:'mono_theme'}}]}]}:
    {schemaVersion:1,state:'unconfigured',purchase:'unavailable',plans:[]}})
+  // The site's own backend is outside this test too. Without VITE_API_URL the
+  // preview proxies /api to localhost:4000, which can hang instead of refusing
+  // and so never let the page go network-idle; abort it like any other origin.
+  if(url.origin===origin&&url.pathname.startsWith('/api/'))return route.abort()
   return url.origin===origin?route.continue():route.abort()
  })
  await page.goto(`${origin}/one/`,{waitUntil:'networkidle'})
