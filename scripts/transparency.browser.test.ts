@@ -28,9 +28,16 @@ const errors: string[] = []
 page.on('pageerror', (error) => errors.push(error.message))
 let legalState: 'published' | 'empty' | 'error' = 'published'
 let newsroomError = false
-await context.route('**/*', (route) => {
+await context.route('**/*', async (route) => {
   const url = new URL(route.request().url())
   if (url.origin !== origin && url.origin !== 'https://website-api.oxy.so') return route.abort()
+  if (url.origin === origin && url.pathname.startsWith('/newsroom/') && route.request().resourceType() === 'document') {
+    const response = await route.fetch()
+    // Exercise an uncached feed and its API error/retry state. A full build
+    // embeds live posts in the HTML; those must not override this fixture.
+    const body = (await response.text()).replace(/<template\b[^>]*\bid="newsroom-(?:index|post)-bootstrap"[^>]*>[\s\S]*?<\/template>/g, '')
+    return route.fulfill({ response, body })
+  }
   if (url.pathname === '/api/newsroom') return newsroomError
     ? route.fulfill({ status: 503, json: { error: 'Unavailable' } })
     : route.fulfill({ json: { posts: [post], total: 1, page: 1, pages: 1 } })
