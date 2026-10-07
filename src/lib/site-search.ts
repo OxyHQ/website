@@ -1,3 +1,4 @@
+import { LEGAL_DOCUMENTS, TRANSPARENCY_DOCUMENTS } from './transparency'
 import type MiniSearch from 'minisearch'
 import { buildDocsHref, getIndex } from '../content/docs-loader'
 import { categoryLabels, categoryOrder } from '../components/docs/docsTypes'
@@ -95,8 +96,10 @@ const SITE_PAGES: Array<{ url: string; title: string; group?: string }> = [
   { url: '/company', title: 'Company' },
   { url: '/company/team', title: 'Team' },
   { url: '/company/careers', title: 'Careers' },
-  { url: '/company/manifesto', title: 'Manifesto' },
-  { url: '/company/influence/', title: 'Influence and Responsibility' },
+  { url: '/transparency/', title: 'Transparency Center' },
+  { url: '/transparency/legal/', title: 'Legal documents' },
+  ...TRANSPARENCY_DOCUMENTS.map(({ path, title }) => ({ url: `${path}/`, title })),
+  ...LEGAL_DOCUMENTS.map(({ slug, title }) => ({ url: `/transparency/legal/${slug}/`, title })),
   { url: '/academy', title: 'Academy' },
   { url: '/newsroom', title: 'Newsroom' },
   { url: '/partners', title: 'Partners' },

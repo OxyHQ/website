@@ -125,8 +125,8 @@ export const footerColumns: FooterColumn[] = [
   {
     title: 'Legal',
     links: [
-      { label: 'Terms of Service', href: '/legal/terms' },
-      { label: 'Privacy Policy', href: '/legal/privacy' },
+      { label: 'Terms of Service', href: '/transparency/legal/terms' },
+      { label: 'Privacy Policy', href: '/transparency/legal/privacy' },
     ],
   },
   {

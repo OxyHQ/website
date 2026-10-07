@@ -1,13 +1,13 @@
 import { Suspense, createElement } from 'react'
 import { MDXProvider } from '@mdx-js/react'
 import PageShell from '../components/layout/PageShell'
-import LongformArticle from '../components/slices/LongformArticle'
+import TransparencyDocument from '../components/slices/TransparencyDocument'
 import { useCurrentLocale } from '../lib/i18n'
 import { loadCompanyPage } from '../content/company-loader'
 import { articleMdxComponents } from '../components/slices/articleMdxComponents'
 
 /* ──────────────────────────────────────────────
- * Long-form company documents: `/company/manifesto`, `/company/charter`.
+ * Long-form company documents: `/transparency/manifesto`, `/transparency/charter`.
  *
  * Copy lives in `src/content/company/<slug>.mdx` and its frontmatter supplies
  * the title, date and reading time. The table of contents is derived from the
@@ -45,35 +45,23 @@ export default function CompanyArticlePage({ slug, canonicalPath, cta }: Company
   }
 
   const { frontmatter, headings, Component } = entry
-  const shareUrl = typeof window === 'undefined' ? canonicalPath : window.location.href
-
   return (
-    <PageShell
-      seo={{
-        title: frontmatter.title,
-        description: frontmatter.description,
-        canonicalPath,
-        ogImage: frontmatter.ogImage,
-      }}
-      className={`${pageTheme} bg-background text-foreground`}
-      mainClassName="flex-1"
+    <TransparencyDocument
+      canonicalPath={canonicalPath}
+      ogImage={frontmatter.ogImage}
+      theme={pageTheme}
+      title={frontmatter.title}
+      eyebrow={frontmatter.eyebrow}
+      description={frontmatter.description}
+      entries={headings}
+      date={frontmatter.date}
+      readingTime={frontmatter.readingTime}
+      pdfHref={frontmatter.pdfHref}
+      cta={cta}
     >
-      <LongformArticle
-        title={frontmatter.title}
-        eyebrow={frontmatter.eyebrow}
-        description={frontmatter.description}
-        entries={headings}
-        date={frontmatter.date}
-        readingTime={frontmatter.readingTime}
-        locale={locale}
-        shareUrl={shareUrl}
-        pdfHref={frontmatter.pdfHref}
-        cta={cta}
-      >
-        <MDXProvider components={articleMdxComponents}>
-          <Suspense fallback={<p className="text-b3 text-muted-foreground">Loading…</p>}>{createElement(Component)}</Suspense>
-        </MDXProvider>
-      </LongformArticle>
-    </PageShell>
+      <MDXProvider components={articleMdxComponents}>
+        <Suspense fallback={<p className="text-b3 text-muted-foreground">Loading…</p>}>{createElement(Component)}</Suspense>
+      </MDXProvider>
+    </TransparencyDocument>
   )
 }

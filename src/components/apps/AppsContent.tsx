@@ -107,7 +107,7 @@ function EditorialCard() {
           </h3>
         </div>
         <div className="pt-space-lg md:pt-space-xl lg:pt-space-2xl xl:pt-space-3xl">
-          <Link className="group/link no-underline hover:underline" to="/company/charter">
+          <Link className="group/link no-underline hover:underline" to="/transparency/charter">
             Read the charter
             <ArrowGlyph />
           </Link>
@@ -142,7 +142,7 @@ function AdvantageSection() {
             Every app here is built on the same identity, the same design system and the same promises.
           </p>
           <div className="mt-8 hidden md:block">
-            <Button variant="primary" href="/company/charter">
+            <Button variant="primary" href="/transparency/charter">
               Read the charter
             </Button>
           </div>
@@ -156,7 +156,7 @@ function AdvantageSection() {
           ))}
         </ul>
         <div className="block md:hidden">
-          <Button variant="primary" responsive href="/company/charter" className="w-full">
+          <Button variant="primary" responsive href="/transparency/charter" className="w-full">
             Read the charter
           </Button>
         </div>

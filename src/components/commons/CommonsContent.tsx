@@ -77,7 +77,7 @@ const UPDATES: UpdateItem[] = [
   },
   {
     title: 'Why we build this way',
-    href: '/company/manifesto',
+    href: '/transparency/manifesto',
     image: '/images/hero/hero-5.jpg',
     imageAlt: '',
   },

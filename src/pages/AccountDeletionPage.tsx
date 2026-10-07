@@ -199,11 +199,11 @@ export default function AccountDeletionPage() {
           </p>
           <p>
             See also our{' '}
-            <Link className="text-foreground underline" to="/legal/privacy">
+            <Link className="text-foreground underline" to="/transparency/legal/privacy">
               Privacy Policy
             </Link>{' '}
             and{' '}
-            <Link className="text-foreground underline" to="/legal/terms">
+            <Link className="text-foreground underline" to="/transparency/legal/terms">
               Terms &amp; Conditions
             </Link>
             .

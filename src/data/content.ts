@@ -90,25 +90,25 @@ export const productNavDropdown: NavDropdown = {
   featureGrid: {
     features: [
       {
-        href: '/company/manifesto',
+        href: '/transparency/manifesto',
         title: 'Manifesto',
         description: 'What we believe and what we refuse to trade away',
         image: '/images/apps/manifesto.svg',
       },
       {
-        href: '/company/charter',
+        href: '/transparency/charter',
         title: 'Founding Charter',
         description: 'The commitments we intend to be held to as we grow',
         image: '/images/apps/founding-charter.svg',
       },
       {
-        href: '/company/business',
+        href: '/transparency/business',
         title: 'How our business works',
         description: 'Where the money comes from, and what we refuse to earn',
         image: '/images/apps/business.svg',
       },
       {
-        href: '/company/transparency',
+        href: '/transparency',
         title: 'Transparency Center',
         description: 'Decisions, data handling and how we stay accountable',
         image: '/images/apps/transparency.svg',
@@ -538,13 +538,13 @@ export const defaultFooterColumns: FooterColumn[] = [
     links: [
       { label: 'About us', href: '/company' },
       { label: 'For organizations', href: '/enterprise' },
-      { label: 'How Our Business Works', href: '/company/business' },
+      { label: 'How Our Business Works', href: '/transparency/business' },
       { label: 'Careers', href: '/company/careers' },
-      { label: 'Transparency Center', href: '/company/transparency' },
+      { label: 'Transparency Center', href: '/transparency' },
       { label: 'Brand guidelines', href: '/brand' },
-      { label: 'Manifesto', href: '/company/manifesto' },
-      { label: 'Founding Charter', href: '/company/charter' },
-      { label: 'Influence and Responsibility', href: '/company/influence/' },
+      { label: 'Manifesto', href: '/transparency/manifesto' },
+      { label: 'Founding Charter', href: '/transparency/charter' },
+      { label: 'Influence and Responsibility', href: '/transparency/influence/' },
       { label: 'The Initiative', href: '/initiative' },
       { label: 'Partner programs', href: '/partners' },
       { label: 'Startup program', href: '/partners#startup-program' },

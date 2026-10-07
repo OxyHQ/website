@@ -337,6 +337,13 @@ try {
     await chat
       .getByRole('textbox', { name: 'Agent name', exact: true })
       .fill('Launch planner')
+    // Filling the name scrolls the editor below its avatar. On a cold/slow
+    // renderer the preview has not intersected yet, so capabilities stay
+    // pending and Playwright will not scroll a disabled eye button into view.
+    // Show the actual preview so Bloom can prepare it before editing its eyes.
+    await chat
+      .getByRole('img', { name: 'Launch planner, live avatar preview', exact: true })
+      .scrollIntoViewIfNeeded()
     await chat.getByRole('button', { name: 'Sparkle capsules', exact: true }).click()
     invariant(
       (await chat

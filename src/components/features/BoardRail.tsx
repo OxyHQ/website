@@ -13,10 +13,10 @@ import { ORG_ROADMAP_PROJECT_URL, ROADMAP_GROUPS } from './roadmapGroups'
  * two is on screen at any width.
  */
 const FOOTER_LINKS = [
-  { label: 'Legal', to: '/legal' },
-  { label: 'Privacy', to: '/company/transparency/policies/privacy' },
-  { label: 'Terms', to: '/company/transparency/policies/terms-of-service' },
-  { label: 'Cookies', to: '/company/transparency/policies/cookies' },
+  { label: 'Legal', to: '/transparency/legal' },
+  { label: 'Privacy', to: '/transparency/legal/privacy' },
+  { label: 'Terms', to: '/transparency/legal/terms' },
+  { label: 'Cookies', to: '/transparency/legal/cookies' },
 ] as const
 
 interface BoardRailProps {

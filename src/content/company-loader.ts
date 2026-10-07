@@ -6,7 +6,7 @@ import type { MdxHeading } from '../../scripts/vite-mdx-headings'
 /* ──────────────────────────────────────────────
  * company-loader.ts
  *
- * Build-time loader for `/company/*` prose pages. One MDX file per page:
+ * Build-time loader for institutional documents under `/transparency/*`. One MDX file per page:
  *
  *   src/content/company/manifesto.mdx
  *   src/content/company/transparency.mdx

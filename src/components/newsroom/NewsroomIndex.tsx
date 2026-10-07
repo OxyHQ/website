@@ -68,7 +68,7 @@ function isNewsCategory(value: string | null): value is NewsCategory {
 export default function NewsroomIndex() {
   const { t } = useTranslation()
   const { data: pageData } = usePage('newsroom')
-  const { data, isPending } = useNewsroomPosts({ limit: 50 })
+  const { data, isPending, isError, refetch } = useNewsroomPosts({ limit: 50 })
   const [searchParams, setSearchParams] = useSearchParams()
   const { colors } = useTheme()
 
@@ -276,6 +276,13 @@ export default function NewsroomIndex() {
                     <div key={item} className="aspect-square"><Skeleton.Box width="100%" height="100%" borderRadius={6} /></div>
                   ))}
                 </div>
+              </div>
+            ) : isError && !data ? (
+              <div role="alert" className="flex flex-col items-center justify-center py-24 text-center">
+                <p className="text-lg font-medium text-muted-foreground">{t('common.somethingWentWrong')}</p>
+                <button type="button" onClick={() => void refetch()} className="mt-4 cursor-pointer text-sm font-medium text-primary hover:underline">
+                  {t('common.tryAgain')}
+                </button>
               </div>
             ) : featuredArticle ? (
               <>

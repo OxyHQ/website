@@ -33,9 +33,11 @@
  */
 
 import { UNTRANSLATED_PREFIXES } from '../src/lib/localizedRoute'
+import { TRANSPARENCY_REDIRECTS } from '../src/lib/transparency'
 
 /** Retired URLs that are still linked from outside. */
 const LEGACY_REDIRECTS: ReadonlyArray<readonly [from: string, to: string]> = [
+  ...TRANSPARENCY_REDIRECTS,
   ['/technologies', '/apps/'],
   ['/products', '/apps/'],
   ['/pay', '/peable/'],
@@ -119,6 +121,9 @@ export function buildRedirectsFile(opts: RedirectsOptions): string {
   push('# Retired URLs, redirected at the edge so crawlers see one permanent hop')
   push('# instead of a 200 that turns into a client-side <Navigate>.')
   for (const [from, to] of LEGACY_REDIRECTS) push(...rule(from, to, 301))
+  for (const code of opts.supportedLocales) {
+    for (const [from, to] of TRANSPARENCY_REDIRECTS) push(...rule(`/${code}${from}`, to, 301))
+  }
   push('')
 
   const prefixed = opts.supportedLocales.filter((code) => code !== opts.defaultLocale)

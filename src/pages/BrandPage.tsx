@@ -367,7 +367,7 @@ export default function BrandPage() {
               control. In the way a sentence tells you the truth. In the space we leave for someone
               else’s ideas.
             </p>
-            <Link to="/company/charter">
+            <Link to="/transparency/charter">
               Read our charter <RiArrowRightUpLine width={18} height={18} fill="currentColor" aria-hidden />
             </Link>
           </div>
@@ -683,7 +683,7 @@ export default function BrandPage() {
           <Link to="/developers/docs/bloom/color-system/">
             Colour recipes <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
           </Link>
-          <Link to="/company/charter">
+          <Link to="/transparency/charter">
             Our charter <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
           </Link>
         </div>

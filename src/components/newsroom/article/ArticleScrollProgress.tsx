@@ -1,23 +1,29 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type RefObject } from 'react'
 import { RiBookOpenLine } from '@oxy.so/bloom/icons/RiBookOpenLine'
+import { articleReadingProgress } from '../../../lib/articleReadingProgress'
 
 /**
- * How far through the article you are, pinned to the bottom of the page.
+ * How far through the article you are, sticky within the article boundary.
  *
- * Reads the document on scroll rather than observing the body element: the
- * measure people want is "how much of this page is left", and the page includes
- * what follows the prose — comments, related posts.
+ * Measures only the prose, excluding the hero, products, comments and footer.
+ * The body uses `display: contents` to preserve the article grid, so a Range
+ * measures its children instead of the wrapper's empty bounding box.
  */
-export default function ArticleScrollProgress() {
+export default function ArticleScrollProgress({ bodyRef }: { bodyRef: RefObject<HTMLDivElement | null> }) {
   const [percent, setPercent] = useState(0)
 
   useEffect(() => {
+    const body = bodyRef.current
+    if (!body) return
     let frame = 0
+    const range = document.createRange()
 
     const update = () => {
       frame = 0
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight
-      setPercent(scrollable <= 0 ? 100 : Math.min(100, Math.round((window.scrollY / scrollable) * 100)))
+      range.selectNodeContents(body)
+      const { top, bottom } = range.getBoundingClientRect()
+      const headerHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-occlusion-bottom')) || 0
+      setPercent(articleReadingProgress(top, bottom, window.innerHeight, headerHeight))
     }
 
     const onScroll = () => {
@@ -27,15 +33,20 @@ export default function ArticleScrollProgress() {
     update()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll, { passive: true })
+    const resizeObserver = new ResizeObserver(onScroll)
+    // Covers late-loading media, font changes and layout above the prose.
+    resizeObserver.observe(document.body)
+    if (body.parentElement) resizeObserver.observe(body.parentElement)
     return () => {
+      resizeObserver.disconnect()
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       if (frame) cancelAnimationFrame(frame)
     }
-  }, [])
+  }, [bodyRef])
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 hidden lg:block">
+    <div data-reading-progress className="pointer-events-none sticky bottom-0 z-30 hidden w-full lg:block">
       <div className="container flex items-start pb-4">
         <div className="flex items-center gap-2 rounded-radius-12 bg-primary p-1 ps-2 text-primary-foreground shadow-md">
           <RiBookOpenLine width={16} height={16} fill="currentColor" aria-hidden />

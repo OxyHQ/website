@@ -699,7 +699,7 @@ export default function ContactSalesPage() {
           <div className="flex flex-col gap-4 border-t border-border pt-6">
             <p className="max-w-2xl text-sm text-muted-foreground">
               {t('contactSales.privacyNotice')}{' '}
-              <Link to="/legal/privacy" className="underline underline-offset-4">
+              <Link to="/transparency/legal/privacy" className="underline underline-offset-4">
                 {t('contactSales.seoTitle')}
               </Link>
             </p>

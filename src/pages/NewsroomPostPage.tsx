@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { Link } from '../lib/navigation'
 import { BloomColorScope } from '@oxy.so/bloom/theme'
@@ -27,6 +27,7 @@ const ArticleCommunity = lazy(() => import('../components/newsroom/article/Artic
 const NewsroomRelatedArticles = lazy(() => import('../components/newsroom/article/NewsroomRelatedArticles'))
 
 export default function NewsroomPostPage() {
+  const readingBodyRef = useRef<HTMLDivElement>(null)
   const { slug = '' } = useParams<{ slug: string }>()
   // Host-aware so an article read on fairco.in never emits oxy.so JSON-LD.
   const { origin, siteName, ogImage } = brandConfig(
@@ -114,7 +115,9 @@ export default function NewsroomPostPage() {
             )}
 
             <div className="contents">
-              <ArticleMarkdown content={post.content} />
+              <div ref={readingBodyRef} data-reading-body className="contents">
+                <ArticleMarkdown content={post.content} />
+              </div>
               <ArticleProducts post={post} />
 
               <footer data-toc-skip data-toc-collision-target className={`${WIDE_ARTICLE_BLOCK} mt-14 w-full lg:mt-20`}>
@@ -149,6 +152,7 @@ export default function NewsroomPostPage() {
             </div>
           </div>
           </section>
+          <ArticleScrollProgress key={post.slug} bodyRef={readingBodyRef} />
         </article>
 
         <DeferredMount rootMargin="900px 0px">
@@ -157,7 +161,6 @@ export default function NewsroomPostPage() {
           </Suspense>
         </DeferredMount>
 
-        <ArticleScrollProgress />
       </PageShell>
     </BloomColorScope>
   )

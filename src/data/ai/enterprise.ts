@@ -104,7 +104,7 @@ export interface EnterpriseService {
 /**
  * The `/enterprise` hub's service cards.
  *
- * `/company/business` is a different page about a different question — how Oxy
+ * `/transparency/business` is a different page about a different question — how Oxy
  * itself makes money. This one is what Oxy sells to organizations, and the hub
  * says so out loud so the two do not get merged again.
  */
@@ -151,5 +151,5 @@ export const enterpriseHubIntro = {
   body:
     'What Oxy sells to companies, and the state each of it is genuinely in. If you are looking for how Oxy itself makes money and where that money goes, that is a different page.',
   businessLinkLabel: 'How our business works',
-  businessLinkHref: '/company/business',
+  businessLinkHref: '/transparency/business',
 }

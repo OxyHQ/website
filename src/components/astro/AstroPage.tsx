@@ -84,7 +84,7 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
             ))}
           </div>
         </div>
-        <p className="mt-5 text-center text-[11px] leading-relaxed text-muted-foreground">By downloading, you agree to the Astro <a href="/legal/terms/" className="underline hover:text-foreground">Terms of Service</a> and <a href="/legal/privacy/" className="underline hover:text-foreground">Privacy Policy</a>.</p>
+        <p className="mt-5 text-center text-[11px] leading-relaxed text-muted-foreground">By downloading, you agree to the Astro <a href="/transparency/legal/terms/" className="underline hover:text-foreground">Terms of Service</a> and <a href="/transparency/legal/privacy/" className="underline hover:text-foreground">Privacy Policy</a>.</p>
       </div>
     </Dialog>
   )

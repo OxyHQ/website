@@ -158,8 +158,8 @@ async function seed() {
         heading: 'Company',
         links: [
           { label: 'Newsroom', href: '/newsroom' },
-          { label: 'Manifesto', href: '/company/manifesto' },
-          { label: 'Founding Charter', href: '/company/charter' },
+          { label: 'Manifesto', href: '/transparency/manifesto' },
+          { label: 'Founding Charter', href: '/transparency/charter' },
           { label: 'Changelog', href: '/changelog' },
           { label: 'Careers', href: '/company/careers' },
         ],
@@ -202,10 +202,10 @@ async function seed() {
         title: 'Company',
         links: [
           { label: 'About Us', href: '/company' },
-          { label: 'Manifesto', href: '/company/manifesto' },
-          { label: 'Founding Charter', href: '/company/charter' },
-          { label: 'How Our Business Works', href: '/company/business' },
-          { label: 'Transparency Center', href: '/company/transparency' },
+          { label: 'Manifesto', href: '/transparency/manifesto' },
+          { label: 'Founding Charter', href: '/transparency/charter' },
+          { label: 'How Our Business Works', href: '/transparency/business' },
+          { label: 'Transparency Center', href: '/transparency' },
           { label: 'The Initiative', href: '/initiative' },
           { label: 'Team', href: '/company/team' },
           { label: 'Careers', href: '/company/careers' },
@@ -312,7 +312,7 @@ async function seed() {
     { productId: 'codex-extension', name: 'Codex Extension', tagline: 'Codea, everywhere you code', description: 'Bring Codea\u2019s open-source AI assistant into the editor you already use. Reviews, refactors and completions — free to inspect, free to extend.', href: '/codea/extension', landingUrl: '/codea/extension', external: false, cta: 'Explore the extension', brand: '#475569', mark: 'E', category: categoryRef('developer'), section: 'developer', lifecycle: 'in-development', showOnProducts: true, showOnStatus: true, showInNav: false, order: 1 },
     { productId: 'syra', name: 'Syra', tagline: 'Music, artists and live', description: 'A home for music: streaming built around artists, listeners and live experiences rather than the economics of a catalogue.', href: 'https://syra.fm', external: true, cta: 'Open Syra', brand: '#f43f5e', mark: 'S', category: categoryRef('apps'), section: 'apps', lifecycle: 'in-development', showOnProducts: true, showOnStatus: true, showInNav: true, order: 4 },
     { productId: 'mercaria', logo: appIcon('mercaria'), name: 'Mercaria', tagline: 'Buy and sell, fairly', description: 'A marketplace for new goods from shops and secondhand items from people, with the same identity and trust you already have across Oxy.', href: 'https://mercaria.co', healthUrl: 'https://api.mercaria.co/health/ready', external: true, cta: 'Open Mercaria', brand: '#f59e0b', mark: 'M', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'in-development', showOnProducts: true, showOnStatus: true, showInNav: true, order: 5 },
-    { productId: 'crowdsource', name: 'CrowdSource', tagline: 'Participatory moderation', description: 'Reports become cases, cases are judged by an independent jury drawn at random, and the versioned decision goes back to the app. Nobody can pick the case they review.', href: '/company/charter#6-governance-designed-for-fallible-people', healthUrl: 'https://api.crowdsource.oxy.so/health/ready', external: false, cta: 'How it works', brand: '#6366f1', mark: 'C', category: categoryRef('infrastructure'), section: 'infrastructure', lifecycle: 'in-development', showOnProducts: true, showOnStatus: true, showInNav: false, order: 4 },
+    { productId: 'crowdsource', name: 'CrowdSource', tagline: 'Participatory moderation', description: 'Reports become cases, cases are judged by an independent jury drawn at random, and the versioned decision goes back to the app. Nobody can pick the case they review.', href: '/transparency/charter#6-governance-designed-for-fallible-people', healthUrl: 'https://api.crowdsource.oxy.so/health/ready', external: false, cta: 'How it works', brand: '#6366f1', mark: 'C', category: categoryRef('infrastructure'), section: 'infrastructure', lifecycle: 'in-development', showOnProducts: true, showOnStatus: true, showInNav: false, order: 4 },
   ])
   console.log('Seeded products')
 
@@ -346,7 +346,7 @@ async function seed() {
     siteDescription:
       'An open ecosystem of apps built on one identity you hold yourself: social, messaging, housing, payments and AI. No surveillance advertising, no data sales, source you can read.',
     ogImage: ogMediaId,
-    banner: { text: 'Read the Oxy Founding Charter', href: '/company/charter', visible: true },
+    banner: { text: 'Read the Oxy Founding Charter', href: '/transparency/charter', visible: true },
   })
   console.log('Seeded site settings')
 
@@ -381,7 +381,7 @@ async function seed() {
   // ── Changelog (sample) ──
   await db.insert(changelogEntries).values([
     { title: 'Device-first sessions everywhere', content: 'Signing in to any Oxy app now proves possession of a credential held on your device.', tags: ['identity', 'release'], date: new Date('2026-07-18'), items: ['No session cookie', 'Per-device credentials', 'Faster cold start'] },
-    { title: 'Founding Charter published', content: 'The commitments Oxy intends to be held to are now public.', tags: ['company'], date: new Date('2026-08-01'), items: ['Charter at /company/charter', 'Linked from the manifesto', 'Open to challenge'] },
+    { title: 'Founding Charter published', content: 'The commitments Oxy intends to be held to are now public.', tags: ['company'], date: new Date('2026-08-01'), items: ['Charter at /transparency/charter', 'Linked from the manifesto', 'Open to challenge'] },
   ])
   console.log('Seeded changelog')
 

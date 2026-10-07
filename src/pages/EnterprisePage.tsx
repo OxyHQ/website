@@ -11,8 +11,8 @@ import { enterpriseHubIntro, enterpriseServices } from '../data/ai/enterprise'
 /**
  * `/enterprise` — the cross-Oxy B2B landing.
  *
- * Deliberately a different page from `/company/business`, and it says so in the
- * first paragraph. `/company/business` answers "how does Oxy make money and
+ * Deliberately a different page from `/transparency/business`, and it says so in the
+ * first paragraph. `/transparency/business` answers "how does Oxy make money and
  * where does it go"; this answers "what can my organization buy". Merging them
  * loses both answers.
  *

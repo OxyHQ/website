@@ -335,7 +335,7 @@ function HowWeWorkSection() {
 
           <div className="w-full">
             <Link
-              to="/company/charter"
+              to="/transparency/charter"
               className="group relative flex flex-col justify-center px-12 py-44 md:size-full md:px-14 md:py-0"
             >
               <div className="absolute left-0 top-0 z-0 size-full bg-foreground" />
