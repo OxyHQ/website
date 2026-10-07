@@ -1,16 +1,40 @@
 import { chromium } from 'playwright'
 import { strict as assert } from 'node:assert'
+import { readFileSync } from 'node:fs'
 
-const origin = process.env.TEST_ORIGIN || 'http://localhost:5173'
+const reserved = Bun.serve({ port: 0, fetch: () => new Response('reserved') })
+const port = reserved.port
+reserved.stop(true)
+const preview = process.env.TEST_ORIGIN ? undefined : Bun.spawn(['bun', 'x', 'vite', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { stdout: 'ignore', stderr: 'ignore' })
+const origin = process.env.TEST_ORIGIN || `http://127.0.0.1:${port}`
+if (preview) {
+  let ready = false
+  for (let attempt = 0; attempt < 50 && !ready; attempt++) {
+    try { ready = (await fetch(origin)).ok } catch { /* Preview is starting. */ }
+    if (!ready) await Bun.sleep(100)
+  }
+  if (!ready) { preview.kill(); throw new Error('Vite preview did not start') }
+}
+const post = {
+  slug: 'reading-progress-test', title: 'Reading progress test',
+  content: readFileSync(new URL('../src/content/newsroom-previews/article-components-showcase.md.txt', import.meta.url), 'utf8'),
+  resume: 'Synthetic article for the reading test.', categories: ['Engineering'], tags: [], products: [],
+  authorUsername: 'Test author', publishedAt: '2026-08-22T09:00:00.000Z', themePreset: 'oxy',
+}
 const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_EXECUTABLE || undefined })
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
 const page = await context.newPage()
 const errors: string[] = []
 page.on('pageerror', (error) => errors.push(error.message))
 let legalState: 'published' | 'empty' | 'error' = 'published'
+let newsroomError = false
 await context.route('**/*', (route) => {
   const url = new URL(route.request().url())
   if (url.origin !== origin && url.origin !== 'https://website-api.oxy.so') return route.abort()
+  if (url.pathname === '/api/newsroom') return newsroomError
+    ? route.fulfill({ status: 503, json: { error: 'Unavailable' } })
+    : route.fulfill({ json: { posts: [post], total: 1, page: 1, pages: 1 } })
+  if (url.pathname === `/api/newsroom/${post.slug}`) return route.fulfill({ json: post })
   if (url.pathname === '/api/pages/legal-privacy') {
     if (legalState === 'error') return route.fulfill({ status: 503, json: { error: 'Unavailable' } })
     return route.fulfill({ json: {
@@ -70,7 +94,15 @@ try {
   console.log('PASS transparency: shared reader, catalogue, redirects, mobile, sanitization and API states')
 
   await page.setViewportSize({ width: 1440, height: 1000 })
-  await visit('/newsroom/article-components-showcase-preview/', 'A richer editorial language for Oxy Newsroom')
+  await visit('/newsroom/', 'Newsroom')
+  await page.locator(`main a[href="/newsroom/${post.slug}/"]`).waitFor()
+  newsroomError = true
+  await page.reload()
+  await page.getByRole('alert').waitFor()
+  newsroomError = false
+  await page.getByRole('button', { name: 'Try again', exact: true }).click()
+  await page.locator(`main a[href="/newsroom/${post.slug}/"]`).click()
+  await page.getByRole('heading', { level: 1, name: post.title, exact: true }).waitFor()
   await page.locator('[data-reading-body]').waitFor({ state: 'attached' })
   await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo(0, 0) })
   await page.getByLabel('0% read', { exact: true }).waitFor()
@@ -138,4 +170,6 @@ try {
   assert.deepEqual(errors, [], 'Unexpected browser errors')
 } finally {
   await browser.close()
+  preview?.kill()
+  if (preview) await preview.exited
 }

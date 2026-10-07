@@ -22,7 +22,7 @@ export default function ArticleScrollProgress({ bodyRef }: { bodyRef: RefObject<
       frame = 0
       range.selectNodeContents(body)
       const { top, bottom } = range.getBoundingClientRect()
-      const headerHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 0
+      const headerHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-occlusion-bottom')) || 0
       setPercent(articleReadingProgress(top, bottom, window.innerHeight, headerHeight))
     }
 
