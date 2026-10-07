@@ -2,6 +2,8 @@ import { MotionConfig } from 'framer-motion'
 import { useState, useCallback, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import { Navigate } from './lib/navigation'
+import { TRANSPARENCY_REDIRECTS } from './lib/transparency'
+import TransparencyPage from './pages/TransparencyPage'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { OxyProvider, useOxy } from '@oxy.so/services/ui/client'
 import type { User } from '@oxy.so/core'
@@ -217,6 +219,11 @@ function CollapseDefaultLocalePrefix() {
   return <Navigate to={rest + location.search + location.hash} replace />
 }
 
+function TransparencyRedirect({ to }: { to: string }) {
+  const { search, hash } = useLocation()
+  return <Navigate to={to + search + hash} replace />
+}
+
 function PublicRoutes() {
   // The SPA serves two brands. On fairco.in only the FairCoin surface is
   // mounted; every Oxy route falls through to NotFoundPage. On oxy.so the
@@ -255,52 +262,52 @@ function PublicRoutes() {
       <Route path="company" element={<CompanyPage />} />
       <Route path="company/team" element={<TeamPage />} />
       <Route
-        path="company/manifesto"
+        path="transparency/manifesto"
         element={
           <CompanyArticlePage
             slug="manifesto"
-            canonicalPath="/company/manifesto"
-            cta={{ title: 'Read the founding charter.', label: 'Open the charter', href: '/company/charter' }}
+            canonicalPath="/transparency/manifesto"
+            cta={{ title: 'Read the founding charter.', label: 'Open the charter', href: '/transparency/charter' }}
           />
         }
       />
       <Route
-        path="company/influence"
+        path="transparency/influence"
         element={
           <CompanyArticlePage
             slug="influence"
-            canonicalPath="/company/influence"
-            cta={{ title: 'Read the founding commitments.', label: 'Open the charter', href: '/company/charter/' }}
+            canonicalPath="/transparency/influence"
+            cta={{ title: 'Read the founding commitments.', label: 'Open the charter', href: '/transparency/charter/' }}
           />
         }
       />
       <Route
-        path="company/charter"
+        path="transparency/charter"
         element={
           <CompanyArticlePage
             slug="charter"
-            canonicalPath="/company/charter"
+            canonicalPath="/transparency/charter"
             cta={{ title: 'Help build it.', label: 'See open roles', href: '/company/careers' }}
           />
         }
       />
       <Route
-        path="company/transparency"
+        path="transparency/approach"
         element={
           <CompanyArticlePage
             slug="transparency"
-            canonicalPath="/company/transparency"
-            cta={{ title: 'See where the money goes.', label: 'How our business works', href: '/company/business' }}
+            canonicalPath="/transparency/approach"
+            cta={{ title: 'See where the money goes.', label: 'How our business works', href: '/transparency/business' }}
           />
         }
       />
       <Route
-        path="company/business"
+        path="transparency/business"
         element={
           <CompanyArticlePage
             slug="business"
-            canonicalPath="/company/business"
-            cta={{ title: 'See the full picture.', label: 'Open the Transparency Center', href: '/company/transparency' }}
+            canonicalPath="/transparency/business"
+            cta={{ title: 'See the full picture.', label: 'Open the Transparency Center', href: '/transparency/' }}
           />
         }
       />
@@ -430,10 +437,14 @@ function PublicRoutes() {
       <Route path="apps/:name" element={<AppDetailPage />} />
       <Route path="faqs" element={<FaqsPage />} />
       <Route path="settings" element={<SettingsPage />} />
-      <Route path="legal" element={<LegalPage />} />
+      <Route path="transparency" element={<TransparencyPage />} />
+      <Route path="transparency/legal" element={<TransparencyPage legal />} />
+      {TRANSPARENCY_REDIRECTS.map(([from, to]) => (
+        <Route key={from} path={from.slice(1)} element={<TransparencyRedirect to={to} />} />
+      ))}
       {/* Public, no-auth URL required by the Play Console Data safety form. */}
       <Route path="account-deletion" element={<AccountDeletionPage />} />
-      <Route path="legal/:section" element={<LegalPage />} />
+      <Route path="transparency/legal/:section" element={<LegalPage />} />
       <Route path="u/:username" element={<UserProfilePage />} />
       <Route path="u/:username/followers" element={<UserFollowersPage />} />
       <Route path="u/:username/following" element={<UserFollowersPage />} />

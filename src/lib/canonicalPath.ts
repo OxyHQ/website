@@ -16,6 +16,7 @@
  */
 import type { To } from 'react-router-dom'
 import { withDocumentTrailingSlash } from './seoUrl'
+import { transparencyDestination } from './transparency'
 
 /**
  * Extensions of things `public/` serves verbatim. A slash appended to one of
@@ -68,10 +69,10 @@ export function canonicalTo(to: To): To {
     if (!to.startsWith('/') || to.startsWith('//')) return to
     const pathname = to.split(/[?#]/)[0] ?? ''
     if (!isDocumentPath(pathname)) return to
-    return withDocumentTrailingSlash(to)
+    return withDocumentTrailingSlash((transparencyDestination(pathname) ?? pathname) + to.slice(pathname.length))
   }
   if (!to.pathname || !to.pathname.startsWith('/') || !isDocumentPath(to.pathname)) return to
-  return { ...to, pathname: withDocumentTrailingSlash(to.pathname) }
+  return { ...to, pathname: withDocumentTrailingSlash(transparencyDestination(to.pathname) ?? to.pathname) }
 }
 
 /**

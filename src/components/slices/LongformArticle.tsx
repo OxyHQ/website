@@ -5,7 +5,7 @@ import ArticleToc, { type TocEntry } from './ArticleToc'
 import PillButton from './PillButton'
 import { ARTICLE_BLOCK } from './articleBlock'
 
-interface LongformArticleProps {
+export interface LongformArticleProps {
   title: string
   eyebrow?: string
   description?: string
@@ -19,6 +19,11 @@ interface LongformArticleProps {
   shareUrl: string
   pdfHref?: string
   children: ReactNode
+  /** Collection navigation at the start of the body, below the title section. */
+  contentNavigation?: ReactNode
+  readingTools?: boolean
+  /** Reserve room inside the hero when the global header overlays it. */
+  headerOverlay?: boolean
   /** Closing band under the body. */
   cta?: { title: string; label: string; href: string; external?: boolean }
 }
@@ -44,10 +49,16 @@ export default function LongformArticle({
   pdfHref,
   children,
   cta,
+  contentNavigation,
+  readingTools = true,
+  headerOverlay = false,
 }: LongformArticleProps) {
   return (
     <div className="relative">
-      <section className="w-full bg-[color-mix(in_srgb,var(--primary)_14%,var(--background))] text-foreground">
+      <section
+        className="w-full bg-[color-mix(in_srgb,var(--primary)_14%,var(--background))] text-foreground"
+        style={headerOverlay ? { paddingTop: 'var(--site-header-occlusion-bottom)' } : undefined}
+      >
         <div className="container grid grid-cols-8 items-end gap-x-2.5 pt-24 sm:grid-cols-12 sm:gap-x-5 sm:pt-32 md:gap-x-6">
           <div className="col-span-full flex flex-col items-start sm:items-center sm:text-center">
             {(date || eyebrow || readingTime) && (
@@ -63,7 +74,7 @@ export default function LongformArticle({
             )}
           </div>
 
-          <div className="col-span-full mt-16 flex items-center justify-between gap-3 border-t border-border pt-3 lg:col-start-4 lg:col-span-6">
+          {readingTools ? <div className="col-span-full mt-16 mb-3 flex items-center justify-between gap-3 border-t border-border pt-3 lg:col-start-4 lg:col-span-6">
             <ArticleListenControl
               title={title}
               resume={description ?? ''}
@@ -73,17 +84,18 @@ export default function LongformArticle({
               durationLabel={readingTime?.match(/\d+/)?.[0] ? `${readingTime.match(/\d+/)?.[0]}:00` : undefined}
             />
             <ShareLinkButton url={shareUrl} />
-          </div>
+          </div> : <div className="col-span-full h-16" />}
         </div>
       </section>
 
       <article className="w-full bg-[color-mix(in_srgb,var(--primary)_6%,var(--background))] text-foreground">
+        {contentNavigation}
         <div
           id="company-article-body"
           data-article-body
           className="container grid grid-cols-8 place-items-start gap-x-2.5 pb-24 pt-10 sm:grid-cols-12 sm:gap-x-5 sm:pt-16 md:gap-x-6 md:pb-32 lg:[&>[data-article-block-width=prose]]:col-start-5 lg:[&>[data-article-block-width=wide]]:col-start-3 2xl:pb-40"
         >
-          <ArticleToc entries={entries} pdfHref={pdfHref} />
+          {(entries.length > 0 || pdfHref) && <ArticleToc entries={entries} pdfHref={pdfHref} />}
 
           {children}
 

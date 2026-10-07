@@ -545,11 +545,11 @@ function QuoteSection() {
 /* ── More ──────────────────────────────────── */
 
 const MORE_LINKS = [
-  { href: '/company/charter', label: 'The Oxy Founding Charter', kind: 'Document' },
-  { href: '/company/influence/', label: 'Influence and Responsibility', kind: 'Document' },
-  { href: '/company/manifesto', label: 'The Oxy Manifesto', kind: 'Document' },
-  { href: '/company/business', label: 'How our business works', kind: 'Document' },
-  { href: '/company/transparency', label: 'Transparency Center', kind: 'Document' },
+  { href: '/transparency/charter', label: 'The Oxy Founding Charter', kind: 'Document' },
+  { href: '/transparency/influence/', label: 'Influence and Responsibility', kind: 'Document' },
+  { href: '/transparency/manifesto', label: 'The Oxy Manifesto', kind: 'Document' },
+  { href: '/transparency/business', label: 'How our business works', kind: 'Document' },
+  { href: '/transparency', label: 'Transparency Center', kind: 'Document' },
   { href: '/company/team', label: 'The people building Oxy', kind: 'Team' },
   { href: '/initiative', label: 'The Oxy Initiative', kind: 'Community' },
   { href: '/newsroom', label: 'Newsroom', kind: 'Updates' },
@@ -636,7 +636,7 @@ function CareersCtaSection() {
               <Button
                 variant="ghost"
                 responsive
-                href="/company/charter"
+                href="/transparency/charter"
                 className="text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground"
               >
                 Read the charter

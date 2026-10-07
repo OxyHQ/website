@@ -26,7 +26,6 @@ import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '
 import { useTranslation, useLocaleContext } from '../../lib/i18n'
 import { searchSite, groupResults, searchContextGroups, type SearchResult } from '../../lib/site-search'
 import NavDropdownItem from '../ui/NavDropdownItem'
-import { SettingsPanel } from '../ui/SettingsPanel'
 import NavbarSearchResults from './NavbarSearchResults'
 import { RiLoginBoxLine } from '@oxy.so/bloom/icons/RiLoginBoxLine'
 import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
@@ -39,10 +38,7 @@ import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { NavBarButton, type NavBarInk } from './NavBarButton'
 import { useAdminAccess } from '../../hooks/useAdminAccess'
 
-/** Pseudo-dropdown key for the settings panel (theme + language), routed through
- *  the same shared viewport as the nav dropdowns. Prefixed so it never collides
- *  with a CMS label. */
-const SETTINGS_DROPDOWN_KEY = '__settings__'
+const WebsiteSettingsDialog = lazy(() => import('../settings/WebsiteSettingsDialog'))
 
 // ProfileButton pulls in native icon infrastructure. Authenticated visitors
 // still get the full account menu, while anonymous page loads keep it out of
@@ -414,6 +410,8 @@ export default function Navbar({
   const scrollY = useSyncExternalStore(subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [settingsMounted, setSettingsMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [activeResult, setActiveResult] = useState(0)
@@ -490,7 +488,7 @@ export default function Navbar({
    */
   const pendingFocusRef = useRef<{ key: string; edge: 'first' | 'last' } | null>(null)
   const idBase = useId()
-  const panelId = (key: string) => `${idBase}-panel-${key === SETTINGS_DROPDOWN_KEY ? 'settings' : dropdownLabels.indexOf(key)}`
+  const panelId = (key: string) => `${idBase}-panel-${dropdownLabels.indexOf(key)}`
   const mobilePanelId = `${idBase}-mobile`
   const mobileRowRefs = useRef<Record<string, HTMLButtonElement | null>>({})
   const mobileBackRefs = useRef<Record<string, HTMLButtonElement | null>>({})
@@ -517,8 +515,6 @@ export default function Navbar({
         const el = measureRefs.current[dd.label]
         if (el) heights[dd.label] = el.scrollHeight
       }
-      const settingsEl = measureRefs.current[SETTINGS_DROPDOWN_KEY]
-      if (settingsEl) heights[SETTINGS_DROPDOWN_KEY] = settingsEl.scrollHeight
       setPanelHeights(heights)
     }
     const observer = new ResizeObserver(measure)
@@ -526,10 +522,8 @@ export default function Navbar({
       const el = measureRefs.current[dd.label]
       if (el) observer.observe(el)
     }
-    const settingsEl = measureRefs.current[SETTINGS_DROPDOWN_KEY]
-    if (settingsEl) observer.observe(settingsEl)
     return () => observer.disconnect()
-  }, [dropdowns, showLanguageInSettings])
+  }, [dropdowns])
 
   const openDropdown = useCallback(
     (label: string) => {
@@ -653,7 +647,6 @@ export default function Navbar({
       case 'ArrowRight':
       case 'Home':
       case 'End': {
-        if (key === SETTINGS_DROPDOWN_KEY) return
         const bar = Array.from(navLinksRef.current?.querySelectorAll<HTMLElement>(':scope > li > button, :scope > li > a') ?? [])
         const target = rovingTarget(bar, event.currentTarget, event.key)
         if (target) {
@@ -690,8 +683,6 @@ export default function Navbar({
       }
       return
     }
-    // The settings panel's segmented control owns its own arrow keys.
-    if (key === SETTINGS_DROPDOWN_KEY) return
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Home' || event.key === 'End') {
       const target = rovingTarget(items, document.activeElement, event.key)
       if (target) {
@@ -937,6 +928,27 @@ export default function Navbar({
     )
   }
 
+  const settingsButton = (
+    <NavBarButton ink={barInk} square open={settingsOpen}>
+      <button
+        type="button"
+        className={iconButtonClass}
+        aria-label={t('footer.settings')}
+        aria-haspopup="dialog"
+        aria-expanded={settingsOpen}
+        onClick={() => {
+          closeAll()
+          closeSearch()
+          setMobileOpen(false)
+          setSettingsMounted(true)
+          setSettingsOpen(true)
+        }}
+      >
+        <span aria-hidden="true" className="inline-flex transition-transform duration-300 group-hover:rotate-45"><RiSettings3Line width={18} height={18} fill="currentColor" /></span>
+      </button>
+    </NavBarButton>
+  )
+
   return (
     <>
       {/* ─── Banner ─── */}
@@ -1024,9 +1036,6 @@ export default function Navbar({
             <DropdownContent dropdown={dd} loadImages={false} />
           </div>
         ))}
-        <div ref={(el) => { measureRefs.current[SETTINGS_DROPDOWN_KEY] = el }}>
-          <SettingsPanel showLanguage={showLanguageInSettings} />
-        </div>
       </div>
 
       {/* ─── Main nav ─── */}
@@ -1178,6 +1187,7 @@ export default function Navbar({
             <div className={`ms-auto flex items-stretch ${searchOpen ? 'lg:hidden' : ''}`}>
               {/* Mobile controls */}
             <div className="flex items-stretch gap-2 lg:hidden">
+              {settingsButton}
               {/* The avatar is the only child of these toggles, and it renders
                   no text, so without a label the button has no accessible name
                   at all — Lighthouse's `button-name` audit fails outright. */}
@@ -1218,23 +1228,7 @@ export default function Navbar({
                   <RiSearchLine aria-hidden width={18} height={18} fill="currentColor" />
                 </button>
               </NavBarButton>
-              <NavBarButton ink={barInk} square open={activeDropdown === SETTINGS_DROPDOWN_KEY}>
-                <button
-                  type="button"
-                  ref={(el) => { triggerRefs.current[SETTINGS_DROPDOWN_KEY] = el }}
-                  className={iconButtonClass}
-                  onMouseEnter={() => openDropdown(SETTINGS_DROPDOWN_KEY)}
-                  onMouseLeave={scheduleClose}
-                  onClick={() => (activeDropdown === SETTINGS_DROPDOWN_KEY ? closeAll() : openDropdown(SETTINGS_DROPDOWN_KEY))}
-                  onKeyDown={(event) => onTriggerKeyDown(event, SETTINGS_DROPDOWN_KEY)}
-                  onBlur={onDisclosureBlur}
-                  aria-expanded={activeDropdown === SETTINGS_DROPDOWN_KEY}
-                  aria-controls={panelId(SETTINGS_DROPDOWN_KEY)}
-                  aria-label={t('footer.settings')}
-                >
-                  <span aria-hidden="true" className="inline-flex transition-transform duration-300 group-hover:rotate-45"><RiSettings3Line width={18} height={18} fill="currentColor" /></span>
-                </button>
-              </NavBarButton>
+              {settingsButton}
               {rightActions}
               {ctaButtons}
               {!hideAuth && (
@@ -1298,31 +1292,7 @@ export default function Navbar({
                   </div>
                 )
               })}
-              {(() => {
-                const isActive = activeDropdown === SETTINGS_DROPDOWN_KEY
-                const show = isActive || prevDropdown === SETTINGS_DROPDOWN_KEY
-                // Right-aligned, unlike the nav panels: it is opened from the
-                // settings button at the far end of the bar, and a 340px panel
-                // parked at the container's left edge would sit nowhere near the
-                // control that opened it.
-                return (
-                  <div
-                    id={panelId(SETTINGS_DROPDOWN_KEY)}
-                    ref={(el) => { panelRefs.current[SETTINGS_DROPDOWN_KEY] = el }}
-                    className={`flex justify-end ${isActive ? 'animate-nav-fade-in' : ''}`}
-                    style={{
-                      position: isActive ? 'relative' : 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      visibility: show ? 'visible' : 'hidden',
-                      pointerEvents: isActive ? 'auto' : 'none',
-                    }}
-                  >
-                    <SettingsPanel showLanguage={showLanguageInSettings} />
-                  </div>
-                )
-              })()}
+
             </div>
           </div>
         </div>
@@ -1457,6 +1427,11 @@ export default function Navbar({
       </div>
     </header>
 
+    {settingsMounted && (
+      <Suspense fallback={null}>
+        <WebsiteSettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} showLanguage={showLanguageInSettings} />
+      </Suspense>
+    )}
     {!transparent && <div style={{ height: `calc(var(--site-header-height) + ${bannerOffset}px)` }} />}
     </>
   )

@@ -49,6 +49,7 @@ import type { SyncedIndex } from './types.ts'
 import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './sitemap.ts'
 import { hasLocalizedVariants } from '../src/lib/localizedRoute'
 import { buildRedirectsFile } from './redirects.ts'
+import { LEGAL_DOCUMENTS, TRANSPARENCY_DOCUMENTS } from '../src/lib/transparency'
 import type { SeoData } from '../src/lib/seo'
 import type { SEOLocaleSeed } from '../src/entry-server'
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, interpolate, isRtlLocale, type Locale } from '../src/lib/i18n/types'
@@ -454,36 +455,14 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description: 'The people building Oxy across engineering, design, community and operations.',
     canonicalPath: '/company/team',
   },
-  '/company/manifesto': {
-    title: 'Manifesto',
-    description:
-      'Why we build the way we do, what we refuse to trade away, and how to hold us to it. The short version of the Founding Charter.',
-    canonicalPath: '/company/manifesto',
-  },
-  '/company/influence': {
-    title: 'The Oxy Declaration on Influence and Responsibility',
-    description:
-      'Freedom to create, responsibility for consequences, and fair treatment for the people affected by public influence. A founding draft for Oxy and Mention.',
-    canonicalPath: '/company/influence',
-  },
-  '/company/charter': {
-    title: 'Founding Charter',
-    description:
-      'What Oxy is trying to become, what it must protect while it grows, and what it must never sacrifice for speed, attention, money or status.',
-    canonicalPath: '/company/charter',
-  },
-  '/company/transparency': {
+  '/transparency': {
     title: 'Transparency Center',
-    description:
-      'What Oxy publishes about its code, decisions, incidents and money, and what it deliberately does not.',
-    canonicalPath: '/company/transparency',
+    description: 'Our principles, policies and decisions, in one place. Read what we commit to and follow the work behind it.',
+    canonicalPath: '/transparency',
   },
-  '/company/business': {
-    title: 'How our business works',
-    description:
-      'Where the money comes from, where it goes, what we refuse to earn it from, and the terms capital has to accept.',
-    canonicalPath: '/company/business',
-  },
+  ...Object.fromEntries(TRANSPARENCY_DOCUMENTS.map(({ path, title, description }) => [
+    path, { title, description, canonicalPath: path },
+  ])),
   '/company/careers': {
     title: 'Careers',
     description:
@@ -545,42 +524,14 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description: 'What people are asking for across the Oxy apps, what is planned and what already shipped.',
     canonicalPath: '/features',
   },
-  '/legal': {
-    title: 'Legal',
-    description:
-      'Terms, privacy policy, data processing agreement, acceptable use and security disclosures for Oxy.',
-    canonicalPath: '/legal',
+  '/transparency/legal': {
+    title: 'Legal documents',
+    description: 'The policies and terms that shape your relationship with Oxy.',
+    canonicalPath: '/transparency/legal',
   },
-  '/legal/privacy': {
-    title: 'Privacy Policy',
-    description: 'What Oxy collects, why, how long it is kept and how to remove or export it.',
-    canonicalPath: '/legal/privacy',
-  },
-  '/legal/terms': {
-    title: 'Terms of Service',
-    description: 'The terms that govern the use of Oxy products and services.',
-    canonicalPath: '/legal/terms',
-  },
-  '/legal/dpa': {
-    title: 'Data Processing Agreement',
-    description: 'The processing terms for organisations running Oxy on behalf of their own users.',
-    canonicalPath: '/legal/dpa',
-  },
-  '/legal/aup': {
-    title: 'Acceptable Use Policy',
-    description: 'What is and is not allowed on Oxy services, and how the rules are enforced.',
-    canonicalPath: '/legal/aup',
-  },
-  '/legal/cookies': {
-    title: 'Cookies Policy',
-    description: 'Which cookies and local storage Oxy uses, what each one is for and how to refuse them.',
-    canonicalPath: '/legal/cookies',
-  },
-  '/legal/security': {
-    title: 'Security',
-    description: 'How Oxy protects accounts and data, and how to report a vulnerability.',
-    canonicalPath: '/legal/security',
-  },
+  ...Object.fromEntries(LEGAL_DOCUMENTS.map(({ slug, title, description }) => [
+    `/transparency/legal/${slug}`, { title, description, canonicalPath: `/transparency/legal/${slug}` },
+  ])),
   '/account-deletion': {
     title: 'Delete your Oxy account',
     description: 'How to delete an Oxy account and what happens to your data when you do.',
@@ -941,11 +892,9 @@ function companyMdxToPrerenderMarkdown(source: string): string {
 
 /** Long-form company documents whose source of truth is local MDX. */
 async function enumerateCompanyArticleRoutes(): Promise<RouteEntry[]> {
-  const slugs = ['manifesto', 'charter', 'influence', 'transparency', 'business'] as const
   const routes: RouteEntry[] = []
 
-  for (const slug of slugs) {
-    const url = `/company/${slug}`
+  for (const { slug, path: url } of TRANSPARENCY_DOCUMENTS) {
     const fallbackSeo = STATIC_ROUTE_SEO[url]
     const file = path.join(COMPANY_DIR, `${slug}.mdx`)
     if (!fallbackSeo || !existsSync(file)) continue

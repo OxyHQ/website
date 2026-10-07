@@ -155,12 +155,12 @@ export default function Footer({
     { label: t('footer.socialMention'), icon: MentionIcon, href: SOCIAL_URLS.mention },
   ]
   const defaultLegal: readonly LegalLink[] = [
-    { label: t('footer.legal'), to: '/legal' },
-    { label: t('footer.privacyPolicy'), to: '/legal/privacy' },
-    { label: t('footer.cookiePolicy'), to: '/legal/cookies' },
-    { label: t('footer.accessibility'), to: '/legal/accessibility' },
-    { label: t('footer.termsAndConditions'), to: '/legal/terms' },
-    { label: t('footer.llms'), to: '/legal/llms' },
+    { label: t('footer.legal'), to: '/transparency/legal' },
+    { label: t('footer.privacyPolicy'), to: '/transparency/legal/privacy' },
+    { label: t('footer.cookiePolicy'), to: '/transparency/legal/cookies' },
+    { label: t('footer.accessibility'), to: '/transparency/legal/accessibility' },
+    { label: t('footer.termsAndConditions'), to: '/transparency/legal/terms' },
+    { label: t('footer.llms'), to: '/transparency/legal/llms' },
     // These are documents rather than SPA routes, so plain anchors are
     // intentional: the browser must request the XML instead of React Router
     // handling the click.

@@ -1,117 +1,79 @@
-import { useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { Link } from '../lib/navigation'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
-import { usePage, type PageSection } from '../api/hooks'
+import { usePage } from '../api/hooks'
 import { sanitizeCmsHtml } from '../lib/sanitizeCmsHtml'
+import { canonicalHref } from '../lib/canonicalPath'
+import { LEGAL_DOCUMENTS } from '../lib/transparency'
+import TransparencyDocument from '../components/slices/TransparencyDocument'
+import { articleMdxComponents } from '../components/slices/articleMdxComponents'
+import { ARTICLE_BLOCK } from '../components/slices/articleBlock'
+import type { TocEntry } from '../components/slices/ArticleToc'
 import NotFoundPage from './NotFoundPage'
-import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
-const legalSections = [
-  { slug: 'privacy', title: 'Privacy Policy', description: 'How we collect, use, and protect your data.' },
-  { slug: 'cookies', title: 'Cookie Policy', description: 'How we use cookies and similar technologies.' },
-  { slug: 'terms', title: 'Terms & Conditions', description: 'The terms governing your use of Oxy.' },
-  { slug: 'accessibility', title: 'Accessibility', description: 'Our commitment to digital accessibility.' },
-  { slug: 'llms', title: 'LLMs', description: 'How Oxy uses large language models.' },
-]
+const { h2: Heading, h3: Subheading, p: Paragraph } = articleMdxComponents
 
-function SanitizedSectionContent({ content }: { content: string }) {
-  const sanitizedContent = useMemo(() => sanitizeCmsHtml(content), [content])
-
-  return <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
-}
-
-function SectionContent({ slug }: { slug: string }) {
-  const meta = legalSections.find((s) => s.slug === slug)
-  const { data: pageData } = usePage(`legal-${slug}`)
-  const title = pageData?.title ?? meta?.title ?? slug
-  const pageSections = pageData?.sections ?? []
+function LegalDocument({ document }: { document: typeof LEGAL_DOCUMENTS[number] }) {
+  // Keep CMS identifiers stable: the public URL does not change the stored page.
+  const { data, isPending, isError, refetch } = usePage(`legal-${document.slug}`)
+  const { sections, entries } = useMemo(() => {
+    const entries: TocEntry[] = []
+    const sections = [...(data?.sections ?? [])].sort((a, b) => a.order - b.order).map((section, index) => {
+      const id = `section-${index + 1}`
+      if (section.heading) entries.push({ id, label: section.heading, level: 2 })
+      if (section.subheading) entries.push({ id: `${id}-subheading`, label: section.subheading, level: 3 })
+      let html = sanitizeCmsHtml(section.content ?? '')
+      if (typeof DOMParser !== 'undefined') {
+        const body = new DOMParser().parseFromString(html, 'text/html').body
+        body.querySelectorAll('h2, h3, h4').forEach((heading, headingIndex) => {
+          heading.id = `${id}-heading-${headingIndex + 1}`
+          entries.push({ id: heading.id, label: heading.textContent ?? '', level: Number(heading.tagName.slice(1)) })
+        })
+        body.querySelectorAll('a[href]').forEach((link) => {
+          link.setAttribute('href', canonicalHref(link.getAttribute('href')!)!)
+        })
+        html = body.innerHTML
+      }
+      return { ...section, id, html }
+    })
+    return { sections, entries }
+  }, [data?.sections])
+  const title = data?.title || document.title
 
   return (
-    <div className="container max-w-3xl py-16">
-      <Link to="/legal" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground">
-        <RiArrowLeftLine width={14} height={14} fill="currentColor" aria-hidden />
-        All legal documents
-      </Link>
-      <AnimatedTitle as="h1" className="mb-8 text-heading-responsive-lg text-foreground">{title}</AnimatedTitle>
-      {pageSections.length > 0 ? (
-        <div className="prose prose-neutral dark:prose-invert max-w-none">
-          {pageSections.map((s: PageSection, i: number) => (
-            <div key={i}>
-              {s.heading && <h2>{s.heading}</h2>}
-              {s.subheading && <h3>{s.subheading}</h3>}
-              {s.content && <SanitizedSectionContent content={s.content} />}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-muted-foreground space-y-3">
-          <p>This document is being prepared and will be published here once it is ready.</p>
-          <p>
-            In the meantime, if you have a legal, privacy, or compliance question, reach out at{' '}
-            <a className="text-foreground underline" href="mailto:legal@oxy.so">
-              legal@oxy.so
-            </a>
-            .
-          </p>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function LegalIndex() {
-  return (
-    <div className="container max-w-3xl py-16">
-      <AnimatedTitle as="h1" className="mb-2 text-heading-responsive-lg text-foreground">Legal</AnimatedTitle>
-      <p className="mb-10 text-lg text-muted-foreground">Legal documents and policies for Oxy.</p>
-      <div className="flex flex-col gap-3">
-        {legalSections.map((section) => (
-          <Link
-            key={section.slug}
-            to={`/legal/${section.slug}`}
-            className="group flex items-center justify-between rounded-xl border border-border p-5 transition-colors hover:bg-foreground/[0.03]"
-          >
-            <div>
-              <h2 className="text-base font-medium text-foreground">{section.title}</h2>
-              <p className="mt-0.5 text-sm text-muted-foreground">{section.description}</p>
-            </div>
-            <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground transition-colors group-hover:text-foreground"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
-          </Link>
-        ))}
-      </div>
-    </div>
+    <TransparencyDocument
+      canonicalPath={`/transparency/legal/${document.slug}`}
+      title={title}
+      eyebrow="Legal"
+      description={data?.description || document.description}
+      legal
+      entries={entries}
+      readingTools={sections.length > 0}
+      cta={{ title: 'Explore the collection.', label: 'All legal documents', href: '/transparency/legal/' }}
+    >
+      {isPending ? <Paragraph><span role="status">Loading document…</span></Paragraph> : sections.length > 0 ? sections.map((section) => (
+        <Fragment key={section.id}>
+          {section.heading && <Heading id={section.id}>{section.heading}</Heading>}
+          {section.subheading && <Subheading id={`${section.id}-subheading`}>{section.subheading}</Subheading>}
+          {section.content && <div
+            className={`${ARTICLE_BLOCK} w-full min-w-0 text-blog-body text-foreground [&_p]:mt-4 [&_a]:text-primary [&_a]:underline [&_h2]:scroll-m-24 [&_h2]:pt-12 [&_h2]:pb-4 [&_h2]:text-subheading-3 [&_h2]:text-primary [&_h3]:scroll-m-24 [&_h3]:pt-8 [&_h3]:pb-4 [&_h3]:text-body-1 [&_h4]:scroll-m-24 [&_h4]:pt-6 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:ps-5 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:ps-5 [&_li]:mb-2 [&_table]:block [&_table]:overflow-x-auto [&_td]:border [&_td]:border-border [&_td]:p-3 [&_th]:border [&_th]:border-border [&_th]:p-3`}
+            dangerouslySetInnerHTML={{ __html: section.html }}
+          />}
+        </Fragment>
+      )) : isError ? <>
+        <Heading>Document unavailable</Heading>
+        <Paragraph>We could not load this document. Please try again, or contact <a className="text-primary underline" href="mailto:legal@oxy.so">legal@oxy.so</a>.</Paragraph>
+        <div className={`${ARTICLE_BLOCK} mt-6`}><button type="button" className="cursor-pointer rounded-full border border-border px-5 py-3 text-b3 hover:bg-muted" onClick={() => void refetch()}>Try again</button></div>
+      </> : <>
+        <Heading>Publication pending</Heading>
+        <Paragraph>This document is being prepared and will be published here once it is ready.</Paragraph>
+        <Paragraph>For legal, privacy or compliance questions, contact <a className="text-primary underline" href="mailto:legal@oxy.so">legal@oxy.so</a>.</Paragraph>
+      </>}
+    </TransparencyDocument>
   )
 }
 
 export default function LegalPage() {
-  const { section } = useParams<{ section?: string }>()
-  const current = section ? legalSections.find((s) => s.slug === section) : undefined
-
-  // An unrecognized `:section` used to render a 200 with a self-referencing
-  // canonical and a placeholder `<h1>`, i.e. unbounded indexable thin content.
-  // Treat it as a miss, the same way AdminPage handles an unauthorized route.
-  if (section && !current) return <NotFoundPage />
-
-  const title = current?.title ?? 'Legal'
-  const description = current?.description ?? 'Legal documents and policies for Oxy.'
-
-  return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
-      <SEO
-        title={title}
-        description={description}
-        canonicalPath={section ? `/legal/${section}` : '/legal'}
-      />
-      <Navbar />
-      <main className="flex-1">
-        {section ? <SectionContent slug={section} /> : <LegalIndex />}
-      </main>
-      <Footer />
-    </div>
-  )
+  const { section } = useParams<{ section: string }>()
+  const document = LEGAL_DOCUMENTS.find(({ slug }) => slug === section)
+  return document ? <LegalDocument key={document.slug} document={document} /> : <NotFoundPage />
 }

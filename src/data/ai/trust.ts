@@ -149,8 +149,8 @@ export const trustIntro = {
 
 /** Legal documents linked from the page, with only the ones that exist. */
 export const trustDocumentLinks: ReadonlyArray<{ label: string; href: string }> = [
-  { label: 'Privacy policy', href: '/legal/privacy' },
-  { label: 'Terms and conditions', href: '/legal/terms' },
-  { label: 'How Oxy uses large language models', href: '/legal/llms' },
+  { label: 'Privacy policy', href: '/transparency/legal/privacy' },
+  { label: 'Terms and conditions', href: '/transparency/legal/terms' },
+  { label: 'How Oxy uses large language models', href: '/transparency/legal/llms' },
   { label: 'Account deletion', href: '/account-deletion' },
 ]
