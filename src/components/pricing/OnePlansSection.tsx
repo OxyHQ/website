@@ -13,12 +13,19 @@ import { Muted, Text } from '@oxy.so/bloom/typography'
 import { useTheme } from '@oxy.so/bloom/theme'
 import { SegmentedControl, SegmentedControlItem, SegmentedControlItemText } from '@oxy.so/bloom/segmented-control'
 import { Stepper } from '@oxy.so/bloom/stepper'
-import PricingApps from './PricingApps'
+import { getBrandMark } from '../../data/brand-assets'
 
 import { organizationSeatCount, pricingOrganizationId } from '../../lib/pricingSeats'
 
 /** Plan comparison; account and subscription changes remain in Accounts. */
 export type PlanAudience = 'personal' | 'creator' | 'business'
+
+// Proposed bundle composition. Checkout and entitlement activation live in Accounts.
+const BUNDLE_APPS = {
+  personal: ['Alia', 'Mention', 'Inbox'],
+  creator: ['Alia', 'Mention', 'Mercaria'],
+  business: ['Alia', 'Mention', 'Inbox', 'Mercaria', 'Homiio'],
+} as const
 
 export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = false, audience, personalMode, onPersonalModeChange }: { headingLevel?: 'h1' | 'h2'; headerOverlay?: boolean; audience?: PlanAudience; personalMode?: PersonalPlanMode; onPersonalModeChange?: (mode: PersonalPlanMode) => void }) {
   const scope = OXY_ONE_AUDIENCE_THEMES[audience ?? 'personal']
@@ -93,9 +100,11 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
         }] : []),
         {
           title: 'App subscriptions',
-          items: [
-            { label: 'Oxy One bundle', detail: free ? 'Subscribe to individual apps separately.' : `${name} app bundle included.`, confirmed: !free },
-          ],
+          items: BUNDLE_APPS[audience ?? 'personal'].map(app => ({
+            app: app.toLowerCase(),
+            label: free ? app : `${app} ${name}`,
+            detail: free ? 'Free access' : 'Included subscription',
+          })),
         },
         {
           title: 'Credits',
@@ -257,7 +266,6 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
             <p className="mt-4 max-w-2xl text-balance text-center text-muted-foreground text-xl">
               {t(audience ? `one.${audience}PlansDescription` : 'one.lead')}
             </p>
-            <PricingApps audience={audience ?? 'personal'} />
             {family && <p className="mt-4 max-w-2xl text-center text-sm text-muted-foreground">{t('one.familyPool', { count: OXY_ONE_FAMILY_MEMBERS })}</p>}
             {audience === 'business' && <p className="mt-4 max-w-2xl text-center text-sm text-muted-foreground">{t('one.teamBillingNote')}</p>}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-5">
@@ -347,13 +355,13 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
   )
 }
 
-function PlanFeature({ label, detail, confirmed = true }: { label: string; detail: string; confirmed?: boolean }) {
+function PlanFeature({ label, detail, app, confirmed = true }: { label: string; detail: string; app?: string; confirmed?: boolean }) {
   const { colors } = useTheme()
   return (
     <div className="flex items-start gap-2 text-start">
-      <span aria-hidden="true" className="shrink-0">
+      {app ? <img data-subscription-app={app} src={getBrandMark(app)} alt="" aria-hidden="true" width={28} height={28} className="size-7 shrink-0 rounded-md object-contain" /> : <span aria-hidden="true" className="shrink-0">
         {confirmed ? <RiCheckLine width={16} height={16} fill={colors.primary} /> : <span className="inline-block w-4 text-center text-muted-foreground">—</span>}
-      </span>
+      </span>}
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <Text variant="body-regular">{label}</Text>
         <Muted>{detail}</Muted>
