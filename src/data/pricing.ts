@@ -84,7 +84,7 @@ export function getOnePlans(audience: OneAudience, mode: PersonalPlanMode = 'ind
 export const OXY_ONE_APP_SUBSCRIPTIONS = {
   alia: { name: 'Alia', tiers: { Free: null, Go: 'Go', Pro: 'Pro', Max: 'Max', Ultra: 'Ultra' } },
   inbox: { name: 'Inbox', tiers: { Free: null, Go: null, Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
-  homiio: { name: 'Homiio', tiers: { Free: null, Go: null, Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
+  homiio: { name: 'Homiio', tiers: { Free: null, Go: 'Plus', Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
 } as const
 
 /** Annual rounding follows the billable base and per-seat line items. */

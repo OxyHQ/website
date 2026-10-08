@@ -24,7 +24,7 @@ export type PlanAudience = 'personal' | 'creator' | 'business'
 const BUNDLE_APPS = {
   personal: ['Alia', 'Mention', 'Inbox'],
   creator: ['Alia', 'Mention', 'Mercaria'],
-  business: ['Alia', 'Mention', 'Inbox', 'Mercaria', 'Homiio'],
+  business: ['Alia', 'Mention', 'Inbox'],
 } as const
 
 export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = false, audience, personalMode, onPersonalModeChange }: { headingLevel?: 'h1' | 'h2'; headerOverlay?: boolean; audience?: PlanAudience; personalMode?: PersonalPlanMode; onPersonalModeChange?: (mode: PersonalPlanMode) => void }) {
@@ -37,6 +37,7 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
   const family = (audience ?? 'personal') === 'personal' && mode === 'family'
   const changePersonalMode = onPersonalModeChange ?? setLocalPersonalMode
   const [estimatedSeats, setEstimatedSeats] = useState(1)
+  const [businessApp, setBusinessApp] = useState<'mercaria' | 'homiio'>('mercaria')
   const seatsControl = useRef<HTMLDivElement>(null)
   const { oxyServices, activeSessionId } = useOxy()
   const { user, isAuthenticated, isAuthResolved } = useAuth()
@@ -100,7 +101,7 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
         }] : []),
         {
           title: 'App subscriptions',
-          items: BUNDLE_APPS[audience ?? 'personal'].map(app => {
+          items: [...BUNDLE_APPS[audience ?? 'personal'], ...(audience === 'business' ? [businessApp === 'mercaria' ? 'Mercaria' : 'Homiio'] : [])].map(app => {
             const productId = app.toLowerCase()
             const subscription = OXY_ONE_APP_SUBSCRIPTIONS[productId as keyof typeof OXY_ONE_APP_SUBSCRIPTIONS]
             const appTier = subscription?.tiers[name as keyof typeof subscription.tiers]
@@ -296,6 +297,14 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
                 </span>}
               </div>}
             </div>
+            {audience === 'business' && <div data-business-app-choice className="mt-6 flex max-w-2xl flex-col items-center gap-3">
+              <span className="text-sm font-medium">{t('one.businessAppChoice')}</span>
+              <div className="flex justify-center"><SegmentedControl type="radio" label={t('one.businessAppChoice')} value={businessApp} onValueChange={setBusinessApp}>
+                <SegmentedControlItem value="mercaria"><SegmentedControlItemText>Mercaria</SegmentedControlItemText></SegmentedControlItem>
+                <SegmentedControlItem value="homiio"><SegmentedControlItemText>Homiio</SegmentedControlItemText></SegmentedControlItem>
+              </SegmentedControl></div>
+              <p className="text-balance text-center text-sm text-muted-foreground">{t('one.businessAppNote')}</p>
+            </div>}
             {audience === 'business' && isAuthenticated && <div className="mt-3 max-w-lg text-center text-sm text-muted-foreground" role="status">
               {seats === undefined ? seatsMessage : t('one.organizationSeats')}
               {organizationSeats.isError && <Button variant="ghost" className="ms-2" onClick={() => void organizationSeats.refetch()}>{t('one.retrySeats')}</Button>}
