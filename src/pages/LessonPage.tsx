@@ -14,7 +14,6 @@ import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
 import { useNavigate } from '../lib/navigation'
 import Button from '../components/ui/Button'
 import AcademyShell from '../components/academy/AcademyShell'
-import { AcademyBreadcrumb } from '../components/academy/AcademyBreadcrumb'
 import { LessonOutline } from '../components/academy/LessonOutline'
 import { LessonStatusMark } from '../components/academy/ProgressMarks'
 import { useAcademyProgress } from '../components/academy/useAcademyProgress'
@@ -33,7 +32,7 @@ import { mdxContentComponents } from '../content/_components'
 /* ──────────────────────────────────────────────
  * /academy/:slug/:lesson/ — the lesson reader.
  *
- * Breadcrumb, title and meta, the lesson's MDX exactly as authored, then the
+ * Title and meta, the lesson's MDX exactly as authored, then the
  * end of the lesson: mark it complete, and move on — the next lesson, the
  * next course's first lesson when this was the course's last, or back to the
  * course at the very end. "On this page" sits beside the column on xl+.
@@ -150,15 +149,7 @@ export default function LessonPage() {
       }
       aside={<LessonOutline headings={headings} />}
     >
-      <AcademyBreadcrumb
-        items={[
-          { label: t('academy.title'), to: academyPath },
-          { label: courseMeta.title, to: coursePath(courseMeta.slug) },
-          { label: lesson.frontmatter.title },
-        ]}
-      />
-
-      <header className="mt-6 mb-8 flex flex-col gap-3 border-b border-border pb-8">
+      <header className="mb-8 flex flex-col gap-3 border-b border-border pb-8">
         <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           {lesson.frontmatter.title}
         </h1>

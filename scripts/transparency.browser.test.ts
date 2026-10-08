@@ -65,11 +65,11 @@ async function visit(path: string, title: string) {
 
 try {
   await visit('/transparency/', 'Transparency Center')
-  assert.equal(await page.locator('main a[href="/transparency/manifesto/"]').count(), 1)
+  assert.equal(await page.locator('#documents a[href="/transparency/manifesto/"]').count(), 1)
   await page.screenshot({ path: '/tmp/transparency-desktop.png' })
   await visit('/transparency/legal/', 'Legal documents')
-  assert.equal(await page.locator('[data-article-body] li').count(), 8)
-  await page.locator('main a[href="/transparency/legal/privacy/"]').click()
+  assert.equal(await page.locator('#documents ul li').count(), 8)
+  await page.locator('#documents a[href="/transparency/legal/privacy/"]').click()
   await page.getByText('Policy test content.', { exact: true }).waitFor()
   assert.equal(await page.locator('[data-article-body] img').count(), 0)
   assert.equal(await page.locator('[data-article-body] a[href="/transparency/legal/terms/"]').count(), 1)

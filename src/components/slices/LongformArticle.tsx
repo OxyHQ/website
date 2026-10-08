@@ -19,8 +19,6 @@ export interface LongformArticleProps {
   shareUrl: string
   pdfHref?: string
   children: ReactNode
-  /** Collection navigation at the start of the body, below the title section. */
-  contentNavigation?: ReactNode
   readingTools?: boolean
   /** Reserve room inside the hero when the global header overlays it. */
   headerOverlay?: boolean
@@ -49,7 +47,6 @@ export default function LongformArticle({
   pdfHref,
   children,
   cta,
-  contentNavigation,
   readingTools = true,
   headerOverlay = false,
 }: LongformArticleProps) {
@@ -89,7 +86,6 @@ export default function LongformArticle({
       </section>
 
       <article className="w-full bg-[color-mix(in_srgb,var(--primary)_6%,var(--background))] text-foreground">
-        {contentNavigation}
         <div
           id="company-article-body"
           data-article-body

@@ -9,7 +9,6 @@ import { Link, useNavigate } from '../lib/navigation'
 import Button from '../components/ui/Button'
 import ShareWithMention from '../components/social/ShareWithMention'
 import AcademyShell from '../components/academy/AcademyShell'
-import { AcademyBreadcrumb } from '../components/academy/AcademyBreadcrumb'
 import { lessonCountLabel, useStatusLabel, useTrackLabels } from '../components/academy/academyLabels'
 import { CourseMeta, CourseProgressBar } from '../components/academy/CourseParts'
 import { LessonStatusMark } from '../components/academy/ProgressMarks'
@@ -29,7 +28,7 @@ import { loadCourse } from '../content/academy-loader'
 /* ──────────────────────────────────────────────
  * /academy/:slug/ — a course.
  *
- * Breadcrumb, the course header with its one primary action (start, continue
+ * The course header with its one primary action (start, continue
  * at the next lesson, or review), the course's progress, and the curriculum:
  * every lesson a row that is its own link, with its status said in words as
  * well as drawn.
@@ -99,9 +98,7 @@ export default function CourseDetailPage() {
       activeCourse={course.slug}
       context={course.title}
     >
-      <AcademyBreadcrumb items={[{ label: t('academy.title'), to: academyPath }, { label: course.title }]} />
-
-      <header className="mt-6 flex flex-col gap-3">
+      <header className="flex flex-col gap-3">
         {track ? <span className="text-xs font-semibold text-primary">{trackLabels(track).label}</span> : null}
         <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{course.title}</h1>
         {course.summary ? <p className="max-w-2xl text-pretty text-base text-muted-foreground">{course.summary}</p> : null}

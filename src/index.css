@@ -53,6 +53,35 @@
 @import './styles/brand-system.css';
 
 @theme {
+  --animate-price-digit: price-digit 350ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+  --animate-price-copy: price-copy 300ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
+  @keyframes price-digit {
+    from { transform: translateY(0); }
+    to { transform: translateY(var(--digit-offset)); }
+  }
+  @keyframes price-copy {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  --animate-plan-columns: plan-columns linear both;
+  --animate-pricing-header-merge: pricing-header-merge steps(1, end) both;
+  --animate-pricing-subnav-merge: pricing-subnav-merge steps(1, end) both;
+  /* The hero's exit timeline ends when its bottom reaches the site header.
+     At that point the header backdrop covers both rows, and the subnav stops
+     drawing its own. One blur sample avoids a seam between adjacent filters. */
+  @keyframes pricing-header-merge {
+    from { bottom: 0; }
+    to { bottom: -60px; }
+  }
+  @keyframes pricing-subnav-merge {
+    from { visibility: visible; }
+    to { visibility: hidden; }
+  }
+  @keyframes plan-columns {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(100cqw - 100%)); }
+  }
+
   /* Semantic colours are NOT declared here.
    * `@oxy.so/bloom/design-tokens/theme.css` (imported above) is the single
    * authority for the `--color-x` alias vocabulary, and it ships more of it than

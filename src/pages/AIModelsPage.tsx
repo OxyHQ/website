@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
 import PageShell from '../components/layout/PageShell'
 import Button from '../components/ui/Button'
-import AiBreadcrumbs from '../components/ai/platform/AiBreadcrumbs'
 import ModelCard from '../components/ai/platform/ModelCard'
 import ModelFilters from '../components/ai/platform/ModelFilters'
 import {
@@ -63,10 +62,6 @@ export default function AIModelsPage() {
       navbar={<Navbar />}
       mainClassName="flex-1"
     >
-      <AiBreadcrumbs
-        crumbs={[{ label: t('ai.breadcrumbHome'), href: '/ai' }, { label: t('ai.models.seoTitle') }]}
-      />
-
       <section className="container pt-10 pb-8">
         <h1 className="text-heading-responsive-lg text-balance text-foreground">
           {t('ai.models.heading')}

@@ -73,7 +73,7 @@ export default function MercariaPage() {
       <FaqSection
         title="Frequently asked questions"
         groups={MERCARIA_FAQ_GROUPS}
-        className="faq-theme bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
+        className="mercaria-faq-theme bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
       />
     </PageShell>
   )

@@ -35,7 +35,7 @@ import { AnimatedTitle } from '../components/ui/AnimatedTitle'
  * Two-column layout: sticky table of contents on the left, prose
  * article on the right. Mobile collapses the TOC into a "Jump to"
  * select. Header shows the ecosystem product the article covers via
- * a `HelpProductBadge`, plus breadcrumb, last-updated date, and an
+ * a `HelpProductBadge`, plus last-updated date, and an
  * estimated read time derived from the frontmatter description +
  * heading count (the body lazy-loads so we approximate).
  *
@@ -200,36 +200,9 @@ export default function HelpArticlePage() {
         {/* ═══ Hero ═══ */}
         <section className="relative">
           <div className="container relative flex flex-col items-start gap-4 pt-28 pb-10 lg:pt-36">
-            {/* Breadcrumb */}
-            <nav
-              className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground"
-              aria-label="Breadcrumb"
-            >
-              <Link to="/" className="transition-colors hover:text-foreground">
-                Home
-              </Link>
-              <span aria-hidden="true">/</span>
-              <Link to="/help" className="transition-colors hover:text-foreground">
-                Help
-              </Link>
-              {categoryLabel && categoryMeta && (
-                <>
-                  <span aria-hidden="true">/</span>
-                  <Link
-                    to={`/help#${categoryMeta.id}`}
-                    className="transition-colors hover:text-foreground"
-                  >
-                    {categoryLabel}
-                  </Link>
-                </>
-              )}
-              <span aria-hidden="true">/</span>
-              <span className="truncate text-foreground">{frontmatter.title}</span>
-            </nav>
-
             {/* Eyebrow: product badge */}
             {categoryMeta && (
-              <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5">
                 <HelpProductBadge category={categoryMeta.id} label={categoryMeta.label} size="sm" />
               </div>
             )}

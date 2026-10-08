@@ -3,7 +3,6 @@ import PageShell from '../components/layout/PageShell'
 import StructuredData from '../components/StructuredData'
 import Button from '../components/ui/Button'
 import AiSection from '../components/ai/platform/AiSection'
-import AiBreadcrumbs from '../components/ai/platform/AiBreadcrumbs'
 import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge'
 import { useTranslation } from '../lib/i18n'
 import {
@@ -46,13 +45,6 @@ export default function AIEnterprisePage() {
           // and an offer node here would advertise a price that does not exist.
         }}
       />
-      <AiBreadcrumbs
-        crumbs={[
-          { label: t('ai.breadcrumbHome'), href: '/ai' },
-          { label: t('ai.enterprise.seoTitle') },
-        ]}
-      />
-
       <section className="container pt-10 pb-8">
         <div className="flex max-w-3xl flex-col gap-5">
           <div className="flex flex-wrap items-center gap-3">

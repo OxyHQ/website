@@ -19,7 +19,7 @@
     "test:theme": "bun test scripts/theme-contract.test.ts",
     "test:theme:browser": "bun scripts/theme-prepaint.browser.test.ts",
     "test:docs:browser": "bun scripts/docs-special-routes.browser.test.ts",
-    "test:one:browser": "bun scripts/one-catalogue.browser.test.ts",
+    "test:one:browser": "bun test scripts/one-pricing.test.ts scripts/pricing-seats.test.ts && bun scripts/one-catalogue.browser.test.ts",
     "test:bloom-demos:browser": "bun scripts/bloom-demos.browser.test.ts",
     "validate:bloom-catalog": "bun ./scripts/validate-bloom-catalog.ts && bun ./scripts/test-validate-bloom-catalog.ts",
     "validate:bloom-live-scope": "bun ./scripts/validate-bloom-live-scope.ts && bun ./scripts/test-validate-bloom-live-scope.ts",

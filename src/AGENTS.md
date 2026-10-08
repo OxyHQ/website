@@ -6,6 +6,8 @@ covers the whole repository; this file holds the rules that only apply inside
 
 > Procedures live in `docs/`; history lives in git. This file holds only RULES.
 
+Do not render breadcrumb navigation on any website page.
+
 ## Oxy AI
 
 **Taxonomy, claims registry, source-of-truth map and release gates:

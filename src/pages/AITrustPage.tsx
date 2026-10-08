@@ -2,7 +2,6 @@ import Navbar from '../components/layout/Navbar'
 import PageShell from '../components/layout/PageShell'
 import Button from '../components/ui/Button'
 import { Link } from '../lib/navigation'
-import AiBreadcrumbs from '../components/ai/platform/AiBreadcrumbs'
 import { useTranslation } from '../lib/i18n'
 import {
   trustDocumentLinks,
@@ -48,10 +47,6 @@ export default function AITrustPage() {
       navbar={<Navbar />}
       mainClassName="flex-1"
     >
-      <AiBreadcrumbs
-        crumbs={[{ label: t('ai.breadcrumbHome'), href: '/ai' }, { label: t('ai.trust.seoTitle') }]}
-      />
-
       <section className="container pt-10 pb-8">
         <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
           {t('ai.trust.heroEyebrow')}

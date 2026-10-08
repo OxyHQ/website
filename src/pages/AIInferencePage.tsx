@@ -3,7 +3,6 @@ import PageShell from '../components/layout/PageShell'
 import StructuredData from '../components/StructuredData'
 import Button from '../components/ui/Button'
 import AiSection from '../components/ai/platform/AiSection'
-import AiBreadcrumbs from '../components/ai/platform/AiBreadcrumbs'
 import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge'
 import CodeSampleTabs from '../components/ai/platform/CodeSampleTabs'
 import RoutingDiagram from '../components/ai/platform/RoutingDiagram'
@@ -62,13 +61,6 @@ export default function AIInferencePage() {
           provider: { '@type': 'Organization', name: 'Oxy', url: 'https://oxy.so/' },
         }}
       />
-      <AiBreadcrumbs
-        crumbs={[
-          { label: t('ai.breadcrumbHome'), href: '/ai' },
-          { label: t('ai.inference.seoTitle') },
-        ]}
-      />
-
       <section className="container pt-10 pb-8">
         <div className="flex max-w-3xl flex-col gap-5">
           <div className="flex flex-wrap items-center gap-3">

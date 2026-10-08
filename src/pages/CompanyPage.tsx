@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
+import PageShell from '../components/layout/PageShell'
+import { useTheme } from '@oxy.so/bloom/theme'
 import Button from '../components/ui/Button'
 import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
 import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
@@ -10,7 +10,7 @@ import RollingNumber from '../components/ui/RollingNumber'
 import { useJobs, useProducts } from '../api/hooks'
 import { getStaticChangelog } from '../content/changelog-loader'
 import { useTranslation } from '../lib/i18n'
-import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import ResourceLinksSection from '../components/sections/ResourceLinksSection'
 
 /* ──────────────────────────────────────────────
  * /company
@@ -556,53 +556,21 @@ const MORE_LINKS = [
   { href: 'https://github.com/OxyHQ', label: 'Every repository on GitHub', kind: 'Open source', external: true },
 ]
 
+const MORE_GROUPS = [
+  { title: 'Documents', links: MORE_LINKS.filter(({ kind }) => kind === 'Document') },
+  { title: 'People & community', links: MORE_LINKS.filter(({ kind }) => kind === 'Team' || kind === 'Community') },
+  { title: 'News & updates', links: MORE_LINKS.filter(({ kind }) => kind === 'Updates') },
+  { title: 'Open source', links: MORE_LINKS.filter(({ kind }) => kind === 'Open source') },
+]
+
 function MoreSection() {
   return (
-    <section id="resources" className="relative scroll-mt-[var(--site-header-height)] bg-surface text-foreground">
-      <div className="container relative grid gap-8 pt-8 md:grid-cols-12 md:pt-12">
-        <div className="col-span-full min-w-0">
-          <div className="flex flex-col gap-0">
-            <div className="flex w-full flex-col gap-4">
-              <AnimatedTitle as="h2" className="w-full text-heading-responsive-md">More</AnimatedTitle>
-              <p className="w-full text-muted-foreground">
-                The documents this page summarises, the people behind them, and the code underneath.
-              </p>
-            </div>
-            <div className="block h-16 w-full" />
-            <ul>
-              {MORE_LINKS.map((link) => (
-                <li key={link.href} className="border-border border-b first:border-t">
-                  <a
-                    href={link.href}
-                    {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    className="group relative flex items-start justify-between gap-4 px-1 py-4 transition-colors duration-150 hover:bg-background md:px-4 md:py-5"
-                  >
-                    <div className="flex items-start">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex flex-col-reverse px-3 sm:block md:px-5">
-                          <span>{link.label}</span>
-                          <span className="text-muted-foreground sm:pl-2">{link.kind}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-0.5 text-muted-foreground">
-                      <svg
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        stroke="currentColor"
-                        className="size-5 transition-transform duration-150 group-hover:translate-x-1"
-                      >
-                        <path d="m12 4 6 6-6 6M2 10h16" />
-                      </svg>
-                    </div>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
+    <ResourceLinksSection
+      id="resources"
+      className="company-resources-theme"
+      title="Explore the principles, people and work"
+      groups={MORE_GROUPS}
+    />
   )
 }
 
@@ -651,21 +619,21 @@ function CareersCtaSection() {
 
 export default function CompanyPage() {
   const { t } = useTranslation()
+  const { isDark } = useTheme()
 
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-surface">
-      <SEO title={t('company.seoTitle')} description={t('company.seoDescription')} canonicalPath="/company" />
-      <Navbar transparent />
-      <main>
-        <HeroSection />
-        <MissionSection />
-        <ImageBandSection />
-        <HistorySection />
-        <QuoteSection />
-        <MoreSection />
-        <CareersCtaSection />
-      </main>
-      <Footer />
-    </div>
+    <PageShell
+      seo={{ title: t('company.seoTitle'), description: t('company.seoDescription'), canonicalPath: '/company' }}
+      className="company-theme bg-surface text-foreground"
+      navbar={<Navbar transparent transparentOn={isDark ? 'dark' : 'light'} />}
+    >
+      <HeroSection />
+      <MissionSection />
+      <ImageBandSection />
+      <HistorySection />
+      <QuoteSection />
+      <MoreSection />
+      <CareersCtaSection />
+    </PageShell>
   )
 }

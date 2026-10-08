@@ -1,30 +1,21 @@
-import { FaqList } from '../sections/FaqSection'
-import { faqItems } from '../../data/pricing'
+import type { PersonalPlanMode } from '../../data/pricing'
+import FaqSection from '../sections/FaqSection'
+import { PRICING_FAQ_GROUPS, getAudienceFaqGroups } from '../../data/pricingFaq'
+import type { PlanAudience } from './OnePlansSection'
 
-export default function PricingFaqSection() {
+const FAQ_THEMES: Record<PlanAudience, string> = {
+  personal: 'pricing-faq-theme',
+  creator: 'pricing-creator-faq-theme',
+  business: 'pricing-business-faq-theme',
+}
+
+export default function PricingFaqSection({ audience, personalMode }: { audience?: PlanAudience; personalMode?: PersonalPlanMode }) {
   return (
-    <section>
-      <div className="container">
-        <div className="border-border grid grid-cols-12 gap-x-6 pt-20 lg:pt-32 xl:pt-44 pb-16 lg:pb-24 xl:pb-32">
-          <div className="col-span-12 xl:col-start-2 xl:col-end-12">
-            <div className="space-y-4 lg:space-y-6 mx-auto max-w-2xl">
-              <h2
-                id="faq"
-                className="pr-6 text-heading-responsive-md text-foreground"
-              >
-                Frequently asked questions.
-              </h2>
-
-              <FaqList
-                items={faqItems}
-                idPrefix="pricing-faq"
-                questionClassName="font-semibold text-foreground"
-                answerClassName="pt-3 pb-1 pr-2 text-base text-muted-foreground lg:pr-16"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <FaqSection
+      id="faq"
+      title="Frequently asked questions"
+      groups={audience ? getAudienceFaqGroups(audience, personalMode) : PRICING_FAQ_GROUPS}
+      className={`${FAQ_THEMES[audience ?? 'personal']} scroll-mt-[var(--site-header-occlusion-bottom)] bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]`}
+    />
   )
 }

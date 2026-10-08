@@ -318,6 +318,8 @@ interface NavbarProps {
   rightActions?: React.ReactNode
   /** Make navbar fully transparent with no border */
   transparent?: boolean
+  /** Extend one shared backdrop behind the pricing subheader when it docks. */
+  mergePricingSubheader?: boolean
   /**
    * What the transparent bar is sitting on. A dark hero takes light type
    * (the default); a light one — Astro's aluminium backdrop, say — takes dark
@@ -336,6 +338,7 @@ export default function Navbar({
   hideLocalePicker,
   rightActions,
   transparent,
+  mergePricingSubheader = false,
   transparentOn = 'dark',
 }: NavbarProps = {}) {
   const { t } = useTranslation()
@@ -1008,12 +1011,22 @@ export default function Navbar({
       )}
 
     <header
-      className={`fixed left-0 right-0 z-50 transition-[backdrop-filter] duration-300 ${isTransparent ? '' : 'backdrop-blur-md'}`}
+      data-transparent={isTransparent}
+      data-menu-open={isOpen || mobileOpen || searchOpen}
+      className={`fixed left-0 right-0 z-50 transition-[backdrop-filter] duration-300 ${isTransparent || mergePricingSubheader ? '' : 'backdrop-blur-md'}`}
       style={{
         top: bannerOffset,
-        background: isTransparent ? 'transparent' : headerSurface,
+        background: isTransparent || mergePricingSubheader ? 'transparent' : headerSurface,
       }}
     >
+      {mergePricingSubheader && (
+        <div
+          aria-hidden="true"
+          data-pricing-header-backdrop
+          className={`pointer-events-none absolute inset-0 -z-10 supports-[animation-timeline:scroll()]:animate-pricing-header-merge supports-[animation-timeline:scroll()]:[animation-timeline:--pricing-hero] supports-[animation-timeline:scroll()]:[animation-range:exit_99.999%_exit_100%] ${isTransparent ? '' : 'backdrop-blur-md'}`}
+          style={{ background: isTransparent ? 'transparent' : headerSurface }}
+        />
+      )}
 
       {/* ─── Hidden measurement panels (off-screen, unstyled, for measuring natural size) ─── */}
       <div
