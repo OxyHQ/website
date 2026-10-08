@@ -79,6 +79,14 @@ export function getOnePlans(audience: OneAudience, mode: PersonalPlanMode = 'ind
   return Object.entries(plans).map(([name, plan]) => ({ name, ...plan }))
 }
 
+/** Each product owns its tier names; an Oxy One level selects an app subscription.
+ * Bundle inclusion is a proposal and does not activate product entitlements. */
+export const OXY_ONE_APP_SUBSCRIPTIONS = {
+  alia: { name: 'Alia', tiers: { Free: null, Go: 'Go', Pro: 'Pro', Max: 'Max', Ultra: 'Ultra' } },
+  inbox: { name: 'Inbox', tiers: { Free: null, Go: null, Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
+  homiio: { name: 'Homiio', tiers: { Free: null, Go: null, Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
+} as const
+
 /** Annual rounding follows the billable base and per-seat line items. */
 export function onePlanQuote(plan: OnePlan, period: 'monthly' | 'annual', seats: number | undefined) {
   const annual = (value: number) => Math.round(value * 12 * (1 - OXY_ONE_ANNUAL_DISCOUNT / 100))

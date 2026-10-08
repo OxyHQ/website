@@ -6,7 +6,7 @@ import { AnimatedTitle } from '../ui/AnimatedTitle'
 import Button from '../ui/Button'
 import { Card, CardTitle, CardDescription } from '@oxy.so/bloom/card'
 import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
-import { getOnePlans, onePlanQuote, OXY_ONE_FAMILY_MEMBERS, OXY_ONE_AUDIENCE_THEMES, type PersonalPlanMode } from '../../data/pricing'
+import { getOnePlans, onePlanQuote, OXY_ONE_APP_SUBSCRIPTIONS, OXY_ONE_FAMILY_MEMBERS, OXY_ONE_AUDIENCE_THEMES, type PersonalPlanMode } from '../../data/pricing'
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@oxy.so/bloom/table'
 import { Muted, Text } from '@oxy.so/bloom/typography'
@@ -100,11 +100,16 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
         }] : []),
         {
           title: 'App subscriptions',
-          items: BUNDLE_APPS[audience ?? 'personal'].map(app => ({
-            app: app.toLowerCase(),
-            label: free ? app : `${app} ${name}`,
-            detail: free ? 'Free access' : 'Included subscription',
-          })),
+          items: BUNDLE_APPS[audience ?? 'personal'].map(app => {
+            const productId = app.toLowerCase()
+            const subscription = OXY_ONE_APP_SUBSCRIPTIONS[productId as keyof typeof OXY_ONE_APP_SUBSCRIPTIONS]
+            const appTier = subscription?.tiers[name as keyof typeof subscription.tiers]
+            return {
+              app: productId,
+              label: appTier ? `${app} ${appTier}` : app,
+              detail: free || appTier === null ? 'Free access' : 'Included subscription',
+            }
+          }),
         },
         {
           title: 'Credits',
