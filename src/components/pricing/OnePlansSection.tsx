@@ -37,7 +37,6 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
   const family = (audience ?? 'personal') === 'personal' && mode === 'family'
   const changePersonalMode = onPersonalModeChange ?? setLocalPersonalMode
   const [estimatedSeats, setEstimatedSeats] = useState(1)
-  const [businessApp, setBusinessApp] = useState<'mercaria' | 'homiio'>('mercaria')
   const seatsControl = useRef<HTMLDivElement>(null)
   const { oxyServices, activeSessionId } = useOxy()
   const { user, isAuthenticated, isAuthResolved } = useAuth()
@@ -101,7 +100,7 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
         }] : []),
         {
           title: 'App subscriptions',
-          items: [...BUNDLE_APPS[audience ?? 'personal'], ...(audience === 'business' ? [businessApp === 'mercaria' ? 'Mercaria' : 'Homiio'] : [])].map(app => {
+          items: [...BUNDLE_APPS[audience ?? 'personal'].map(app => {
             const productId = app.toLowerCase()
             const subscription = OXY_ONE_APP_SUBSCRIPTIONS[productId as keyof typeof OXY_ONE_APP_SUBSCRIPTIONS]
             const appTier = subscription?.tiers[name as keyof typeof subscription.tiers]
@@ -110,7 +109,11 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
               label: appTier ? `${app} ${appTier}` : app,
               detail: free || appTier === null ? 'Free access' : 'Included subscription',
             }
-          }),
+          }), ...(audience === 'business' ? [{
+            label: 'Business app',
+            detail: t('one.businessAppIncluded'),
+            choices: [{ app: 'mercaria', label: 'Mercaria' }, { app: 'homiio', label: 'Homiio Plus' }],
+          }] : [])],
         },
         {
           title: 'Credits',
@@ -297,14 +300,6 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
                 </span>}
               </div>}
             </div>
-            {audience === 'business' && <div data-business-app-choice className="mt-6 flex max-w-2xl flex-col items-center gap-3">
-              <span className="text-sm font-medium">{t('one.businessAppChoice')}</span>
-              <div className="flex justify-center"><SegmentedControl type="radio" label={t('one.businessAppChoice')} value={businessApp} onValueChange={setBusinessApp}>
-                <SegmentedControlItem value="mercaria"><SegmentedControlItemText>Mercaria</SegmentedControlItemText></SegmentedControlItem>
-                <SegmentedControlItem value="homiio"><SegmentedControlItemText>Homiio</SegmentedControlItemText></SegmentedControlItem>
-              </SegmentedControl></div>
-              <p className="text-balance text-center text-sm text-muted-foreground">{t('one.businessAppNote')}</p>
-            </div>}
             {audience === 'business' && isAuthenticated && <div className="mt-3 max-w-lg text-center text-sm text-muted-foreground" role="status">
               {seats === undefined ? seatsMessage : t('one.organizationSeats')}
               {organizationSeats.isError && <Button variant="ghost" className="ms-2" onClick={() => void organizationSeats.refetch()}>{t('one.retrySeats')}</Button>}
@@ -369,8 +364,19 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
   )
 }
 
-function PlanFeature({ label, detail, app, confirmed = true }: { label: string; detail: string; app?: string; confirmed?: boolean }) {
+function PlanFeature({ label, detail, app, choices, confirmed = true }: { label: string; detail: string; app?: string; choices?: { app: string; label: string }[]; confirmed?: boolean }) {
   const { colors } = useTheme()
+  if (choices) return (
+    <div data-business-app-choice className="flex flex-col gap-3 text-start">
+      <div className="flex flex-col gap-2">
+        {choices.map(choice => <div key={choice.app} className="flex items-center gap-2">
+          <img data-subscription-app={choice.app} src={getBrandMark(choice.app)} alt="" aria-hidden="true" width={28} height={28} className="size-7 shrink-0 rounded-md object-contain" />
+          <Text variant="body-regular">{choice.label}</Text>
+        </div>)}
+      </div>
+      <Muted>{detail}</Muted>
+    </div>
+  )
   return (
     <div className="flex items-start gap-2 text-start">
       {app ? <img data-subscription-app={app} src={getBrandMark(app)} alt="" aria-hidden="true" width={28} height={28} className="size-7 shrink-0 rounded-md object-contain" /> : <span aria-hidden="true" className="shrink-0">

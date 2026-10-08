@@ -133,7 +133,7 @@ export function getAudienceFaqGroups(audience: 'personal' | 'creator' | 'busines
         { question: `How is ${name} billed?`, answer: 'Choose monthly billing or save 20% with annual billing. The annual view shows the monthly equivalent and the full amount charged for the year. Credit allowances renew monthly even when you pay annually.' },
         ...(!creator ? [{
           question: 'Does Business include both Mercaria and Homiio?',
-          answer: 'Business combines Alia, Mention and Inbox with one app for your business: choose Mercaria for selling products or Homiio for housing. One choice is included for the team, not both. The comparison selector lets you explore each option; subscription activation is managed in Oxy Accounts.',
+          answer: 'Business combines Alia, Mention and Inbox with one app for your business: choose Mercaria for selling products or Homiio for housing. One choice is included for the team, not both. The plan grid shows both options together; subscription activation is managed in Oxy Accounts.',
         }, {
           question: 'How do the base fee and seats work?',
           answer: `Your total is the team base fee plus the per-user price multiplied by the number of members. Every member needs a paid seat; seats are not included in the base fee. For example, Business Go with five members costs ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format((OXY_ONE_BUSINESS_PLANS.Go.monthlyPrice + 5 * OXY_ONE_BUSINESS_PLANS.Go.monthlySeatPrice) / 100)} per month. Annual billing saves 20% on both the base fee and the seats. Monthly credits are also calculated as a base allowance plus the allowance for each active seat, shared by the team.`,
