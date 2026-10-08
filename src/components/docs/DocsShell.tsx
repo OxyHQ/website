@@ -1,5 +1,3 @@
-import { Link } from '../../lib/navigation'
-import { buildDocsHref } from '../../content/docs-loader'
 import type { SyncedPackage } from '../../../scripts/types'
 import VersionSelector from '../docs-platform/VersionSelector'
 import VersionBanner from '../docs-platform/VersionBanner'
@@ -156,39 +154,6 @@ export function DocsShell({
               <div className="min-w-0 xl:col-start-1 xl:row-start-1">
                 {hideHeader ? null : (
                   <header className="relative flex flex-col gap-3">
-                    <nav
-                      aria-label="Breadcrumb"
-                      className="mb-2 flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-muted-foreground"
-                    >
-                      <Link
-                        to="/developers/docs/"
-                        className="hover:text-foreground"
-                      >
-                        Docs
-                      </Link>
-                      <span aria-hidden>›</span>
-                      {pkg && title !== pkg.displayName ? (
-                        <>
-                          <Link
-                            to={buildDocsHref(
-                              pkg,
-                              currentVersion ?? pkg.latestVersion,
-                              '',
-                            )}
-                            className="hover:text-foreground"
-                          >
-                            {pkg.displayName}
-                          </Link>
-                          <span aria-hidden>›</span>
-                        </>
-                      ) : null}
-                      <span
-                        className="min-w-0 break-words text-foreground"
-                        aria-current="page"
-                      >
-                        {title}
-                      </span>
-                    </nav>
                     <div className="space-y-2.5">
                       <div className="text-xs text-muted-foreground">
                         {eyebrow}

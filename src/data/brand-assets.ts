@@ -12,6 +12,7 @@ export const BRAND_MARKS: Readonly<Record<string, string>> = {
   homiio: '/images/apps/homiio.png',
   inbox: '/images/apps/inbox.png',
   mention: '/images/apps/mention.png',
+  mercaria: '/images/apps/mercaria.png',
   oxyos: '/images/apps/oxyos.png',
   tnp: '/images/apps/tnp.png',
 }

@@ -1,89 +1,49 @@
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { Link } from '../../lib/navigation'
 import { useTranslation } from '../../lib/i18n'
+import type { PlanAudience } from './OnePlansSection'
 
-/**
- * The four things people mean when they say "pricing".
- *
- * This page prices per-seat plans for the Oxy apps. Inference is per token,
- * Alia is a product subscription sold by Alia, and dedicated capacity is priced
- * per agreement. Those are four different purchases, and a visitor who lands on
- * one looking for another should find out here rather than by reading a table
- * that does not answer their question.
- *
- * Each entry names its own source of truth, because "credits" on this page and
- * "credits" on Alia are not one balance and never were.
- */
-interface PricingPath {
-  titleKey: string
-  bodyKey: string
-  ctaKey: string
-  href: string
-  external?: boolean
+const PATHS: Record<PlanAudience, readonly { labelKey: string; href: string }[]> = {
+  personal: [
+    { labelKey: 'one.exploreApps', href: '/apps/' },
+    { labelKey: 'one.exploreAlia', href: 'https://alia.onl/' },
+    { labelKey: 'one.exploreHelp', href: '/help/' },
+  ],
+  creator: [
+    { labelKey: 'one.exploreMention', href: '/mention/' },
+    { labelKey: 'one.exploreAlia', href: 'https://alia.onl/' },
+    { labelKey: 'one.exploreAcademy', href: '/academy/' },
+  ],
+  business: [
+    { labelKey: 'one.exploreInference', href: '/ai/pricing/' },
+    { labelKey: 'one.exploreInfrastructure', href: '/ai/enterprise/' },
+    { labelKey: 'common.talkToSales', href: '/contact/sales/' },
+  ],
 }
 
-const PATHS: readonly PricingPath[] = [
-  { titleKey: 'one.title', bodyKey: 'one.lead', ctaKey: 'one.path', href: '/one' },
-  {
-    titleKey: 'ai.pricing.pathEcosystem',
-    bodyKey: 'ai.pricing.pathEcosystemBody',
-    ctaKey: 'common.seeMore',
-    href: '#pricing-plans',
-  },
-  {
-    titleKey: 'ai.pricing.heading',
-    bodyKey: 'ai.pricing.lead',
-    ctaKey: 'ai.cta.viewPricing',
-    href: '/ai/pricing',
-  },
-  {
-    titleKey: 'ai.pricing.pathAlia',
-    bodyKey: 'ai.pricing.pathAliaBody',
-    ctaKey: 'ai.pricing.aliaHandoffCta',
-    href: 'https://alia.onl/pricing',
-    external: true,
-  },
-  {
-    titleKey: 'ai.pricing.pathDedicated',
-    bodyKey: 'ai.pricing.pathDedicatedBody',
-    ctaKey: 'ai.cta.talkToSales',
-    href: '/contact/sales?interest=dedicated_inference',
-  },
-]
-
-export default function PricingPathsSection() {
+/** A quiet closing section that inherits the selected audience's page palette. */
+export default function PricingPathsSection({ audience = 'personal' }: { audience?: PlanAudience }) {
   const { t } = useTranslation()
 
   return (
-    <section className="py-16 sm:py-24">
-      <div className="container">
-        <h2 className="text-heading-responsive-md text-foreground">{t('ai.pricing.pathsHeading')}</h2>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {PATHS.map((path) => (
-            <article
-              key={path.titleKey}
-              className="flex h-full flex-col rounded-2xl border border-border bg-card p-5"
-            >
-              <h3 className="text-base text-foreground">{t(path.titleKey)}</h3>
-              <p className="mt-2 flex-1 text-sm text-muted-foreground">{t(path.bodyKey)}</p>
-              {path.external ? (
-                <a
-                  className="mt-4 text-sm text-foreground underline underline-offset-4"
-                  href={path.href}
-                  rel="noreferrer"
-                >
-                  {t(path.ctaKey)}
-                </a>
-              ) : (
-                <Link
-                  className="mt-4 text-sm text-foreground underline underline-offset-4"
-                  to={path.href}
-                >
-                  {t(path.ctaKey)}
-                </Link>
-              )}
-            </article>
+    <section id="pricing-explore" aria-labelledby="pricing-explore-title" className="bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))] py-16 text-foreground sm:py-24">
+      <div className="container grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-12">
+        <h2 id="pricing-explore-title" className="max-w-md text-heading-responsive-md">{t('one.exploreMore')}</h2>
+        <ul className="min-w-0 divide-y divide-border">
+          {PATHS[audience].map((path) => (
+            <li key={path.href}>
+              <Link
+                to={path.href}
+                className="group flex items-center justify-between gap-6 py-6 text-lg leading-snug transition-colors hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:text-xl"
+              >
+                <span>{t(path.labelKey)}</span>
+                <span aria-hidden="true" className="shrink-0 transition-transform group-hover:translate-x-1 motion-reduce:transition-none">
+                  <RiArrowRightLine width={20} height={20} fill="currentColor" />
+                </span>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   )

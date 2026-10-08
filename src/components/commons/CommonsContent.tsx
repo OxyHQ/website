@@ -144,7 +144,7 @@ export default function CommonsContent() {
       <FaqSection
         title="Frequently asked questions"
         items={commonsFaqItems}
-        className="faq-theme flex min-h-[100svh] items-center bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
+        className="commons-faq-theme flex min-h-[100svh] items-center bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
       />
     </>
   )

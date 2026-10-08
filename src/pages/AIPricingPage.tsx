@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import Navbar from '../components/layout/Navbar'
 import PageShell from '../components/layout/PageShell'
 import Button from '../components/ui/Button'
-import AiBreadcrumbs from '../components/ai/platform/AiBreadcrumbs'
 import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge'
 import CostEstimator from '../components/ai/platform/CostEstimator'
 import { CatalogEmptyState, CatalogFreshness } from '../components/ai/platform/CatalogNotice'
@@ -62,13 +61,6 @@ export default function AIPricingPage() {
       navbar={<Navbar />}
       mainClassName="flex-1"
     >
-      <AiBreadcrumbs
-        crumbs={[
-          { label: t('ai.breadcrumbHome'), href: '/ai' },
-          { label: t('ai.pricing.seoTitle') },
-        ]}
-      />
-
       <section className="container pt-10 pb-8">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-heading-responsive-lg text-balance text-foreground">

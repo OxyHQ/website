@@ -4,7 +4,6 @@ import Navbar from '../components/layout/Navbar'
 import PageShell from '../components/layout/PageShell'
 import StructuredData from '../components/StructuredData'
 import Button from '../components/ui/Button'
-import AiBreadcrumbs from '../components/ai/platform/AiBreadcrumbs'
 import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge'
 import CodeSampleTabs from '../components/ai/platform/CodeSampleTabs'
 import { CatalogFreshness } from '../components/ai/platform/CatalogNotice'
@@ -55,14 +54,6 @@ export default function AIModelDetailPage() {
       mainClassName="flex-1"
     >
       <ModelStructuredData catalog={catalog} entry={entry} />
-      <AiBreadcrumbs
-        crumbs={[
-          { label: t('ai.breadcrumbHome'), href: '/ai' },
-          { label: t('ai.models.seoTitle'), href: '/ai/models' },
-          { label: entry.name },
-        ]}
-      />
-
       <section className="container pt-10 pb-8">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">

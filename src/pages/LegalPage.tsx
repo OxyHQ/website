@@ -45,7 +45,6 @@ function LegalDocument({ document }: { document: typeof LEGAL_DOCUMENTS[number] 
       title={title}
       eyebrow="Legal"
       description={data?.description || document.description}
-      legal
       entries={entries}
       readingTools={sections.length > 0}
       cta={{ title: 'Explore the collection.', label: 'All legal documents', href: '/transparency/legal/' }}

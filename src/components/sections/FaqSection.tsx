@@ -19,14 +19,18 @@ export interface FaqEntry {
   answer: ReactNode
 }
 
-export interface FaqGroup {
+export type FaqGroup = {
+  id?: string
   title?: string
-  items: readonly FaqEntry[]
-}
+} & (
+  | { items: readonly FaqEntry[]; content?: never }
+  | { content: ReactNode; items?: never }
+)
 
 export type FaqOpenValue = string | string[] | undefined
 
 interface FaqSectionProps {
+  id?: string
   /** The heading over the set. */
   title: string
   /** Optional supporting copy or action shown with the heading. */
@@ -82,7 +86,11 @@ export function FaqList({
       {items.map((item, index) => {
         const rowId = `${idPrefix}-${index}`
         return (
-          <AccordionItem key={rowId} value={rowId} style={itemStyle}>
+          <AccordionItem
+            key={rowId}
+            value={rowId}
+            style={[itemStyle, index === items.length - 1 && { borderBottomWidth: 0 }]}
+          >
             <AccordionTrigger>
               <span className={`block text-start ${questionClassName}`}>{item.question}</span>
             </AccordionTrigger>
@@ -98,8 +106,10 @@ export function FaqList({
 
 /** The rows keep the gutter the band's rounded corners need. */
 const FAQ_ROW_STYLE = { paddingLeft: 16, paddingRight: 16 }
+const PANEL_CLASS = 'overflow-hidden rounded-[2rem] bg-[color-mix(in_srgb,var(--background)_84%,var(--primary))]'
 
 export default function FaqSection({
+  id,
   title,
   description,
   items,
@@ -114,7 +124,7 @@ export default function FaqSection({
 
   return (
     <BrandScope className={className}>
-      <section className={`w-full ${className}`}>
+      <section id={id} className={`w-full ${className}`}>
         <div className="container">
           <div className="grid w-full gap-6 py-8 md:gap-8 md:py-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-12">
             <div className="min-w-0 self-start lg:pt-2 lg:sticky lg:top-[40vh]">
@@ -130,16 +140,16 @@ export default function FaqSection({
 
             <div className="min-w-0 space-y-8">
               {groups.map((group, groupIndex) => (
-                <div key={group.title ?? `faq-group-${groupIndex}`}>
+                <div id={group.id} className="scroll-mt-[calc(var(--site-header-occlusion-bottom)+1.5rem)]" key={group.title ?? `faq-group-${groupIndex}`}>
                   {group.title && <h3 className="mb-3 px-1 text-base font-medium leading-6 tracking-normal text-foreground">{group.title}</h3>}
-                  <div className="overflow-hidden rounded-[2rem] bg-[color-mix(in_srgb,var(--background)_84%,var(--primary))]">
-                    <FaqList
+                  <div className={PANEL_CLASS}>
+                    {group.items ? <FaqList
                       items={group.items}
                       idPrefix={`faq-${groupIndex}`}
                       value={openId}
                       onValueChange={setOpenId}
                       itemStyle={FAQ_ROW_STYLE}
-                    />
+                    /> : group.content}
                   </div>
                 </div>
               ))}

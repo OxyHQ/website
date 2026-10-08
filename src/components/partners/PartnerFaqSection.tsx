@@ -69,7 +69,7 @@ export default function PartnerFaqSection() {
       title="Partner questions, answered."
       description="Everything you need to choose a program and start building with Oxy."
       groups={PARTNER_FAQ_GROUPS}
-      className="faq-theme flex min-h-[100svh] items-center bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
+      className="partners-faq-theme flex min-h-[100svh] items-center bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
     />
   )
 }
