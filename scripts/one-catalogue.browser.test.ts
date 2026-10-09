@@ -146,7 +146,7 @@ try {
  for(const cell of await comparison.locator('[data-subscription-missing]').all()) assert((await cell.innerText())==='—','An excluded app must show only a dash')
  assert(await comparison.getByText(/Inbox (Go|Pro|Max|Ultra)/).count()===0,'Oxy One levels must never generate app subscription names')
  assert(await comparison.locator('[data-subscription-app]').count()===15,'Only included subscriptions show app icons')
- assert(await comparison.locator('[data-subscription-app=homiio]').first().evaluate(el=>getComputedStyle(el).maskImage.includes('homiio.svg')),'Use the official Homiio vector as a theme-aware mark')
+ assert((await comparison.locator('img[data-subscription-app=homiio]').first().getAttribute('src'))==='/images/apps/homiio.png','Use the official Homiio PNG image')
  await comparison.locator('img[data-subscription-app]').evaluateAll(images=>Promise.all(images.map(image=>(image as HTMLImageElement).decode())))
  await page.setViewportSize({width:1440,height:600})
  await comparison.evaluate(el=>scrollTo({top:el.getBoundingClientRect().top+scrollY-350,behavior:'instant'}))

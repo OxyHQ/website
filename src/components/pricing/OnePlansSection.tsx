@@ -377,8 +377,6 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
 
 function SubscriptionMark({ app }: { app: string }) {
   const src = getBrandMark(app)
-  // Homiio's app uses a monochrome vector; inherit the surrounding Bloom colour.
-  if (app === 'homiio') return <span data-subscription-app={app} aria-hidden="true" className="size-7 shrink-0 bg-current" style={{ mask: `url(${src}) center / contain no-repeat` }} />
   return <img data-subscription-app={app} src={src} alt="" aria-hidden="true" width={28} height={28} className="size-7 shrink-0 rounded-md object-contain" />
 }
 

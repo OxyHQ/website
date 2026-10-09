@@ -9,7 +9,7 @@ export const BRAND_MARKS: Readonly<Record<string, string>> = {
   clarity: '/images/apps/clarity.png',
   console: '/images/apps/console.svg',
   faircoin: '/images/apps/faircoin.svg',
-  homiio: '/images/apps/homiio.svg',
+  homiio: '/images/apps/homiio.png',
   inbox: '/images/apps/inbox.png',
   mention: '/images/apps/mention.png',
   mercaria: '/images/apps/mercaria.png',
