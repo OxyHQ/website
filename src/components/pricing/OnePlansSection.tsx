@@ -22,7 +22,7 @@ export type PlanAudience = 'personal' | 'creator' | 'business'
 
 // Proposed bundle composition. Checkout and entitlement activation live in Accounts.
 const BUNDLE_APPS = {
-  personal: ['alia', 'mention', 'inbox'],
+  personal: ['alia', 'mention', 'inbox', 'homiio'],
   creator: ['alia', 'mention', 'mercaria'],
   business: ['alia', 'mention', 'inbox'],
 } as const
