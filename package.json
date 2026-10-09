@@ -10,7 +10,7 @@
     "dev:client": "vite",
     "prebuild": "bun scripts/sync-ai-catalog.ts && bun scripts/generate-theme-css.ts && bun run test:theme && bun run test:links && bun test scripts/prerender-fetch.test.ts scripts/transparency.test.ts scripts/seo-contract.test.ts scripts/sitemap.test.ts scripts/mdx-literal-tags.test.ts scripts/mcp-docs.test.ts && bun test scripts/kaana-brand.test.ts && bun run test:ai && bun scripts/generate-bloom-catalog.ts && bun scripts/generate-bloom-live-scope.ts && bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts && bun scripts/build-help-og-images.ts && rm -rf node_modules/.tmp",
     "build": "tsc -b && vite build",
-    "postbuild": "bun scripts/build-docs-search-index.ts && NODE_ENV=production bun scripts/prerender.ts && bun scripts/build-csp-headers.ts && bun run test:ai:dist && bun run test:routing && bun run test:link-audit && bun scripts/run-pagefind.ts && bun run test:theme:browser && bun run test:docs:browser && bun run test:bloom-demos:browser && bun run test:bloom-landing:browser && bun run test:transparency:browser",
+    "postbuild": "bun scripts/build-docs-search-index.ts && NODE_ENV=production bun scripts/prerender.ts && bun scripts/build-csp-headers.ts && bun run test:ai:dist && bun run test:routing && bun run test:link-audit && bun scripts/run-pagefind.ts && bun run test:theme:browser && bun run test:docs:browser && bun run test:bloom-demos:browser && bun run test:bloom-landing:browser && bun run test:transparency:browser && bun run test:help:browser",
     "prerender": "NODE_ENV=production bun scripts/prerender.ts",
     "analyze": "ANALYZE=1 vite build && echo \"open node_modules/.tmp/bundle-stats.html\"",
     "lint": "eslint .",
@@ -50,7 +50,8 @@
     "sync-ai-catalog": "bun scripts/sync-ai-catalog.ts",
     "test:routing": "bun scripts/routing-contract.test.ts",
     "test:link-audit": "bun scripts/link-audit.ts",
-    "test:bloom-landing:browser": "bun scripts/bloom-landing.browser.test.ts"
+    "test:bloom-landing:browser": "bun scripts/bloom-landing.browser.test.ts",
+    "test:help:browser": "bun scripts/help.browser.test.ts"
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch": "^3.1130.0",

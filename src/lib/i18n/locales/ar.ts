@@ -360,7 +360,8 @@ const ar: Translations = {
     chooseYourPlan: 'اختر خطتك',
   },
   help: {
-    seoTitle: 'مركز المساعدة',
+    "welcome": "مرحبًا بك في مركز مساعدة Oxy", "ecosystemHeading": "الدعم لجميع خدمات Oxy", "ecosystemDescription": "احصل على المساعدة بشأن تطبيقات وتجارب Oxy", "moreSupport": "استكشف المزيد من خيارات الدعم",
+    "greeting": "مرحبًا.", "topicsHeading": "تصفح حسب الموضوع", "featuredHeading": "مقالات مميزة", "allArticles": "عرض جميع المقالات", "searchResults": "نتائج البحث", "clearFilters": "مسح عوامل التصفية", "noResults": "لم يتم العثور على مقالات. جرّب بحثًا آخر أو امسح عوامل التصفية.", "readTime": "مدة القراءة: {count} دقيقة", seoTitle: 'مركز المساعدة',
     seoDescription:
       'احصل على المساعدة بشأن Oxy. ابحث عن إجابات للأسئلة الشائعة، وأدلة استكشاف الأخطاء، وتواصل مع فريق الدعم.',
     heading: 'كيف يمكننا مساعدتك؟',

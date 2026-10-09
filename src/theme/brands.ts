@@ -63,6 +63,7 @@ export interface BrandSurface {
  * that uses `.cursor-theme` alone.
  */
 export const BRAND_SURFACES: readonly BrandSurface[] = [
+  { selector: '.help-photo-theme', seed: APP_COLOR_PRESETS[SITE_PRESET].hex, mode: 'dark', label: 'Help center photo overlays' },
   {
     // The Homiio landing is one fixed daytime illustration — a blue sky over a
     // cream ground — so it stays light whatever the toggle says. The yellow seed

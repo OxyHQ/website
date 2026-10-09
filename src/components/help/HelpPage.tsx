@@ -1,465 +1,149 @@
-import { useMemo } from 'react'
-import { Link } from '../../lib/navigation'
-import type { BloomIconComponent } from '@oxy.so/bloom/icons'
-import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine'
-import { RiAccountCircleLine } from '@oxy.so/bloom/icons/RiAccountCircleLine'
-import { RiInbox2Line } from '@oxy.so/bloom/icons/RiInbox2Line'
-import { RiDashboardLine } from '@oxy.so/bloom/icons/RiDashboardLine'
+import { useEffect, useMemo, useRef } from 'react'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
-import { RiArrowRightSLine } from '@oxy.so/bloom/icons/RiArrowRightSLine'
 import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
-import { Divider } from '@oxy.so/bloom/divider'
-import { useCurrentLocale } from '../../lib/i18n'
-import {
-  loadHelpArticles,
-  loadFeaturedHelpArticles,
-  loadHelpArticleCounts,
-  HELP_CATEGORIES,
-  type HelpEntry,
-  type HelpCategoryMeta,
-  type HelpCategoryId,
-} from '../../content/help-loader'
-import HelpProductBadge from './HelpProductBadge'
 import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { getHelpProductLogo } from './getHelpProductLogo'
-import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { Link } from '../../lib/navigation'
+import { useTranslation } from '../../lib/i18n'
+import { getBrandMark } from '../../data/brand-assets'
+import { HELP_CATEGORIES, loadHelpArticles, type HelpCategoryId } from '../../content/help-loader'
+import Button from '../ui/Button'
 
-/* ──────────────────────────────────────────────
- * /help — landing
- *
- * Reads articles + categories from the MDX loader (locale-aware) and
- * renders the existing landing chrome — category cards, sidebar nav,
- * featured "Get started" list. UI is preserved verbatim; only the data
- * source changed (was CMS API, now build-time MDX).
- *
- * Heading copy is held in module-level constants since this page is no
- * longer driven by the `/pages/help` CMS doc.
- * ──────────────────────────────────────────── */
-
-/* ─── Landing copy ─── */
-
-const HERO_BADGE = 'Help center'
-const HERO_TITLE = 'How can we help?'
-const HERO_SUBTITLE = 'Get answers to common questions on all things Oxy'
-const GETTING_STARTED_HEADING = 'Get started'
-const GETTING_STARTED_SUB_PRE = 'with '
-const GETTING_STARTED_SUB_POST = 'Oxy 101.'
-const GETTING_STARTED_LEAD = 'Everything you need to master the basics of Oxy.'
-const POPULAR_SEARCHES = ['recovery email', 'encryption', 'sign in']
-
-/* ─── Category icon lookup ─── */
-
-// `HELP_CATEGORIES` names its icons by slug (they began as lucide names). An
-// explicit table rather than a lookup into the whole icon set, so the page
-// ships only the glyphs a category actually uses; a slug missing here falls
-// back to the dot below.
-const CATEGORY_ICONS: Record<string, BloomIconComponent> = {
-  sparkles: RiSparklingLine,
-  'user-circle': RiAccountCircleLine,
-  inbox: RiInbox2Line,
-  'layout-dashboard': RiDashboardLine,
-  'shield-check': RiShieldCheckLine,
+const normalizeSearch = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase()
+const panels: { id: HelpCategoryId; image: string; position?: string; wide?: boolean }[] = [
+  { id: 'account', image: '/images/landing/company-band.jpg', position: 'object-[center_40%]', wide: true },
+  { id: 'inbox', image: '/images/landing/inbox-phone.png', wide: true },
+  { id: 'console', image: '/images/landing/video-thumb-in-house-ops.webp' },
+  { id: 'getting-started', image: '/images/landing/hero-photo-03.avif' },
+  { id: 'auth', image: '/images/landing/hero-photo-02.avif', wide: true },
+]
+const shortcutMarks: Record<HelpCategoryId, string> = {
+  account: 'accounts', inbox: 'inbox', console: 'console', auth: 'auth', 'getting-started': 'oxyos',
 }
+const focusClasses = 'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring'
 
-/* ─── SVG Icons (kept for the sidebar + hero search visuals) ─── */
+/** Meta Help reference: centered search, six shortcuts, panoramic and asymmetric photo panels. */
+export default function HelpPageContent() {
+  const { t, locale } = useTranslation()
+  const { pathname, hash } = useLocation()
+  const [params, setParams] = useSearchParams()
+  const heading = useRef<HTMLHeadingElement>(null)
+  const query = params.get('q') ?? ''
+  const selectedTopic = HELP_CATEGORIES.find(category => category.id === (params.get('topic') ?? hash.slice(1)))
+  const filtered = !!query.trim() || !!selectedTopic
+  const articles = useMemo(() => loadHelpArticles(locale), [locale])
+  const terms = normalizeSearch(query).trim().split(/\s+/).filter(Boolean)
+  const results = articles.filter(article => {
+    if (selectedTopic && article.frontmatter.category !== selectedTopic.id) return false
+    const body = normalizeSearch([article.frontmatter.title, article.frontmatter.description, ...article.frontmatter.tags, article.searchText].join(' '))
+    return terms.every(term => body.includes(term))
+  })
+  const topicHref = (id: string) => `${pathname}?topic=${id}#help-results`
+  useEffect(() => {
+    if (selectedTopic) heading.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
+  }, [selectedTopic])
+  const featured = articles.filter(article => article.frontmatter.featured).slice(0, 4)
 
-// Bloom glyphs fill with `currentColor` from the span around them (their
-// default is the theme's primary) and render no className onto the <svg>.
-function SearchIcon({ className = '' }: { className?: string }) {
   return (
-    <span className={`inline-flex shrink-0 ${className}`}>
-      <RiSearchLine width={18} height={18} fill="currentColor" />
-    </span>
-  )
-}
-
-function ChevronRight() {
-  return (
-    <span className="flex text-muted-foreground transition-transform group-data-[open]:rotate-90">
-      <RiArrowRightSLine width={12} height={12} fill="currentColor" />
-    </span>
-  )
-}
-
-/** The shared arrow with this page's slide-in-on-hover treatment. */
-function ArrowRight() {
-  return (
-    <span aria-hidden="true" className="inline-flex relative shrink-0 text-foreground opacity-0 -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150 group-active:translate-0 group-active:opacity-100 group-active:duration-50"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
-  )
-}
-
-/* ─── Card helpers ─── */
-
-function CategoryCardIcon({
-  name,
-  category,
-  className = '',
-}: { name?: string; category?: HelpCategoryId; className?: string }) {
-  const logo = category ? getHelpProductLogo(category) : undefined
-  if (logo) {
-    return (
-      <div
-        className={`flex items-center justify-center rounded-[10px] border border-border bg-surface p-1.5 ${className}`}
-      >
-        <img
-          src={logo}
-          alt=""
-          aria-hidden="true"
-          className="h-full w-full object-contain"
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-    )
-  }
-  const Icon = name ? CATEGORY_ICONS[name] : undefined
-  if (Icon) {
-    return (
-      <div
-        className={`flex items-center justify-center rounded-[10px] border border-border bg-surface text-muted-foreground ${className}`}
-        aria-hidden="true"
-      >
-        <Icon width={20} height={20} fill="currentColor" />
-      </div>
-    )
-  }
-  return (
-    <div className={`flex items-center justify-center rounded-[10px] border border-border bg-surface ${className}`} aria-hidden="true">
-      <div className="size-2 rounded-full bg-muted-foreground" />
-    </div>
-  )
-}
-
-function ArticleNumber({ index }: { index: number }) {
-  return (
-    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground text-sm shadow-s transition-[border-color] group-hover:border-input">
-      {index + 1}
-    </div>
-  )
-}
-
-/* ─── Sidebar ─── */
-
-interface CategoryGroup {
-  category: HelpCategoryMeta
-  articles: HelpEntry[]
-}
-
-function buildCategoryGroups(articles: HelpEntry[]): CategoryGroup[] {
-  const byCategory = new Map<string, HelpEntry[]>()
-  for (const article of articles) {
-    const list = byCategory.get(article.frontmatter.category) ?? []
-    list.push(article)
-    byCategory.set(article.frontmatter.category, list)
-  }
-  return [...HELP_CATEGORIES]
-    .sort((a, b) => a.order - b.order)
-    .map((category) => ({
-      category,
-      articles: byCategory.get(category.id) ?? [],
-    }))
-    .filter((group) => group.articles.length > 0)
-}
-
-function HelpSidebar({ groups }: { groups: CategoryGroup[] }) {
-  return (
-    <nav className="col-[1/6] border-border border-r max-xl:col-[1/7] max-lg:hidden">
-      <div className="sticky top-[var(--site-header-height,56px)] flex h-[calc(100vh-var(--site-header-height,56px))] flex-col pt-10">
-        {/* Search button — placeholder UI until a real search experience
-            is wired. Disabled so users get the right signal instead of a
-            silent no-op. */}
-        <div className="pr-6">
-          <button
-            type="button"
-            disabled
-            aria-disabled="true"
-            title="Search is coming soon"
-            className="relative inline-flex items-center text-nowrap border transition-colors h-9 gap-x-1.5 rounded-full px-3 text-sm button-outline justify-between pr-2 w-full opacity-60 cursor-not-allowed"
-          >
-            <SearchIcon className="text-muted-foreground" />
-            <div className="flex w-full items-center justify-between gap-2">
-              <span className="text-muted-foreground">Search help</span>
-              <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Soon</span>
-            </div>
-          </button>
-        </div>
-
-        {/* Scrollable nav */}
-        <div className="mask-t-from-[calc(100%-40px)] relative flex-1 overflow-y-scroll pt-10 pr-6 pb-8 [scrollbar-gutter:stable]">
-          <div className="mb-5 flex flex-col gap-5 lg:mb-8 lg:gap-8">
-            {groups.map(({ category, articles }) => (
-              <div key={category.id}>
-                <Link
-                  className="flex items-center gap-[7px] rounded-[10px] py-px pl-px hover:bg-surface/80"
-                  to={`/help#${category.id}`}
-                >
-                  <CategoryCardIcon name={category.icon} category={category.id} className="size-7.5" />
-                  <div className="font-semibold text-xs uppercase">{category.label}</div>
-                </Link>
-                <div className="mt-1 flex flex-col lg:gap-0.5">
-                  {articles.map((article) => (
-                    <div key={article.slug} className="group relative w-full">
-                      <button
-                        className="absolute top-0 left-0 cursor-pointer self-start rounded-full p-2.5 ring-inset transition-[background-color] hover:bg-surface group-hover:bg-surface"
-                        type="button"
-                      >
-                        <ChevronRight />
-                      </button>
-                      <Link
-                        className="inline-block w-full rounded-[10px] p-1.5 pr-2.5 pl-[38px] text-left text-muted-foreground text-sm hover:bg-surface"
-                        to={`/help/${article.slug}`}
-                      >
-                        {article.frontmatter.title}
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </nav>
-  )
-}
-
-/* ─── Main Content ─── */
-
-interface HelpContentProps {
-  categories: HelpCategoryMeta[]
-  groups: CategoryGroup[]
-  featuredArticles: HelpEntry[]
-  articleCountsByCategory: Map<string, number>
-}
-
-function HelpContent({
-  categories,
-  groups,
-  featuredArticles,
-  articleCountsByCategory,
-}: HelpContentProps) {
-  return (
-    <div className="col-[7/-1] pt-10 pb-20 max-lg:col-[1/-1] max-xl:col-[8/-1]">
-      <section className="grid w-full grid-cols-18">
-        <div className="col-[2/-3] flex flex-col items-center pt-19 pb-10 max-lg:col-[1/-1] max-lg:pt-10">
-          {/* Hero */}
-          <div className="flex flex-col items-center text-center">
-            <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground">
-              {HERO_BADGE}
-            </div>
-            <AnimatedTitle as="h1" className="mt-6 text-title-lg">{HERO_TITLE}</AnimatedTitle>
-            <div className="mt-4 max-w-[20em] text-pretty text-foreground text-xl">
-              {HERO_SUBTITLE}
-            </div>
-          </div>
-
-          {/* Search bar — placeholder UI until a real search experience is
-              wired. Disabled so users get the right signal instead of a
-              silent no-op. */}
-          <div className="mt-10 flex w-full max-w-[558px] flex-col items-center md:mt-8">
-            <button
-              type="button"
-              disabled
-              aria-disabled="true"
-              title="Search is coming soon"
-              className="relative inline-flex h-11.5 w-full cursor-not-allowed items-center justify-center gap-x-2 text-nowrap rounded-full border pr-2.5 pl-3.5 text-sm opacity-60 shadow-s transition-colors button-outline"
-            >
-              <SearchIcon />
-              <p className="w-full truncate text-left text-muted-foreground">
-                Search is coming soon. Browse the categories below for now
-              </p>
-            </button>
-
-            {/* Popular searches — decorative until search is wired. */}
-            {POPULAR_SEARCHES.length > 0 && (
-              <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-2 text-muted-foreground mt-4 md:mt-5">
-                <p className="shrink-0 text-muted-foreground text-sm">Popular topics:</p>
-                <ul className="flex gap-1.5 text-xs">
-                  {POPULAR_SEARCHES.map((s) => (
-                    <li key={s}>
-                      <button
-                        type="button"
-                        disabled
-                        aria-disabled="true"
-                        className="relative inline-flex items-center justify-center text-nowrap border gap-x-1.5 rounded-full px-2.5 text-xs button-outline !bg-surface !text-muted-foreground h-7 opacity-60 cursor-not-allowed"
-                      >
-                        {s}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Category cards */}
-          {categories.length > 0 && (
-            <div className="mt-25 grid w-full grid-cols-3 gap-5 max-lg:grid-cols-1 max-lg:gap-4 max-md:mt-15">
-              {categories.slice(0, 3).map((category) => {
-                const count = articleCountsByCategory.get(category.id) ?? 0
-                return (
-                  <Link
-                    key={category.id}
-                    className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-border p-6 pt-5.5 transition-colors duration-400 ease-in-out hover:border-input hover:duration-150 active:border-input active:duration-50 size-full"
-                    to={`/help#${category.id}`}
-                  >
-                    <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
-                    <div className="relative flex items-center justify-between">
-                      <CategoryCardIcon name={category.icon} category={category.id} className="relative size-11 max-lg:size-10" />
-                      <ArrowRight />
-                    </div>
-                    <div className="relative flex flex-col gap-1">
-                      <h3 className="font-semibold text-foreground">{category.label}</h3>
-                      <p className="text-balance text-sm text-muted-foreground">
-                        {category.description || `${count} ${count === 1 ? 'article' : 'articles'}`}
-                      </p>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
-          )}
-
-          {/* Browse by product — one column per category, each headed by
-              its Oxy ecosystem logo so readers can scan to the right
-              product first, then drill into a specific article. */}
-          {groups.length > 0 && (
-            <div className="mt-20 w-full self-stretch md:mt-25">
-              <div className="mb-8 flex flex-col gap-2">
-                <AnimatedTitle as="h2" className="text-title-md">Browse by product</AnimatedTitle>
-                <p className="text-muted-foreground">
-                  Articles organized by the Oxy app or service they cover.
-                </p>
-              </div>
-              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                {groups.map(({ category, articles }) => (
-                  <section
-                    key={category.id}
-                    id={category.id}
-                    className="scroll-mt-24 flex flex-col gap-4 rounded-2xl border border-border bg-background p-5 transition-colors hover:border-input"
-                  >
-                    <header className="flex items-center justify-between gap-3 pb-3 border-b border-border">
-                      <HelpProductBadge category={category.id} label={category.label} size="lg" />
-                      <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                        {articles.length} {articles.length === 1 ? 'article' : 'articles'}
-                      </span>
-                    </header>
-                    <ul className="flex flex-col gap-1">
-                      {articles.map((article) => (
-                        <li key={article.slug}>
-                          <Link
-                            to={`/help/${article.slug}`}
-                            className="group flex items-start justify-between gap-3 rounded-xl px-2 py-2 -mx-2 transition-colors hover:bg-surface"
-                          >
-                            <span className="flex-1 text-sm text-foreground transition-colors group-hover:text-primary">
-                              {article.frontmatter.title}
-                            </span>
-                            <ArrowRight />
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="w-full my-15 md:my-25"><Divider color="var(--border)" /></div>
-
-          {/* Get started section */}
-          <div className="flex flex-col justify-between gap-x-[clamp(24px,calc(33.8%-215.304px),105px)] gap-y-10 xl:flex-row self-stretch">
-            <div className="w-full xl:max-w-96">
-              <div>
-                <h2 className="text-title-md">
-                  <span>{GETTING_STARTED_HEADING} </span>
-                  <span className="text-muted-foreground">{GETTING_STARTED_SUB_PRE}</span>
-                  <br />
-                  <span className="text-muted-foreground">{GETTING_STARTED_SUB_POST}</span>
-                </h2>
-              </div>
-              <p className="mt-3 text-muted-foreground">{GETTING_STARTED_LEAD}</p>
-            </div>
-            <div>
-              <ul>
-                {featuredArticles.map((article, i) => {
-                  const categoryMeta = HELP_CATEGORIES.find(
-                    (c) => c.id === article.frontmatter.category,
-                  )
-                  return (
-                    <li
-                      key={article.slug}
-                      className="border-border border-b pt-8 pb-[31px] first-of-type:pt-0"
-                    >
-                      <Link className="group -m-2 flex gap-x-8 rounded-xl p-2" to={`/help/${article.slug}`}>
-                        <ArticleNumber index={i} />
-                        <div className="flex flex-col gap-1.5">
-                          {categoryMeta && (
-                            <HelpProductBadge
-                              category={categoryMeta.id}
-                              label={categoryMeta.label}
-                              size="sm"
-                            />
-                          )}
-                          <p className="text-balance font-semibold">{article.frontmatter.title}</p>
-                          <p className="line-clamp-2 text-balance text-muted-foreground transition-[color] group-hover:text-foreground">
-                            {article.frontmatter.description}
-                          </p>
-                        </div>
-                      </Link>
-                    </li>
-                  )
-                })}
-                {featuredArticles.length === 0 && (
-                  <li className="border-border border-b pt-8 pb-[31px] first-of-type:pt-0">
-                    <p className="text-balance text-muted-foreground">
-                      No featured articles yet. Mark an article as `featured: true` in its frontmatter to populate this list.
-                    </p>
-                  </li>
-                )}
-              </ul>
-              <Link
-                className="-m-px mt-7 inline-block rounded-sm p-px text-muted-foreground transition-[color] hover:text-foreground active:text-muted-foreground"
-                to="/help"
-              >
-                See all articles...
-              </Link>
-            </div>
-          </div>
+    <div data-help-center>
+      <section aria-labelledby="help-title" className="px-6 pb-36 pt-24 text-center sm:pb-48 sm:pt-28">
+        <div className="mx-auto max-w-[848px]">
+          <h1 id="help-title" className="text-balance text-[28px] font-medium leading-tight tracking-tight sm:text-4xl sm:leading-[46px]">
+            {t('help.welcome')}
+          </h1>
+          <form role="search" action={pathname} className="mx-auto mt-7 flex min-h-[60px] max-w-[780px] items-center gap-3 rounded-full border border-border/40 bg-surface p-2 ps-5 shadow-[0_4px_24px_color-mix(in_srgb,var(--primary)_20%,transparent)] focus-within:ring-2 focus-within:ring-ring" onSubmit={event => {
+            event.preventDefault()
+            heading.current?.focus({ preventScroll: true })
+            heading.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
+          }}>
+            <span aria-hidden="true" className="shrink-0 text-muted-foreground"><RiSearchLine width={24} height={24} fill="currentColor" /></span>
+            <input type="search" name="q" aria-label={t('help.searchPlaceholder')} aria-controls="help-results" autoComplete="off" placeholder={t('help.searchPlaceholder')} value={query} onChange={event => {
+              const next = new URLSearchParams(params)
+              if (selectedTopic) next.set('topic', selectedTopic.id)
+              if (event.target.value) next.set('q', event.target.value)
+              else next.delete('q')
+              setParams(next, { replace: true, preventScrollReset: true })
+            }} className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground sm:text-lg" />
+            <Button type="submit" variant="primary" className="shrink-0 rounded-full" disabled={!query.trim() && !selectedTopic}>{t('common.search')}</Button>
+          </form>
         </div>
       </section>
-    </div>
-  )
-}
 
-/* ─── Page Export ─── */
+      {filtered && (
+        <section id="help-results" aria-labelledby="help-results-heading" className="container scroll-mt-28 pb-20">
+          <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+            <h2 id="help-results-heading" ref={heading} tabIndex={-1} className="text-2xl outline-none sm:text-4xl">{query.trim() ? t('help.searchResults') : selectedTopic?.label}</h2>
+            <Link to={pathname} className={`rounded-sm underline underline-offset-4 ${focusClasses}`}>{t('help.clearFilters')}</Link>
+          </div>
+          <p role="status" aria-live="polite" className="mb-5 text-muted-foreground">{t(results.length === 1 ? 'help.articleCountOne' : 'help.articleCountOther', { count: results.length })}</p>
+          {results.length ? <div className="grid gap-4 md:grid-cols-2">{results.map(article => (
+            <Link key={article.slug} to={`${article.locale === 'en' ? '' : `/${article.locale}`}/help/${article.slug}/`} data-help-result className={`rounded-3xl bg-surface p-6 transition-colors hover:bg-secondary ${focusClasses}`}>
+              <h3 className="text-xl font-medium">{article.frontmatter.title}</h3>
+              <p className="mt-3 text-muted-foreground">{article.frontmatter.description}</p>
+              <p className="mt-5 text-sm text-muted-foreground">{t('help.readTime', { count: article.readingMinutes })}</p>
+            </Link>
+          ))}</div> : <p>{t('help.noResults')}</p>}
+        </section>
+      )}
 
-export default function HelpPageContent() {
-  const locale = useCurrentLocale()
-  const articles = useMemo(() => loadHelpArticles(locale), [locale])
-  const featured = useMemo(() => loadFeaturedHelpArticles(locale, 6), [locale])
-  const counts = useMemo(() => loadHelpArticleCounts(locale), [locale])
-  const groups = useMemo(() => buildCategoryGroups(articles), [articles])
+      <section aria-labelledby="help-ecosystem-title" className="mx-auto max-w-[1488px] px-6">
+        <div className="mb-8 text-center">
+          <h2 id="help-ecosystem-title" className="text-3xl font-medium tracking-tight sm:text-4xl sm:leading-[46px]">{t('help.ecosystemHeading')}</h2>
+          <p className="mt-4 text-lg text-muted-foreground">{t('help.ecosystemDescription')}</p>
+        </div>
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+          {HELP_CATEGORIES.map(category => (
+            <Link key={category.id} to={topicHref(category.id)} data-help-topic={category.id} className={`flex min-h-32 flex-col items-start justify-between gap-4 rounded-3xl bg-surface px-6 py-4 transition-colors hover:bg-secondary ${focusClasses}`}>
+              <span className="flex size-12 items-center justify-center" aria-hidden="true">{category.id === 'auth' ? <RiShieldCheckLine width={48} height={48} fill="currentColor" /> : <img src={getBrandMark(shortcutMarks[category.id])} alt="" className="size-12 object-contain" />}</span>
+              <span className="text-xl leading-tight sm:text-2xl">{category.label}</span>
+            </Link>
+          ))}
+          <Link to="/pricing/" className={`flex min-h-32 flex-col items-start justify-between gap-4 rounded-3xl bg-surface px-6 py-4 transition-colors hover:bg-secondary ${focusClasses}`}>
+            <img src={getBrandMark('accounts')} alt="" className="size-12 object-contain" />
+            <span className="text-xl sm:text-2xl">Oxy One</span>
+          </Link>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {panels.map((panel, index) => {
+            const category = HELP_CATEGORIES.find(item => item.id === panel.id)!
+            const lead = index === 0
+            return <article key={panel.id} className={`help-photo-theme relative isolate flex min-h-[420px] overflow-hidden rounded-3xl bg-background text-foreground ${lead ? 'md:col-span-3 md:min-h-[464px] md:items-center' : panel.wide ? 'md:col-span-2 md:min-h-[576px]' : 'md:min-h-[576px]'}`}>
+              <img src={panel.image} alt="" loading="lazy" className={`absolute inset-0 -z-20 size-full object-cover ${panel.position ?? ''}`} />
+              <div className={`absolute inset-0 -z-10 ${lead ? 'bg-linear-to-t from-background/95 via-background/40 to-transparent md:bg-linear-to-r md:from-background/85 md:via-background/30' : 'bg-linear-to-t from-background/95 via-background/30 to-transparent'}`} />
+              <div className={`flex w-full flex-col justify-end gap-4 p-7 sm:p-10 ${lead ? 'items-center text-center md:max-w-[480px] md:items-start md:p-12 md:text-start' : 'items-center text-center'}`}>
+                <h3 className={`text-balance font-medium leading-tight ${lead ? 'text-4xl md:text-5xl' : 'text-3xl md:text-4xl'}`}>{category.label}</h3>
+                <p className="max-w-lg text-pretty text-base leading-snug">{category.description}</p>
+                <Button href={topicHref(category.id)} className="mt-2 rounded-full">{category.label} · {t('help.seoTitle')}</Button>
+              </div>
+            </article>
+          })}
+        </div>
+      </section>
 
-  // Map<HelpCategoryId, number> → Map<string, number> — keeps the prop
-  // generic so HelpContent doesn't depend on the loader's exact ID union.
-  const countsByString = useMemo(() => {
-    const m = new Map<string, number>()
-    for (const [k, v] of counts) m.set(k, v)
-    return m
-  }, [counts])
+      <section aria-labelledby="help-featured-title" className="mx-auto max-w-[1488px] px-6 pt-20 sm:pt-24">
+        <h2 id="help-featured-title" className="mb-8 text-center text-2xl">{t('help.featuredHeading')}</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          {featured.map((article, index) => (
+            <article key={article.slug} className={`help-photo-theme relative isolate flex min-h-[400px] items-end overflow-hidden rounded-3xl bg-background text-foreground ${index < 2 ? 'md:min-h-[640px]' : ''}`}>
+              <img src={['/images/landing/identity-app.webp', '/images/landing/hero-photo-03.avif', '/images/landing/video-thumb-in-house-ops.webp', '/images/landing/company-band.jpg'][index]} alt="" loading="lazy" className="absolute inset-0 -z-20 size-full object-cover" />
+              <div className="absolute inset-0 -z-10 bg-linear-to-t from-background/95 via-background/25 to-transparent" />
+              <div className="flex w-full flex-col items-center p-8 text-center sm:p-12">
+                <h3 className="text-balance text-3xl font-medium leading-tight">{article.frontmatter.title}</h3>
+                <p className="mt-4 max-w-lg text-pretty">{article.frontmatter.description}</p>
+                <Button href={`${article.locale === 'en' ? '' : `/${article.locale}`}/help/${article.slug}/`} className="mt-6 rounded-full">{t('help.readTime', { count: article.readingMinutes })}<RiArrowRightLine aria-hidden={true} width={16} height={16} /></Button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
-  return (
-    <div className="container">
-      <div className="grid grid-cols-24">
-        <HelpSidebar groups={groups} />
-        <HelpContent
-          categories={HELP_CATEGORIES}
-          groups={groups}
-          featuredArticles={featured}
-          articleCountsByCategory={countsByString}
-        />
-      </div>
+      <section aria-labelledby="help-more-title" className="mx-auto max-w-[1488px] px-6 py-20 sm:py-24">
+        <h2 id="help-more-title" className="mb-8 text-center text-3xl font-medium">{t('help.moreSupport')}</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {HELP_CATEGORIES.map(category => <Link key={category.id} to={topicHref(category.id)} className={`flex min-h-14 items-center justify-between gap-4 rounded-xl border border-border px-5 py-3 transition-colors hover:bg-surface ${focusClasses}`}>{category.label}<RiArrowRightLine aria-hidden={true} width={16} height={16} /></Link>)}
+          <a href="mailto:support@oxy.so" className={`flex min-h-14 items-center justify-between gap-4 rounded-xl border border-border px-5 py-3 transition-colors hover:bg-surface ${focusClasses}`}>{t('help.contactCtaButton')}<RiArrowRightLine aria-hidden={true} width={16} height={16} /></a>
+        </div>
+      </section>
     </div>
   )
 }

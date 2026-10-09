@@ -360,7 +360,8 @@ const de: Translations = {
     chooseYourPlan: 'Wähle deinen Plan',
   },
   help: {
-    seoTitle: 'Hilfecenter',
+    "welcome": "Willkommen im Oxy-Hilfebereich", "ecosystemHeading": "Hilfe rund um Oxy", "ecosystemDescription": "Hilfe zu deinen Oxy-Apps und Erlebnissen", "moreSupport": "Weitere Hilfe entdecken",
+    "greeting": "Hallo.", "topicsHeading": "Nach Thema suchen", "featuredHeading": "Ausgewählte Artikel", "allArticles": "Alle Artikel ansehen", "searchResults": "Suchergebnisse", "clearFilters": "Filter löschen", "noResults": "Keine Artikel gefunden. Versuche eine andere Suche oder lösche die Filter.", "readTime": "{count} Min. Lesezeit", seoTitle: 'Hilfecenter',
     seoDescription:
       'Hilfe zu Oxy. Finde Antworten auf häufige Fragen, Fehlerbehebungs-Anleitungen und kontaktiere unser Support-Team.',
     heading: 'Wie können wir dir helfen?',
