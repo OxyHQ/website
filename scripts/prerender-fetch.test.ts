@@ -15,8 +15,9 @@ test('prerender fetch also times out on an unfinished JSON body', async () => {
     start(controller) { controller.enqueue(new TextEncoder().encode('{"items":[')) },
   }), { headers: { 'Content-Type': 'application/json' } }) })
   try {
-    const read = async () => (await fetchPrerender(`http://127.0.0.1:${server.port}`, 100)).json()
-    await expect(read()).rejects.toThrow()
+    const response = await fetchPrerender(`http://127.0.0.1:${server.port}`, 500)
+    expect(response.status).toBe(200)
+    await expect(response.json()).rejects.toThrow()
   } finally {
     server.stop(true)
   }
