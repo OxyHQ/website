@@ -39,7 +39,7 @@ try {
  assert(await page.getByRole('link',{name:'Manage your account',exact:true}).count()===1,'Accounts handoff missing')
  configured=true;await page.reload({waitUntil:'networkidle'})
  await page.getByText('Synthetic QA · Oxy One Personal',{exact:true}).waitFor()
- await page.getByText('100 GB',{exact:true}).waitFor()
+ await page.locator('[data-one-offers]').getByText('100 GB',{exact:true}).waitFor()
  assert((await page.getByTestId('one-price').innerText()).replace(/\s/g,' ')==='USD 29.99','SDK monthly price missing')
  await page.getByText('No trial. Monthly only; no annual plan.',{exact:true}).waitFor()
  await page.locator('[data-one-offers]').getByText('per month',{exact:true}).waitFor()
@@ -90,7 +90,7 @@ try {
  assert(await tierCards.filter({has:page.getByRole('heading',{name:'Creator',exact:true})}).getByTestId('one-tier-price').count()===0,'Do not invent Creator pricing')
  assert(await pricingOne.locator('a[href="https://accounts.oxy.so/"]').count()===1,'Free signup from the original plans must survive the migration')
  await pricingOne.getByTestId('one-price').getByText('USD 29.99',{exact:true}).waitFor()
- await pricingOne.getByText('100 GB',{exact:true}).waitFor()
+ await pricingOne.locator('[data-one-offers]').getByText('100 GB',{exact:true}).waitFor()
  await pricingOne.getByText('Purchasing is unavailable',{exact:true}).waitFor()
  assert(await page.locator('h1').count()===1,'Embedded One catalogue must not add another page heading')
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Pricing One mobile overflow')
@@ -130,10 +130,11 @@ try {
  await page.waitForTimeout(200)
  assert(await featureRow.evaluate(el=>getComputedStyle(el).backgroundColor)!==restingBackground,'Hover must highlight the entire comparison row')
 
- assert(await rows.count()===38,'Comparison must include app tiers, Alia features and limits, and credit terms')
- assert(await comparison.getByText('Alia · Limits & support',{exact:true}).count()===5,'Alia limits must be compared for every plan')
- for(const tasks of [5,10,20,50,100])assert(await comparison.getByText(`${tasks} concurrent tasks`,{exact:true}).count()===1,'Use the included Alia tier’s published concurrency limit')
- assert(await rows.nth(0).getByText('App subscriptions',{exact:true}).count()===5,'Alia repeats each category in every plan column')
+ assert(await rows.count()===13,'Compare bundle subscriptions, storage and credits without duplicating app feature lists')
+ assert(await comparison.getByText(/Alia ·|concurrent tasks/).count()===0,'Internal Alia features belong to Alia pricing')
+ for(const capacity of ['15 GB','100 GB','500 GB','2 TB','5 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Every personal tier must show its storage capacity')
+ assert(await comparison.getByText('Mention Plus',{exact:true}).count()===4,'Paid Mention inclusions must name their proposed subscription')
+ assert(await rows.nth(0).getByText('App subscriptions',{exact:true}).count()===5,'Repeat each category in every plan column')
  assert(await rows.filter({hasText:'Credits'}).getByText('Credits',{exact:true}).count()===5,'Usage category missing from a plan')
  assert(await comparison.getByTestId('one-comparison-body').getByRole('row').last().evaluate(el=>getComputedStyle(el).borderBottomWidth)==='0px','Last comparison row must not have a bottom border')
  assert(await pricingOne.locator('[data-pricing-apps]').count()===0,'App logos belong in the comparison, not beneath the heading')
@@ -170,6 +171,7 @@ try {
  assert((await pricingOne.locator('[data-plan-name]').allTextContents()).join(',')==='Go,Pro,Max,Ultra','Family has four shared plans')
  assert(await page.getByRole('button',{name:'How many people does Family include?',exact:true}).count()===1,'Family FAQ must follow the membership control')
  assert(await pricingOne.getByTestId('business-seats').count()===0,'Family is a flat package, not per-seat billing')
+ for(const capacity of ['200 GB','1 TB','4 TB','10 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Family storage belongs to the whole group')
  assert(await pricingOne.getByTestId('one-price').count()===0,'Individual SDK offers must not be advertised as Family offers')
  for (const [name,price,total,credits] of [['Go','$20','$240 billed annually','8,000'],['Pro','$39.20','$470.40 billed annually','20,000'],['Max','$135.20','$1,622.40 billed annually','100,000'],['Ultra','$479.20','$5,750.40 billed annually','300,000']]) {
   const card=tierCards.filter({has:page.getByRole('heading',{name,exact:true})})
@@ -214,6 +216,7 @@ try {
  assert(await businessChoices.count()===4,'Every Business column must show one shared cell for its app alternatives')
  for(const cell of await businessChoices.all()) {
   assert(await cell.locator('[data-subscription-app=mercaria]').count()===1,'The choice cell must show Mercaria with its icon')
+  assert(await cell.getByText('Mercaria Pro',{exact:true}).count()===1,'Name the candidate Mercaria subscription')
   assert(await cell.getByText('Homiio Plus',{exact:true}).count()===1,'The same choice cell must show Homiio Plus')
   assert(await cell.getByText('One included, your choice',{exact:true}).count()===1,'Alternatives must clearly include only one app')
  }
@@ -225,6 +228,7 @@ try {
  await pricingOne.getByTestId('business-seats-increment').click()
  await pricingOne.getByTestId('business-seats-increment').click()
  assert(await seatCount.getAttribute('aria-valuenow')==='3','Stepper must update the member count')
+ for(const capacity of ['260 GB','1.15 TB','3.3 TB','10.6 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Business storage must sum base and selected seats')
  for (const [name,credits] of [['Go','14,000'],['Pro','40,000'],['Max','84,000'],['Ultra','245,000']]) {
   await tierCards.filter({has:page.getByRole('heading',{name,exact:true})}).locator('[data-monthly-credits]').getByText(`${credits} credits / month`,{exact:true}).waitFor()
  }
@@ -278,5 +282,5 @@ try {
  await pricingOne.locator('[data-one-tiers]').first().waitFor()
  assert(await pricingOne.locator('[data-one-tiers] article').count()===5,'Pricing must show personal plans without a published catalogue')
  assert(await pricingOne.getByTestId('one-price').count()===0,'Pricing must not invent an unconfigured One price')
- console.log('[one-catalogue] passed: production route, SDK fixtures, disabled checkout, SDK final tax-inclusive monthly price, Alia comparison, monthly/annual availability, desktop/mobile limits')
+ console.log('[one-catalogue] passed: production route, SDK fixtures, disabled checkout, SDK final tax-inclusive monthly price, bundle subscriptions and shared storage, monthly/annual availability, desktop/mobile limits')
 }finally {await browser?.close();preview.kill();await preview.exited}

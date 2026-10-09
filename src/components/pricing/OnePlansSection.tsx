@@ -14,7 +14,6 @@ import { useTheme } from '@oxy.so/bloom/theme'
 import { SegmentedControl, SegmentedControlItem, SegmentedControlItemText } from '@oxy.so/bloom/segmented-control'
 import { Stepper } from '@oxy.so/bloom/stepper'
 import { getBrandMark } from '../../data/brand-assets'
-import { getAliaComparisonGroups } from '../../data/oneAliaComparison'
 
 import { organizationSeatCount, pricingOrganizationId } from '../../lib/pricingSeats'
 
@@ -23,9 +22,9 @@ export type PlanAudience = 'personal' | 'creator' | 'business'
 
 // Proposed bundle composition. Checkout and entitlement activation live in Accounts.
 const BUNDLE_APPS = {
-  personal: ['Alia', 'Mention', 'Inbox'],
-  creator: ['Alia', 'Mention', 'Mercaria'],
-  business: ['Alia', 'Mention', 'Inbox'],
+  personal: ['alia', 'mention', 'inbox'],
+  creator: ['alia', 'mention', 'mercaria'],
+  business: ['alia', 'mention', 'inbox'],
 } as const
 
 export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = false, audience, personalMode, onPersonalModeChange }: { headingLevel?: 'h1' | 'h2'; headerOverlay?: boolean; audience?: PlanAudience; personalMode?: PersonalPlanMode; onPersonalModeChange?: (mode: PersonalPlanMode) => void }) {
@@ -78,6 +77,7 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
     const free = name === 'Free'
     const quote = onePlanQuote(tier, billingPeriod, seats)
     const formatPrice = (amount: number) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD', minimumFractionDigits: amount % 100 === 0 ? 0 : 2, maximumFractionDigits: 2 }).format(amount / 100)
+    const formatStorage = (gb: number) => `${new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(gb >= 1000 ? gb / 1000 : gb)} ${gb >= 1000 ? 'TB' : 'GB'}`
     const creditLabel = quote.monthlyCredits === undefined ? '—' : t('one.monthlyCreditAmount', { count: quote.monthlyCredits.toLocaleString(locale) })
     return {
       ...tier,
@@ -102,21 +102,27 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
         {
           title: 'App subscriptions',
           items: [...BUNDLE_APPS[audience ?? 'personal'].map(app => {
-            const productId = app.toLowerCase()
-            const subscription = OXY_ONE_APP_SUBSCRIPTIONS[productId as keyof typeof OXY_ONE_APP_SUBSCRIPTIONS]
-            const appTier = subscription?.tiers[name as keyof typeof subscription.tiers]
+            const subscription = OXY_ONE_APP_SUBSCRIPTIONS[app]
+            const appTier = subscription.tiers[name as keyof typeof subscription.tiers]
             return {
-              app: productId,
-              label: appTier ? `${app} ${appTier}` : app,
+              app,
+              label: appTier ? `${subscription.name} ${appTier}` : subscription.name,
               detail: free || appTier === null ? 'Free access' : 'Included subscription',
             }
           }), ...(audience === 'business' ? [{
             label: 'Business app',
             detail: t('one.businessAppIncluded'),
-            choices: [{ app: 'mercaria', label: 'Mercaria' }, { app: 'homiio', label: 'Homiio Plus' }],
+            choices: [{ app: 'mercaria', label: 'Mercaria Pro' }, { app: 'homiio', label: 'Homiio Plus' }],
           }] : [])],
         },
-        ...getAliaComparisonGroups(OXY_ONE_APP_SUBSCRIPTIONS.alia.tiers[name as keyof typeof OXY_ONE_APP_SUBSCRIPTIONS.alia.tiers] ?? 'Free'),
+        {
+          title: t('one.storage'),
+          items: [
+            { label: t('one.totalStorage'), detail: quote.storageGB === undefined ? '—' : formatStorage(quote.storageGB) },
+            { label: t('one.storageSharing'), detail: t(family ? 'one.familyStorage' : audience === 'business' ? 'one.teamStorage' : 'one.appStorage') },
+            ...(audience === 'business' ? [{ label: t('one.storageBreakdown'), detail: `${formatStorage(tier.storageGB)} + ${t('one.storagePerSeat', { amount: formatStorage(tier.storagePerSeatGB ?? 0) })}` }] : []),
+          ],
+        },
         {
           title: 'Credits',
           items: [
