@@ -131,7 +131,7 @@ export default function HelpPageContent() {
               <span className="text-xl leading-tight sm:text-2xl">{category.label}</span>
             </Link>
           ))}
-          <Link to="/pricing/" className={`flex min-h-32 flex-col items-start justify-between gap-4 rounded-3xl bg-surface px-6 py-4 transition-colors hover:bg-secondary ${focusClasses}`}>
+          <Link to="/one/" className={`flex min-h-32 flex-col items-start justify-between gap-4 rounded-3xl bg-surface px-6 py-4 transition-colors hover:bg-secondary ${focusClasses}`}>
             <img src={getBrandMark('accounts')} alt="" className="size-12 object-contain" />
             <span className="text-xl sm:text-2xl">Oxy One</span>
           </Link>

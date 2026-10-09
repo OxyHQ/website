@@ -1,4 +1,5 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
+import { bloomIndex } from '../bloom-catalog.generated'
 import type { PlaygroundProp, PlaygroundValues } from './_playground'
 
 /**
@@ -110,6 +111,26 @@ for (const [key, loader] of Object.entries(demoModules)) {
   })
 }
 
+// Catalogue examples remain lazy: scanning their metadata must not import
+// every component implementation into the page's initial module graph.
+const examples = import.meta.glob<DemoModule>('../bloom-examples/*.tsx')
+const exampleSources = import.meta.glob<string>('../bloom-examples/*.tsx', {
+  eager: true, query: '?raw', import: 'default',
+})
+const normalizeName = (name: string) => name.replace(/[^a-z0-9]/gi, '').toLowerCase()
+for (const [path, loader] of Object.entries(examples)) {
+  const name = path.split('/').pop()!.replace(/\.tsx$/, '')
+  const surface = bloomIndex.find((entry) => normalizeName(entry.subpath) === normalizeName(name))
+  demos.push({
+    name,
+    description: surface?.components.find((component) => component.description)?.description ??
+      `A live example of Bloom's ${surface?.subpath ?? name} components.`,
+    Component: lazy(loader),
+    docsSlug: `components/${surface?.subpath ?? name}`,
+    source: exampleSources[path] ?? '',
+  })
+}
+
 demos.sort((a, b) => a.name.localeCompare(b.name))
 
 /** All registered Bloom demos, alphabetized by component name. */
@@ -121,5 +142,10 @@ const bloomDemosByName: ReadonlyMap<string, BloomDemo> = new Map(
 )
 
 export function getBloomDemo(name: string): BloomDemo | undefined {
-  return bloomDemosByName.get(name)
+  const aliases: Record<string, string> = {
+    'ChatPeople/ContactRow': 'ChatPeople',
+    ZoomableImageGallery: 'ZoomableMediaGallery',
+  }
+  const resolved = aliases[name] ?? name
+  return bloomDemosByName.get(resolved) ?? demos.find((demo) => normalizeName(demo.name) === normalizeName(resolved))
 }

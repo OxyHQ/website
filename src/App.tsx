@@ -49,6 +49,8 @@ const AdminPage = lazy(() => import('./pages/AdminPage'))
 const PartnersPage = lazy(() => import('./pages/PartnersPage'))
 const CareersPage = lazy(() => import('./pages/CareersPage'))
 const OnePage = lazy(() => import('./pages/OnePage'))
+const StorePage = lazy(() => import('./pages/StorePage'))
+const StoreProductPage = lazy(() => import('./pages/StoreProductPage'))
 const PricingPage = lazy(() => import('./pages/PricingPage'))
 const NewsroomPage = lazy(loadNewsroomPage)
 const NewsroomPostPage = lazy(loadNewsroomPostPage)
@@ -315,6 +317,8 @@ function PublicRoutes() {
       <Route path="company/careers/:id" element={<CareerDetailPage />} />
       <Route path="one" element={<OnePage />} />
       <Route path="pricing" element={<PricingPage />} />
+      <Route path="store" element={<StorePage />} />
+      <Route path="store/p/:id" element={<StoreProductPage />} />
       <Route
         path="newsroom"
         element={(

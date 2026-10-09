@@ -190,7 +190,7 @@ export const claims: readonly Claim[] = [
     evidenceOwner: 'Alia',
     reviewBy: '2027-03-31',
     status: 'approved',
-    surfaces: ['/ai/pricing', '/pricing'],
+    surfaces: ['/ai/pricing', '/one'],
   },
 ]
 

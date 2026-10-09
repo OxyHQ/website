@@ -63,6 +63,7 @@ import { BUILD_SNAPSHOT } from '../src/lib/ai/snapshot'
 import { modelPath } from '../src/lib/ai/modelId'
 import { publisherName } from '../src/lib/ai/catalog'
 import { APP_CARD_IMAGES } from '../src/data/appCardImages'
+import { STORE_PRODUCTS } from '../src/data/store'
 import { brandConfig } from '../src/lib/seo'
 import type { NewsroomPost, NewsroomPostSummary } from '../src/data/newsroom'
 import {
@@ -269,14 +270,15 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'One identity you hold yourself, and a family of open apps built on it: social, messaging, housing, payments, AI and an operating system. No ads, no data sales.',
     canonicalPath: '/',
   },
-  // The same strings OnePage sets at runtime, so crawlers and visitors see one description.
-  '/one': { title: en.one.title, description: en.one.lead, canonicalPath: '/one' },
-  '/pricing': {
-    title: 'Pricing',
-    description:
-      'What each plan costs and what it includes across the Oxy apps. A free tier that is genuinely useful, and paid plans priced against real costs.',
-    canonicalPath: '/pricing',
-  },
+  '/pricing': { title: en.pricingHub.seoTitle, description: en.pricingHub.description, canonicalPath: '/pricing' },
+  '/store': { title: en.store.title, description: en.store.description, canonicalPath: '/store' },
+  ...Object.fromEntries(STORE_PRODUCTS.map(product => [`/store/p/${product.id}`, {
+    title: product.units > 1 ? `${product.name} · ${en.store.pair}` : product.name,
+    description: en.store.description,
+    canonicalPath: `/store/p/${product.id}/`,
+    ogImage: product.image,
+  }])),
+  '/one': { title: en.pricing.seoTitle, description: en.one.lead, canonicalPath: '/one' },
   '/apps': {
     title: 'Apps',
     description:

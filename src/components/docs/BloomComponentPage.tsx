@@ -1,4 +1,5 @@
 import { Suspense, createElement, use, useState } from 'react'
+import { bloomReferenceSurfaces } from '../../content/bloom-reference-surfaces'
 import { DocsExample } from './DocsExample'
 import { DocsInstall } from './DocsInstall'
 import { bloomUsage } from './bloomUsage'
@@ -360,7 +361,7 @@ function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
         <h2 id="preview" className="sr-only">
           Preview
         </h2>
-        <DocsExample title={preview?.title ?? surfaceName} code={code}>
+        {preview || demo ? <DocsExample title={preview?.title ?? surfaceName} code={code}>
           {preview ? (
             <CatalogPreview preview={preview} />
           ) : demo ? (
@@ -379,7 +380,10 @@ function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
               .
             </p>
           )}
-        </DocsExample>
+        </DocsExample> : <div className="space-y-3 border-b border-border pb-6 text-sm text-muted-foreground">
+          <p>{bloomReferenceSurfaces[entry.subpath] ?? 'Integration reference for this module.'}</p>
+          <Link className="oxy-link" to={HUB_PATH}>Browse live component examples</Link>
+        </div>}
         {principal && controls.length > 0 ? (
           <details className="rounded-2xl border border-border bg-surface p-4">
             <summary className="cursor-pointer text-sm font-medium text-foreground">

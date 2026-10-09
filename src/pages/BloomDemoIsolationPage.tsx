@@ -15,7 +15,7 @@ import { bloomDemos, getBloomDemo } from '../content/bloom-demos/registry'
  *    the gate has to see past — a boundary here would swallow exactly the
  *    throw the gate is looking for.
  *  - **One demo per page.** The gate could have read the index instead, since
- *    it already renders all sixteen. But the index is free to stop rendering
+ *    it displays the live catalogue. But the index is free to stop rendering
  *    offscreen previews the day it needs to, and a gate that silently narrows
  *    to whatever is in the viewport is the failure this check exists to
  *    prevent. Isolation also names the culprit without parsing a stack.

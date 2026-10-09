@@ -158,6 +158,11 @@ export const productNavDropdown: NavDropdown = {
 export const resourcesNavDropdown: NavDropdown = {
   label: 'Resources',
   sections: [
+    { heading: 'Plans', items: [
+      { title: 'Oxy One', description: 'More features, AI and storage across your Oxy apps', href: '/one/', icon: 'apps' },
+      { title: 'Pricing', description: 'Explore subscriptions, credits and inference', href: '/pricing/', icon: 'data' },
+      { title: 'The Oxy Store', description: 'Objects for everyday life', href: '/store/', icon: 'apps' },
+    ] },
     {
       heading: 'Support',
       items: [
