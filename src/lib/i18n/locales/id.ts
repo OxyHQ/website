@@ -5,6 +5,9 @@ const id: Translations = {
 
   ...en,
   help: { ...en.help,
+    feedbackThanks: "Terima kasih atas masukan Anda.",
+    feedbackError: "Masukan Anda tidak dapat disimpan. Silakan coba lagi.",
+    relatedArticles: "Artikel terkait",
     voiceUnavailable: "Input suara tidak tersedia. Silakan ketik pesan Anda.",
     "supportPrompt": "Ajukan pertanyaan kepada dukungan Oxy", "openingSupport": "Membuka dukungan…", "supportUnavailable": "Dukungan tidak dapat dibuka. Pesan Anda masih tersimpan di sini. Silakan coba lagi.",
     "welcome": "Selamat datang di Pusat Bantuan Oxy", "ecosystemHeading": "Dukungan untuk seluruh Oxy", "ecosystemDescription": "Dapatkan bantuan untuk aplikasi dan pengalaman Oxy Anda", "moreSupport": "Jelajahi dukungan lainnya", "greeting": "Halo.", "topicsHeading": "Jelajahi berdasarkan topik", "featuredHeading": "Artikel pilihan", "allArticles": "Lihat semua artikel", "searchResults": "Hasil pencarian", "clearFilters": "Hapus filter", "noResults": "Tidak ada artikel ditemukan. Coba pencarian lain atau hapus filter.", "readTime": "{count} menit baca" },

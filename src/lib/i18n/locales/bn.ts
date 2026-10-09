@@ -5,6 +5,9 @@ const bn: Translations = {
 
   ...en,
   help: { ...en.help,
+    feedbackThanks: "আপনার মতামতের জন্য ধন্যবাদ।",
+    feedbackError: "আপনার মতামত সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।",
+    relatedArticles: "সম্পর্কিত নিবন্ধ",
     voiceUnavailable: "ভয়েস ইনপুট উপলব্ধ নয়। আপনার বার্তা লিখুন।",
     "supportPrompt": "Oxy সহায়তা দলকে প্রশ্ন করুন", "openingSupport": "সহায়তা চ্যাট খোলা হচ্ছে…", "supportUnavailable": "সহায়তা চ্যাট খোলা যায়নি। আপনার বার্তা এখানেই আছে। আবার চেষ্টা করুন।",
     "welcome": "Oxy সহায়তা কেন্দ্রে স্বাগতম", "ecosystemHeading": "Oxy জুড়ে সহায়তা", "ecosystemDescription": "আপনার Oxy অ্যাপ ও পরিষেবার জন্য সহায়তা পান", "moreSupport": "সহায়তার আরও উপায় দেখুন", "greeting": "হ্যালো।", "topicsHeading": "বিষয় অনুযায়ী দেখুন", "featuredHeading": "নির্বাচিত নিবন্ধ", "allArticles": "সব নিবন্ধ দেখুন", "searchResults": "অনুসন্ধানের ফলাফল", "clearFilters": "ফিল্টার মুছুন", "noResults": "কোনো নিবন্ধ পাওয়া যায়নি। অন্যভাবে খুঁজুন বা ফিল্টার মুছুন।", "readTime": "পড়তে {count} মিনিট" },

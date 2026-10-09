@@ -68,7 +68,7 @@ export const props: BloomSurfaceProps = {
     },
     'ChartCardSurfaceProps': {
       props: [
-        { name: 'radius', type: "CardProps['radius']", options: ['radius-0', 'radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max'], optional: true, description: "Fixed card height. Chart cards are 329 tall; the dashboard revenue / orders cards 344. `'auto'` lets the content size the card — what `tiles` cards do (`h-auto`)." },
+        { name: 'radius', type: "CardProps['radius']", options: ['panel', 'radius-0', 'radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max'], optional: true, description: "Fixed card height. Chart cards are 329 tall; the dashboard revenue / orders cards 344. `'auto'` lets the content size the card — what `tiles` cards do (`h-auto`)." },
         { name: 'height', type: "number | 'auto'", optional: true },
         { name: 'gap', type: 'number', optional: true, description: "Gap between the card's children. Default 16 (the dashboard cards use 24)." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

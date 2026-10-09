@@ -360,6 +360,9 @@ const ja: Translations = {
     chooseYourPlan: 'プランを選択',
   },
   help: {
+    feedbackThanks: "ご意見ありがとうございます。",
+    feedbackError: "ご意見を保存できませんでした。もう一度お試しください。",
+    relatedArticles: "関連記事",
     voiceUnavailable: "音声入力は利用できません。メッセージを入力してください。",
     "supportPrompt": "Oxyサポートに質問する", "openingSupport": "サポートを開いています…", "supportUnavailable": "サポートを開けませんでした。メッセージはここに残っています。もう一度お試しください。",
     "welcome": "Oxyヘルプセンターへようこそ", "ecosystemHeading": "Oxy全体のサポート", "ecosystemDescription": "Oxyのアプリやサービスに関するヘルプ", "moreSupport": "その他のサポートを見る",

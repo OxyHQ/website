@@ -14,8 +14,14 @@ try {
     await Bun.sleep(100)
   }
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
+  let feedbackFails = false
+  const feedbackRequests: { token: string; helpful: boolean }[] = []
   await context.route('**/*', route => {
     const url = new URL(route.request().url())
+    if (url.pathname === '/api/help/feedback') {
+      feedbackRequests.push(route.request().postDataJSON())
+      return route.fulfill({ status: feedbackFails ? 503 : 200, json: feedbackFails ? { error: 'Unavailable' } : { ok: true } })
+    }
     if (url.origin !== origin) return route.abort()
     if (url.pathname.startsWith('/api/')) return route.fulfill({ status: 503, json: { error: 'Offline test' } })
     return route.continue()
@@ -120,9 +126,27 @@ try {
   assert.ok((await page.locator('[data-help-result]').allTextContents()).some(text => text.includes('Change your password')))
   await page.locator('[data-help-result][href*="change-password"]').click()
   await page.waitForURL('**/help/account/change-password/')
-  await page.locator('[data-article-body] h2').first().waitFor()
+  await page.locator('[data-article-body] > h2').first().waitFor()
   assert.equal(await page.locator('h1').textContent(), 'Change your password')
   assert.equal(await page.locator('main').count(), 1)
+  const feedback = page.locator('[data-help-article-footer]')
+  await feedback.getByRole('button', { name: 'Yes', exact: true }).click()
+  await feedback.getByText('Thanks for your feedback.').waitFor()
+  assert.equal(feedbackRequests.length, 1)
+  await page.reload()
+  await feedback.getByText('Thanks for your feedback.').waitFor()
+  assert.equal(await feedback.getByRole('button', { name: 'Yes', exact: true }).getAttribute('aria-pressed'), 'true')
+  assert.equal(feedbackRequests.length, 1)
+  feedbackFails = true
+  await feedback.getByRole('button', { name: 'No', exact: true }).click()
+  await feedback.getByRole('alert').waitFor()
+  assert.equal(await feedback.getByRole('button', { name: 'Yes', exact: true }).getAttribute('aria-pressed'), 'true')
+  feedbackFails = false
+  await feedback.getByRole('button', { name: 'No', exact: true }).click()
+  await feedback.getByText('Thanks for your feedback.').waitFor()
+  assert.equal(await feedback.getByRole('button', { name: 'No', exact: true }).getAttribute('aria-pressed'), 'true')
+  assert.ok(feedbackRequests.every(request => request.token === feedbackRequests[0].token))
+  assert.equal(await feedback.getByRole('heading', { name: 'Related articles' }).count(), 1)
   await page.getByRole('link', { name: 'View all articles', exact: true }).click()
   await page.locator('[data-help-result]').first().waitFor()
   assert.equal(await page.locator('[data-help-result]').count(), 14)
@@ -130,7 +154,7 @@ try {
   // callouts and code must remain in its prose column at every viewport.
   for (const slug of ['account/add-recovery-email', 'console/api-keys', 'inbox/encryption']) {
     await page.goto(`${origin}/help/${slug}/`)
-    await page.locator('[data-article-body] h2').first().waitFor()
+    await page.locator('[data-article-body] > h2').first().waitFor()
     assert.equal(await page.locator('meta[property="og:type"]').getAttribute('content'), 'article')
     assert.equal(await page.locator('nav[aria-label*="breadcrumb" i]').count(), 0)
     for (const width of [390, 1440]) {
@@ -156,7 +180,7 @@ try {
     }
   }
   await page.goto(`${origin}/es/help/account/add-recovery-email/`)
-  await page.locator('[data-article-body] h2').first().waitFor()
+  await page.locator('[data-article-body] > h2').first().waitFor()
   assert.ok((await page.locator('h1').textContent())?.includes('recuperación'))
   await page.goto(`${origin}/help/no-such-article/`)
   await page.getByRole('heading', { name: '404 — Page not found', exact: true }).waitFor()

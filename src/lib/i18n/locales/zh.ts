@@ -360,6 +360,9 @@ const zh: Translations = {
     chooseYourPlan: '选择你的方案',
   },
   help: {
+    feedbackThanks: "感谢你的反馈。",
+    feedbackError: "无法保存你的反馈，请重试。",
+    relatedArticles: "相关文章",
     voiceUnavailable: "语音输入不可用，请输入你的消息。",
     "supportPrompt": "向 Oxy 支持团队提问", "openingSupport": "正在打开支持聊天…", "supportUnavailable": "无法打开支持聊天。你的消息仍保留在这里，请重试。",
     "welcome": "欢迎来到 Oxy 帮助中心", "ecosystemHeading": "Oxy 全方位支持", "ecosystemDescription": "获取有关 Oxy 应用和体验的帮助", "moreSupport": "探索更多支持选项",

@@ -169,6 +169,13 @@
       "when": 1789337902779,
       "tag": "0023_drop_jobs",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791519617027,
+      "tag": "0024_help_feedback",
+      "breakpoints": true
     }
   ]
 }

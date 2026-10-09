@@ -360,6 +360,9 @@ const fr: Translations = {
     chooseYourPlan: 'Choisissez votre forfait',
   },
   help: {
+    feedbackThanks: "Merci pour votre avis.",
+    feedbackError: "Votre avis n’a pas pu être enregistré. Veuillez réessayer.",
+    relatedArticles: "Articles associés",
     voiceUnavailable: "La saisie vocale est indisponible. Veuillez saisir votre message.",
     "supportPrompt": "Posez une question à l’assistance Oxy", "openingSupport": "Ouverture de l’assistance…", "supportUnavailable": "Impossible d’ouvrir l’assistance. Votre message est conservé ici. Réessayez.",
     "welcome": "Bienvenue dans le centre d’aide Oxy", "ecosystemHeading": "Assistance pour tout Oxy", "ecosystemDescription": "Obtenez de l’aide pour vos applications et expériences Oxy", "moreSupport": "Découvrez plus d’options d’assistance",

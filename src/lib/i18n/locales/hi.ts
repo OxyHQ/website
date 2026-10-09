@@ -5,6 +5,9 @@ const hi: Translations = {
 
   ...en,
   help: { ...en.help,
+    feedbackThanks: "आपकी प्रतिक्रिया के लिए धन्यवाद।",
+    feedbackError: "आपकी प्रतिक्रिया सहेजी नहीं जा सकी। कृपया फिर से कोशिश करें।",
+    relatedArticles: "संबंधित लेख",
     voiceUnavailable: "वॉइस इनपुट उपलब्ध नहीं है। कृपया अपना संदेश टाइप करें।",
     "supportPrompt": "Oxy सहायता टीम से सवाल पूछें", "openingSupport": "सहायता चैट खुल रही है…", "supportUnavailable": "सहायता चैट नहीं खुल सकी। आपका संदेश यहीं है। फिर से कोशिश करें।",
     "welcome": "Oxy सहायता केंद्र में आपका स्वागत है", "ecosystemHeading": "पूरे Oxy के लिए सहायता", "ecosystemDescription": "अपने Oxy ऐप और अनुभवों के लिए सहायता पाएँ", "moreSupport": "सहायता के और विकल्प देखें", "greeting": "नमस्ते।", "topicsHeading": "विषय के अनुसार देखें", "featuredHeading": "चुनिंदा लेख", "allArticles": "सभी लेख देखें", "searchResults": "खोज परिणाम", "clearFilters": "फ़िल्टर हटाएँ", "noResults": "कोई लेख नहीं मिला। दूसरी खोज करें या फ़िल्टर हटाएँ।", "readTime": "पढ़ने में {count} मिनट" },

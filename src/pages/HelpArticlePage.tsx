@@ -1,6 +1,7 @@
 import { Suspense, createElement } from 'react'
 import { useParams } from 'react-router-dom'
 import { MDXProvider } from '@mdx-js/react'
+import HelpArticleFooter from '../components/help/HelpArticleFooter'
 import PageShell from '../components/layout/PageShell'
 import TransparencyDocument from '../components/slices/TransparencyDocument'
 import { articleMdxComponents } from '../components/slices/articleMdxComponents'
@@ -58,6 +59,7 @@ export default function HelpArticlePage() {
           {createElement(Component)}
         </Suspense>
       </MDXProvider>
+      <HelpArticleFooter entry={entry} />
     </TransparencyDocument>
   )
 }

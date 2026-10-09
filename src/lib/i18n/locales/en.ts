@@ -523,6 +523,9 @@ const en = {
 
   // ── Help center ───────────────────────────────────────────
   help: {
+    feedbackThanks: "Thanks for your feedback.",
+    feedbackError: "Your feedback could not be saved. Please try again.",
+    relatedArticles: "Related articles",
     voiceUnavailable: "Voice input is unavailable. Please type your message.",
     "supportPrompt": "Ask Oxy support a question", "openingSupport": "Opening support…", "supportUnavailable": "Could not open support. Your message is still here. Please try again.",
     "welcome": "Welcome to the Oxy Help Center", "ecosystemHeading": "Oxy-wide support", "ecosystemDescription": "Get help with your Oxy apps & experiences", "moreSupport": "Explore more support",

@@ -9,8 +9,9 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true },
         { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
+        { name: 'panelRadius', type: 'number', optional: true, description: 'Shared corner radius for framed content panels and card sidebars. Defaults to 28.' },
       ],
-      inheritsFrom: ['PropsWithChildren<BloomAppearanceProps>'],
+      inheritsFrom: ['PropsWithChildren<BloomAppearanceProps & { panelRadius?: number; }>'],
     },
   },
   components: [

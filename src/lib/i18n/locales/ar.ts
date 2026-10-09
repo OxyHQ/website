@@ -360,6 +360,9 @@ const ar: Translations = {
     chooseYourPlan: 'اختر خطتك',
   },
   help: {
+    feedbackThanks: "شكرًا على ملاحظاتك.",
+    feedbackError: "تعذّر حفظ ملاحظاتك. يُرجى المحاولة مرة أخرى.",
+    relatedArticles: "مقالات ذات صلة",
     voiceUnavailable: "الإدخال الصوتي غير متاح. يُرجى كتابة رسالتك.",
     "supportPrompt": "اطرح سؤالًا على دعم Oxy", "openingSupport": "جارٍ فتح الدعم…", "supportUnavailable": "تعذّر فتح الدعم. رسالتك ما زالت هنا. يُرجى المحاولة مجددًا.",
     "welcome": "مرحبًا بك في مركز مساعدة Oxy", "ecosystemHeading": "الدعم لجميع خدمات Oxy", "ecosystemDescription": "احصل على المساعدة بشأن تطبيقات وتجارب Oxy", "moreSupport": "استكشف المزيد من خيارات الدعم",

@@ -360,6 +360,9 @@ const de: Translations = {
     chooseYourPlan: 'Wähle deinen Plan',
   },
   help: {
+    feedbackThanks: "Danke für dein Feedback.",
+    feedbackError: "Dein Feedback konnte nicht gespeichert werden. Bitte versuche es erneut.",
+    relatedArticles: "Ähnliche Artikel",
     voiceUnavailable: "Spracheingabe ist nicht verfügbar. Bitte tippe deine Nachricht.",
     "supportPrompt": "Stelle dem Oxy-Support eine Frage", "openingSupport": "Support wird geöffnet…", "supportUnavailable": "Der Support konnte nicht geöffnet werden. Deine Nachricht ist noch hier. Versuche es erneut.",
     "welcome": "Willkommen im Oxy-Hilfebereich", "ecosystemHeading": "Hilfe rund um Oxy", "ecosystemDescription": "Hilfe zu deinen Oxy-Apps und Erlebnissen", "moreSupport": "Weitere Hilfe entdecken",

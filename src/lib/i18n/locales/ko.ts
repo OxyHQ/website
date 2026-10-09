@@ -360,6 +360,9 @@ const ko: Translations = {
     chooseYourPlan: '플랜 선택',
   },
   help: {
+    feedbackThanks: "의견을 보내 주셔서 감사합니다.",
+    feedbackError: "의견을 저장하지 못했습니다. 다시 시도해 주세요.",
+    relatedArticles: "관련 문서",
     voiceUnavailable: "음성 입력을 사용할 수 없습니다. 메시지를 입력해 주세요.",
     "supportPrompt": "Oxy 지원팀에 질문하세요", "openingSupport": "지원 채팅을 여는 중…", "supportUnavailable": "지원 채팅을 열 수 없습니다. 메시지는 여기에 남아 있습니다. 다시 시도해 주세요.",
     "welcome": "Oxy 도움말 센터에 오신 것을 환영합니다", "ecosystemHeading": "Oxy 전체 지원", "ecosystemDescription": "Oxy 앱과 서비스에 대한 도움을 받으세요", "moreSupport": "더 많은 지원 살펴보기",

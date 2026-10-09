@@ -5,6 +5,9 @@ const ru: Translations = {
 
   ...en,
   help: { ...en.help,
+    feedbackThanks: "Спасибо за ваш отзыв.",
+    feedbackError: "Не удалось сохранить отзыв. Попробуйте ещё раз.",
+    relatedArticles: "Похожие статьи",
     voiceUnavailable: "Голосовой ввод недоступен. Введите сообщение вручную.",
     "supportPrompt": "Задайте вопрос поддержке Oxy", "openingSupport": "Открываем чат поддержки…", "supportUnavailable": "Не удалось открыть поддержку. Ваше сообщение сохранено здесь. Попробуйте ещё раз.",
     "welcome": "Добро пожаловать в Справочный центр Oxy", "ecosystemHeading": "Поддержка всей экосистемы Oxy", "ecosystemDescription": "Помощь с приложениями и сервисами Oxy", "moreSupport": "Другие варианты поддержки", "greeting": "Здравствуйте.", "topicsHeading": "Поиск по темам", "featuredHeading": "Рекомендуемые статьи", "allArticles": "Посмотреть все статьи", "searchResults": "Результаты поиска", "clearFilters": "Сбросить фильтры", "noResults": "Статьи не найдены. Измените запрос или сбросьте фильтры.", "readTime": "Чтение: {count} мин." },

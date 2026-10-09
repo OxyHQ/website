@@ -64,6 +64,7 @@ export const props: BloomSurfaceProps = {
         { name: 'expandedIds', type: 'readonly string[]', optional: true, description: 'Which messages are open. Uncontrolled, the NEWEST is open and the rest are closed — the one arrangement that is right on arrival every time.' },
         { name: 'onExpandedIdsChange', type: '(ids: string[]) => void', optional: true },
         { name: 'collapseAfter', type: 'number', optional: true, description: 'How many messages stay visible before the MIDDLE collapses behind an "N earlier messages" button. The first and the last two are always drawn. Default 4; `0` never collapses.' },
+        { name: 'messageGap', type: 'number', optional: true, description: 'Space between message cards and the earlier-messages control. Default space.md (12).' },
         { name: 'quickReply', type: 'ReactNode', optional: true, description: 'A slot under the stack — the quick-reply box, or a row of reply buttons.' },
         { name: 'header', type: 'ReactNode', optional: true, description: 'A slot above the subject — a back button, the mailbox chrome.' },
         { name: 'strings', type: 'Partial<MailThreadStrings>', optional: true },
