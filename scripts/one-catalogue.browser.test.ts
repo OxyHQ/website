@@ -132,7 +132,7 @@ try {
 
  assert(await rows.count()===13,'Compare bundle subscriptions, storage and credits without duplicating app feature lists')
  assert(await comparison.getByText(/Alia ·|concurrent tasks/).count()===0,'Internal Alia features belong to Alia pricing')
- for(const capacity of ['15 GB','100 GB','500 GB','2 TB','5 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Every personal tier must show its storage capacity')
+ for(const capacity of ['2 GB','20 GB','100 GB','500 GB','2 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Every personal tier must show its storage capacity')
  assert(await comparison.getByText('Mention Plus',{exact:true}).count()===4,'Paid Mention inclusions must name their proposed subscription')
  assert(await rows.nth(0).getByText('App subscriptions',{exact:true}).count()===5,'Repeat each category in every plan column')
  assert(await rows.filter({hasText:'Credits'}).getByText('Credits',{exact:true}).count()===5,'Usage category missing from a plan')
@@ -171,7 +171,7 @@ try {
  assert((await pricingOne.locator('[data-plan-name]').allTextContents()).join(',')==='Go,Pro,Max,Ultra','Family has four shared plans')
  assert(await page.getByRole('button',{name:'How many people does Family include?',exact:true}).count()===1,'Family FAQ must follow the membership control')
  assert(await pricingOne.getByTestId('business-seats').count()===0,'Family is a flat package, not per-seat billing')
- for(const capacity of ['200 GB','1 TB','4 TB','10 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Family storage belongs to the whole group')
+ for(const capacity of ['40 GB','200 GB','1 TB','4 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Family storage belongs to the whole group')
  assert(await pricingOne.getByTestId('one-price').count()===0,'Individual SDK offers must not be advertised as Family offers')
  for (const [name,price,total,credits] of [['Go','$20','$240 billed annually','8,000'],['Pro','$39.20','$470.40 billed annually','20,000'],['Max','$135.20','$1,622.40 billed annually','100,000'],['Ultra','$479.20','$5,750.40 billed annually','300,000']]) {
   const card=tierCards.filter({has:page.getByRole('heading',{name,exact:true})})
@@ -228,7 +228,7 @@ try {
  await pricingOne.getByTestId('business-seats-increment').click()
  await pricingOne.getByTestId('business-seats-increment').click()
  assert(await seatCount.getAttribute('aria-valuenow')==='3','Stepper must update the member count')
- for(const capacity of ['260 GB','1.15 TB','3.3 TB','10.6 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Business storage must sum base and selected seats')
+ for(const capacity of ['35 GB','130 GB','575 GB','2.15 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Business storage must sum base and selected seats')
  for (const [name,credits] of [['Go','14,000'],['Pro','40,000'],['Max','84,000'],['Ultra','245,000']]) {
   await tierCards.filter({has:page.getByRole('heading',{name,exact:true})}).locator('[data-monthly-credits]').getByText(`${credits} credits / month`,{exact:true}).waitFor()
  }

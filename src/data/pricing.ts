@@ -44,37 +44,37 @@ export const OXY_ONE_AUDIENCE_THEMES = {
 } as const
 
 /** Approved prices and credits; proposed storage capacities for the bundle design.
- * USD minor units; credits renew monthly even on annual plans. Free storage mirrors
- * Oxy Storage’s 15 GB baseline. Marketing terms do not provision backend quotas. */
+ * USD minor units; credits renew monthly even on annual plans. Free 2 GB and Go 20 GB follow
+ * the new product direction; existing backend quotas are not changed here. */
 export const OXY_ONE_PERSONAL_PLANS = {
-  Free: { monthlyPrice: 0, monthlyCredits: 0, creditDiscount: 0, storageGB: 15 },
-  Go: { monthlyPrice: 1500, monthlyCredits: 4000, creditDiscount: 5, storageGB: 100 },
-  Pro: { monthlyPrice: 2999, monthlyCredits: 10000, creditDiscount: 10, storageGB: 500 },
-  Max: { monthlyPrice: 9900, monthlyCredits: 50000, creditDiscount: 15, storageGB: 2000 },
-  Ultra: { monthlyPrice: 40000, monthlyCredits: 200000, creditDiscount: 20, storageGB: 5000 },
+  Free: { monthlyPrice: 0, monthlyCredits: 0, creditDiscount: 0, storageGB: 2 },
+  Go: { monthlyPrice: 1500, monthlyCredits: 4000, creditDiscount: 5, storageGB: 20 },
+  Pro: { monthlyPrice: 2999, monthlyCredits: 10000, creditDiscount: 10, storageGB: 100 },
+  Max: { monthlyPrice: 9900, monthlyCredits: 50000, creditDiscount: 15, storageGB: 500 },
+  Ultra: { monthlyPrice: 40000, monthlyCredits: 200000, creditDiscount: 20, storageGB: 2000 },
 } as const
 
 /** A family quota belongs to the whole group, never multiplied by member count. */
 export const OXY_ONE_FAMILY_PLANS = {
-  Go: { monthlyPrice: 2500, monthlyCredits: 8000, creditDiscount: 5, storageGB: 200 },
-  Pro: { monthlyPrice: 4900, monthlyCredits: 20000, creditDiscount: 10, storageGB: 1000 },
-  Max: { monthlyPrice: 16900, monthlyCredits: 100000, creditDiscount: 15, storageGB: 4000 },
-  Ultra: { monthlyPrice: 59900, monthlyCredits: 300000, creditDiscount: 20, storageGB: 10000 },
+  Go: { monthlyPrice: 2500, monthlyCredits: 8000, creditDiscount: 5, storageGB: 40 },
+  Pro: { monthlyPrice: 4900, monthlyCredits: 20000, creditDiscount: 10, storageGB: 200 },
+  Max: { monthlyPrice: 16900, monthlyCredits: 100000, creditDiscount: 15, storageGB: 1000 },
+  Ultra: { monthlyPrice: 59900, monthlyCredits: 300000, creditDiscount: 20, storageGB: 4000 },
 } as const
 
 export const OXY_ONE_BUSINESS_PLANS = {
-  Go: { monthlyPrice: 3900, monthlySeatPrice: 900, monthlyCredits: 8000, creditsPerSeat: 2000, creditDiscount: 15, storageGB: 200, storagePerSeatGB: 20 },
-  Pro: { monthlyPrice: 9999, monthlySeatPrice: 1900, monthlyCredits: 25000, creditsPerSeat: 5000, creditDiscount: 25, storageGB: 1000, storagePerSeatGB: 50 },
-  Max: { monthlyPrice: 19900, monthlySeatPrice: 2900, monthlyCredits: 60000, creditsPerSeat: 8000, creditDiscount: 30, storageGB: 3000, storagePerSeatGB: 100 },
-  Ultra: { monthlyPrice: 59900, monthlySeatPrice: 4900, monthlyCredits: 200000, creditsPerSeat: 15000, creditDiscount: 35, storageGB: 10000, storagePerSeatGB: 200 },
+  Go: { monthlyPrice: 3900, monthlySeatPrice: 900, monthlyCredits: 8000, creditsPerSeat: 2000, creditDiscount: 15, storageGB: 20, storagePerSeatGB: 5 },
+  Pro: { monthlyPrice: 9999, monthlySeatPrice: 1900, monthlyCredits: 25000, creditsPerSeat: 5000, creditDiscount: 25, storageGB: 100, storagePerSeatGB: 10 },
+  Max: { monthlyPrice: 19900, monthlySeatPrice: 2900, monthlyCredits: 60000, creditsPerSeat: 8000, creditDiscount: 30, storageGB: 500, storagePerSeatGB: 25 },
+  Ultra: { monthlyPrice: 59900, monthlySeatPrice: 4900, monthlyCredits: 200000, creditsPerSeat: 15000, creditDiscount: 35, storageGB: 2000, storagePerSeatGB: 50 },
 } as const
 
 /** Verification, basic app access and model access are not subscription gates. */
 export const OXY_ONE_CREATOR_PLANS = {
-  Go: { monthlyPrice: 2900, monthlyCredits: 10000, creditDiscount: 10, storageGB: 200 },
-  Pro: { monthlyPrice: 6900, monthlyCredits: 25000, creditDiscount: 15, storageGB: 1000 },
-  Max: { monthlyPrice: 14900, monthlyCredits: 60000, creditDiscount: 20, storageGB: 3000 },
-  Ultra: { monthlyPrice: 49900, monthlyCredits: 250000, creditDiscount: 25, storageGB: 10000 },
+  Go: { monthlyPrice: 2900, monthlyCredits: 10000, creditDiscount: 10, storageGB: 20 },
+  Pro: { monthlyPrice: 6900, monthlyCredits: 25000, creditDiscount: 15, storageGB: 100 },
+  Max: { monthlyPrice: 14900, monthlyCredits: 60000, creditDiscount: 20, storageGB: 500 },
+  Ultra: { monthlyPrice: 49900, monthlyCredits: 250000, creditDiscount: 25, storageGB: 2000 },
 } as const
 
 export function getOnePlans(audience: OneAudience, mode: PersonalPlanMode = 'individual'): OnePlan[] {
