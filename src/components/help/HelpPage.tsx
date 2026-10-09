@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
-import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
+import { ChatComposer } from '@oxy.so/bloom/chat-composer'
 import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { startIntercomConversation } from '../../lib/intercom'
 import { Link } from '../../lib/navigation'
 import { useTranslation } from '../../lib/i18n'
 import { getBrandMark } from '../../data/brand-assets'
@@ -26,11 +27,16 @@ const focusClasses = 'focus-visible:outline-2 focus-visible:outline-offset-4 foc
 export default function HelpPageContent() {
   const { t, locale } = useTranslation()
   const { pathname, hash } = useLocation()
-  const [params, setParams] = useSearchParams()
+  const [params] = useSearchParams()
   const heading = useRef<HTMLHeadingElement>(null)
+  const [message, setMessage] = useState('')
+  const [sending, setSending] = useState(false)
+  const [sendFailed, setSendFailed] = useState(false)
+  const sendingRef = useRef(false)
   const query = params.get('q') ?? ''
   const selectedTopic = HELP_CATEGORIES.find(category => category.id === (params.get('topic') ?? hash.slice(1)))
-  const filtered = !!query.trim() || !!selectedTopic
+  const showAll = params.get('all') === '1'
+  const filtered = !!query.trim() || !!selectedTopic || showAll
   const articles = useMemo(() => loadHelpArticles(locale), [locale])
   const terms = normalizeSearch(query).trim().split(/\s+/).filter(Boolean)
   const results = articles.filter(article => {
@@ -51,28 +57,42 @@ export default function HelpPageContent() {
           <h1 id="help-title" className="text-balance text-[28px] font-medium leading-tight tracking-tight sm:text-4xl sm:leading-[46px]">
             {t('help.welcome')}
           </h1>
-          <form role="search" action={pathname} className="mx-auto mt-7 flex min-h-[60px] max-w-[780px] items-center gap-3 rounded-full border border-border/40 bg-surface p-2 ps-5 shadow-[0_4px_24px_color-mix(in_srgb,var(--primary)_20%,transparent)] focus-within:ring-2 focus-within:ring-ring" onSubmit={event => {
-            event.preventDefault()
-            heading.current?.focus({ preventScroll: true })
-            heading.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
-          }}>
-            <span aria-hidden="true" className="shrink-0 text-muted-foreground"><RiSearchLine width={24} height={24} fill="currentColor" /></span>
-            <input type="search" name="q" aria-label={t('help.searchPlaceholder')} aria-controls="help-results" autoComplete="off" placeholder={t('help.searchPlaceholder')} value={query} onChange={event => {
-              const next = new URLSearchParams(params)
-              if (selectedTopic) next.set('topic', selectedTopic.id)
-              if (event.target.value) next.set('q', event.target.value)
-              else next.delete('q')
-              setParams(next, { replace: true, preventScrollReset: true })
-            }} className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground sm:text-lg" />
-            <Button type="submit" variant="primary" className="shrink-0 rounded-full" disabled={!query.trim() && !selectedTopic}>{t('common.search')}</Button>
-          </form>
+          <div className="mx-auto mt-7 max-w-[780px] text-start" aria-busy={sending}>
+            <ChatComposer
+              testID="help-composer"
+              value={message}
+              placeholder={t('help.supportPrompt')}
+              labels={{ input: t('help.supportPrompt'), send: t('common.submit') }}
+              canSend
+              disabled={sending}
+              sendOn="enter"
+              onValueChange={value => { setMessage(value); setSendFailed(false) }}
+              onSend={async value => {
+                if (!value.trim() || sendingRef.current) return
+                sendingRef.current = true
+                setSending(true)
+                setSendFailed(false)
+                try {
+                  await startIntercomConversation(value)
+                  setMessage('')
+                } catch {
+                  setSendFailed(true)
+                } finally {
+                  sendingRef.current = false
+                  setSending(false)
+                }
+              }}
+            />
+            {sending && <p role="status" className="mt-3 text-sm text-muted-foreground">{t('help.openingSupport')}</p>}
+            {sendFailed && <p role="alert" className="mt-3 text-sm text-muted-foreground">{t('help.supportUnavailable')}</p>}
+          </div>
         </div>
       </section>
 
       {filtered && (
         <section id="help-results" aria-labelledby="help-results-heading" className="container scroll-mt-28 pb-20">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-            <h2 id="help-results-heading" ref={heading} tabIndex={-1} className="text-2xl outline-none sm:text-4xl">{query.trim() ? t('help.searchResults') : selectedTopic?.label}</h2>
+            <h2 id="help-results-heading" ref={heading} tabIndex={-1} className="text-2xl outline-none sm:text-4xl">{query.trim() ? t('help.searchResults') : selectedTopic?.label ?? t('help.allArticles')}</h2>
             <Link to={pathname} className={`rounded-sm underline underline-offset-4 ${focusClasses}`}>{t('help.clearFilters')}</Link>
           </div>
           <p role="status" aria-live="polite" className="mb-5 text-muted-foreground">{t(results.length === 1 ? 'help.articleCountOne' : 'help.articleCountOther', { count: results.length })}</p>

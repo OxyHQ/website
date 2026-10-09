@@ -19,6 +19,25 @@ try {
     if (url.pathname.startsWith('/api/')) return route.fulfill({ status: 503, json: { error: 'Offline test' } })
     return route.continue()
   })
+  await context.addInitScript(() => {
+    const fixture = window as unknown as {
+      Intercom: (command: string, ...args: unknown[]) => void
+      supportCalls: unknown[][]
+      supportReady: boolean
+      supportCallbacks: (() => void)[]
+    }
+    fixture.supportCalls = []
+    fixture.supportReady = false
+    fixture.supportCallbacks = []
+    fixture.Intercom = (command: string, ...args: unknown[]) => {
+      fixture.supportCalls.push([command, ...args])
+      if (command === 'ready') {
+        const callback = args[0] as () => void
+        if (fixture.supportReady) queueMicrotask(callback)
+        else fixture.supportCallbacks.push(callback)
+      }
+    }
+  })
   const page = await context.newPage()
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
@@ -26,15 +45,52 @@ try {
   await page.locator('[data-help-center]').waitFor()
   assert.equal(await page.locator('main').count(), 1)
   assert.equal(await page.locator('h1').count(), 1)
-  const search = page.getByRole('searchbox')
-  await search.fill('Bitwarden')
+  const composer = page.getByRole('textbox', { name: 'Ask Oxy support a question' })
+  const send = page.getByRole('button', { name: 'Submit', exact: true })
+  const sentMessages = () => page.evaluate(() => (window as unknown as { supportCalls: unknown[][] }).supportCalls.filter(call => call[0] === 'startConversation').map(call => call[1]))
+  const ready = () => page.evaluate(() => {
+    const fixture = window as unknown as { supportReady: boolean; supportCallbacks: (() => void)[] }
+    fixture.supportReady = true
+    fixture.supportCallbacks.splice(0).forEach(callback => { callback(); callback() })
+  })
+  assert.equal(await page.locator('[data-testid=help-composer]').count(), 1)
+  await composer.fill('I need help with my account.\nMy message stays private.')
+  assert.equal(new URL(page.url()).search, '')
+  assert.equal(await page.locator('[data-help-result]').count(), 0)
+  await send.click()
+  await page.getByText('Opening support…').waitFor()
+  assert.equal(await send.isDisabled(), true)
+  assert.deepEqual(await sentMessages(), [])
+  await ready()
+  await page.waitForFunction(() => document.querySelector<HTMLTextAreaElement>('[data-testid=help-composer-input]')?.value === '')
+  assert.deepEqual(await sentMessages(), ['I need help with my account.\nMy message stays private.'])
+  assert.ok(await page.evaluate(() => (window as unknown as { supportCalls: unknown[][] }).supportCalls.some(call => call[0] === 'show')))
+  await composer.fill('A second question')
+  await composer.press('Enter')
+  await page.waitForFunction(() => document.querySelector<HTMLTextAreaElement>('[data-testid=help-composer-input]')?.value === '')
+  assert.deepEqual(await sentMessages(), ['I need help with my account.\nMy message stays private.', 'A second question'])
+  await send.click()
+  assert.equal((await sentMessages()).length, 2)
+
+  // A blocked/slow SDK must leave the draft intact and never send it later.
+  await page.clock.install()
+  await page.evaluate(() => { (window as unknown as { supportReady: boolean }).supportReady = false })
+  await composer.fill('Keep this draft if support is unavailable')
+  await send.click()
+  await page.getByText('Opening support…').waitFor()
+  await page.clock.fastForward(20_100)
+  await page.getByRole('alert').waitFor()
+  assert.equal(await composer.inputValue(), 'Keep this draft if support is unavailable')
+  await ready()
+  assert.equal((await sentMessages()).length, 2)
+  await send.click()
+  await page.waitForFunction(() => document.querySelector<HTMLTextAreaElement>('[data-testid=help-composer-input]')?.value === '')
+  assert.equal((await sentMessages()).length, 3)
+  await page.clock.resume()
+
+  await page.goto(`${origin}/help/?q=Bitwarden`)
   await page.waitForFunction(() => document.querySelectorAll('[data-help-result]').length === 2)
   assert.ok((await page.locator('[data-help-result]').allTextContents()).some(text => text.includes('Change your password')))
-  await search.press('Enter')
-  assert.equal(await page.evaluate(() => document.activeElement?.id), 'help-results-heading')
-  await page.reload()
-  await page.locator('[data-help-result]').first().waitFor()
-  assert.equal(await search.inputValue(), 'Bitwarden')
   await page.locator('[data-help-result][href*="change-password"]').click()
   await page.waitForURL('**/help/account/change-password/')
   await page.goto(`${origin}/help/`)
@@ -43,10 +99,9 @@ try {
   assert.equal(await page.locator('[data-help-result]').count(), 3)
   assert.ok((await page.locator('[data-help-result]').evaluateAll(nodes => nodes.map(node => node.getAttribute('href')))).every(href => href?.includes('/inbox/')))
   await page.getByRole('link', { name: 'Clear filters' }).click()
-  await search.fill('no-such-help-article-98765')
+  await page.goto(`${origin}/help/?q=no-such-help-article-98765`)
   await page.getByText('No articles found. Try another search or clear the filters.').waitFor()
   await page.getByRole('link', { name: 'Clear filters' }).click()
-  await page.waitForFunction(() => document.querySelector<HTMLInputElement>('input[name=q]')?.value === '')
   await page.goto(`${origin}/es/help/?q=recuperacion`)
   await page.locator('[data-help-result]').first().waitFor()
   assert.ok((await page.locator('[data-help-result]').allTextContents()).some(text => text.includes('recuperación')))
@@ -77,7 +132,7 @@ try {
   assert.ok(prepaint.every(Boolean))
   assert.deepEqual(prepaint, painted)
   assert.deepEqual(errors, [])
-  console.log('Help browser checks passed: search, topics, links, locale, responsive layout, prepaint palette.')
+  console.log('Help browser checks passed: Bloom composer, Intercom handoff, timeout/retry, topics, links, locale, responsive layout, prepaint palette.')
 } finally {
   await browser.close()
   preview?.kill()

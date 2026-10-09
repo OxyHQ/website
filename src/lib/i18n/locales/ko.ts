@@ -360,6 +360,7 @@ const ko: Translations = {
     chooseYourPlan: '플랜 선택',
   },
   help: {
+    "supportPrompt": "Oxy 지원팀에 질문하세요", "openingSupport": "지원 채팅을 여는 중…", "supportUnavailable": "지원 채팅을 열 수 없습니다. 메시지는 여기에 남아 있습니다. 다시 시도해 주세요.",
     "welcome": "Oxy 도움말 센터에 오신 것을 환영합니다", "ecosystemHeading": "Oxy 전체 지원", "ecosystemDescription": "Oxy 앱과 서비스에 대한 도움을 받으세요", "moreSupport": "더 많은 지원 살펴보기",
     "greeting": "안녕하세요.", "topicsHeading": "주제별로 찾아보기", "featuredHeading": "추천 문서", "allArticles": "모든 문서 보기", "searchResults": "검색 결과", "clearFilters": "필터 초기화", "noResults": "문서를 찾을 수 없습니다. 다른 검색어를 입력하거나 필터를 초기화하세요.", "readTime": "읽는 시간 {count}분", seoTitle: '도움말 센터',
     seoDescription:

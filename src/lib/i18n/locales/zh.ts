@@ -360,6 +360,7 @@ const zh: Translations = {
     chooseYourPlan: '选择你的方案',
   },
   help: {
+    "supportPrompt": "向 Oxy 支持团队提问", "openingSupport": "正在打开支持聊天…", "supportUnavailable": "无法打开支持聊天。你的消息仍保留在这里，请重试。",
     "welcome": "欢迎来到 Oxy 帮助中心", "ecosystemHeading": "Oxy 全方位支持", "ecosystemDescription": "获取有关 Oxy 应用和体验的帮助", "moreSupport": "探索更多支持选项",
     "greeting": "你好。", "topicsHeading": "按主题浏览", "featuredHeading": "精选文章", "allArticles": "查看全部文章", "searchResults": "搜索结果", "clearFilters": "清除筛选条件", "noResults": "未找到文章。请尝试其他搜索词或清除筛选条件。", "readTime": "阅读约需 {count} 分钟", seoTitle: '帮助中心',
     seoDescription:
