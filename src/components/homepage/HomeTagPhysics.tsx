@@ -82,7 +82,7 @@ const TAGS: readonly PhysicsTag[] = [
   { id: 'community', labelKey: 'home.tagCommunity', hue: 'cyan', Glyph: RiTeamLine },
   { id: 'inbox', labelKey: 'home.tagInbox', hue: 'blue', logo: '/images/apps/inbox.svg', mono: true },
   { id: 'research', labelKey: 'home.tagResearch', hue: 'purple', Glyph: RiFlaskLine },
-  { id: 'homiio', labelKey: 'home.tagHomiio', hue: 'lime', logo: '/images/apps/homiio.png' },
+  { id: 'homiio', labelKey: 'home.tagHomiio', hue: 'lime', logo: '/images/apps/homiio.svg', mono: true },
   { id: 'no-ads', labelKey: 'home.tagNoAds', hue: 'yellow', Glyph: RiForbidLine },
   { id: 'alia', labelKey: 'home.tagAlia', hue: 'rose', logo: '/images/apps/alia-mark.svg' },
   { id: 'sustainability', labelKey: 'home.tagSustainability', hue: 'cyan', Glyph: RiLeafLine },

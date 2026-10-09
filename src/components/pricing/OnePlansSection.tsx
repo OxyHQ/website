@@ -107,7 +107,8 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
             return {
               app,
               label: appTier ? `${subscription.name} ${appTier}` : subscription.name,
-              detail: free || appTier === null ? 'Free access' : 'Included subscription',
+              detail: 'Included subscription',
+              included: appTier !== null,
             }
           }), ...(audience === 'business' ? [{
             label: 'Business app',
@@ -374,13 +375,22 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
   )
 }
 
-function PlanFeature({ label, detail, app, choices, confirmed = true }: { label: string; detail: string; app?: string; choices?: { app: string; label: string }[]; confirmed?: boolean }) {
+function SubscriptionMark({ app }: { app: string }) {
+  const src = getBrandMark(app)
+  // Homiio's app uses a monochrome vector; inherit the surrounding Bloom colour.
+  if (app === 'homiio') return <span data-subscription-app={app} aria-hidden="true" className="size-7 shrink-0 bg-current" style={{ mask: `url(${src}) center / contain no-repeat` }} />
+  return <img data-subscription-app={app} src={src} alt="" aria-hidden="true" width={28} height={28} className="size-7 shrink-0 rounded-md object-contain" />
+}
+
+function PlanFeature({ label, detail, app, choices, included = true, confirmed = true }: { label: string; detail: string; app?: string; choices?: { app: string; label: string }[]; included?: boolean; confirmed?: boolean }) {
   const { colors } = useTheme()
+  const { t } = useTranslation()
+  if (app && !included) return <span data-subscription-missing={app} role="img" aria-label={t('one.subscriptionNotIncluded', { app: label })} className="text-muted-foreground">—</span>
   if (choices) return (
     <div data-business-app-choice className="flex flex-col gap-3 text-start">
       <div className="flex flex-col gap-2">
         {choices.map(choice => <div key={choice.app} className="flex items-center gap-2">
-          <img data-subscription-app={choice.app} src={getBrandMark(choice.app)} alt="" aria-hidden="true" width={28} height={28} className="size-7 shrink-0 rounded-md object-contain" />
+          <SubscriptionMark app={choice.app} />
           <Text variant="body-regular">{choice.label}</Text>
         </div>)}
       </div>
@@ -389,7 +399,7 @@ function PlanFeature({ label, detail, app, choices, confirmed = true }: { label:
   )
   return (
     <div className="flex items-start gap-2 text-start">
-      {app ? <img data-subscription-app={app} src={getBrandMark(app)} alt="" aria-hidden="true" width={28} height={28} className="size-7 shrink-0 rounded-md object-contain" /> : <span aria-hidden="true" className="shrink-0">
+      {app ? <SubscriptionMark app={app} /> : <span aria-hidden="true" className="shrink-0">
         {confirmed ? <RiCheckLine width={16} height={16} fill={colors.primary} /> : <span className="inline-block w-4 text-center text-muted-foreground">—</span>}
       </span>}
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
