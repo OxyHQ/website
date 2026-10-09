@@ -1,55 +1,153 @@
+import { Card, CardDescription, CardTitle } from '@oxy.so/bloom/card'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { useTheme } from '@oxy.so/bloom/theme'
-import { useState } from 'react'
 import Navbar from '../components/layout/Navbar'
 import PageShell from '../components/layout/PageShell'
-import PricingFaqSection from '../components/pricing/PricingFaqSection'
-import PricingPathsSection from '../components/pricing/PricingPathsSection'
-import OnePlansSection, { type PlanAudience } from '../components/pricing/OnePlansSection'
-import PricingSubNav from '../components/pricing/PricingSubNav'
+import FaqSection from '../components/sections/FaqSection'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import Button from '../components/ui/Button'
+import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge'
+import { OXY_INFERENCE_AVAILABILITY, consoleLinks } from '../data/ai/taxonomy'
+import { Link } from '../lib/navigation'
 import { useTranslation } from '../lib/i18n'
-import { OXY_ONE_AUDIENCE_THEMES, type PersonalPlanMode } from '../data/pricing'
 
+/** The pricing index links to each offer's source of truth, rather than copying rates. */
 export default function PricingPage() {
   const { t } = useTranslation()
   const { isDark } = useTheme()
-  const [audience, setAudience] = useState<PlanAudience>('personal')
-  const [personalMode, setPersonalMode] = useState<PersonalPlanMode>('individual')
-  const selectAudience = (next: PlanAudience) => {
-    setAudience(next)
-    requestAnimationFrame(() => {
-      document.getElementById('pricing-panel')?.scrollIntoView({
-        block: 'start',
-        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-      })
-    })
-  }
+  const paths = [
+    {
+      id: 'one',
+      title: 'Oxy One',
+      audience: t('pricingHub.oneAudience'),
+      body: t('pricingHub.oneBody'),
+      detail: t('pricingHub.oneDetail'),
+      cta: t('pricingHub.oneCta'),
+      href: '/one/',
+    },
+    {
+      id: 'credits',
+      title: t('pricingHub.creditsTitle'),
+      audience: t('pricingHub.creditsAudience'),
+      body: t('pricingHub.creditsBody'),
+      detail: t('pricingHub.creditsDetail'),
+      cta: t('pricingHub.creditsCta'),
+      href: consoleLinks.billing,
+    },
+    {
+      id: 'inference',
+      title: t('pricingHub.inferenceTitle'),
+      audience: t('pricingHub.inferenceAudience'),
+      body: t('pricingHub.inferenceBody'),
+      detail: t('pricingHub.inferenceDetail'),
+      cta: t('pricingHub.inferenceCta'),
+      href: '/ai/pricing/',
+    },
+  ]
 
   return (
     <PageShell
-      seo={{ title: t('pricing.seoTitle'), description: t('one.lead'), canonicalPath: '/pricing/' }}
-      className={`group/pricing ${OXY_ONE_AUDIENCE_THEMES[audience]} bg-background text-foreground [timeline-scope:--pricing-hero]`}
-      mainClassName="bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
-      navbar={<Navbar transparent mergePricingSubheader transparentOn={isDark ? 'dark' : 'light'} />}
+      seo={{
+        title: t('pricingHub.seoTitle'),
+        description: t('pricingHub.description'),
+        canonicalPath: '/pricing/',
+      }}
+      className="bg-background text-foreground"
+      navbar={<Navbar transparent transparentOn={isDark ? 'dark' : 'light'} />}
+      mainClassName="flex-1"
     >
-      <section aria-labelledby="pricing-hero-title" className="relative flex min-h-[calc(100svh-60px)] items-end pt-[calc(var(--site-header-occlusion-bottom)+80px)] pb-16 sm:pb-24 [view-timeline-name:--pricing-hero] [view-timeline-axis:block] [view-timeline-inset:var(--site-header-height)_0px]">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -bottom-[60px]">
-          <img src="/images/pricing/oxy-one-hero.png" alt="" fetchPriority="high" className="h-full w-full object-cover object-center" />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--background)_75%,transparent)_0%,color-mix(in_srgb,var(--background)_15%,transparent)_30%,color-mix(in_srgb,var(--background)_85%,transparent)_72%,var(--background)_100%)]" />
+      <section className="container pt-[calc(var(--site-header-occlusion-bottom)+64px)] pb-12 sm:pt-[calc(var(--site-header-occlusion-bottom)+96px)] sm:pb-20">
+        <p className="mb-6 text-sm font-medium text-muted-foreground">{t('navbar.pricing')}</p>
+        <div className="grid items-end gap-8 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
+          <AnimatedTitle as="h1" className="max-w-3xl text-[clamp(3.5rem,7vw,7rem)] leading-[1.02] tracking-tight">
+            {t('pricingHub.title')}
+          </AnimatedTitle>
+          <p className="max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground sm:text-xl lg:pb-1">
+            {t('pricingHub.description')}
+          </p>
         </div>
-        <div id="pricing-hero-title" className="container relative">
-          <div className="max-w-3xl">
-            <AnimatedTitle as="h1" className="text-[clamp(3rem,6vw,6rem)] leading-[1.04] tracking-tight">{t('one.heroTitle')}</AnimatedTitle>
-            <p className="mt-6 max-w-xl text-pretty text-xl leading-relaxed sm:text-2xl">{t('one.lead')}</p>
+      </section>
+
+      <section className="container pb-16 sm:pb-24" aria-label={t('navbar.pricing')}>
+        <div className="grid gap-4 lg:grid-cols-3 lg:gap-5">
+          {paths.map((path) => (
+            <article id={path.id} key={path.id} className="flex min-w-0 scroll-mt-[calc(var(--site-header-occlusion-bottom)+24px)]">
+              <Card
+                tone={path.id === 'one' ? 'support' : 'neutral'}
+                appearance="solid"
+                radius="radius-24"
+                border="none"
+                elevation="none"
+                className="min-w-0 flex-1 px-6 py-8 sm:px-8 sm:py-10"
+              >
+                <CardDescription style={{ fontSize: 13, lineHeight: 20, fontWeight: '500' }}>
+                  {path.audience}
+                </CardDescription>
+                <h2 className="mt-7 mb-5">
+                  <CardTitle style={{ fontSize: 36, lineHeight: 42, fontWeight: '500' }}>
+                    {path.title}
+                  </CardTitle>
+                </h2>
+                <div className="mb-4">
+                  <CardTitle style={{ fontSize: 20, lineHeight: 28, fontWeight: '400' }}>
+                    {path.body}
+                  </CardTitle>
+                </div>
+                <div className="flex-1">
+                  <CardDescription style={{ fontSize: 16, lineHeight: 26 }}>
+                    {path.detail}
+                  </CardDescription>
+                </div>
+                {path.id === 'inference' && (
+                  <div className="relative mt-5"><AvailabilityBadge availability={OXY_INFERENCE_AVAILABILITY} /></div>
+                )}
+                <div className="mt-10">
+                  <Button responsive href={path.href} variant={path.id === 'one' ? 'primary' : 'outline'} className="max-w-full">
+                    <span className="whitespace-normal text-start">{path.cta}</span>
+                    <span className="shrink-0 rtl:rotate-180" aria-hidden="true"><RiArrowRightLine width={18} height={18} fill="currentColor" /></span>
+                  </Button>
+                </div>
+              </Card>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="container pb-20 sm:pb-28" aria-labelledby="pricing-free-title">
+        <div className="grid gap-6 border-t border-border pt-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16 lg:pt-14">
+          <h2 id="pricing-free-title" className="max-w-xl text-3xl leading-tight tracking-tight sm:text-4xl">
+            {t('pricingHub.freeTitle')}
+          </h2>
+          <div className="max-w-xl">
+            <p className="text-base leading-7 text-muted-foreground sm:text-lg">{t('pricingHub.freeBody')}</p>
+            <Link to="/apps/" className="mt-6 inline-flex items-center gap-2 font-medium text-primary-text underline-offset-4 hover:underline">
+              {t('one.exploreApps')}
+              <span className="rtl:rotate-180" aria-hidden="true"><RiArrowRightLine width={18} height={18} fill="currentColor" /></span>
+            </Link>
           </div>
         </div>
       </section>
-      <PricingSubNav value={audience} onChange={selectAudience} />
-      <div id="pricing-panel" role="tabpanel" aria-labelledby={`pricing-tab-${audience}`} className="relative scroll-mt-[calc(var(--site-header-height)+60px)] [--plans-anchor-offset:calc(var(--site-header-occlusion-bottom)+76px)]">
-        <OnePlansSection audience={audience} personalMode={personalMode} onPersonalModeChange={setPersonalMode} />
-        <PricingFaqSection audience={audience} personalMode={personalMode} />
-        <PricingPathsSection audience={audience} />
-      </div>
+
+      <FaqSection
+        id="faq"
+        title={t('pricingHub.faqTitle')}
+        className="pricing-business-faq-theme bg-background py-8 sm:py-14"
+        description={<Link to="/help/" className="text-primary-text underline underline-offset-4">{t('one.exploreHelp')}</Link>}
+        items={[
+          { question: t('pricingHub.faqPlanQuestion'), answer: t('pricingHub.faqPlanAnswer') },
+          { question: t('pricingHub.faqCreditsQuestion'), answer: t('pricingHub.faqCreditsAnswer') },
+          {
+            question: t('pricingHub.faqBillingQuestion'),
+            answer: <>
+              <p>{t('pricingHub.faqBillingAnswer')}</p>
+              <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+                <a href="https://accounts.oxy.so/payments" className="text-primary-text underline underline-offset-4">Oxy Accounts</a>
+                <a href={consoleLinks.billing} className="text-primary-text underline underline-offset-4">Oxy Console</a>
+              </div>
+            </>,
+          },
+        ]}
+      />
     </PageShell>
   )
 }

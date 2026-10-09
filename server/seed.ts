@@ -139,7 +139,7 @@ async function seed() {
         links: [
           { label: 'Academy', href: '/academy' },
           { label: 'Help center', href: '/help' },
-          { label: 'Pricing', href: '/pricing' },
+          { label: 'Pricing', href: '/one' },
           { label: 'Partner programs', href: '/partners' },
         ],
       },
@@ -192,7 +192,7 @@ async function seed() {
         title: 'Platform',
         links: [
           { label: 'Technologies', href: '/technologies' },
-          { label: 'Pricing', href: '/pricing' },
+          { label: 'Pricing', href: '/one' },
           { label: 'Changelog', href: '/changelog' },
           { label: 'Status', href: '/status' },
           { label: 'Referrals', href: '/referrals', isNewBadge: true },

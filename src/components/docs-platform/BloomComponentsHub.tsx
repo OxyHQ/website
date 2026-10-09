@@ -12,6 +12,7 @@ import { pascalPath } from '../../content/bloom-catalog'
 import { DocsShell } from '../docs/DocsShell'
 import PageShell from '../layout/PageShell'
 import OptionSelect from '../ui/OptionSelect'
+import DeferredExample from '../bloom/DeferredExample'
 import CatalogPreview from '../bloom/CatalogPreview'
 import { catalogPreviews } from '../bloom/catalogPreviews'
 import { getPackage } from '../../content/docs-loader'
@@ -121,7 +122,7 @@ export function BloomComponentsHub() {
                         className="flex h-[230px] items-center justify-center overflow-hidden px-4 xl:h-[197px]"
                         inert
                       >
-                        <ErrorBoundary
+                        <DeferredExample><ErrorBoundary
                           fallback={
                             <p className="text-sm">
                               This example could not load.
@@ -141,7 +142,7 @@ export function BloomComponentsHub() {
                               </div>
                             </Suspense>
                           ) : null}
-                        </ErrorBoundary>
+                        </ErrorBoundary></DeferredExample>
                       </div>
                       <div className="flex flex-col gap-1 px-5 pt-3 pb-5">
                         <h3 className="text-base font-medium leading-[22px]">
@@ -185,8 +186,8 @@ export function BloomComponentsHub() {
                 API reference
               </h2>
               <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-                Browse the props, hooks and exports for the rest of the
-                library.
+                Providers, configuration and router adapters do not render
+                standalone controls. Their integration references live here.
               </p>
               <ul className="mt-6 grid gap-x-8 sm:grid-cols-2 xl:grid-cols-3">
                 {reference.map((entry) => (

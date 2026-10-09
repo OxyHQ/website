@@ -103,7 +103,7 @@ export const footerColumns: FooterColumn[] = [
     links: [
       { label: 'Codea Editor', href: '/codea' },
       { label: 'Oxy Platform', href: '/developers/docs' },
-      { label: 'Pricing', href: '/pricing' },
+      { label: 'Pricing', href: '/one' },
     ],
   },
   {

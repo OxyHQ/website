@@ -37,7 +37,7 @@ export const faqGroups: FaqGroup[] = [
           <FaqParagraph>
             The apps are free to use, and the source is open. Paid plans exist where a product costs us money to run per user — storage,
             AI inference, hosted infrastructure. The details are on{' '}
-            <UnderlineLink href="/pricing">the pricing page</UnderlineLink>.
+            <UnderlineLink href="/one">the pricing page</UnderlineLink>.
           </FaqParagraph>
         ),
       },

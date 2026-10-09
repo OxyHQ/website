@@ -135,6 +135,8 @@ const ROUTE_WEIGHTS: ReadonlyArray<{ prefix: string; changefreq: string; priorit
   { prefix: '/ai/inference', changefreq: 'monthly', priority: 0.9 },
   { prefix: '/ai', changefreq: 'weekly', priority: 0.9 },
   { prefix: '/pricing', changefreq: 'monthly', priority: 0.9 },
+  { prefix: '/store', changefreq: 'monthly', priority: 0.8 },
+  { prefix: '/one', changefreq: 'monthly', priority: 0.9 },
   { prefix: '/codea', changefreq: 'monthly', priority: 0.9 },
 ]
 

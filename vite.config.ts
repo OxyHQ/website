@@ -342,6 +342,7 @@ export default defineConfig(({ mode }) => ({
       'color',
       'fontfaceobserver',
       'expo-modules-core',
+      'expo-image',
       '@expo/vector-icons',
       // The SDK imports the icon families by subpath. `include` only covers the
       // specifier it is given, so without these two the family files are served

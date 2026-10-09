@@ -92,7 +92,7 @@ export default function AIPricingPage() {
             title={t('ai.pricing.ecosystemHandoffTitle')}
             body={t('ai.pricing.ecosystemHandoffBody')}
             cta={t('ai.pricing.ecosystemHandoffCta')}
-            href="/pricing"
+            href="/one"
           />
         </div>
       </section>
@@ -216,7 +216,7 @@ export default function AIPricingPage() {
             title={t('ai.pricing.pathEcosystem')}
             body={t('ai.pricing.pathEcosystemBody')}
             cta={t('ai.pricing.ecosystemHandoffCta')}
-            href="/pricing"
+            href="/one"
           />
         </div>
       </section>
