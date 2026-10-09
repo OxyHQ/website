@@ -22,9 +22,9 @@ export type PlanAudience = 'personal' | 'creator' | 'business'
 
 // Proposed bundle composition. Checkout and entitlement activation live in Accounts.
 const BUNDLE_APPS = {
-  personal: ['alia', 'mention', 'inbox', 'homiio'],
-  creator: ['alia', 'mention', 'mercaria'],
-  business: ['alia', 'mention', 'inbox'],
+  personal: ['alia', 'mention', 'inbox', 'noted', 'clarity', 'homiio'],
+  creator: ['alia', 'mention', 'inbox', 'noted', 'clarity', 'schedio', 'mercaria'],
+  business: ['alia', 'mention', 'inbox', 'noted', 'clarity', 'schedio'],
 } as const
 
 export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = false, audience, personalMode, onPersonalModeChange }: { headingLevel?: 'h1' | 'h2'; headerOverlay?: boolean; audience?: PlanAudience; personalMode?: PersonalPlanMode; onPersonalModeChange?: (mode: PersonalPlanMode) => void }) {
@@ -107,14 +107,14 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
             const appTier = appTiers[name as keyof typeof appTiers]
             return {
               app,
-              label: appTier ? `${subscription.name} ${appTier}` : subscription.name,
+              label: appTier ? `${subscription.name}${appTier === '+' ? '' : ' '}${appTier}` : subscription.name,
               detail: 'Included subscription',
               included: appTier !== null,
             }
           }), ...(audience === 'business' ? [{
             label: 'Business app',
             detail: t('one.businessAppIncluded'),
-            choices: [{ app: 'mercaria', label: 'Mercaria Pro' }, { app: 'homiio', label: 'Homiio Plus' }],
+            choices: [{ app: 'mercaria', label: `Mercaria ${OXY_ONE_APP_SUBSCRIPTIONS.mercaria.tiers[name as keyof typeof OXY_ONE_APP_SUBSCRIPTIONS.mercaria.tiers]}` }, { app: 'homiio', label: 'Homiio Plus' }],
           }] : [])],
         },
         {
@@ -320,6 +320,7 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
           </div>
 
           {renderPlanGrid(tiers, 'pricing-plans')}
+          <p data-catalogue-proposal className="mt-6 max-w-3xl text-sm text-muted-foreground">{t('one.catalogueProposal')}</p>
 
           {(!audience || audience === 'personal') && !family && <div data-one-offers aria-live="polite" className={catalogue.data?.state === 'configured' ? 'mt-20' : undefined}>
             {catalogue.data?.state === 'configured' && billingPeriod === 'monthly' && (

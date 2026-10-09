@@ -130,7 +130,9 @@ try {
  await page.waitForTimeout(200)
  assert(await featureRow.evaluate(el=>getComputedStyle(el).backgroundColor)!==restingBackground,'Hover must highlight the entire comparison row')
 
- assert(await rows.count()===14,'Compare bundle subscriptions, storage and credits without duplicating app feature lists')
+ assert(await comparison.getByText('Noted+',{exact:true}).count()===4,'Name the Noted subscription precisely')
+ assert(await comparison.getByText('Clarity Plus',{exact:true}).count()===3,'Clarity starts at Pro')
+ assert(await rows.count()===16,'Compare bundle subscriptions, storage and credits without duplicating app feature lists')
  assert(await comparison.getByText(/Alia ·|concurrent tasks/).count()===0,'Internal Alia features belong to Alia pricing')
  for(const capacity of ['2 GB','20 GB','100 GB','500 GB','2 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Every personal tier must show its storage capacity')
  assert(await comparison.getByText('Mention Plus',{exact:true}).count()===4,'Paid Mention inclusions must name their proposed subscription')
@@ -142,10 +144,10 @@ try {
  assert(await comparison.getByText('Homiio Plus',{exact:true}).count()===4,'Every paid personal bundle must include Homiio Plus')
  assert(await comparison.getByText('Inbox Plus',{exact:true}).count()===3,'Inbox Plus starts at Pro and keeps its own name in Max and Ultra')
  assert(await comparison.getByText('Inbox',{exact:true}).count()===0,'Do not advertise free Inbox access as an included subscription')
- assert(await comparison.locator('[data-subscription-missing]').count()===5,'Excluded subscriptions use a dash')
+ assert(await comparison.locator('[data-subscription-missing]').count()===8,'Excluded subscriptions use a dash')
  for(const cell of await comparison.locator('[data-subscription-missing]').all()) assert((await cell.innerText())==='—','An excluded app must show only a dash')
  assert(await comparison.getByText(/Inbox (Go|Pro|Max|Ultra)/).count()===0,'Oxy One levels must never generate app subscription names')
- assert(await comparison.locator('[data-subscription-app]').count()===15,'Only included subscriptions show app icons')
+ assert(await comparison.locator('[data-subscription-app]').count()===22,'Only included subscriptions show app icons')
  assert((await comparison.locator('img[data-subscription-app=homiio]').first().getAttribute('src'))==='/images/apps/homiio.png','Use the official Homiio PNG image')
  await comparison.locator('img[data-subscription-app]').evaluateAll(images=>Promise.all(images.map(image=>(image as HTMLImageElement).decode())))
  await page.setViewportSize({width:1440,height:600})
@@ -219,9 +221,9 @@ try {
  assert(await page.getByRole('button',{name:'Who is the Business plan for?',exact:true}).count()===1,'Business FAQ must change with the plans')
  const businessChoices=comparison.locator('[data-business-app-choice]')
  assert(await businessChoices.count()===4,'Every Business column must show one shared cell for its app alternatives')
- for(const cell of await businessChoices.all()) {
+ for(const [index,cell] of (await businessChoices.all()).entries()) {
   assert(await cell.locator('[data-subscription-app=mercaria]').count()===1,'The choice cell must show Mercaria with its icon')
-  assert(await cell.getByText('Mercaria Pro',{exact:true}).count()===1,'Name the candidate Mercaria subscription')
+  assert(await cell.getByText(['Mercaria Go','Mercaria Plus','Mercaria Plus','Mercaria Ultra'][index],{exact:true}).count()===1,'Name the candidate Mercaria subscription')
   assert(await cell.getByText('Homiio Plus',{exact:true}).count()===1,'The same choice cell must show Homiio Plus')
   assert(await cell.getByText('One included, your choice',{exact:true}).count()===1,'Alternatives must clearly include only one app')
  }
