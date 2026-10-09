@@ -11,6 +11,7 @@ export default function HelpPage() {
         description: t('help.seoDescription'),
         canonicalPath: '/help',
       }}
+      className="help-theme bg-background text-foreground"
       mainClassName="flex-1"
     >
       <HelpPageContent />

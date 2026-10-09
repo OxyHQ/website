@@ -360,6 +360,7 @@ const ca: Translations = {
     chooseYourPlan: 'Tria el teu pla',
   },
   help: {
+    voiceUnavailable: "L’entrada de veu no està disponible. Escriu el teu missatge.",
     "supportPrompt": "Fes una pregunta a l’equip de suport d’Oxy", "openingSupport": "Obrint el xat de suport…", "supportUnavailable": "No s’ha pogut obrir el xat. El teu missatge continua aquí. Torna-ho a provar.",
     "welcome": "Et donem la benvinguda al Centre d’ajuda d’Oxy", "ecosystemHeading": "Ajuda per a tot Oxy", "ecosystemDescription": "Troba ajuda per a les teves aplicacions i experiències d’Oxy", "moreSupport": "Explora més opcions d’ajuda",
     "greeting": "Hola.", "topicsHeading": "Explora per tema", "featuredHeading": "Articles destacats", "allArticles": "Veure tots els articles", "searchResults": "Resultats de cerca", "clearFilters": "Esborra els filtres", "noResults": "No s’han trobat articles. Prova una altra cerca o esborra els filtres.", "readTime": "{count} min de lectura", seoTitle: "Centre d'ajuda",

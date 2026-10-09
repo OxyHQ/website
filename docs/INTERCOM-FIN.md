@@ -64,7 +64,7 @@ secret in a `VITE_` variable or in the connector request body.
 
 ## Help composer
 
-`/help/` uses Bloom’s `ChatComposer`. Submitting hands the draft to the existing
+`/help/` uses Bloom’s AI `ComposerPanel`. Submitting hands the draft to the existing
 `IntercomMessenger` integration through `src/lib/intercom.ts`; it waits for
 Messenger readiness and, for signed-in users, the verified JWT identity before
 calling `show` and `startConversation`. The latter sends the initial message;

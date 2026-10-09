@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
-import { ChatComposer } from '@oxy.so/bloom/chat-composer'
+import { ComposerPanel } from '@oxy.so/bloom/composer-panel'
 import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { startIntercomConversation } from '../../lib/intercom'
 import { Link } from '../../lib/navigation'
@@ -9,6 +9,7 @@ import { useTranslation } from '../../lib/i18n'
 import { getBrandMark } from '../../data/brand-assets'
 import { HELP_CATEGORIES, loadHelpArticles, type HelpCategoryId } from '../../content/help-loader'
 import Button from '../ui/Button'
+import { useHelpDictation } from './useHelpDictation'
 
 const normalizeSearch = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase()
 const panels: { id: HelpCategoryId; image: string; position?: string; wide?: boolean }[] = [
@@ -33,6 +34,10 @@ export default function HelpPageContent() {
   const [sending, setSending] = useState(false)
   const [sendFailed, setSendFailed] = useState(false)
   const sendingRef = useRef(false)
+  const [voiceFailed, setVoiceFailed] = useState(false)
+  const dictation = useHelpDictation(locale, text => {
+    if (!sendingRef.current) setMessage(current => [current.trim(), text].filter(Boolean).join(' '))
+  }, () => setVoiceFailed(true))
   const query = params.get('q') ?? ''
   const selectedTopic = HELP_CATEGORIES.find(category => category.id === (params.get('topic') ?? hash.slice(1)))
   const showAll = params.get('all') === '1'
@@ -58,23 +63,30 @@ export default function HelpPageContent() {
             {t('help.welcome')}
           </h1>
           <div className="mx-auto mt-7 max-w-[780px] text-start" aria-busy={sending}>
-            <ChatComposer
+            <ComposerPanel
               testID="help-composer"
               value={message}
               placeholder={t('help.supportPrompt')}
-              labels={{ input: t('help.supportPrompt'), send: t('common.submit') }}
-              canSend
-              disabled={sending}
-              sendOn="enter"
+              labels={{ message: t('help.supportPrompt'), send: t('common.submit') }}
+              addMenu={[]}
+              permissions={[]}
+              listening={dictation.listening}
+              onListeningChange={next => {
+                if (sending) return
+                setVoiceFailed(false)
+                dictation.setActive(next)
+              }}
+              disabled={sending || !message.trim()}
               onValueChange={value => { setMessage(value); setSendFailed(false) }}
-              onSend={async value => {
+              onSubmit={async value => {
                 if (!value.trim() || sendingRef.current) return
+                dictation.setActive(false)
                 sendingRef.current = true
                 setSending(true)
                 setSendFailed(false)
                 try {
                   await startIntercomConversation(value)
-                  setMessage('')
+                  setMessage(current => current === value ? '' : current)
                 } catch {
                   setSendFailed(true)
                 } finally {
@@ -84,6 +96,7 @@ export default function HelpPageContent() {
               }}
             />
             {sending && <p role="status" className="mt-3 text-sm text-muted-foreground">{t('help.openingSupport')}</p>}
+            {voiceFailed && <p role="alert" className="mt-3 text-sm text-muted-foreground">{t('help.voiceUnavailable')}</p>}
             {sendFailed && <p role="alert" className="mt-3 text-sm text-muted-foreground">{t('help.supportUnavailable')}</p>}
           </div>
         </div>

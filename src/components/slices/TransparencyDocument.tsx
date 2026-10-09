@@ -8,16 +8,17 @@ import { canonicalHref } from '../../lib/canonicalPath'
 type Props = Omit<LongformArticleProps, 'locale' | 'shareUrl'> & {
   canonicalPath: string
   ogImage?: string
+  ogType?: 'website' | 'article'
   theme?: string
 }
 
 /** One reading screen for institutional MDX and CMS legal documents. */
-export default function TransparencyDocument({ canonicalPath, ogImage, theme = '', ...article }: Props) {
+export default function TransparencyDocument({ canonicalPath, ogImage, ogType, theme = '', ...article }: Props) {
   const locale = useCurrentLocale()
   const { isDark } = useTheme()
   return (
     <PageShell
-      seo={{ title: article.title, description: article.description ?? '', canonicalPath, ogImage }}
+      seo={{ title: article.title, description: article.description ?? '', canonicalPath, ogImage, ogType }}
       className={`${theme} slice-theme bg-background text-foreground`}
       mainClassName="flex-1"
       navbar={<Navbar transparent transparentOn={isDark ? 'dark' : 'light'} />}

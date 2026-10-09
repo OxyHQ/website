@@ -494,6 +494,7 @@ const es: Translations = {
     chooseYourPlan: 'Elige tu plan',
   },
   help: {
+    voiceUnavailable: "La entrada de voz no está disponible. Escribe tu mensaje.",
     "supportPrompt": "Haz una pregunta al equipo de soporte de Oxy", "openingSupport": "Abriendo el chat de soporte…", "supportUnavailable": "No se ha podido abrir el chat. Tu mensaje sigue aquí. Inténtalo de nuevo.",
     "welcome": "Te damos la bienvenida al Centro de ayuda de Oxy", "ecosystemHeading": "Ayuda para todo Oxy", "ecosystemDescription": "Encuentra ayuda para tus aplicaciones y experiencias de Oxy", "moreSupport": "Explora más opciones de ayuda",
     "greeting": "Hola.", "topicsHeading": "Explora por tema", "featuredHeading": "Artículos destacados", "allArticles": "Ver todos los artículos", "searchResults": "Resultados de búsqueda", "clearFilters": "Quitar filtros", "noResults": "No se encontraron artículos. Prueba otra búsqueda o quita los filtros.", "readTime": "{count} min de lectura", seoTitle: 'Centro de ayuda',

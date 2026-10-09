@@ -69,7 +69,7 @@ try {
   await composer.press('Enter')
   await page.waitForFunction(() => document.querySelector<HTMLTextAreaElement>('[data-testid=help-composer-input]')?.value === '')
   assert.deepEqual(await sentMessages(), ['I need help with my account.\nMy message stays private.', 'A second question'])
-  await send.click()
+  assert.equal(await send.isDisabled(), true)
   assert.equal((await sentMessages()).length, 2)
 
   // A blocked/slow SDK must leave the draft intact and never send it later.
@@ -88,11 +88,69 @@ try {
   assert.equal((await sentMessages()).length, 3)
   await page.clock.resume()
 
+  // The AI composer's native mic dictates into the draft without submitting.
+  await page.evaluate(() => {
+    const fixture = window as unknown as { SpeechRecognition: unknown; supportRecognition: { onresult: ((event: unknown) => void) | null; stop: () => void } }
+    fixture.SpeechRecognition = class {
+      lang = ''
+      interimResults = false
+      onresult: ((event: unknown) => void) | null = null
+      onerror = null
+      onend: (() => void) | null = null
+      start() { fixture.supportRecognition = this }
+      stop() { this.onend?.() }
+      abort() { this.onend?.() }
+    }
+  })
+  await page.getByRole('button', { name: 'Voice input', exact: true }).click()
+  await page.evaluate(() => {
+    const recognition = (window as unknown as { supportRecognition: { onresult: (event: unknown) => void; stop: () => void } }).supportRecognition
+    recognition.onresult({ resultIndex: 0, results: [{ isFinal: true, 0: { transcript: 'A dictated support question' } }] })
+    recognition.stop()
+  })
+  await page.waitForFunction(() => document.querySelector<HTMLTextAreaElement>('[data-testid=help-composer-input]')?.value === 'A dictated support question')
+  assert.equal((await sentMessages()).length, 3)
+
   await page.goto(`${origin}/help/?q=Bitwarden`)
   await page.waitForFunction(() => document.querySelectorAll('[data-help-result]').length === 2)
   assert.ok((await page.locator('[data-help-result]').allTextContents()).some(text => text.includes('Change your password')))
   await page.locator('[data-help-result][href*="change-password"]').click()
   await page.waitForURL('**/help/account/change-password/')
+  await page.locator('[data-article-body] h2').first().waitFor()
+  assert.equal(await page.locator('h1').textContent(), 'Change your password')
+  assert.equal(await page.locator('main').count(), 1)
+  await page.getByRole('link', { name: 'View all articles', exact: true }).click()
+  await page.locator('[data-help-result]').first().waitFor()
+  assert.equal(await page.locator('[data-help-result]').count(), 14)
+  // Help uses the manifesto's reading screen. Tutorial blocks, warning
+  // callouts and code must remain in its prose column at every viewport.
+  for (const slug of ['account/add-recovery-email', 'console/api-keys', 'inbox/encryption']) {
+    await page.goto(`${origin}/help/${slug}/`)
+    await page.locator('[data-article-body] h2').first().waitFor()
+    assert.equal(await page.locator('meta[property="og:type"]').getAttribute('content'), 'article')
+    assert.equal(await page.locator('nav[aria-label*="breadcrumb" i]').count(), 0)
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 1000 })
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${slug} / ${width}: overflow`)
+      const geometry = await page.locator('[data-article-body]').evaluate(body => {
+        const prose = body.querySelector(':scope > p')!.getBoundingClientRect()
+        return [...body.querySelectorAll(':scope > div, :scope > pre')].map(node => {
+          const rect = node.getBoundingClientRect()
+          return { left: rect.left - prose.left, right: rect.right - prose.right }
+        })
+      })
+      assert.ok(geometry.every(rect => Math.abs(rect.left) < 2 && Math.abs(rect.right) < 2), `${slug}: article furniture leaves prose column`)
+    }
+    const tocLinks = await page.locator('[data-toc-rail] a[href^="#"]').evaluateAll(links => links.map(link => link.getAttribute('href')!.slice(1)))
+    assert.ok(tocLinks.length > 0)
+    for (const id of tocLinks) assert.equal(await page.locator(`[data-article-body] [id="${id}"]`).count(), 1)
+  }
+  await page.goto(`${origin}/es/help/account/add-recovery-email/`)
+  await page.locator('[data-article-body] h2').first().waitFor()
+  assert.ok((await page.locator('h1').textContent())?.includes('recuperación'))
+  await page.goto(`${origin}/help/no-such-article/`)
+  await page.getByRole('heading', { name: '404 — Page not found', exact: true }).waitFor()
+  assert.ok((await page.locator('meta[name="robots"]').getAttribute('content'))?.includes('noindex'))
   await page.goto(`${origin}/help/`)
   await page.locator('[data-help-topic="inbox"]').click()
   await page.locator('[data-help-result]').first().waitFor()
@@ -117,19 +175,22 @@ try {
   // The scoped photo palette must exist before React, not just after its JS loads.
   const before = await context.newPage()
   await before.route('**/*.js', route => route.abort())
+  await before.addInitScript(() => localStorage.setItem('theme', 'dark'))
   await before.goto(`${origin}/help/`)
   const prepaint = await before.evaluate(() => {
-    const probe = document.createElement('div')
-    probe.className = 'help-photo-theme bg-background text-foreground'
-    document.body.appendChild(probe)
-    const css = getComputedStyle(probe)
-    return [css.getPropertyValue('--background').trim(), css.getPropertyValue('--foreground').trim()]
+    return ['help-theme', 'help-photo-theme'].map(className => {
+      const probe = document.createElement('div')
+      probe.className = className
+      document.body.appendChild(probe)
+      const css = getComputedStyle(probe)
+      return ['--background', '--foreground', '--primary', '--color-primary'].map(token => css.getPropertyValue(token).trim())
+    })
   })
-  const painted = await page.locator('.help-photo-theme').first().evaluate(node => {
-    const css = getComputedStyle(node)
-    return [css.getPropertyValue('--background').trim(), css.getPropertyValue('--foreground').trim()]
-  })
-  assert.ok(prepaint.every(Boolean))
+  const painted = await page.evaluate(() => ['help-theme', 'help-photo-theme'].map(className => {
+    const css = getComputedStyle(document.querySelector(`.${className}`)!)
+    return ['--background', '--foreground', '--primary', '--color-primary'].map(token => css.getPropertyValue(token).trim())
+  }))
+  assert.ok(prepaint.flat().every(Boolean))
   assert.deepEqual(prepaint, painted)
   assert.deepEqual(errors, [])
   console.log('Help browser checks passed: Bloom composer, Intercom handoff, timeout/retry, topics, links, locale, responsive layout, prepaint palette.')
