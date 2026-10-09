@@ -1,0 +1,189 @@
+{
+  "verifiedAt": "2026-10-09T08:28:59.086Z",
+  "storeId": "01a11fb9-e7b2-7d3f-85a3-0c69515d783d",
+  "storeUrl": "https://mercaria.co/stores/the-oxy-store",
+  "products": [
+    {
+      "sourceId": "everyday-tee",
+      "id": "01a11fc6-dea5-7a3e-9cd2-12e9f43b4d88",
+      "title": "Oxy Everyday Tee",
+      "price": {
+        "amount": 3500,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/tee.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-dea5-7a3e-9cd2-12e9f43b4d88"
+    },
+    {
+      "sourceId": "canvas-tote",
+      "id": "01a11fc6-deeb-7f90-8f22-a7cfb8e46d32",
+      "title": "Oxy Canvas Tote",
+      "price": {
+        "amount": 2800,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/tote.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-deeb-7f90-8f22-a7cfb8e46d32"
+    },
+    {
+      "sourceId": "studio-mug",
+      "id": "01a11fc6-df20-7f23-811d-7c222aa693e7",
+      "title": "Oxy Studio Mug",
+      "price": {
+        "amount": 2200,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/mug.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-df20-7f23-811d-7c222aa693e7"
+    },
+    {
+      "sourceId": "ideas-notebook",
+      "id": "01a11fc6-df59-7e88-99ee-8ff6156c83d2",
+      "title": "Oxy Ideas Notebook",
+      "price": {
+        "amount": 1800,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/notebook.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-df59-7e88-99ee-8ff6156c83d2"
+    },
+    {
+      "sourceId": "everyday-bottle",
+      "id": "01a11fc6-df90-7bb6-80cc-691ef5054b5c",
+      "title": "Oxy Everyday Bottle",
+      "price": {
+        "amount": 3200,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/bottle.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-df90-7bb6-80cc-691ef5054b5c"
+    },
+    {
+      "sourceId": "studio-cap",
+      "id": "01a11fc6-dfbb-722d-b12a-546f9da7d28e",
+      "title": "Oxy Studio Cap",
+      "price": {
+        "amount": 2500,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/cap.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-dfbb-722d-b12a-546f9da7d28e"
+    },
+    {
+      "sourceId": "everyday-tee-pair",
+      "id": "01a11fc6-dfe4-7ae4-a30a-e8becdbc0ebd",
+      "title": "Oxy Everyday Tee — Set of 2",
+      "price": {
+        "amount": 7000,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/tee.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-dfe4-7ae4-a30a-e8becdbc0ebd"
+    },
+    {
+      "sourceId": "canvas-tote-pair",
+      "id": "01a11fc6-e00a-7dd9-9175-3942cf25a71f",
+      "title": "Oxy Canvas Tote — Set of 2",
+      "price": {
+        "amount": 5600,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/tote.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-e00a-7dd9-9175-3942cf25a71f"
+    },
+    {
+      "sourceId": "studio-mug-pair",
+      "id": "01a11fc6-e02b-727f-825b-28ee07cfa7c6",
+      "title": "Oxy Studio Mug — Set of 2",
+      "price": {
+        "amount": 4400,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/mug.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-e02b-727f-825b-28ee07cfa7c6"
+    },
+    {
+      "sourceId": "ideas-notebook-pair",
+      "id": "01a11fc6-e04d-7577-91c7-07dee73e8951",
+      "title": "Oxy Ideas Notebook — Set of 2",
+      "price": {
+        "amount": 3600,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/notebook.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-e04d-7577-91c7-07dee73e8951"
+    },
+    {
+      "sourceId": "everyday-bottle-pair",
+      "id": "01a11fc6-e06e-77b5-9b77-efb848858122",
+      "title": "Oxy Everyday Bottle — Set of 2",
+      "price": {
+        "amount": 6400,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/bottle.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-e06e-77b5-9b77-efb848858122"
+    },
+    {
+      "sourceId": "studio-cap-pair",
+      "id": "01a11fc6-e0a7-71c1-b4eb-a28b96efaa49",
+      "title": "Oxy Studio Cap — Set of 2",
+      "price": {
+        "amount": 5000,
+        "currency": "EUR"
+      },
+      "image": "https://oxy.so/images/store/cap.webp",
+      "availability": "out_of_stock",
+      "url": "https://mercaria.co/products/01a11fc6-e0a7-71c1-b4eb-a28b96efaa49"
+    }
+  ],
+  "collections": [
+    {
+      "id": "01a11fc6-e2bb-7340-ae34-b44cd8e171f9",
+      "title": "Drinkware",
+      "productIds": [
+        "01a11fc6-df20-7f23-811d-7c222aa693e7",
+        "01a11fc6-df90-7bb6-80cc-691ef5054b5c",
+        "01a11fc6-e02b-727f-825b-28ee07cfa7c6",
+        "01a11fc6-e06e-77b5-9b77-efb848858122"
+      ]
+    },
+    {
+      "id": "01a11fc6-e2a0-7f91-b924-1542bef6f975",
+      "title": "On your desk",
+      "productIds": [
+        "01a11fc6-df59-7e88-99ee-8ff6156c83d2",
+        "01a11fc6-e04d-7577-91c7-07dee73e8951"
+      ]
+    },
+    {
+      "id": "01a11fc6-e283-78b1-8f82-b4952f7a1957",
+      "title": "Carry",
+      "productIds": [
+        "01a11fc6-deeb-7f90-8f22-a7cfb8e46d32",
+        "01a11fc6-e00a-7dd9-9175-3942cf25a71f"
+      ]
+    },
+    {
+      "id": "01a11fc6-e266-7734-9b46-ffeea9c02242",
+      "title": "Wear",
+      "productIds": [
+        "01a11fc6-dea5-7a3e-9cd2-12e9f43b4d88",
+        "01a11fc6-dfbb-722d-b12a-546f9da7d28e",
+        "01a11fc6-dfe4-7ae4-a30a-e8becdbc0ebd",
+        "01a11fc6-e0a7-71c1-b4eb-a28b96efaa49"
+      ]
+    }
+  ]
+}

@@ -63,7 +63,11 @@ import { BUILD_SNAPSHOT } from '../src/lib/ai/snapshot'
 import { modelPath } from '../src/lib/ai/modelId'
 import { publisherName } from '../src/lib/ai/catalog'
 import { APP_CARD_IMAGES } from '../src/data/appCardImages'
-import { STORE_PRODUCTS } from '../src/data/store'
+import { OXY_STORE_ID } from '../src/data/store-config'
+import { createMercariaClient } from '@mercaria.co/sdk'
+import { readMercariaCatalog } from '../src/lib/mercaria-store'
+
+const storeProducts = (await readMercariaCatalog(createMercariaClient(), OXY_STORE_ID)).products
 import { brandConfig } from '../src/lib/seo'
 import type { NewsroomPost, NewsroomPostSummary } from '../src/data/newsroom'
 import {
@@ -272,10 +276,10 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/pricing': { title: en.pricingHub.seoTitle, description: en.pricingHub.description, canonicalPath: '/pricing' },
   '/store': { title: en.store.title, description: en.store.description, canonicalPath: '/store' },
-  ...Object.fromEntries(STORE_PRODUCTS.map(product => [`/store/p/${product.id}`, {
+  ...Object.fromEntries(storeProducts.map(product => [`/store/p/${encodeURIComponent(product.id)}`, {
     title: product.units > 1 ? `${product.name} · ${en.store.pair}` : product.name,
     description: en.store.description,
-    canonicalPath: `/store/p/${product.id}/`,
+    canonicalPath: `/store/p/${encodeURIComponent(product.id)}/`,
     ogImage: product.image,
   }])),
   '/one': { title: en.pricing.seoTitle, description: en.one.lead, canonicalPath: '/one' },

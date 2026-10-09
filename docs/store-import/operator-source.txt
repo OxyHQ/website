@@ -1,0 +1,47 @@
+import { connectPostgres, closePostgres, assertMigrationsCurrent } from '../../../Mercaria/packages/backend/src/db/postgres.ts';
+import { createStoreProductWithin, finishStoreProductCreation } from '../../../Mercaria/packages/backend/src/services/catalog-write.service.ts';
+import { createCollection, getCollectionByHandle } from '../../../Mercaria/packages/backend/src/services/collection.service.ts';
+import { stores, listings } from '../../../Mercaria/packages/backend/src/db/schema/index.ts';
+import { and, eq, sql } from 'drizzle-orm';
+import manifest from './mocks.json';
+
+const apply = process.env.OXY_STORE_IMPORT_APPLY === 'true';
+const rollback = new Error('PREVIEW_ROLLBACK');
+const created = [];
+try {
+ const db = await connectPostgres();
+ await assertMigrationsCurrent();
+ const [store] = await db.select().from(stores).where(eq(stores.id,manifest.storeId));
+ if(!store || store.oxyAccountId !== manifest.ownerAccountId || store.handle !== 'the-oxy-store') throw new Error('Store identity mismatch');
+ for (const url of new Set(manifest.products.flatMap(p=>p.input.imageFileIds))) {
+  const r=await fetch(url,{method:'HEAD'});
+  if(!r.ok || !r.headers.get('content-type')?.startsWith('image/')) throw new Error('Image unavailable: '+url);
+ }
+ try {
+  await db.transaction(async tx=>{
+   await tx.execute(sql`select pg_advisory_xact_lock(hashtext('oxy-store-preview-import'))`);
+   for(const p of manifest.products){
+    const existing=await tx.select().from(listings).where(and(eq(listings.storeId,manifest.storeId),eq(listings.handle,p.input.handle)));
+    if(existing.length){
+     if(!existing[0].tags.includes('oxy-preview') || existing[0].title!==p.input.title) throw new Error('Handle conflict: '+p.sourceId);
+     console.log(JSON.stringify({skipped:p.sourceId,id:existing[0].id}));continue;
+    }
+    const row=await createStoreProductWithin(tx,manifest.storeId,p.input as any,{status:'active'});
+    created.push({sourceId:p.sourceId,id:row.id,collection:p.collection});
+   }
+   if(!apply) throw rollback;
+  });
+ }catch(e){if(e!==rollback) throw e;}
+ if(!apply){console.log(JSON.stringify({dryRun:true,rolledBack:true,products:created}));}
+ else {
+  for(const p of created) await finishStoreProductCreation(manifest.storeId,p.id);
+  const rows=await db.select().from(listings).where(eq(listings.storeId,manifest.storeId));
+  for(const [handle,title] of Object.entries({wear:'Wear',carry:'Carry',desk:'On your desk',drink:'Drinkware'})){
+   if(await getCollectionByHandle(manifest.storeId,handle)) continue;
+   const productIds=manifest.products.filter(p=>p.collection===handle).map(p=>rows.find(r=>r.handle===p.input.handle)!.id);
+   await createCollection(manifest.storeId,{title,handle,type:'manual',isPublished:true,productIds});
+  }
+  console.log(JSON.stringify({applied:true,created,products:rows.filter(r=>r.tags.includes('oxy-preview')).map(r=>({id:r.id,handle:r.handle,title:r.title,status:r.status}))}));
+ }
+}catch(e){console.error(JSON.stringify({failed:true,name:e.name,message:e.message,code:e.code}));process.exitCode=1;}
+finally{await closePostgres();}

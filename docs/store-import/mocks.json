@@ -1,0 +1,426 @@
+{
+  "storeId": "01a11fb9-e7b2-7d3f-85a3-0c69515d783d",
+  "ownerAccountId": "69b2d3df5d12f58c9800d651",
+  "products": [
+    {
+      "sourceId": "everyday-tee",
+      "collection": "wear",
+      "units": 1,
+      "input": {
+        "title": "Oxy Everyday Tee",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Preview product; illustrative price. Not available for purchase.",
+        "category": "t-shirts",
+        "imageFileIds": [
+          "https://oxy.so/images/store/tee.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "wear",
+          "units-1"
+        ],
+        "vendor": "Oxy",
+        "handle": "everyday-tee",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 3500,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-EVERYDAY-TEE",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sourceId": "canvas-tote",
+      "collection": "carry",
+      "units": 1,
+      "input": {
+        "title": "Oxy Canvas Tote",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Preview product; illustrative price. Not available for purchase.",
+        "category": "home",
+        "imageFileIds": [
+          "https://oxy.so/images/store/tote.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "carry",
+          "units-1"
+        ],
+        "vendor": "Oxy",
+        "handle": "canvas-tote",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 2800,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-CANVAS-TOTE",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sourceId": "studio-mug",
+      "collection": "drink",
+      "units": 1,
+      "input": {
+        "title": "Oxy Studio Mug",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Preview product; illustrative price. Not available for purchase.",
+        "category": "home",
+        "imageFileIds": [
+          "https://oxy.so/images/store/mug.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "drink",
+          "units-1"
+        ],
+        "vendor": "Oxy",
+        "handle": "studio-mug",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 2200,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-STUDIO-MUG",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sourceId": "ideas-notebook",
+      "collection": "desk",
+      "units": 1,
+      "input": {
+        "title": "Oxy Ideas Notebook",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Preview product; illustrative price. Not available for purchase.",
+        "category": "home",
+        "imageFileIds": [
+          "https://oxy.so/images/store/notebook.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "desk",
+          "units-1"
+        ],
+        "vendor": "Oxy",
+        "handle": "ideas-notebook",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 1800,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-IDEAS-NOTEBOOK",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sourceId": "everyday-bottle",
+      "collection": "drink",
+      "units": 1,
+      "input": {
+        "title": "Oxy Everyday Bottle",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Preview product; illustrative price. Not available for purchase.",
+        "category": "home",
+        "imageFileIds": [
+          "https://oxy.so/images/store/bottle.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "drink",
+          "units-1"
+        ],
+        "vendor": "Oxy",
+        "handle": "everyday-bottle",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 3200,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-EVERYDAY-BOTTLE",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sourceId": "studio-cap",
+      "collection": "wear",
+      "units": 1,
+      "input": {
+        "title": "Oxy Studio Cap",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Preview product; illustrative price. Not available for purchase.",
+        "category": "men",
+        "imageFileIds": [
+          "https://oxy.so/images/store/cap.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "wear",
+          "units-1"
+        ],
+        "vendor": "Oxy",
+        "handle": "studio-cap",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 2500,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-STUDIO-CAP",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sourceId": "everyday-tee-pair",
+      "collection": "wear",
+      "units": 2,
+      "input": {
+        "title": "Oxy Everyday Tee — Set of 2",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Set of 2. Preview product; illustrative price. Not available for purchase.",
+        "category": "t-shirts",
+        "imageFileIds": [
+          "https://oxy.so/images/store/tee.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "wear",
+          "units-2"
+        ],
+        "vendor": "Oxy",
+        "handle": "everyday-tee-pair",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 7000,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-EVERYDAY-TEE-PAIR",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sourceId": "canvas-tote-pair",
+      "collection": "carry",
+      "units": 2,
+      "input": {
+        "title": "Oxy Canvas Tote — Set of 2",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Set of 2. Preview product; illustrative price. Not available for purchase.",
+        "category": "home",
+        "imageFileIds": [
+          "https://oxy.so/images/store/tote.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "carry",
+          "units-2"
+        ],
+        "vendor": "Oxy",
+        "handle": "canvas-tote-pair",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 5600,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-CANVAS-TOTE-PAIR",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sourceId": "studio-mug-pair",
+      "collection": "drink",
+      "units": 2,
+      "input": {
+        "title": "Oxy Studio Mug — Set of 2",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Set of 2. Preview product; illustrative price. Not available for purchase.",
+        "category": "home",
+        "imageFileIds": [
+          "https://oxy.so/images/store/mug.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "drink",
+          "units-2"
+        ],
+        "vendor": "Oxy",
+        "handle": "studio-mug-pair",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 4400,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-STUDIO-MUG-PAIR",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sourceId": "ideas-notebook-pair",
+      "collection": "desk",
+      "units": 2,
+      "input": {
+        "title": "Oxy Ideas Notebook — Set of 2",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Set of 2. Preview product; illustrative price. Not available for purchase.",
+        "category": "home",
+        "imageFileIds": [
+          "https://oxy.so/images/store/notebook.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "desk",
+          "units-2"
+        ],
+        "vendor": "Oxy",
+        "handle": "ideas-notebook-pair",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 3600,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-IDEAS-NOTEBOOK-PAIR",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sourceId": "everyday-bottle-pair",
+      "collection": "drink",
+      "units": 2,
+      "input": {
+        "title": "Oxy Everyday Bottle — Set of 2",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Set of 2. Preview product; illustrative price. Not available for purchase.",
+        "category": "home",
+        "imageFileIds": [
+          "https://oxy.so/images/store/bottle.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "drink",
+          "units-2"
+        ],
+        "vendor": "Oxy",
+        "handle": "everyday-bottle-pair",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 6400,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-EVERYDAY-BOTTLE-PAIR",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sourceId": "studio-cap-pair",
+      "collection": "wear",
+      "units": 2,
+      "input": {
+        "title": "Oxy Studio Cap — Set of 2",
+        "description": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment. Set of 2. Preview product; illustrative price. Not available for purchase.",
+        "category": "men",
+        "imageFileIds": [
+          "https://oxy.so/images/store/cap.webp"
+        ],
+        "tags": [
+          "oxy-preview",
+          "wear",
+          "units-2"
+        ],
+        "vendor": "Oxy",
+        "handle": "studio-cap-pair",
+        "options": [],
+        "variants": [
+          {
+            "optionValues": [],
+            "price": {
+              "amount": 5000,
+              "currency": "EUR"
+            },
+            "sku": "OXY-PREVIEW-STUDIO-CAP-PAIR",
+            "inventory": {
+              "tracked": true,
+              "available": 0
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

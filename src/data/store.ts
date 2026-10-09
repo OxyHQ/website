@@ -1,11 +1,15 @@
+import type { MercariaImage, MercariaPurchaseOption, MercariaProductAvailability } from '@mercaria.co/sdk'
+
 /** Fictional merchandise for the store preview. No inventory or checkout API. */
 export type StoreCategory = 'wear' | 'carry' | 'desk' | 'drink'
 export interface StoreProduct {
   id: string
   name: string
-  category: StoreCategory
+  category: StoreCategory | 'all'
   price: number
   image: string
+  currency?: string
+  mercaria?: { availability: MercariaProductAvailability; description?: string; images?: MercariaImage[]; options?: MercariaPurchaseOption[]; url: string }
   units: number
 }
 const goods = [

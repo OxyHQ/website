@@ -8,6 +8,7 @@ import { useHero, useNewsroomPosts, type HeroMediaRef } from '../../api/hooks'
 import { usePageChromeStore } from '../../stores/pageChromeStore'
 import { useTranslation } from '../../lib/i18n'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { LANDING_FILM } from '../../data/landingMedia'
 
 /* ──────────────────────────────────────────────
  * HomeHero
@@ -33,10 +34,8 @@ const IMG = '/images/landing'
 const IMG_HERO = '/images/hero'
 
 const DEFAULT_POSTER = `${IMG}/hero-bg.avif`
-const DEFAULT_BG_WEBM = `${IMG}/hero-panel-14953520.webm`
-const DEFAULT_BG_MP4 = `${IMG}/hero-panel-14953520.mp4`
 /** The video's own first frame. The still below the panel is a different picture. */
-const PANEL_POSTER = `${IMG}/hero-panel-14953520-poster.webp`
+const PANEL_POSTER = LANDING_FILM.poster
 /** Behind the newsroom cell, under a scrim. */
 const NEWS_CELL_BACKDROP = `${IMG}/4lffisf9oaY443RqgB8sCKLHJc.avif`
 
@@ -94,8 +93,6 @@ export default function HomeHero() {
     { src: `${IMG_HERO}/emoji-globe.png`, alt: t('home.heroIconGlobe') },
   ]
   const poster = heroMediaUrl(hero?.backgroundPoster) || DEFAULT_POSTER
-  const webm = heroMediaUrl(hero?.backgroundVideoWebm) || DEFAULT_BG_WEBM
-  const mp4 = heroMediaUrl(hero?.backgroundVideoMp4) || DEFAULT_BG_MP4
   const usesDefaultPoster = poster === DEFAULT_POSTER
 
   const sectionRef = useRef<HTMLElement>(null)
@@ -422,8 +419,7 @@ export default function HomeHero() {
                     poster={PANEL_POSTER}
                     className="size-full object-cover"
                   >
-                    {webm && <source src={webm} type="video/webm" />}
-                    <source src={mp4} type="video/mp4" />
+                    <source src={LANDING_FILM.src} type="video/mp4" />
                   </video>
                 ) : (
                   <img src={PANEL_POSTER} alt="" aria-hidden="true" className="size-full object-cover" />

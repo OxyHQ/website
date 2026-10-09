@@ -3,7 +3,10 @@ import en, { type Translations } from './en'
 /** Russian translations. English remains the structural source of truth. */
 const ru: Translations = {
 
+
   ...en,
+  storeLive: {"loading": "Загрузка коллекции…", "error": "Не удалось загрузить коллекцию.", "empty": "Товары ещё не опубликованы.", "retry": "Повторить", "announcement": "Посмотрите коллекцию. Варианты покупки и доставки доступны на Mercaria.", "view": "Открыть в Mercaria", "in_stock": "В наличии", "out_of_stock": "Нет в наличии", "sold": "Продано"},
+
   help: { ...en.help,
     feedbackThanks: "Спасибо за ваш отзыв.",
     feedbackError: "Не удалось сохранить отзыв. Попробуйте ещё раз.",

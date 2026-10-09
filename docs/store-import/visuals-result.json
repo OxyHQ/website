@@ -1,0 +1,43 @@
+{
+  "verifiedAt": "2026-10-09T09:40:25.782Z",
+  "storeId": "01a11fb9-e7b2-7d3f-85a3-0c69515d783d",
+  "logo": "https://cloud.oxy.so/oxy-website/store/the-oxy-store-logo-dd991c0a.png",
+  "collections": [
+    {
+      "id": "01a11fc6-e2bb-7340-ae34-b44cd8e171f9",
+      "title": "Drinkware",
+      "image": {
+        "url": "https://oxy.so/images/store/mug.webp",
+        "alt": null
+      },
+      "productCount": 4
+    },
+    {
+      "id": "01a11fc6-e2a0-7f91-b924-1542bef6f975",
+      "title": "On your desk",
+      "image": {
+        "url": "https://oxy.so/images/store/notebook.webp",
+        "alt": null
+      },
+      "productCount": 2
+    },
+    {
+      "id": "01a11fc6-e283-78b1-8f82-b4952f7a1957",
+      "title": "Carry",
+      "image": {
+        "url": "https://oxy.so/images/store/tote.webp",
+        "alt": null
+      },
+      "productCount": 2
+    },
+    {
+      "id": "01a11fc6-e266-7734-9b46-ffeea9c02242",
+      "title": "Wear",
+      "image": {
+        "url": "https://oxy.so/images/store/tee.webp",
+        "alt": null
+      },
+      "productCount": 4
+    }
+  ]
+}
