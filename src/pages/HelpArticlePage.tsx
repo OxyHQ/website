@@ -44,27 +44,10 @@ import { AnimatedTitle } from '../components/ui/AnimatedTitle'
  * same category.
  * ──────────────────────────────────────────── */
 
-const WORDS_PER_MINUTE = 200
 const RELATED_LIMIT = 3
 
 function categoryMetaForId(id: string) {
   return HELP_CATEGORIES.find((c) => c.id === id) ?? null
-}
-
-/**
- * Estimate read time in minutes from the article's frontmatter +
- * description. Since the MDX body is lazy-loaded, we cannot read
- * its rendered text synchronously — instead we lean on the
- * description length as a proxy plus a per-article floor of 2 min.
- */
-function estimateReadTimeMinutes(entry: HelpEntry): number {
-  const description = entry.frontmatter.description ?? ''
-  const descriptionWords = description.trim().split(/\s+/).filter(Boolean).length
-  // Description is usually ~10-30 words; multiply by 12 as a rough
-  // proxy for the full article body so short descriptions still get
-  // a reasonable 2-3 min estimate and longer ones scale up.
-  const approxBodyWords = Math.max(200, descriptionWords * 12)
-  return Math.max(2, Math.ceil(approxBodyWords / WORDS_PER_MINUTE))
 }
 
 function formatUpdatedDate(iso: string | undefined, locale: string): string | null {
@@ -183,7 +166,7 @@ export default function HelpArticlePage() {
   const { frontmatter, Component } = entry
   const cover = frontmatter.coverImage ?? ''
   const updatedLabel = formatUpdatedDate(frontmatter.updated, locale)
-  const readMinutes = estimateReadTimeMinutes(entry)
+  const readMinutes = entry.readingMinutes
   const categoryLabel = categoryMeta?.label ?? ''
 
   return (
@@ -312,7 +295,7 @@ export default function HelpArticlePage() {
                 </div>
                 {categoryMeta && (
                   <Link
-                    to={`/help#${categoryMeta.id}`}
+                    to={`/help/?topic=${categoryMeta.id}#help-results`}
                     className="inline-flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     See all

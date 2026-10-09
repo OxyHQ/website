@@ -523,7 +523,8 @@ const en = {
 
   // ── Help center ───────────────────────────────────────────
   help: {
-    seoTitle: 'Help Center',
+    "welcome": "Welcome to the Oxy Help Center", "ecosystemHeading": "Oxy-wide support", "ecosystemDescription": "Get help with your Oxy apps & experiences", "moreSupport": "Explore more support",
+    "greeting": "Hello.", "topicsHeading": "Browse by topic", "featuredHeading": "Featured articles", "allArticles": "View all articles", "searchResults": "Search results", "clearFilters": "Clear filters", "noResults": "No articles found. Try another search or clear the filters.", "readTime": "{count} min read", seoTitle: 'Help Center',
     seoDescription:
       'Get help with Oxy. Find answers to common questions, troubleshooting guides, and contact our support team.',
     heading: 'How can we help?',

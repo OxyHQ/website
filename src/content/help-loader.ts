@@ -44,6 +44,9 @@ export interface HelpEntry {
    * `frontmatter.coverImage` so unset articles fall back to the generated PNG.
    */
   cover: string
+  /** Searchable article body and estimated reading time, derived from the source. */
+  searchText: string
+  readingMinutes: number
   Component: LazyExoticComponent<ComponentType<Record<string, unknown>>>
 }
 
@@ -118,6 +121,10 @@ const eagerModules = import.meta.glob<MdxModuleMeta>('./help/**/*.mdx', {
   eager: true,
 })
 
+const rawModules = import.meta.glob<string>('./help/**/*.mdx', {
+  query: '?raw', import: 'default', eager: true,
+})
+
 // Lazy component glob — one chunk per article.
 const componentModules = import.meta.glob<{ default: ComponentType<Record<string, unknown>> }>(
   './help/**/*.mdx',
@@ -167,9 +174,17 @@ function buildIndex(): HelpIndex {
     const generatedCover = `/images/help-og${localePrefix}/${slug}.png`
     const cover = parsed.data.coverImage ?? generatedCover
 
+    const searchText = (rawModules[path] ?? '')
+      .replace(/^---[\s\S]*?---/, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    const readingMinutes = Math.max(1, Math.ceil(searchText.trim().split(/\s+/).filter(Boolean).length / 200))
     const entry: HelpEntry = {
       slug,
       locale,
+      searchText,
+      readingMinutes,
       // Mirror the resolved cover back into frontmatter.coverImage so legacy
       // consumers that read the field directly (e.g. before this loader
       // exposed `cover`) also benefit from the fallback without having to
