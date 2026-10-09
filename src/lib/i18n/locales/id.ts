@@ -526,7 +526,9 @@ const id: Translations = {
     "faqBillingAnswer": "Kelola Oxy One dan pembayaran pribadi di Oxy Accounts. Tinjau kredit dan penggunaan pengembang di Oxy Console. Halaman pembayaran akun menampilkan penawaran dan ketentuan yang tersedia."
 },
 
-  store: {"title": "The Oxy Store", "description": "Benda sehari-hari dari Oxy. Jelajahi koleksi contoh pakaian, aksesori, dan perlengkapan meja.", "demo": "Koleksi contoh. Produk dan harga hanya ilustrasi; pembelian dan pembayaran tidak tersedia.", "collections": "Koleksi", "all": "Semua produk", "wear": "Pakaian", "carry": "Tas", "desk": "Di meja Anda", "drink": "Cangkir dan botol", "bag": "Tas belanja", "add": "Tambahkan ke tas demo", "remove": "Hapus", "empty": "Tas belanja Anda kosong.", "total": "Total demo", "featured": "Pilihan lainnya", "about": "Sedikit Oxy, jauh dari layar. Benda akrab untuk berkarya, berpikir, dan mengambil jeda.", "learn": "Tentang Oxy", "sample": "Pratinjau", "pair": "Set isi 2"},
+  store: {"title": "The Oxy Store", "announcement": "Koleksi contoh · Pembelian belum tersedia", "description": "Benda sehari-hari dari Oxy. Jelajahi koleksi contoh pakaian, aksesori, dan perlengkapan meja.", "demo": "Koleksi contoh. Produk dan harga hanya ilustrasi; pembelian dan pembayaran tidak tersedia.", "collections": "Koleksi", "all": "Semua produk", "wear": "Pakaian", "carry": "Tas", "desk": "Di meja Anda", "drink": "Cangkir dan botol", "bag": "Tas belanja", "add": "Tambahkan ke tas demo", "remove": "Hapus", "empty": "Tas belanja Anda kosong.", "total": "Total demo", "featured": "Pilihan lainnya", "about": "Sedikit Oxy, jauh dari layar. Benda akrab untuk berkarya, berpikir, dan mengambil jeda.", "learn": "Tentang Oxy", "sample": "Pratinjau", "pair": "Set isi 2"},
+
+  storeFavorites: {"title": "Favorit", "hint": "Disimpan di perangkat ini.", "empty": "Belum ada barang yang kamu simpan.", "remove": "Hapus dari favorit"},
 
   storeProduct: {
     "share": "Bagikan",

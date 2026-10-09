@@ -36,12 +36,33 @@ try {
   await productLinks.first().waitFor()
   assert.equal(await productLinks.count(), STORE_PRODUCTS.length)
   assert.ok(await productLinks.evaluateAll(nodes => nodes.every(node => node.tagName === 'A')))
+  const assertStoreChrome = async () => {
+    assert.equal(await page.locator('.site-banner').count(), 1)
+    assert.equal(await page.locator('.site-banner').textContent(), 'Preview collection · Purchases unavailable')
+    assert.equal(await page.locator('main').getByText('Preview collection. Products and prices are illustrative; no purchases or payments are available.', { exact: true }).count(), 0)
+    await page.getByRole('heading', { level: 1, name: 'The Oxy Store', exact: true }).waitFor()
+  }
+  await assertStoreChrome()
+  for (const width of [390, 768, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 1000 })
+    const bounds = await page.evaluate(() => {
+      const container = document.querySelector('footer .container')!
+      const box = container.getBoundingClientRect()
+      const css = getComputedStyle(container)
+      const grid = document.querySelector('[data-store-grid]')!.getBoundingClientRect()
+      return { left: box.left + parseFloat(css.paddingLeft), right: box.right - parseFloat(css.paddingRight), gridLeft: grid.left, gridRight: grid.right, titleLeft: document.querySelector('[data-store-header] h1')!.getBoundingClientRect().left }
+    })
+    assert.ok(Math.abs(bounds.gridLeft - bounds.left) < 1 && Math.abs(bounds.gridRight - bounds.right) < 1, `Collection grid follows the website container at ${width}`)
+    assert.ok(Math.abs(bounds.titleLeft - bounds.left) < 1, `Store title aligns with its collection at ${width}`)
+  }
+  await page.setViewportSize({ width: 1440, height: 1000 })
   await productLinks.first().click()
   await page.waitForURL('**/store/p/everyday-tee/')
-  await page.getByRole('heading', { level: 1, name: 'Oxy Everyday Tee', exact: true }).waitFor()
+  await page.getByRole('heading', { level: 2, name: 'Oxy Everyday Tee', exact: true }).waitFor()
+  await assertStoreChrome()
   assert.equal(await page.locator('h1').count(), 1)
   assert.equal(await page.locator('main').count(), 1)
-  assert.equal(await page.locator('link[rel=canonical]').getAttribute('href'), 'https://oxy.so/store/p/everyday-tee/')
+  await page.locator('link[rel=canonical][href="https://oxy.so/store/p/everyday-tee/"]').waitFor({ state: 'attached' })
   const gallery = page.getByRole('group', { name: 'Product images', exact: true })
   await gallery.locator('img').first().evaluate(async image => { await (image as HTMLImageElement).decode() })
   assert.ok(await gallery.locator('img').first().evaluate(image => (image as HTMLImageElement).naturalWidth >= 512))
@@ -84,7 +105,7 @@ try {
   assert.equal(await bag.getByText('€140', { exact: true }).count(), 2)
   await bag.getByRole('button', { name: 'Close', exact: true }).click()
   await bag.waitFor({ state: 'hidden' })
-  await page.getByRole('link', { name: 'Back to the store', exact: true }).click()
+  await page.locator('[data-store-header]').getByRole('link', { name: 'The Oxy Store', exact: true }).click()
   await page.waitForURL('**/store/')
   await page.getByRole('button', { name: 'Bag [2]', exact: true }).waitFor()
   await page.reload()
@@ -103,7 +124,7 @@ try {
   await floating.waitFor({ state: 'visible' })
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
   const positions = await page.evaluate(() => ({
-    title: document.querySelector('h1')!.getBoundingClientRect().top,
+    title: document.querySelector('#store-product-title')!.getBoundingClientRect().top,
     gallery: document.querySelector('[role=group][aria-label="Product images"]')!.getBoundingClientRect().top,
     purchase: document.querySelector('[data-store-purchase]')!.getBoundingClientRect().top,
   }))
@@ -142,6 +163,7 @@ try {
     await page.setViewportSize({ width, height: 1000 })
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Product overflow at ${width}`)
     if (width >= 1440) {
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))
       const alignment = await page.evaluate(() => {
         const container = document.querySelector('footer .container')!
         const bounds = container.getBoundingClientRect()
@@ -151,25 +173,55 @@ try {
         return {
           expectedLeft: bounds.left + parseFloat(css.paddingLeft),
           contentWidth: bounds.width - parseFloat(css.paddingLeft) - parseFloat(css.paddingRight),
-          titleLeft: document.querySelector('h1')!.getBoundingClientRect().left,
+          titleLeft: document.querySelector('#store-product-title')!.getBoundingClientRect().left,
+          storeTitleLeft: document.querySelector('[data-store-header] h1')!.getBoundingClientRect().left,
+          contentGap: document.querySelector('#store-product-title')!.getBoundingClientRect().top - document.querySelector('[data-store-header]')!.getBoundingClientRect().bottom,
           purchaseLeft: purchase.left,
           purchaseWidth: purchase.width,
           galleryLeft: gallery.left,
         }
       })
       assert.ok(Math.abs(alignment.titleLeft - alignment.expectedLeft) < 1, `Title must follow the website container at ${width}`)
+      assert.ok(Math.abs(alignment.storeTitleLeft - alignment.expectedLeft) < 1, 'Store header follows the shared container')
+      assert.ok(alignment.contentGap >= 0 && alignment.contentGap < 12, 'Product content starts directly after its header')
       assert.ok(Math.abs(alignment.purchaseLeft - alignment.expectedLeft) < 1, `Buy box must follow the website container at ${width}`)
       assert.ok(alignment.purchaseWidth <= alignment.contentWidth / 3 + 1, `Buy box must stay compact at ${width}`)
       // The user's approved gallery keeps its original page-wide position.
       assert.ok(Math.abs(alignment.galleryLeft - (width === 1440 ? 619 : 819)) < 1, `Gallery position must remain unchanged at ${width}`)
     }
   }
+  // Saved objects have a shareable route and remain available after a reload.
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.locator('[data-store-header]').getByRole('link', { name: 'Favorites [1]', exact: true }).click()
+  await page.waitForURL('**/store/?view=favorites')
+  await page.getByRole('heading', { name: 'Favorites [1]', exact: true }).waitFor()
+  await assertStoreChrome()
+  assert.equal(await productLinks.count(), 1)
+  assert.equal(await productLinks.first().getAttribute('href'), '/store/p/everyday-tee/')
+  assert.equal(await productLinks.locator('button').count(), 0, 'Favorite removal must not be nested in the product link')
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Favorites and shared header must fit mobile')
+  await page.reload()
+  await page.getByRole('heading', { name: 'Favorites [1]', exact: true }).waitFor()
+  await productLinks.first().click()
+  await page.waitForURL('**/store/p/everyday-tee/')
+  await saved.waitFor()
+  await page.locator('[data-store-header]').getByRole('link', { name: 'Favorites [1]', exact: true }).click()
+  await page.getByRole('button', { name: 'Remove from favorites: Oxy Everyday Tee', exact: true }).click()
+  await page.getByText('You haven’t saved any objects yet.', { exact: true }).waitFor()
+  await page.locator('[data-store-header]').getByRole('link', { name: 'Favorites [0]', exact: true }).waitFor()
+  assert.equal(await productLinks.count(), 0)
+  await page.reload()
+  await page.getByText('You haven’t saved any objects yet.', { exact: true }).waitFor()
+  await page.getByRole('region', { name: 'Favorites', exact: true }).getByRole('button', { name: 'All objects', exact: true }).click()
+  await page.waitForURL('**/store/')
+  await productLinks.first().waitFor()
+  assert.equal(await productLinks.count(), STORE_PRODUCTS.length)
   await page.goto(`${origin}/store/p/does-not-exist/`)
   await page.locator('meta[name=robots][content*="noindex"]').waitFor({ state: 'attached' })
   assert.equal(await page.locator('[data-store-purchase]').count(), 0)
   assert.deepEqual(errors, [])
   await context.close()
-  console.log('Store browser checks passed: linked products, gallery keyboard/zoom, share/save, persistent bag, variants, mobile sticky CTA and unknown products.')
+  console.log('Store browser checks passed: linked products, gallery keyboard/zoom, share/save, favorites collection, persistent bag, variants, mobile sticky CTA and unknown products.')
 } finally {
   await browser.close()
   preview?.kill()

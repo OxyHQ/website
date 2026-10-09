@@ -933,7 +933,9 @@ const ja: Translations = {
     "faqBillingAnswer": "Oxy Oneと個人の支払いはOxy Accountsで管理できます。クレジットと開発者の利用状況はOxy Consoleで確認できます。アカウントの決済画面に、利用可能な商品と条件が表示されます。"
 },
 
-  store: {"title": "The Oxy Store", "description": "Oxyの日用品。衣類、アクセサリー、デスク用品のサンプルコレクションをご覧ください。", "demo": "サンプルコレクションです。商品と価格は例示であり、購入や決済はできません。", "collections": "コレクション", "all": "すべての商品", "wear": "衣類", "carry": "バッグ", "desk": "デスク用品", "drink": "カップ・ボトル", "bag": "バッグ", "add": "デモバッグに追加", "remove": "削除", "empty": "バッグは空です。", "total": "デモ合計", "featured": "その他のおすすめ", "about": "画面から離れても、Oxyと一緒に。作る、考える、ひと息つくための身近なもの。", "learn": "Oxyについて", "sample": "サンプル", "pair": "2個セット"},
+  store: {"title": "The Oxy Store", "announcement": "サンプルコレクション · 購入はできません", "description": "Oxyの日用品。衣類、アクセサリー、デスク用品のサンプルコレクションをご覧ください。", "demo": "サンプルコレクションです。商品と価格は例示であり、購入や決済はできません。", "collections": "コレクション", "all": "すべての商品", "wear": "衣類", "carry": "バッグ", "desk": "デスク用品", "drink": "カップ・ボトル", "bag": "バッグ", "add": "デモバッグに追加", "remove": "削除", "empty": "バッグは空です。", "total": "デモ合計", "featured": "その他のおすすめ", "about": "画面から離れても、Oxyと一緒に。作る、考える、ひと息つくための身近なもの。", "learn": "Oxyについて", "sample": "サンプル", "pair": "2個セット"},
+
+  storeFavorites: {"title": "お気に入り", "hint": "このデバイスに保存されています。", "empty": "まだアイテムを保存していません。", "remove": "お気に入りから削除"},
 
   storeProduct: {
     "share": "共有",

@@ -933,7 +933,9 @@ const de: Translations = {
     "faqBillingAnswer": "Verwalte Oxy One und persönliche Zahlungen in Oxy Accounts. Credits und Entwicklernutzung findest du in Oxy Console. Beim Bezahlen in deinem Konto siehst du die verfügbaren Angebote und Bedingungen."
 },
 
-  store: {"title": "The Oxy Store", "description": "Alltagsgegenstände von Oxy. Entdecke eine Vorschau auf Kleidung, Accessoires und Schreibtischzubehör.", "demo": "Vorschaukollektion. Produkte und Preise sind Beispiele; Käufe und Zahlungen sind nicht möglich.", "collections": "Kollektionen", "all": "Alle Produkte", "wear": "Kleidung", "carry": "Taschen", "desk": "Am Schreibtisch", "drink": "Trinkgefäße", "bag": "Warenkorb", "add": "Zum Demo-Warenkorb hinzufügen", "remove": "Entfernen", "empty": "Dein Warenkorb ist leer.", "total": "Demo-Gesamtsumme", "featured": "Weitere Highlights", "about": "Ein bisschen Oxy, abseits des Bildschirms. Vertraute Dinge zum Gestalten, Nachdenken und Innehalten.", "learn": "Über Oxy", "sample": "Vorschau", "pair": "2er-Set"},
+  store: {"title": "The Oxy Store", "announcement": "Vorschaukollektion · Kein Kauf möglich", "description": "Alltagsgegenstände von Oxy. Entdecke eine Vorschau auf Kleidung, Accessoires und Schreibtischzubehör.", "demo": "Vorschaukollektion. Produkte und Preise sind Beispiele; Käufe und Zahlungen sind nicht möglich.", "collections": "Kollektionen", "all": "Alle Produkte", "wear": "Kleidung", "carry": "Taschen", "desk": "Am Schreibtisch", "drink": "Trinkgefäße", "bag": "Warenkorb", "add": "Zum Demo-Warenkorb hinzufügen", "remove": "Entfernen", "empty": "Dein Warenkorb ist leer.", "total": "Demo-Gesamtsumme", "featured": "Weitere Highlights", "about": "Ein bisschen Oxy, abseits des Bildschirms. Vertraute Dinge zum Gestalten, Nachdenken und Innehalten.", "learn": "Über Oxy", "sample": "Vorschau", "pair": "2er-Set"},
+
+  storeFavorites: {"title": "Favoriten", "hint": "Auf diesem Gerät gespeichert.", "empty": "Du hast noch keine Objekte gespeichert.", "remove": "Aus Favoriten entfernen"},
 
   storeProduct: {
     "share": "Teilen",

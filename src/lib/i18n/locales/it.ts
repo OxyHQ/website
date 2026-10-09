@@ -933,7 +933,9 @@ const it: Translations = {
     "faqBillingAnswer": "Gestisci Oxy One e i pagamenti personali in Oxy Accounts. Consulta crediti e utilizzo per sviluppatori in Oxy Console. Il checkout nel tuo account mostra le offerte e le condizioni disponibili."
 },
 
-  store: {"title": "The Oxy Store", "description": "Oggetti quotidiani di Oxy. Esplora una collezione dimostrativa di abbigliamento, accessori e articoli da scrivania.", "demo": "Collezione dimostrativa. Prodotti e prezzi sono indicativi; acquisti e pagamenti non sono disponibili.", "collections": "Collezioni", "all": "Tutti gli oggetti", "wear": "Abbigliamento", "carry": "Borse", "desk": "Sulla scrivania", "drink": "Tazze e borracce", "bag": "Carrello", "add": "Aggiungi al carrello demo", "remove": "Rimuovi", "empty": "Il carrello è vuoto.", "total": "Totale demo", "featured": "Altri suggerimenti", "about": "Un po’ di Oxy, lontano dallo schermo. Oggetti familiari per creare, pensare e prendersi un momento.", "learn": "Informazioni su Oxy", "sample": "Anteprima", "pair": "Set da 2"},
+  store: {"title": "The Oxy Store", "announcement": "Collezione dimostrativa · Acquisti non disponibili", "description": "Oggetti quotidiani di Oxy. Esplora una collezione dimostrativa di abbigliamento, accessori e articoli da scrivania.", "demo": "Collezione dimostrativa. Prodotti e prezzi sono indicativi; acquisti e pagamenti non sono disponibili.", "collections": "Collezioni", "all": "Tutti gli oggetti", "wear": "Abbigliamento", "carry": "Borse", "desk": "Sulla scrivania", "drink": "Tazze e borracce", "bag": "Carrello", "add": "Aggiungi al carrello demo", "remove": "Rimuovi", "empty": "Il carrello è vuoto.", "total": "Totale demo", "featured": "Altri suggerimenti", "about": "Un po’ di Oxy, lontano dallo schermo. Oggetti familiari per creare, pensare e prendersi un momento.", "learn": "Informazioni su Oxy", "sample": "Anteprima", "pair": "Set da 2"},
+
+  storeFavorites: {"title": "Preferiti", "hint": "Salvati su questo dispositivo.", "empty": "Non hai ancora salvato nessun oggetto.", "remove": "Rimuovi dai preferiti"},
 
   storeProduct: {
     "share": "Condividi",

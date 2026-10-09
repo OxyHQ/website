@@ -933,7 +933,9 @@ const ko: Translations = {
     "faqBillingAnswer": "Oxy One과 개인 결제는 Oxy Accounts에서 관리하세요. 크레딧과 개발자 사용량은 Oxy Console에서 확인하세요. 계정 결제 화면에 이용 가능한 상품과 약관이 표시됩니다."
 },
 
-  store: {"title": "The Oxy Store", "description": "Oxy의 일상용품. 의류, 액세서리, 책상용품의 미리보기 컬렉션을 살펴보세요.", "demo": "미리보기 컬렉션입니다. 상품과 가격은 예시이며 구매와 결제는 지원하지 않습니다.", "collections": "컬렉션", "all": "모든 상품", "wear": "의류", "carry": "가방", "desk": "책상용품", "drink": "컵과 물병", "bag": "장바구니", "add": "데모 장바구니에 추가", "remove": "삭제", "empty": "장바구니가 비어 있습니다.", "total": "데모 합계", "featured": "더 많은 추천", "about": "화면 밖에서도 함께하는 Oxy. 만들고 생각하고 잠시 쉬기 위한 친숙한 물건들.", "learn": "Oxy 소개", "sample": "미리보기", "pair": "2개 세트"},
+  store: {"title": "The Oxy Store", "announcement": "미리보기 컬렉션 · 구매 불가", "description": "Oxy의 일상용품. 의류, 액세서리, 책상용품의 미리보기 컬렉션을 살펴보세요.", "demo": "미리보기 컬렉션입니다. 상품과 가격은 예시이며 구매와 결제는 지원하지 않습니다.", "collections": "컬렉션", "all": "모든 상품", "wear": "의류", "carry": "가방", "desk": "책상용품", "drink": "컵과 물병", "bag": "장바구니", "add": "데모 장바구니에 추가", "remove": "삭제", "empty": "장바구니가 비어 있습니다.", "total": "데모 합계", "featured": "더 많은 추천", "about": "화면 밖에서도 함께하는 Oxy. 만들고 생각하고 잠시 쉬기 위한 친숙한 물건들.", "learn": "Oxy 소개", "sample": "미리보기", "pair": "2개 세트"},
+
+  storeFavorites: {"title": "즐겨찾기", "hint": "이 기기에 저장됩니다.", "empty": "아직 저장한 상품이 없습니다.", "remove": "즐겨찾기에서 삭제"},
 
   storeProduct: {
     "share": "공유",

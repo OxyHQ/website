@@ -5,10 +5,11 @@ import { Dialog } from '@oxy.so/bloom/dialog'
 import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
 import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
-import { RiHeartLine } from '@oxy.so/bloom/icons/RiHeartLine'
-import { RiShareLine } from '@oxy.so/bloom/icons/RiShareLine'
+import { MentionHeartIcon, MentionShareIcon } from '../components/store/MentionActionIcons'
 import PageShell from '../components/layout/PageShell'
+import Navbar from '../components/layout/Navbar'
 import StoreBag from '../components/store/StoreBag'
+import StoreHeader from '../components/store/StoreHeader'
 import StoreProductImage from '../components/store/StoreProductImage'
 import { useStoreBag } from '../components/store/useStoreBag'
 import { FaqList } from '../components/sections/FaqSection'
@@ -69,31 +70,26 @@ function ProductDetail({ product }: { product: StoreProduct }) {
   }
 
   return <PageShell
+    navbar={<Navbar bannerContent={t('store.announcement')} />}
     seo={{ title: name, description: t('store.description'), canonicalPath: `/store/p/${product.id}/`, ogImage: product.image }}
     mainClassName="min-w-0 flex-1 pb-20 lg:pb-0"
   >
-    <div className="bg-secondary px-4 py-2 text-center text-xs text-secondary-foreground sm:px-6">{t('store.demo')}</div>
-    <div className="flex items-center justify-between gap-4 px-4 py-6 sm:px-6 lg:px-8">
-      <Link to="/store/" className="inline-flex min-h-11 items-center gap-2 text-xs hover:underline" aria-label={t('storeProduct.back')}>
-        <span aria-hidden="true" className="rtl:rotate-180"><RiArrowLeftLine width={16} height={16} fill="currentColor" /></span> The Oxy Store
-      </Link>
-      <Button appearance="subtle" onPress={() => setBagOpen(true)}>{t('store.bag')} [{count}]</Button>
-    </div>
+    <StoreHeader count={count} onOpenBag={() => setBagOpen(true)} />
 
     <section className="flex flex-col gap-8 px-4 pb-20 sm:px-6 lg:grid lg:grid-cols-12 lg:items-start lg:gap-8 lg:px-8" aria-labelledby="store-product-title">
       <div className="contents lg:sticky lg:top-[calc(var(--site-header-occlusion-bottom)+32px)] lg:col-span-5 lg:col-start-1 lg:row-start-1 lg:ms-[max(0px,calc((100vw-var(--layout-max-width))/2+var(--layout-gutter)-2rem))] lg:max-w-[calc((min(100vw,var(--layout-max-width))-2*var(--layout-gutter))/3)] lg:flex lg:flex-col lg:gap-10">
         <header className="order-1 space-y-5 pt-2 lg:pt-0">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 space-y-2">
-              <h1 id="store-product-title" className="text-xl font-normal leading-snug sm:text-2xl">{name}</h1>
+              <h2 id="store-product-title" className="text-xl font-normal leading-snug sm:text-2xl">{name}</h2>
               <p className="text-sm">{money(product.price)} <span className="text-muted-foreground">· {t('store.sample')}</span></p>
             </div>
             <div className="flex shrink-0 gap-1">
               <Button appearance="plain" accessibilityLabel={t('storeProduct.share')} onPress={() => void share()} iconOnly>
-                <RiShareLine width={20} height={20} fill="currentColor" />
+                <MentionShareIcon />
               </Button>
               <Button appearance={isSaved ? 'subtle' : 'plain'} accessibilityLabel={isSaved ? t('storeProduct.saved') : t('storeProduct.save')} pressed={isSaved} onPress={() => toggleSaved(product.id)} iconOnly>
-                <RiHeartLine width={20} height={20} fill="currentColor" />
+                <MentionHeartIcon active={isSaved} />
               </Button>
             </div>
           </div>

@@ -1188,7 +1188,9 @@ const en = {
     "faqBillingAnswer": "Manage Oxy One and personal payments in Oxy Accounts. Review credits and developer usage in Oxy Console. The account checkout shows the offers and terms currently available to you."
 },
 
-  store: {"title": "The Oxy Store", "description": "Everyday objects from Oxy. Explore a preview collection of clothing, accessories and desk essentials.", "demo": "Preview collection. Products and prices are illustrative; no purchases or payments are available.", "collections": "Collections", "all": "All objects", "wear": "Wear", "carry": "Carry", "desk": "On your desk", "drink": "Drinkware", "bag": "Bag", "add": "Add to demo bag", "remove": "Remove", "empty": "Your bag is empty.", "total": "Demo total", "featured": "More featured", "about": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment.", "learn": "About Oxy", "sample": "Preview", "pair": "Set of 2"},
+  store: {"title": "The Oxy Store", "announcement": "Preview collection · Purchases unavailable", "description": "Everyday objects from Oxy. Explore a preview collection of clothing, accessories and desk essentials.", "demo": "Preview collection. Products and prices are illustrative; no purchases or payments are available.", "collections": "Collections", "all": "All objects", "wear": "Wear", "carry": "Carry", "desk": "On your desk", "drink": "Drinkware", "bag": "Bag", "add": "Add to demo bag", "remove": "Remove", "empty": "Your bag is empty.", "total": "Demo total", "featured": "More featured", "about": "A little Oxy, away from the screen. Familiar objects for making, thinking and taking a moment.", "learn": "About Oxy", "sample": "Preview", "pair": "Set of 2"},
+
+  storeFavorites: {"title": "Favorites", "hint": "Saved on this device.", "empty": "You haven’t saved any objects yet.", "remove": "Remove from favorites"},
 
   storeProduct: {
     "share": "Share",

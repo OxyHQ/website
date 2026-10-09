@@ -933,7 +933,9 @@ const ca: Translations = {
     "faqBillingAnswer": "Gestiona Oxy One i els pagaments personals a Oxy Accounts. Consulta els crèdits i l’ús per a desenvolupadors a Oxy Console. En pagar des del compte veuràs les ofertes i condicions disponibles."
 },
 
-  store: {"title": "The Oxy Store", "description": "Objectes quotidians d’Oxy. Descobreix una col·lecció de mostra de roba, accessoris i articles d’escriptori.", "demo": "Col·lecció de mostra. Els productes i preus són orientatius; no es poden fer compres ni pagaments.", "collections": "Col·leccions", "all": "Tots els objectes", "wear": "Roba", "carry": "Bosses", "desk": "Al teu escriptori", "drink": "Gots i tasses", "bag": "Bossa", "add": "Afegir a la bossa de prova", "remove": "Treure", "empty": "La teva bossa és buida.", "total": "Total de prova", "featured": "Més destacats", "about": "Una mica d’Oxy, lluny de la pantalla. Objectes quotidians per crear, pensar i prendre’t un moment.", "learn": "Sobre Oxy", "sample": "Mostra", "pair": "Joc de 2"},
+  store: {"title": "The Oxy Store", "announcement": "Col·lecció de mostra · Compres no disponibles", "description": "Objectes quotidians d’Oxy. Descobreix una col·lecció de mostra de roba, accessoris i articles d’escriptori.", "demo": "Col·lecció de mostra. Els productes i preus són orientatius; no es poden fer compres ni pagaments.", "collections": "Col·leccions", "all": "Tots els objectes", "wear": "Roba", "carry": "Bosses", "desk": "Al teu escriptori", "drink": "Gots i tasses", "bag": "Bossa", "add": "Afegir a la bossa de prova", "remove": "Treure", "empty": "La teva bossa és buida.", "total": "Total de prova", "featured": "Més destacats", "about": "Una mica d’Oxy, lluny de la pantalla. Objectes quotidians per crear, pensar i prendre’t un moment.", "learn": "Sobre Oxy", "sample": "Mostra", "pair": "Joc de 2"},
+
+  storeFavorites: {"title": "Preferits", "hint": "Desats en aquest dispositiu.", "empty": "Encara no has desat cap objecte.", "remove": "Elimina dels preferits"},
 
   storeProduct: {
     "share": "Comparteix",

@@ -312,6 +312,8 @@ interface NavbarProps {
   hideAuth?: boolean
   /** Hide the global announcement banner. */
   hideBanner?: boolean
+  /** Page-specific content rendered in the existing global announcement banner. */
+  bannerContent?: React.ReactNode
   /** Hide the locale picker. */
   hideLocalePicker?: boolean
   /** Extra elements rendered before Sign in / Start for free on desktop, and before auth buttons on mobile */
@@ -335,6 +337,7 @@ export default function Navbar({
   ctaButtons,
   hideAuth,
   hideBanner,
+  bannerContent,
   hideLocalePicker,
   rightActions,
   transparent,
@@ -456,7 +459,7 @@ export default function Navbar({
   const { isAdmin } = useAdminAccess()
   const searchPath = useLocation().pathname
   const [bannerDismissed, setBannerDismissed] = useState(false)
-  const bannerVisible = !hideBanner && !bannerDismissed && (banner?.visible ?? true)
+  const bannerVisible = !hideBanner && !bannerDismissed && (bannerContent !== undefined || (banner?.visible ?? true))
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [prevDropdown, setPrevDropdown] = useState<string | null>(null)
   const [direction, setDirection] = useState<'left' | 'right' | null>(null)
@@ -965,7 +968,11 @@ export default function Navbar({
         >
           <div className="container flex h-full items-center justify-center">
             <div className="relative flex size-full items-stretch justify-center px-12 max-md:justify-start max-md:pl-0">
-              <Link
+              {bannerContent !== undefined ? (
+                <div className="flex size-full items-center justify-center text-xs leading-tight text-primary-foreground max-md:justify-start">
+                  {bannerContent}
+                </div>
+              ) : <Link
                 className="group relative flex size-full items-center justify-center gap-1.5 text-primary-foreground max-md:justify-start"
                 to={banner?.href ?? '/bloom/'}
               >
@@ -973,7 +980,7 @@ export default function Navbar({
                   {banner?.text ?? t('navbar.bannerDefault')}
                 </span>
                 <span aria-hidden="true" className="inline-flex transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
-              </Link>
+              </Link>}
               {/* Bloom's close control on the banner's own ground: primary
                   ink at 70%, a primary-foreground wash on hover. */}
               <Button

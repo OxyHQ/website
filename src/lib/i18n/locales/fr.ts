@@ -933,7 +933,9 @@ const fr: Translations = {
     "faqBillingAnswer": "Gérez Oxy One et vos paiements personnels dans Oxy Accounts. Consultez les crédits et l’usage développeur dans Oxy Console. Le paiement depuis votre compte affiche les offres et conditions disponibles."
 },
 
-  store: {"title": "The Oxy Store", "description": "Des objets du quotidien signés Oxy. Découvrez une collection de démonstration de vêtements, accessoires et objets de bureau.", "demo": "Collection de démonstration. Produits et prix indicatifs ; aucun achat ni paiement possible.", "collections": "Collections", "all": "Tous les objets", "wear": "Vêtements", "carry": "Sacs", "desk": "Sur votre bureau", "drink": "Tasses et gourdes", "bag": "Panier", "add": "Ajouter au panier de démonstration", "remove": "Retirer", "empty": "Votre panier est vide.", "total": "Total indicatif", "featured": "À découvrir aussi", "about": "Un peu d’Oxy, loin des écrans. Des objets familiers pour créer, réfléchir et prendre un moment.", "learn": "À propos d’Oxy", "sample": "Aperçu", "pair": "Lot de 2"},
+  store: {"title": "The Oxy Store", "announcement": "Collection de démonstration · Achats indisponibles", "description": "Des objets du quotidien signés Oxy. Découvrez une collection de démonstration de vêtements, accessoires et objets de bureau.", "demo": "Collection de démonstration. Produits et prix indicatifs ; aucun achat ni paiement possible.", "collections": "Collections", "all": "Tous les objets", "wear": "Vêtements", "carry": "Sacs", "desk": "Sur votre bureau", "drink": "Tasses et gourdes", "bag": "Panier", "add": "Ajouter au panier de démonstration", "remove": "Retirer", "empty": "Votre panier est vide.", "total": "Total indicatif", "featured": "À découvrir aussi", "about": "Un peu d’Oxy, loin des écrans. Des objets familiers pour créer, réfléchir et prendre un moment.", "learn": "À propos d’Oxy", "sample": "Aperçu", "pair": "Lot de 2"},
+
+  storeFavorites: {"title": "Favoris", "hint": "Enregistrés sur cet appareil.", "empty": "Vous n’avez encore enregistré aucun objet.", "remove": "Retirer des favoris"},
 
   storeProduct: {
     "share": "Partager",

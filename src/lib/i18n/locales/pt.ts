@@ -933,7 +933,9 @@ const pt: Translations = {
     "faqBillingAnswer": "Gerencie o Oxy One e pagamentos pessoais no Oxy Accounts. Consulte créditos e uso para desenvolvedores no Oxy Console. O checkout da sua conta mostra as ofertas e condições disponíveis."
 },
 
-  store: {"title": "The Oxy Store", "description": "Objetos do dia a dia da Oxy. Explore uma coleção de demonstração de roupas, acessórios e artigos de escritório.", "demo": "Coleção de demonstração. Produtos e preços são ilustrativos; compras e pagamentos não estão disponíveis.", "collections": "Coleções", "all": "Todos os objetos", "wear": "Roupas", "carry": "Bolsas", "desk": "Na sua mesa", "drink": "Copos e garrafas", "bag": "Sacola", "add": "Adicionar à sacola de demonstração", "remove": "Remover", "empty": "Sua sacola está vazia.", "total": "Total de demonstração", "featured": "Mais destaques", "about": "Um pouco de Oxy, longe da tela. Objetos familiares para criar, pensar e fazer uma pausa.", "learn": "Sobre a Oxy", "sample": "Prévia", "pair": "Conjunto de 2"},
+  store: {"title": "The Oxy Store", "announcement": "Coleção de demonstração · Compras indisponíveis", "description": "Objetos do dia a dia da Oxy. Explore uma coleção de demonstração de roupas, acessórios e artigos de escritório.", "demo": "Coleção de demonstração. Produtos e preços são ilustrativos; compras e pagamentos não estão disponíveis.", "collections": "Coleções", "all": "Todos os objetos", "wear": "Roupas", "carry": "Bolsas", "desk": "Na sua mesa", "drink": "Copos e garrafas", "bag": "Sacola", "add": "Adicionar à sacola de demonstração", "remove": "Remover", "empty": "Sua sacola está vazia.", "total": "Total de demonstração", "featured": "Mais destaques", "about": "Um pouco de Oxy, longe da tela. Objetos familiares para criar, pensar e fazer uma pausa.", "learn": "Sobre a Oxy", "sample": "Prévia", "pair": "Conjunto de 2"},
+
+  storeFavorites: {"title": "Favoritos", "hint": "Guardados neste dispositivo.", "empty": "Ainda não guardaste nenhum objeto.", "remove": "Remover dos favoritos"},
 
   storeProduct: {
     "share": "Compartilhar",

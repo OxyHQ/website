@@ -933,7 +933,9 @@ const zh: Translations = {
     "faqBillingAnswer": "在 Oxy Accounts 中管理 Oxy One 和个人付款。在 Oxy Console 中查看积分和开发者用量。账户结账页面会显示你当前可用的产品及条款。"
 },
 
-  store: {"title": "The Oxy Store", "description": "来自 Oxy 的日常好物。探索服装、配饰和桌面用品的预览系列。", "demo": "预览系列。商品和价格仅供展示，暂不支持购买或付款。", "collections": "系列", "all": "全部商品", "wear": "服装", "carry": "包袋", "desk": "桌面用品", "drink": "杯子与水瓶", "bag": "购物袋", "add": "加入演示购物袋", "remove": "移除", "empty": "购物袋为空。", "total": "演示总计", "featured": "更多精选", "about": "离开屏幕，也有 Oxy 相伴。为创作、思考与片刻休息准备的日常好物。", "learn": "关于 Oxy", "sample": "预览", "pair": "两件套"},
+  store: {"title": "The Oxy Store", "announcement": "预览系列 · 暂不支持购买", "description": "来自 Oxy 的日常好物。探索服装、配饰和桌面用品的预览系列。", "demo": "预览系列。商品和价格仅供展示，暂不支持购买或付款。", "collections": "系列", "all": "全部商品", "wear": "服装", "carry": "包袋", "desk": "桌面用品", "drink": "杯子与水瓶", "bag": "购物袋", "add": "加入演示购物袋", "remove": "移除", "empty": "购物袋为空。", "total": "演示总计", "featured": "更多精选", "about": "离开屏幕，也有 Oxy 相伴。为创作、思考与片刻休息准备的日常好物。", "learn": "关于 Oxy", "sample": "预览", "pair": "两件套"},
+
+  storeFavorites: {"title": "收藏", "hint": "保存在此设备上。", "empty": "你还没有收藏任何商品。", "remove": "取消收藏"},
 
   storeProduct: {
     "share": "分享",

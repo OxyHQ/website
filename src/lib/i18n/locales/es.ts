@@ -1080,7 +1080,9 @@ const es: Translations = {
     "faqBillingAnswer": "Gestiona Oxy One y los pagos personales en Oxy Accounts. Consulta los créditos y el uso para desarrolladores en Oxy Console. Al pagar desde tu cuenta verás las ofertas y condiciones disponibles."
 },
 
-  store: {"title": "The Oxy Store", "description": "Objetos cotidianos de Oxy. Descubre una colección de muestra de ropa, accesorios y artículos de escritorio.", "demo": "Colección de muestra. Los productos y precios son orientativos; no se pueden realizar compras ni pagos.", "collections": "Colecciones", "all": "Todos los objetos", "wear": "Ropa", "carry": "Bolsos", "desk": "En tu escritorio", "drink": "Vasos y tazas", "bag": "Bolsa", "add": "Añadir a la bolsa de prueba", "remove": "Quitar", "empty": "Tu bolsa está vacía.", "total": "Total de prueba", "featured": "Más destacados", "about": "Un poco de Oxy, lejos de la pantalla. Objetos cotidianos para crear, pensar y tomarte un momento.", "learn": "Acerca de Oxy", "sample": "Muestra", "pair": "Juego de 2"},
+  store: {"title": "The Oxy Store", "announcement": "Colección de muestra · Compras no disponibles", "description": "Objetos cotidianos de Oxy. Descubre una colección de muestra de ropa, accesorios y artículos de escritorio.", "demo": "Colección de muestra. Los productos y precios son orientativos; no se pueden realizar compras ni pagos.", "collections": "Colecciones", "all": "Todos los objetos", "wear": "Ropa", "carry": "Bolsos", "desk": "En tu escritorio", "drink": "Vasos y tazas", "bag": "Bolsa", "add": "Añadir a la bolsa de prueba", "remove": "Quitar", "empty": "Tu bolsa está vacía.", "total": "Total de prueba", "featured": "Más destacados", "about": "Un poco de Oxy, lejos de la pantalla. Objetos cotidianos para crear, pensar y tomarte un momento.", "learn": "Acerca de Oxy", "sample": "Muestra", "pair": "Juego de 2"},
+
+  storeFavorites: {"title": "Favoritos", "hint": "Guardados en este dispositivo.", "empty": "Todavía no has guardado ningún objeto.", "remove": "Quitar de favoritos"},
 
   storeProduct: {
     "share": "Compartir",
