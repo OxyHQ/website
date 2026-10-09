@@ -253,6 +253,8 @@ try {
  assert(await seatCount.evaluate(el=>document.activeElement===el),'Animating the value must preserve keyboard focus')
  await pricingOne.getByRole('radio',{name:'Annual',exact:true}).click()
  await tabs.getByRole('tab',{name:'Creator',exact:true}).click()
+ assert(await comparison.getByText('Mercaria Creator',{exact:true}).count()===4,'Creator bundles must include the merchandise subscription')
+ assert(await comparison.getByText('Mercaria Pro',{exact:true}).count()===0,'Creator bundles must not promise the business subscription')
  assert(await pricingOne.getByTestId('business-seats').count()===0,'Creator must not show the Business seat control')
  assert(await pricingOne.locator('[data-business-app-choice]').count()===0,'Only Business offers the industry app choice')
  assert((await pricingOne.locator('[data-plan-name]').allTextContents()).join(',')==='Go,Pro,Max,Ultra','Creator must show its four tiers')

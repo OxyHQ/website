@@ -89,7 +89,11 @@ export const OXY_ONE_APP_SUBSCRIPTIONS = {
   alia: { name: 'Alia', tiers: { Free: null, Go: 'Go', Pro: 'Pro', Max: 'Max', Ultra: 'Ultra' } },
   // Mention Plus is the proposed product name; Mercaria Pro is its documented candidate tier.
   mention: { name: 'Mention', tiers: { Free: null, Go: 'Plus', Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
-  mercaria: { name: 'Mercaria', tiers: { Free: null, Go: 'Pro', Pro: 'Pro', Max: 'Pro', Ultra: 'Pro' } },
+  mercaria: {
+    name: 'Mercaria',
+    tiers: { Free: null, Go: 'Pro', Pro: 'Pro', Max: 'Pro', Ultra: 'Pro' },
+    creatorTiers: { Free: null, Go: 'Creator', Pro: 'Creator', Max: 'Creator', Ultra: 'Creator' },
+  },
   inbox: { name: 'Inbox', tiers: { Free: null, Go: null, Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
   homiio: { name: 'Homiio', tiers: { Free: null, Go: 'Plus', Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
 } as const

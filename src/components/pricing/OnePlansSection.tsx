@@ -103,7 +103,8 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
           title: 'App subscriptions',
           items: [...BUNDLE_APPS[audience ?? 'personal'].map(app => {
             const subscription = OXY_ONE_APP_SUBSCRIPTIONS[app]
-            const appTier = subscription.tiers[name as keyof typeof subscription.tiers]
+            const appTiers = audience === 'creator' && 'creatorTiers' in subscription ? subscription.creatorTiers : subscription.tiers
+            const appTier = appTiers[name as keyof typeof appTiers]
             return {
               app,
               label: appTier ? `${subscription.name} ${appTier}` : subscription.name,
