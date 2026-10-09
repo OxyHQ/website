@@ -3,7 +3,10 @@ import en, { type Translations } from './en'
 /** Indonesian translations. English remains the structural source of truth. */
 const id: Translations = {
 
+
   ...en,
+  storeLive: {"loading": "Memuat koleksi…", "error": "Koleksi tidak dapat dimuat.", "empty": "Belum ada produk yang diterbitkan.", "retry": "Coba lagi", "announcement": "Jelajahi koleksi. Pilihan pembelian dan pengiriman tersedia di Mercaria.", "view": "Lihat di Mercaria", "in_stock": "Tersedia", "out_of_stock": "Stok habis", "sold": "Terjual"},
+
   help: { ...en.help,
     feedbackThanks: "Terima kasih atas masukan Anda.",
     feedbackError: "Masukan Anda tidak dapat disimpan. Silakan coba lagi.",

@@ -6,7 +6,8 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  // Synced repositories are documentation inputs, not website source.
+  globalIgnores(['dist', 'src/content/_synced/**']),
   {
     // Browser-side SPA code. The Node/Bun-side trees are handled by the next
     // block — the React plugins and browser globals don't apply there.

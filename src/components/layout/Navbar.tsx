@@ -55,7 +55,7 @@ const NAV_LABEL_KEYS: Record<string, string> = {
 
 const NAV_PRODUCT_DESCRIPTION_FALLBACKS: Record<string, string> = {
   'faircoin-explorer': 'Explore the FairCoin network',
-  pay: 'Simple payments across Oxy',
+  peable: 'Simple payments across Oxy',
   mercaria: 'An open marketplace for people and goods',
   moovo: 'Mobility and urban transport',
   noted: 'A focused space for notes and ideas',
@@ -360,20 +360,28 @@ export default function Navbar({
     // than a list (an HTML error page behind a proxy) must fall back to the
     // code-owned menu, not take the whole document down with it.
     if (!Array.isArray(navProducts) || navProducts.length === 0) return technologiesNavFallbackItems
-    const items: Array<NavDropdownItemData & { section: string }> = navProducts.map((product) => {
-      const productKey = product.productId.toLowerCase()
-      return {
-        title: product.name,
-        description: product.tagline || product.description || NAV_PRODUCT_DESCRIPTION_FALLBACKS[productKey] || 'Explore this Oxy product',
-        href: productKey === 'marketplace' || productKey === 'mercaria'
-          ? '/mercaria'
-          : (product.navOpensApp ? product.href : (product.landingUrl || product.href)),
-        image: product.productId === 'alia' ? '/images/apps/alia-dropdown.svg' : (resolveProductLogoUrl(product) || undefined),
-        logoColor: product.brand,
-        preserveImageColors: product.productId === 'alia' || product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet' || product.productId === 'kaana',
-        section: technologyNavSection(product.productId, product.section),
-      }
-    })
+    const hasPeable = navProducts.some((product) => product.productId.toLowerCase() === 'peable')
+    const items: Array<NavDropdownItemData & { section: string }> = navProducts
+      .filter((product) => !hasPeable || product.productId.toLowerCase() !== 'pay')
+      .map((product) => {
+        const productKey = product.productId.toLowerCase()
+        // Older CMS catalogues still publish Pay. Present its current identity
+        // and canonical landing page in both desktop and mobile navigation.
+        if (productKey === 'pay' || productKey === 'peable') {
+          return technologiesNavFallbackItems.find((item) => item.title === 'Peable')!
+        }
+        return {
+          title: product.name,
+          description: product.tagline || product.description || NAV_PRODUCT_DESCRIPTION_FALLBACKS[productKey] || 'Explore this Oxy product',
+          href: productKey === 'marketplace' || productKey === 'mercaria'
+            ? '/mercaria'
+            : (product.navOpensApp ? product.href : (product.landingUrl || product.href)),
+          image: product.productId === 'alia' ? '/images/apps/alia-dropdown.svg' : (resolveProductLogoUrl(product) || undefined),
+          logoColor: product.brand,
+          preserveImageColors: product.productId === 'alia' || product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet' || product.productId === 'kaana',
+          section: technologyNavSection(product.productId, product.section),
+        }
+      })
     for (const fallbackTitle of ['Noted', 'Wholesale by Mercaria']) {
       if (items.some((item) => item.title === fallbackTitle)) continue
       const fallbackItem = technologiesNavFallbackItems.find((item) => item.title === fallbackTitle)

@@ -1,6 +1,8 @@
 import CommonsContent from '../components/commons/CommonsContent'
 import PageShell from '../components/layout/PageShell'
+import Navbar from '../components/layout/Navbar'
 import { APP_CARD_IMAGES } from '../data/appCardImages'
+import '../styles/commons.css'
 
 export default function CommonsPage() {
   return (
@@ -12,7 +14,8 @@ export default function CommonsPage() {
         canonicalPath: '/commons',
         ogImage: APP_CARD_IMAGES['/commons'],
       }}
-      className="slice-theme bg-background"
+      className="slice-theme commons-theme bg-background"
+      navbar={<Navbar transparent transparentOn="dark" />}
       mainClassName="flex-1"
       hideFooterDivider
     >

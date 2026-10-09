@@ -2,6 +2,7 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 interface ImportMetaEnv {
+  readonly VITE_STORE_PREVIEW?: string
   readonly VITE_OXY_CLIENT_ID?: string
   readonly VITE_INTERCOM_APP_ID?: string
 }

@@ -11,17 +11,30 @@ import Navbar from '../components/layout/Navbar'
 import StoreBag from '../components/store/StoreBag'
 import StoreHeader from '../components/store/StoreHeader'
 import StoreProductImage from '../components/store/StoreProductImage'
+import { productGallery } from '../components/store/product-gallery'
 import { useStoreBag } from '../components/store/useStoreBag'
 import { FaqList } from '../components/sections/FaqSection'
-import { STORE_PRODUCTS, type StoreProduct } from '../data/store'
+import { type StoreProduct } from '../data/store'
 import { useCurrentLocale, useTranslation } from '../lib/i18n'
 import { Link } from '../lib/navigation'
 import { useCopyToClipboard } from '../lib/useCopyToClipboard'
+import { MercariaGoneError, MercariaNotFoundError } from '@mercaria.co/sdk'
+import { currencyDecimals, formatStorePrice } from '../lib/mercaria-store'
+import { useStoreCatalog, useStoreProduct } from '../components/store/useStoreCatalog'
+import StoreLoadState from '../components/store/StoreLoadState'
 import NotFoundPage from './NotFoundPage'
 
 export default function StoreProductPage() {
   const { id } = useParams<{ id: string }>()
-  const product = STORE_PRODUCTS.find(item => item.id === id)
+  const catalog = useStoreCatalog()
+  const query = useStoreProduct(id)
+  const { t } = useTranslation()
+  const [bagOpen, setBagOpen] = useState(false)
+  if (catalog.live && (query.isPending || query.error)) {
+    if (query.error instanceof MercariaNotFoundError || query.error instanceof MercariaGoneError) return <NotFoundPage />
+    return <PageShell navbar={<Navbar bannerContent={t('storeLive.announcement')} />} seo={{ title: t('store.title'), description: t('store.description'), canonicalPath: `/store/p/${encodeURIComponent(id ?? '')}/`, noIndex: true }}><StoreHeader count={0} onOpenBag={() => setBagOpen(true)} /><StoreLoadState pending={query.isPending} error={query.error} onRetry={() => void query.refetch()} /><StoreBag open={bagOpen} onClose={() => setBagOpen(false)} /></PageShell>
+  }
+  const product = catalog.live ? query.data : catalog.products.find(item => item.id === id)
   return product ? <ProductDetail key={product.id} product={product} /> : <NotFoundPage />
 }
 
@@ -35,15 +48,19 @@ function ProductDetail({ product }: { product: StoreProduct }) {
   const [zoomed, setZoomed] = useState(false)
   const [purchaseVisible, setPurchaseVisible] = useState(true)
   const purchaseRef = useRef<HTMLDivElement>(null)
-  const variants = STORE_PRODUCTS.filter(item => item.name === product.name)
-  const related = STORE_PRODUCTS.filter(item => item.name !== product.name && item.units === 1).slice(0, 3)
-  const money = (amount: number) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount)
+  const catalog = useStoreCatalog()
+  const [selectedOption, setSelectedOption] = useState(product.mercaria?.options?.[0]?.ref.variantId)
+  const option = product.mercaria?.options?.find(item => item.ref.variantId === selectedOption)
+  const livePrice = option ? option.price.amount / 10 ** currencyDecimals(option.price.currency) : product.price
+  const variants = catalog.products.filter(item => item.name === product.name)
+  const related = catalog.products.filter(item => item.name !== product.name && item.units === 1).slice(0, 3)
+  const money = (amount: number) => formatStorePrice(amount, option?.price.currency ?? product.currency ?? 'EUR', locale)
   const format = (item: StoreProduct) => item.units > 1 ? t('store.pair') : t('storeProduct.single')
   const name = product.units > 1 ? `${product.name} · ${t('store.pair')}` : product.name
   const isSaved = saved.includes(product.id)
   // The second view is a labelled detail crop of the same photograph, never an invented angle or colour.
-  const images = [{ src: product.image, detail: false }, { src: product.image, detail: true }]
-  const imageLabel = (index: number) => `${name}${images[index].detail ? ` · ${t('storeProduct.details')}` : ''}`
+  const images = productGallery(product)
+  const imageLabel = (index: number) => `${images[index].alt}${images[index].detail ? ` · ${t('storeProduct.details')}` : ''}`
 
   useEffect(() => {
     const node = purchaseRef.current
@@ -70,8 +87,8 @@ function ProductDetail({ product }: { product: StoreProduct }) {
   }
 
   return <PageShell
-    navbar={<Navbar bannerContent={t('store.announcement')} />}
-    seo={{ title: name, description: t('store.description'), canonicalPath: `/store/p/${product.id}/`, ogImage: product.image }}
+    navbar={<Navbar bannerContent={product.mercaria ? t('storeLive.announcement') : t('store.announcement')} />}
+    seo={{ title: name, description: product.mercaria?.description || t('store.description'), canonicalPath: `/store/p/${encodeURIComponent(product.id)}/`, ogImage: product.image }}
     mainClassName="min-w-0 flex-1 pb-20 lg:pb-0"
   >
     <StoreHeader count={count} onOpenBag={() => setBagOpen(true)} />
@@ -82,7 +99,7 @@ function ProductDetail({ product }: { product: StoreProduct }) {
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 space-y-2">
               <h2 id="store-product-title" className="text-xl font-normal leading-snug sm:text-2xl">{name}</h2>
-              <p className="text-sm">{money(product.price)} <span className="text-muted-foreground">· {t('store.sample')}</span></p>
+              <p className="text-sm">{money(livePrice)} {!product.mercaria && <span className="text-muted-foreground">· {t('store.sample')}</span>}</p>
             </div>
             <div className="flex shrink-0 gap-1">
               <Button appearance="plain" accessibilityLabel={t('storeProduct.share')} onPress={() => void share()} iconOnly>
@@ -96,13 +113,13 @@ function ProductDetail({ product }: { product: StoreProduct }) {
         </header>
 
         <div className="order-3 flex min-w-0 flex-col gap-8 lg:gap-10">
-          <p className="max-w-md text-sm leading-relaxed">{t('store.about')}</p>
-          <fieldset>
+          <p className="max-w-md text-sm leading-relaxed">{product.mercaria?.description ?? t('store.about')}</p>
+          {!product.mercaria && <fieldset>
             <legend className="mb-3 text-xs">{t('storeProduct.format')}: <span>{format(product)}</span></legend>
             <div className="grid max-w-xs grid-cols-6 gap-2">
               {variants.map(variant => <Link
                 key={variant.id}
-                to={`/store/p/${variant.id}/`}
+                to={`/store/p/${encodeURIComponent(variant.id)}/`}
                 aria-label={`${format(variant)} · ${money(variant.price)}`}
                 aria-current={variant.id === product.id ? 'page' : undefined}
                 className="flex min-w-0 flex-col gap-1 text-center text-xs outline-offset-2 aria-[current=page]:outline aria-[current=page]:outline-1 aria-[current=page]:outline-foreground focus-visible:outline-2 focus-visible:outline-ring"
@@ -111,9 +128,10 @@ function ProductDetail({ product }: { product: StoreProduct }) {
                 <span>{variant.units}</span>
               </Link>)}
             </div>
-          </fieldset>
+          </fieldset>}
+          {product.mercaria?.options && <fieldset><legend className="mb-3 text-xs">{t('storeProduct.format')}</legend><div className="flex flex-wrap gap-2">{product.mercaria.options.map(item => <Button key={item.ref.variantId} appearance={item.ref.variantId === selectedOption ? 'solid' : 'outline'} pressed={item.ref.variantId === selectedOption} onPress={() => setSelectedOption(item.ref.variantId)}>{item.title}</Button>)}</div></fieldset>}
           <div ref={purchaseRef} data-store-purchase>
-            <Button onPress={addToBag} className="w-full !min-h-12">{t('store.add')}</Button>
+            {product.mercaria ? <div className="space-y-3"><p className="text-sm text-muted-foreground">{t(`storeLive.${option?.availability ?? product.mercaria.availability}`)}</p><a href={product.mercaria.url} className="flex min-h-12 items-center justify-center bg-foreground px-4 text-sm text-background focus-visible:outline-2 focus-visible:outline-ring">{t('storeLive.view')}</a></div> : <Button onPress={addToBag} className="w-full !min-h-12">{t('store.add')}</Button>}
           </div>
           <FaqList
             idPrefix={`product-${product.id}`}
@@ -125,19 +143,19 @@ function ProductDetail({ product }: { product: StoreProduct }) {
                 {[
                   [t('store.collections'), t(`store.${product.category}`)],
                   [t('storeProduct.format'), format(product)],
-                  [t('storeProduct.price'), money(product.price)],
+                  [t('storeProduct.price'), money(livePrice)],
                 ].map(([term, value]) => <div key={term} className="grid grid-cols-2 gap-4 py-3"><dt>{term}</dt><dd className="text-foreground">{value}</dd></div>)}
               </dl> },
-              { question: t('storeProduct.shipping'), answer: t('storeProduct.shippingBody') },
+              { question: t('storeProduct.shipping'), answer: product.mercaria ? t('storeLive.announcement') : t('storeProduct.shippingBody') },
             ]}
           />
           <section aria-labelledby="store-product-related">
             <h2 id="store-product-related" className="mb-4 text-sm font-normal">{t('storeProduct.related')}</h2>
             <div className="grid grid-cols-3 gap-3">
-              {related.map(item => <Link key={item.id} to={`/store/p/${item.id}/`} className="group min-w-0 text-xs leading-relaxed">
+              {related.map(item => <Link key={item.id} to={`/store/p/${encodeURIComponent(item.id)}/`} className="group min-w-0 text-xs leading-relaxed">
                 <div className="mb-2 aspect-[4/5] overflow-hidden bg-muted"><StoreProductImage product={item} /></div>
                 <h3 className="font-normal group-hover:italic">{item.name}</h3>
-                <p className="mt-1 text-muted-foreground">{money(item.price)}</p>
+                <p className="mt-1 text-muted-foreground">{formatStorePrice(item.price, item.currency ?? 'EUR', locale)}</p>
               </Link>)}
             </div>
           </section>
@@ -161,8 +179,8 @@ function ProductDetail({ product }: { product: StoreProduct }) {
       </div>
     </section>
 
-    {!purchaseVisible && !bagOpen && imageIndex === null && <div data-store-floating-purchase className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-border bg-background px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] shadow-sm lg:hidden">
-      <div className="min-w-0 text-xs"><p className="truncate">{name}</p><p className="mt-1">{money(product.price)}</p></div>
+    {!product.mercaria && !purchaseVisible && !bagOpen && imageIndex === null && <div data-store-floating-purchase className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-border bg-background px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] shadow-sm lg:hidden">
+      <div className="min-w-0 text-xs"><p className="truncate">{name}</p><p className="mt-1">{money(livePrice)}</p></div>
       <Button onPress={addToBag} className="shrink-0 !min-h-11">{t('store.add')}</Button>
     </div>}
 

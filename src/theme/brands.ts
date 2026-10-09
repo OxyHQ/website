@@ -63,8 +63,17 @@ export interface BrandSurface {
  * that uses `.cursor-theme` alone.
  */
 const HELP_PRESET = APP_COLOR_PRESETS['arctic-signal']
+const COMMONS_PRESET = APP_COLOR_PRESETS['pacific-flare']
 
 export const BRAND_SURFACES: readonly BrandSurface[] = [
+  {
+    selector: '.commons-theme',
+    seed: COMMONS_PRESET.hex,
+    secondarySeed: COMMONS_PRESET.secondaryHex,
+    tertiarySeed: COMMONS_PRESET.tertiaryHex,
+    mode: 'auto',
+    label: 'Commons — Pacific Flare',
+  },
   {
     selector: '.help-theme',
     seed: HELP_PRESET.hex,

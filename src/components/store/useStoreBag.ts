@@ -1,12 +1,14 @@
 import { useSyncExternalStore } from 'react'
 import { STORE_PRODUCTS } from '../../data/store'
+import { mercariaStoreId } from '../../lib/mercaria-store'
+import { useStoreCatalog } from './useStoreCatalog'
 
 interface StoreState {
   quantities: Readonly<Record<string, number>>
   saved: readonly string[]
 }
 
-const STORAGE_KEY = 'oxy:store:bag:v1'
+const STORAGE_KEY = mercariaStoreId ? `oxy:store:${mercariaStoreId}:saved:v1` : 'oxy:store:bag:v1'
 const EMPTY: StoreState = { quantities: {}, saved: [] }
 const productIds = new Set(STORE_PRODUCTS.map(product => product.id))
 const listeners = new Set<() => void>()
@@ -21,11 +23,11 @@ function readStorage(): StoreState {
     const quantities: Record<string, number> = {}
     if (stored.quantities && typeof stored.quantities === 'object' && !Array.isArray(stored.quantities)) {
       for (const [id, quantity] of Object.entries(stored.quantities)) {
-        if (productIds.has(id) && typeof quantity === 'number' && Number.isInteger(quantity) && quantity > 0 && quantity <= 99) quantities[id] = quantity
+        if (!mercariaStoreId && productIds.has(id) && typeof quantity === 'number' && Number.isInteger(quantity) && quantity > 0 && quantity <= 99) quantities[id] = quantity
       }
     }
     const saved = Array.isArray(stored.saved)
-      ? [...new Set(stored.saved.filter((id): id is string => typeof id === 'string' && productIds.has(id)))]
+      ? [...new Set(stored.saved.filter((id): id is string => typeof id === 'string' && id.length > 0 && id.length <= 256 && (!!mercariaStoreId || productIds.has(id))))]
       : []
     return { quantities, saved }
   } catch {
@@ -68,7 +70,7 @@ function update(next: StoreState) {
 }
 
 function setQuantity(id: string, quantity: number) {
-  if (!productIds.has(id) || !Number.isFinite(quantity)) return
+  if (mercariaStoreId || !productIds.has(id) || !Number.isFinite(quantity)) return
   const current = getSnapshot()
   const quantities = { ...current.quantities }
   const next = Math.max(0, Math.min(99, Math.floor(quantity)))
@@ -82,16 +84,18 @@ function addItem(id: string) {
 }
 
 function toggleSaved(id: string) {
-  if (!productIds.has(id)) return
+  if (!id || (!mercariaStoreId && !productIds.has(id))) return
   const current = getSnapshot()
   update({ ...current, saved: current.saved.includes(id) ? current.saved.filter(value => value !== id) : [...current.saved, id] })
 }
 
 /** A device-local preview bag shared by the collection and product routes. No checkout or account data. */
 export function useStoreBag() {
+  const catalog = useStoreCatalog()
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
   return {
     ...snapshot,
+    saved: mercariaStoreId && catalog.isSuccess ? snapshot.saved.filter(id => catalog.products.some(product => product.id === id)) : snapshot.saved,
     count: Object.values(snapshot.quantities).reduce((total, quantity) => total + quantity, 0),
     total: STORE_PRODUCTS.reduce((total, product) => total + product.price * (snapshot.quantities[product.id] ?? 0), 0),
     setQuantity,

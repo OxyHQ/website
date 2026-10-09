@@ -3,7 +3,10 @@ import en, { type Translations } from './en'
 /** Bengali translations. English remains the structural source of truth. */
 const bn: Translations = {
 
+
   ...en,
+  storeLive: {"loading": "সংগ্রহ লোড হচ্ছে…", "error": "সংগ্রহ লোড করা যায়নি।", "empty": "এখনও কোনো পণ্য প্রকাশিত হয়নি।", "retry": "আবার চেষ্টা করুন", "announcement": "সংগ্রহ দেখুন। কেনাকাটা ও ডেলিভারির বিকল্প Mercaria-তে পাওয়া যাবে।", "view": "Mercaria-তে দেখুন", "in_stock": "মজুত আছে", "out_of_stock": "মজুত নেই", "sold": "বিক্রি হয়েছে"},
+
   help: { ...en.help,
     feedbackThanks: "আপনার মতামতের জন্য ধন্যবাদ।",
     feedbackError: "আপনার মতামত সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।",

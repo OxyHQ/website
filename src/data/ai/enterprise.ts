@@ -138,7 +138,7 @@ export const enterpriseServices: EnterpriseService[] = [
   },
   {
     key: 'peable',
-    name: 'Oxy Pay',
+    name: 'Peable',
     description:
       'Payments across the Oxy ecosystem. In development — nothing is open for deposits yet, and this card will say so until that changes.',
     availability: 'coming_soon',

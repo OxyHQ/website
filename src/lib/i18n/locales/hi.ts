@@ -3,7 +3,10 @@ import en, { type Translations } from './en'
 /** Hindi translations. English remains the structural source of truth. */
 const hi: Translations = {
 
+
   ...en,
+  storeLive: {"loading": "संग्रह लोड हो रहा है…", "error": "संग्रह लोड नहीं हो सका।", "empty": "अभी कोई उत्पाद प्रकाशित नहीं हुआ है।", "retry": "फिर कोशिश करें", "announcement": "संग्रह देखें। खरीदारी और डिलीवरी के विकल्प Mercaria पर उपलब्ध हैं।", "view": "Mercaria पर देखें", "in_stock": "स्टॉक में है", "out_of_stock": "स्टॉक में नहीं है", "sold": "बिक चुका है"},
+
   help: { ...en.help,
     feedbackThanks: "आपकी प्रतिक्रिया के लिए धन्यवाद।",
     feedbackError: "आपकी प्रतिक्रिया सहेजी नहीं जा सकी। कृपया फिर से कोशिश करें।",

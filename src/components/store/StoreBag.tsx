@@ -2,6 +2,8 @@ import { Dialog } from '@oxy.so/bloom/dialog'
 import { Button } from '@oxy.so/bloom/button'
 import { CartPanel } from '@oxy.so/bloom/cart-panel'
 import { LocaleProvider as BloomLocaleProvider } from '@oxy.so/bloom/locale'
+import { mercariaStoreId } from '../../lib/mercaria-store'
+import { useStoreCatalog } from './useStoreCatalog'
 import { STORE_PRODUCTS } from '../../data/store'
 import { useCurrentLocale, useTranslation } from '../../lib/i18n'
 import { useNavigate } from '../../lib/navigation'
@@ -12,6 +14,7 @@ export default function StoreBag({ open, onClose }: { open: boolean; onClose: ()
   const { t } = useTranslation()
   const locale = useCurrentLocale()
   const navigate = useNavigate()
+  const catalog = useStoreCatalog()
   const { quantities, count, total, setQuantity } = useStoreBag()
   const money = (amount: number) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount)
   const lines = STORE_PRODUCTS.filter(product => quantities[product.id]).map(product => ({
@@ -39,7 +42,8 @@ export default function StoreBag({ open, onClose }: { open: boolean; onClose: ()
           <h2 className="text-xl font-medium">{t('store.bag')} [{count}]</h2>
           <Button appearance="subtle" onPress={onClose}>{t('common.close')}</Button>
         </div>
-        <p className="text-sm leading-relaxed text-muted-foreground">{t('store.demo')}</p>
+        <p className="text-sm leading-relaxed text-muted-foreground">{mercariaStoreId ? t('storeLive.announcement') : t('store.demo')}</p>
+        {mercariaStoreId && catalog.data?.store && <a href={catalog.data.store.url} className="block underline">{t('storeLive.view')}</a>}
         <CartPanel
           vendorName={t('store.title')}
           vendorPhoto="/logo-mark.svg"
