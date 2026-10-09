@@ -39,11 +39,11 @@ elif op=='list-tasks': print('task-1\\ttask-2')
 elif op=='describe-tasks': print(json.dumps({'tasks':[{'containers':[{'name':'website-api','imageDigest':os.environ['RUNNING_TEST_DIGEST']}]}]}))
 else: raise Exception(args)
 `, { mode: 0o755 })
-    const process = Bun.spawn(['bash', 'scripts/deploy-ecs.sh', 'oxy-cluster', 'website-api'], {
-      env: { ...Bun.env, PATH: `${dir}:${Bun.env.PATH}`, AWS_REGION: 'us-west-2', ECR_REGISTRY: 'registry', GITHUB_SHA: 'c'.repeat(40), DEPLOY_TEST_DIR: dir, EXPECTED_TEST_DIGEST: digest, RUNNING_TEST_DIGEST: wrongDigest ? `sha256:${'a'.repeat(64)}` : digest },
+    const child = Bun.spawn(['bash', 'scripts/deploy-ecs.sh', 'oxy-cluster', 'website-api'], {
+      env: { ...process.env, PATH: `${dir}:${process.env.PATH}`, AWS_REGION: 'us-west-2', ECR_REGISTRY: 'registry', GITHUB_SHA: 'c'.repeat(40), DEPLOY_TEST_DIR: dir, EXPECTED_TEST_DIGEST: digest, RUNNING_TEST_DIGEST: wrongDigest ? `sha256:${'a'.repeat(64)}` : digest },
       stdout: 'pipe', stderr: 'pipe',
     })
-    const [code, output] = await Promise.all([process.exited, new Response(process.stdout).text()])
+    const [code, output] = await Promise.all([child.exited, new Response(child.stdout).text()])
     expect(code).toBe(wrongDigest ? 1 : 0)
     expect(output).toContain(wrongDigest ? 'running tasks do not serve the built image' : `COMPLETED, ${digest}`)
     const registered = JSON.parse(await readFile(join(dir, 'registered.json'), 'utf8'))
