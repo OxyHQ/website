@@ -29,50 +29,51 @@ if [ "$STATUS" != "ACTIVE" ]; then
   exit 0
 fi
 
-# The website API's Intercom secret is synced to SSM by the deploy workflow,
-# but older live task definitions predate that secret. Keep the task definition
-# update narrowly scoped to this service and clone the live definition so that
-# fields managed outside the current Terraform checkout are preserved.
+# Render from the live definition, but pin this deployment to the image built
+# by this run. Reusing the live image silently redeploys an old digest even when
+# ECS reports a successful rollout.
+RELEASE_SHA="${GITHUB_SHA:?exact built commit required}"
+ECR_REGISTRY="${ECR_REGISTRY:?ECR registry required}"
+[[ "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "invalid release SHA" >&2; exit 1; }
+EXPECTED_DIGEST=$(aws ecr describe-images --repository-name "oxy/$SERVICE" \
+  --image-ids "imageTag=$RELEASE_SHA" --region "$AWS_REGION" \
+  --query 'imageDetails[0].imageDigest' --output text)
+[[ "$EXPECTED_DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]] || { echo "built image digest missing" >&2; exit 1; }
+EXPECTED_IMAGE="$ECR_REGISTRY/oxy/$SERVICE@$EXPECTED_DIGEST"
 TASK_DEFINITION=$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" \
   --region "$AWS_REGION" --query 'services[0].taskDefinition' --output text)
-if [ "$SERVICE" = "website-api" ]; then
-  WORK_DIR=$(mktemp -d)
-  trap 'rm -rf "$WORK_DIR"' EXIT
-  aws ecs describe-task-definition --task-definition "$TASK_DEFINITION" \
-    --region "$AWS_REGION" --query 'taskDefinition' \
-    > "$WORK_DIR/task-definition.json"
+WORK_DIR=$(mktemp -d)
+trap 'rm -rf "$WORK_DIR"' EXIT
+aws ecs describe-task-definition --task-definition "$TASK_DEFINITION" \
+  --region "$AWS_REGION" --query 'taskDefinition' > "$WORK_DIR/task-definition.json"
+jq -e --arg name "$SERVICE" '[.containerDefinitions[] | select(.name == $name)] | length == 1' \
+  "$WORK_DIR/task-definition.json" >/dev/null
 
-  # `any` folds every secret into ONE boolean. The previous filter emitted one
-  # per secret and `jq -e` judged only the last, so a definition that already
-  # carried the secret anywhere but last got it appended again, and ECS refused
-  # the duplicate — every website-api deploy failed from 2026-09-14.
-  if ! jq -e --arg name "INTERCOM_MESSENGER_SECRET" \
-    'any(.containerDefinitions[] | (.secrets // [])[]?; .name == $name)' \
-    "$WORK_DIR/task-definition.json" >/dev/null; then
-    # The ARN is spelled out rather than read back: the deploy role may WRITE
-    # /oxy/* (the sync step above just put this parameter there) but not read
-    # it, and `ssm:GetParameter` was failing the whole deploy for the sake of a
-    # string this line can build. ECS resolves it at task start; if the sync
-    # skipped an empty secret, that is where it surfaces.
-    ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
-    SECRET_ARN="arn:aws:ssm:$AWS_REGION:$ACCOUNT_ID:parameter/oxy/$SERVICE/INTERCOM_MESSENGER_SECRET"
-    jq --arg container "$SERVICE" --arg name "INTERCOM_MESSENGER_SECRET" \
-      --arg valueFrom "$SECRET_ARN" '
-      del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
-          .compatibilities, .registeredAt, .registeredBy, .tags)
-      | .containerDefinitions |= map(
-          if .name == $container then
-            .secrets = ((.secrets // []) + [{name: $name, valueFrom: $valueFrom}])
-          else . end
-        )
-    ' "$WORK_DIR/task-definition.json" > "$WORK_DIR/task-definition-updated.json"
-    TASK_DEFINITION=$(aws ecs register-task-definition \
-      --region "$AWS_REGION" \
-      --cli-input-json "file://$WORK_DIR/task-definition-updated.json" \
-      --query 'taskDefinition.taskDefinitionArn' --output text)
-    echo "registered $TASK_DEFINITION with Intercom secret"
-  fi
+# Preserve the existing Intercom secret compatibility fix without changing
+# other containers, environment, roles, resource limits or secret references.
+SECRET_ARN=""
+if [ "$SERVICE" = "website-api" ] && ! jq -e --arg name "INTERCOM_MESSENGER_SECRET" \
+  'any(.containerDefinitions[] | select(.name == "website-api") | (.secrets // [])[]?; .name == $name)' \
+  "$WORK_DIR/task-definition.json" >/dev/null; then
+  ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+  SECRET_ARN="arn:aws:ssm:$AWS_REGION:$ACCOUNT_ID:parameter/oxy/$SERVICE/INTERCOM_MESSENGER_SECRET"
 fi
+jq --arg container "$SERVICE" --arg image "$EXPECTED_IMAGE" --arg secret "$SECRET_ARN" '
+  del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
+      .compatibilities, .registeredAt, .registeredBy, .tags)
+  | .containerDefinitions |= map(
+      if .name == $container then
+        .image = $image
+        | if $secret != "" then
+            .secrets = ((.secrets // []) + [{name: "INTERCOM_MESSENGER_SECRET", valueFrom: $secret}])
+          else . end
+      else . end
+    )
+' "$WORK_DIR/task-definition.json" > "$WORK_DIR/task-definition-updated.json"
+TASK_DEFINITION=$(aws ecs register-task-definition --region "$AWS_REGION" \
+  --cli-input-json "file://$WORK_DIR/task-definition-updated.json" \
+  --query 'taskDefinition.taskDefinitionArn' --output text)
+echo "registered $TASK_DEFINITION for $EXPECTED_IMAGE"
 
 # Start both replacement tasks at once, next to the old ones: 200% with a 100%
 # healthy floor. At 150% they were replaced one at a time — two waves of start,
@@ -116,7 +117,21 @@ if [ "$LIVE" = "$ID" ]; then
       --query 'services[0].events[0:8].message' --output text
     exit 1
   fi
-  echo "deployed $SERVICE ($STATE)"
+  RUNNING_TASKS=$(aws ecs list-tasks --cluster "$CLUSTER" --service-name "$SERVICE" \
+    --region "$AWS_REGION" --desired-status RUNNING --query 'taskArns' --output text)
+  if [ -z "$RUNNING_TASKS" ] || [ "$RUNNING_TASKS" = "None" ]; then
+    echo "::error::no running tasks to verify"; exit 1
+  fi
+  read -ra TASK_ARNS <<<"$RUNNING_TASKS"
+  aws ecs describe-tasks --cluster "$CLUSTER" --tasks "${TASK_ARNS[@]}" \
+    --region "$AWS_REGION" > "$WORK_DIR/running-tasks.json"
+  if ! jq -e --arg name "$SERVICE" --arg digest "$EXPECTED_DIGEST" '
+    [.tasks[].containers[] | select(.name == $name)] as $containers
+    | ($containers | length > 0) and all($containers[]; .imageDigest == $digest)
+  ' "$WORK_DIR/running-tasks.json" >/dev/null; then
+    echo "::error::running tasks do not serve the built image $EXPECTED_DIGEST"; exit 1
+  fi
+  echo "deployed $SERVICE ($STATE, $EXPECTED_DIGEST)"
 elif [ "$(date -d "$LIVE_AT" +%s)" -gt "$(date -d "$STARTED" +%s)" ]; then
   # A newer deployment took over — another push, not a rollback. Its own run
   # owns that outcome; failing here would make every concurrent push red.
