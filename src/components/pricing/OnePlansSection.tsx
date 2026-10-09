@@ -14,7 +14,6 @@ import { useTheme } from '@oxy.so/bloom/theme'
 import { SegmentedControl, SegmentedControlItem, SegmentedControlItemText } from '@oxy.so/bloom/segmented-control'
 import { Stepper } from '@oxy.so/bloom/stepper'
 import { getBrandMark } from '../../data/brand-assets'
-import { getAliaComparisonGroups } from '../../data/oneAliaComparison'
 
 import { organizationSeatCount, pricingOrganizationId } from '../../lib/pricingSeats'
 
@@ -23,9 +22,9 @@ export type PlanAudience = 'personal' | 'creator' | 'business'
 
 // Proposed bundle composition. Checkout and entitlement activation live in Accounts.
 const BUNDLE_APPS = {
-  personal: ['Alia', 'Mention', 'Inbox'],
-  creator: ['Alia', 'Mention', 'Mercaria'],
-  business: ['Alia', 'Mention', 'Inbox'],
+  personal: ['alia', 'mention', 'inbox', 'homiio'],
+  creator: ['alia', 'mention', 'mercaria'],
+  business: ['alia', 'mention', 'inbox'],
 } as const
 
 export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = false, audience, personalMode, onPersonalModeChange }: { headingLevel?: 'h1' | 'h2'; headerOverlay?: boolean; audience?: PlanAudience; personalMode?: PersonalPlanMode; onPersonalModeChange?: (mode: PersonalPlanMode) => void }) {
@@ -78,6 +77,7 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
     const free = name === 'Free'
     const quote = onePlanQuote(tier, billingPeriod, seats)
     const formatPrice = (amount: number) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD', minimumFractionDigits: amount % 100 === 0 ? 0 : 2, maximumFractionDigits: 2 }).format(amount / 100)
+    const formatStorage = (gb: number) => `${new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(gb >= 1000 ? gb / 1000 : gb)} ${gb >= 1000 ? 'TB' : 'GB'}`
     const creditLabel = quote.monthlyCredits === undefined ? '—' : t('one.monthlyCreditAmount', { count: quote.monthlyCredits.toLocaleString(locale) })
     return {
       ...tier,
@@ -102,21 +102,29 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
         {
           title: 'App subscriptions',
           items: [...BUNDLE_APPS[audience ?? 'personal'].map(app => {
-            const productId = app.toLowerCase()
-            const subscription = OXY_ONE_APP_SUBSCRIPTIONS[productId as keyof typeof OXY_ONE_APP_SUBSCRIPTIONS]
-            const appTier = subscription?.tiers[name as keyof typeof subscription.tiers]
+            const subscription = OXY_ONE_APP_SUBSCRIPTIONS[app]
+            const appTiers = audience === 'creator' && 'creatorTiers' in subscription ? subscription.creatorTiers : subscription.tiers
+            const appTier = appTiers[name as keyof typeof appTiers]
             return {
-              app: productId,
-              label: appTier ? `${app} ${appTier}` : app,
-              detail: free || appTier === null ? 'Free access' : 'Included subscription',
+              app,
+              label: appTier ? `${subscription.name} ${appTier}` : subscription.name,
+              detail: 'Included subscription',
+              included: appTier !== null,
             }
           }), ...(audience === 'business' ? [{
             label: 'Business app',
             detail: t('one.businessAppIncluded'),
-            choices: [{ app: 'mercaria', label: 'Mercaria' }, { app: 'homiio', label: 'Homiio Plus' }],
+            choices: [{ app: 'mercaria', label: 'Mercaria Pro' }, { app: 'homiio', label: 'Homiio Plus' }],
           }] : [])],
         },
-        ...getAliaComparisonGroups(OXY_ONE_APP_SUBSCRIPTIONS.alia.tiers[name as keyof typeof OXY_ONE_APP_SUBSCRIPTIONS.alia.tiers] ?? 'Free'),
+        {
+          title: t('one.storage'),
+          items: [
+            { label: t('one.totalStorage'), detail: quote.storageGB === undefined ? '—' : formatStorage(quote.storageGB) },
+            { label: t('one.storageSharing'), detail: t(family ? 'one.familyStorage' : audience === 'business' ? 'one.teamStorage' : 'one.appStorage') },
+            ...(audience === 'business' ? [{ label: t('one.storageBreakdown'), detail: `${formatStorage(tier.storageGB)} + ${t('one.storagePerSeat', { amount: formatStorage(tier.storagePerSeatGB ?? 0) })}` }] : []),
+          ],
+        },
         {
           title: 'Credits',
           items: [
@@ -368,13 +376,20 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
   )
 }
 
-function PlanFeature({ label, detail, app, choices, confirmed = true }: { label: string; detail: string; app?: string; choices?: { app: string; label: string }[]; confirmed?: boolean }) {
+function SubscriptionMark({ app }: { app: string }) {
+  const src = getBrandMark(app)
+  return <img data-subscription-app={app} src={src} alt="" aria-hidden="true" width={28} height={28} className="size-7 shrink-0 rounded-md object-contain" />
+}
+
+function PlanFeature({ label, detail, app, choices, included = true, confirmed = true }: { label: string; detail: string; app?: string; choices?: { app: string; label: string }[]; included?: boolean; confirmed?: boolean }) {
   const { colors } = useTheme()
+  const { t } = useTranslation()
+  if (app && !included) return <span data-subscription-missing={app} role="img" aria-label={t('one.subscriptionNotIncluded', { app: label })} className="text-muted-foreground">—</span>
   if (choices) return (
     <div data-business-app-choice className="flex flex-col gap-3 text-start">
       <div className="flex flex-col gap-2">
         {choices.map(choice => <div key={choice.app} className="flex items-center gap-2">
-          <img data-subscription-app={choice.app} src={getBrandMark(choice.app)} alt="" aria-hidden="true" width={28} height={28} className="size-7 shrink-0 rounded-md object-contain" />
+          <SubscriptionMark app={choice.app} />
           <Text variant="body-regular">{choice.label}</Text>
         </div>)}
       </div>
@@ -383,7 +398,7 @@ function PlanFeature({ label, detail, app, choices, confirmed = true }: { label:
   )
   return (
     <div className="flex items-start gap-2 text-start">
-      {app ? <img data-subscription-app={app} src={getBrandMark(app)} alt="" aria-hidden="true" width={28} height={28} className="size-7 shrink-0 rounded-md object-contain" /> : <span aria-hidden="true" className="shrink-0">
+      {app ? <SubscriptionMark app={app} /> : <span aria-hidden="true" className="shrink-0">
         {confirmed ? <RiCheckLine width={16} height={16} fill={colors.primary} /> : <span className="inline-block w-4 text-center text-muted-foreground">—</span>}
       </span>}
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">

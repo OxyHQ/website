@@ -28,6 +28,9 @@ export interface OnePlan {
   monthlyPrice: number
   monthlyCredits: number
   creditDiscount: number
+  /** Proposed shared storage in GB; does not provision a backend quota. */
+  storageGB: number
+  storagePerSeatGB?: number
   monthlySeatPrice?: number
   creditsPerSeat?: number
 }
@@ -40,37 +43,38 @@ export const OXY_ONE_AUDIENCE_THEMES = {
   business: 'one-professional-theme',
 } as const
 
-/** Product-owner-approved catalogue. USD minor units; credits renew monthly even on annual plans.
- * Marketing terms do not provision subscriptions or grant runtime entitlements. */
+/** Approved prices and credits; proposed storage capacities for the bundle design.
+ * USD minor units; credits renew monthly even on annual plans. Free 2 GB and Go 20 GB follow
+ * the new product direction; existing backend quotas are not changed here. */
 export const OXY_ONE_PERSONAL_PLANS = {
-  Free: { monthlyPrice: 0, monthlyCredits: 0, creditDiscount: 0 },
-  Go: { monthlyPrice: 1500, monthlyCredits: 4000, creditDiscount: 5 },
-  Pro: { monthlyPrice: 2999, monthlyCredits: 10000, creditDiscount: 10 },
-  Max: { monthlyPrice: 9900, monthlyCredits: 50000, creditDiscount: 15 },
-  Ultra: { monthlyPrice: 40000, monthlyCredits: 200000, creditDiscount: 20 },
+  Free: { monthlyPrice: 0, monthlyCredits: 0, creditDiscount: 0, storageGB: 2 },
+  Go: { monthlyPrice: 1500, monthlyCredits: 4000, creditDiscount: 5, storageGB: 20 },
+  Pro: { monthlyPrice: 2999, monthlyCredits: 10000, creditDiscount: 10, storageGB: 100 },
+  Max: { monthlyPrice: 9900, monthlyCredits: 50000, creditDiscount: 15, storageGB: 500 },
+  Ultra: { monthlyPrice: 40000, monthlyCredits: 200000, creditDiscount: 20, storageGB: 2000 },
 } as const
 
 /** A family quota belongs to the whole group, never multiplied by member count. */
 export const OXY_ONE_FAMILY_PLANS = {
-  Go: { monthlyPrice: 2500, monthlyCredits: 8000, creditDiscount: 5 },
-  Pro: { monthlyPrice: 4900, monthlyCredits: 20000, creditDiscount: 10 },
-  Max: { monthlyPrice: 16900, monthlyCredits: 100000, creditDiscount: 15 },
-  Ultra: { monthlyPrice: 59900, monthlyCredits: 300000, creditDiscount: 20 },
+  Go: { monthlyPrice: 2500, monthlyCredits: 8000, creditDiscount: 5, storageGB: 40 },
+  Pro: { monthlyPrice: 4900, monthlyCredits: 20000, creditDiscount: 10, storageGB: 200 },
+  Max: { monthlyPrice: 16900, monthlyCredits: 100000, creditDiscount: 15, storageGB: 1000 },
+  Ultra: { monthlyPrice: 59900, monthlyCredits: 300000, creditDiscount: 20, storageGB: 4000 },
 } as const
 
 export const OXY_ONE_BUSINESS_PLANS = {
-  Go: { monthlyPrice: 3900, monthlySeatPrice: 900, monthlyCredits: 8000, creditsPerSeat: 2000, creditDiscount: 15 },
-  Pro: { monthlyPrice: 9999, monthlySeatPrice: 1900, monthlyCredits: 25000, creditsPerSeat: 5000, creditDiscount: 25 },
-  Max: { monthlyPrice: 19900, monthlySeatPrice: 2900, monthlyCredits: 60000, creditsPerSeat: 8000, creditDiscount: 30 },
-  Ultra: { monthlyPrice: 59900, monthlySeatPrice: 4900, monthlyCredits: 200000, creditsPerSeat: 15000, creditDiscount: 35 },
+  Go: { monthlyPrice: 3900, monthlySeatPrice: 900, monthlyCredits: 8000, creditsPerSeat: 2000, creditDiscount: 15, storageGB: 20, storagePerSeatGB: 5 },
+  Pro: { monthlyPrice: 9999, monthlySeatPrice: 1900, monthlyCredits: 25000, creditsPerSeat: 5000, creditDiscount: 25, storageGB: 100, storagePerSeatGB: 10 },
+  Max: { monthlyPrice: 19900, monthlySeatPrice: 2900, monthlyCredits: 60000, creditsPerSeat: 8000, creditDiscount: 30, storageGB: 500, storagePerSeatGB: 25 },
+  Ultra: { monthlyPrice: 59900, monthlySeatPrice: 4900, monthlyCredits: 200000, creditsPerSeat: 15000, creditDiscount: 35, storageGB: 2000, storagePerSeatGB: 50 },
 } as const
 
 /** Verification, basic app access and model access are not subscription gates. */
 export const OXY_ONE_CREATOR_PLANS = {
-  Go: { monthlyPrice: 2900, monthlyCredits: 10000, creditDiscount: 10 },
-  Pro: { monthlyPrice: 6900, monthlyCredits: 25000, creditDiscount: 15 },
-  Max: { monthlyPrice: 14900, monthlyCredits: 60000, creditDiscount: 20 },
-  Ultra: { monthlyPrice: 49900, monthlyCredits: 250000, creditDiscount: 25 },
+  Go: { monthlyPrice: 2900, monthlyCredits: 10000, creditDiscount: 10, storageGB: 20 },
+  Pro: { monthlyPrice: 6900, monthlyCredits: 25000, creditDiscount: 15, storageGB: 100 },
+  Max: { monthlyPrice: 14900, monthlyCredits: 60000, creditDiscount: 20, storageGB: 500 },
+  Ultra: { monthlyPrice: 49900, monthlyCredits: 250000, creditDiscount: 25, storageGB: 2000 },
 } as const
 
 export function getOnePlans(audience: OneAudience, mode: PersonalPlanMode = 'individual'): OnePlan[] {
@@ -83,6 +87,13 @@ export function getOnePlans(audience: OneAudience, mode: PersonalPlanMode = 'ind
  * Bundle inclusion is a proposal and does not activate product entitlements. */
 export const OXY_ONE_APP_SUBSCRIPTIONS = {
   alia: { name: 'Alia', tiers: { Free: null, Go: 'Go', Pro: 'Pro', Max: 'Max', Ultra: 'Ultra' } },
+  // Mention Plus is the proposed product name; Mercaria Pro is its documented candidate tier.
+  mention: { name: 'Mention', tiers: { Free: null, Go: 'Plus', Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
+  mercaria: {
+    name: 'Mercaria',
+    tiers: { Free: null, Go: 'Pro', Pro: 'Pro', Max: 'Pro', Ultra: 'Pro' },
+    creatorTiers: { Free: null, Go: 'Creator', Pro: 'Creator', Max: 'Creator', Ultra: 'Creator' },
+  },
   inbox: { name: 'Inbox', tiers: { Free: null, Go: null, Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
   homiio: { name: 'Homiio', tiers: { Free: null, Go: 'Plus', Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
 } as const
@@ -99,6 +110,7 @@ export function onePlanQuote(plan: OnePlan, period: 'monthly' | 'annual', seats:
     seatMonthly: plan.monthlySeatPrice === undefined ? undefined : period === 'annual' ? Math.round(seatAnnual! / 12) : plan.monthlySeatPrice,
     totalMonthly: !known ? undefined : period === 'annual' ? Math.round(totalAnnual! / 12) : plan.monthlyPrice + (plan.monthlySeatPrice ?? 0) * (seats ?? 0),
     totalAnnual,
+    storageGB: known ? plan.storageGB + (plan.storagePerSeatGB ?? 0) * (seats ?? 0) : undefined,
     monthlyCredits: known ? plan.monthlyCredits + (plan.creditsPerSeat ?? 0) * (seats ?? 0) : undefined,
   }
 }
