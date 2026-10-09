@@ -14,6 +14,7 @@ import { useTheme } from '@oxy.so/bloom/theme'
 import { SegmentedControl, SegmentedControlItem, SegmentedControlItemText } from '@oxy.so/bloom/segmented-control'
 import { Stepper } from '@oxy.so/bloom/stepper'
 import { getBrandMark } from '../../data/brand-assets'
+import { getAliaComparisonGroups } from '../../data/oneAliaComparison'
 
 import { organizationSeatCount, pricingOrganizationId } from '../../lib/pricingSeats'
 
@@ -115,6 +116,7 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
             choices: [{ app: 'mercaria', label: 'Mercaria' }, { app: 'homiio', label: 'Homiio Plus' }],
           }] : [])],
         },
+        ...getAliaComparisonGroups(OXY_ONE_APP_SUBSCRIPTIONS.alia.tiers[name as keyof typeof OXY_ONE_APP_SUBSCRIPTIONS.alia.tiers] ?? 'Free'),
         {
           title: 'Credits',
           items: [
@@ -122,6 +124,8 @@ export default function OnePlansSection({ headingLevel = 'h2', headerOverlay = f
             ...(family ? [{ label: 'Shared allowance', detail: t('one.familyPool', { count: OXY_ONE_FAMILY_MEMBERS }) }] : []),
             ...(audience === 'business' ? [{ label: 'Allowance breakdown', detail: `${tier.monthlyCredits.toLocaleString(locale)} + ${(tier.creditsPerSeat ?? 0).toLocaleString(locale)} ${t('one.perSeatMonthly')}` }] : []),
             { label: 'Extra credit discount', detail: creditDiscount ? `${creditDiscount}% off credit packs` : '0% · Standard pricing', confirmed: creditDiscount > 0 },
+            { label: 'AI and API usage', detail: free ? 'Top up credits as needed' : 'Share the monthly credit allowance' },
+            { label: 'Allowance renewal', detail: free ? 'No monthly bundle allowance' : 'Every month, including on annual billing', confirmed: !free },
           ],
         },
       ],

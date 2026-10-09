@@ -340,10 +340,11 @@ try {
     // Filling the name scrolls the editor below its avatar. On a cold/slow
     // renderer the preview has not intersected yet, so capabilities stay
     // pending and Playwright will not scroll a disabled eye button into view.
-    // Show the actual preview so Bloom can prepare it before editing its eyes.
+    // Center the preview in both scroll containers; an edge-visible image can
+    // still leave its lazy renderer outside the clipped editor viewport.
     await chat
       .getByRole('img', { name: 'Launch planner, live avatar preview', exact: true })
-      .scrollIntoViewIfNeeded()
+      .evaluate(node => node.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }))
     await chat.getByRole('button', { name: 'Sparkle capsules', exact: true }).click()
     invariant(
       (await chat

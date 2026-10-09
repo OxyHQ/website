@@ -130,7 +130,9 @@ try {
  await page.waitForTimeout(200)
  assert(await featureRow.evaluate(el=>getComputedStyle(el).backgroundColor)!==restingBackground,'Hover must highlight the entire comparison row')
 
- assert(await rows.count()===8,'Expected a header, two category rows, three apps and two credit rows')
+ assert(await rows.count()===38,'Comparison must include app tiers, Alia features and limits, and credit terms')
+ assert(await comparison.getByText('Alia · Limits & support',{exact:true}).count()===5,'Alia limits must be compared for every plan')
+ for(const tasks of [5,10,20,50,100])assert(await comparison.getByText(`${tasks} concurrent tasks`,{exact:true}).count()===1,'Use the included Alia tier’s published concurrency limit')
  assert(await rows.nth(0).getByText('App subscriptions',{exact:true}).count()===5,'Alia repeats each category in every plan column')
  assert(await rows.filter({hasText:'Credits'}).getByText('Credits',{exact:true}).count()===5,'Usage category missing from a plan')
  assert(await comparison.getByTestId('one-comparison-body').getByRole('row').last().evaluate(el=>getComputedStyle(el).borderBottomWidth)==='0px','Last comparison row must not have a bottom border')

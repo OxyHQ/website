@@ -45,6 +45,7 @@ import { readFile, writeFile, mkdir, stat, readdir, rm } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { build as viteBuild } from 'vite'
+import { fetchPrerender } from './prerender-fetch'
 import type { SyncedIndex } from './types.ts'
 import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './sitemap.ts'
 import { hasLocalizedVariants } from '../src/lib/localizedRoute'
@@ -582,7 +583,7 @@ interface NewsroomApiResponse {
 
 async function fetchNewsroomPosts(): Promise<NewsroomApiPost[]> {
   try {
-    const res = await fetch(NEWSROOM_API)
+    const res = await fetchPrerender(NEWSROOM_API)
     if (!res.ok) {
       console.warn(`[prerender] newsroom API returned ${res.status}`)
       return []
@@ -628,7 +629,7 @@ async function fetchFeatureRequests(): Promise<FeatureApiEntry[]> {
 
   for (const query of ['sort=votes', 'sort=newest']) {
     try {
-      const res = await fetch(`${FEATURES_API}?${query}&limit=${FEATURE_PRERENDER_PAGE_SIZE}`)
+      const res = await fetchPrerender(`${FEATURES_API}?${query}&limit=${FEATURE_PRERENDER_PAGE_SIZE}`)
       if (!res.ok) {
         console.warn(`[prerender] features API returned ${res.status} for ${query}`)
         continue
@@ -658,7 +659,7 @@ interface ProductApiEntry {
 
 async function fetchProducts(): Promise<ProductApiEntry[]> {
   try {
-    const res = await fetch(PRODUCTS_API)
+    const res = await fetchPrerender(PRODUCTS_API)
     if (!res.ok) return []
     const products = (await res.json()) as ProductApiEntry[]
     // Without an id there is no URL to emit, and without a name there is no
@@ -673,7 +674,7 @@ async function fetchProducts(): Promise<ProductApiEntry[]> {
 /** The route returns a bare array of Oxy's active openings. */
 async function fetchJobs(): Promise<CareerJob[]> {
   try {
-    const res = await fetch(JOBS_API)
+    const res = await fetchPrerender(JOBS_API)
     if (!res.ok) return []
     const jobs = (await res.json()) as CareerJob[]
     // Skip malformed entries rather than interpolating `undefined` into a
@@ -1204,7 +1205,7 @@ async function fetchTranslationReadyLocales(): Promise<{
 }> {
   let entries: SEOLocaleSeed[]
   try {
-    const res = await fetch(LOCALES_API)
+    const res = await fetchPrerender(LOCALES_API)
     if (!res.ok) {
       console.warn(`[prerender] locales API returned ${res.status} — no locale-prefixed pages.`)
       return { locales: [], seed: [], known: false }
@@ -1581,7 +1582,7 @@ async function fetchSeoData(routePath: string): Promise<SeoData | null> {
     const url = new URL(SEO_API)
     url.searchParams.set('brand', 'oxy')
     url.searchParams.set('path', routePath)
-    const res = await fetch(url.toString())
+    const res = await fetchPrerender(url.toString())
     if (!res.ok) return null
     return (await res.json()) as SeoData
   } catch (err) {
@@ -1802,10 +1803,10 @@ async function main(): Promise<void> {
   const startTime = Date.now()
 
   const [ssr, baseRoutes, shell, localeInfo] = await Promise.all([
-    buildSsrBundle(),
-    enumerateAllRoutes(),
+    buildSsrBundle().then(value => { console.log('[prerender] SSR bundle ready'); return value }),
+    enumerateAllRoutes().then(value => { console.log(`[prerender] enumerated ${value.length} routes`); return value }),
     loadShellHtml(),
-    fetchTranslationReadyLocales(),
+    fetchTranslationReadyLocales().then(value => { console.log(`[prerender] locale readiness ${value.known ? 'loaded' : 'unknown'}`); return value }),
   ])
 
   const jobs = expandRoutesForLocales(baseRoutes, localeInfo.locales)
