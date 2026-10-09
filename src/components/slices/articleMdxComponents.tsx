@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef } from 'react'
+import type { ComponentProps, ComponentPropsWithoutRef } from 'react'
 import { mdxContentComponents } from '../../content/_components'
 import UnderlineLink from './UnderlineLink'
 import { ARTICLE_BLOCK } from './articleBlock'
@@ -6,6 +6,7 @@ import { Footnotes, Takeaways } from './ArticleMdxBlocks'
 import {
   ArticleCallout,
   ArticleCitation,
+
   ArticleComparison,
   ArticleFootnotes,
   ArticleMedia,
@@ -37,6 +38,24 @@ export const articleMdxComponents = {
   ArticleTable,
   ArticleFootnotes,
   ArticleCitation,
+
+  // MDX furniture must occupy the same reading column as the prose. These
+  // components also serve non-grid docs, so keep the grid placement here.
+  Callout: (props: ComponentProps<typeof mdxContentComponents.Callout>) => (
+    <div className={`${ARTICLE_BLOCK} min-w-0 w-full`}><mdxContentComponents.Callout {...props} /></div>
+  ),
+  Steps: (props: ComponentProps<typeof mdxContentComponents.Steps>) => (
+    <div className={`${ARTICLE_BLOCK} min-w-0 w-full`}><mdxContentComponents.Steps {...props} /></div>
+  ),
+  NextPrev: (props: ComponentProps<typeof mdxContentComponents.NextPrev>) => (
+    <div className={`${ARTICLE_BLOCK} min-w-0 w-full`}><mdxContentComponents.NextPrev {...props} /></div>
+  ),
+  pre: (props: ComponentPropsWithoutRef<'pre'>) => (
+    <mdxContentComponents.pre {...props} className={`${ARTICLE_BLOCK} min-w-0 w-full ${props.className ?? ''}`} />
+  ),
+  CodeBlock: (props: ComponentProps<typeof mdxContentComponents.CodeBlock>) => (
+    <mdxContentComponents.CodeBlock {...props} className={`${ARTICLE_BLOCK} min-w-0 w-full ${props.className ?? ''}`} />
+  ),
 
   // `first-of-type`, not `first`: the contents nav is the article's first
   // child, so `first` never matches a heading and the opening section would

@@ -360,6 +360,11 @@ const pt: Translations = {
     chooseYourPlan: 'Escolha o seu plano',
   },
   help: {
+    feedbackThanks: "Obrigado pelo seu feedback.",
+    feedbackError: "Não foi possível guardar o seu feedback. Tente novamente.",
+    relatedArticles: "Artigos relacionados",
+    voiceUnavailable: "A entrada de voz não está disponível. Digite sua mensagem.",
+    "supportPrompt": "Faça uma pergunta ao suporte da Oxy", "openingSupport": "Abrindo o suporte…", "supportUnavailable": "Não foi possível abrir o suporte. Sua mensagem continua aqui. Tente novamente.",
     "welcome": "Bem-vindo à Central de Ajuda da Oxy", "ecosystemHeading": "Suporte para toda a Oxy", "ecosystemDescription": "Receba ajuda com seus aplicativos e experiências Oxy", "moreSupport": "Explore mais opções de suporte",
     "greeting": "Olá.", "topicsHeading": "Explore por assunto", "featuredHeading": "Artigos em destaque", "allArticles": "Ver todos os artigos", "searchResults": "Resultados da pesquisa", "clearFilters": "Limpar filtros", "noResults": "Nenhum artigo encontrado. Tente outra pesquisa ou limpe os filtros.", "readTime": "{count} min de leitura", seoTitle: 'Centro de Ajuda',
     seoDescription:

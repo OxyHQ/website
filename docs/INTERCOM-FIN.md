@@ -61,3 +61,15 @@ The API route is protected by the same JWT secret used by Messenger Security.
 Set `INTERCOM_MESSENGER_SECRET` in the server environment, then use Intercom's
 Data connector **Test connection** with a logged-in test profile. Do not put the
 secret in a `VITE_` variable or in the connector request body.
+
+## Help composer
+
+`/help/` uses Bloom’s AI `ComposerPanel`. Submitting hands the draft to the existing
+`IntercomMessenger` integration through `src/lib/intercom.ts`; it waits for
+Messenger readiness and, for signed-in users, the verified JWT identity before
+calling `show` and `startConversation`. The latter sends the initial message;
+`showNewMessage` would only prefill it. See the [Messenger JavaScript API](https://developers.intercom.com/installing-intercom/web/methods).
+
+Drafts stay in component state, never in search URLs. A 20-second startup timeout
+retains the draft and cancels the queued send, including late readiness callbacks.
+The browser test stubs Intercom; it never sends test messages to the live workspace.

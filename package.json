@@ -63,7 +63,7 @@
     "@gsap/react": "^2.1.2",
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
-    "@oxy.so/bloom": "7.1.5",
+    "@oxy.so/bloom": "7.7.1",
     "@oxy.so/contracts": "4.11.0-oxy-one.0",
     "@oxy.so/core": "4.5.0-oxy-one.0",
     "@oxy.so/mcp": "1.1.0",
@@ -164,7 +164,7 @@
     "@oxy.so/core": "4.5.0-oxy-one.0",
     "@oxy.so/services": "11.2.0-oxy-one.0",
     "@oxy.so/mcp": "1.1.0",
-    "@oxy.so/bloom": "7.1.5",
+    "@oxy.so/bloom": "7.7.1",
     "@oxy.so/telemetry": "1.2.0"
   }
 }

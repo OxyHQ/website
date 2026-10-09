@@ -8,6 +8,7 @@ export const props: BloomSurfaceProps = {
     'ErrorBoundaryProps': {
       props: [
         { name: 'children', type: 'ReactNode', optional: false },
+        { name: 'resetKey', type: 'string | number', optional: true, description: 'Changing this identity resets a failed boundary without remounting healthy children.' },
         { name: 'fallback', type: 'ErrorBoundaryFallback', optional: true, description: 'Custom fallback UI to render on error. Accepts either: - a ReactNode (static — same UI on every error), or - a render-prop `(ctx) => ReactNode` receiving `{ error, errorInfo, retry, retryCount }`.' },
         { name: 'title', type: 'string', optional: true, description: "Error title (`'Something went wrong'` in English, localised via `BloomProvider locale`)" },
         { name: 'message', type: 'string', optional: true, description: "Error message (`'An unexpected error occurred'` in English)" },
@@ -16,8 +17,19 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'PanelErrorBoundaryProps': {
+      props: [
+        { name: 'children', type: 'ReactNode', optional: false },
+        { name: 'resetKey', type: "ErrorBoundaryProps['resetKey']", optional: true },
+        { name: 'onError', type: "ErrorBoundaryProps['onError']", optional: true },
+        { name: 'fallback', type: 'ErrorBoundaryFallback', optional: true },
+        { name: 'emptyState', type: 'EmptyStateProps', optional: true, description: 'Defaults to localized error wording and a retry action. A supplied action runs before retry.' },
+        { name: 'bottomInset', type: 'number', optional: true, description: 'Override inherited bottom chrome clearance when the parent has already reserved it.' },
+      ],
+    },
   },
   components: [
     { name: 'ErrorBoundary', propsType: 'ErrorBoundaryProps' },
+    { name: 'PanelErrorBoundary', propsType: 'PanelErrorBoundaryProps' },
   ],
 }

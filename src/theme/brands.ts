@@ -62,8 +62,18 @@ export interface BrandSurface {
  * makes the sibling's palette take, and what leaves Codea's in place on the page
  * that uses `.cursor-theme` alone.
  */
+const HELP_PRESET = APP_COLOR_PRESETS['arctic-signal']
+
 export const BRAND_SURFACES: readonly BrandSurface[] = [
-  { selector: '.help-photo-theme', seed: APP_COLOR_PRESETS[SITE_PRESET].hex, mode: 'dark', label: 'Help center photo overlays' },
+  {
+    selector: '.help-theme',
+    seed: HELP_PRESET.hex,
+    secondarySeed: HELP_PRESET.secondaryHex,
+    tertiarySeed: HELP_PRESET.tertiaryHex,
+    mode: 'auto',
+    label: 'Help center — Arctic Signal',
+  },
+  { selector: '.help-photo-theme', seed: HELP_PRESET.hex, secondarySeed: HELP_PRESET.secondaryHex, tertiarySeed: HELP_PRESET.tertiaryHex, mode: 'dark', label: 'Help center photo overlays' },
   {
     // The Homiio landing is one fixed daytime illustration — a blue sky over a
     // cream ground — so it stays light whatever the toggle says. The yellow seed

@@ -1,382 +1,65 @@
-import { Suspense, createElement, useMemo, useState } from 'react'
+import { Suspense, createElement } from 'react'
 import { useParams } from 'react-router-dom'
-import { Link } from '../lib/navigation'
 import { MDXProvider } from '@mdx-js/react'
-import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { RiCalendarLine } from '@oxy.so/bloom/icons/RiCalendarLine'
-import { RiThumbDownLine } from '@oxy.so/bloom/icons/RiThumbDownLine'
-import { RiThumbUpLine } from '@oxy.so/bloom/icons/RiThumbUpLine'
-import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import PageSection from '../components/layout/PageSection'
-import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import Button from '../components/ui/Button'
-import { useCurrentLocale } from '../lib/i18n'
-import { brandConfig } from '../lib/seo'
-import {
-  loadHelpBySlug,
-  loadHelpSiblings,
-  loadHelpByCategory,
-  HELP_CATEGORIES,
-  type HelpEntry,
-} from '../content/help-loader'
-import { mdxContentComponents } from '../content/_components'
-import ShareWithMention from '../components/social/ShareWithMention'
-import HelpProductBadge from '../components/help/HelpProductBadge'
-import TableOfContents from '../components/ui/TableOfContents'
-import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import HelpArticleFooter from '../components/help/HelpArticleFooter'
+import PageShell from '../components/layout/PageShell'
+import TransparencyDocument from '../components/slices/TransparencyDocument'
+import { articleMdxComponents } from '../components/slices/articleMdxComponents'
+import { ARTICLE_BLOCK } from '../components/slices/articleBlock'
+import { Link } from '../lib/navigation'
+import { useCurrentLocale, useTranslation } from '../lib/i18n'
+import { HELP_CATEGORIES, loadHelpBySlug } from '../content/help-loader'
 
-/* ──────────────────────────────────────────────
- * /help/* — single help-center article
- *
- * Two-column layout: sticky table of contents on the left, prose
- * article on the right. Mobile collapses the TOC into a "Jump to"
- * select. Header shows the ecosystem product the article covers via
- * a `HelpProductBadge`, plus last-updated date, and an
- * estimated read time derived from the frontmatter description +
- * heading count (the body lazy-loads so we approximate).
- *
- * Helpful feedback buttons and a "Related articles" rail land below
- * the article. Related articles surface up to three siblings in the
- * same category.
- * ──────────────────────────────────────────── */
-
-const RELATED_LIMIT = 3
-
-function categoryMetaForId(id: string) {
-  return HELP_CATEGORIES.find((c) => c.id === id) ?? null
-}
-
-function formatUpdatedDate(iso: string | undefined, locale: string): string | null {
-  if (!iso) return null
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return null
-  return new Intl.DateTimeFormat(locale === 'es' ? 'es-ES' : 'en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(date)
-}
-
-interface FeedbackButtonsProps {
-  articleSlug: string
-}
-
-function FeedbackButtons({ articleSlug }: FeedbackButtonsProps) {
-  // Local UI-only state — analytics wiring is intentionally deferred.
-  // Resetting on slug change is handled by React's `key` propagation
-  // higher up (article page is keyed by slug on the MDX Suspense).
-  const [vote, setVote] = useState<'up' | 'down' | null>(null)
-
-  if (vote !== null) {
-    return (
-      <div
-        className="flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface px-6 py-6 text-center"
-        role="status"
-        aria-live="polite"
-      >
-        <p className="text-sm font-medium text-foreground">
-          {vote === 'up'
-            ? 'Thanks — glad this helped.'
-            : 'Thanks for letting us know. We will keep improving this article.'}
-        </p>
-        <Link
-          to="/help"
-          className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-          data-help-feedback-article={articleSlug}
-        >
-          Back to Help Center
-        </Link>
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-surface px-6 py-6 text-center">
-      <p className="text-sm font-medium text-foreground">Was this article helpful?</p>
-      <div className="flex items-center gap-3">
-        <Button
-          variant="outline"
-          type="button"
-          onClick={() => setVote('up')}
-          aria-label="Mark this article as helpful"
-        >
-          <RiThumbUpLine width={16} height={16} fill="currentColor" aria-hidden />
-          Yes
-        </Button>
-        <Button
-          variant="outline"
-          type="button"
-          onClick={() => setVote('down')}
-          aria-label="Mark this article as not helpful"
-        >
-          <RiThumbDownLine width={16} height={16} fill="currentColor" aria-hidden />
-          No
-        </Button>
-      </div>
-    </div>
-  )
-}
-
+/** Help and institutional documents share one reading screen and MDX renderer. */
 export default function HelpArticlePage() {
   const params = useParams<{ '*': string }>()
   const locale = useCurrentLocale()
+  const { t } = useTranslation()
   const slug = (params['*'] ?? '').replace(/\/+$/, '')
   const entry = loadHelpBySlug(slug, locale)
-  const { origin } = brandConfig(typeof window === 'undefined' ? undefined : window.location.hostname)
-
-  // Hooks must be unconditional. Compute derived values up front
-  // and gate on `entry` in the render path only.
-  const categoryMeta = entry ? categoryMetaForId(entry.frontmatter.category) : null
-  const { prev, next } = useMemo(
-    () => (entry ? loadHelpSiblings(slug, locale) : { prev: null, next: null }),
-    [entry, slug, locale],
-  )
-  const related = useMemo<HelpEntry[]>(() => {
-    if (!entry) return []
-    return loadHelpByCategory(entry.frontmatter.category, locale)
-      .filter((sibling) => sibling.slug !== entry.slug)
-      .slice(0, RELATED_LIMIT)
-  }, [entry, locale])
 
   if (!entry) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <SEO
-          title="Help article not found"
-          description="The help article you are looking for does not exist."
-          canonicalPath={`/help/${slug}`}
-          noIndex
-        />
-        <Navbar />
-        <main className="flex flex-1 flex-col items-center justify-center gap-4">
-          <h1 className="text-2xl font-semibold text-foreground">Help article not found</h1>
-          <Link to="/help" className="text-sm text-primary hover:underline">
-            Back to Help Center
-          </Link>
-        </main>
-        <Footer />
-      </div>
+      <PageShell
+        seo={{ title: t('errors.notFoundTitle'), description: t('errors.notFoundDescription'), canonicalPath: `/help/${slug}/`, noIndex: true }}
+        className="help-theme bg-background text-foreground"
+        mainClassName="container flex flex-1 flex-col items-center justify-center gap-6 py-32 text-center"
+      >
+        <h1 className="text-heading-responsive-lg">{t('errors.notFoundTitle')}</h1>
+        <p className="text-muted-foreground">{t('errors.notFoundDescription')}</p>
+        <Link to="/help/" className="text-primary underline underline-offset-4">{t('help.seoTitle')}</Link>
+      </PageShell>
     )
   }
 
-  const { frontmatter, Component } = entry
-  const cover = frontmatter.coverImage ?? ''
-  const updatedLabel = formatUpdatedDate(frontmatter.updated, locale)
-  const readMinutes = entry.readingMinutes
-  const categoryLabel = categoryMeta?.label ?? ''
+  const { frontmatter, headings, Component } = entry
+  const category = HELP_CATEGORIES.find(item => item.id === frontmatter.category)
+  const updated = frontmatter.updated ? new Date(frontmatter.updated) : null
+  const date = updated && !Number.isNaN(updated.getTime())
+    ? t('help.lastUpdated', { date: new Intl.DateTimeFormat(locale, { dateStyle: 'long', timeZone: 'UTC' }).format(updated) })
+    : undefined
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <SEO
-        title={frontmatter.title}
-        description={frontmatter.description}
-        canonicalPath={`/help/${entry.slug}`}
-        ogImage={cover || undefined}
-        ogType="article"
-      />
-      <Navbar />
-      <main>
-        {/* ═══ Hero ═══ */}
-        <section className="relative">
-          <div className="container relative flex flex-col items-start gap-4 pt-28 pb-10 lg:pt-36">
-            {/* Eyebrow: product badge */}
-            {categoryMeta && (
-              <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5">
-                <HelpProductBadge category={categoryMeta.id} label={categoryMeta.label} size="sm" />
-              </div>
-            )}
-
-            <AnimatedTitle as="h1" className="max-w-[18em] text-balance text-heading-responsive-lg text-foreground">
-              {frontmatter.title}
-            </AnimatedTitle>
-            {frontmatter.description && (
-              <p className="max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
-                {frontmatter.description}
-              </p>
-            )}
-
-            {/* Meta row: read time + updated date */}
-            <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <RiTimeLine width={14} height={14} fill="currentColor" aria-hidden />
-                {readMinutes} min read
-              </span>
-              {updatedLabel && (
-                <span className="inline-flex items-center gap-1.5">
-                  <RiCalendarLine width={14} height={14} fill="currentColor" aria-hidden />
-                  Updated {updatedLabel}
-                </span>
-              )}
-              {frontmatter.tags.length > 0 && (
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {frontmatter.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full bg-surface px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ Cover ═══ */}
-        {cover && (
-          <PageSection spacing="sm" width="wide">
-            <img
-              src={cover}
-              alt=""
-              className="mx-auto w-full max-w-5xl rounded-3xl object-cover"
-              style={{ aspectRatio: '16 / 7' }}
-              loading="eager"
-              decoding="async"
-            />
-          </PageSection>
-        )}
-
-        {/* ═══ Two-column body: TOC + article ═══ */}
-        <section className="container py-12 md:py-16">
-          <div className="grid gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[16rem_minmax(0,1fr)] xl:gap-16">
-            {/* Sticky TOC + mobile select */}
-            <aside>
-              <TableOfContents headings={entry.headings} />
-            </aside>
-
-            {/* Article body */}
-            <article
-              data-help-body
-              className="min-w-0 text-foreground [&_h2]:scroll-mt-24 [&_h3]:scroll-mt-24"
-            >
-              <MDXProvider components={mdxContentComponents}>
-                <Suspense
-                  fallback={<div className="text-sm text-muted-foreground">Loading…</div>}
-                >
-                  {createElement(Component)}
-                </Suspense>
-              </MDXProvider>
-            </article>
-          </div>
-        </section>
-
-        {/* ═══ Was this helpful? ═══ */}
-        <PageSection spacing="sm" width="narrow">
-          <FeedbackButtons articleSlug={entry.slug} />
-        </PageSection>
-
-        {/* ═══ Share ═══ */}
-        <PageSection spacing="sm" width="narrow">
-          <ShareWithMention
-            title={frontmatter.title}
-            url={`${origin}/help/${entry.slug}`}
-            hashtags={frontmatter.tags.length > 0 ? frontmatter.tags : ['help']}
-            via="oxy"
-          />
-        </PageSection>
-
-        {/* ═══ Related articles ═══ */}
-        {related.length > 0 && (
-          <PageSection spacing="md" width="wide">
-            <div className="mx-auto max-w-5xl">
-              <div className="mb-6 flex items-end justify-between gap-4">
-                <div className="flex flex-col gap-1">
-                  <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-                    Related articles
-                  </h2>
-                  {categoryLabel && (
-                    <p className="text-sm text-muted-foreground">More from {categoryLabel}.</p>
-                  )}
-                </div>
-                {categoryMeta && (
-                  <Link
-                    to={`/help/?topic=${categoryMeta.id}#help-results`}
-                    className="inline-flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    See all
-                    <RiArrowRightLine width={14} height={14} fill="currentColor" aria-hidden />
-                  </Link>
-                )}
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {related.map((article) => (
-                  <Link
-                    key={article.slug}
-                    to={`/help/${article.slug}`}
-                    className="group flex flex-col gap-3 rounded-2xl border border-border bg-background p-5 transition-colors hover:border-input hover:bg-surface"
-                  >
-                    {categoryMeta && (
-                      <HelpProductBadge
-                        category={categoryMeta.id}
-                        label={categoryMeta.label}
-                        size="sm"
-                      />
-                    )}
-                    <h3 className="text-base font-semibold text-foreground">
-                      {article.frontmatter.title}
-                    </h3>
-                    <p className="line-clamp-3 text-sm text-muted-foreground transition-colors group-hover:text-foreground">
-                      {article.frontmatter.description}
-                    </p>
-                    <span className="mt-auto inline-flex items-center gap-1.5 text-xs font-medium text-primary">
-                      Read article
-                      <RiArrowRightLine width={14} height={14} fill="currentColor" aria-hidden />
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </PageSection>
-        )}
-
-        {/* ═══ Prev / Next ═══ */}
-        {(prev || next) && (
-          <PageSection spacing="md" width="narrow">
-            <div className="grid gap-4 sm:grid-cols-2">
-              {prev ? (
-                <Link
-                  to={`/help/${prev.slug}`}
-                  className="group flex flex-col gap-1 rounded-2xl border border-border bg-background p-5 transition-colors hover:border-input hover:bg-surface"
-                >
-                  <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    <RiArrowLeftLine width={14} height={14} fill="currentColor" aria-hidden />
-                    Previous
-                  </span>
-                  <span className="text-base font-semibold text-foreground">
-                    {prev.frontmatter.title}
-                  </span>
-                </Link>
-              ) : (
-                <div aria-hidden="true" />
-              )}
-              {next ? (
-                <Link
-                  to={`/help/${next.slug}`}
-                  className="group flex flex-col items-end gap-1 rounded-2xl border border-border bg-background p-5 text-right transition-colors hover:border-input hover:bg-surface sm:col-start-2"
-                >
-                  <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    Next
-                    <RiArrowRightLine width={14} height={14} fill="currentColor" aria-hidden />
-                  </span>
-                  <span className="text-base font-semibold text-foreground">
-                    {next.frontmatter.title}
-                  </span>
-                </Link>
-              ) : (
-                <div aria-hidden="true" />
-              )}
-            </div>
-          </PageSection>
-        )}
-
-        <KeepUpToDateSection />
-      </main>
-      <Footer />
-    </div>
+    <TransparencyDocument
+      key={`${locale}:${entry.slug}`}
+      canonicalPath={`/help/${entry.slug}/`}
+      ogImage={entry.cover}
+      ogType="article"
+      theme="help-theme"
+      title={frontmatter.title}
+      eyebrow={category?.label}
+      description={frontmatter.description}
+      entries={headings}
+      date={date}
+      readingTime={t('help.readTime', { count: entry.readingMinutes })}
+      cta={{ title: t('help.seoTitle'), label: t('help.allArticles'), href: '/help/?all=1#help-results' }}
+    >
+      <MDXProvider components={articleMdxComponents}>
+        <Suspense fallback={<p className={`${ARTICLE_BLOCK} text-muted-foreground`}>Loading…</p>}>
+          {createElement(Component)}
+        </Suspense>
+      </MDXProvider>
+      <HelpArticleFooter entry={entry} />
+    </TransparencyDocument>
   )
 }

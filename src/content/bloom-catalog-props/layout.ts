@@ -25,6 +25,13 @@ export const props: BloomSurfaceProps = {
       ],
       inheritsFrom: ['ViewProps'],
     },
+    'ScrollAreaProps': {
+      props: [
+        { name: 'className', type: 'string', optional: true, description: "Utilities for the scrolling viewport, resolved by Bloom's own interop." },
+        { name: 'contentContainerClassName', type: 'string', optional: true, description: 'Utilities for the inner content container.' },
+      ],
+      inheritsFrom: ['ScrollViewProps', 'RefAttributes<ScrollView>'],
+    },
   },
   components: [
     { name: 'BottomEdgeProvider', propsType: 'BottomEdgeProvider' },
@@ -33,5 +40,7 @@ export const props: BloomSurfaceProps = {
     { name: 'ScreenScope', propsType: 'BottomEdgeProvider' },
     { name: 'HeaderDockProvider', propsType: 'PropsWithChildren<{ scrollY?: SharedValue<number> | undefined; }>' },
     { name: 'StickySection', propsType: 'StickySectionProps' },
+    { name: 'ScrollMetricsProvider', propsType: 'BottomEdgeProvider' },
+    { name: 'ScrollArea', propsType: 'ScrollAreaProps' },
   ],
 }

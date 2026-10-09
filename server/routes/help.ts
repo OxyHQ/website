@@ -1,8 +1,9 @@
 import { Router } from 'express'
+import { rateLimit } from 'express-rate-limit'
 import { z } from 'zod'
 import { and, asc, count, desc, eq, sql, type SQL } from 'drizzle-orm'
 import { db } from '../db/postgres.js'
-import { categories, media, helpArticles as table } from '../db/schema/index.js'
+import { categories, media, helpFeedback, helpArticles as table } from '../db/schema/index.js'
 import { populate, populateOne } from '../db/refs.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
@@ -14,6 +15,23 @@ import { validate } from '../utils/validate.js'
 import { isAdminUser } from '../utils/adminAccess.js'
 
 const router = Router()
+
+// An explicit anonymous vote; repeated requests update one row, never inflate counts.
+const feedbackSchema = z.object({
+  slug: z.string().max(200).regex(/^[a-z0-9]+(?:[/-][a-z0-9]+)*$/),
+  locale: z.string().min(2).max(35).regex(/^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$/),
+  token: z.uuid(),
+  helpful: z.boolean(),
+}).strict()
+
+router.post('/feedback', rateLimit({ windowMs: 60_000, limit: 30, standardHeaders: 'draft-8', legacyHeaders: false }), async (req, res) => {
+  const body = validate(feedbackSchema, req.body)
+  await db.insert(helpFeedback).values(body).onConflictDoUpdate({
+    target: [helpFeedback.slug, helpFeedback.locale, helpFeedback.token],
+    set: { helpful: body.helpful, updatedAt: new Date() },
+  })
+  res.json({ ok: true })
+})
 
 /** The referenced rows every response carries inline. */
 const REFS = { coverImage: media, category: categories }

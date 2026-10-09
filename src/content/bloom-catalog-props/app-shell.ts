@@ -14,6 +14,7 @@ export const props: BloomSurfaceProps = {
         { name: 'title', type: 'string', optional: true, description: 'Heading over the content. Optional: without it (and without `breadcrumb` / `actions`) the header still renders the menu button while the sidebar is a drawer, and nothing otherwise. A page with its own `header` opens the drawer with `AppShellMenuButton` or `useAppShell()`.' },
         { name: 'info', type: 'ReactNode', optional: true, description: '`split`: an optional third pane, from `infoFrom`.' },
         { name: 'actions', type: 'ReactNode', optional: true, description: 'Header actions at the end edge — the right in LTR (`NotificationBell`, buttons).' },
+        { name: 'safeArea', type: 'boolean', optional: true, description: "Native: keep the shell, navigation and pages inside the device's safe area. The bottom-bar slot still owns its bottom inset; without bottom chrome the frame reserves it. Use `safeArea={false}` on descendant PageHeaders because the frame already owns their top edge. Device insets remain available to dialogs and other portaled surfaces. Defaults to false; no effect on web." },
         { name: 'variant', type: 'AppShellVariant', options: ['dashboard', 'feed', 'split', 'focus', 'canvas'], optional: true, description: 'The layout shape. Defaults to `dashboard` — the behaviour this component had before variants existed, down to the pixel.' },
         { name: 'sidebar', type: "Omit<SidebarProps, 'mobile' | 'onClose'>", optional: true, description: "The rail. Rendered in flow at `lg` and up (`sm` and up with `variant: 'rail'`); below it, the same props drive the drawer (`mobile`, and `flat` for `reveal`), always as the panel. Sidebar configuration, including card (detached, default) or docked surface. Also applies with navigation." },
         { name: 'drawer', type: 'AppShellDrawer', options: ['overlay', 'reveal'], optional: true, description: 'How the rail arrives below `navFrom`. `reveal` slides the WHOLE page sideways for dashboard and compact feed layouts. Feed desktop columns retain their normal layout. Other variants use the overlay drawer.' },
@@ -23,7 +24,7 @@ export const props: BloomSurfaceProps = {
         { name: 'asideWidth', type: 'number', optional: true, description: "The aside column's width. Defaults to 320." },
         { name: 'asideFrom', type: 'AppShellBreakpoint', optional: true, description: 'The breakpoint the aside sits beside the content from. Defaults to `xl` (1280).' },
         { name: 'asideCollapse', type: "'stack' | 'hidden'", options: ['stack', 'hidden'], optional: true, description: 'Below `asideFrom`: `stack` (default) renders it after the content, `hidden` drops it. `canvas` always drops it — the screen is the canvas, so there is no column underneath to stack into.' },
-        { name: 'contentMaxWidth', type: 'number', optional: true, description: "The content column's max width. Defaults to 1300." },
+        { name: 'contentMaxWidth', type: "number | 'none'", optional: true, description: "The content column's max width. Defaults to 1300; `none` fills the available width." },
         { name: 'overlay', type: 'ReactNode', optional: true, description: 'Floating extras rendered last, e.g. a `ProOfferCard`.' },
         { name: 'drawerOpen', type: 'boolean', optional: true, description: 'Controlled drawer state (below `lg`).' },
         { name: 'onDrawerOpenChange', type: '(open: boolean) => void', optional: true },
@@ -119,6 +120,9 @@ export const props: BloomSurfaceProps = {
     },
     'AppShellSplitPanesProps': {
       props: [
+        { name: 'listErrorBoundary', type: 'false | PanelErrorBoundaryOptions', optional: true, description: 'Each visible pane isolates render errors by default. false delegates to an outer boundary.' },
+        { name: 'detailErrorBoundary', type: 'false | PanelErrorBoundaryOptions', optional: true },
+        { name: 'infoErrorBoundary', type: 'false | PanelErrorBoundaryOptions', optional: true },
         { name: 'variant', type: "'joined' | 'separated'", options: ['joined', 'separated'], optional: true, description: 'Joined uses hairline dividers (default); separated leaves a 12px gutter for independent panel surfaces.' },
         { name: 'list', type: 'ReactNode', optional: true },
         { name: 'detail', type: 'ReactNode', optional: true },

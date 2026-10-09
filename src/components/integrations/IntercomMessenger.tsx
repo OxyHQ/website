@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAuth } from '@oxy.so/services/ui/client'
 import { apiFetch } from '../../api/client'
+import { INTERCOM_CONVERSATION_EVENT, type IntercomConversationRequest } from '../../lib/intercom'
 import { isFairCoinHost } from '../../lib/host'
 
 type IntercomSettings = {
@@ -67,10 +68,34 @@ export default function IntercomMessenger() {
   const appId = (import.meta.env.VITE_INTERCOM_APP_ID as string | undefined)?.trim() || INTERCOM_APP_ID
   const disabled = isFairCoinHost() || pathname === '/admin' || pathname.startsWith('/admin/')
   const [activated, setActivated] = useState(false)
+  const [conversation, setConversation] = useState<IntercomConversationRequest | null>(null)
+  const [identityReadyFor, setIdentityReadyFor] = useState<{ userId: string } | null>(null)
+  const [identityFailedFor, setIdentityFailedFor] = useState<string | null>(null)
+  const pendingConversation = useRef<IntercomConversationRequest | null>(null)
   const identifiedUserIdRef = useRef<string | null>(null)
   const identityRequestRef = useRef(0)
   const userId = isAuthenticated && user?.id ? String(user.id) : null
   const ready = activated || isAuthenticated
+
+  useEffect(() => {
+    const receive = (event: Event) => {
+      const request = (event as CustomEvent<IntercomConversationRequest>).detail
+      event.preventDefault()
+      if (disabled || !appId || (pendingConversation.current && !pendingConversation.current.signal.aborted)) {
+        request.reject(new Error('Intercom is unavailable or already opening'))
+        return
+      }
+      pendingConversation.current = request
+      setConversation(request)
+      setActivated(true)
+    }
+    window.addEventListener(INTERCOM_CONVERSATION_EVENT, receive)
+    return () => {
+      window.removeEventListener(INTERCOM_CONVERSATION_EVENT, receive)
+      pendingConversation.current?.reject(new Error('Intercom was closed'))
+      pendingConversation.current = null
+    }
+  }, [appId, disabled, userId])
 
   useEffect(() => {
     if (!appId || disabled || ready) return
@@ -145,7 +170,10 @@ export default function IntercomMessenger() {
           window.Intercom?.('update', settings)
         }
         window.Intercom?.('setAuthTokens', { security_token: token })
+        setIdentityFailedFor(null)
+        setIdentityReadyFor({ userId })
       } catch (error) {
+        if (!cancelled && requestId === identityRequestRef.current) setIdentityFailedFor(userId)
         // A missing production secret should not break the website or turn
         // into a noisy console error for visitors. The backend returns 503
         // until Intercom Messenger Security is configured.
@@ -187,6 +215,42 @@ export default function IntercomMessenger() {
     if (!appId || disabled || !ready) return
     window.Intercom?.('update', { current_url: window.location.href })
   }, [appId, disabled, pathname, ready])
+
+  useEffect(() => {
+    if (!conversation || !ready || !isAuthResolved || disabled) return
+    const request = conversation
+    const finish = () => {
+      if (pendingConversation.current === request) pendingConversation.current = null
+      setConversation(current => current === request ? null : current)
+    }
+    if (request.signal.aborted) { finish(); return }
+    if (userId && identityFailedFor === userId) {
+      request.reject(new Error('Intercom identity could not be verified'))
+      finish()
+      return
+    }
+    if (userId && (identityReadyFor?.userId !== userId || identifiedUserIdRef.current !== userId)) return
+    let active = true
+    const cancel = () => { active = false; finish() }
+    request.signal.addEventListener('abort', cancel, { once: true })
+    window.Intercom?.('ready', () => {
+      if (!active || request.signal.aborted) return
+      // A ready callback may survive a session switch; never send it twice.
+      active = false
+      try {
+        window.Intercom?.('show')
+        window.Intercom?.('startConversation', request.message)
+        request.resolve()
+      } catch (error) {
+        request.reject(error instanceof Error ? error : new Error('Intercom could not start the conversation'))
+      }
+      finish()
+    })
+    return () => {
+      active = false
+      request.signal.removeEventListener('abort', cancel)
+    }
+  }, [conversation, disabled, identityFailedFor, identityReadyFor, isAuthResolved, ready, userId])
 
   return null
 }
