@@ -74,6 +74,10 @@ export const PRICING_FAQ_GROUPS = [
         answer: <>Manage Oxy credit plans in <Link className="text-primary-text underline underline-offset-4 hover:text-foreground" to="https://console.oxy.so/billing/plans">Oxy Console</Link>. For personal account payments and Oxy One, use <Link className="text-primary-text underline underline-offset-4 hover:text-foreground" to="https://accounts.oxy.so/payments">Oxy Accounts</Link>. This website helps you compare the options and takes you to the appropriate account page.</>,
       },
       {
+        question: 'Can anyone pay for ads or more visibility?',
+        answer: 'No. Oxy is 100% ad-free, including on Free. We do not sell ads, sponsored placement, boosts or organic reach. Subscriptions pay for additional tools and capacity, never verification, reputation or preferential moderation. Existing free tools, security and data export stay free.',
+      },
+      {
         question: 'Can I pay for a verified badge?',
         answer: 'No. Verified badges are not sold or included in paid plans. Anyone can apply for verification; it is awarded to real people of public relevance based on authenticity and notability. A paid subscription is not required.',
       },
@@ -149,7 +153,7 @@ export function getAudienceFaqGroups(audience: 'personal' | 'creator' | 'busines
     },
     {
       title: 'Purchases & support',
-      items: PRICING_FAQ_GROUPS[3].items.filter(item => item.question === 'Where do I buy or manage a plan?' || item.question === 'Where can I get help with billing?' || (creator && item.question === 'Can I pay for a verified badge?')),
+      items: PRICING_FAQ_GROUPS[3].items.filter(item => item.question === 'Where do I buy or manage a plan?' || item.question === 'Where can I get help with billing?' || item.question === 'Can I pay for a verified badge?' || item.question === 'Can anyone pay for ads or more visibility?'),
     },
     ...(!creator ? [{ title: 'Dedicated infrastructure', items: [PRICING_FAQ_GROUPS[4].items[2]] }] : []),
   ]

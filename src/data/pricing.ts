@@ -87,13 +87,16 @@ export function getOnePlans(audience: OneAudience, mode: PersonalPlanMode = 'ind
  * Bundle inclusion is a proposal and does not activate product entitlements. */
 export const OXY_ONE_APP_SUBSCRIPTIONS = {
   alia: { name: 'Alia', tiers: { Free: null, Go: 'Go', Pro: 'Pro', Max: 'Max', Ultra: 'Ultra' } },
-  // Mention Plus is the proposed product name; Mercaria Pro is its documented candidate tier.
+  // Product-owned names; these bundle mappings remain a proposal.
   mention: { name: 'Mention', tiers: { Free: null, Go: 'Plus', Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
   mercaria: {
     name: 'Mercaria',
-    tiers: { Free: null, Go: 'Pro', Pro: 'Pro', Max: 'Pro', Ultra: 'Pro' },
+    tiers: { Free: null, Go: 'Go', Pro: 'Plus', Max: 'Plus', Ultra: 'Ultra' },
     creatorTiers: { Free: null, Go: 'Creator', Pro: 'Creator', Max: 'Creator', Ultra: 'Creator' },
   },
+  noted: { name: 'Noted', tiers: { Free: null, Go: '+', Pro: '+', Max: '+', Ultra: '+' } },
+  clarity: { name: 'Clarity', tiers: { Free: null, Go: null, Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
+  schedio: { name: 'Schedio', tiers: { Free: null, Go: null, Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
   inbox: { name: 'Inbox', tiers: { Free: null, Go: null, Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
   homiio: { name: 'Homiio', tiers: { Free: null, Go: 'Plus', Pro: 'Plus', Max: 'Plus', Ultra: 'Plus' } },
 } as const
