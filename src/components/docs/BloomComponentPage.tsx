@@ -19,7 +19,6 @@ import {
 import { Switch } from '@oxy.so/bloom/switch'
 import { TextField, TextFieldInput } from '@oxy.so/bloom/text-field'
 import {
-  bloomCategories,
   bloomIndex,
   bloomVersion,
 } from '../../content/bloom-catalog.generated'
@@ -40,7 +39,7 @@ import CodeBlock from '../../content/_components/CodeBlock'
 import { getPackage } from '../../content/docs-loader'
 import PageShell from '../layout/PageShell'
 import { DocsShell } from './DocsShell'
-import type { SidebarSection } from './docsTypes'
+import { bloomCatalogSections } from './bloomCatalogSidebar'
 import CatalogPreview from '../bloom/CatalogPreview'
 import { catalogPreviews } from '../bloom/catalogPreviews'
 
@@ -63,44 +62,9 @@ const EYEBROW = `Bloom ${bloomVersion}`
  */
 function bloomDocsShell() {
   const pkg = getPackage('bloom')
-  return { pkg, sections: catalogSections }
+  return { pkg, sections: bloomCatalogSections }
 }
 
-const catalogSections: SidebarSection[] = [
-  {
-    category: 'ui-library',
-    title: 'Bloom components',
-    nodes: [
-      {
-        kind: 'package',
-        label: 'All components',
-        href: HUB_PATH,
-        shortName: 'bloom',
-        key: 'bloom',
-        leafCount: bloomIndex.length,
-        children: bloomCategories.map((category) => {
-          const entries = bloomIndex.filter(
-            (entry) => entry.category === category.name,
-          )
-          return {
-            kind: 'group',
-            label: category.name,
-            key: `bloom/${category.name}`,
-            leafCount: entries.length,
-            children: entries.map((entry) => ({
-              kind: 'leaf',
-              label:
-                catalogPreviews[entry.subpath]?.title ??
-                pascalPath(entry.subpath),
-              href: `${HUB_PATH}/${entry.subpath}/`,
-              slug: entry.subpath,
-            })),
-          }
-        }),
-      },
-    ],
-  },
-]
 
 /**
  * One Bloom surface: what it exports, what it looks like, and every prop it
