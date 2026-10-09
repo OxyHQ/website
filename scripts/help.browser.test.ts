@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert'
+import { readFileSync } from 'node:fs'
 import { chromium } from 'playwright'
 
 const reserved = Bun.serve({ port: 0, fetch: () => new Response('reserved') })
@@ -37,6 +38,9 @@ try {
         else fixture.supportCallbacks.push(callback)
       }
     }
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText: async (text: string) => {
+      (window as unknown as { copiedCode: string }).copiedCode = text
+    } } })
   })
   const page = await context.newPage()
   const errors: string[] = []
@@ -144,6 +148,12 @@ try {
     const tocLinks = await page.locator('[data-toc-rail] a[href^="#"]').evaluateAll(links => links.map(link => link.getAttribute('href')!.slice(1)))
     assert.ok(tocLinks.length > 0)
     for (const id of tocLinks) assert.equal(await page.locator(`[data-article-body] [id="${id}"]`).count(), 1)
+    if (slug === 'console/api-keys') {
+      const expectedCode = readFileSync(new URL('../src/content/help/console/api-keys.mdx', import.meta.url), 'utf8').match(/```ts\n([\s\S]*?)\n```/)![1]
+      await page.getByRole('button', { name: 'Copy code', exact: true }).click()
+      assert.equal(await page.evaluate(() => (window as unknown as { copiedCode: string }).copiedCode), expectedCode)
+      await page.getByRole('button', { name: 'Code copied', exact: true }).waitFor()
+    }
   }
   await page.goto(`${origin}/es/help/account/add-recovery-email/`)
   await page.locator('[data-article-body] h2').first().waitFor()

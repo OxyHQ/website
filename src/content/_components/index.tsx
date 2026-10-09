@@ -1,8 +1,10 @@
 import type { ComponentPropsWithoutRef } from 'react'
+import { Code as BloomCode } from '@oxy.so/bloom/code'
 import { cn } from '../../lib/utils'
 import Callout from './Callout'
 import Steps, { Step } from './Steps'
 import CodeBlock from './CodeBlock'
+import MdxCodeBlock from './MdxCodeBlock'
 import VideoEmbed from './VideoEmbed'
 import Image from './Image'
 import NextPrev from './NextPrev'
@@ -87,24 +89,8 @@ export const mdxContentComponents = {
       )}
     />
   ),
-  code: (props: ComponentPropsWithoutRef<'code'>) => (
-    <code
-      {...props}
-      className={cn(
-        'rounded bg-surface px-1.5 py-0.5 font-mono text-[0.875em] text-foreground',
-        props.className,
-      )}
-    />
-  ),
-  pre: (props: ComponentPropsWithoutRef<'pre'>) => (
-    <pre
-      {...props}
-      className={cn(
-        'not-prose my-4 overflow-x-auto rounded-2xl border border-border bg-surface p-4 text-sm leading-relaxed text-foreground',
-        props.className,
-      )}
-    />
-  ),
+  code: ({ children }: ComponentPropsWithoutRef<'code'>) => <BloomCode>{children}</BloomCode>,
+  pre: MdxCodeBlock,
   table: (props: ComponentPropsWithoutRef<'table'>) => (
     <div className="not-prose my-6 overflow-x-auto rounded-2xl border border-border">
       <table {...props} className={cn('w-full text-sm', props.className)} />

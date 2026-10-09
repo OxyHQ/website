@@ -53,6 +53,9 @@ export const articleMdxComponents = {
   pre: (props: ComponentPropsWithoutRef<'pre'>) => (
     <mdxContentComponents.pre {...props} className={`${ARTICLE_BLOCK} min-w-0 w-full ${props.className ?? ''}`} />
   ),
+  CodeBlock: (props: ComponentProps<typeof mdxContentComponents.CodeBlock>) => (
+    <mdxContentComponents.CodeBlock {...props} className={`${ARTICLE_BLOCK} min-w-0 w-full ${props.className ?? ''}`} />
+  ),
 
   // `first-of-type`, not `first`: the contents nav is the article's first
   // child, so `first` never matches a heading and the opening section would
