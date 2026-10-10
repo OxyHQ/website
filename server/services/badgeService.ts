@@ -1,7 +1,7 @@
 import { and, count, eq } from 'drizzle-orm';
 import { db } from '../db/postgres.js';
 import { comments, userBadges, votes } from '../db/schema/index.js';
-import { BADGE_DEFINITIONS } from '../data/badges.js';
+import type { BADGE_DEFINITIONS } from '../data/badges.js';
 
 async function countRows(query: Promise<Array<{ value: number }>>): Promise<number> {
   const [row] = await query;

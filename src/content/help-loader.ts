@@ -1,5 +1,5 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
-import { z } from 'zod';
+import type { z } from 'zod';
 import { HelpFrontmatter, DEFAULT_LOCALE, parseLocaleFromPath } from './schemas';
 import type { MdxHeading } from '../../scripts/vite-mdx-headings';
 

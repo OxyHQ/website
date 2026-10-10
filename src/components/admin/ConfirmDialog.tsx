@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { View } from 'react-native';
 import { Dialog, type DialogControlProps } from '@oxy.so/bloom/dialog';
 import { Button } from '@oxy.so/bloom/button';

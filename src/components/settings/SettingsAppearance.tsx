@@ -5,8 +5,8 @@ import {
   SegmentedControlItemText,
 } from '@oxy.so/bloom/segmented-control';
 import { getPresetVars } from '@oxy.so/bloom/design-tokens';
-import { type ColorPresetRecipe } from '@oxy.so/bloom/color-presets';
-import { type AppColorName } from '../../theme';
+import type { ColorPresetRecipe } from '@oxy.so/bloom/color-presets';
+import type { AppColorName } from '../../theme';
 import { PUBLIC_COLOR_PRESET_GROUPS } from '../../theme/preset-catalog';
 import { AnimatedTitle } from '../ui/AnimatedTitle';
 

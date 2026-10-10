@@ -268,7 +268,7 @@ export default function DottedMap({
     const animateFocus = (now: number) => {
       if (dragRef.current) return;
       const progress = Math.min(1, (now - startedAt) / 900);
-      const eased = 1 - Math.pow(1 - progress, 3);
+      const eased = 1 - (1 - progress) ** 3;
       setViewport((current) => ({
         ...current,
         x: start.x + (targetX - start.x) * eased,

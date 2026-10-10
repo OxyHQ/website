@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { usePricing, useLocales } from '../../../api/hooks';
 import { apiFetch } from '../../../api/client';
-import { type PricingPlan } from '../../../data/pricing';
+import type { PricingPlan } from '../../../data/pricing';
 import { Button } from '@oxy.so/bloom/button';
 import { Switch } from '@oxy.so/bloom/switch';
 import { LabeledTextField } from '../LabeledTextField';

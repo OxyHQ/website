@@ -1,4 +1,4 @@
-import { type CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 import { getPresetVars } from '@oxy.so/bloom/design-tokens';
 import type { AppColorName } from '@oxy.so/bloom/color-presets';
 

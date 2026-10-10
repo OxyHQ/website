@@ -6,7 +6,7 @@ import {
   useProducts,
   type ProductRecord,
 } from '../../../api/hooks';
-import { type NewsroomPost, type NewsroomProductRef } from '../../../data/newsroom';
+import type { NewsroomPost, NewsroomProductRef } from '../../../data/newsroom';
 import { apiFetch } from '../../../api/client';
 import { Button } from '@oxy.so/bloom/button';
 import { Switch } from '@oxy.so/bloom/switch';

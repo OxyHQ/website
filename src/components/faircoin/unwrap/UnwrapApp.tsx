@@ -42,10 +42,7 @@ import AppShell from '../app/AppShell';
 import StepTransition from '../app/StepTransition';
 import { isValidFairAddress } from '../buy/validate';
 import { useFaircoinWithdrawalStatus } from '../../../hooks/use-faircoin-withdrawal';
-import {
-  type WithdrawalStatus,
-  type WithdrawalStatusResponse,
-} from '../../../api/faircoin-withdrawal';
+import type { WithdrawalStatus, WithdrawalStatusResponse } from '../../../api/faircoin-withdrawal';
 import {
   FAIRCOIN_ADDRESS_BYTES,
   WFAIR_ABI,

@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { FaqList } from '../sections/FaqSection';
 import UnderlineLink from './UnderlineLink';
 

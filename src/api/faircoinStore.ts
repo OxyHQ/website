@@ -124,7 +124,7 @@ function openWs() {
     if (ws === socket) ws = null;
     if (listeners.size === 0) return;
     const delay = Math.min(
-      INITIAL_RECONNECT_DELAY_MS * Math.pow(2, reconnectAttempts++),
+      INITIAL_RECONNECT_DELAY_MS * 2 ** reconnectAttempts++,
       MAX_RECONNECT_DELAY_MS,
     );
     reconnectTimer = setTimeout(openWs, delay);

@@ -61,7 +61,7 @@ function AnimatedStat({
       const start = performance.now();
       const tick = (now: number) => {
         const t = Math.min((now - start) / duration, 1);
-        const ease = 1 - Math.pow(1 - t, 3);
+        const ease = 1 - (1 - t) ** 3;
         setValue(parseFloat((ease * end).toFixed(decimals)));
         if (t < 1) rafId = requestAnimationFrame(tick);
       };

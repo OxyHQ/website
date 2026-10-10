@@ -18,7 +18,7 @@
       on the first line.
     -->
     <script>
-      (function () {
+      (() => {
         var host = location.hostname;
         if (host !== 'fairco.in' && host !== 'www.fairco.in') return;
         // Selects the FairCoin palette out of styles/theme.generated.css. Without
@@ -91,7 +91,7 @@
       // FREE_COLOR_NAMES; this script carries no palette or allow-list that can
       // drift from it. An unknown/gated value matches no selector and safely
       // falls back to the generated Oxy root palette.
-      (function(){
+      (()=> {
         const mode = localStorage.getItem('theme');
         if (mode === 'light') document.documentElement.classList.remove('dark');
         else document.documentElement.classList.add('dark');
