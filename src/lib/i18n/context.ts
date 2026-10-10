@@ -41,6 +41,8 @@ export const LocaleContext = createContext<LocaleContextValue>({
     translationCount: 0,
     translationReady: false,
   })),
-  setLocale: () => {},
+  setLocale: () => {
+    // Outside a provider there is no locale state to change.
+  },
   t: (key) => key,
 });

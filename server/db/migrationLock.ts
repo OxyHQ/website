@@ -109,7 +109,9 @@ export async function migrateUnderLock(options: MigrateUnderLockOptions): Promis
     max_lifetime: null,
     connect_timeout: 10,
     prepare: false,
-    onnotice: () => {},
+    onnotice: () => {
+      // Migration NOTICEs (e.g. "relation already exists, skipping") are noise.
+    },
     connection: { application_name: APPLICATION_NAME },
     onclose: () => {
       if (ending) return;
@@ -187,9 +189,13 @@ export async function migrateUnderLock(options: MigrateUnderLockOptions): Promis
     throw error;
   } finally {
     if (locked && !lost) {
-      await client`select pg_advisory_unlock(${key}::bigint)`.catch(() => {});
+      await client`select pg_advisory_unlock(${key}::bigint)`.catch(() => {
+        // Best effort: the session ending releases the lock anyway.
+      });
     }
     ending = true;
-    await client.end({ timeout: 5 }).catch(() => {});
+    await client.end({ timeout: 5 }).catch(() => {
+      // Best effort: nothing to do if the connection is already gone.
+    });
   }
 }

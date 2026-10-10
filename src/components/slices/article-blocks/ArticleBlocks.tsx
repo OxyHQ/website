@@ -232,7 +232,9 @@ export function ArticleStats({
  */
 const ArticleTabsBloom = lazy(() => import('./ArticleTabsBloom'));
 
-const subscribeNever = () => () => {};
+const subscribeNever = () => () => {
+  // Nothing was subscribed, so nothing to remove.
+};
 const renderRichText = (content: string) => <RichText>{content}</RichText>;
 
 /**

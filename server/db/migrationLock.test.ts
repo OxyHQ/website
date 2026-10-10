@@ -24,7 +24,12 @@ const FIXTURES = path.join(import.meta.dir, '..', 'test', 'fixtures', 'migration
 const REAL_MIGRATIONS = path.join(import.meta.dir, 'migrations');
 
 const baseUrl = process.env.TEST_DATABASE_URL as string;
-const admin = postgres(baseUrl, { max: 1, onnotice: () => {} });
+const admin = postgres(baseUrl, {
+  max: 1,
+  onnotice: () => {
+    // Silence NOTICEs from test setup.
+  },
+});
 const created: string[] = [];
 const clients: postgres.Sql[] = [];
 
@@ -39,7 +44,12 @@ async function freshDatabase(): Promise<string> {
 }
 
 function connect(url: string): postgres.Sql {
-  const client = postgres(url, { max: 1, onnotice: () => {} });
+  const client = postgres(url, {
+    max: 1,
+    onnotice: () => {
+      // Silence NOTICEs from test setup.
+    },
+  });
   clients.push(client);
   return client;
 }
@@ -133,7 +143,9 @@ describe('migrateUnderLock', () => {
         connectionString: url,
         migrationsFolder: REAL_MIGRATIONS,
         pollMs: 50,
-        log: () => {},
+        log: () => {
+          // Quiet in tests.
+        },
       });
     const runs = await Promise.all([boot(), boot()]);
 
@@ -190,7 +202,9 @@ describe('migrateUnderLock', () => {
       migrationsFolder: path.join(FIXTURES, 'applied'),
       maxWaitMs: 400,
       pollMs: 50,
-      log: () => {},
+      log: () => {
+        // Quiet in tests.
+      },
     });
     const error = await attempt.catch((e: unknown) => e);
     expect(error).toBeInstanceOf(MigrationLockTimeoutError);
@@ -208,7 +222,9 @@ describe('migrateUnderLock', () => {
     const failed = await migrateUnderLock({
       connectionString: url,
       migrationsFolder: path.join(FIXTURES, 'broken'),
-      log: () => {},
+      log: () => {
+        // Quiet in tests.
+      },
     }).catch((e: unknown) => e);
     expect(failed).toBeInstanceOf(Error);
     expect(await lockHolders(url)).toBe(0);
@@ -217,7 +233,9 @@ describe('migrateUnderLock', () => {
       connectionString: url,
       migrationsFolder: path.join(FIXTURES, 'applied'),
       maxWaitMs: 1000,
-      log: () => {},
+      log: () => {
+        // Quiet in tests.
+      },
     });
     expect(run.waitedMs).toBeLessThan(500);
     expect((await journal(url)).length).toBe(1);

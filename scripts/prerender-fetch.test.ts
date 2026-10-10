@@ -2,7 +2,13 @@ import { expect, test } from 'bun:test';
 import { fetchPrerender } from './prerender-fetch';
 
 test('prerender fetch times out waiting for headers', async () => {
-  const server = Bun.serve({ port: 0, fetch: () => new Promise<Response>(() => {}) });
+  const server = Bun.serve({
+    port: 0,
+    fetch: () =>
+      new Promise<Response>(() => {
+        // Never settles: the test needs a server that hangs.
+      }),
+  });
   try {
     await expect(fetchPrerender(`http://127.0.0.1:${server.port}`, 50)).rejects.toThrow();
   } finally {

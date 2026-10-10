@@ -32,7 +32,9 @@ export const sql = postgres(connectionString, {
   idle_timeout: 30,
   connect_timeout: 10,
   prepare: false,
-  onnotice: () => {},
+  onnotice: () => {
+    // Server NOTICEs are informational; keep them out of the logs.
+  },
 });
 
 /**
