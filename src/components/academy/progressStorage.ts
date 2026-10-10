@@ -119,7 +119,7 @@ export function clearAllLocalAcademyProgress(): void {
     const removable: string[] = [];
     for (let i = 0; i < window.localStorage.length; i += 1) {
       const key = window.localStorage.key(i);
-      if (key && key.startsWith(LOCAL_STORAGE_PREFIX)) {
+      if (key?.startsWith(LOCAL_STORAGE_PREFIX)) {
         removable.push(key);
       }
     }
@@ -144,7 +144,7 @@ export function readAllLocalCourseProgress(): Array<{
   try {
     for (let i = 0; i < window.localStorage.length; i += 1) {
       const key = window.localStorage.key(i);
-      if (key && key.startsWith(LOCAL_STORAGE_PREFIX)) {
+      if (key?.startsWith(LOCAL_STORAGE_PREFIX)) {
         const courseSlug = key.slice(LOCAL_STORAGE_PREFIX.length);
         const raw = window.localStorage.getItem(key);
         if (raw) {

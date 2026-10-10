@@ -29,7 +29,7 @@ const ASSET_PREFIXES = ['/images/', '/fonts/', '/videos/', '/assets/', '/icons/'
 function isAssetHref(href: string): boolean {
   if (ASSET_PREFIXES.some((prefix) => href.startsWith(prefix))) return true;
   const last = href.split(/[?#]/)[0]?.split('/').filter(Boolean).pop();
-  return last !== undefined && last.includes('.');
+  return last?.includes('.') === true;
 }
 
 /**

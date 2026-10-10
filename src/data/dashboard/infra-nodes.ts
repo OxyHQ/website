@@ -29,8 +29,7 @@ export function infrastructureNodes(
     const known = INFRA_NODES.find((candidate) => candidate.region === node.region);
     const coordinates = node.coordinates ?? known?.coordinates;
     if (
-      !coordinates ||
-      !coordinates.every(Number.isFinite) ||
+      !coordinates?.every(Number.isFinite) ||
       Math.abs(coordinates[0]) > 180 ||
       Math.abs(coordinates[1]) > 90
     )

@@ -191,7 +191,7 @@ export interface SearchHit {
 }
 
 const includes = (haystack: string | undefined, needle: string) =>
-  haystack !== undefined && haystack.toLowerCase().includes(needle);
+  haystack?.toLowerCase().includes(needle) === true;
 
 /** Courses and lessons matching `query`, in catalog order. An empty query matches nothing. */
 export function searchAcademy(courses: readonly CourseWithLessons[], query: string): SearchHit[] {
