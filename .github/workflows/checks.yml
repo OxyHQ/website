@@ -116,6 +116,11 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Lint and format (Biome)
         run: bunx biome ci .
+      # Only what Biome cannot check: the React Compiler rules from
+      # eslint-plugin-react-hooks (the SPA is built with the compiler) and a
+      # few core rules with no Biome counterpart. See eslint.config.js.
+      - name: React Compiler and core rules (ESLint)
+        run: bun run lint:eslint
       - name: Typecheck every project (app, scripts, node, server)
         run: bunx tsc -b
 

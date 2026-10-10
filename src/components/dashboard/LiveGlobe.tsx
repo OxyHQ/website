@@ -522,6 +522,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   const arcs = useMemo<ActivityArc[]>(() => {
     if (!layout) return [];
     const now = activityClock(activityEvents);
+    // eslint-disable-next-line react-hooks/refs -- the cache read below is the identity three-globe holds; see the comment above this memo
     const nextArcs = activityFlows(activityEvents).flatMap((event) => {
       const route = activityRoute(event, infrastructureNodes(infraStatus));
       if (!route) return [];
@@ -567,6 +568,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         ...pulses,
       ];
     });
+    // eslint-disable-next-line react-hooks/refs -- see the comment above this memo
     return retainFlowObjects(arcCacheRef.current, nextArcs);
   }, [activityEvents, layout, infraStatus]);
 
