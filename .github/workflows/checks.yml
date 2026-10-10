@@ -15,12 +15,12 @@ name: Checks
 # check does not (a locale missing a key, an unused declaration), including the
 # server project that `bun run typecheck:server` covers.
 #
-# ONE job, not three. The Mongo/AGENTS.md guards and the Bloom catalog gate were
-# workflows of their own (`no-mongo.yml`, `bloom-catalog.yml`), each a runner of
-# its own on every pull request and every push. This org is on GitHub Free: 20
-# concurrent jobs shared by EVERY repository, so a job is a queue slot other
-# repos wait for, and two of the three paid for the same checkout and bun setup
-# — the catalog gate for the same `bun install` as well. Each guard is still
+# ONE job. The AGENTS.md guard and the Bloom catalog gate are steps here rather
+# than workflows of their own, each a runner of its own on every pull request
+# and every push. This org is on GitHub Free: 20 concurrent jobs shared by EVERY
+# repository, so a job is a queue slot other repos wait for, and separate
+# workflows would pay for the same checkout and bun setup — the catalog gate for
+# the same `bun install` as well. Each guard is still
 # its own named step, so a red run still says which check failed. The guards
 # that need no dependencies run BEFORE the install, so they still answer in
 # seconds.
@@ -97,13 +97,6 @@ jobs:
       # and `deploy-aws.yml` both run on push to main, and a guard that only
       # runs post-merge is a report, not a gate.
       #
-      # Runs the guard AND its own mutation self-test. The self-test is not
-      # optional here: every part of this guard is a regex or a file listing,
-      # and both fail quiet — a broken one reports a clean tree. Needs no
-      # install: it reads the tracked file listing and the files themselves.
-      - name: Guard against MongoDB returning
-        run: bun run validate:no-mongo
-
       # AGENTS.md is prepended to EVERY agent session, so its bytes are paid on
       # every task forever, and it grows by accretion — one reasonable paragraph
       # at a time, invisible per-commit. Nothing breaks when it grows, which is

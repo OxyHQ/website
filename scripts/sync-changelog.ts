@@ -14,7 +14,7 @@
  *
  * Set `CHANGELOG_REPOS=owner/name,owner/name` to override the default list.
  *
- * Admin DB (Mongo) is left untouched as future work.
+ * It does not write to the admin database.
  */
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
