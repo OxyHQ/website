@@ -23,7 +23,6 @@
     "test:bloom-demos:browser": "bun scripts/bloom-demos.browser.test.ts",
     "validate:bloom-catalog": "bun ./scripts/validate-bloom-catalog.ts && bun ./scripts/test-validate-bloom-catalog.ts",
     "validate:bloom-live-scope": "bun ./scripts/validate-bloom-live-scope.ts && bun ./scripts/test-validate-bloom-live-scope.ts",
-    "validate:no-mongo": "bun ./scripts/validate-no-mongo.mjs && bun ./scripts/test-validate-no-mongo.mjs",
     "validate:agents-md": "bun ./scripts/check-agents-md-size.mjs && bun ./scripts/test-check-agents-md-size.mjs",
     "preview": "vite preview",
     "server": "bun server/index.ts",

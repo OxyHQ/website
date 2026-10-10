@@ -3,7 +3,7 @@ import { describe, expect, test } from 'bun:test'
 
 /**
  * The public MCP docs once described static admin-minted tokens, query-string
- * tokens, a Mongo collection and an `api.oxy.so/mcp` endpoint — an
+ * tokens and an `api.oxy.so/mcp` endpoint — an
  * architecture that no longer exists — for months after it was retired
  * (OxyHQ/website#108, F15). Retired names may appear only inside a section whose
  * heading says it is about migration.
@@ -18,7 +18,6 @@ const RETIRED: Array<{ label: string; pattern: RegExp }> = [
   { label: 'the /api/mcp-tokens route', pattern: /\/api\/mcp-tokens/ },
   { label: 'api.oxy.so/mcp', pattern: /(?<![\w-])api\.oxy\.so\/mcp/ },
   { label: 'a query-string token', pattern: /[?&]token=/ },
-  { label: 'MongoDB', pattern: /\bmongo/i },
 ]
 
 const HEADING = /^(#{1,6})\s+(.*)$/
@@ -84,7 +83,7 @@ describe('MCP docs drift', () => {
       '# Authentication',
       'Connect to website-api.oxy.so/mcp.',
       '## Migration from static tokens',
-      'The old `create_mcp_token` tool and `?token=` URLs, stored in MongoDB, are gone.',
+      'The old `create_mcp_token` tool and `?token=` URLs are gone.',
       '### Details',
       'Old endpoint api.oxy.so/mcp.',
       '## Revoking',
