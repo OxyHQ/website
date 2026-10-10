@@ -1,6 +1,6 @@
-import { Badge } from '@oxy.so/bloom/badge'
-import { Button } from '@oxy.so/bloom/button'
-import { Chip } from '@oxy.so/bloom/chip'
+import { Badge } from '@oxy.so/bloom/badge';
+import { Button } from '@oxy.so/bloom/button';
+import { Chip } from '@oxy.so/bloom/chip';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -10,13 +10,13 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@oxy.so/bloom/dropdown-menu'
-import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
-import { RiArrowUpDownLine } from '@oxy.so/bloom/icons/RiArrowUpDownLine'
-import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
-import { RiEqualizerLine } from '@oxy.so/bloom/icons/RiEqualizerLine'
-import { useTheme } from '@oxy.so/bloom/theme'
-import { useTranslation } from '../../lib/i18n'
+} from '@oxy.so/bloom/dropdown-menu';
+import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine';
+import { RiArrowUpDownLine } from '@oxy.so/bloom/icons/RiArrowUpDownLine';
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine';
+import { RiEqualizerLine } from '@oxy.so/bloom/icons/RiEqualizerLine';
+import { useTheme } from '@oxy.so/bloom/theme';
+import { useTranslation } from '../../lib/i18n';
 
 /*
  * The article-list toolbar pieces shared by /newsroom (NewsroomIndex) and the
@@ -32,14 +32,14 @@ export function NewsroomFilterMenu<T extends string>({
   onToggle,
   onClear,
 }: {
-  label: string
-  clearAllLabel: string
-  categories: readonly T[]
-  active: readonly T[]
-  onToggle: (category: T) => void
-  onClear: () => void
+  label: string;
+  clearAllLabel: string;
+  categories: readonly T[];
+  active: readonly T[];
+  onToggle: (category: T) => void;
+  onClear: () => void;
 }) {
-  const { colors } = useTheme()
+  const { colors } = useTheme();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild label={label} className="inline-flex">
@@ -47,9 +47,11 @@ export function NewsroomFilterMenu<T extends string>({
           appearance="plain"
           tone="neutral"
           leadingIcon={RiEqualizerLine}
-          trailing={active.length > 0
-            ? <Badge content={active.length} tone="accent" appearance="subtle" />
-            : undefined}
+          trailing={
+            active.length > 0 ? (
+              <Badge content={active.length} tone="accent" appearance="subtle" />
+            ) : undefined
+          }
           trailingIcon={RiArrowDownSLine}
         >
           {label}
@@ -76,7 +78,7 @@ export function NewsroomFilterMenu<T extends string>({
         )}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
 export function NewsroomSortMenu<T extends string>({
@@ -86,14 +88,14 @@ export function NewsroomSortMenu<T extends string>({
   onChange,
 }: {
   /** The trigger's visible text: a fixed "Sort", or the chosen option's label. */
-  label: string
-  options: Record<T, string>
-  value: T
-  onChange: (value: T) => void
+  label: string;
+  options: Record<T, string>;
+  value: T;
+  onChange: (value: T) => void;
 }) {
-  const { t } = useTranslation()
-  const { colors } = useTheme()
-  const accessibleLabel = t('newsroom.sortLabel', { option: options[value] })
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const accessibleLabel = t('newsroom.sortLabel', { option: options[value] });
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild label={accessibleLabel} className="inline-flex">
@@ -122,7 +124,7 @@ export function NewsroomSortMenu<T extends string>({
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
 /** The chosen filters as removable chips, plus "Clear all". Renders nothing when none are chosen. */
@@ -133,14 +135,14 @@ export function NewsroomActiveFilters<T extends string>({
   onClear,
   className = '',
 }: {
-  active: readonly T[]
-  clearAllLabel: string
-  onRemove: (category: T) => void
-  onClear: () => void
-  className?: string
+  active: readonly T[];
+  clearAllLabel: string;
+  onRemove: (category: T) => void;
+  onClear: () => void;
+  className?: string;
 }) {
-  const { t } = useTranslation()
-  if (active.length === 0) return null
+  const { t } = useTranslation();
+  if (active.length === 0) return null;
   return (
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>
       {active.map((category) => (
@@ -156,5 +158,5 @@ export function NewsroomActiveFilters<T extends string>({
         {clearAllLabel}
       </Button>
     </div>
-  )
+  );
 }

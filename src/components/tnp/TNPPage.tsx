@@ -1,13 +1,14 @@
-import Button from '../ui/Button'
-import { useCopyToClipboard } from '../../lib/useCopyToClipboard'
+import Button from '../ui/Button';
+import { useCopyToClipboard } from '../../lib/useCopyToClipboard';
 
-const TNP_DOWNLOADS_URL = 'https://tnp.network/downloads'
+const TNP_DOWNLOADS_URL = 'https://tnp.network/downloads';
 
 const tldCards = [
   {
     tld: '.ox',
     title: 'Short, sharp, Oxy-native',
-    description: 'The default namespace for everything on TNP. Clean two-letter domains that belong to you.',
+    description:
+      'The default namespace for everything on TNP. Clean two-letter domains that belong to you.',
   },
   {
     tld: '.app',
@@ -17,55 +18,63 @@ const tldCards = [
   {
     tld: '.com',
     title: 'The classic, now on TNP',
-    description: 'The domain everyone knows, available fresh in the TNP namespace. No squatters, no markup.',
+    description:
+      'The domain everyone knows, available fresh in the TNP namespace. No squatters, no markup.',
   },
   {
     tld: '.???',
     title: 'Propose your own TLD',
     description: 'Think the world needs .dev, .music, or .pizza? Propose it. The community votes.',
   },
-]
+];
 
 const steps = [
   {
     number: '01',
     title: 'Install TNP',
-    description: 'Download the signed installer for your platform, verify it, then run it locally to configure TNP DNS alongside the regular internet.',
+    description:
+      'Download the signed installer for your platform, verify it, then run it locally to configure TNP DNS alongside the regular internet.',
     code: TNP_DOWNLOADS_URL,
   },
   {
     number: '02',
     title: 'Register your domain',
-    description: 'Pick a name, pick a TLD, and register it at tnp.network. Linked to your Oxy account.',
+    description:
+      'Pick a name, pick a TLD, and register it at tnp.network. Linked to your Oxy account.',
   },
   {
     number: '03',
     title: 'It just works',
-    description: 'Your domain resolves natively on any device running TNP. No browser extensions, no proxies, no workarounds.',
+    description:
+      'Your domain resolves natively on any device running TNP. No browser extensions, no proxies, no workarounds.',
   },
-]
+];
 
 const features = [
   {
     title: 'Own your namespace',
-    description: 'TNP is not subject to ICANN rules, registrar fees, or domain squatting. You register once and it is yours.',
+    description:
+      'TNP is not subject to ICANN rules, registrar fees, or domain squatting. You register once and it is yours.',
   },
   {
     title: 'Linked to your Oxy account',
-    description: 'Your domains are tied to the identity you already own. One login, one place to manage everything.',
+    description:
+      'Your domains are tied to the identity you already own. One login, one place to manage everything.',
   },
   {
     title: 'Open by design',
-    description: 'The TNP client is open source. The infrastructure is transparent. You can see exactly what it does.',
+    description:
+      'The TNP client is open source. The infrastructure is transparent. You can see exactly what it does.',
   },
   {
     title: 'DNS only, nothing else',
-    description: 'TNP is not a VPN. It does not route your traffic. It only resolves names. Everything else stays the same.',
+    description:
+      'TNP is not a VPN. It does not route your traffic. It only resolves names. Everything else stays the same.',
   },
-]
+];
 
 function CopyButton({ text }: { text: string }) {
-  const { copied, copy } = useCopyToClipboard()
+  const { copied, copy } = useCopyToClipboard();
 
   return (
     <button
@@ -75,7 +84,7 @@ function CopyButton({ text }: { text: string }) {
     >
       {copied ? 'Copied' : 'Copy'}
     </button>
-  )
+  );
 }
 
 export default function TNPContent() {
@@ -94,7 +103,8 @@ export default function TNPContent() {
             </h1>
             <p className="type-base text-muted-foreground text-pretty mb-v1">
               TNP is an alternative internet namespace controlled by Oxy. Register domains on TLDs
-              that no one else can offer. Install once, and every TNP domain resolves natively on your device.
+              that no one else can offer. Install once, and every TNP domain resolves natively on
+              your device.
             </p>
             <div className="flex justify-center gap-x-g1 items-center flex-wrap mb-v1">
               <Button href="https://tnp.network/register" target="_blank" rel="noopener noreferrer">
@@ -120,25 +130,24 @@ export default function TNPContent() {
               <div className="mono-tag mb-v1 flex items-center gap-2 text-sm">
                 <span>[</span> <span>About</span> <span>]</span>
               </div>
-              <h2 className="type-md-lg text-balance">
-                A parallel internet, built on DNS
-              </h2>
+              <h2 className="type-md-lg text-balance">A parallel internet, built on DNS</h2>
             </div>
             <div className="col-span-full md:col-start-10 md:col-end-25 lg:col-start-10 lg:col-end-25 mt-v1 md:mt-0">
               <div className="type-base text-muted-foreground space-y-4 max-w-prose">
                 <p>
-                  TNP is an alternative internet layer that runs on top of the regular internet. It is
-                  a parallel namespace: a new set of domain names that only resolve for people running TNP.
+                  TNP is an alternative internet layer that runs on top of the regular internet. It
+                  is a parallel namespace: a new set of domain names that only resolve for people
+                  running TNP.
                 </p>
                 <p>
-                  Oxy controls the root. That means TNP can offer TLDs that ICANN never will,
-                  with registration rules that actually make sense. No annual renewal gouging.
-                  No domain squatting. No WHOIS privacy fees.
+                  Oxy controls the root. That means TNP can offer TLDs that ICANN never will, with
+                  registration rules that actually make sense. No annual renewal gouging. No domain
+                  squatting. No WHOIS privacy fees.
                 </p>
                 <p>
                   TNP is DNS-only. It does not tunnel your traffic, it does not act as a VPN, and it
-                  does not touch anything except name resolution. Install it once, and every TNP domain
-                  works system-wide: browsers, CLI tools, APIs, everything.
+                  does not touch anything except name resolution. Install it once, and every TNP
+                  domain works system-wide: browsers, CLI tools, APIs, everything.
                 </p>
               </div>
             </div>
@@ -153,9 +162,7 @@ export default function TNPContent() {
             <span>[</span> <span>Domains</span> <span>]</span>
           </div>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between mb-v2">
-            <h2 className="type-md-lg text-balance max-w-prose-narrow">
-              TLDs available at launch
-            </h2>
+            <h2 className="type-md-lg text-balance max-w-prose-narrow">TLDs available at launch</h2>
           </div>
           <div className="grid gap-0 lg:grid-cols-4 lg:-space-x-px">
             {tldCards.map((card) => (
@@ -246,11 +253,15 @@ export default function TNPContent() {
                 Claim your namespace.
               </h2>
               <p className="type-base text-muted-foreground">
-                Registration is free and requires an Oxy account. Pick your domain, set your records,
-                and you are live on the TNP network.
+                Registration is free and requires an Oxy account. Pick your domain, set your
+                records, and you are live on the TNP network.
               </p>
               <div className="flex gap-x-g1 items-center flex-wrap justify-center">
-                <Button href="https://tnp.network/register" target="_blank" rel="noopener noreferrer">
+                <Button
+                  href="https://tnp.network/register"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Register a Domain
                 </Button>
                 <Button variant="outline" href="/tnp/install">
@@ -262,5 +273,5 @@ export default function TNPContent() {
         </div>
       </section>
     </div>
-  )
+  );
 }

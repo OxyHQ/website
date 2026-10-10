@@ -1,6 +1,6 @@
-import HomiioWheelHero from './HomiioWheelHero'
-import HomiioSpiral from './HomiioSpiral'
-import HomiioFAQ from './HomiioFAQ'
+import HomiioWheelHero from './HomiioWheelHero';
+import HomiioSpiral from './HomiioSpiral';
+import HomiioFAQ from './HomiioFAQ';
 
 export default function HomiioContent() {
   return (
@@ -14,5 +14,5 @@ export default function HomiioContent() {
       </div>
       <HomiioFAQ />
     </>
-  )
+  );
 }

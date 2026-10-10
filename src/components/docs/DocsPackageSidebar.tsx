@@ -1,23 +1,12 @@
-import {
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react'
-import { Search } from '@oxy.so/bloom/search'
-import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom'
-import { useLocation } from 'react-router-dom'
-import { Link } from '../../lib/navigation'
-import { buildDocsHref, getPackages } from '../../content/docs-loader'
-import type {
-  SyncedPackage,
-  SyncedPage,
-  SyncedVersion,
-} from '../../../scripts/types'
-import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
-import { getPackageLogo } from './getPackageLogo'
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Search } from '@oxy.so/bloom/search';
+import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom';
+import { useLocation } from 'react-router-dom';
+import { Link } from '../../lib/navigation';
+import { buildDocsHref, getPackages } from '../../content/docs-loader';
+import type { SyncedPackage, SyncedPage, SyncedVersion } from '../../../scripts/types';
+import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine';
+import { getPackageLogo } from './getPackageLogo';
 import {
   categoryLabels,
   categoryOrder,
@@ -25,10 +14,10 @@ import {
   type SidebarNode,
   type SidebarPackage,
   type SidebarSection,
-} from './docsTypes'
+} from './docsTypes';
 
 function pageHref(pkg: SyncedPackage, version: string, slug: string): string {
-  return buildDocsHref(pkg, version, slug)
+  return buildDocsHref(pkg, version, slug);
 }
 
 /**
@@ -37,16 +26,16 @@ function pageHref(pkg: SyncedPackage, version: string, slug: string): string {
  * Examples: `functions` → `Functions`, `type-aliases` → `Type aliases`.
  */
 function formatGroupLabel(segment: string): string {
-  const words = segment.split(/[-_]/).filter((w) => w.length > 0)
-  if (words.length === 0) return segment
-  const head = words[0]
-  const headCased = head.charAt(0).toUpperCase() + head.slice(1).toLowerCase()
-  if (words.length === 1) return headCased
+  const words = segment.split(/[-_]/).filter((w) => w.length > 0);
+  if (words.length === 0) return segment;
+  const head = words[0];
+  const headCased = head.charAt(0).toUpperCase() + head.slice(1).toLowerCase();
+  if (words.length === 1) return headCased;
   const tail = words
     .slice(1)
     .map((w) => w.toLowerCase())
-    .join(' ')
-  return `${headCased} ${tail}`
+    .join(' ');
+  return `${headCased} ${tail}`;
 }
 
 /**
@@ -61,97 +50,89 @@ function formatGroupLabel(segment: string): string {
  * `api/functions/...`), we convert the leaf to a group in-place — the
  * `Map` slot is reused, preserving insertion order.
  */
-function buildPageTree(
-  pkg: SyncedPackage,
-  version: SyncedVersion,
-): SidebarNode[] {
+function buildPageTree(pkg: SyncedPackage, version: SyncedVersion): SidebarNode[] {
   interface TreeGroup {
     /** Raw slug segment (pre-formatting). */
-    segment: string
+    segment: string;
     /** Stable key — `pkg.shortName` + fullPath, or `pkg.shortName` for root. */
-    key: string
+    key: string;
     /** Insertion-ordered children. */
-    children: Map<string, TreeNode>
+    children: Map<string, TreeNode>;
     /**
      * Optional page anchored at this group's own slug (e.g. the `api`
      * README that sits at the same path as the `api/` group). Rendered as
      * an `Overview` entry when present.
      */
-    page?: SyncedPage
+    page?: SyncedPage;
   }
   interface TreeLeafEntry {
-    label: string
-    href: string
-    slug: string
+    label: string;
+    href: string;
+    slug: string;
   }
-  type TreeNode =
-    { kind: 'leaf'; leaf: TreeLeafEntry } | { kind: 'group'; group: TreeGroup }
+  type TreeNode = { kind: 'leaf'; leaf: TreeLeafEntry } | { kind: 'group'; group: TreeGroup };
 
   const root: TreeGroup = {
     segment: '',
     key: pkg.shortName,
     children: new Map(),
-  }
+  };
 
-  function ensureGroup(
-    parent: TreeGroup,
-    segment: string,
-    fullPath: string,
-  ): TreeGroup {
-    const existing = parent.children.get(segment)
+  function ensureGroup(parent: TreeGroup, segment: string, fullPath: string): TreeGroup {
+    const existing = parent.children.get(segment);
     if (existing && existing.kind === 'group') {
-      return existing.group
+      return existing.group;
     }
     const group: TreeGroup = {
       segment,
       key: `${pkg.shortName}/${fullPath}`,
       children: new Map(),
-    }
+    };
     // If `existing` is a leaf, promote it: the page becomes the new group's
     // anchor (rendered as "Overview" below). `Map.set` on an existing key
     // overwrites the value while keeping the original insertion slot.
     if (existing && existing.kind === 'leaf') {
-      const synced = version.pages.find((p) => p.slug === existing.leaf.slug)
-      if (synced) group.page = synced
+      const synced = version.pages.find((p) => p.slug === existing.leaf.slug);
+      if (synced) group.page = synced;
     }
-    parent.children.set(segment, { kind: 'group', group })
-    return group
+    parent.children.set(segment, { kind: 'group', group });
+    return group;
   }
 
   for (const page of version.pages) {
     if (!page.slug) {
       // Index page — anchored at the root group; the package row links to it.
-      root.page = page
-      continue
+      root.page = page;
+      continue;
     }
-    const segments = page.slug.split('/').filter((s) => s.length > 0)
-    if (segments.length === 0) continue
-    let node: TreeGroup = root
+    const segments = page.slug.split('/').filter((s) => s.length > 0);
+    if (segments.length === 0) continue;
+    let node: TreeGroup = root;
     for (let i = 0; i < segments.length - 1; i += 1) {
-      const segment = segments[i]
-      const fullPath = segments.slice(0, i + 1).join('/')
-      node = ensureGroup(node, segment, fullPath)
+      const segment = segments[i];
+      const fullPath = segments.slice(0, i + 1).join('/');
+      node = ensureGroup(node, segment, fullPath);
     }
-    const lastSegment = segments[segments.length - 1]
+    const lastSegment = segments[segments.length - 1];
     const leaf: TreeLeafEntry = {
       label: page.title,
       href: pageHref(pkg, version.version, page.slug),
       slug: page.slug,
-    }
-    const existing = node.children.get(lastSegment)
+    };
+    const existing = node.children.get(lastSegment);
     if (existing && existing.kind === 'group') {
       // Deeper pages were processed first — this page sits at the group's
       // own slug. Anchor it as the group's overview page.
-      existing.group.page = page
-      continue
+      existing.group.page = page;
+      continue;
     }
     // Either no existing entry, or an existing leaf at the same slug
     // (duplicate — last write wins, matching the input order).
-    node.children.set(lastSegment, { kind: 'leaf', leaf })
+    node.children.set(lastSegment, { kind: 'leaf', leaf });
   }
 
   function materialize(group: TreeGroup): SidebarNode[] {
-    const out: SidebarNode[] = []
+    const out: SidebarNode[] = [];
     for (const [, child] of group.children) {
       if (child.kind === 'leaf') {
         out.push({
@@ -159,19 +140,19 @@ function buildPageTree(
           label: child.leaf.label,
           href: child.leaf.href,
           slug: child.leaf.slug,
-        })
-        continue
+        });
+        continue;
       }
-      const childNodes = materialize(child.group)
-      if (childNodes.length === 0 && !child.group.page) continue
+      const childNodes = materialize(child.group);
+      if (childNodes.length === 0 && !child.group.page) continue;
       const overview = child.group.page
         ? {
             label: 'Overview',
             href: pageHref(pkg, version.version, child.group.page.slug),
             slug: child.group.page.slug,
           }
-        : undefined
-      const leafCount = countLeaves(childNodes) + (overview ? 1 : 0)
+        : undefined;
+      const leafCount = countLeaves(childNodes) + (overview ? 1 : 0);
       out.push({
         kind: 'group',
         label: formatGroupLabel(child.group.segment),
@@ -179,25 +160,25 @@ function buildPageTree(
         children: childNodes,
         leafCount,
         ...(overview ? { overview } : {}),
-      })
+      });
     }
-    return out
+    return out;
   }
 
-  return materialize(root)
+  return materialize(root);
 }
 
 function countLeaves(nodes: SidebarNode[]): number {
-  let total = 0
+  let total = 0;
   for (const node of nodes) {
-    if (node.kind === 'leaf') total += 1
-    else total += node.leafCount
+    if (node.kind === 'leaf') total += 1;
+    else total += node.leafCount;
   }
-  return total
+  return total;
 }
 
 function normalizeDocsPath(pathname: string): string {
-  return pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
+  return pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
 }
 
 /**
@@ -208,21 +189,21 @@ function normalizeDocsPath(pathname: string): string {
  * when every page sits under it.
  */
 function collapseSingleWrapper(nodes: SidebarNode[]): SidebarNode[] {
-  let current = nodes
+  let current = nodes;
   while (
     current.length === 1 &&
     current[0].kind === 'group' &&
     !current.some((n) => n.kind === 'leaf')
   ) {
-    const only = current[0]
-    if (only.kind !== 'group') break
-    current = only.children
+    const only = current[0];
+    if (only.kind !== 'group') break;
+    current = only.children;
   }
   return current.map((n) =>
     n.kind === 'group'
       ? ({ ...n, children: collapseSingleWrapper(n.children) } as SidebarGroup)
       : n,
-  )
+  );
 }
 
 /**
@@ -236,32 +217,32 @@ function collapseSingleWrapper(nodes: SidebarNode[]): SidebarNode[] {
 // Co-located with the sidebar component because it shares the tree-building
 // helpers above. Fast refresh isn't relevant for this pure function — it has
 // no React state to preserve across edits.
-// eslint-disable-next-line react-refresh/only-export-components
+// biome-ignore lint/style/useComponentExportOnlyModules: pure function sharing the tree-building helpers above; fast refresh has no React state to preserve here
 export function buildSidebar(
   activePkg?: SyncedPackage,
   activeVersion?: SyncedVersion,
 ): SidebarSection[] {
-  const sections: SidebarSection[] = []
-  const grouped = new Map<SyncedPackage['category'], SyncedPackage[]>()
+  const sections: SidebarSection[] = [];
+  const grouped = new Map<SyncedPackage['category'], SyncedPackage[]>();
   for (const pkg of getPackages()) {
-    const list = grouped.get(pkg.category) ?? []
-    list.push(pkg)
-    grouped.set(pkg.category, list)
+    const list = grouped.get(pkg.category) ?? [];
+    list.push(pkg);
+    grouped.set(pkg.category, list);
   }
   for (const cat of categoryOrder) {
-    const pkgs = grouped.get(cat)
-    if (!pkgs || pkgs.length === 0) continue
-    const nodes: SidebarPackage[] = []
+    const pkgs = grouped.get(cat);
+    if (!pkgs || pkgs.length === 0) continue;
+    const nodes: SidebarPackage[] = [];
     for (const pkg of pkgs) {
-      const isActive = activePkg?.shortName === pkg.shortName
+      const isActive = activePkg?.shortName === pkg.shortName;
       const version =
         isActive && activeVersion
           ? activeVersion
           : (pkg.versions.find((v) => v.version === pkg.latestVersion) ??
             pkg.versions.find((v) => v.version === pkg.defaultVersion) ??
-            pkg.versions[0])
-      if (!version) continue
-      const children = collapseSingleWrapper(buildPageTree(pkg, version))
+            pkg.versions[0]);
+      if (!version) continue;
+      const children = collapseSingleWrapper(buildPageTree(pkg, version));
       if (pkg.shortName === 'bloom') {
         children.unshift(
           {
@@ -276,7 +257,7 @@ export function buildSidebar(
             href: '/developers/docs/bloom/color-system',
             slug: 'color-system',
           },
-        )
+        );
       }
       nodes.push({
         kind: 'package',
@@ -286,12 +267,12 @@ export function buildSidebar(
         key: pkg.shortName,
         children,
         leafCount: countLeaves(children),
-      })
+      });
     }
-    if (nodes.length === 0) continue
-    sections.push({ category: cat, title: categoryLabels[cat], nodes })
+    if (nodes.length === 0) continue;
+    sections.push({ category: cat, title: categoryLabels[cat], nodes });
   }
-  return sections
+  return sections;
 }
 
 /**
@@ -306,51 +287,41 @@ export function buildSidebar(
  * added — so users see the full table of contents on first paint. For
  * deep leaves only the ancestor groups are expanded.
  */
-function collectActivePath(
-  nodes: SidebarNode[],
-  activePath: string,
-): Set<string> {
-  const out = new Set<string>()
+function collectActivePath(nodes: SidebarNode[], activePath: string): Set<string> {
+  const out = new Set<string>();
   function addAllGroupKeys(children: SidebarNode[]): void {
     for (const child of children) {
-      if (child.kind === 'leaf') continue
-      out.add(child.key)
-      addAllGroupKeys(child.children)
+      if (child.kind === 'leaf') continue;
+      out.add(child.key);
+      addAllGroupKeys(child.children);
     }
   }
   function visit(node: SidebarNode): boolean {
     if (node.kind === 'leaf') {
-      return normalizeDocsPath(node.href) === activePath
+      return normalizeDocsPath(node.href) === activePath;
     }
-    const selfMatches =
-      node.kind === 'package' && normalizeDocsPath(node.href) === activePath
-    let containsActive = selfMatches
+    const selfMatches = node.kind === 'package' && normalizeDocsPath(node.href) === activePath;
+    let containsActive = selfMatches;
     for (const child of node.children) {
-      if (visit(child)) containsActive = true
+      if (visit(child)) containsActive = true;
     }
-    if (containsActive) out.add(node.key)
+    if (containsActive) out.add(node.key);
     // If the package row itself is the active path (overview landing),
     // expand every descendant group so the full TOC is visible. This
     // doesn't apply to inner groups — we want deep-page navigation to
     // only expand the ancestor path, not blow open every sibling group.
-    if (selfMatches) addAllGroupKeys(node.children)
-    return containsActive
+    if (selfMatches) addAllGroupKeys(node.children);
+    return containsActive;
   }
-  for (const node of nodes) visit(node)
-  return out
+  for (const node of nodes) visit(node);
+  return out;
 }
 
 /* -------------------------- Sidebar UI -------------------------------- */
 
 /** Letter avatar fallback used when no logo asset exists for a package. */
-function PackageLogo({
-  shortName,
-  label,
-}: {
-  shortName: string
-  label: string
-}) {
-  const src = getPackageLogo(shortName)
+function PackageLogo({ shortName, label }: { shortName: string; label: string }) {
+  const src = getPackageLogo(shortName);
   if (src) {
     return (
       <img
@@ -361,13 +332,13 @@ function PackageLogo({
         loading="lazy"
         decoding="async"
       />
-    )
+    );
   }
   const letter =
     label
       .replace(/^@[^/]+\//, '')
       .charAt(0)
-      .toUpperCase() || '?'
+      .toUpperCase() || '?';
   return (
     <span
       aria-hidden="true"
@@ -375,7 +346,7 @@ function PackageLogo({
     >
       {letter}
     </span>
-  )
+  );
 }
 
 /**
@@ -392,20 +363,20 @@ const depthPaddingClasses: Record<number, string> = {
   5: 'pl-12',
   6: 'pl-14',
   7: 'pl-16',
-}
+};
 
 function paddingForDepth(depth: number): string {
-  const cls = depthPaddingClasses[depth]
-  if (cls) return cls
+  const cls = depthPaddingClasses[depth];
+  if (cls) return cls;
   // Beyond the predefined range, fall back to the deepest known class to
   // avoid generating arbitrary class names the JIT may not pick up.
-  return depthPaddingClasses[7] ?? 'pl-4'
+  return depthPaddingClasses[7] ?? 'pl-4';
 }
 
 function childKey(child: SidebarNode): string {
-  if (child.kind === 'leaf') return `leaf:${child.href}`
-  if (child.kind === 'group') return `group:${child.key}`
-  return `package:${child.key}`
+  if (child.kind === 'leaf') return `leaf:${child.href}`;
+  if (child.kind === 'group') return `group:${child.key}`;
+  return `package:${child.key}`;
 }
 
 function SidebarTreeNode({
@@ -416,20 +387,18 @@ function SidebarTreeNode({
   activePath,
   overview = false,
 }: {
-  node: SidebarNode
-  depth: number
-  expanded: ReadonlySet<string>
-  toggle: (key: string) => void
-  activePath: string
-  overview?: boolean
+  node: SidebarNode;
+  depth: number;
+  expanded: ReadonlySet<string>;
+  toggle: (key: string) => void;
+  activePath: string;
+  overview?: boolean;
 }) {
   if (node.kind === 'leaf') {
-    const isActive = activePath === normalizeDocsPath(node.href)
+    const isActive = activePath === normalizeDocsPath(node.href);
     const pad = overview
-      ? ['pl-4', 'pl-8', 'pl-12', 'pl-16', 'pl-20', 'pl-24', 'pl-28', 'pl-32'][
-          Math.min(depth, 7)
-        ]
-      : paddingForDepth(depth)
+      ? ['pl-4', 'pl-8', 'pl-12', 'pl-16', 'pl-20', 'pl-24', 'pl-28', 'pl-32'][Math.min(depth, 7)]
+      : paddingForDepth(depth);
     return (
       <li>
         <Link
@@ -442,13 +411,11 @@ function SidebarTreeNode({
           to={node.href}
         >
           <div className="flex-1 flex items-start space-x-2.5">
-            <div className="break-words [word-break:break-word]">
-              {node.label}
-            </div>
+            <div className="break-words [word-break:break-word]">{node.label}</div>
           </div>
         </Link>
       </li>
-    )
+    );
   }
   if (node.kind === 'package') {
     // The package row is a link (logo + label) that navigates to the
@@ -456,19 +423,17 @@ function SidebarTreeNode({
     // toggles the sub-tree in place. The two are siblings (not nested) so
     // clicking the chevron never triggers navigation. Hover styling is
     // shared across the row via a peer-group pattern using `group/row`.
-    const isActive = activePath === normalizeDocsPath(node.href)
+    const isActive = activePath === normalizeDocsPath(node.href);
     const pad = overview
-      ? ['pl-4', 'pl-8', 'pl-12', 'pl-16', 'pl-20', 'pl-24', 'pl-28', 'pl-32'][
-          Math.min(depth, 7)
-        ]
-      : paddingForDepth(depth)
+      ? ['pl-4', 'pl-8', 'pl-12', 'pl-16', 'pl-20', 'pl-24', 'pl-28', 'pl-32'][Math.min(depth, 7)]
+      : paddingForDepth(depth);
     // Show a chevron when the package has any non-leaf descendant, or more
     // than one child total — i.e. anything worth expanding. A single leaf
     // child stands on its own without an extra wrapper toggle.
-    const hasGroup = node.children.some((c) => c.kind !== 'leaf')
-    const hasChevron = hasGroup || node.children.length > 1
-    const isOpen = expanded.has(node.key)
-    const showChildren = node.children.length > 0 && (!hasChevron || isOpen)
+    const hasGroup = node.children.some((c) => c.kind !== 'leaf');
+    const hasChevron = hasGroup || node.children.length > 1;
+    const isOpen = expanded.has(node.key);
+    const showChildren = node.children.length > 0 && (!hasChevron || isOpen);
     return (
       <li>
         <div
@@ -485,9 +450,7 @@ function SidebarTreeNode({
           >
             <div className="flex-1 flex items-start space-x-2.5">
               <PackageLogo shortName={node.shortName} label={node.label} />
-              <div className="break-words [word-break:break-word]">
-                {node.label}
-              </div>
+              <div className="break-words [word-break:break-word]">{node.label}</div>
             </div>
           </Link>
           {hasChevron ? (
@@ -527,14 +490,12 @@ function SidebarTreeNode({
           </ul>
         ) : null}
       </li>
-    )
+    );
   }
-  const isOpen = expanded.has(node.key)
+  const isOpen = expanded.has(node.key);
   const pad = overview
-    ? ['pl-4', 'pl-8', 'pl-12', 'pl-16', 'pl-20', 'pl-24', 'pl-28', 'pl-32'][
-        Math.min(depth, 7)
-      ]
-    : paddingForDepth(depth)
+    ? ['pl-4', 'pl-8', 'pl-12', 'pl-16', 'pl-20', 'pl-24', 'pl-28', 'pl-32'][Math.min(depth, 7)]
+    : paddingForDepth(depth);
   return (
     <li>
       <button
@@ -543,13 +504,9 @@ function SidebarTreeNode({
         aria-expanded={isOpen}
         className={`group flex items-center justify-between pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left ${overview ? 'rounded-xl' : 'rounded-lg'} w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground`}
       >
-        <span className="break-words [word-break:break-word]">
-          {node.label}
-        </span>
+        <span className="break-words [word-break:break-word]">{node.label}</span>
         <span className="flex items-center gap-2 shrink-0">
-          <span className="text-xs text-muted-foreground/70 tabular-nums">
-            ({node.leafCount})
-          </span>
+          <span className="text-xs text-muted-foreground/70 tabular-nums">({node.leafCount})</span>
           <span
             aria-hidden="true"
             className={
@@ -594,7 +551,7 @@ function SidebarTreeNode({
         </ul>
       ) : null}
     </li>
-  )
+  );
 }
 
 export function DocsPackageSidebar({
@@ -603,73 +560,66 @@ export function DocsPackageSidebar({
   versionSelector,
   overview = false,
 }: {
-  sections: SidebarSection[]
-  activePkg?: SyncedPackage
-  versionSelector?: ReactNode
+  sections: SidebarSection[];
+  activePkg?: SyncedPackage;
+  versionSelector?: ReactNode;
   /** Preserve the docs overview design independently of the article layout. */
-  overview?: boolean
+  overview?: boolean;
 }) {
-  const location = useLocation()
-  const [query, setQuery] = useState('')
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const panelId = useId()
-  const searchRef = useRef<HTMLDivElement>(null)
-  const railTop = useSiteHeaderBottom() + 60
+  const location = useLocation();
+  const [query, setQuery] = useState('');
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const panelId = useId();
+  const searchRef = useRef<HTMLDivElement>(null);
+  const railTop = useSiteHeaderBottom() + 60;
   useEffect(() => {
-    if (overview) return
+    if (overview) return;
     const shortcut = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-        event.preventDefault()
-        setMobileOpen(true)
-        requestAnimationFrame(() =>
-          searchRef.current?.querySelector('input')?.focus(),
-        )
+        event.preventDefault();
+        setMobileOpen(true);
+        requestAnimationFrame(() => searchRef.current?.querySelector('input')?.focus());
       }
-    }
-    window.addEventListener('keydown', shortcut)
-    return () => window.removeEventListener('keydown', shortcut)
-  }, [overview])
+    };
+    window.addEventListener('keydown', shortcut);
+    return () => window.removeEventListener('keydown', shortcut);
+  }, [overview]);
   const matches = useMemo(() => {
-    const leaves: Array<{ label: string; href: string; parent: string }> = []
+    const leaves: Array<{ label: string; href: string; parent: string }> = [];
     const visit = (nodes: SidebarNode[], parent = '') =>
       nodes.forEach((node) => {
-        if (node.kind !== 'group')
-          leaves.push({ label: node.label, href: node.href, parent })
-        if (node.kind !== 'leaf') visit(node.children, node.label)
-      })
-    sections.forEach((section) => visit(section.nodes, section.title))
-    const needle = query.trim().toLowerCase()
-    return leaves.filter((item) =>
-      `${item.label} ${item.parent}`.toLowerCase().includes(needle),
-    )
-  }, [sections, query])
-  const activePath = normalizeDocsPath(location.pathname)
+        if (node.kind !== 'group') leaves.push({ label: node.label, href: node.href, parent });
+        if (node.kind !== 'leaf') visit(node.children, node.label);
+      });
+    sections.forEach((section) => visit(section.nodes, section.title));
+    const needle = query.trim().toLowerCase();
+    return leaves.filter((item) => `${item.label} ${item.parent}`.toLowerCase().includes(needle));
+  }, [sections, query]);
+  const activePath = normalizeDocsPath(location.pathname);
   // Default expansion: only the category containing the active package is
   // expanded; all others collapsed. Computed once per `activePkg`/`sections`
   // shape change via `useMemo` — no `useEffect`.
-  const initialExpanded = useMemo<
-    Record<SyncedPackage['category'], boolean>
-  >(() => {
+  const initialExpanded = useMemo<Record<SyncedPackage['category'], boolean>>(() => {
     const out: Record<SyncedPackage['category'], boolean> = {
       'ui-library': false,
       sdk: false,
       app: false,
       service: false,
-    }
+    };
     if (activePkg) {
-      out[activePkg.category] = true
+      out[activePkg.category] = true;
     } else if (sections.length > 0) {
       // No active package (e.g. docs hub) — expand the first non-empty section
       // so the sidebar isn't entirely closed on first load.
-      out[sections[0].category] = true
+      out[sections[0].category] = true;
     }
-    return out
-  }, [activePkg, sections])
+    return out;
+  }, [activePkg, sections]);
   const [expanded, setExpanded] =
-    useState<Record<SyncedPackage['category'], boolean>>(initialExpanded)
+    useState<Record<SyncedPackage['category'], boolean>>(initialExpanded);
 
   function toggle(cat: SyncedPackage['category']) {
-    setExpanded((prev) => ({ ...prev, [cat]: !prev[cat] }))
+    setExpanded((prev) => ({ ...prev, [cat]: !prev[cat] }));
   }
 
   // Independent expand state for tree branches inside each section. The
@@ -677,68 +627,59 @@ export function DocsPackageSidebar({
   // down to the active page, so the active link is visible on first paint
   // without forcing every other branch open.
   const activePathKeys = useMemo<Set<string>>(() => {
-    const out = new Set<string>()
+    const out = new Set<string>();
     for (const section of sections) {
       for (const key of collectActivePath(section.nodes, activePath)) {
-        out.add(key)
+        out.add(key);
       }
     }
-    return out
-  }, [sections, activePath])
-  const [treeExpanded, setTreeExpanded] = useState<Set<string>>(activePathKeys)
+    return out;
+  }, [sections, activePath]);
+  const [treeExpanded, setTreeExpanded] = useState<Set<string>>(activePathKeys);
   // Derived-state pattern (no useEffect): on pathname change, merge the new
   // active-path keys into the user's expand set so navigating to a new
   // package auto-expands its tree without clobbering the user's own toggles.
-  const [prevActivePath, setPrevActivePath] = useState<string>(activePath)
+  const [prevActivePath, setPrevActivePath] = useState<string>(activePath);
   if (prevActivePath !== activePath) {
-    setPrevActivePath(activePath)
-    setMobileOpen(false)
-    setQuery('')
+    setPrevActivePath(activePath);
+    setMobileOpen(false);
+    setQuery('');
     setExpanded((previous) => ({
       ...previous,
-      ...Object.fromEntries(
-        Object.entries(initialExpanded).filter(([, open]) => open),
-      ),
-    }))
+      ...Object.fromEntries(Object.entries(initialExpanded).filter(([, open]) => open)),
+    }));
     setTreeExpanded((prev) => {
-      const next = new Set(prev)
-      for (const key of activePathKeys) next.add(key)
-      return next
-    })
+      const next = new Set(prev);
+      for (const key of activePathKeys) next.add(key);
+      return next;
+    });
   }
 
   function toggleTree(key: string) {
     setTreeExpanded((prev) => {
-      const next = new Set(prev)
-      if (next.has(key)) next.delete(key)
-      else next.add(key)
-      return next
-    })
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
   }
 
   if (overview) {
     return (
       <aside className="hidden w-[19.5rem] shrink-0 border-r border-border/60 bg-[color-mix(in_srgb,var(--primary)_3%,var(--background))] lg:block">
         <div className="sticky top-[calc(var(--site-header-height,64px)+48px)] h-[calc(100vh-var(--site-header-height,64px)-48px)] overflow-y-auto relative text-sm leading-6 pt-6 pb-10 pl-6 pr-6">
-          {versionSelector ? (
-            <div className="mb-5 pl-1">{versionSelector}</div>
-          ) : null}
+          {versionSelector ? <div className="mb-5 pl-1">{versionSelector}</div> : null}
           {sections.map((section, sectionIdx) => {
-            const isOpen = expanded[section.category]
+            const isOpen = expanded[section.category];
             return (
-              <div
-                key={section.category}
-                className={sectionIdx === 0 ? '' : 'mt-6'}
-              >
+              <div key={section.category} className={sectionIdx === 0 ? '' : 'mt-6'}>
                 <button
                   type="button"
                   onClick={() => toggle(section.category)}
                   aria-expanded={isOpen}
                   className="group mb-2.5 flex w-full items-center justify-between rounded-lg py-1 pl-4 pr-3 hover:bg-primary/8"
                 >
-                  <span className="text-left font-semibold text-primary">
-                    {section.title}
-                  </span>
+                  <span className="text-left font-semibold text-primary">{section.title}</span>
                   <span
                     aria-hidden="true"
                     className={
@@ -747,11 +688,7 @@ export function DocsPackageSidebar({
                         : 'inline-flex -rotate-90 transition-transform text-muted-foreground group-hover:text-foreground'
                     }
                   >
-                    <RiArrowDownSLine
-                      width={16}
-                      height={16}
-                      fill="currentColor"
-                    />
+                    <RiArrowDownSLine width={16} height={16} fill="currentColor" />
                   </span>
                 </button>
                 {isOpen ? (
@@ -770,18 +707,15 @@ export function DocsPackageSidebar({
                   </ul>
                 ) : null}
               </div>
-            )
+            );
           })}
         </div>
       </aside>
-    )
+    );
   }
 
   return (
-    <div
-      className="w-full shrink-0 px-3 pt-3 lg:w-[284px] lg:self-stretch"
-      data-docs-navigation
-    >
+    <div className="w-full shrink-0 px-3 pt-3 lg:w-[284px] lg:self-stretch" data-docs-navigation>
       <button
         type="button"
         aria-expanded={mobileOpen}
@@ -798,10 +732,7 @@ export function DocsPackageSidebar({
         className={`${mobileOpen ? 'flex' : 'hidden'} sticky mt-3 max-h-[60dvh] flex-col gap-3 overflow-hidden rounded-3xl border border-border/60 bg-[color-mix(in_srgb,var(--primary)_3%,var(--background))] p-3 shadow-sm lg:mt-0 lg:flex lg:max-h-none`}
         style={{ top: railTop, height: `calc(100dvh - ${railTop + 12}px)` }}
       >
-        <Link
-          to="/developers/docs/"
-          className="px-1 text-base font-medium text-foreground"
-        >
+        <Link to="/developers/docs/" className="px-1 text-base font-medium text-foreground">
           Oxy Docs
         </Link>
         <div ref={searchRef} className="relative">
@@ -821,10 +752,7 @@ export function DocsPackageSidebar({
         >
           {query.trim() ? (
             <div>
-              <p
-                className="px-2 py-2 text-xs text-muted-foreground"
-                role="status"
-              >
+              <p className="px-2 py-2 text-xs text-muted-foreground" role="status">
                 {matches.length} results
               </p>
               <ul className="space-y-1">
@@ -835,9 +763,7 @@ export function DocsPackageSidebar({
                       className="block rounded-lg px-2 py-2 text-foreground hover:bg-surface"
                     >
                       <span className="block break-words">{item.label}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {item.parent}
-                      </span>
+                      <span className="text-xs text-muted-foreground">{item.parent}</span>
                     </Link>
                   </li>
                 ))}
@@ -851,12 +777,9 @@ export function DocsPackageSidebar({
           ) : (
             <>
               {sections.map((section, sectionIdx) => {
-                const isOpen = expanded[section.category]
+                const isOpen = expanded[section.category];
                 return (
-                  <div
-                    key={section.category}
-                    className={sectionIdx === 0 ? '' : 'mt-5'}
-                  >
+                  <div key={section.category} className={sectionIdx === 0 ? '' : 'mt-5'}>
                     <button
                       type="button"
                       onClick={() => toggle(section.category)}
@@ -874,11 +797,7 @@ export function DocsPackageSidebar({
                             : 'inline-flex -rotate-90 transition-transform text-muted-foreground group-hover:text-foreground'
                         }
                       >
-                        <RiArrowDownSLine
-                          width={16}
-                          height={16}
-                          fill="currentColor"
-                        />
+                        <RiArrowDownSLine width={16} height={16} fill="currentColor" />
                       </span>
                     </button>
                     {isOpen ? (
@@ -896,12 +815,12 @@ export function DocsPackageSidebar({
                       </ul>
                     ) : null}
                   </div>
-                )
+                );
               })}
             </>
           )}
         </div>
       </aside>
     </div>
-  )
+  );
 }

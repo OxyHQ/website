@@ -25,7 +25,6 @@
   --text-body-medium--line-height: 20px;
 }
 
-
 /* Scan the Oxy SDK packages so their react-native-css className LAYOUT utilities
  * (flex-1 / flex-row / gap-* / arbitrary [Npx]) are generated on web. Tailwind v4
  * auto-detects this app's own src/ but excludes node_modules by default, so without
@@ -34,7 +33,7 @@
 @source "../node_modules/@oxy.so/bloom/lib/**/*.{js,jsx}";
 
 :root {
-  --build-tag: '2026-04-16T11-cachebust-2';
+  --build-tag: "2026-04-16T11-cachebust-2";
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -42,26 +41,34 @@
 /* The resolved values behind Bloom's alias layer — site palette, the FairCoin
  * apex, the forced-dark region, and every brand scope. Generated; see the file
  * header and `scripts/generate-theme-css.ts`. */
-@import './styles/theme.generated.css';
+@import "./styles/theme.generated.css";
 
-@import './styles/cursor-theme.css';
-@import './styles/oxyos-theme.css';
-@import './styles/tnp-theme.css';
-@import './styles/faircoin-theme.css';
-@import './styles/peable-theme.css';
-@import './styles/slice-theme.css';
-@import './styles/brand-system.css';
+@import "./styles/cursor-theme.css";
+@import "./styles/oxyos-theme.css";
+@import "./styles/tnp-theme.css";
+@import "./styles/faircoin-theme.css";
+@import "./styles/peable-theme.css";
+@import "./styles/slice-theme.css";
+@import "./styles/brand-system.css";
 
 @theme {
   --animate-price-digit: price-digit 350ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
   --animate-price-copy: price-copy 300ms cubic-bezier(0.215, 0.61, 0.355, 1) both;
   @keyframes price-digit {
-    from { transform: translateY(0); }
-    to { transform: translateY(var(--digit-offset)); }
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(var(--digit-offset));
+    }
   }
   @keyframes price-copy {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   --animate-plan-columns: plan-columns linear both;
   --animate-pricing-header-merge: pricing-header-merge steps(1, end) both;
@@ -70,16 +77,28 @@
      At that point the header backdrop covers both rows, and the subnav stops
      drawing its own. One blur sample avoids a seam between adjacent filters. */
   @keyframes pricing-header-merge {
-    from { bottom: 0; }
-    to { bottom: -60px; }
+    from {
+      bottom: 0;
+    }
+    to {
+      bottom: -60px;
+    }
   }
   @keyframes pricing-subnav-merge {
-    from { visibility: visible; }
-    to { visibility: hidden; }
+    from {
+      visibility: visible;
+    }
+    to {
+      visibility: hidden;
+    }
   }
   @keyframes plan-columns {
-    from { transform: translateX(0); }
-    to { transform: translateX(calc(100cqw - 100%)); }
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(100cqw - 100%));
+    }
   }
 
   /* Semantic colours are NOT declared here.
@@ -290,7 +309,6 @@
 
   /* Easing */
   --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
-
 }
 
 /* The palette itself lives in `styles/theme.generated.css` (imported above),
@@ -360,7 +378,10 @@ body {
 :root {
   --layout-max-width: 90rem; /* 1440px */
   --layout-gutter: 1.25rem;
-  --site-header-occlusion-bottom: calc(var(--site-header-banner-visible-height) + var(--site-header-height));
+  --site-header-occlusion-bottom: calc(
+    var(--site-header-banner-visible-height) +
+    var(--site-header-height)
+  );
 
   /*
    * One square, used three times: the brand cell that opens the header, the
@@ -405,7 +426,9 @@ body {
   border-radius: 9999px;
   background: color-mix(in srgb, var(--foreground) 4%, transparent);
   cursor: pointer;
-  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .values-nav-btn:hover {
@@ -450,12 +473,23 @@ body {
 }
 
 /* Responsive editorial hierarchy, independent of compact app labels. */
-.text-heading-responsive-lg, .text-heading-responsive-md, .text-heading-responsive-sm {
-  font-family: var(--font-display); font-weight: 500; letter-spacing: -.02em; line-height: 1.15;
+.text-heading-responsive-lg,
+.text-heading-responsive-md,
+.text-heading-responsive-sm {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
-.text-heading-responsive-lg { font-size: clamp(2rem, 4vw, 3rem); }
-.text-heading-responsive-md { font-size: clamp(1.75rem, 3vw, 2.5rem); }
-.text-heading-responsive-sm { font-size: clamp(1.25rem, 2vw, 1.5rem); }
+.text-heading-responsive-lg {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+.text-heading-responsive-md {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+.text-heading-responsive-sm {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+}
 
 /* Button variants */
 @layer components {
@@ -496,12 +530,18 @@ body {
 
 /* The hero's three scroll arrows, each one a beat behind the last. */
 @keyframes hero-scroll-arrow {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes hero-scroll-cta {
-  0%, 18% {
+  0%,
+  18% {
     translate: 0 0;
     animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -525,7 +565,8 @@ body {
     translate: 0 -1px;
     animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  84%, 100% {
+  84%,
+  100% {
     translate: 0 0;
   }
 }
@@ -546,26 +587,62 @@ body {
 
 /* Dropdown panel — initial open (no direction) */
 @keyframes dropdown-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Navigation directional slide animations */
 @keyframes nav-enter-from-right {
-  from { opacity: 0; filter: blur(8px); transform: translateX(200px); }
-  to { opacity: 1; filter: blur(0); transform: translateX(0); }
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateX(200px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+  }
 }
 @keyframes nav-enter-from-left {
-  from { opacity: 0; filter: blur(8px); transform: translateX(-200px); }
-  to { opacity: 1; filter: blur(0); transform: translateX(0); }
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateX(-200px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+  }
 }
 @keyframes nav-exit-to-right {
-  from { opacity: 1; filter: blur(0); transform: translateX(0); }
-  to { opacity: 0; filter: blur(8px); transform: translateX(200px); }
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateX(200px);
+  }
 }
 @keyframes nav-exit-to-left {
-  from { opacity: 1; filter: blur(0); transform: translateX(0); }
-  to { opacity: 0; filter: blur(8px); transform: translateX(-200px); }
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateX(-200px);
+  }
 }
 
 /* Custom scrollbar */
@@ -609,11 +686,27 @@ body {
 }
 
 /* Dimension-style typography */
-.body-lg { font-size: 1rem; line-height: 1.5; }
-.body-md { font-size: 0.9375rem; line-height: 1.5; }
-.heading-3xl { font-size: clamp(2rem, 1.5rem + 2.5vw, 3.5rem); line-height: 1.05; letter-spacing: -0.02em; }
-.heading-xl { font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem); line-height: 1.2; }
-.heading-md { font-size: 1.125rem; line-height: 1.3; }
+.body-lg {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.body-md {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.heading-3xl {
+  font-size: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.heading-xl {
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  line-height: 1.2;
+}
+.heading-md {
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
 
 /* Mono tag — uppercase monospace label (xAI-style) */
 .mono-tag {
@@ -652,16 +745,16 @@ body {
  * file only patches the cases where directional
  * SVG arrows / decorative rotations need to flip.
  * ──────────────────────────────────────────── */
-[dir='rtl'] .group-hover-underline {
+[dir="rtl"] .group-hover-underline {
   background-position: 100% 100%;
 }
 /* External-link arrow uses a -45deg rotation — flip across the y-axis when
    the document direction is RTL so the arrow still points outward. */
-[dir='rtl'] svg.-rotate-45 {
+[dir="rtl"] svg.-rotate-45 {
   transform: scaleX(-1) rotate(-45deg);
 }
 /* Right-side dropdown panels should align to the start of the trigger in RTL. */
-[dir='rtl'] .right-0 {
+[dir="rtl"] .right-0 {
   right: auto;
   left: 0;
 }

@@ -1,16 +1,22 @@
-import UnderlineLink from './UnderlineLink'
+import UnderlineLink from './UnderlineLink';
 
 interface PromoBannerProps {
-  title: string
-  paragraphs: string[]
-  link?: { label: string; href: string; external?: boolean }
-  image: { src: string; alt: string }
+  title: string;
+  paragraphs: string[];
+  link?: { label: string; href: string; external?: boolean };
+  image: { src: string; alt: string };
   /** Puts the artwork on the left from `md` up. */
-  reversed?: boolean
+  reversed?: boolean;
 }
 
 /** Copy on one side, artwork on the other — the slice for spotlighting one thing. */
-export default function PromoBanner({ title, paragraphs, link, image, reversed }: PromoBannerProps) {
+export default function PromoBanner({
+  title,
+  paragraphs,
+  link,
+  image,
+  reversed,
+}: PromoBannerProps) {
   return (
     <section
       className={`text-gray-a1 layout-padding-top layout-px-large flex flex-col-reverse md:justify-between md:items-center gap-10 lg:gap-20 ${
@@ -25,7 +31,11 @@ export default function PromoBanner({ title, paragraphs, link, image, reversed }
           </p>
         ))}
         {link && (
-          <UnderlineLink href={link.href} external={link.external} className="text-b1 w-fit mt-10 lg:mt-12">
+          <UnderlineLink
+            href={link.href}
+            external={link.external}
+            className="text-b1 w-fit mt-10 lg:mt-12"
+          >
             {link.label}
           </UnderlineLink>
         )}
@@ -40,5 +50,5 @@ export default function PromoBanner({ title, paragraphs, link, image, reversed }
         />
       </div>
     </section>
-  )
+  );
 }

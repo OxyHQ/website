@@ -1,7 +1,12 @@
-import { useState, type ReactNode } from 'react'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@oxy.so/bloom/accordion'
-import { AnimatedTitle } from '../ui/AnimatedTitle'
-import { BrandScope } from '../../theme/BrandScope'
+import { useState, type ReactNode } from 'react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@oxy.so/bloom/accordion';
+import { AnimatedTitle } from '../ui/AnimatedTitle';
+import { BrandScope } from '../../theme/BrandScope';
 
 /**
  * A question-and-answer band: the heading holds its own column on the left, the
@@ -15,31 +20,28 @@ import { BrandScope } from '../../theme/BrandScope'
  */
 
 export interface FaqEntry {
-  question: string
-  answer: ReactNode
+  question: string;
+  answer: ReactNode;
 }
 
 export type FaqGroup = {
-  id?: string
-  title?: string
-} & (
-  | { items: readonly FaqEntry[]; content?: never }
-  | { content: ReactNode; items?: never }
-)
+  id?: string;
+  title?: string;
+} & ({ items: readonly FaqEntry[]; content?: never } | { content: ReactNode; items?: never });
 
-export type FaqOpenValue = string | string[] | undefined
+export type FaqOpenValue = string | string[] | undefined;
 
 interface FaqSectionProps {
-  id?: string
+  id?: string;
   /** The heading over the set. */
-  title: string
+  title: string;
   /** Optional supporting copy or action shown with the heading. */
-  description?: ReactNode
-  items?: readonly FaqEntry[]
-  groups?: readonly FaqGroup[]
+  description?: ReactNode;
+  items?: readonly FaqEntry[];
+  groups?: readonly FaqGroup[];
   /** Heading level. One `h1` per page, so a section defaults to `h2`. */
-  as?: 'h2' | 'h3'
-  className?: string
+  as?: 'h2' | 'h3';
+  className?: string;
 }
 
 /**
@@ -65,26 +67,27 @@ export function FaqList({
   answerClassName = 'max-w-2xl pb-3 pr-10 text-base leading-7 text-foreground/75 md:pb-4 md:text-lg',
   itemStyle,
 }: {
-  items: readonly FaqEntry[]
+  items: readonly FaqEntry[];
   /** Makes the row values unique when several lists share one `value`. */
-  idPrefix: string
-  type?: 'single' | 'multiple'
-  value?: FaqOpenValue
-  onValueChange?: (next: FaqOpenValue) => void
-  questionClassName?: string
-  answerClassName?: string
+  idPrefix: string;
+  type?: 'single' | 'multiple';
+  value?: FaqOpenValue;
+  onValueChange?: (next: FaqOpenValue) => void;
+  questionClassName?: string;
+  answerClassName?: string;
   /** Layout only (padding): Bloom paints the rows. */
-  itemStyle?: { paddingLeft?: number; paddingRight?: number }
+  itemStyle?: { paddingLeft?: number; paddingRight?: number };
 }) {
-  const [ownValue, setOwnValue] = useState<FaqOpenValue>(type === 'multiple' ? [] : undefined)
-  const value = onValueChange ? controlledValue : ownValue
-  const setValue = onValueChange ?? setOwnValue
-  const isOpen = (rowId: string) => (Array.isArray(value) ? value.includes(rowId) : value === rowId)
+  const [ownValue, setOwnValue] = useState<FaqOpenValue>(type === 'multiple' ? [] : undefined);
+  const value = onValueChange ? controlledValue : ownValue;
+  const setValue = onValueChange ?? setOwnValue;
+  const isOpen = (rowId: string) =>
+    Array.isArray(value) ? value.includes(rowId) : value === rowId;
 
   return (
     <Accordion type={type} value={value} onValueChange={setValue}>
       {items.map((item, index) => {
-        const rowId = `${idPrefix}-${index}`
+        const rowId = `${idPrefix}-${index}`;
         return (
           <AccordionItem
             key={rowId}
@@ -95,18 +98,21 @@ export function FaqList({
               <span className={`block text-start ${questionClassName}`}>{item.question}</span>
             </AccordionTrigger>
             <AccordionContent>
-              <div inert={!isOpen(rowId)} className={answerClassName}>{item.answer}</div>
+              <div inert={!isOpen(rowId)} className={answerClassName}>
+                {item.answer}
+              </div>
             </AccordionContent>
           </AccordionItem>
-        )
+        );
       })}
     </Accordion>
-  )
+  );
 }
 
 /** The rows keep the gutter the band's rounded corners need. */
-const FAQ_ROW_STYLE = { paddingLeft: 16, paddingRight: 16 }
-const PANEL_CLASS = 'overflow-hidden rounded-[2rem] bg-[color-mix(in_srgb,var(--background)_84%,var(--primary))]'
+const FAQ_ROW_STYLE = { paddingLeft: 16, paddingRight: 16 };
+const PANEL_CLASS =
+  'overflow-hidden rounded-[2rem] bg-[color-mix(in_srgb,var(--background)_84%,var(--primary))]';
 
 export default function FaqSection({
   id,
@@ -117,10 +123,10 @@ export default function FaqSection({
   as = 'h2',
   className = '',
 }: FaqSectionProps) {
-  const groups = groupsProp ?? [{ items: items ?? [] }]
+  const groups = groupsProp ?? [{ items: items ?? [] }];
   // One open answer across every group, as before: each group's list is handed
   // the same value, and a list naming none of its own rows shows none open.
-  const [openId, setOpenId] = useState<FaqOpenValue>(undefined)
+  const [openId, setOpenId] = useState<FaqOpenValue>(undefined);
 
   return (
     <BrandScope className={className}>
@@ -128,7 +134,10 @@ export default function FaqSection({
         <div className="container">
           <div className="grid w-full gap-6 py-8 md:gap-8 md:py-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-12">
             <div className="min-w-0 self-start lg:pt-2 lg:sticky lg:top-[40vh]">
-              <AnimatedTitle as={as} className="text-heading-responsive-lg !text-[3rem] !leading-[3.25rem] font-medium text-tertiary [&>p]:font-medium">
+              <AnimatedTitle
+                as={as}
+                className="text-heading-responsive-lg !text-[3rem] !leading-[3.25rem] font-medium text-tertiary [&>p]:font-medium"
+              >
                 {title}
               </AnimatedTitle>
               {description && (
@@ -140,16 +149,28 @@ export default function FaqSection({
 
             <div className="min-w-0 space-y-8">
               {groups.map((group, groupIndex) => (
-                <div id={group.id} className="scroll-mt-[calc(var(--site-header-occlusion-bottom)+1.5rem)]" key={group.title ?? `faq-group-${groupIndex}`}>
-                  {group.title && <h3 className="mb-3 px-1 text-base font-medium leading-6 tracking-normal text-foreground">{group.title}</h3>}
+                <div
+                  id={group.id}
+                  className="scroll-mt-[calc(var(--site-header-occlusion-bottom)+1.5rem)]"
+                  key={group.title ?? `faq-group-${groupIndex}`}
+                >
+                  {group.title && (
+                    <h3 className="mb-3 px-1 text-base font-medium leading-6 tracking-normal text-foreground">
+                      {group.title}
+                    </h3>
+                  )}
                   <div className={PANEL_CLASS}>
-                    {group.items ? <FaqList
-                      items={group.items}
-                      idPrefix={`faq-${groupIndex}`}
-                      value={openId}
-                      onValueChange={setOpenId}
-                      itemStyle={FAQ_ROW_STYLE}
-                    /> : group.content}
+                    {group.items ? (
+                      <FaqList
+                        items={group.items}
+                        idPrefix={`faq-${groupIndex}`}
+                        value={openId}
+                        onValueChange={setOpenId}
+                        itemStyle={FAQ_ROW_STYLE}
+                      />
+                    ) : (
+                      group.content
+                    )}
                   </div>
                 </div>
               ))}
@@ -158,5 +179,5 @@ export default function FaqSection({
         </div>
       </section>
     </BrandScope>
-  )
+  );
 }

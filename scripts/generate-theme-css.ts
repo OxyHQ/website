@@ -28,26 +28,21 @@
  * is never left without a palette.
  */
 
-import { writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
-import { APP_COLOR_PRESETS, FREE_COLOR_NAMES } from '@oxy.so/bloom/color-presets'
-import { getPresetVars, buildSeedScopeVars } from '@oxy.so/bloom/design-tokens'
+import { APP_COLOR_PRESETS, FREE_COLOR_NAMES } from '@oxy.so/bloom/color-presets';
+import { getPresetVars, buildSeedScopeVars } from '@oxy.so/bloom/design-tokens';
 
-import {
-  BRAND_SURFACES,
-  HOST_BRANDS,
-  SITE_PRESET,
-  type BrandSurface,
-} from '../src/theme/brands'
+import { BRAND_SURFACES, HOST_BRANDS, SITE_PRESET, type BrandSurface } from '../src/theme/brands';
 
-const OUTPUT = join(import.meta.dir, '..', 'src', 'styles', 'theme.generated.css')
+const OUTPUT = join(import.meta.dir, '..', 'src', 'styles', 'theme.generated.css');
 
 function block(selector: string, vars: Record<string, string>, extra?: string): string {
   const body = Object.entries(vars)
     .map(([name, value]) => `  ${name}: ${value};`)
-    .join('\n')
-  return `${selector} {\n${body}${extra ? `\n  ${extra}` : ''}\n}`
+    .join('\n');
+  return `${selector} {\n${body}${extra ? `\n  ${extra}` : ''}\n}`;
 }
 
 /**
@@ -58,20 +53,25 @@ function block(selector: string, vars: Record<string, string>, extra?: string): 
  * a page-by-page colour list.
  */
 function logoLetterColor(vars: Record<string, string>): string {
-  const match = vars['--primary']?.match(/rgb\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)/)
-  if (!match) return 'rgb(255 255 255)'
+  const match = vars['--primary']?.match(/rgb\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)/);
+  if (!match) return 'rgb(255 255 255)';
 
-  const luminance = (0.299 * Number(match[1]) + 0.587 * Number(match[2]) + 0.114 * Number(match[3])) / 255
-  return luminance > 0.9 ? 'rgb(0 0 0)' : 'rgb(255 255 255)'
+  const luminance =
+    (0.299 * Number(match[1]) + 0.587 * Number(match[2]) + 0.114 * Number(match[3])) / 255;
+  return luminance > 0.9 ? 'rgb(0 0 0)' : 'rgb(255 255 255)';
 }
 
 function withLogoLetterColor(vars: Record<string, string>): Record<string, string> {
-  return { ...vars, '--logo-letter-color': logoLetterColor(vars) }
+  return { ...vars, '--logo-letter-color': logoLetterColor(vars) };
 }
 
 /** A document-root block: the alias layer at `:root` already resolves against it. */
-function rootBlock(selector: string, preset: Parameters<typeof getPresetVars>[0], mode: 'light' | 'dark'): string {
-  return block(selector, withLogoLetterColor(getPresetVars(preset, mode)))
+function rootBlock(
+  selector: string,
+  preset: Parameters<typeof getPresetVars>[0],
+  mode: 'light' | 'dark',
+): string {
+  return block(selector, withLogoLetterColor(getPresetVars(preset, mode)));
 }
 
 /** A scoped block: carries the `--color-x` aliases too, or utilities miss it. */
@@ -82,7 +82,11 @@ function scopeBlock(
   extra?: string,
   accents?: Pick<BrandSurface, 'secondarySeed' | 'tertiarySeed'>,
 ): string {
-  return block(selector, withLogoLetterColor(buildSeedScopeVars({ seed, mode, ...accents })), extra)
+  return block(
+    selector,
+    withLogoLetterColor(buildSeedScopeVars({ seed, mode, ...accents })),
+    extra,
+  );
 }
 
 /**
@@ -97,26 +101,26 @@ function mediaScopeBlock(query: string, selector: string, seed: string, extra?: 
   const body = scopeBlock(selector, seed, 'dark', extra)
     .split('\n')
     .map((line) => `  ${line}`)
-    .join('\n')
-  return `@media ${query} {\n${body}\n}`
+    .join('\n');
+  return `@media ${query} {\n${body}\n}`;
 }
 
 function brandBlocks(surface: BrandSurface): string[] {
-  const heading = `/* ${surface.label} — seed ${surface.seed} */`
+  const heading = `/* ${surface.label} — seed ${surface.seed} */`;
   const accents = {
     secondarySeed: surface.secondarySeed,
     tertiarySeed: surface.tertiarySeed,
-  }
+  };
   if (surface.mode !== 'auto') {
     // A fixed surface: one block in its own mode, and no `.dark` counterpart.
     return [
       `${heading}\n${scopeBlock(surface.selector, surface.seed, surface.mode, `color-scheme: ${surface.mode};`, accents)}`,
-    ]
+    ];
   }
   return [
     `${heading}\n${scopeBlock(surface.selector, surface.seed, 'light', undefined, accents)}`,
     scopeBlock(`${surface.selector}:is(.dark, .dark *)`, surface.seed, 'dark', undefined, accents),
-  ]
+  ];
 }
 
 const sections: string[] = [
@@ -127,7 +131,7 @@ const sections: string[] = [
  */`,
   `/* The site palette, before BloomThemeProvider applies the same one. */\n${rootBlock(':root', SITE_PRESET, 'light')}`,
   rootBlock('.dark', SITE_PRESET, 'dark'),
-]
+];
 
 // The public picker persists one of Bloom's free recipes. Emit those recipes
 // into the same committed stylesheet as the default/brand palettes, so the
@@ -141,7 +145,7 @@ for (const preset of FREE_COLOR_NAMES) {
       'light',
     )}`,
     rootBlock(`:root[data-color-preset='${preset}'].dark`, preset, 'dark'),
-  )
+  );
 }
 
 for (const [brand, preset] of Object.entries(HOST_BRANDS)) {
@@ -152,7 +156,7 @@ for (const [brand, preset] of Object.entries(HOST_BRANDS)) {
       'light',
     )}`,
     rootBlock(`:root[data-brand='${brand}'].dark`, preset, 'dark'),
-  )
+  );
 }
 
 sections.push(
@@ -174,9 +178,9 @@ sections.push(
     APP_COLOR_PRESETS[SITE_PRESET].hex,
     'color-scheme: dark;',
   )}`,
-)
+);
 
-for (const surface of BRAND_SURFACES) sections.push(...brandBlocks(surface))
+for (const surface of BRAND_SURFACES) sections.push(...brandBlocks(surface));
 
-writeFileSync(OUTPUT, `${sections.join('\n\n')}\n`)
-console.log(`[generate-theme-css] wrote ${OUTPUT}`)
+writeFileSync(OUTPUT, `${sections.join('\n\n')}\n`);
+console.log(`[generate-theme-css] wrote ${OUTPUT}`);

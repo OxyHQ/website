@@ -1,5 +1,12 @@
-import { useId, useMemo, useState, type AriaAttributes, type MouseEvent, type ReactNode } from 'react'
-import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
+import {
+  useId,
+  useMemo,
+  useState,
+  type AriaAttributes,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
+import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine';
 import {
   Select,
   SelectContent,
@@ -7,41 +14,41 @@ import {
   SelectItemIndicator,
   SelectItemText,
   SelectTrigger,
-} from '@oxy.so/bloom/select'
-import { Link } from '../../lib/navigation'
-import SliceIcon from './SliceIcon'
+} from '@oxy.so/bloom/select';
+import { Link } from '../../lib/navigation';
+import SliceIcon from './SliceIcon';
 
 export interface JobListing {
-  title: string
-  team: string
-  location: string
-  href: string
+  title: string;
+  team: string;
+  location: string;
+  href: string;
 }
 
 interface JobBoardProps {
-  jobs: JobListing[]
+  jobs: JobListing[];
   /** Shown while the listings are still loading. */
-  isPending?: boolean
-  emptyMessage?: string
+  isPending?: boolean;
+  emptyMessage?: string;
 }
 
-const ALL = 'all'
+const ALL = 'all';
 
 /**
  * What `SelectTrigger asChild` hands its child: Bloom's trigger contract, in
  * React Native's spelling (`onPress`, `accessibilityLabel`, `nativeID`).
  */
 interface CellTriggerProps {
-  children: ReactNode
-  valueId: string
-  onPress?: (event: MouseEvent<HTMLButtonElement>) => void
-  disabled?: boolean
-  accessibilityLabel?: string
-  nativeID?: string
-  'aria-expanded'?: boolean
-  'aria-haspopup'?: AriaAttributes['aria-haspopup']
-  'aria-describedby'?: string
-  'aria-invalid'?: boolean
+  children: ReactNode;
+  valueId: string;
+  onPress?: (event: MouseEvent<HTMLButtonElement>) => void;
+  disabled?: boolean;
+  accessibilityLabel?: string;
+  nativeID?: string;
+  'aria-expanded'?: boolean;
+  'aria-haspopup'?: AriaAttributes['aria-haspopup'];
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean;
 }
 
 /**
@@ -81,7 +88,7 @@ function CellTrigger({
     >
       {children}
     </button>
-  )
+  );
 }
 
 function Filter({
@@ -91,21 +98,21 @@ function Filter({
   onChange,
   className,
 }: {
-  label: string
-  value: string
-  options: string[]
-  onChange: (value: string) => void
-  className: string
+  label: string;
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+  className: string;
 }) {
-  const valueId = useId()
+  const valueId = useId();
   const items = useMemo(
     () => [
       { value: ALL, label: `${label} (${options.length})` },
       ...options.map((option) => ({ value: option, label: option })),
     ],
     [label, options],
-  )
-  const display = items.find((item) => item.value === value)?.label ?? items[0].label
+  );
+  const display = items.find((item) => item.value === value)?.label ?? items[0].label;
 
   return (
     <div className={`flex text-b1 text-gray-a1 ${className}`}>
@@ -132,13 +139,15 @@ function Filter({
         />
       </Select>
     </div>
-  )
+  );
 }
 
 function JobRow({ job }: { job: JobListing }) {
   return (
     <div className="relative layout-px-bleed grid grid-cols-8 gap-x-2.5 sm:grid-cols-12 sm:gap-x-5 md:gap-x-6 group lg:items-center gap-y-1.5 md:gap-y-3 lg:gap-y-0 py-6 md:py-8 lg:py-5 bg-gray-a10 lg:hover:bg-gray-a8">
-      <p className="col-span-7 col-start-1 text-b3 text-gray-a1 sm:col-span-11 md:col-span-6 lg:col-span-3 lg:col-start-5">{job.title}</p>
+      <p className="col-span-7 col-start-1 text-b3 text-gray-a1 sm:col-span-11 md:col-span-6 lg:col-span-3 lg:col-start-5">
+        {job.title}
+      </p>
       <p className="col-span-7 col-start-1 text-b3 text-alt-gray-e1 sm:col-span-11 md:col-span-6 lg:col-span-3 lg:col-start-9">
         {job.location}
       </p>
@@ -150,7 +159,7 @@ function JobRow({ job }: { job: JobListing }) {
         <span className="max-md:hidden md:flex">Apply Now</span>
       </Link>
     </div>
-  )
+  );
 }
 
 /**
@@ -158,23 +167,33 @@ function JobRow({ job }: { job: JobListing }) {
  * heading pin under the site header while their section scrolls, so you always
  * know which team you are reading.
  */
-export default function JobBoard({ jobs, isPending, emptyMessage = 'No open roles match these filters.' }: JobBoardProps) {
-  const [team, setTeam] = useState(ALL)
-  const [location, setLocation] = useState(ALL)
+export default function JobBoard({
+  jobs,
+  isPending,
+  emptyMessage = 'No open roles match these filters.',
+}: JobBoardProps) {
+  const [team, setTeam] = useState(ALL);
+  const [location, setLocation] = useState(ALL);
 
-  const teams = useMemo(() => Array.from(new Set(jobs.map((job) => job.team))).sort(), [jobs])
-  const locations = useMemo(() => Array.from(new Set(jobs.map((job) => job.location))).sort(), [jobs])
+  const teams = useMemo(() => Array.from(new Set(jobs.map((job) => job.team))).sort(), [jobs]);
+  const locations = useMemo(
+    () => Array.from(new Set(jobs.map((job) => job.location))).sort(),
+    [jobs],
+  );
 
   const grouped = useMemo(() => {
-    const visible = jobs.filter((job) => (team === ALL || job.team === team) && (location === ALL || job.location === location))
-    const byTeam = new Map<string, JobListing[]>()
+    const visible = jobs.filter(
+      (job) =>
+        (team === ALL || job.team === team) && (location === ALL || job.location === location),
+    );
+    const byTeam = new Map<string, JobListing[]>();
     for (const job of visible) {
-      const bucket = byTeam.get(job.team)
-      if (bucket) bucket.push(job)
-      else byTeam.set(job.team, [job])
+      const bucket = byTeam.get(job.team);
+      if (bucket) bucket.push(job);
+      else byTeam.set(job.team, [job]);
     }
-    return Array.from(byTeam.entries()).sort(([a], [b]) => a.localeCompare(b))
-  }, [jobs, team, location])
+    return Array.from(byTeam.entries()).sort(([a], [b]) => a.localeCompare(b));
+  }, [jobs, team, location]);
 
   return (
     <div className="relative">
@@ -194,17 +213,32 @@ export default function JobBoard({ jobs, isPending, emptyMessage = 'No open role
           className="bg-gray-a8 [--filter-ps:max(var(--layout-gutter),calc((300%-var(--layout-max-width))/2+var(--layout-gutter)))]"
         />
         <div className="hidden items-center bg-gray-a7 px-6 text-b1 lg:grid">Role</div>
-        <Filter label="All Locations" value={location} options={locations} onChange={setLocation} className="bg-gray-a6" />
+        <Filter
+          label="All Locations"
+          value={location}
+          options={locations}
+          onChange={setLocation}
+          className="bg-gray-a6"
+        />
       </div>
 
-      {isPending && <p className="layout-px-bleed text-b1 text-alt-gray-e1 py-20">Loading open roles…</p>}
+      {isPending && (
+        <p className="layout-px-bleed text-b1 text-alt-gray-e1 py-20">Loading open roles…</p>
+      )}
 
-      {!isPending && grouped.length === 0 && <p className="layout-px-bleed text-b1 text-alt-gray-e1 py-20">{emptyMessage}</p>}
+      {!isPending && grouped.length === 0 && (
+        <p className="layout-px-bleed text-b1 text-alt-gray-e1 py-20">{emptyMessage}</p>
+      )}
 
       {grouped.map(([teamName, teamJobs]) => (
-        <section key={teamName} className="relative grid items-start text-gray-a1 bg-gray-a10 py-20">
+        <section
+          key={teamName}
+          className="relative grid items-start text-gray-a1 bg-gray-a10 py-20"
+        >
           <div className="layout-px-bleed pointer-events-none pb-5 lg:sticky lg:col-start-1 lg:row-start-1 lg:pb-0 lg:top-[calc(var(--header-height)+var(--nav-height)+1.5rem)] text-b1 z-30">
-            <h2 className="md:max-w-[11em] lg:max-w-[8em] xl:max-w-[20em] pointer-events-auto">{teamName}</h2>
+            <h2 className="md:max-w-[11em] lg:max-w-[8em] xl:max-w-[20em] pointer-events-auto">
+              {teamName}
+            </h2>
           </div>
           <div className="lg:col-start-1 lg:row-start-1">
             {teamJobs.map((job) => (
@@ -214,5 +248,5 @@ export default function JobBoard({ jobs, isPending, emptyMessage = 'No open role
         </section>
       ))}
     </div>
-  )
+  );
 }

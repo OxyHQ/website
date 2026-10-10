@@ -1,37 +1,37 @@
-import { type ReactNode } from 'react'
-import { View } from 'react-native'
-import { Dialog, type DialogControlProps } from '@oxy.so/bloom/dialog'
-import { Button } from '@oxy.so/bloom/button'
+import { type ReactNode } from 'react';
+import { View } from 'react-native';
+import { Dialog, type DialogControlProps } from '@oxy.so/bloom/dialog';
+import { Button } from '@oxy.so/bloom/button';
 
 interface ConfirmDialogProps {
   /** Control returned by `useDialogControl()`. */
-  control: DialogControlProps
+  control: DialogControlProps;
   /** Optional `aria-label` describing the dialog purpose. */
-  label?: string
+  label?: string;
   /** Heading shown in bold at the top. */
-  title: string
+  title: string;
   /** Body copy. Plain string or any React node (use a fragment for multi-line). */
-  description?: ReactNode
+  description?: ReactNode;
   /** Label for the destructive / primary action. Defaults to "Confirm". */
-  confirmLabel?: string
+  confirmLabel?: string;
   /** Label for the dismiss action. Defaults to "Cancel". */
-  cancelLabel?: string
+  cancelLabel?: string;
   /**
    * Visual treatment for the confirm button. Use `'danger'` for delete-style
    * actions; defaults to `'primary'`.
    */
-  tone?: 'primary' | 'danger'
+  tone?: 'primary' | 'danger';
   /**
    * Called when the user clicks the confirm button. The handler owns the dialog
    * lifecycle from here: it must close `control` itself once the action
    * succeeds, and report any failure through `error`. `useConfirmAction` does
    * both.
    */
-  onConfirm: () => void | Promise<void>
+  onConfirm: () => void | Promise<void>;
   /** Disable the confirm button (e.g. while a delete request is in flight). */
-  busy?: boolean
+  busy?: boolean;
   /** Failure message from the last confirm attempt. Shown in place; the dialog stays open. */
-  error?: string | null
+  error?: string | null;
 }
 
 /**
@@ -78,9 +78,7 @@ export default function ConfirmDialog({
       <View style={{ padding: 24 }}>
         <div className="flex flex-col gap-3">
           <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-          {description && (
-            <div className="text-sm text-muted-foreground">{description}</div>
-          )}
+          {description && <div className="text-sm text-muted-foreground">{description}</div>}
           {error && <p className="text-sm text-error-text">{error}</p>}
           <div className="mt-4 flex items-center justify-end gap-2">
             <Button appearance="subtle" onPress={() => control.close()} disabled={busy}>
@@ -89,7 +87,9 @@ export default function ConfirmDialog({
             <Button
               appearance="solid"
               tone={tone === 'danger' ? 'danger' : 'accent'}
-              onPress={() => { void onConfirm() }}
+              onPress={() => {
+                void onConfirm();
+              }}
               disabled={busy}
             >
               {busy ? 'Working…' : confirmLabel}
@@ -98,5 +98,5 @@ export default function ConfirmDialog({
         </div>
       </View>
     </Dialog>
-  )
+  );
 }

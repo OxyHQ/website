@@ -1,47 +1,53 @@
-import { useState } from 'react'
-import { useNewsroomPosts, useCreateNewsroomPost, useLocales, useProducts, type ProductRecord } from '../../../api/hooks'
-import { type NewsroomPost, type NewsroomProductRef } from '../../../data/newsroom'
-import { apiFetch } from '../../../api/client'
-import { Button } from '@oxy.so/bloom/button'
-import { Switch } from '@oxy.so/bloom/switch'
-import { Checkbox } from '@oxy.so/bloom/checkbox'
-import { Badge } from '@oxy.so/bloom/badge'
-import { Label } from '@oxy.so/bloom/label'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
-import LocaleSwitcher from '../LocaleSwitcher'
-import { TranslationFields } from '../TranslationEditor'
-import MediaPicker from '../MediaPicker'
-import { NEWSROOM_THEME_PRESETS } from '../../../lib/newsroom-theme'
-import OptionSelect from '../../ui/OptionSelect'
-import { AdminField } from '../AdminField'
+import { useState } from 'react';
+import {
+  useNewsroomPosts,
+  useCreateNewsroomPost,
+  useLocales,
+  useProducts,
+  type ProductRecord,
+} from '../../../api/hooks';
+import { type NewsroomPost, type NewsroomProductRef } from '../../../data/newsroom';
+import { apiFetch } from '../../../api/client';
+import { Button } from '@oxy.so/bloom/button';
+import { Switch } from '@oxy.so/bloom/switch';
+import { Checkbox } from '@oxy.so/bloom/checkbox';
+import { Badge } from '@oxy.so/bloom/badge';
+import { Label } from '@oxy.so/bloom/label';
+import ConfirmDialog from '../ConfirmDialog';
+import { useConfirmAction } from '../useConfirmAction';
+import LocaleSwitcher from '../LocaleSwitcher';
+import { TranslationFields } from '../TranslationEditor';
+import MediaPicker from '../MediaPicker';
+import { NEWSROOM_THEME_PRESETS } from '../../../lib/newsroom-theme';
+import OptionSelect from '../../ui/OptionSelect';
+import { AdminField } from '../AdminField';
 
 function productIdOf(ref: string | NewsroomProductRef): string {
-  if (typeof ref === 'string') return ref
-  return ref._id
+  if (typeof ref === 'string') return ref;
+  return ref._id;
 }
 
 function stripProductsForEditing(post: NewsroomPost): NewsroomPost {
   return {
     ...post,
     products: (post.products ?? []).map(productIdOf).filter(Boolean),
-  }
+  };
 }
 
 export default function NewsroomAdmin() {
-  const { data, refetch } = useNewsroomPosts<NewsroomPost>({ limit: 50 })
-  const { data: locales } = useLocales()
-  const { data: productsData } = useProducts()
-  const createPost = useCreateNewsroomPost()
-  const [editing, setEditing] = useState<NewsroomPost | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [activeLocale, setActiveLocale] = useState('')
-  const [translatingPost, setTranslatingPost] = useState<NewsroomPost | null>(null)
+  const { data, refetch } = useNewsroomPosts<NewsroomPost>({ limit: 50 });
+  const { data: locales } = useLocales();
+  const { data: productsData } = useProducts();
+  const createPost = useCreateNewsroomPost();
+  const [editing, setEditing] = useState<NewsroomPost | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [activeLocale, setActiveLocale] = useState('');
+  const [translatingPost, setTranslatingPost] = useState<NewsroomPost | null>(null);
 
-  const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
-  const posts = data?.posts ?? []
-  const products = productsData ?? []
-  const isDefault = !activeLocale || activeLocale === defaultLocale
+  const defaultLocale = locales?.find((l) => l.isDefault)?.code ?? 'en';
+  const posts = data?.posts ?? [];
+  const products = productsData ?? [];
+  const isDefault = !activeLocale || activeLocale === defaultLocale;
 
   const emptyPost = (): NewsroomPost => ({
     title: '',
@@ -58,53 +64,91 @@ export default function NewsroomAdmin() {
     publishedAt: new Date().toISOString(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-  })
+  });
 
   const toggleProduct = (product: ProductRecord) => {
-    if (!editing || !product._id) return
-    const current = (editing.products ?? []).map(productIdOf)
+    if (!editing || !product._id) return;
+    const current = (editing.products ?? []).map(productIdOf);
     const next = current.includes(product._id)
       ? current.filter((id) => id !== product._id)
-      : [...current, product._id]
-    setEditing({ ...editing, products: next })
-  }
+      : [...current, product._id];
+    setEditing({ ...editing, products: next });
+  };
 
   const save = async () => {
-    if (!editing) return
-    setSaving(true)
+    if (!editing) return;
+    setSaving(true);
     const payload: NewsroomPost = {
       ...editing,
       products: (editing.products ?? []).map(productIdOf).filter(Boolean),
-    }
+    };
     if (payload._id) {
-      await apiFetch(`/newsroom/${payload.slug}`, { method: 'PUT', body: JSON.stringify(payload) })
+      await apiFetch(`/newsroom/${payload.slug}`, { method: 'PUT', body: JSON.stringify(payload) });
     } else {
-      await createPost.mutateAsync(payload)
+      await createPost.mutateAsync(payload);
     }
-    await refetch()
-    setSaving(false)
-    setEditing(null)
-  }
+    await refetch();
+    setSaving(false);
+    setEditing(null);
+  };
 
   const deleteAction = useConfirmAction<NewsroomPost>({
     onConfirm: async (post) => {
-      await apiFetch(`/newsroom/${post.slug}`, { method: 'DELETE' })
-      await refetch()
+      await apiFetch(`/newsroom/${post.slug}`, { method: 'DELETE' });
+      await refetch();
     },
-  })
+  });
 
   if (editing) {
-    const selectedProductIds = new Set((editing.products ?? []).map(productIdOf))
+    const selectedProductIds = new Set((editing.products ?? []).map(productIdOf));
     return (
       <div>
-        <div className="mb-4"><Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button></div>
-        <h2 className="text-xl font-semibold text-foreground">{editing._id ? 'Edit Post' : 'New Post'}</h2>
+        <div className="mb-4">
+          <Button appearance="subtle" onPress={() => setEditing(null)}>
+            &larr; Back to list
+          </Button>
+        </div>
+        <h2 className="text-xl font-semibold text-foreground">
+          {editing._id ? 'Edit Post' : 'New Post'}
+        </h2>
 
         <div className="mt-6 flex flex-col gap-4">
-          <AdminField label="Title" value={editing.title} onChange={(v) => setEditing({ ...editing, title: v, ...(!editing._id ? { slug: v.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '') } : {}) })} />
-          <AdminField label="Slug" value={editing.slug} onChange={(v) => setEditing({ ...editing, slug: v })} />
-          <AdminField label="Resume" value={editing.resume} onChange={(v) => setEditing({ ...editing, resume: v })} textarea />
-          <AdminField label="Content (Markdown)" value={editing.content} onChange={(v) => setEditing({ ...editing, content: v })} textarea rows={12} />
+          <AdminField
+            label="Title"
+            value={editing.title}
+            onChange={(v) =>
+              setEditing({
+                ...editing,
+                title: v,
+                ...(!editing._id
+                  ? {
+                      slug: v
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/-+$/, ''),
+                    }
+                  : {}),
+              })
+            }
+          />
+          <AdminField
+            label="Slug"
+            value={editing.slug}
+            onChange={(v) => setEditing({ ...editing, slug: v })}
+          />
+          <AdminField
+            label="Resume"
+            value={editing.resume}
+            onChange={(v) => setEditing({ ...editing, resume: v })}
+            textarea
+          />
+          <AdminField
+            label="Content (Markdown)"
+            value={editing.content}
+            onChange={(v) => setEditing({ ...editing, content: v })}
+            textarea
+            rows={12}
+          />
           <MediaPicker
             value={editing.coverImage}
             onChange={(id) => setEditing({ ...editing, coverImage: id || '' })}
@@ -112,8 +156,32 @@ export default function NewsroomAdmin() {
             folder="newsroom"
             accept="image/*"
           />
-          <AdminField label="Categories (comma-separated)" value={(editing.categories ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, categories: v.split(',').map((c: string) => c.trim()).filter(Boolean) })} />
-          <AdminField label="Tags (comma-separated)" value={(editing.tags ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })} />
+          <AdminField
+            label="Categories (comma-separated)"
+            value={(editing.categories ?? []).join(', ')}
+            onChange={(v) =>
+              setEditing({
+                ...editing,
+                categories: v
+                  .split(',')
+                  .map((c: string) => c.trim())
+                  .filter(Boolean),
+              })
+            }
+          />
+          <AdminField
+            label="Tags (comma-separated)"
+            value={(editing.tags ?? []).join(', ')}
+            onChange={(v) =>
+              setEditing({
+                ...editing,
+                tags: v
+                  .split(',')
+                  .map((t: string) => t.trim())
+                  .filter(Boolean),
+              })
+            }
+          />
 
           <div className="flex flex-col gap-1.5">
             <Label>Bloom recipe</Label>
@@ -123,20 +191,24 @@ export default function NewsroomAdmin() {
               onValueChange={(value) => setEditing({ ...editing, themePreset: value })}
               options={NEWSROOM_THEME_PRESETS.map((preset) => ({ value: preset, label: preset }))}
             />
-            <p className="text-xs text-muted-foreground">Each post keeps its own Bloom recipe across cards and article pages.</p>
+            <p className="text-xs text-muted-foreground">
+              Each post keeps its own Bloom recipe across cards and article pages.
+            </p>
           </div>
 
           <div className="flex flex-col gap-1.5">
             <Label>Products</Label>
-            <p className="text-xs text-muted-foreground">Select which products this post belongs to (e.g. Homiio Tips).</p>
+            <p className="text-xs text-muted-foreground">
+              Select which products this post belongs to (e.g. Homiio Tips).
+            </p>
             <div className="mt-1 max-h-48 overflow-y-auto rounded-lg border border-border p-3">
               {products.length === 0 ? (
                 <p className="text-sm text-muted-foreground">No products available.</p>
               ) : (
                 <div className="flex flex-col gap-2">
                   {products.map((product) => {
-                    if (!product._id) return null
-                    const checked = selectedProductIds.has(product._id)
+                    if (!product._id) return null;
+                    const checked = selectedProductIds.has(product._id);
                     return (
                       <div key={product._id} className="flex items-center gap-2">
                         <Checkbox
@@ -144,9 +216,11 @@ export default function NewsroomAdmin() {
                           checked={checked}
                           onCheckedChange={() => toggleProduct(product)}
                         />
-                        <span className="font-mono text-xs text-muted-foreground">{product.productId}</span>
+                        <span className="font-mono text-xs text-muted-foreground">
+                          {product.productId}
+                        </span>
                       </div>
-                    )
+                    );
                   })}
                 </div>
               )}
@@ -154,15 +228,38 @@ export default function NewsroomAdmin() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2"><Switch checked={editing.featured} onCheckedChange={(val) => setEditing({ ...editing, featured: val })} /><Label>Featured</Label></div>
-            <div className="flex items-center gap-2"><Switch checked={editing.status === 'published'} onCheckedChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })} /><Label>{editing.status === 'published' ? 'Published' : 'Draft'}</Label></div>
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={editing.featured}
+                onCheckedChange={(val) => setEditing({ ...editing, featured: val })}
+              />
+              <Label>Featured</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={editing.status === 'published'}
+                onCheckedChange={(val) =>
+                  setEditing({ ...editing, status: val ? 'published' : 'draft' })
+                }
+              />
+              <Label>{editing.status === 'published' ? 'Published' : 'Draft'}</Label>
+            </div>
           </div>
 
           <div className="mt-4 border-t border-border pt-4">
             <h3 className="mb-3 text-sm font-medium text-muted-foreground">SEO</h3>
             <div className="flex flex-col gap-4">
-              <AdminField label="Meta Title (optional)" value={editing.metaTitle ?? ''} onChange={(v) => setEditing({ ...editing, metaTitle: v })} />
-              <AdminField label="Meta Description (optional)" value={editing.metaDescription ?? ''} onChange={(v) => setEditing({ ...editing, metaDescription: v })} textarea />
+              <AdminField
+                label="Meta Title (optional)"
+                value={editing.metaTitle ?? ''}
+                onChange={(v) => setEditing({ ...editing, metaTitle: v })}
+              />
+              <AdminField
+                label="Meta Description (optional)"
+                value={editing.metaDescription ?? ''}
+                onChange={(v) => setEditing({ ...editing, metaDescription: v })}
+                textarea
+              />
               <MediaPicker
                 value={editing.ogImage}
                 onChange={(id) => setEditing({ ...editing, ogImage: id || '' })}
@@ -177,18 +274,26 @@ export default function NewsroomAdmin() {
             <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving...' : editing._id ? 'Update' : 'Publish'}
             </Button>
-            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>
+              Cancel
+            </Button>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (translatingPost && !isDefault) {
     return (
       <div>
-        <div className="mb-4"><Button appearance="subtle" onPress={() => setTranslatingPost(null)}>&larr; Back</Button></div>
-        <h2 className="text-xl font-semibold text-foreground">Translate: {translatingPost.title}</h2>
+        <div className="mb-4">
+          <Button appearance="subtle" onPress={() => setTranslatingPost(null)}>
+            &larr; Back
+          </Button>
+        </div>
+        <h2 className="text-xl font-semibold text-foreground">
+          Translate: {translatingPost.title}
+        </h2>
         <div className="mt-4">
           <LocaleSwitcher activeLocale={activeLocale} onLocaleChange={setActiveLocale} />
         </div>
@@ -208,7 +313,7 @@ export default function NewsroomAdmin() {
           />
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -231,7 +336,10 @@ export default function NewsroomAdmin() {
 
       <div className="mt-6 flex flex-col gap-2">
         {posts.map((post) => (
-          <div key={post._id} className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition-colors hover:bg-muted/50">
+          <div
+            key={post._id}
+            className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition-colors hover:bg-muted/50"
+          >
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="truncate text-sm font-medium text-foreground">{post.title}</span>
@@ -254,16 +362,27 @@ export default function NewsroomAdmin() {
             <div className="flex items-center gap-2">
               {isDefault ? (
                 <>
-                  <Button appearance="subtle" onPress={() => setEditing(stripProductsForEditing(post))}>Edit</Button>
-                  <Button appearance="subtle" onPress={() => deleteAction.request(post)}>Delete</Button>
+                  <Button
+                    appearance="subtle"
+                    onPress={() => setEditing(stripProductsForEditing(post))}
+                  >
+                    Edit
+                  </Button>
+                  <Button appearance="subtle" onPress={() => deleteAction.request(post)}>
+                    Delete
+                  </Button>
                 </>
               ) : (
-                <Button appearance="subtle" onPress={() => setTranslatingPost(post)}>Translate</Button>
+                <Button appearance="subtle" onPress={() => setTranslatingPost(post)}>
+                  Translate
+                </Button>
               )}
             </div>
           </div>
         ))}
-        {posts.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No posts yet.</p>}
+        {posts.length === 0 && (
+          <p className="py-8 text-center text-sm text-muted-foreground">No posts yet.</p>
+        )}
       </div>
 
       <ConfirmDialog
@@ -277,5 +396,5 @@ export default function NewsroomAdmin() {
         onConfirm={deleteAction.confirm}
       />
     </div>
-  )
+  );
 }

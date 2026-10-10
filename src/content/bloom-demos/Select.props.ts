@@ -1,4 +1,4 @@
-import type { PlaygroundProp } from './_playground'
+import type { PlaygroundProp } from './_playground';
 
 export const props: PlaygroundProp[] = [
   {
@@ -9,4 +9,4 @@ export const props: PlaygroundProp[] = [
   },
   { name: 'label', kind: 'text', default: 'Priority' },
   { name: 'disabled', kind: 'boolean', default: false },
-]
+];

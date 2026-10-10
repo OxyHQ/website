@@ -1,14 +1,14 @@
-import type { SyncedPackage } from '../../../scripts/types'
-import VersionSelector from '../docs-platform/VersionSelector'
-import VersionBanner from '../docs-platform/VersionBanner'
-import TableOfContents from '../ui/TableOfContents'
-import { useContentHeadings } from '../../hooks/useContentHeadings'
-import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom'
-import DocsSubNav from './DocsSubNav'
-import { DocsCopyPageMenu } from './DocsCopyPageMenu'
-import { DocsPackageSidebar } from './DocsPackageSidebar'
-import { BrandScope } from '../../theme/BrandScope'
-import type { SidebarSection } from './docsTypes'
+import type { SyncedPackage } from '../../../scripts/types';
+import VersionSelector from '../docs-platform/VersionSelector';
+import VersionBanner from '../docs-platform/VersionBanner';
+import TableOfContents from '../ui/TableOfContents';
+import { useContentHeadings } from '../../hooks/useContentHeadings';
+import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom';
+import DocsSubNav from './DocsSubNav';
+import { DocsCopyPageMenu } from './DocsCopyPageMenu';
+import { DocsPackageSidebar } from './DocsPackageSidebar';
+import { BrandScope } from '../../theme/BrandScope';
+import type { SidebarSection } from './docsTypes';
 
 export interface DocsShellProps {
   /**
@@ -16,44 +16,44 @@ export interface DocsShellProps {
    * with `hideSidebar` to mount the shell without any left rail (used by
    * the Scalar-rendered REST API route, where Scalar ships its own nav).
    */
-  sections: SidebarSection[] | null
-  eyebrow: string
-  title: string
-  subtitle?: string
-  pkg?: SyncedPackage
-  currentVersion?: string
-  slug?: string
-  activePkg?: SyncedPackage
+  sections: SidebarSection[] | null;
+  eyebrow: string;
+  title: string;
+  subtitle?: string;
+  pkg?: SyncedPackage;
+  currentVersion?: string;
+  slug?: string;
+  activePkg?: SyncedPackage;
   /**
    * Suppress the shell's eyebrow/title/subtitle header. Used by the REST
    * API route — Scalar renders its own H1 ("Oxy REST API") at the top of
    * the content area, so the shell's "API Reference" H1 would be a
    * duplicate.
    */
-  hideHeader?: boolean
+  hideHeader?: boolean;
   /**
    * Skip the left rail entirely. Used by the REST API route so the
    * Scalar reference can own the full available width without sitting
    * next to a redundant tag-jump sidebar of our own.
    */
-  hideSidebar?: boolean
+  hideSidebar?: boolean;
   /**
    * Let an interactive canvas use the full article column while retaining the
    * package sidebar. The page-level table of contents is omitted because a
    * wide tool owns its own controls and responsive layout.
    */
-  wideContent?: boolean
+  wideContent?: boolean;
   /**
    * Hide historical docs controls for a tool that always runs the Website's
    * installed Bloom release. Versioned aliases redirect to its canonical URL.
    */
-  versionAgnostic?: boolean
+  versionAgnostic?: boolean;
   /**
    * The synced source file behind the page (`SyncedPage.file`). Enables
    * "Copy as Markdown"; routes with no source of their own leave it unset.
    */
-  sourceFile?: string
-  children: React.ReactNode
+  sourceFile?: string;
+  children: React.ReactNode;
 }
 
 export function DocsShell({
@@ -72,17 +72,17 @@ export function DocsShell({
   sourceFile,
   children,
 }: DocsShellProps) {
-  const { headings, contentRef } = useContentHeadings()
+  const { headings, contentRef } = useContentHeadings();
   // The rail pins under the header AND the docs sub-nav, both of which move
   // while the promo banner scrolls away. Same measured bottom the sub-nav
   // parks on, plus its own 48px row.
-  const railTop = useSiteHeaderBottom() + 48
+  const railTop = useSiteHeaderBottom() + 48;
   /*
    * Scalar renders its own nav, its own contents and its own measure, so the
    * REST route mounts the shell bare: no rail, no page cap. Everything else
    * gets the three columns.
    */
-  const showRail = !hideSidebar && !wideContent
+  const showRail = !hideSidebar && !wideContent;
   // The version selector only makes sense for packages that opted into
   // versioning AND ship more than one version. Non-versioned packages
   // never show it; single-version versioned packages also hide it so the
@@ -92,7 +92,7 @@ export function DocsShell({
     currentVersion !== undefined &&
     !versionAgnostic &&
     pkg.versioned &&
-    pkg.versions.length > 1
+    pkg.versions.length > 1;
   return (
     <BrandScope className="docs-theme">
       <div className="docs-theme relative antialiased bg-[color-mix(in_srgb,var(--primary)_4%,var(--background))]">
@@ -105,11 +105,7 @@ export function DocsShell({
               activePkg={activePkg}
               versionSelector={
                 showVersionSelector && pkg && currentVersion ? (
-                  <VersionSelector
-                    pkg={pkg}
-                    currentVersion={currentVersion}
-                    slug={slug}
-                  />
+                  <VersionSelector pkg={pkg} currentVersion={currentVersion} slug={slug} />
                 ) : null
               }
             />
@@ -142,11 +138,7 @@ export function DocsShell({
                     className="min-h-0 overflow-y-auto pr-1"
                     style={{ maxHeight: `calc(100dvh - ${railTop + 48}px)` }}
                   >
-                    <TableOfContents
-                      headings={headings}
-                      variant="list"
-                      sticky={false}
-                    />
+                    <TableOfContents headings={headings} variant="list" sticky={false} />
                   </div>
                 </aside>
               ) : null}
@@ -155,17 +147,12 @@ export function DocsShell({
                 {hideHeader ? null : (
                   <header className="relative flex flex-col gap-3">
                     <div className="space-y-2.5">
-                      <div className="text-xs text-muted-foreground">
-                        {eyebrow}
-                      </div>
+                      <div className="text-xs text-muted-foreground">{eyebrow}</div>
                       <div className="flex flex-col sm:flex-row items-start sm:items-center relative gap-2 min-w-0">
                         <h1 className="text-2xl leading-8 font-medium text-foreground [overflow-wrap:anywhere]">
                           {title}
                         </h1>
-                        <DocsCopyPageMenu
-                          title={title}
-                          sourceFile={sourceFile}
-                        />
+                        <DocsCopyPageMenu title={title} sourceFile={sourceFile} />
                       </div>
                     </div>
                     {subtitle ? (
@@ -192,11 +179,7 @@ export function DocsShell({
                     </div>
                   ) : null}
                   {pkg && currentVersion && !versionAgnostic ? (
-                    <VersionBanner
-                      pkg={pkg}
-                      currentVersion={currentVersion}
-                      slug={slug}
-                    />
+                    <VersionBanner pkg={pkg} currentVersion={currentVersion} slug={slug} />
                   ) : null}
                   {children}
                 </div>
@@ -206,5 +189,5 @@ export function DocsShell({
         </div>
       </div>
     </BrandScope>
-  )
+  );
 }

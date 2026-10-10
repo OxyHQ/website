@@ -11,10 +11,10 @@
  * Step transitions slide horizontally via `StepTransition`. `useEffect` is
  * avoided — transitions derive from wagmi/react-query state shape.
  */
-import { useCallback, useMemo, useState } from 'react'
-import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
-import { stringToBytes, formatUnits, parseUnits, toHex } from 'viem'
-import { base } from 'wagmi/chains'
+import { useCallback, useMemo, useState } from 'react';
+import { useCopyToClipboard } from '../../../lib/useCopyToClipboard';
+import { stringToBytes, formatUnits, parseUnits, toHex } from 'viem';
+import { base } from 'wagmi/chains';
 import {
   useAccount,
   useChainId,
@@ -24,62 +24,61 @@ import {
   useSwitchChain,
   useWaitForTransactionReceipt,
   useWriteContract,
-} from 'wagmi'
-import { RiAlertLine } from '@oxy.so/bloom/icons/RiAlertLine'
-import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { RiCheckboxCircleLine } from '@oxy.so/bloom/icons/RiCheckboxCircleLine'
-import { RiCheckboxCircleFill } from '@oxy.so/bloom/icons/RiCheckboxCircleFill'
-import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
-import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
-import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
-import { RiLogoutBoxRLine } from '@oxy.so/bloom/icons/RiLogoutBoxRLine'
-import { RiLoader4Line } from '@oxy.so/bloom/icons/RiLoader4Line'
-import { RiResetLeftLine } from '@oxy.so/bloom/icons/RiResetLeftLine'
-import { RiErrorWarningLine } from '@oxy.so/bloom/icons/RiErrorWarningLine'
-import { RiWallet3Line } from '@oxy.so/bloom/icons/RiWallet3Line'
-import AppShell from '../app/AppShell'
-import StepTransition from '../app/StepTransition'
-import { isValidFairAddress } from '../buy/validate'
-import { useFaircoinWithdrawalStatus } from '../../../hooks/use-faircoin-withdrawal'
+} from 'wagmi';
+import { RiAlertLine } from '@oxy.so/bloom/icons/RiAlertLine';
+import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { RiCheckboxCircleLine } from '@oxy.so/bloom/icons/RiCheckboxCircleLine';
+import { RiCheckboxCircleFill } from '@oxy.so/bloom/icons/RiCheckboxCircleFill';
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine';
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine';
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine';
+import { RiLogoutBoxRLine } from '@oxy.so/bloom/icons/RiLogoutBoxRLine';
+import { RiLoader4Line } from '@oxy.so/bloom/icons/RiLoader4Line';
+import { RiResetLeftLine } from '@oxy.so/bloom/icons/RiResetLeftLine';
+import { RiErrorWarningLine } from '@oxy.so/bloom/icons/RiErrorWarningLine';
+import { RiWallet3Line } from '@oxy.so/bloom/icons/RiWallet3Line';
+import AppShell from '../app/AppShell';
+import StepTransition from '../app/StepTransition';
+import { isValidFairAddress } from '../buy/validate';
+import { useFaircoinWithdrawalStatus } from '../../../hooks/use-faircoin-withdrawal';
 import {
   type WithdrawalStatus,
   type WithdrawalStatusResponse,
-} from '../../../api/faircoin-withdrawal'
+} from '../../../api/faircoin-withdrawal';
 import {
   FAIRCOIN_ADDRESS_BYTES,
   WFAIR_ABI,
   WFAIR_ADDRESS,
   WFAIR_DECIMALS,
-} from '../../../lib/wfair-contract'
+} from '../../../lib/wfair-contract';
 
-const FAIR_EXPLORER_BASE = 'https://explorer.fairco.in'
-const BASESCAN_BASE = 'https://basescan.org'
-const FAIRWALLET_RELEASES_URL =
-  'https://github.com/FairCoinOfficial/FAIRWallet/releases'
+const FAIR_EXPLORER_BASE = 'https://explorer.fairco.in';
+const BASESCAN_BASE = 'https://basescan.org';
+const FAIRWALLET_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases';
 
-const COPY_FLASH_MS = 1_500
+const COPY_FLASH_MS = 1_500;
 
 const STEPS = [
   { id: 'amount', label: 'Amount' },
   { id: 'confirm', label: 'Confirm' },
   { id: 'done', label: 'Done' },
-] as const
+] as const;
 
 interface ActiveBurn {
-  txHash: `0x${string}`
-  amountWei: bigint
-  destinationAddress: string
+  txHash: `0x${string}`;
+  amountWei: bigint;
+  destinationAddress: string;
 }
 
-type StageKind = 'connect' | 'redeem' | 'status'
+type StageKind = 'connect' | 'redeem' | 'status';
 
 interface ShellCopy {
-  eyebrow: string
-  title: string
-  subtitle?: string
-  currentStep: number
-  footnote?: React.ReactNode
+  eyebrow: string;
+  title: string;
+  subtitle?: string;
+  currentStep: number;
+  footnote?: React.ReactNode;
 }
 
 const SHELL_COPY_CONNECT: ShellCopy = {
@@ -102,58 +101,55 @@ const SHELL_COPY_CONNECT: ShellCopy = {
       .
     </>
   ),
-}
+};
 
 const SHELL_COPY_REDEEM: ShellCopy = {
   eyebrow: 'Redeem WFAIR',
   title: 'Unwrap WFAIR to native FAIR',
   subtitle: 'Burn WFAIR on Base. The bridge releases the equivalent FAIR to your address.',
   currentStep: 0,
-}
+};
 
 const SHELL_COPY_TRACKING: ShellCopy = {
   eyebrow: 'Tracking redemption',
   title: 'Releasing native FAIR',
-  subtitle:
-    'Your burn is being indexed by the bridge. Native FAIR will arrive shortly.',
+  subtitle: 'Your burn is being indexed by the bridge. Native FAIR will arrive shortly.',
   currentStep: 1,
-}
+};
 
 export default function UnwrapApp() {
-  const account = useAccount()
-  const { disconnect } = useDisconnect()
-  const [activeBurn, setActiveBurn] = useState<ActiveBurn | null>(null)
-  const [direction, setDirection] = useState<1 | -1>(1)
+  const account = useAccount();
+  const { disconnect } = useDisconnect();
+  const [activeBurn, setActiveBurn] = useState<ActiveBurn | null>(null);
+  const [direction, setDirection] = useState<1 | -1>(1);
 
   // Derive the active stage from wagmi + local state. No useEffect.
-  const stageKind: StageKind = !account.isConnected || !account.address
-    ? 'connect'
-    : activeBurn
-      ? 'status'
-      : 'redeem'
+  const stageKind: StageKind =
+    !account.isConnected || !account.address ? 'connect' : activeBurn ? 'status' : 'redeem';
 
   const handleBurnConfirmed = useCallback(
     (txHash: `0x${string}`, amountWei: bigint, destinationAddress: string) => {
-      setDirection(1)
-      setActiveBurn({ txHash, amountWei, destinationAddress })
+      setDirection(1);
+      setActiveBurn({ txHash, amountWei, destinationAddress });
     },
     [],
-  )
+  );
 
   const handleReset = useCallback(() => {
-    setDirection(-1)
-    setActiveBurn(null)
-  }, [])
+    setDirection(-1);
+    setActiveBurn(null);
+  }, []);
 
   const copy = useMemo<ShellCopy>(() => {
-    if (stageKind === 'connect') return SHELL_COPY_CONNECT
-    if (stageKind === 'redeem') return SHELL_COPY_REDEEM
-    return SHELL_COPY_TRACKING
-  }, [stageKind])
+    if (stageKind === 'connect') return SHELL_COPY_CONNECT;
+    if (stageKind === 'redeem') return SHELL_COPY_REDEEM;
+    return SHELL_COPY_TRACKING;
+  }, [stageKind]);
 
-  const toolbar = stageKind !== 'connect' && account.address ? (
-    <ConnectedPill address={account.address} onDisconnect={() => disconnect()} />
-  ) : null
+  const toolbar =
+    stageKind !== 'connect' && account.address ? (
+      <ConnectedPill address={account.address} onDisconnect={() => disconnect()} />
+    ) : null;
 
   return (
     <AppShell
@@ -175,35 +171,36 @@ export default function UnwrapApp() {
         ) : null}
       </StepTransition>
     </AppShell>
-  )
+  );
 }
 
 // ── Step 1 — connect ─────────────────────────────────────────────────────
 
 function ConnectStep() {
-  const { connectors, connect, isPending: isConnecting, error: connectError } = useConnect()
-  const [chosen, setChosen] = useState<string | null>(null)
+  const { connectors, connect, isPending: isConnecting, error: connectError } = useConnect();
+  const [chosen, setChosen] = useState<string | null>(null);
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-center text-sm text-muted-foreground">
-        Choose a wallet to continue
-      </p>
+      <p className="text-center text-sm text-muted-foreground">Choose a wallet to continue</p>
       {connectors.map((connector) => {
-        const isThisPending = isConnecting && chosen === connector.uid
+        const isThisPending = isConnecting && chosen === connector.uid;
         return (
           <button
             key={connector.uid}
             type="button"
             disabled={isConnecting}
             onClick={() => {
-              setChosen(connector.uid)
-              connect({ connector, chainId: base.id })
+              setChosen(connector.uid);
+              connect({ connector, chainId: base.id });
             }}
             className="flex h-14 items-center justify-between rounded-2xl border border-border bg-background/60 px-4 text-left transition-all duration-150 hover:border-primary/50 hover:bg-background disabled:cursor-not-allowed disabled:opacity-60"
           >
             <span className="flex items-center gap-3">
-              <span aria-hidden className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <span
+                aria-hidden
+                className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary"
+              >
                 <RiWallet3Line width={16} height={16} fill="currentColor" />
               </span>
               <span className="flex flex-col">
@@ -216,17 +213,23 @@ function ConnectStep() {
               </span>
             </span>
             {isThisPending ? (
-              <span aria-hidden="true" className="inline-flex animate-spin text-muted-foreground"><RiLoader4Line width={16} height={16} fill="currentColor" /></span>
+              <span aria-hidden="true" className="inline-flex animate-spin text-muted-foreground">
+                <RiLoader4Line width={16} height={16} fill="currentColor" />
+              </span>
             ) : (
-              <span aria-hidden="true" className="inline-flex text-muted-foreground"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
+              <span aria-hidden="true" className="inline-flex text-muted-foreground">
+                <RiArrowRightLine width={16} height={16} fill="currentColor" />
+              </span>
             )}
           </button>
-        )
+        );
       })}
 
       {connectError ? (
         <div className="flex items-start gap-2 rounded-xl border border-error/40 bg-error-subtle px-3 py-2.5 text-xs text-error-text">
-          <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiAlertLine width={14} height={14} fill="currentColor" /></span>
+          <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0">
+            <RiAlertLine width={14} height={14} fill="currentColor" />
+          </span>
           <span>
             {connectError.message.length > 0
               ? connectError.message
@@ -239,24 +242,20 @@ function ConnectStep() {
         We never see your keys. The redemption is signed in your wallet on Base mainnet.
       </p>
     </div>
-  )
+  );
 }
 
 // ── Step 2 — amount + destination + burn ─────────────────────────────────
 
 interface RedeemStepProps {
-  address: `0x${string}`
-  onBurnConfirmed: (
-    txHash: `0x${string}`,
-    amountWei: bigint,
-    destinationAddress: string,
-  ) => void
+  address: `0x${string}`;
+  onBurnConfirmed: (txHash: `0x${string}`, amountWei: bigint, destinationAddress: string) => void;
 }
 
 function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
-  const chainId = useChainId()
-  const { switchChain, isPending: isSwitchingChain } = useSwitchChain()
-  const onWrongChain = chainId !== base.id
+  const chainId = useChainId();
+  const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
+  const onWrongChain = chainId !== base.id;
 
   const balanceQuery = useReadContract({
     address: WFAIR_ADDRESS,
@@ -268,72 +267,58 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
       // Refresh after we burn so the balance updates without a manual refresh.
       refetchInterval: 15_000,
     },
-  })
+  });
 
   const pausedQuery = useReadContract({
     address: WFAIR_ADDRESS,
     abi: WFAIR_ABI,
     functionName: 'paused',
     chainId: base.id,
-  })
+  });
 
-  const balanceWei = balanceQuery.data ?? 0n
-  const balanceFormatted = useMemo(
-    () => formatUnits(balanceWei, WFAIR_DECIMALS),
-    [balanceWei],
-  )
+  const balanceWei = balanceQuery.data ?? 0n;
+  const balanceFormatted = useMemo(() => formatUnits(balanceWei, WFAIR_DECIMALS), [balanceWei]);
 
-  const [amount, setAmount] = useState('')
-  const [destination, setDestination] = useState('')
-  const [touched, setTouched] = useState({ amount: false, destination: false })
+  const [amount, setAmount] = useState('');
+  const [destination, setDestination] = useState('');
+  const [touched, setTouched] = useState({ amount: false, destination: false });
 
-  const writeContract = useWriteContract()
-  const burnHash = writeContract.data
+  const writeContract = useWriteContract();
+  const burnHash = writeContract.data;
   const burnReceipt = useWaitForTransactionReceipt({
     hash: burnHash,
     chainId: base.id,
     query: { enabled: Boolean(burnHash) },
-  })
+  });
 
   // Step transition: once the burn is mined, hand off to the status step.
   // Derived during render rather than via useEffect.
-  const lastBurn = useDerivedConfirmedBurn(
-    burnHash,
-    burnReceipt.data?.status,
-    amount,
-    destination,
-  )
+  const lastBurn = useDerivedConfirmedBurn(burnHash, burnReceipt.data?.status, amount, destination);
   if (lastBurn) {
-    onBurnConfirmed(lastBurn.txHash, lastBurn.amountWei, lastBurn.destination)
+    onBurnConfirmed(lastBurn.txHash, lastBurn.amountWei, lastBurn.destination);
   }
 
   const amountValid = useMemo(() => {
-    const trimmed = amount.trim()
-    if (trimmed.length === 0) return false
-    if (!/^\d+(\.\d{1,18})?$/.test(trimmed)) return false
+    const trimmed = amount.trim();
+    if (trimmed.length === 0) return false;
+    if (!/^\d+(\.\d{1,18})?$/.test(trimmed)) return false;
     try {
-      const wei = parseUnits(trimmed, WFAIR_DECIMALS)
-      return wei > 0n && wei <= balanceWei
+      const wei = parseUnits(trimmed, WFAIR_DECIMALS);
+      return wei > 0n && wei <= balanceWei;
     } catch {
-      return false
+      return false;
     }
-  }, [amount, balanceWei])
+  }, [amount, balanceWei]);
 
-  const destinationValid = useMemo(
-    () => isValidFairAddress(destination.trim()),
-    [destination],
-  )
+  const destinationValid = useMemo(() => isValidFairAddress(destination.trim()), [destination]);
 
   // Bridge contract enforces 26-35 byte FairCoin address payload — also
   // surface this client-side so the user can see the issue before signing.
   const destinationBytesValid = useMemo(() => {
-    if (!destinationValid) return false
-    const bytes = stringToBytes(destination.trim())
-    return (
-      bytes.length >= FAIRCOIN_ADDRESS_BYTES.min &&
-      bytes.length <= FAIRCOIN_ADDRESS_BYTES.max
-    )
-  }, [destination, destinationValid])
+    if (!destinationValid) return false;
+    const bytes = stringToBytes(destination.trim());
+    return bytes.length >= FAIRCOIN_ADDRESS_BYTES.min && bytes.length <= FAIRCOIN_ADDRESS_BYTES.max;
+  }, [destination, destinationValid]);
 
   const amountErrorMsg =
     touched.amount && amount.trim().length > 0 && !amountValid
@@ -342,34 +327,34 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
         : Number(amount) > Number(balanceFormatted)
           ? 'Exceeds your balance'
           : 'Enter a valid amount'
-      : null
+      : null;
   const destinationErrorMsg =
     touched.destination && destination.trim().length > 0 && !destinationBytesValid
       ? 'Enter a valid FairCoin address (starts with F, 26–35 base58 characters)'
-      : null
+      : null;
 
-  const isPaused = pausedQuery.data === true
+  const isPaused = pausedQuery.data === true;
   const canSubmit =
     amountValid &&
     destinationBytesValid &&
     !onWrongChain &&
     !isPaused &&
     !writeContract.isPending &&
-    !burnReceipt.isLoading
+    !burnReceipt.isLoading;
 
   const handleMax = useCallback(() => {
-    setAmount(balanceFormatted)
-    setTouched((t) => ({ ...t, amount: true }))
-  }, [balanceFormatted])
+    setAmount(balanceFormatted);
+    setTouched((t) => ({ ...t, amount: true }));
+  }, [balanceFormatted]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
-      setTouched({ amount: true, destination: true })
-      if (!canSubmit) return
+      e.preventDefault();
+      setTouched({ amount: true, destination: true });
+      if (!canSubmit) return;
 
-      const amountWei = parseUnits(amount.trim(), WFAIR_DECIMALS)
-      const destinationBytesHex = toHex(stringToBytes(destination.trim()))
+      const amountWei = parseUnits(amount.trim(), WFAIR_DECIMALS);
+      const destinationBytesHex = toHex(stringToBytes(destination.trim()));
 
       writeContract.writeContract({
         address: WFAIR_ADDRESS,
@@ -377,27 +362,26 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
         functionName: 'bridgeBurn',
         args: [amountWei, destinationBytesHex],
         chainId: base.id,
-      })
+      });
     },
     [amount, destination, canSubmit, writeContract],
-  )
+  );
 
-  const writeError = writeContract.error
-  const receiptError = burnReceipt.error
+  const writeError = writeContract.error;
+  const receiptError = burnReceipt.error;
   const failureMessage =
-    burnReceipt.data?.status === 'reverted'
-      ? 'The burn transaction reverted on-chain.'
-      : null
+    burnReceipt.data?.status === 'reverted' ? 'The burn transaction reverted on-chain.' : null;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {onWrongChain ? (
         <div className="flex flex-col gap-2.5 rounded-2xl border border-warning/40 bg-warning-subtle p-3.5 text-warning-text">
           <div className="flex items-start gap-2 text-sm">
-            <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiErrorWarningLine width={16} height={16} fill="currentColor" /></span>
+            <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0">
+              <RiErrorWarningLine width={16} height={16} fill="currentColor" />
+            </span>
             <span>
-              Your wallet is on the wrong network. WFAIR lives on{' '}
-              <strong>Base mainnet</strong>.
+              Your wallet is on the wrong network. WFAIR lives on <strong>Base mainnet</strong>.
             </span>
           </div>
           <button
@@ -433,7 +417,10 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
             className="w-full bg-transparent text-[44px] font-semibold leading-[1.05] tracking-tight text-foreground placeholder:text-muted-foreground/40 focus:outline-none sm:text-[52px]"
           />
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-label-sm font-bold text-white">
+            <span
+              aria-hidden
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-label-sm font-bold text-white"
+            >
               W
             </span>
             <span className="text-sm font-semibold text-foreground">WFAIR</span>
@@ -449,8 +436,8 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
             Max
           </button>
           {(['25', '50', '75'] as const).map((pct) => {
-            const fraction = (balanceWei * BigInt(Number(pct))) / 100n
-            const display = formatUnits(fraction, WFAIR_DECIMALS)
+            const fraction = (balanceWei * BigInt(Number(pct))) / 100n;
+            const display = formatUnits(fraction, WFAIR_DECIMALS);
             return (
               <button
                 key={pct}
@@ -461,7 +448,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
               >
                 {pct}%
               </button>
-            )
+            );
           })}
         </div>
         {amountErrorMsg ? (
@@ -486,7 +473,10 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
             {amount.trim().length > 0 && amountValid ? amount : '0'}
           </span>
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-body-xs font-bold text-primary-foreground">
+            <span
+              aria-hidden
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-body-xs font-bold text-primary-foreground"
+            >
               F
             </span>
             <span className="text-sm font-semibold text-foreground">FAIR</span>
@@ -506,7 +496,9 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
           Send FAIR to
         </label>
         <div className="mt-2.5 flex items-center gap-2 rounded-xl border border-border bg-popover/60 px-3 py-2.5 transition-colors focus-within:border-primary">
-          <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground"><RiWallet3Line width={16} height={16} fill="currentColor" /></span>
+          <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground">
+            <RiWallet3Line width={16} height={16} fill="currentColor" />
+          </span>
           <input
             id="unwrap-destination"
             type="text"
@@ -539,7 +531,9 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
 
       {isPaused ? (
         <div className="flex items-start gap-2 rounded-2xl border border-error/40 bg-error-subtle p-3.5 text-sm text-error-text">
-          <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiAlertLine width={16} height={16} fill="currentColor" /></span>
+          <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0">
+            <RiAlertLine width={16} height={16} fill="currentColor" />
+          </span>
           <span>The WFAIR contract is currently paused. Redemptions are disabled.</span>
         </div>
       ) : null}
@@ -552,18 +546,27 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
       >
         {writeContract.isPending ? (
           <>
-            <span aria-hidden="true" className="inline-flex animate-spin"><RiLoader4Line width={16} height={16} fill="currentColor" /></span>
+            <span aria-hidden="true" className="inline-flex animate-spin">
+              <RiLoader4Line width={16} height={16} fill="currentColor" />
+            </span>
             Confirm in your wallet…
           </>
         ) : burnReceipt.isLoading ? (
           <>
-            <span aria-hidden="true" className="inline-flex animate-spin"><RiLoader4Line width={16} height={16} fill="currentColor" /></span>
+            <span aria-hidden="true" className="inline-flex animate-spin">
+              <RiLoader4Line width={16} height={16} fill="currentColor" />
+            </span>
             Waiting for confirmation…
           </>
         ) : (
           <>
             Redeem WFAIR
-            <span aria-hidden="true" className="inline-flex transition-transform group-hover:translate-x-0.5"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
+            <span
+              aria-hidden="true"
+              className="inline-flex transition-transform group-hover:translate-x-0.5"
+            >
+              <RiArrowRightLine width={16} height={16} fill="currentColor" />
+            </span>
           </>
         )}
       </button>
@@ -580,28 +583,28 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
         </p>
       ) : null}
     </form>
-  )
+  );
 }
 
 // ── Step 3 — status / done ───────────────────────────────────────────────
 
 interface StatusStepProps {
-  burn: ActiveBurn
-  onReset: () => void
+  burn: ActiveBurn;
+  onReset: () => void;
 }
 
 function StatusStep({ burn, onReset }: StatusStepProps) {
-  const withdrawal = useFaircoinWithdrawalStatus(burn.txHash)
-  const status = withdrawal.data
-  const isFinal = status?.status === 'FINAL'
-  const isFailed = status?.status === 'FAILED'
+  const withdrawal = useFaircoinWithdrawalStatus(burn.txHash);
+  const status = withdrawal.data;
+  const isFinal = status?.status === 'FINAL';
+  const isFailed = status?.status === 'FAILED';
 
   if (isFinal && status) {
-    return <UnwrapSuccess burn={burn} status={status} onReset={onReset} />
+    return <UnwrapSuccess burn={burn} status={status} onReset={onReset} />;
   }
 
   if (isFailed && status) {
-    return <UnwrapFailed burn={burn} onReset={onReset} />
+    return <UnwrapFailed burn={burn} onReset={onReset} />;
   }
 
   return (
@@ -616,7 +619,10 @@ function StatusStep({ burn, onReset }: StatusStepProps) {
             {formatUnits(burn.amountWei, WFAIR_DECIMALS)}
           </span>
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-label-sm font-bold text-white">
+            <span
+              aria-hidden
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-label-sm font-bold text-white"
+            >
               W
             </span>
             <span className="text-sm font-semibold text-foreground">WFAIR</span>
@@ -644,27 +650,25 @@ function StatusStep({ burn, onReset }: StatusStepProps) {
           className="mt-1 inline-flex items-center gap-1.5 break-all font-mono text-xs text-foreground underline-offset-4 hover:underline"
         >
           {burn.txHash}
-          <span aria-hidden="true" className="inline-flex shrink-0"><RiExternalLinkLine width={12} height={12} fill="currentColor" /></span>
+          <span aria-hidden="true" className="inline-flex shrink-0">
+            <RiExternalLinkLine width={12} height={12} fill="currentColor" />
+          </span>
         </a>
       </div>
 
       {withdrawal.isError && withdrawal.failureCount > 2 ? (
         <p className="text-center text-xs text-muted-foreground">
-          <span aria-hidden="true" className="inline-flex mr-1 animate-spin"><RiLoader4Line width={12} height={12} fill="currentColor" /></span>
+          <span aria-hidden="true" className="inline-flex mr-1 animate-spin">
+            <RiLoader4Line width={12} height={12} fill="currentColor" />
+          </span>
           Reconnecting to bridge…
         </p>
       ) : null}
     </div>
-  )
+  );
 }
 
-function UnwrapFailed({
-  burn,
-  onReset,
-}: {
-  burn: ActiveBurn
-  onReset: () => void
-}) {
+function UnwrapFailed({ burn, onReset }: { burn: ActiveBurn; onReset: () => void }) {
   // Intentionally rendered inside the tracking shell to avoid a second layout
   // shift after the bridge reports FAILED mid-flight.
   return (
@@ -685,7 +689,7 @@ function UnwrapFailed({
         Start a new redemption
       </button>
     </div>
-  )
+  );
 }
 
 function UnwrapSuccess({
@@ -693,15 +697,15 @@ function UnwrapSuccess({
   status,
   onReset,
 }: {
-  burn: ActiveBurn
-  status: WithdrawalStatusResponse
-  onReset: () => void
+  burn: ActiveBurn;
+  status: WithdrawalStatusResponse;
+  onReset: () => void;
 }) {
-  const fairAmount = useMemo(() => satsToFair(status.amountSats), [status.amountSats])
+  const fairAmount = useMemo(() => satsToFair(status.amountSats), [status.amountSats]);
   const explorerUrl = status.fairTxid
     ? `${FAIR_EXPLORER_BASE}/tx/${encodeURIComponent(status.fairTxid)}`
-    : null
-  const burnUrl = `${BASESCAN_BASE}/tx/${encodeURIComponent(status.baseBurnTxHash)}`
+    : null;
+  const burnUrl = `${BASESCAN_BASE}/tx/${encodeURIComponent(status.baseBurnTxHash)}`;
 
   return (
     <div className="flex flex-col items-center gap-5 py-1 text-center">
@@ -760,15 +764,15 @@ function UnwrapSuccess({
         Redeem more WFAIR
       </button>
     </div>
-  )
+  );
 }
 
 // ── Sub-components ───────────────────────────────────────────────────────
 
 interface UnwrapTimelineStep {
-  key: 'BURN' | WithdrawalStatus
-  label: string
-  hint: string
+  key: 'BURN' | WithdrawalStatus;
+  label: string;
+  hint: string;
 }
 
 const UNWRAP_TIMELINE: readonly UnwrapTimelineStep[] = [
@@ -786,7 +790,7 @@ const UNWRAP_TIMELINE: readonly UnwrapTimelineStep[] = [
     hint: 'FAIR tx is in the mempool.',
   },
   { key: 'FINAL', label: 'FAIR delivered', hint: 'Transfer is final on FairCoin.' },
-]
+];
 
 function UnwrapTimeline({ status }: { status: WithdrawalStatusResponse | null | undefined }) {
   // BURN is always done if we got here. If `status` is null the bridge has
@@ -798,26 +802,23 @@ function UnwrapTimeline({ status }: { status: WithdrawalStatusResponse | null | 
     'SIGNING',
     'BROADCAST',
     'FINAL',
-  ]
-  const completedFromBridge: WithdrawalStatus[] = []
+  ];
+  const completedFromBridge: WithdrawalStatus[] = [];
   if (status) {
-    const idx = stages.indexOf(status.status)
+    const idx = stages.indexOf(status.status);
     for (let i = 1; i <= idx; i++) {
-      completedFromBridge.push(stages[i] as WithdrawalStatus)
+      completedFromBridge.push(stages[i] as WithdrawalStatus);
     }
   }
-  const completed = new Set<UnwrapTimelineStep['key']>([
-    'BURN',
-    ...completedFromBridge,
-  ])
-  const currentIdx = status ? stages.indexOf(status.status) : 0
+  const completed = new Set<UnwrapTimelineStep['key']>(['BURN', ...completedFromBridge]);
+  const currentIdx = status ? stages.indexOf(status.status) : 0;
 
   return (
     <ol className="relative ml-2 flex flex-col gap-3 border-l border-border pl-5">
       {UNWRAP_TIMELINE.map((step, i) => {
-        const done = completed.has(step.key) && i < currentIdx
-        const active = i === currentIdx || (!status && step.key === 'BURN')
-        const future = i > currentIdx && !done && !active
+        const done = completed.has(step.key) && i < currentIdx;
+        const active = i === currentIdx || (!status && step.key === 'BURN');
+        const future = i > currentIdx && !done && !active;
         return (
           <li key={step.key} className="relative">
             <span
@@ -832,7 +833,9 @@ function UnwrapTimeline({ status }: { status: WithdrawalStatusResponse | null | 
               ].join(' ')}
             >
               {done ? (
-                <span aria-hidden="true" className="inline-flex text-primary-foreground"><RiCheckLine width={10} height={10} fill="currentColor" /></span>
+                <span aria-hidden="true" className="inline-flex text-primary-foreground">
+                  <RiCheckLine width={10} height={10} fill="currentColor" />
+                </span>
               ) : active ? (
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
               ) : null}
@@ -860,20 +863,20 @@ function UnwrapTimeline({ status }: { status: WithdrawalStatusResponse | null | 
               ) : null}
             </div>
           </li>
-        )
+        );
       })}
     </ol>
-  )
+  );
 }
 
 function ConnectedPill({
   address,
   onDisconnect,
 }: {
-  address: `0x${string}`
-  onDisconnect: () => void
+  address: `0x${string}`;
+  onDisconnect: () => void;
 }) {
-  const { copied, copy } = useCopyToClipboard(COPY_FLASH_MS)
+  const { copied, copy } = useCopyToClipboard(COPY_FLASH_MS);
   return (
     <div className="inline-flex items-center gap-1 rounded-full border border-border bg-popover/80 p-0.5 pl-3">
       <span aria-hidden className="flex h-2 w-2 rounded-full bg-success" />
@@ -899,7 +902,7 @@ function ConnectedPill({
         <RiLogoutBoxRLine width={14} height={14} fill="currentColor" />
       </button>
     </div>
-  )
+  );
 }
 
 function LiveDot({ active }: { active: boolean }) {
@@ -918,16 +921,18 @@ function LiveDot({ active }: { active: boolean }) {
       </span>
       Live
     </span>
-  )
+  );
 }
 
 function ErrorBanner({ message }: { message: string }) {
   return (
     <div className="flex items-start gap-2 rounded-xl border border-error/40 bg-error-subtle px-3 py-2.5 text-xs text-error-text">
-      <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiErrorWarningLine width={14} height={14} fill="currentColor" /></span>
+      <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0">
+        <RiErrorWarningLine width={14} height={14} fill="currentColor" />
+      </span>
       <span className="break-words">{message}</span>
     </div>
-  )
+  );
 }
 
 function SuccessCheckmark() {
@@ -935,12 +940,15 @@ function SuccessCheckmark() {
     <div className="relative flex h-16 w-16 items-center justify-center sm:h-20 sm:w-20">
       <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
       <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 sm:h-20 sm:w-20">
-        <span aria-hidden="true" className="inline-flex h-8 w-8 text-primary sm:h-10 sm:w-10 [&_svg]:size-full">
+        <span
+          aria-hidden="true"
+          className="inline-flex h-8 w-8 text-primary sm:h-10 sm:w-10 [&_svg]:size-full"
+        >
           <RiCheckboxCircleFill width={32} height={32} fill="currentColor" />
         </span>
       </span>
     </div>
-  )
+  );
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────
@@ -956,7 +964,7 @@ function useDerivedConfirmedBurn(
   amount: string,
   destination: string,
 ): { txHash: `0x${string}`; amountWei: bigint; destination: string } | null {
-  const [reported, setReported] = useState<`0x${string}` | null>(null)
+  const [reported, setReported] = useState<`0x${string}` | null>(null);
   if (
     burnHash &&
     receiptStatus === 'success' &&
@@ -965,80 +973,80 @@ function useDerivedConfirmedBurn(
     destination.trim().length > 0
   ) {
     try {
-      const amountWei = parseUnits(amount.trim(), WFAIR_DECIMALS)
-      setReported(burnHash)
-      return { txHash: burnHash, amountWei, destination: destination.trim() }
+      const amountWei = parseUnits(amount.trim(), WFAIR_DECIMALS);
+      setReported(burnHash);
+      return { txHash: burnHash, amountWei, destination: destination.trim() };
     } catch {
       // Amount parsing failed (shouldn't happen if upstream validation worked)
-      setReported(burnHash)
-      return null
+      setReported(burnHash);
+      return null;
     }
   }
-  return null
+  return null;
 }
 
 function shortAddress(a: string): string {
-  if (a.length <= 14) return a
-  return `${a.slice(0, 6)}…${a.slice(-4)}`
+  if (a.length <= 14) return a;
+  return `${a.slice(0, 6)}…${a.slice(-4)}`;
 }
 
 function shortHash(h: string): string {
-  if (h.length <= 14) return h
-  return `${h.slice(0, 8)}…${h.slice(-6)}`
+  if (h.length <= 14) return h;
+  return `${h.slice(0, 8)}…${h.slice(-6)}`;
 }
 
 function formatBalanceForDisplay(formatted: string): string {
-  const numeric = Number(formatted)
-  if (!Number.isFinite(numeric)) return formatted
-  if (numeric === 0) return '0'
-  if (numeric < 0.0001) return '<0.0001'
-  if (numeric < 1) return numeric.toFixed(4)
-  if (numeric < 1_000) return numeric.toFixed(2)
-  return numeric.toLocaleString(undefined, { maximumFractionDigits: 2 })
+  const numeric = Number(formatted);
+  if (!Number.isFinite(numeric)) return formatted;
+  if (numeric === 0) return '0';
+  if (numeric < 0.0001) return '<0.0001';
+  if (numeric < 1) return numeric.toFixed(4);
+  if (numeric < 1_000) return numeric.toFixed(2);
+  return numeric.toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
 function satsToFair(satsStr: string): string {
   try {
-    const sats = BigInt(satsStr)
-    const whole = sats / 100_000_000n
-    const frac = sats % 100_000_000n
-    if (frac === 0n) return whole.toString()
-    const fracStr = frac.toString().padStart(8, '0').replace(/0+$/, '')
-    return `${whole.toString()}.${fracStr}`
+    const sats = BigInt(satsStr);
+    const whole = sats / 100_000_000n;
+    const frac = sats % 100_000_000n;
+    if (frac === 0n) return whole.toString();
+    const fracStr = frac.toString().padStart(8, '0').replace(/0+$/, '');
+    return `${whole.toString()}.${fracStr}`;
   } catch {
-    return satsStr
+    return satsStr;
   }
 }
 
 function connectorLabel(name: string, id: string): string {
-  if (id === 'walletConnect') return 'WalletConnect'
-  if (id === 'coinbaseWallet' || id === 'coinbaseWalletSDK') return 'Coinbase Wallet'
-  if (id === 'injected') return name === 'Injected' ? 'Browser wallet' : name
-  return name
+  if (id === 'walletConnect') return 'WalletConnect';
+  if (id === 'coinbaseWallet' || id === 'coinbaseWalletSDK') return 'Coinbase Wallet';
+  if (id === 'injected') return name === 'Injected' ? 'Browser wallet' : name;
+  return name;
 }
 
 function connectorHint(id: string): string {
-  if (id === 'walletConnect') return 'Scan with any mobile wallet'
-  if (id === 'coinbaseWallet' || id === 'coinbaseWalletSDK') return 'Open in Coinbase'
-  if (id === 'injected') return 'MetaMask, Rabby, Rainbow…'
-  return 'Connect to continue'
+  if (id === 'walletConnect') return 'Scan with any mobile wallet';
+  if (id === 'coinbaseWallet' || id === 'coinbaseWalletSDK') return 'Open in Coinbase';
+  if (id === 'injected') return 'MetaMask, Rabby, Rainbow…';
+  return 'Connect to continue';
 }
 
 function describeWriteError(err: Error): string {
-  const msg = err.message
+  const msg = err.message;
   if (/User rejected|rejected the request|denied transaction signature/i.test(msg)) {
-    return 'You cancelled the transaction in your wallet.'
+    return 'You cancelled the transaction in your wallet.';
   }
   if (/insufficient funds/i.test(msg)) {
-    return 'Insufficient ETH on Base to pay for gas.'
+    return 'Insufficient ETH on Base to pay for gas.';
   }
   if (/whenNotPaused/i.test(msg)) {
-    return 'WFAIR contract is currently paused. Try again later.'
+    return 'WFAIR contract is currently paused. Try again later.';
   }
   if (/invalid faircoin address length/i.test(msg)) {
-    return 'The destination address is not the right size for the bridge.'
+    return 'The destination address is not the right size for the bridge.';
   }
   // Trim noisy viem error chains to the root message line.
-  const firstLine = msg.split('\n')[0]
-  return firstLine.length > 0 ? firstLine : 'Could not submit transaction.'
+  const firstLine = msg.split('\n')[0];
+  return firstLine.length > 0 ? firstLine : 'Could not submit transaction.';
 }

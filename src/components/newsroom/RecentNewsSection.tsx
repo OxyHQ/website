@@ -1,30 +1,30 @@
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { NewsCardRow } from './NewsCard'
-import SectionHeaderWithLink from './SectionHeaderWithLink'
-import { useNewsroomPosts } from '../../api/hooks'
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import { NewsCardRow } from './NewsCard';
+import SectionHeaderWithLink from './SectionHeaderWithLink';
+import { useNewsroomPosts } from '../../api/hooks';
 
 /* ──────────────────────────────────────────────────
  * "Recent news" section — 2-col grid with row cards
  * ────────────────────────────────────────────── */
 interface RecentNewsSectionProps {
-  title?: string
-  linkText?: string
-  viewAllText?: string
+  title?: string;
+  linkText?: string;
+  viewAllText?: string;
   /**
    * When set, scopes the recent-news rail to a single category. Also flips the
    * "View more" link target to /company/news for the scoped variant.
    */
-  category?: string
+  category?: string;
   /** Search title and summary before selecting the recent-news rail. */
-  search?: string
+  search?: string;
   /** Override target for the section header link (defaults to /newsroom). */
-  href?: string
+  href?: string;
   /**
    * Off when the caller already provides the page frame. A `container` inside
    * a `container` applies the gutter twice, which leaves the rail sitting a
    * full gutter inside the sections around it.
    */
-  framed?: boolean
+  framed?: boolean;
 }
 
 export default function RecentNewsSection({
@@ -35,27 +35,22 @@ export default function RecentNewsSection({
   href = '/newsroom',
   framed = true,
 }: RecentNewsSectionProps) {
-  const { data, isPending } = useNewsroomPosts({ category, search, limit: 5 })
-  const recentNewsArticles = data?.posts ?? []
+  const { data, isPending } = useNewsroomPosts({ category, search, limit: 5 });
+  const recentNewsArticles = data?.posts ?? [];
 
-  if (!isPending && recentNewsArticles.length === 0) return null
+  if (!isPending && recentNewsArticles.length === 0) return null;
 
   return (
     <section className={framed ? 'container' : undefined}>
-      <SectionHeaderWithLink
-        title={title}
-        href={href}
-        linkText={linkText}
-      />
+      <SectionHeaderWithLink title={title} href={href} linkText={linkText} />
 
       <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
-        {isPending && [1, 2].map((i) => (
-          <Skeleton.Box key={i} width="100%" height={128} borderRadius={16} />
-        ))}
+        {isPending &&
+          [1, 2].map((i) => <Skeleton.Box key={i} width="100%" height={128} borderRadius={16} />)}
         {recentNewsArticles.map((article) => (
           <NewsCardRow key={article._id} article={article} />
         ))}
       </div>
     </section>
-  )
+  );
 }

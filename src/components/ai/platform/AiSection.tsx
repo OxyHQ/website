@@ -1,15 +1,15 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
 interface AiSectionProps {
   /** Anchor target. Every section has one so `/ai#enterprise` can be linked. */
-  id: string
-  eyebrow?: string
-  heading: string
-  description?: ReactNode
+  id: string;
+  eyebrow?: string;
+  heading: string;
+  description?: ReactNode;
   /** Rendered beside the heading — usually an availability badge. */
-  meta?: ReactNode
-  children?: ReactNode
-  className?: string
+  meta?: ReactNode;
+  children?: ReactNode;
+  className?: string;
 }
 
 /**
@@ -49,5 +49,5 @@ export default function AiSection({
         {children && <div className="mt-10">{children}</div>}
       </div>
     </section>
-  )
+  );
 }

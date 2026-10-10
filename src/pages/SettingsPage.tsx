@@ -1,5 +1,5 @@
-import PageShell from '../components/layout/PageShell'
-import SettingsAppearance from '../components/settings/SettingsAppearance'
+import PageShell from '../components/layout/PageShell';
+import SettingsAppearance from '../components/settings/SettingsAppearance';
 
 export default function SettingsPage() {
   return (
@@ -14,5 +14,5 @@ export default function SettingsPage() {
     >
       <SettingsAppearance />
     </PageShell>
-  )
+  );
 }

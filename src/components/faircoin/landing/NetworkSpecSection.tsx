@@ -1,9 +1,9 @@
-import { motion } from 'framer-motion'
+import { motion } from 'framer-motion';
 
 interface NetworkParam {
-  label: string
-  value: string
-  hint?: string
+  label: string;
+  value: string;
+  hint?: string;
 }
 
 const NETWORK_PARAMS: readonly NetworkParam[] = [
@@ -15,7 +15,7 @@ const NETWORK_PARAMS: readonly NetworkParam[] = [
   { label: 'Masternode collateral', value: '5,000 FAIR' },
   { label: 'BIP44 coin type', value: '119' },
   { label: 'P2P port', value: '46372' },
-]
+];
 
 /**
  * Apple-style spec sheet for the FairCoin network parameters. Numbers right-
@@ -53,10 +53,9 @@ export default function NetworkSpecSection() {
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
               className="mt-5 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground"
             >
-              FairCoin is a Bitcoin-fork cryptocurrency launched in 2014. It
-              pairs proof-of-work with proof-of-stake, runs the Quark hash
-              function, settles new blocks every two minutes, and has a hard
-              supply cap of 33 million coins.
+              FairCoin is a Bitcoin-fork cryptocurrency launched in 2014. It pairs proof-of-work
+              with proof-of-stake, runs the Quark hash function, settles new blocks every two
+              minutes, and has a hard supply cap of 33 million coins.
             </motion.p>
             <motion.p
               initial={{ opacity: 0, y: 12 }}
@@ -65,9 +64,8 @@ export default function NetworkSpecSection() {
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
               className="mt-3 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground"
             >
-              Maintained by volunteers. No ICO, no foundation, no marketing
-              budget. Just a daemon, a few wallets, an explorer and a small
-              group of people that keep shipping.
+              Maintained by volunteers. No ICO, no foundation, no marketing budget. Just a daemon, a
+              few wallets, an explorer and a small group of people that keep shipping.
             </motion.p>
           </div>
 
@@ -108,5 +106,5 @@ export default function NetworkSpecSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

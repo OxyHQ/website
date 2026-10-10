@@ -1,16 +1,16 @@
-import { useRef, useState } from 'react'
-import { Button } from '@oxy.so/bloom/button'
-import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
-import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
+import { useRef, useState } from 'react';
+import { Button } from '@oxy.so/bloom/button';
+import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine';
+import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine';
 
 /** How long typing settles before the query reaches the URL, in ms. */
-const DEBOUNCE_MS = 250
+const DEBOUNCE_MS = 250;
 
 interface FeatureSearchProps {
   /** The committed query, from the URL. */
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
 }
 
 /**
@@ -26,30 +26,39 @@ interface FeatureSearchProps {
  * and debounced on its way there, which keeps the caret responsive and stops
  * every keystroke becoming a history entry.
  */
-export default function FeatureSearch({ value, onChange, placeholder = 'Search proposals' }: FeatureSearchProps) {
-  const [text, setText] = useState(value)
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+export default function FeatureSearch({
+  value,
+  onChange,
+  placeholder = 'Search proposals',
+}: FeatureSearchProps) {
+  const [text, setText] = useState(value);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function commit(next: string) {
-    if (timer.current) clearTimeout(timer.current)
-    timer.current = setTimeout(() => onChange(next), DEBOUNCE_MS)
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => onChange(next), DEBOUNCE_MS);
   }
 
   function clear() {
-    if (timer.current) clearTimeout(timer.current)
-    setText('')
-    onChange('')
+    if (timer.current) clearTimeout(timer.current);
+    setText('');
+    onChange('');
   }
 
   return (
     <div className="relative">
-      <span aria-hidden="true" className="inline-flex pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"><RiSearchLine width={16} height={16} fill="currentColor" /></span>
+      <span
+        aria-hidden="true"
+        className="inline-flex pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+      >
+        <RiSearchLine width={16} height={16} fill="currentColor" />
+      </span>
       <input
         type="search"
         value={text}
         onChange={(event) => {
-          setText(event.target.value)
-          commit(event.target.value)
+          setText(event.target.value);
+          commit(event.target.value);
         }}
         placeholder={placeholder}
         aria-label="Search proposals"
@@ -68,5 +77,5 @@ export default function FeatureSearch({ value, onChange, placeholder = 'Search p
         </span>
       )}
     </div>
-  )
+  );
 }

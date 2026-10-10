@@ -21,22 +21,22 @@
  * document by design, and `scripts/routing-contract.test.ts` is what checks the
  * list itself stays honest.
  */
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
-import path from 'node:path'
-import { canonicalTo } from '../src/lib/canonicalPath'
-import { isSpaFallbackPath } from '../src/lib/spaFallback'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import path from 'node:path';
+import { canonicalTo } from '../src/lib/canonicalPath';
+import { isSpaFallbackPath } from '../src/lib/spaFallback';
 
-const ROOT = path.resolve(import.meta.dir, '..')
-const DIST = path.join(ROOT, 'dist')
-const SITE_ORIGIN = process.env.SITE_URL || 'https://oxy.so'
+const ROOT = path.resolve(import.meta.dir, '..');
+const DIST = path.join(ROOT, 'dist');
+const SITE_ORIGIN = process.env.SITE_URL || 'https://oxy.so';
 
 interface Rule {
-  from: string
-  to: string
-  status: number
+  from: string;
+  to: string;
+  status: number;
 }
 
-type Resolution = { status: number; detail?: string }
+type Resolution = { status: number; detail?: string };
 
 function loadRules(): Rule[] {
   return readFileSync(path.join(DIST, '_redirects'), 'utf8')
@@ -44,71 +44,71 @@ function loadRules(): Rule[] {
     .map((line) => line.trim())
     .filter((line) => line && !line.startsWith('#'))
     .map((line) => {
-      const [from, to, status] = line.split(/\s+/)
-      return { from: from ?? '', to: to ?? '', status: Number(status ?? 200) }
-    })
+      const [from, to, status] = line.split(/\s+/);
+      return { from: from ?? '', to: to ?? '', status: Number(status ?? 200) };
+    });
 }
 
 function ruleMatches(from: string, pathname: string): boolean {
   const source = from
     .split('/')
     .map((segment) => {
-      if (segment === '*') return '.*'
-      if (segment.startsWith(':')) return '[^/]+'
-      return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      if (segment === '*') return '.*';
+      if (segment.startsWith(':')) return '[^/]+';
+      return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     })
-    .join('/')
+    .join('/');
   // Exact, like Cloudflare: `/dashboard` does not match `/dashboard/`. The
   // generator emits both forms for literal sources precisely because of this.
-  return new RegExp(`^${source}$`).test(pathname)
+  return new RegExp(`^${source}$`).test(pathname);
 }
 
 /** Cloudflare Pages, as far as this build is concerned. */
 function resolve(pathname: string, rules: readonly Rule[]): Resolution {
-  const clean = pathname.replace(/\/+$/, '')
-  const asFile = path.join(DIST, clean)
-  if (clean !== '' && existsSync(asFile) && statSync(asFile).isFile()) return { status: 200 }
-  const asIndex = path.join(DIST, clean, 'index.html')
+  const clean = pathname.replace(/\/+$/, '');
+  const asFile = path.join(DIST, clean);
+  if (clean !== '' && existsSync(asFile) && statSync(asFile).isFile()) return { status: 200 };
+  const asIndex = path.join(DIST, clean, 'index.html');
   if (existsSync(asIndex)) {
     // A document is served at `<path>/`; the bare form is a 308 to it.
-    return pathname.endsWith('/') ? { status: 200 } : { status: 308, detail: `${pathname}/` }
+    return pathname.endsWith('/') ? { status: 200 } : { status: 308, detail: `${pathname}/` };
   }
   for (const rule of rules) {
     if (ruleMatches(rule.from, pathname)) {
       // `functions/_middleware.ts` upgrades the catch-all 404 to the app shell
       // for the surfaces the SPA owns. Those resolve; they just do not have a
       // document.
-      if (rule.status === 404 && isSpaFallbackPath(pathname)) return { status: 200 }
-      return { status: rule.status, detail: rule.to }
+      if (rule.status === 404 && isSpaFallbackPath(pathname)) return { status: 200 };
+      return { status: rule.status, detail: rule.to };
     }
   }
-  return isSpaFallbackPath(pathname) ? { status: 200 } : { status: 404 }
+  return isSpaFallbackPath(pathname) ? { status: 200 } : { status: 404 };
 }
 
 function walk(dir: string, match: (file: string) => boolean): string[] {
-  const out: string[] = []
+  const out: string[] = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const abs = path.join(dir, entry.name)
-    if (entry.isDirectory()) out.push(...walk(abs, match))
-    else if (match(abs)) out.push(abs)
+    const abs = path.join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walk(abs, match));
+    else if (match(abs)) out.push(abs);
   }
-  return out
+  return out;
 }
 
 /** A site-internal pathname, or null for anything this build does not serve. */
 function internalPath(raw: string): string | null {
-  let value = raw.trim()
-  if (value.startsWith(SITE_ORIGIN)) value = value.slice(SITE_ORIGIN.length) || '/'
-  if (!value.startsWith('/') || value.startsWith('//')) return null
-  const pathname = value.split(/[?#]/)[0] ?? ''
-  return pathname === '' ? null : pathname
+  let value = raw.trim();
+  if (value.startsWith(SITE_ORIGIN)) value = value.slice(SITE_ORIGIN.length) || '/';
+  if (!value.startsWith('/') || value.startsWith('//')) return null;
+  const pathname = value.split(/[?#]/)[0] ?? '';
+  return pathname === '' ? null : pathname;
 }
 
 interface Finding {
-  pathname: string
-  status: number
-  detail?: string
-  sources: Set<string>
+  pathname: string;
+  status: number;
+  detail?: string;
+  sources: Set<string>;
 }
 
 /**
@@ -119,27 +119,27 @@ interface Finding {
  * are checked exactly as written: there is nothing left to normalise them.
  */
 function normalizeSourceTarget(raw: string): string {
-  const to = canonicalTo(raw)
-  return typeof to === 'string' ? to : raw
+  const to = canonicalTo(raw);
+  return typeof to === 'string' ? to : raw;
 }
 
 function main(): void {
-  if (!existsSync(DIST)) throw new Error('[link-audit] dist missing — run the build first')
-  const rules = loadRules()
-  const targets = new Map<string, Set<string>>()
+  if (!existsSync(DIST)) throw new Error('[link-audit] dist missing — run the build first');
+  const rules = loadRules();
+  const targets = new Map<string, Set<string>>();
   const record = (raw: string, source: string) => {
-    const pathname = internalPath(raw)
-    if (pathname === null) return
-    const sources = targets.get(pathname) ?? new Set<string>()
-    sources.add(source)
-    targets.set(pathname, sources)
-  }
+    const pathname = internalPath(raw);
+    if (pathname === null) return;
+    const sources = targets.get(pathname) ?? new Set<string>();
+    sources.add(source);
+    targets.set(pathname, sources);
+  };
 
   for (const file of walk(path.join(ROOT, 'src'), (f) => /\.tsx?$/.test(f))) {
-    const source = readFileSync(file, 'utf8')
-    const rel = path.relative(ROOT, file)
+    const source = readFileSync(file, 'utf8');
+    const rel = path.relative(ROOT, file);
     for (const match of source.matchAll(/\b(?:to|href)="(\/[^"]*)"/g)) {
-      record(normalizeSourceTarget(match[1] ?? ''), rel)
+      record(normalizeSourceTarget(match[1] ?? ''), rel);
     }
   }
 
@@ -147,41 +147,43 @@ function main(): void {
   // deleted later in `postbuild` and never served, so their markup is not a
   // published URL.
   const isStubTree = (file: string) =>
-    path.relative(DIST, file).split(path.sep)[0]?.endsWith('-content') === true
+    path.relative(DIST, file).split(path.sep)[0]?.endsWith('-content') === true;
 
   for (const file of walk(DIST, (f) => f.endsWith('.html') && !isStubTree(f))) {
-    const html = readFileSync(file, 'utf8')
-    const rel = path.relative(DIST, file)
-    for (const match of html.matchAll(/<a\b[^>]*?\shref="([^"]+)"/g)) record(match[1] ?? '', `dist/${rel}`)
+    const html = readFileSync(file, 'utf8');
+    const rel = path.relative(DIST, file);
+    for (const match of html.matchAll(/<a\b[^>]*?\shref="([^"]+)"/g))
+      record(match[1] ?? '', `dist/${rel}`);
   }
 
-  const sitemap = path.join(DIST, 'sitemap.xml')
+  const sitemap = path.join(DIST, 'sitemap.xml');
   if (existsSync(sitemap)) {
-    const xml = readFileSync(sitemap, 'utf8')
-    for (const match of xml.matchAll(/<loc>([^<]+)<\/loc>/g)) record(match[1] ?? '', 'sitemap.xml <loc>')
+    const xml = readFileSync(sitemap, 'utf8');
+    for (const match of xml.matchAll(/<loc>([^<]+)<\/loc>/g))
+      record(match[1] ?? '', 'sitemap.xml <loc>');
     for (const match of xml.matchAll(/<xhtml:link[^>]*href="([^"]+)"/g)) {
-      record(match[1] ?? '', 'sitemap.xml hreflang')
+      record(match[1] ?? '', 'sitemap.xml hreflang');
     }
   }
 
-  const findings: Finding[] = []
+  const findings: Finding[] = [];
   for (const [pathname, sources] of targets) {
-    const { status, detail } = resolve(pathname, rules)
+    const { status, detail } = resolve(pathname, rules);
     // A 200 is the only acceptable answer for a URL this site publishes itself.
-    if (status === 200) continue
-    findings.push({ pathname, status, detail, sources })
+    if (status === 200) continue;
+    findings.push({ pathname, status, detail, sources });
   }
 
-  findings.sort((a, b) => a.status - b.status || a.pathname.localeCompare(b.pathname))
+  findings.sort((a, b) => a.status - b.status || a.pathname.localeCompare(b.pathname));
   if (findings.length > 0) {
-    console.error(`[link-audit] ${findings.length} published URL(s) do not resolve to a document:`)
+    console.error(`[link-audit] ${findings.length} published URL(s) do not resolve to a document:`);
     for (const finding of findings) {
-      const where = [...finding.sources].slice(0, 3).join(', ')
-      const extra = finding.sources.size > 3 ? ` (+${finding.sources.size - 3} more)` : ''
+      const where = [...finding.sources].slice(0, 3).join(', ');
+      const extra = finding.sources.size > 3 ? ` (+${finding.sources.size - 3} more)` : '';
       console.error(
         `  ${String(finding.status).padEnd(4)} ${finding.pathname}` +
           `${finding.detail ? ` -> ${finding.detail}` : ''}\n       linked from ${where}${extra}`,
-      )
+      );
     }
     // Strict by default, like the prerender: shipping a link the site itself
     // knows is broken is how eight dead URLs sat in the Astro docs long enough
@@ -190,13 +192,13 @@ function main(): void {
     // to block a deploy of the whole site at 2am — `LINK_AUDIT_STRICT=0`
     // downgrades the run to a report.
     if (process.env.LINK_AUDIT_STRICT === '0') {
-      console.error('[link-audit] LINK_AUDIT_STRICT=0 — reporting only.')
-      return
+      console.error('[link-audit] LINK_AUDIT_STRICT=0 — reporting only.');
+      return;
     }
-    process.exit(1)
+    process.exit(1);
   }
 
-  console.log(`[link-audit] ok — ${targets.size} internal URLs, every one resolves to a document`)
+  console.log(`[link-audit] ok — ${targets.size} internal URLs, every one resolves to a document`);
 }
 
-main()
+main();

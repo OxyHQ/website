@@ -1,5 +1,5 @@
-import PageShell from '../components/layout/PageShell'
-import AppsContent from '../components/apps/AppsContent'
+import PageShell from '../components/layout/PageShell';
+import AppsContent from '../components/apps/AppsContent';
 
 export default function AppsPage() {
   return (
@@ -15,5 +15,5 @@ export default function AppsPage() {
     >
       <AppsContent />
     </PageShell>
-  )
+  );
 }

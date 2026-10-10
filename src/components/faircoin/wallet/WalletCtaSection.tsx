@@ -1,9 +1,8 @@
-import { motion } from 'framer-motion'
-import Button from '../../ui/Button'
+import { motion } from 'framer-motion';
+import Button from '../../ui/Button';
 
-const RELEASES_URL =
-  'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest'
-const REPO_URL = 'https://github.com/FairCoinOfficial/FAIRWallet'
+const RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest';
+const REPO_URL = 'https://github.com/FairCoinOfficial/FAIRWallet';
 
 export default function WalletCtaSection() {
   return (
@@ -27,29 +26,18 @@ export default function WalletCtaSection() {
             </span>
           </h2>
           <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground sm:text-xl">
-            Install FAIRWallet, write down your seed, and you are on the
-            FairCoin network.
+            Install FAIRWallet, write down your seed, and you are on the FairCoin network.
           </p>
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
-            <Button
-              variant="primary"
-              href={RELEASES_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Button variant="primary" href={RELEASES_URL} target="_blank" rel="noopener noreferrer">
               Download FAIRWallet
             </Button>
-            <Button
-              variant="outline"
-              href={REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Button variant="outline" href={REPO_URL} target="_blank" rel="noopener noreferrer">
               View on GitHub
             </Button>
           </div>
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

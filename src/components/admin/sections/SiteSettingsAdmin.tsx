@@ -1,50 +1,52 @@
-import { useState } from 'react'
-import { useSiteSettings, useLocales, type SiteSettings } from '../../../api/hooks'
-import { apiFetch } from '../../../api/client'
-import { Button } from '@oxy.so/bloom/button'
-import { Switch } from '@oxy.so/bloom/switch'
-import { Label } from '@oxy.so/bloom/label'
-import LocaleSwitcher from '../LocaleSwitcher'
-import { TranslationFields } from '../TranslationEditor'
-import MediaPicker from '../MediaPicker'
-import { AdminField } from '../AdminField'
+import { useState } from 'react';
+import { useSiteSettings, useLocales, type SiteSettings } from '../../../api/hooks';
+import { apiFetch } from '../../../api/client';
+import { Button } from '@oxy.so/bloom/button';
+import { Switch } from '@oxy.so/bloom/switch';
+import { Label } from '@oxy.so/bloom/label';
+import LocaleSwitcher from '../LocaleSwitcher';
+import { TranslationFields } from '../TranslationEditor';
+import MediaPicker from '../MediaPicker';
+import { AdminField } from '../AdminField';
 
 const EMPTY_SETTINGS: SiteSettings = {
   siteTitle: '',
   siteDescription: '',
   ogImage: '',
   banner: { text: '', href: '', visible: false },
-}
+};
 
 export default function SiteSettingsAdmin() {
-  const { data, refetch } = useSiteSettings()
-  const { data: locales } = useLocales()
-  const [form, setForm] = useState<SiteSettings>(data ?? EMPTY_SETTINGS)
-  const [lastSyncedData, setLastSyncedData] = useState(data)
-  const [saving, setSaving] = useState(false)
-  const [activeLocale, setActiveLocale] = useState('')
+  const { data, refetch } = useSiteSettings();
+  const { data: locales } = useLocales();
+  const [form, setForm] = useState<SiteSettings>(data ?? EMPTY_SETTINGS);
+  const [lastSyncedData, setLastSyncedData] = useState(data);
+  const [saving, setSaving] = useState(false);
+  const [activeLocale, setActiveLocale] = useState('');
 
-  const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
-  const resolvedActiveLocale = activeLocale || defaultLocale
+  const defaultLocale = locales?.find((l) => l.isDefault)?.code ?? 'en';
+  const resolvedActiveLocale = activeLocale || defaultLocale;
 
   if (data !== lastSyncedData) {
-    setLastSyncedData(data)
-    if (data) setForm(data)
+    setLastSyncedData(data);
+    if (data) setForm(data);
   }
 
   const save = async () => {
-    setSaving(true)
-    await apiFetch('/settings', { method: 'PUT', body: JSON.stringify(form) })
-    await refetch()
-    setSaving(false)
-  }
+    setSaving(true);
+    await apiFetch('/settings', { method: 'PUT', body: JSON.stringify(form) });
+    await refetch();
+    setSaving(false);
+  };
 
-  const isDefault = resolvedActiveLocale === defaultLocale
+  const isDefault = resolvedActiveLocale === defaultLocale;
 
   return (
     <div>
       <h2 className="text-xl font-semibold text-foreground">Site Settings</h2>
-      <p className="mt-1 text-sm text-muted-foreground">Global site metadata and banner configuration.</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Global site metadata and banner configuration.
+      </p>
 
       <div className="mt-4">
         <LocaleSwitcher activeLocale={resolvedActiveLocale} onLocaleChange={setActiveLocale} />
@@ -52,8 +54,17 @@ export default function SiteSettingsAdmin() {
 
       {isDefault ? (
         <div className="mt-6 flex flex-col gap-4">
-          <AdminField label="Site Title" value={form.siteTitle} onChange={(v) => setForm({ ...form, siteTitle: v })} />
-          <AdminField label="Site Description" value={form.siteDescription} onChange={(v) => setForm({ ...form, siteDescription: v })} textarea />
+          <AdminField
+            label="Site Title"
+            value={form.siteTitle}
+            onChange={(v) => setForm({ ...form, siteTitle: v })}
+          />
+          <AdminField
+            label="Site Description"
+            value={form.siteDescription}
+            onChange={(v) => setForm({ ...form, siteDescription: v })}
+            textarea
+          />
           <MediaPicker
             value={form.ogImage}
             onChange={(id) => setForm({ ...form, ogImage: id || '' })}
@@ -65,9 +76,25 @@ export default function SiteSettingsAdmin() {
           <div className="mt-4 rounded-xl border border-border p-4">
             <h3 className="text-sm font-medium text-foreground">Banner</h3>
             <div className="mt-3 flex flex-col gap-3">
-              <AdminField label="Text" value={form.banner?.text ?? ''} onChange={(v) => setForm({ ...form, banner: { ...form.banner, text: v } })} />
-              <AdminField label="Link" value={form.banner?.href ?? ''} onChange={(v) => setForm({ ...form, banner: { ...form.banner, href: v } })} />
-              <div className="flex items-center gap-2"><Switch checked={form.banner?.visible ?? false} onCheckedChange={(val) => setForm({ ...form, banner: { ...form.banner, visible: val } })} /><Label>Visible</Label></div>
+              <AdminField
+                label="Text"
+                value={form.banner?.text ?? ''}
+                onChange={(v) => setForm({ ...form, banner: { ...form.banner, text: v } })}
+              />
+              <AdminField
+                label="Link"
+                value={form.banner?.href ?? ''}
+                onChange={(v) => setForm({ ...form, banner: { ...form.banner, href: v } })}
+              />
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={form.banner?.visible ?? false}
+                  onCheckedChange={(val) =>
+                    setForm({ ...form, banner: { ...form.banner, visible: val } })
+                  }
+                />
+                <Label>Visible</Label>
+              </div>
             </div>
           </div>
 
@@ -93,5 +120,5 @@ export default function SiteSettingsAdmin() {
         </div>
       )}
     </div>
-  )
+  );
 }

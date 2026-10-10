@@ -1,11 +1,11 @@
-import { ShaderMaterial, TextureLoader, Vector3 } from 'three'
+import { ShaderMaterial, TextureLoader, Vector3 } from 'three';
 
 /** Same day/night terminator technique as solar-material.ts, but the Moon has
  * no city-lights layer to blend into — its far side just dims toward a small
  * ambient floor instead of a second texture. */
 export function createMoonMaterial() {
-  const loader = new TextureLoader()
-  const map = loader.load('/images/dashboard/moon.jpg')
+  const loader = new TextureLoader();
+  const map = loader.load('/images/dashboard/moon.jpg');
   const material = new ShaderMaterial({
     uniforms: {
       moonMap: { value: map },
@@ -25,12 +25,15 @@ export function createMoonMaterial() {
         gl_FragColor = vec4(texture2D(moonMap, moonUv).rgb * daylight, 1.0);
       }`,
     toneMapped: false,
-  })
+  });
   return {
     material,
     setSunDirection(direction: readonly [number, number, number]) {
-      material.uniforms.sun.value.set(...direction)
+      material.uniforms.sun.value.set(...direction);
     },
-    dispose() { map.dispose(); material.dispose() },
-  }
+    dispose() {
+      map.dispose();
+      material.dispose();
+    },
+  };
 }

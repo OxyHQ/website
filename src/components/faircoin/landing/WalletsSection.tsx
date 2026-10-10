@@ -1,22 +1,22 @@
-import { motion } from 'framer-motion'
-import type { BloomIconComponent } from '@oxy.so/bloom/icons'
-import { RiGlobalLine } from '@oxy.so/bloom/icons/RiGlobalLine'
-import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
-import { RiCpuLine } from '@oxy.so/bloom/icons/RiCpuLine'
-import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine'
-import { fc } from '../../../lib/faircoin-links'
+import { motion } from 'framer-motion';
+import type { BloomIconComponent } from '@oxy.so/bloom/icons';
+import { RiGlobalLine } from '@oxy.so/bloom/icons/RiGlobalLine';
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine';
+import { RiCpuLine } from '@oxy.so/bloom/icons/RiCpuLine';
+import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine';
+import { fc } from '../../../lib/faircoin-links';
 
 interface WalletOption {
-  name: string
-  description: string
-  badges: readonly string[]
-  href: string
-  icon: BloomIconComponent
+  name: string;
+  description: string;
+  badges: readonly string[];
+  href: string;
+  icon: BloomIconComponent;
 }
 
-const FAIRCOIN_REPO_URL = 'https://github.com/FairCoinOfficial/FairCoin'
-const FAIRWALLET_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases'
-const FAIRNODE_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRNode/releases'
+const FAIRCOIN_REPO_URL = 'https://github.com/FairCoinOfficial/FairCoin';
+const FAIRWALLET_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases';
+const FAIRNODE_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRNode/releases';
 
 const WALLETS: readonly WalletOption[] = [
   {
@@ -43,7 +43,7 @@ const WALLETS: readonly WalletOption[] = [
     href: FAIRCOIN_REPO_URL,
     icon: RiServerLine,
   },
-]
+];
 
 export default function WalletsSection() {
   return (
@@ -75,8 +75,8 @@ export default function WalletsSection() {
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
             className="mt-5 text-pretty text-lg leading-relaxed text-muted-foreground"
           >
-            Every flavour, every platform. Hold native FAIR in a non-custodial
-            wallet that talks straight to the chain.
+            Every flavour, every platform. Hold native FAIR in a non-custodial wallet that talks
+            straight to the chain.
           </motion.p>
         </div>
 
@@ -106,13 +106,18 @@ export default function WalletsSection() {
                 <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                   <wallet.icon width={20} height={20} fill="currentColor" />
                 </span>
-                <span aria-hidden="true" className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground">
+                <span
+                  aria-hidden="true"
+                  className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
+                >
                   <RiArrowRightUpLine width={16} height={16} fill="currentColor" />
                 </span>
               </div>
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg font-semibold text-foreground">{wallet.name}</h3>
-                <p className="text-base leading-relaxed text-muted-foreground">{wallet.description}</p>
+                <p className="text-base leading-relaxed text-muted-foreground">
+                  {wallet.description}
+                </p>
               </div>
               <div className="mt-auto flex flex-wrap gap-1.5 pt-2">
                 {wallet.badges.map((badge) => (
@@ -130,15 +135,12 @@ export default function WalletsSection() {
 
         <p className="mt-10 text-center text-sm text-muted-foreground">
           No centralised exchanges today. Acquire FAIR via the{' '}
-          <a
-            href={fc('/buy')}
-            className="text-foreground underline-offset-4 hover:underline"
-          >
+          <a href={fc('/buy')} className="text-foreground underline-offset-4 hover:underline">
             web buy flow
           </a>
           , by mining the early PoW phase, by staking, or by running a masternode.
         </p>
       </div>
     </section>
-  )
+  );
 }

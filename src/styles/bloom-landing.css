@@ -22,13 +22,13 @@
   min-width: 0;
   position: relative;
 }
-.bloom-preview[data-bloom-preview='multi-agent'] {
+.bloom-preview[data-bloom-preview="multi-agent"] {
   min-height: 720px;
 }
-.bloom-preview[data-bloom-preview='profile'] {
+.bloom-preview[data-bloom-preview="profile"] {
   min-height: 337px;
 }
-.bloom-preview[data-bloom-preview='sidebar'] {
+.bloom-preview[data-bloom-preview="sidebar"] {
   width: max-content;
 }
 .bloom-preview-placeholder {
@@ -93,11 +93,7 @@
   to {
     opacity: 1;
     filter: none;
-    mask-image: radial-gradient(
-      circle,
-      var(--foreground) 100%,
-      transparent 100%
-    );
+    mask-image: radial-gradient(circle, var(--foreground) 100%, transparent 100%);
     mask-size: 6px 6px;
   }
 }
@@ -138,10 +134,10 @@
 .bloom-landing [data-bloom-composer-input] {
   resize: none;
 }
-.bloom-template-canvas[data-device='tablet'] {
+.bloom-template-canvas[data-device="tablet"] {
   width: min(100%, 768px);
 }
-.bloom-template-canvas[data-device='mobile'] {
+.bloom-template-canvas[data-device="mobile"] {
   width: min(100%, 390px);
 }
 .bloom-fan-card {
@@ -153,9 +149,8 @@
     rotate(calc(var(--fan-index) * 6deg));
   transition: transform 760ms cubic-bezier(0.32, 0.72, 0, 1);
 }
-.bloom-card-fan[data-spread='true'] .bloom-fan-card {
-  transform: translateX(calc(var(--fan-index) * 170px))
-    rotate(calc(var(--fan-index) * 4deg));
+.bloom-card-fan[data-spread="true"] .bloom-fan-card {
+  transform: translateX(calc(var(--fan-index) * 170px)) rotate(calc(var(--fan-index) * 4deg));
 }
 .bloom-fan-card:nth-child(3) {
   z-index: 5;
@@ -184,39 +179,36 @@
 }
 
 .landing-hero-dither-character::after {
-  content: '';
+  content: "";
   position: absolute;
   inset-inline: 0;
   bottom: 0;
   height: 6px;
-  background: radial-gradient(
-      circle,
-      var(--muted-foreground) 3px,
-      transparent 3.5px
-    )
-    left center / 13px 6px repeat-x;
+  background:
+    radial-gradient(circle, var(--muted-foreground) 3px, transparent 3.5px) left center / 13px 6px
+    repeat-x;
   opacity: 0.25;
 }
 /* The reference's cards have round corners and a flat surface. Keep Bloom's
    resolved fill, but remove the glass sheen on these preview cards only. */
 .bloom-landing
   .bloom-preview:is(
-    [data-bloom-preview='patient'],
-    [data-bloom-preview='steps'],
-    [data-bloom-preview='sleep'],
-    [data-bloom-preview='profile'],
-    [data-bloom-preview='days'],
-    [data-bloom-preview='activity'],
-    [data-bloom-preview='funnel'],
-    [data-bloom-preview='earnings'],
-    [data-bloom-preview='radar'],
-    [data-bloom-preview='comparison'],
-    [data-bloom-preview='sankey'],
-    [data-bloom-preview='stages'],
-    [data-bloom-preview='radial'],
-    [data-bloom-preview='gauge'],
-    [data-bloom-preview='area'],
-    [data-bloom-preview='combo']
+    [data-bloom-preview="patient"],
+    [data-bloom-preview="steps"],
+    [data-bloom-preview="sleep"],
+    [data-bloom-preview="profile"],
+    [data-bloom-preview="days"],
+    [data-bloom-preview="activity"],
+    [data-bloom-preview="funnel"],
+    [data-bloom-preview="earnings"],
+    [data-bloom-preview="radar"],
+    [data-bloom-preview="comparison"],
+    [data-bloom-preview="sankey"],
+    [data-bloom-preview="stages"],
+    [data-bloom-preview="radial"],
+    [data-bloom-preview="gauge"],
+    [data-bloom-preview="area"],
+    [data-bloom-preview="combo"]
   )
   > div {
   corner-shape: round !important;

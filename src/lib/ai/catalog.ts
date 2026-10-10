@@ -19,21 +19,21 @@
  *  3. **Money is a decimal string, never a number.** `0.1 + 0.2` is the reason.
  *     `src/lib/ai/estimator.ts` does the arithmetic in integers.
  */
-import { z } from 'zod'
-import { AVAILABILITY_STATES, isPubliclyListable } from './availability'
+import { z } from 'zod';
+import { AVAILABILITY_STATES, isPubliclyListable } from './availability';
 
 /**
  * The schema version this build understands. Bumped only alongside a change to
  * the shapes below; the ingestion script refuses anything else.
  */
-export const CATALOG_SCHEMA_VERSION = 1
+export const CATALOG_SCHEMA_VERSION = 1;
 
 /** A decimal amount as written, e.g. `"0.60"`. Never parsed as a float here. */
 const decimalString = z
   .string()
-  .regex(/^\d+(\.\d+)?$/, 'expected a non-negative decimal written as a string')
+  .regex(/^\d+(\.\d+)?$/, 'expected a non-negative decimal written as a string');
 
-const availabilitySchema = z.enum(AVAILABILITY_STATES)
+const availabilitySchema = z.enum(AVAILABILITY_STATES);
 
 /**
  * The units a public price can be quoted in. Anything else is a unit this site
@@ -49,8 +49,8 @@ export const PRICE_UNITS = [
   'image',
   'request',
   'rerank_document',
-] as const
-export type PriceUnit = (typeof PRICE_UNITS)[number]
+] as const;
+export type PriceUnit = (typeof PRICE_UNITS)[number];
 
 export const unitPriceSchema = z.object({
   unit: z.enum(PRICE_UNITS),
@@ -62,8 +62,8 @@ export const unitPriceSchema = z.object({
   amountUsd: decimalString,
   /** Set when the price depends on which deployment serves the request. */
   deploymentId: z.string().min(1).optional(),
-})
-export type UnitPrice = z.infer<typeof unitPriceSchema>
+});
+export type UnitPrice = z.infer<typeof unitPriceSchema>;
 
 export const capabilitySchema = z.enum([
   'text',
@@ -77,8 +77,8 @@ export const capabilitySchema = z.enum([
   'reranking',
   'reasoning',
   'batch',
-])
-export type Capability = z.infer<typeof capabilitySchema>
+]);
+export type Capability = z.infer<typeof capabilitySchema>;
 
 export const dataPolicySchema = z.object({
   /** Whether the SERVING ROUTE retains prompts, and for how long if it does. */
@@ -90,22 +90,22 @@ export const dataPolicySchema = z.object({
   zeroRetentionAvailable: z.boolean(),
   /** Free-text scope note, rendered verbatim and escaped. */
   note: z.string().max(500).optional(),
-})
-export type DataPolicy = z.infer<typeof dataPolicySchema>
+});
+export type DataPolicy = z.infer<typeof dataPolicySchema>;
 
 export const publisherSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   /** Canonical site for the publisher, used for attribution. */
   url: z.string().url().optional(),
-})
-export type Publisher = z.infer<typeof publisherSchema>
+});
+export type Publisher = z.infer<typeof publisherSchema>;
 
 export const servingProviderSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
-})
-export type ServingProvider = z.infer<typeof servingProviderSchema>
+});
+export type ServingProvider = z.infer<typeof servingProviderSchema>;
 
 export const deploymentSchema = z.object({
   id: z.string().min(1),
@@ -116,16 +116,16 @@ export const deploymentSchema = z.object({
   kind: z.enum(['shared', 'managed', 'dedicated']),
   availability: availabilitySchema,
   dataPolicy: dataPolicySchema,
-})
-export type Deployment = z.infer<typeof deploymentSchema>
+});
+export type Deployment = z.infer<typeof deploymentSchema>;
 
 export const revisionSchema = z.object({
   /** Immutable, pinnable id, e.g. `2026-04-01`. */
   id: z.string().min(1),
   releasedAt: z.string().optional(),
   availability: availabilitySchema,
-})
-export type Revision = z.infer<typeof revisionSchema>
+});
+export type Revision = z.infer<typeof revisionSchema>;
 
 /**
  * A model or a routing profile. They share a route shape and a card shape, and
@@ -164,8 +164,8 @@ export const catalogEntrySchema = z.object({
       note: z.string().max(300).optional(),
     })
     .optional(),
-})
-export type CatalogEntry = z.infer<typeof catalogEntrySchema>
+});
+export type CatalogEntry = z.infer<typeof catalogEntrySchema>;
 
 export const publicCatalogSchema = z.object({
   schemaVersion: z.literal(CATALOG_SCHEMA_VERSION),
@@ -179,13 +179,13 @@ export const publicCatalogSchema = z.object({
   providers: z.array(servingProviderSchema).default([]),
   deployments: z.array(deploymentSchema).default([]),
   entries: z.array(catalogEntrySchema).default([]),
-})
-export type PublicCatalog = z.infer<typeof publicCatalogSchema>
+});
+export type PublicCatalog = z.infer<typeof publicCatalogSchema>;
 
 export class CatalogSchemaError extends Error {
   constructor(message: string) {
-    super(message)
-    this.name = 'CatalogSchemaError'
+    super(message);
+    this.name = 'CatalogSchemaError';
   }
 }
 
@@ -199,23 +199,23 @@ export class CatalogSchemaError extends Error {
  */
 export function parsePublicCatalog(input: unknown): PublicCatalog {
   if (typeof input !== 'object' || input === null) {
-    throw new CatalogSchemaError('catalogue payload is not an object')
+    throw new CatalogSchemaError('catalogue payload is not an object');
   }
-  const version = (input as { schemaVersion?: unknown }).schemaVersion
+  const version = (input as { schemaVersion?: unknown }).schemaVersion;
   if (version !== CATALOG_SCHEMA_VERSION) {
     throw new CatalogSchemaError(
       `unsupported catalogue schemaVersion ${String(version)} — this build understands ${CATALOG_SCHEMA_VERSION}`,
-    )
+    );
   }
-  const result = publicCatalogSchema.safeParse(input)
+  const result = publicCatalogSchema.safeParse(input);
   if (!result.success) {
     const issues = result.error.issues
       .slice(0, 5)
       .map((issue) => `${issue.path.join('.') || '(root)'}: ${issue.message}`)
-      .join('; ')
-    throw new CatalogSchemaError(`catalogue failed validation — ${issues}`)
+      .join('; ');
+    throw new CatalogSchemaError(`catalogue failed validation — ${issues}`);
   }
-  return result.data
+  return result.data;
 }
 
 /**
@@ -232,8 +232,8 @@ export function parsePublicCatalog(input: unknown): PublicCatalog {
 export function toCustomerSafeCatalog(catalog: PublicCatalog): PublicCatalog {
   const deployments = catalog.deployments.filter((deployment) =>
     isPubliclyListable(deployment.availability),
-  )
-  const deploymentIds = new Set(deployments.map((deployment) => deployment.id))
+  );
+  const deploymentIds = new Set(deployments.map((deployment) => deployment.id));
   const entries = catalog.entries
     .filter(
       (entry) => isPubliclyListable(entry.availability) && entry.commercial !== 'internal_only',
@@ -244,16 +244,16 @@ export function toCustomerSafeCatalog(catalog: PublicCatalog): PublicCatalog {
       prices: entry.prices.filter(
         (price) => price.deploymentId === undefined || deploymentIds.has(price.deploymentId),
       ),
-    }))
-  const publisherIds = new Set(entries.map((entry) => entry.publisherId))
-  const providerIds = new Set(deployments.map((deployment) => deployment.providerId))
+    }));
+  const publisherIds = new Set(entries.map((entry) => entry.publisherId));
+  const providerIds = new Set(deployments.map((deployment) => deployment.providerId));
   return {
     ...catalog,
     publishers: catalog.publishers.filter((publisher) => publisherIds.has(publisher.id)),
     providers: catalog.providers.filter((provider) => providerIds.has(provider.id)),
     deployments,
     entries,
-  }
+  };
 }
 
 /**
@@ -277,48 +277,48 @@ const FORBIDDEN_KEYS: readonly string[] = [
   'internal_route_id',
   'contract',
   'upstreamKey',
-]
+];
 
 /** Throws when a payload carries a secret, an internal cost or an internal-only object. */
 export function assertNoInternalLeakage(value: unknown, path = '$'): void {
   if (Array.isArray(value)) {
-    value.forEach((item, index) => assertNoInternalLeakage(item, `${path}[${index}]`))
-    return
+    value.forEach((item, index) => assertNoInternalLeakage(item, `${path}[${index}]`));
+    return;
   }
-  if (typeof value !== 'object' || value === null) return
+  if (typeof value !== 'object' || value === null) return;
   for (const [key, child] of Object.entries(value)) {
     if (FORBIDDEN_KEYS.includes(key)) {
-      throw new CatalogSchemaError(`snapshot carries a non-public field at ${path}.${key}`)
+      throw new CatalogSchemaError(`snapshot carries a non-public field at ${path}.${key}`);
     }
     if (key === 'availability' || key === 'commercial') {
       if (child === 'internal_only') {
-        throw new CatalogSchemaError(`snapshot carries an internal_only object at ${path}`)
+        throw new CatalogSchemaError(`snapshot carries an internal_only object at ${path}`);
       }
     }
-    assertNoInternalLeakage(child, `${path}.${key}`)
+    assertNoInternalLeakage(child, `${path}.${key}`);
   }
 }
 
 /* ── Derived views the pages share ─────────────────────────────────────── */
 
 export function entriesForListing(catalog: PublicCatalog): CatalogEntry[] {
-  return [...catalog.entries].sort((a, b) => a.id.localeCompare(b.id))
+  return [...catalog.entries].sort((a, b) => a.id.localeCompare(b.id));
 }
 
 export function findEntry(catalog: PublicCatalog, id: string): CatalogEntry | undefined {
-  return catalog.entries.find((entry) => entry.id === id)
+  return catalog.entries.find((entry) => entry.id === id);
 }
 
 export function publisherName(catalog: PublicCatalog, publisherId: string): string {
-  return catalog.publishers.find((publisher) => publisher.id === publisherId)?.name ?? publisherId
+  return catalog.publishers.find((publisher) => publisher.id === publisherId)?.name ?? publisherId;
 }
 
 export function deploymentsForEntry(catalog: PublicCatalog, entry: CatalogEntry): Deployment[] {
   return entry.deploymentIds
     .map((id) => catalog.deployments.find((deployment) => deployment.id === id))
-    .filter((deployment): deployment is Deployment => deployment !== undefined)
+    .filter((deployment): deployment is Deployment => deployment !== undefined);
 }
 
 export function regionsForEntry(catalog: PublicCatalog, entry: CatalogEntry): string[] {
-  return [...new Set(deploymentsForEntry(catalog, entry).map((deployment) => deployment.region))]
+  return [...new Set(deploymentsForEntry(catalog, entry).map((deployment) => deployment.region))];
 }

@@ -1,8 +1,8 @@
 /// <reference types="@cloudflare/workers-types" />
-import { observeEdgeRequest, type EdgeActivityEnv } from '@oxy.so/telemetry/edge'
-import { brandForHost, resolveSeoOrDefault, type SeoData } from '../src/lib/seo'
-import { hasPrerenderedNewsroomPost, matchNewsroomPostPath } from './newsroom-status'
-import { isSpaFallbackPath } from '../src/lib/spaFallback'
+import { observeEdgeRequest, type EdgeActivityEnv } from '@oxy.so/telemetry/edge';
+import { brandForHost, resolveSeoOrDefault, type SeoData } from '../src/lib/seo';
+import { hasPrerenderedNewsroomPost, matchNewsroomPostPath } from './newsroom-status';
+import { isSpaFallbackPath } from '../src/lib/spaFallback';
 
 /**
  * Cloudflare Pages edge middleware: per-host SEO at request time.
@@ -25,10 +25,10 @@ interface Env extends EdgeActivityEnv {
    * as a Pages environment variable to point a preview deployment at a staging
    * backend; unset it falls back to production.
    */
-  VITE_API_URL?: string
+  VITE_API_URL?: string;
 }
 
-const DEFAULT_API_BASE = 'https://website-api.oxy.so'
+const DEFAULT_API_BASE = 'https://website-api.oxy.so';
 
 async function fetchSeoData(
   apiBase: string,
@@ -36,17 +36,17 @@ async function fetchSeoData(
   brand: string,
 ): Promise<SeoData | null> {
   try {
-    const url = new URL(`${apiBase}/api/seo`)
-    url.searchParams.set('brand', brand)
-    url.searchParams.set('path', pathname)
+    const url = new URL(`${apiBase}/api/seo`);
+    url.searchParams.set('brand', brand);
+    url.searchParams.set('path', pathname);
     const res = await fetch(url.toString(), {
       cf: { cacheTtl: 300, cacheEverything: true },
-    } as RequestInit)
-    if (!res.ok) return null
-    return (await res.json()) as SeoData
+    } as RequestInit);
+    if (!res.ok) return null;
+    return (await res.json()) as SeoData;
   } catch (err) {
-    console.error('[seo-middleware] /api/seo fetch failed:', err)
-    return null
+    console.error('[seo-middleware] /api/seo fetch failed:', err);
+    return null;
   }
 }
 
@@ -56,32 +56,32 @@ async function newsroomPostExists(
   locale?: string,
 ): Promise<boolean | null> {
   try {
-    const url = new URL(`${apiBase}/api/newsroom/${encodeURIComponent(slug)}`)
-    if (locale) url.searchParams.set('locale', locale)
+    const url = new URL(`${apiBase}/api/newsroom/${encodeURIComponent(slug)}`);
+    if (locale) url.searchParams.set('locale', locale);
     const res = await fetch(url.toString(), {
       cf: { cacheTtl: 60, cacheEverything: true },
-    } as RequestInit)
-    if (res.ok) return true
-    if (res.status === 404) return false
-    return null
+    } as RequestInit);
+    if (res.ok) return true;
+    if (res.status === 404) return false;
+    return null;
   } catch (err) {
-    console.error('[newsroom-status] detail probe failed:', err)
-    return null
+    console.error('[newsroom-status] detail probe failed:', err);
+    return null;
   }
 }
 
 function asNotFound(response: Response, html: string): Response {
-  const headers = new Headers(response.headers)
-  headers.set('Cache-Control', 'public, max-age=60, must-revalidate')
-  headers.set('X-Robots-Tag', 'noindex, nofollow')
-  return new Response(html, { status: 404, statusText: 'Not Found', headers })
+  const headers = new Headers(response.headers);
+  headers.set('Cache-Control', 'public, max-age=60, must-revalidate');
+  headers.set('X-Robots-Tag', 'noindex, nofollow');
+  return new Response(html, { status: 404, statusText: 'Not Found', headers });
 }
 
 const handleRequest: PagesFunction<Env> = async (context) => {
-  const { request, next, env } = context
-  const url = new URL(request.url)
-  let response = await next()
-  if (!(response.headers.get('content-type') ?? '').includes('text/html')) return response
+  const { request, next, env } = context;
+  const url = new URL(request.url);
+  let response = await next();
+  if (!(response.headers.get('content-type') ?? '').includes('text/html')) return response;
 
   // `_redirects` ends in `/*  /404.html  404`, so an unknown path arrives here
   // as a 404. Some of those paths are real surfaces with no build-time document:
@@ -92,11 +92,11 @@ const handleRequest: PagesFunction<Env> = async (context) => {
   // the 404 here cannot: by the time this runs, Cloudflare has already looked
   // for a document and not found one.
   if (response.status === 404 && isSpaFallbackPath(url.pathname)) {
-    const shell = await next(new Request(new URL('/app-shell', url).toString(), request))
+    const shell = await next(new Request(new URL('/app-shell', url).toString(), request));
     if (shell.status === 200) {
-      const headers = new Headers(shell.headers)
-      headers.set('Cache-Control', 'public, max-age=0, must-revalidate')
-      response = new Response(shell.body, { status: 200, statusText: 'OK', headers })
+      const headers = new Headers(shell.headers);
+      headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+      response = new Response(shell.body, { status: 200, statusText: 'OK', headers });
     }
   }
 
@@ -104,34 +104,38 @@ const handleRequest: PagesFunction<Env> = async (context) => {
   // normal for a post published since the deploy, so ask the API which it is and
   // convert only an API-confirmed missing slug to a real 404. A backend failure
   // stays 200 rather than de-indexing a live article during an outage.
-  const newsroomPath = matchNewsroomPostPath(url.pathname)
+  const newsroomPath = matchNewsroomPostPath(url.pathname);
   if (newsroomPath && response.status === 200) {
-    const html = await response.clone().text()
+    const html = await response.clone().text();
     if (!hasPrerenderedNewsroomPost(html)) {
       const exists = await newsroomPostExists(
         env.VITE_API_URL || DEFAULT_API_BASE,
         newsroomPath.slug,
         newsroomPath.locale,
-      )
-      if (exists === false) return asNotFound(response, html)
+      );
+      if (exists === false) return asNotFound(response, html);
     }
   }
 
   // Oxy is the prerendered default — only FairCoin needs host-specific meta.
-  if (brandForHost(url.hostname) !== 'faircoin') return response
+  if (brandForHost(url.hostname) !== 'faircoin') return response;
 
   try {
-    const seoData = await fetchSeoData(env.VITE_API_URL || DEFAULT_API_BASE, url.pathname, 'faircoin')
-    const meta = resolveSeoOrDefault(seoData, url.pathname, url.hostname)
+    const seoData = await fetchSeoData(
+      env.VITE_API_URL || DEFAULT_API_BASE,
+      url.pathname,
+      'faircoin',
+    );
+    const meta = resolveSeoOrDefault(seoData, url.pathname, url.hostname);
     const setContent = (value: string) => ({
       element(el: Element) {
-        el.setAttribute('content', value)
+        el.setAttribute('content', value);
       },
-    })
+    });
     response = new HTMLRewriter()
       .on('title', {
         element(el) {
-          el.setInnerContent(meta.title)
+          el.setInnerContent(meta.title);
         },
       })
       .on('meta[name="description"]', setContent(meta.description))
@@ -145,21 +149,25 @@ const handleRequest: PagesFunction<Env> = async (context) => {
       .on('meta[name="twitter:image"]', setContent(meta.ogImage))
       .on('link[rel="canonical"]', {
         element(el) {
-          el.setAttribute('href', meta.canonical)
+          el.setAttribute('href', meta.canonical);
         },
       })
-      .transform(response)
-    return response
+      .transform(response);
+    return response;
   } catch (err) {
     // Never let a rewrite error break delivery — serve the original document.
-    console.error('[seo-middleware] rewrite failed:', err)
-    return response
+    console.error('[seo-middleware] rewrite failed:', err);
+    return response;
   }
-}
+};
 
-const onRequest: PagesFunction<Env> = (context) => observeEdgeRequest({
-  service: 'website', request: context.request, env: context.env, ctx: context,
-  next: () => Promise.resolve(handleRequest(context)),
-})
+const onRequest: PagesFunction<Env> = (context) =>
+  observeEdgeRequest({
+    service: 'website',
+    request: context.request,
+    env: context.env,
+    ctx: context,
+    next: () => Promise.resolve(handleRequest(context)),
+  });
 
-export { onRequest }
+export { onRequest };

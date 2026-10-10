@@ -1,7 +1,7 @@
-import { AsyncLocalStorage } from 'node:async_hooks'
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
-import * as schema from './schema/index.js'
+import { AsyncLocalStorage } from 'node:async_hooks';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from './schema/index.js';
 
 /* ──────────────────────────────────────────────
  * The Postgres connection, opened once per process.
@@ -13,14 +13,14 @@ import * as schema from './schema/index.js'
  * somebody's laptop.
  * ──────────────────────────────────────────── */
 
-const connectionString = process.env.DATABASE_URL
+const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-  throw new Error('DATABASE_URL is not set. The website API cannot start without a database.')
+  throw new Error('DATABASE_URL is not set. The website API cannot start without a database.');
 }
 
 /** For the one connection that must not come from the pool: the migration lock's. */
-export const databaseUrl: string = connectionString
+export const databaseUrl: string = connectionString;
 
 /**
  * `prepare: false` because the shared instance sits behind a connection pooler
@@ -33,19 +33,19 @@ export const sql = postgres(connectionString, {
   connect_timeout: 10,
   prepare: false,
   onnotice: () => {},
-})
+});
 
 /**
  * The pool itself. Use it for writes that must outlive an enclosing unit of
  * work — a cleanup record for an object already deleted from storage has to
  * survive the rollback of the operation that deleted it.
  */
-export const rootDb = drizzle(sql, { schema, casing: 'snake_case' })
+export const rootDb = drizzle(sql, { schema, casing: 'snake_case' });
 
-type Database = typeof rootDb
-type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0]
+type Database = typeof rootDb;
+type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0];
 
-const unitOfWork = new AsyncLocalStorage<Transaction>()
+const unitOfWork = new AsyncLocalStorage<Transaction>();
 
 /**
  * Run `work` so that every `db` call inside it — including the services it
@@ -54,9 +54,9 @@ const unitOfWork = new AsyncLocalStorage<Transaction>()
  * together without threading a transaction through every handler.
  */
 export function runInUnitOfWork<T>(work: () => Promise<T>): Promise<T> {
-  const current = unitOfWork.getStore()
-  if (current) return work()
-  return rootDb.transaction((tx) => unitOfWork.run(tx, work))
+  const current = unitOfWork.getStore();
+  if (current) return work();
+  return rootDb.transaction((tx) => unitOfWork.run(tx, work));
 }
 
 /**
@@ -65,21 +65,24 @@ export function runInUnitOfWork<T>(work: () => Promise<T>): Promise<T> {
  */
 export const db: Database = new Proxy(rootDb, {
   get(target, property) {
-    const store = unitOfWork.getStore()
+    const store = unitOfWork.getStore();
     // A transaction opened inside a unit of work is a savepoint, and the code
     // inside it must see THAT savepoint as `db` — otherwise its statements would
     // run on the outer transaction and a rollback to the savepoint could not
     // undo them.
     if (store && property === 'transaction') {
-      return <T>(work: (tx: Transaction) => Promise<T>) => store.transaction((savepoint) => unitOfWork.run(savepoint, () => work(savepoint)))
+      return <T>(work: (tx: Transaction) => Promise<T>) =>
+        store.transaction((savepoint) => unitOfWork.run(savepoint, () => work(savepoint)));
     }
-    const active = (store ?? target) as unknown as Record<PropertyKey, unknown>
-    const value = Reflect.get(active, property)
-    return typeof value === 'function' ? (value as (...args: unknown[]) => unknown).bind(active) : value
+    const active = (store ?? target) as unknown as Record<PropertyKey, unknown>;
+    const value = Reflect.get(active, property);
+    return typeof value === 'function'
+      ? (value as (...args: unknown[]) => unknown).bind(active)
+      : value;
   },
-}) as Database
+}) as Database;
 
 /** Closes the pool. Used by scripts so a finished job exits instead of hanging. */
 export async function closeDatabase(): Promise<void> {
-  await sql.end({ timeout: 5 })
+  await sql.end({ timeout: 5 });
 }

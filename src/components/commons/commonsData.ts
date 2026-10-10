@@ -10,7 +10,7 @@ export const COMMONS_APPS = [
   { name: 'Peable', image: '/images/apps/peable.png' },
   { name: 'Moovo', image: '/images/apps/moovo.png' },
   { name: 'GoWay', image: '/images/apps/goway.svg' },
-] as const
+] as const;
 
 // Real app captures: Mention and Mercaria supplied by the user; Alia and Homiio
 // captured from their public web apps. Keep screenshots separate from app marks.
@@ -19,7 +19,7 @@ export const COMMONS_APP_PREVIEWS = [
   { name: 'Mercaria', image: '/images/commons/apps/mercaria.webp' },
   { name: 'Alia', image: '/images/commons/apps/alia.webp' },
   { name: 'Homiio', image: '/images/commons/apps/homiio.webp' },
-] as const
+] as const;
 
 // Rotating hero prompts link to the corresponding Commons feature.
 export const COMMONS_PROMPTS = [
@@ -29,4 +29,4 @@ export const COMMONS_PROMPTS = [
   { prompt: 'Sign in without a password', target: '#commons-sign-in' },
   { prompt: 'Take your identity with you', target: '#commons-identity' },
   { prompt: 'Your keys stay in your hands', target: '#commons-security' },
-] as const
+] as const;

@@ -88,8 +88,10 @@ function validateDocsConfig(config: DocsConfig, configPath: string): void {
     }
     assertSafeGitRef(version, `${configPath} version`);
   }
-  if (typeof config.defaultVersion === 'string') assertSafeGitRef(config.defaultVersion, `${configPath} defaultVersion`);
-  if (typeof config.latestVersion === 'string') assertSafeGitRef(config.latestVersion, `${configPath} latestVersion`);
+  if (typeof config.defaultVersion === 'string')
+    assertSafeGitRef(config.defaultVersion, `${configPath} defaultVersion`);
+  if (typeof config.latestVersion === 'string')
+    assertSafeGitRef(config.latestVersion, `${configPath} latestVersion`);
   for (const pattern of config.docsIgnore ?? []) {
     if (typeof pattern !== 'string') {
       throw new Error(`[sync-docs] ${configPath}: docsIgnore must contain only strings.`);
@@ -160,7 +162,10 @@ function syncGitCache(name: string, git: string, ref: string): string {
   // docs, …) make this exit non-zero with empty stderr — that's expected and
   // must not break the sync of the rest of the registry.
   try {
-    execFileSync('git', ['fetch', '--depth', '1', 'origin', 'refs/tags/*:refs/tags/*'], { cwd: dest, stdio: 'pipe' });
+    execFileSync('git', ['fetch', '--depth', '1', 'origin', 'refs/tags/*:refs/tags/*'], {
+      cwd: dest,
+      stdio: 'pipe',
+    });
   } catch {
     // No tags to fetch — fine. Per-version syncs against this repo will be
     // skipped at the `versions` loop with a warning. Untagged repos rely on
@@ -180,7 +185,9 @@ function resolveRepoRoot(entry: DocsRegistryEntry): string | null {
     const resolved = resolveLocalPath(entry.localPath);
     if (existsSync(resolved)) return resolved;
     if (entry.git) {
-      console.warn(`[sync-docs] localPath '${entry.localPath}' not found for ${entry.name}; falling back to git.`);
+      console.warn(
+        `[sync-docs] localPath '${entry.localPath}' not found for ${entry.name}; falling back to git.`,
+      );
     }
   }
   if (entry.git) {
@@ -244,7 +251,10 @@ function parseFrontMatter(source: string): { data: FrontMatter; body: string } {
     const colon = line.indexOf(':');
     if (colon < 0) continue;
     const key = line.slice(0, colon).trim();
-    const valRaw = line.slice(colon + 1).trim().replace(/^['"]|['"]$/g, '');
+    const valRaw = line
+      .slice(colon + 1)
+      .trim()
+      .replace(/^['"]|['"]$/g, '');
     if (!key) continue;
     if (key === 'order') {
       const n = Number(valRaw);
@@ -318,21 +328,23 @@ async function rewriteSiblingLinksInPlace(
 }
 
 async function rewriteCrossPackageRootsInPlace(packages: readonly SyncedPackage[]): Promise<void> {
-  const canonicalRoots = new Map(packages.map((pkg) => [
-    pkg.shortName,
-    pkg.versioned
-      ? `/developers/docs/${pkg.shortName}/${pkg.latestVersion}`
-      : `/developers/docs/${pkg.shortName}`,
-  ]))
+  const canonicalRoots = new Map(
+    packages.map((pkg) => [
+      pkg.shortName,
+      pkg.versioned
+        ? `/developers/docs/${pkg.shortName}/${pkg.latestVersion}`
+        : `/developers/docs/${pkg.shortName}`,
+    ]),
+  );
   for (const pkg of packages) {
     for (const version of pkg.versions) {
       for (const page of version.pages) {
-        if (!page.file) continue
-        const full = path.join(SYNCED_DIR, page.file)
-        if (!existsSync(full)) continue
-        const original = await readFile(full, 'utf8')
-        const rewritten = rewriteCrossPackageDocRootLinks(original, canonicalRoots)
-        if (rewritten !== original) await writeFile(full, rewritten)
+        if (!page.file) continue;
+        const full = path.join(SYNCED_DIR, page.file);
+        if (!existsSync(full)) continue;
+        const original = await readFile(full, 'utf8');
+        const rewritten = rewriteCrossPackageDocRootLinks(original, canonicalRoots);
+        if (rewritten !== original) await writeFile(full, rewritten);
       }
     }
   }
@@ -349,7 +361,9 @@ function prepareSyncedSource(source: string, filePath: string): string {
   if (!isMdx) return rewritten;
   const { source: escapedSource, escaped } = escapeUnclosedProseTags(rewritten);
   if (escaped.length > 0) {
-    console.warn(`[sync-docs] ${path.relative(SYNCED_DIR, filePath)}: escaped prose tag(s) ${escaped.join(', ')} that MDX would read as unclosed elements.`);
+    console.warn(
+      `[sync-docs] ${path.relative(SYNCED_DIR, filePath)}: escaped prose tag(s) ${escaped.join(', ')} that MDX would read as unclosed elements.`,
+    );
   }
   return escapedSource;
 }
@@ -548,10 +562,7 @@ async function copyVersionFromGitTag(
 
 /** Copy `openapi.json` from a package root into the synced api version dir. */
 async function copyOpenApiSpec(rootDir: string, outDir: string): Promise<void> {
-  const candidates = [
-    path.join(rootDir, 'openapi.json'),
-    path.join(rootDir, 'openapi.yaml'),
-  ];
+  const candidates = [path.join(rootDir, 'openapi.json'), path.join(rootDir, 'openapi.yaml')];
   for (const candidate of candidates) {
     if (!existsSync(candidate)) continue;
     await mkdir(outDir, { recursive: true });
@@ -664,7 +675,9 @@ function deriveTypedocTitle(filePath: string, source: string): string {
   // TypeDoc emits `# Interface: Foo`, `# Class: Bar`, `# Function: baz()`.
   const headingMatch = source.match(/^#\s+(.+)$/m);
   if (headingMatch?.[1]) {
-    return headingMatch[1].replace(/^(Interface|Class|Function|Type Alias|Variable|Module|Namespace):\s+/, '').trim();
+    return headingMatch[1]
+      .replace(/^(Interface|Class|Function|Type Alias|Variable|Module|Namespace):\s+/, '')
+      .trim();
   }
   return path.basename(filePath, path.extname(filePath));
 }
@@ -688,13 +701,17 @@ async function runTypedoc(
 
   const entryAbs = path.resolve(rootDir, typedoc.entry);
   if (!existsSync(entryAbs)) {
-    console.warn(`[sync-docs] typedoc entry '${entryAbs}' not found for ${config.shortName}@${version}; skipping API reference.`);
+    console.warn(
+      `[sync-docs] typedoc entry '${entryAbs}' not found for ${config.shortName}@${version}; skipping API reference.`,
+    );
     return [];
   }
 
   const tsconfigAbs = findNearestTsconfig(rootDir, repoRoot);
   if (!tsconfigAbs) {
-    console.warn(`[sync-docs] no tsconfig.json found near ${rootDir}; skipping API reference for ${config.shortName}@${version}.`);
+    console.warn(
+      `[sync-docs] no tsconfig.json found near ${rootDir}; skipping API reference for ${config.shortName}@${version}.`,
+    );
     return [];
   }
 
@@ -707,7 +724,9 @@ async function runTypedoc(
 
   const typedocBin = path.join(WEBSITE_ROOT, 'node_modules', 'typedoc', 'bin', 'typedoc');
   if (!existsSync(typedocBin)) {
-    console.warn(`[sync-docs] typedoc not installed at ${typedocBin}; run \`bun install\` in website/. Skipping API reference.`);
+    console.warn(
+      `[sync-docs] typedoc not installed at ${typedocBin}; run \`bun install\` in website/. Skipping API reference.`,
+    );
     return [];
   }
 
@@ -715,12 +734,18 @@ async function runTypedoc(
   // `functions/`, `types/`, `variables/`, `modules/` — keeping slugs clean
   // and free of `@scope/` segments.
   const args = [
-    '--entryPoints', entryAbs,
-    '--out', apiOutDir,
-    '--plugin', 'typedoc-plugin-markdown',
-    '--readme', 'none',
-    '--tsconfig', tsconfigAbs,
-    '--router', 'kind',
+    '--entryPoints',
+    entryAbs,
+    '--out',
+    apiOutDir,
+    '--plugin',
+    'typedoc-plugin-markdown',
+    '--readme',
+    'none',
+    '--tsconfig',
+    tsconfigAbs,
+    '--router',
+    'kind',
     '--skipErrorChecking',
     '--hideGenerator',
     '--disableSources',
@@ -733,7 +758,10 @@ async function runTypedoc(
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.warn(`[sync-docs] typedoc failed for ${config.shortName}@${version}:`, message.split('\n')[0]);
+    console.warn(
+      `[sync-docs] typedoc failed for ${config.shortName}@${version}:`,
+      message.split('\n')[0],
+    );
     return [];
   }
 
@@ -772,7 +800,8 @@ async function runTypedoc(
       const baseName = path.basename(rel, path.extname(rel));
       const directHit = bloomDemoNames.has(baseName) ? baseName : null;
       const dotPrefix = baseName.includes('.') ? baseName.split('.')[0] : null;
-      const indirectHit = directHit ?? (dotPrefix && bloomDemoNames.has(dotPrefix) ? dotPrefix : null);
+      const indirectHit =
+        directHit ?? (dotPrefix && bloomDemoNames.has(dotPrefix) ? dotPrefix : null);
       if (indirectHit) {
         cleaned = injectBloomDemo(cleaned, indirectHit);
         injectedMdx = true;
@@ -791,7 +820,9 @@ async function runTypedoc(
     }
     await writeFile(outFull, cleaned);
     // Slug is the file path under `outDir` (so `api/` is included).
-    const slug = `api/${outRel.replace(/\\/g, '/').replace(/\.(mdx?|md)$/i, '')}`.replace(/\/README$/i, '').replace(/\/index$/i, '');
+    const slug = `api/${outRel.replace(/\\/g, '/').replace(/\.(mdx?|md)$/i, '')}`
+      .replace(/\/README$/i, '')
+      .replace(/\/index$/i, '');
     const title = deriveTypedocTitle(outRel, cleaned);
     pages.push({
       slug,
@@ -883,8 +914,7 @@ async function syncPackage(
     // historical slug, which is both wrong and prohibitively slow (each
     // run takes 30-60s, and the services package has ~400 versions).
     const isApiTarget =
-      isWorkingTreeVersion(version) ||
-      version === (config.latestVersion ?? config.defaultVersion);
+      isWorkingTreeVersion(version) || version === (config.latestVersion ?? config.defaultVersion);
     if (isApiTarget) {
       const apiPages = await runTypedoc(config, rootDir, repoRoot, outDir, version);
       pages.push(...apiPages);
@@ -971,7 +1001,9 @@ async function main(): Promise<void> {
   const tmpPath = `${indexPath}.tmp`;
   await writeFile(tmpPath, JSON.stringify(index, null, 2));
   await rename(tmpPath, indexPath);
-  console.error(`[sync-docs] wrote ${packages.length} packages, ${packages.reduce((n, p) => n + p.versions.reduce((m, v) => m + v.pages.length, 0), 0)} pages.`);
+  console.error(
+    `[sync-docs] wrote ${packages.length} packages, ${packages.reduce((n, p) => n + p.versions.reduce((m, v) => m + v.pages.length, 0), 0)} pages.`,
+  );
 }
 
 main().catch((err) => {

@@ -1,21 +1,21 @@
-import { motion } from 'framer-motion'
-import type { BloomIconComponent } from '@oxy.so/bloom/icons'
-import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
-import { RiCompass3Line } from '@oxy.so/bloom/icons/RiCompass3Line'
-import { RiNodeTree } from '@oxy.so/bloom/icons/RiNodeTree'
-import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine'
+import { motion } from 'framer-motion';
+import type { BloomIconComponent } from '@oxy.so/bloom/icons';
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine';
+import { RiCompass3Line } from '@oxy.so/bloom/icons/RiCompass3Line';
+import { RiNodeTree } from '@oxy.so/bloom/icons/RiNodeTree';
+import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine';
 
 interface Piece {
-  icon: BloomIconComponent
-  title: string
-  description: string
-  href: string
-  cta: string
+  icon: BloomIconComponent;
+  title: string;
+  description: string;
+  href: string;
+  cta: string;
 }
 
-const FAIRCOIN_REPO_URL = 'https://github.com/FairCoinOfficial/FairCoin'
-const SEEDER_REPO_URL = 'https://github.com/FairCoinOfficial/faircoin-seeder'
-const EXPLORER_URL = 'https://explorer.fairco.in'
+const FAIRCOIN_REPO_URL = 'https://github.com/FairCoinOfficial/FairCoin';
+const SEEDER_REPO_URL = 'https://github.com/FairCoinOfficial/faircoin-seeder';
+const EXPLORER_URL = 'https://explorer.fairco.in';
 
 const PIECES: readonly Piece[] = [
   {
@@ -42,7 +42,7 @@ const PIECES: readonly Piece[] = [
     href: `${FAIRCOIN_REPO_URL}#masternode-setup`,
     cta: 'How to run one',
   },
-]
+];
 
 export default function NetworkSection() {
   return (
@@ -74,8 +74,8 @@ export default function NetworkSection() {
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
             className="mt-5 text-pretty text-lg leading-relaxed text-muted-foreground"
           >
-            No corporate gatekeeper. The chain, the explorer, the seeders, the
-            wallets: all open, all reproducible, all yours to fork.
+            No corporate gatekeeper. The chain, the explorer, the seeders, the wallets: all open,
+            all reproducible, all yours to fork.
           </motion.p>
         </div>
 
@@ -96,13 +96,18 @@ export default function NetworkSection() {
                 <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                   <piece.icon width={20} height={20} fill="currentColor" />
                 </span>
-                <span aria-hidden="true" className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground">
+                <span
+                  aria-hidden="true"
+                  className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
+                >
                   <RiArrowRightUpLine width={16} height={16} fill="currentColor" />
                 </span>
               </div>
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg font-semibold text-foreground">{piece.title}</h3>
-                <p className="text-base leading-relaxed text-muted-foreground">{piece.description}</p>
+                <p className="text-base leading-relaxed text-muted-foreground">
+                  {piece.description}
+                </p>
               </div>
               <span className="mt-auto pt-2 text-sm font-semibold uppercase tracking-wider text-primary">
                 {piece.cta} →
@@ -112,5 +117,5 @@ export default function NetworkSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -1,20 +1,20 @@
-import { useState, useCallback, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { Link } from '../lib/navigation'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import Button from '../components/ui/Button'
-import { TextFieldInput } from '@oxy.so/bloom/text-field'
-import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
-import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
-import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { useReferralDashboard, type ReferralDashboard } from '../api/hooks'
-import { brandConfig } from '../lib/seo'
-import { AnimatedTitle } from '../components/ui/AnimatedTitle'
-import { DashedHLine } from '../components/ui/GridDecoration'
-import { useTranslation } from '../lib/i18n'
-import { useCopyToClipboard } from '../lib/useCopyToClipboard'
+import { useState, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Link } from '../lib/navigation';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import Button from '../components/ui/Button';
+import { TextFieldInput } from '@oxy.so/bloom/text-field';
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine';
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine';
+import KeepUpToDateSection from '../components/sections/KeepUpToDateSection';
+import { useReferralDashboard, type ReferralDashboard } from '../api/hooks';
+import { brandConfig } from '../lib/seo';
+import { AnimatedTitle } from '../components/ui/AnimatedTitle';
+import { DashedHLine } from '../components/ui/GridDecoration';
+import { useTranslation } from '../lib/i18n';
+import { useCopyToClipboard } from '../lib/useCopyToClipboard';
 
 /* ──────────────────────────────────────────────
  * /referrals/dashboard
@@ -29,49 +29,52 @@ import { useCopyToClipboard } from '../lib/useCopyToClipboard'
 
 function CopyIcon({ copied }: { copied: boolean }) {
   if (copied) {
-    return <RiCheckLine width={16} height={16} fill="currentColor" aria-hidden />
+    return <RiCheckLine width={16} height={16} fill="currentColor" aria-hidden />;
   }
-  return <RiFileCopyLine width={16} height={16} fill="currentColor" aria-hidden />
+  return <RiFileCopyLine width={16} height={16} fill="currentColor" aria-hidden />;
 }
 
 const PROGRAM_LABEL: Record<ReferralDashboard['type'], string> = {
   paid: 'Paid affiliate',
   ambassador: 'Ambassador',
   user: 'Share link',
-}
+};
 
 const PROGRAM_BLURB: Record<ReferralDashboard['type'], string> = {
   paid: 'Earn commission on every paying customer who signs up via your link.',
-  ambassador: 'No commission, but you get early access, swag drops, and an Ambassador badge on your Oxy profile.',
+  ambassador:
+    'No commission, but you get early access, swag drops, and an Ambassador badge on your Oxy profile.',
   user: 'Just share what you love. Every signup helps us keep the lights on.',
-}
+};
 
 function StatTile({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <div className="flex flex-col gap-1 rounded-2xl border border-border bg-background p-5">
-      <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        {label}
+      </div>
       <div className="text-3xl font-medium tabular-nums text-foreground">{value}</div>
       {hint && <div className="text-xs text-muted-foreground">{hint}</div>}
     </div>
-  )
+  );
 }
 
 function buildShareUrl(code: string, customLandingUrl: string | null | undefined): string {
   if (customLandingUrl && customLandingUrl.length > 0) {
-    const sep = customLandingUrl.includes('?') ? '&' : '?'
-    return `${customLandingUrl}${sep}ref=${code}`
+    const sep = customLandingUrl.includes('?') ? '&' : '?';
+    return `${customLandingUrl}${sep}ref=${code}`;
   }
-  if (typeof window === 'undefined') return `${brandConfig().origin}/referrals?ref=${code}`
-  return `${window.location.origin}/referrals?ref=${code}`
+  if (typeof window === 'undefined') return `${brandConfig().origin}/referrals?ref=${code}`;
+  return `${window.location.origin}/referrals?ref=${code}`;
 }
 
 function DashboardContent({ referral }: { referral: ReferralDashboard }) {
-  const { t } = useTranslation()
-  const { copied, copy } = useCopyToClipboard(1800)
+  const { t } = useTranslation();
+  const { copied, copy } = useCopyToClipboard(1800);
   const shareUrl = useMemo(
     () => buildShareUrl(referral.code, referral.customLandingUrl),
     [referral.code, referral.customLandingUrl],
-  )
+  );
 
   return (
     <div className="flex flex-col gap-10">
@@ -93,7 +96,8 @@ function DashboardContent({ referral }: { referral: ReferralDashboard }) {
           <div>
             <h2 className="text-sm font-semibold text-foreground">Your share link</h2>
             <p className="mt-1 text-xs text-muted-foreground">
-              Anyone who lands on this URL counts as your referral. Use it in posts, DMs, email, anywhere.
+              Anyone who lands on this URL counts as your referral. Use it in posts, DMs, email,
+              anywhere.
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -114,11 +118,23 @@ function DashboardContent({ referral }: { referral: ReferralDashboard }) {
 
       {/* Stats */}
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatTile label="Clicks" value={referral.clicks.toLocaleString()} hint="Visits via your link" />
-        <StatTile label="Signups" value={referral.signups.toLocaleString()} hint="Tracked manually for now" />
+        <StatTile
+          label="Clicks"
+          value={referral.clicks.toLocaleString()}
+          hint="Visits via your link"
+        />
+        <StatTile
+          label="Signups"
+          value={referral.signups.toLocaleString()}
+          hint="Tracked manually for now"
+        />
         <StatTile
           label="Commission"
-          value={referral.type === 'paid' && referral.commissionPercent != null ? `${referral.commissionPercent}%` : '—'}
+          value={
+            referral.type === 'paid' && referral.commissionPercent != null
+              ? `${referral.commissionPercent}%`
+              : '—'
+          }
           hint={referral.type === 'paid' ? 'Per paying signup' : 'Not applicable for this program'}
         />
       </section>
@@ -130,10 +146,15 @@ function DashboardContent({ referral }: { referral: ReferralDashboard }) {
           <li>Clicks are counted in real time the moment someone follows your link.</li>
           <li>Signups are reconciled by the team — we're working on automated tracking.</li>
           {referral.type === 'paid' && (
-            <li>Commission is paid monthly, in arrears, against your Oxy account or wire details on file.</li>
+            <li>
+              Commission is paid monthly, in arrears, against your Oxy account or wire details on
+              file.
+            </li>
           )}
           {referral.type === 'ambassador' && (
-            <li>Ambassadors get early access, swag drops, and an Ambassador badge — no cash payouts.</li>
+            <li>
+              Ambassadors get early access, swag drops, and an Ambassador badge — no cash payouts.
+            </li>
           )}
           {referral.type === 'user' && (
             <li>Casual share links don't earn commission, but you still earn our gratitude.</li>
@@ -141,11 +162,19 @@ function DashboardContent({ referral }: { referral: ReferralDashboard }) {
         </ul>
       </section>
     </div>
-  )
+  );
 }
 
-function CodePrompt({ initialCode, onSubmit, error }: { initialCode: string; onSubmit: (code: string) => void; error?: string }) {
-  const [value, setValue] = useState(initialCode)
+function CodePrompt({
+  initialCode,
+  onSubmit,
+  error,
+}: {
+  initialCode: string;
+  onSubmit: (code: string) => void;
+  error?: string;
+}) {
+  const [value, setValue] = useState(initialCode);
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-3">
@@ -156,15 +185,16 @@ function CodePrompt({ initialCode, onSubmit, error }: { initialCode: string; onS
           Check your referral stats.
         </AnimatedTitle>
         <p className="max-w-2xl text-pretty text-lg text-muted-foreground">
-          Paste the code from your referral confirmation email, or open this page with <span className="font-mono">?code=YOUR_CODE</span>.
+          Paste the code from your referral confirmation email, or open this page with{' '}
+          <span className="font-mono">?code=YOUR_CODE</span>.
         </p>
       </header>
 
       <form
         className="flex flex-col gap-2 sm:flex-row sm:items-center"
         onSubmit={(e) => {
-          e.preventDefault()
-          if (value.trim().length > 0) onSubmit(value.trim())
+          e.preventDefault();
+          if (value.trim().length > 0) onSubmit(value.trim());
         }}
       >
         <div className="flex-1">
@@ -186,28 +216,30 @@ function CodePrompt({ initialCode, onSubmit, error }: { initialCode: string; onS
         </Button>
       </form>
 
-      {error && (
-        <p className="text-sm text-error-text">{error}</p>
-      )}
+      {error && <p className="text-sm text-error-text">{error}</p>}
 
       <p className="text-xs text-muted-foreground">
         Don't have a code yet?{' '}
         <Link to="/referrals" className="underline underline-offset-2 hover:text-foreground">
           Apply to a referral program
-        </Link>.
+        </Link>
+        .
       </p>
     </div>
-  )
+  );
 }
 
 export default function ReferralsDashboardPage() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const code = (searchParams.get('code') || '').toUpperCase()
-  const { data: referral, isLoading, isError } = useReferralDashboard(code)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const code = (searchParams.get('code') || '').toUpperCase();
+  const { data: referral, isLoading, isError } = useReferralDashboard(code);
 
-  const handleSubmit = useCallback((next: string) => {
-    setSearchParams({ code: next.toUpperCase() })
-  }, [setSearchParams])
+  const handleSubmit = useCallback(
+    (next: string) => {
+      setSearchParams({ code: next.toUpperCase() });
+    },
+    [setSearchParams],
+  );
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -225,9 +257,7 @@ export default function ReferralsDashboardPage() {
             <div className="grid grid-cols-12">
               <div className="col-span-full py-20 max-lg:py-14">
                 {!code && <CodePrompt initialCode="" onSubmit={handleSubmit} />}
-                {code && isLoading && (
-                  <p className="text-sm text-muted-foreground">Loading…</p>
-                )}
+                {code && isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
                 {code && !isLoading && (isError || !referral) && (
                   <CodePrompt
                     initialCode={code}
@@ -245,5 +275,5 @@ export default function ReferralsDashboardPage() {
       <KeepUpToDateSection />
       <Footer />
     </div>
-  )
+  );
 }

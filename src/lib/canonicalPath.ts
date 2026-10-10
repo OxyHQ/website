@@ -14,9 +14,9 @@
  * signals cannot disagree. React Router matches slash-agnostically, so routes
  * keep their bare `path` declarations.
  */
-import type { To } from 'react-router-dom'
-import { withDocumentTrailingSlash } from './seoUrl'
-import { transparencyDestination } from './transparency'
+import type { To } from 'react-router-dom';
+import { withDocumentTrailingSlash } from './seoUrl';
+import { transparencyDestination } from './transparency';
 
 /**
  * Extensions of things `public/` serves verbatim. A slash appended to one of
@@ -28,11 +28,33 @@ import { transparencyDestination } from './transparency'
  * URL that 308s.
  */
 const STATIC_FILE_EXTENSIONS: readonly string[] = [
-  '.txt', '.xml', '.json', '.webmanifest', '.pdf', '.zip', '.csv',
-  '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.avif', '.ico',
-  '.mp4', '.webm', '.mp3', '.woff', '.woff2', '.ttf',
-  '.css', '.js', '.mjs', '.map', '.html',
-]
+  '.txt',
+  '.xml',
+  '.json',
+  '.webmanifest',
+  '.pdf',
+  '.zip',
+  '.csv',
+  '.png',
+  '.jpg',
+  '.jpeg',
+  '.gif',
+  '.svg',
+  '.webp',
+  '.avif',
+  '.ico',
+  '.mp4',
+  '.webm',
+  '.mp3',
+  '.woff',
+  '.woff2',
+  '.ttf',
+  '.css',
+  '.js',
+  '.mjs',
+  '.map',
+  '.html',
+];
 
 /**
  * True for a path this site serves as a prerendered document, i.e. one that
@@ -40,10 +62,10 @@ const STATIC_FILE_EXTENSIONS: readonly string[] = [
  * (`/llms.txt`, `/og-default.png`), which is served exactly as named.
  */
 function isDocumentPath(pathname: string): boolean {
-  const last = pathname.split('/').filter(Boolean).pop()
-  if (last === undefined) return true
-  const lower = last.toLowerCase()
-  return !STATIC_FILE_EXTENSIONS.some((extension) => lower.endsWith(extension))
+  const last = pathname.split('/').filter(Boolean).pop();
+  if (last === undefined) return true;
+  const lower = last.toLowerCase();
+  return !STATIC_FILE_EXTENSIONS.some((extension) => lower.endsWith(extension));
 }
 
 /**
@@ -52,27 +74,32 @@ function isDocumentPath(pathname: string): boolean {
  * (`[the newsroom](https://oxy.so/newsroom)`) — and redirects like any other.
  * Mirrors `BRANDS` in `./seo`; kept here so this module stays dependency-free.
  */
-const SITE_ORIGINS: readonly string[] = ['https://oxy.so', 'https://fairco.in']
+const SITE_ORIGINS: readonly string[] = ['https://oxy.so', 'https://fairco.in'];
 
 /** Normalise a site-internal `to` to its canonical trailing-slash form. */
 export function canonicalTo(to: To): To {
   if (typeof to === 'string') {
     for (const origin of SITE_ORIGINS) {
-      if (to === origin) return `${origin}/`
+      if (to === origin) return `${origin}/`;
       if (to.startsWith(`${origin}/`)) {
-        const rest = canonicalTo(to.slice(origin.length))
-        return typeof rest === 'string' ? `${origin}${rest}` : to
+        const rest = canonicalTo(to.slice(origin.length));
+        return typeof rest === 'string' ? `${origin}${rest}` : to;
       }
     }
     // Relative (`../x`), bare hash (`#faq`) and third-party absolute targets
     // are not documents this build controls.
-    if (!to.startsWith('/') || to.startsWith('//')) return to
-    const pathname = to.split(/[?#]/)[0] ?? ''
-    if (!isDocumentPath(pathname)) return to
-    return withDocumentTrailingSlash((transparencyDestination(pathname) ?? pathname) + to.slice(pathname.length))
+    if (!to.startsWith('/') || to.startsWith('//')) return to;
+    const pathname = to.split(/[?#]/)[0] ?? '';
+    if (!isDocumentPath(pathname)) return to;
+    return withDocumentTrailingSlash(
+      (transparencyDestination(pathname) ?? pathname) + to.slice(pathname.length),
+    );
   }
-  if (!to.pathname || !to.pathname.startsWith('/') || !isDocumentPath(to.pathname)) return to
-  return { ...to, pathname: withDocumentTrailingSlash(transparencyDestination(to.pathname) ?? to.pathname) }
+  if (!to.pathname || !to.pathname.startsWith('/') || !isDocumentPath(to.pathname)) return to;
+  return {
+    ...to,
+    pathname: withDocumentTrailingSlash(transparencyDestination(to.pathname) ?? to.pathname),
+  };
 }
 
 /**
@@ -80,7 +107,7 @@ export function canonicalTo(to: To): To {
  * route: prose links out of Markdown/MDX and hand-written anchors.
  */
 export function canonicalHref(href: string | undefined): string | undefined {
-  if (href === undefined) return href
-  const to = canonicalTo(href)
-  return typeof to === 'string' ? to : href
+  if (href === undefined) return href;
+  const to = canonicalTo(href);
+  return typeof to === 'string' ? to : href;
 }

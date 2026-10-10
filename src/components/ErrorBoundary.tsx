@@ -1,24 +1,24 @@
-import { Component, type ErrorInfo, type ReactNode } from 'react'
-import Button from './ui/Button'
+import { Component, type ErrorInfo, type ReactNode } from 'react';
+import Button from './ui/Button';
 
 interface ErrorBoundaryProps {
   /** Subtree to guard. Errors thrown anywhere inside render to fallback UI. */
-  children: ReactNode
+  children: ReactNode;
   /**
    * Optional fallback. Either a static React node or a render function that
    * receives the caught error + a `reset()` callback that clears the boundary
    * state so the children re-mount. Defaults to a minimal Tailwind card.
    */
-  fallback?: ReactNode | ((args: { error: Error; reset: () => void }) => ReactNode)
+  fallback?: ReactNode | ((args: { error: Error; reset: () => void }) => ReactNode);
   /**
    * Optional onError hook — fires once per caught error. Use for logging
    * to Sentry / a custom telemetry sink. Synchronous; do not throw.
    */
-  onError?: (error: Error, info: ErrorInfo) => void
+  onError?: (error: Error, info: ErrorInfo) => void;
 }
 
 interface ErrorBoundaryState {
-  error: Error | null
+  error: Error | null;
 }
 
 /**
@@ -37,30 +37,30 @@ interface ErrorBoundaryState {
  * issue is fixed (or the user navigates back).
  */
 export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  state: ErrorBoundaryState = { error: null }
+  state: ErrorBoundaryState = { error: null };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { error }
+    return { error };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
-    this.props.onError?.(error, info)
+    this.props.onError?.(error, info);
     // Surface the failure so it's not swallowed silently in production.
-    console.error('[ErrorBoundary] caught render error:', error, info)
+    console.error('[ErrorBoundary] caught render error:', error, info);
   }
 
   reset = (): void => {
-    this.setState({ error: null })
-  }
+    this.setState({ error: null });
+  };
 
   render(): ReactNode {
-    const { error } = this.state
-    if (!error) return this.props.children
-    const { fallback } = this.props
+    const { error } = this.state;
+    if (!error) return this.props.children;
+    const { fallback } = this.props;
     if (typeof fallback === 'function') {
-      return fallback({ error, reset: this.reset })
+      return fallback({ error, reset: this.reset });
     }
-    if (fallback !== undefined) return fallback
+    if (fallback !== undefined) return fallback;
     return (
       <main
         className="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-24"
@@ -71,8 +71,8 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
             Something went wrong loading this page.
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            We hit an unexpected error while rendering. Try refreshing. If the
-            problem persists, our team has already been notified.
+            We hit an unexpected error while rendering. Try refreshing. If the problem persists, our
+            team has already been notified.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Button variant="inverse" type="button" onClick={this.reset}>
@@ -84,6 +84,6 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
           </div>
         </div>
       </main>
-    )
+    );
   }
 }

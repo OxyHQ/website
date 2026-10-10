@@ -1,7 +1,7 @@
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import Button from '../components/ui/Button'
-import CodexExtensionContent from '../components/codea/CodexExtensionPage'
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import Button from '../components/ui/Button';
+import CodexExtensionContent from '../components/codea/CodexExtensionPage';
 
 export default function CodexExtensionPage() {
   return (
@@ -26,5 +26,5 @@ export default function CodexExtensionPage() {
     >
       <CodexExtensionContent />
     </PageShell>
-  )
+  );
 }

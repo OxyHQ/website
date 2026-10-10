@@ -1,16 +1,16 @@
-import { useParams, useLocation } from 'react-router-dom'
-import { useMemo } from 'react'
-import { BloomColorScope } from '@oxy.so/bloom/theme'
-import PageShell from '../components/layout/PageShell'
-import DocsPageContent from '../components/docs/DocsPage'
-import type { AppColorName } from '../theme'
+import { useParams, useLocation } from 'react-router-dom';
+import { useMemo } from 'react';
+import { BloomColorScope } from '@oxy.so/bloom/theme';
+import PageShell from '../components/layout/PageShell';
+import DocsPageContent from '../components/docs/DocsPage';
+import type { AppColorName } from '../theme';
 import {
   buildDocsHref,
   getPackage,
   getPage,
   getVersion,
   resolveVersion,
-} from '../content/docs-loader'
+} from '../content/docs-loader';
 
 /**
  * Brand-themed docs: render a package's docs in its own Bloom color scope.
@@ -19,86 +19,85 @@ import {
  * single authority for the rest of the site throughout.
  */
 function useDocsBrandPreset(): AppColorName | undefined {
-  const params = useParams<{ package?: string }>()
+  const params = useParams<{ package?: string }>();
   return useMemo<AppColorName | undefined>(() => {
-    const pkg = params.package ? getPackage(params.package) : undefined
-    return pkg?.shortName === 'faircoin' ? 'faircoin' : undefined
-  }, [params.package])
+    const pkg = params.package ? getPackage(params.package) : undefined;
+    return pkg?.shortName === 'faircoin' ? 'faircoin' : undefined;
+  }, [params.package]);
 }
 
 interface DocsRouteMeta {
-  title: string
-  description: string
+  title: string;
+  description: string;
   /**
    * The URL the browser is actually rendering. Used as a fallback for the
    * SEO canonical when we can't resolve a more specific canonical.
    */
-  canonicalPath: string
+  canonicalPath: string;
 }
 
 function useDocsRouteMeta(): DocsRouteMeta {
-  const params = useParams<{ package?: string; version?: string; '*'?: string }>()
-  const location = useLocation()
+  const params = useParams<{ package?: string; version?: string; '*'?: string }>();
+  const location = useLocation();
   return useMemo(() => {
-    const currentPath = location.pathname
+    const currentPath = location.pathname;
     // `/developers/docs/api[/:version]` — the dedicated REST API route.
     if (params.package === undefined && currentPath.startsWith('/developers/docs/api')) {
-      const apiPkg = getPackage('api')
-      const canonicalPath = apiPkg
-        ? buildDocsHref(apiPkg, apiPkg.latestVersion, '')
-        : currentPath
+      const apiPkg = getPackage('api');
+      const canonicalPath = apiPkg ? buildDocsHref(apiPkg, apiPkg.latestVersion, '') : currentPath;
       return {
         title: 'Oxy REST API',
         description:
           'REST API reference for the Oxy platform — authentication, accounts, files, billing, and more.',
         canonicalPath,
-      }
+      };
     }
-    const pkg = params.package ? getPackage(params.package) : undefined
+    const pkg = params.package ? getPackage(params.package) : undefined;
     if (!pkg) {
       return {
         title: 'Documentation',
-        description: 'Oxy developer documentation: SDKs, UI library, API reference, per-app guides.',
+        description:
+          'Oxy developer documentation: SDKs, UI library, API reference, per-app guides.',
         canonicalPath: currentPath,
-      }
+      };
     }
     // For non-versioned packages, the URL "version" segment is part of the
     // slug — stitch it back onto the splat. Mirrors the resolver in
     // `components/docs/DocsPage.tsx`.
-    const splat = (params['*'] ?? '').replace(/^\/+/, '').replace(/\/+$/, '')
+    const splat = (params['*'] ?? '').replace(/^\/+/, '').replace(/\/+$/, '');
     let activeVersion = pkg.versioned
       ? (params.version && getVersion(pkg, params.version)) || resolveVersion(pkg)
-      : resolveVersion(pkg)
+      : resolveVersion(pkg);
     const activeSlug = pkg.versioned
       ? splat
-      : [params.version ?? '', splat].filter(Boolean).join('/')
-    if (!activeVersion) activeVersion = resolveVersion(pkg)
+      : [params.version ?? '', splat].filter(Boolean).join('/');
+    if (!activeVersion) activeVersion = resolveVersion(pkg);
 
-    const page = activeVersion ? getPage(activeVersion, activeSlug) : undefined
+    const page = activeVersion ? getPage(activeVersion, activeSlug) : undefined;
 
     // Canonical: always the latest-version URL for the resolved slug. This
     // de-duplicates old-version pages in search engines without hiding
     // them from crawlers (we deliberately do not set `noIndex`).
-    const canonicalPath = buildDocsHref(pkg, pkg.latestVersion, activeSlug)
+    const canonicalPath = buildDocsHref(pkg, pkg.latestVersion, activeSlug);
 
     if (!page) {
       return {
         title: `${pkg.displayName}, Oxy Docs`,
         description: pkg.description ?? `Documentation for ${pkg.displayName}.`,
         canonicalPath,
-      }
+      };
     }
     return {
       title: `${page.title}, ${pkg.displayName}`,
       description: page.description ?? pkg.description ?? `Documentation for ${pkg.displayName}.`,
       canonicalPath,
-    }
-  }, [params, location.pathname])
+    };
+  }, [params, location.pathname]);
 }
 
 export default function DocsPage() {
-  const meta = useDocsRouteMeta()
-  const brandPreset = useDocsBrandPreset()
+  const meta = useDocsRouteMeta();
+  const brandPreset = useDocsBrandPreset();
   return (
     <BloomColorScope colorPreset={brandPreset}>
       <PageShell
@@ -110,5 +109,5 @@ export default function DocsPage() {
         <DocsPageContent />
       </PageShell>
     </BloomColorScope>
-  )
+  );
 }

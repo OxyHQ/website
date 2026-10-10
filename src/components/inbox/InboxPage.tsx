@@ -1,18 +1,18 @@
-import { useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
-import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
-import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { RiMailLine } from '@oxy.so/bloom/icons/RiMailLine'
-import { RiPriceTag3Line } from '@oxy.so/bloom/icons/RiPriceTag3Line'
-import { RiChat1Line } from '@oxy.so/bloom/icons/RiChat1Line'
-import { Button } from '@oxy.so/bloom/button'
-import { TextField, TextFieldIcon, TextFieldInput } from '@oxy.so/bloom/text-field'
-import { Textarea } from '@oxy.so/bloom/textarea'
-import { Link } from '../../lib/navigation'
-import PageSection from '../layout/PageSection'
-import FaqSection from '../sections/FaqSection'
-import { BrandScope } from '../../theme/BrandScope'
+import { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine';
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { RiMailLine } from '@oxy.so/bloom/icons/RiMailLine';
+import { RiPriceTag3Line } from '@oxy.so/bloom/icons/RiPriceTag3Line';
+import { RiChat1Line } from '@oxy.so/bloom/icons/RiChat1Line';
+import { Button } from '@oxy.so/bloom/button';
+import { TextField, TextFieldIcon, TextFieldInput } from '@oxy.so/bloom/text-field';
+import { Textarea } from '@oxy.so/bloom/textarea';
+import { Link } from '../../lib/navigation';
+import PageSection from '../layout/PageSection';
+import FaqSection from '../sections/FaqSection';
+import { BrandScope } from '../../theme/BrandScope';
 
 const messages = [
   {
@@ -39,7 +39,7 @@ const messages = [
     label: 'Personal',
     body: 'There is a new place around the corner. Coffee on Saturday? We can take a walk afterwards.',
   },
-]
+];
 const scenes = [
   {
     title: 'A clearer view.',
@@ -56,20 +56,20 @@ const scenes = [
     text: 'Read the context, take your time and write a reply.',
     icon: RiChat1Line,
   },
-]
+];
 
 function InboxExample() {
-  const [query, setQuery] = useState('')
-  const [label, setLabel] = useState('All')
-  const [selected, setSelected] = useState<string | null>(null)
-  const [reply, setReply] = useState('')
-  const [sent, setSent] = useState(false)
-  const item = messages.find((m) => m.id === selected)
+  const [query, setQuery] = useState('');
+  const [label, setLabel] = useState('All');
+  const [selected, setSelected] = useState<string | null>(null);
+  const [reply, setReply] = useState('');
+  const [sent, setSent] = useState(false);
+  const item = messages.find((m) => m.id === selected);
   const filtered = messages.filter(
     (m) =>
       (label === 'All' || m.label === label) &&
       `${m.name} ${m.subject} ${m.text}`.toLowerCase().includes(query.toLowerCase()),
-  )
+  );
   return (
     <div className="overflow-hidden rounded-[2rem] border border-border bg-card text-card-foreground shadow-xl">
       <div className="flex items-center justify-between gap-3 border-b border-border p-5">
@@ -82,11 +82,12 @@ function InboxExample() {
       <div className="min-h-[400px] p-5 sm:p-8">
         {item ? (
           <div>
-            <Button appearance="plain"
+            <Button
+              appearance="plain"
               onPress={() => {
-                setSelected(null)
-                setSent(false)
-                setReply('')
+                setSelected(null);
+                setSent(false);
+                setReply('');
               }}
             >
               <RiArrowLeftLine width={18} height={18} fill="currentColor" /> Back to messages
@@ -97,23 +98,25 @@ function InboxExample() {
             <form
               className="mt-8 space-y-4"
               onSubmit={(e) => {
-                e.preventDefault()
-                if (reply.trim()) setSent(true)
+                e.preventDefault();
+                if (reply.trim()) setSent(true);
               }}
             >
               <Textarea
                 label="Try a reply"
                 value={reply}
                 onValueChange={(next) => {
-                  setReply(next)
-                  setSent(false)
+                  setReply(next);
+                  setSent(false);
                 }}
                 placeholder="Write an example reply…"
                 rows={4}
               />
-              <Button appearance="solid" tone="accent"
+              <Button
+                appearance="solid"
+                tone="accent"
                 onPress={() => {
-                  if (reply.trim()) setSent(true)
+                  if (reply.trim()) setSent(true);
                 }}
                 disabled={!reply.trim()}
               >
@@ -179,15 +182,15 @@ function InboxExample() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
 export default function InboxPageContent() {
-  const ref = useRef<HTMLDivElement>(null)
-  const reduce = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], [36, -36])
-  const rotate = useTransform(scrollYProgress, [0, 0.5, 1], [-2, 0, 2])
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const y = useTransform(scrollYProgress, [0, 1], [36, -36]);
+  const rotate = useTransform(scrollYProgress, [0, 0.5, 1], [-2, 0, 2]);
   return (
     <>
       <PageSection spacing="lg" className="inbox-theme bg-background text-foreground">
@@ -332,5 +335,5 @@ export default function InboxPageContent() {
         </a>
       </PageSection>
     </>
-  )
+  );
 }

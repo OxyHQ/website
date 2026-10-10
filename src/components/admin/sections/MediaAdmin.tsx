@@ -1,72 +1,77 @@
-import { useState } from 'react'
-import { useMedia, type MediaItem } from '../../../api/hooks'
-import { Button } from '@oxy.so/bloom/button'
+import { useState } from 'react';
+import { useMedia, type MediaItem } from '../../../api/hooks';
+import { Button } from '@oxy.so/bloom/button';
 import {
   SegmentedControl,
   SegmentedControlItem,
   SegmentedControlItemText,
-} from '@oxy.so/bloom/segmented-control'
-import { LabeledTextField } from '../LabeledTextField'
-import { apiFetch } from '../../../api/client'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
-import MediaPickerDialog from '../MediaPickerDialog'
-import { formatShortDate } from '../../../lib/utils'
+} from '@oxy.so/bloom/segmented-control';
+import { LabeledTextField } from '../LabeledTextField';
+import { apiFetch } from '../../../api/client';
+import ConfirmDialog from '../ConfirmDialog';
+import { useConfirmAction } from '../useConfirmAction';
+import MediaPickerDialog from '../MediaPickerDialog';
+import { formatShortDate } from '../../../lib/utils';
 
 function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 /** A segmented control reads '' as "nothing selected", so "All" has a value of its own here. */
-const ALL_TYPES = 'all'
+const ALL_TYPES = 'all';
 
 const TYPE_FILTERS = [
   { value: ALL_TYPES, label: 'All' },
   { value: 'image', label: 'Images' },
   { value: 'video', label: 'Videos' },
   { value: 'document', label: 'Docs' },
-] as const
+] as const;
 
 export default function MediaAdmin() {
-  const [search, setSearch] = useState('')
-  const [typeFilter, setTypeFilter] = useState('')
-  const [page, setPage] = useState(1)
-  const [editing, setEditing] = useState<MediaItem | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [showUpload, setShowUpload] = useState(false)
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [page, setPage] = useState(1);
+  const [editing, setEditing] = useState<MediaItem | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [showUpload, setShowUpload] = useState(false);
 
-  const { data, refetch } = useMedia({ search: search || undefined, type: typeFilter || undefined, page, limit: 40 })
-  const items = data?.items ?? []
-  const totalPages = data?.pages ?? 1
+  const { data, refetch } = useMedia({
+    search: search || undefined,
+    type: typeFilter || undefined,
+    page,
+    limit: 40,
+  });
+  const items = data?.items ?? [];
+  const totalPages = data?.pages ?? 1;
 
   async function handleSave() {
-    if (!editing) return
-    setSaving(true)
+    if (!editing) return;
+    setSaving(true);
     try {
       await apiFetch(`/media/${editing._id}`, {
         method: 'PATCH',
         body: JSON.stringify({ alt: editing.alt, tags: editing.tags }),
-      })
-      await refetch()
-      setEditing(null)
+      });
+      await refetch();
+      setEditing(null);
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
   }
 
   const deleteAction = useConfirmAction<MediaItem>({
     onConfirm: async (item) => {
-      await apiFetch(`/media/${item._id}`, { method: 'DELETE' })
-      await refetch()
-      if (editing?._id === item._id) setEditing(null)
+      await apiFetch(`/media/${item._id}`, { method: 'DELETE' });
+      await refetch();
+      if (editing?._id === item._id) setEditing(null);
     },
-  })
+  });
 
   if (editing) {
-    const thumb = editing.thumbnails?.lg || editing.url
-    const isImage = editing.mimeType?.startsWith('image/')
+    const thumb = editing.thumbnails?.lg || editing.url;
+    const isImage = editing.mimeType?.startsWith('image/');
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -79,20 +84,48 @@ export default function MediaAdmin() {
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="overflow-hidden rounded-xl border border-border bg-surface">
             {isImage ? (
-              <img src={thumb} alt={editing.alt || editing.filename} className="w-full object-contain max-h-[400px]" />
+              <img
+                src={thumb}
+                alt={editing.alt || editing.filename}
+                className="w-full object-contain max-h-[400px]"
+              />
             ) : (
-              <div className="flex h-40 items-center justify-center text-muted-foreground">{editing.mimeType}</div>
+              <div className="flex h-40 items-center justify-center text-muted-foreground">
+                {editing.mimeType}
+              </div>
             )}
           </div>
 
           <div className="space-y-4">
             <div className="text-sm text-muted-foreground space-y-1">
-              <p><strong>Filename:</strong> {editing.filename}</p>
-              <p><strong>Type:</strong> {editing.mimeType}</p>
-              <p><strong>Size:</strong> {formatBytes(editing.size)}</p>
-              {editing.width && editing.height && <p><strong>Dimensions:</strong> {editing.width} &times; {editing.height}</p>}
-              <p><strong>Uploaded:</strong> {formatShortDate(editing.createdAt)}</p>
-              <p><strong>URL:</strong> <a href={editing.url} target="_blank" rel="noopener noreferrer" className="break-all text-primary-text underline">{editing.url}</a></p>
+              <p>
+                <strong>Filename:</strong> {editing.filename}
+              </p>
+              <p>
+                <strong>Type:</strong> {editing.mimeType}
+              </p>
+              <p>
+                <strong>Size:</strong> {formatBytes(editing.size)}
+              </p>
+              {editing.width && editing.height && (
+                <p>
+                  <strong>Dimensions:</strong> {editing.width} &times; {editing.height}
+                </p>
+              )}
+              <p>
+                <strong>Uploaded:</strong> {formatShortDate(editing.createdAt)}
+              </p>
+              <p>
+                <strong>URL:</strong>{' '}
+                <a
+                  href={editing.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="break-all text-primary-text underline"
+                >
+                  {editing.url}
+                </a>
+              </p>
             </div>
 
             <LabeledTextField
@@ -105,7 +138,15 @@ export default function MediaAdmin() {
             <LabeledTextField
               label="Tags (comma-separated)"
               value={editing.tags.join(', ')}
-              onValueChange={(v) => setEditing({ ...editing, tags: v.split(',').map(t => t.trim()).filter(Boolean) })}
+              onValueChange={(v) =>
+                setEditing({
+                  ...editing,
+                  tags: v
+                    .split(',')
+                    .map((t) => t.trim())
+                    .filter(Boolean),
+                })
+              }
               placeholder="hero, team, product"
             />
 
@@ -113,7 +154,11 @@ export default function MediaAdmin() {
               <Button appearance="solid" tone="accent" onPress={handleSave} disabled={saving}>
                 <span>{saving ? 'Saving...' : 'Save'}</span>
               </Button>
-              <Button appearance="outline" tone="neutral" onPress={() => deleteAction.request(editing)}>
+              <Button
+                appearance="outline"
+                tone="neutral"
+                onPress={() => deleteAction.request(editing)}
+              >
                 <span style={{ color: 'var(--color-destructive)' }}>Delete</span>
               </Button>
             </div>
@@ -122,7 +167,9 @@ export default function MediaAdmin() {
 
         <ConfirmDialog
           control={deleteAction.control}
-          title={deleteAction.target ? `Delete “${deleteAction.target.filename}”?` : 'Delete media?'}
+          title={
+            deleteAction.target ? `Delete “${deleteAction.target.filename}”?` : 'Delete media?'
+          }
           description="This permanently deletes the file. Any references will break. This cannot be undone."
           confirmLabel="Delete"
           tone="danger"
@@ -131,7 +178,7 @@ export default function MediaAdmin() {
           onConfirm={deleteAction.confirm}
         />
       </div>
-    )
+    );
   }
 
   return (
@@ -149,14 +196,20 @@ export default function MediaAdmin() {
           label="Search"
           placeholder="Search..."
           value={search}
-          onValueChange={(v) => { setSearch(v); setPage(1) }}
+          onValueChange={(v) => {
+            setSearch(v);
+            setPage(1);
+          }}
           style={{ maxWidth: 320 }}
         />
         <SegmentedControl
           type="radio"
           label="Media type"
           value={typeFilter || ALL_TYPES}
-          onValueChange={(next) => { setTypeFilter(next === ALL_TYPES ? '' : next); setPage(1) }}
+          onValueChange={(next) => {
+            setTypeFilter(next === ALL_TYPES ? '' : next);
+            setPage(1);
+          }}
         >
           {TYPE_FILTERS.map((filter) => (
             <SegmentedControlItem key={filter.value} value={filter.value}>
@@ -174,8 +227,8 @@ export default function MediaAdmin() {
       ) : (
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
           {items.map((item) => {
-            const thumb = item.thumbnails?.md || item.thumbnails?.sm || item.url
-            const isImage = item.mimeType?.startsWith('image/')
+            const thumb = item.thumbnails?.md || item.thumbnails?.sm || item.url;
+            const isImage = item.mimeType?.startsWith('image/');
             return (
               <button
                 key={item._id}
@@ -183,18 +236,38 @@ export default function MediaAdmin() {
                 className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-surface transition-all hover:border-input hover:ring-2 hover:ring-ring/30"
               >
                 {isImage ? (
-                  <img src={thumb} alt={item.alt || item.filename} className="size-full object-cover" loading="lazy" />
+                  <img
+                    src={thumb}
+                    alt={item.alt || item.filename}
+                    className="size-full object-cover"
+                    loading="lazy"
+                  />
                 ) : (
                   <div className="flex size-full flex-col items-center justify-center gap-1 p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="size-8 text-muted-foreground"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
-                    <span className="text-label-sm text-muted-foreground truncate w-full text-center">{item.filename}</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                      className="size-8 text-muted-foreground"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                      />
+                    </svg>
+                    <span className="text-label-sm text-muted-foreground truncate w-full text-center">
+                      {item.filename}
+                    </span>
                   </div>
                 )}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 opacity-0 transition-opacity group-hover:opacity-100">
                   <p className="truncate text-label-sm text-white">{item.filename}</p>
                 </div>
               </button>
-            )
+            );
           })}
         </div>
       )}
@@ -202,11 +275,23 @@ export default function MediaAdmin() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-4">
-          <Button appearance="outline" tone="neutral" onPress={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}>
+          <Button
+            appearance="outline"
+            tone="neutral"
+            onPress={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page <= 1}
+          >
             <span>Previous</span>
           </Button>
-          <span className="text-sm text-muted-foreground">Page {page} of {totalPages}</span>
-          <Button appearance="outline" tone="neutral" onPress={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>
+          <span className="text-sm text-muted-foreground">
+            Page {page} of {totalPages}
+          </span>
+          <Button
+            appearance="outline"
+            tone="neutral"
+            onPress={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page >= totalPages}
+          >
             <span>Next</span>
           </Button>
         </div>
@@ -214,7 +299,10 @@ export default function MediaAdmin() {
 
       {showUpload && (
         <MediaPickerDialog
-          onSelect={() => { setShowUpload(false); refetch() }}
+          onSelect={() => {
+            setShowUpload(false);
+            refetch();
+          }}
           onClose={() => setShowUpload(false)}
           folder="images"
         />
@@ -231,5 +319,5 @@ export default function MediaAdmin() {
         onConfirm={deleteAction.confirm}
       />
     </div>
-  )
+  );
 }

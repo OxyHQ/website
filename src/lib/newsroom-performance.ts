@@ -1,10 +1,10 @@
-const measuredSlugs = new Set<string>()
+const measuredSlugs = new Set<string>();
 
 export interface NewsroomReadyMetric {
-  name: 'newsroom_article_ready'
-  slug: string
-  duration: number
-  navigationType?: string
+  name: 'newsroom_article_ready';
+  slug: string;
+  duration: number;
+  navigationType?: string;
 }
 
 /**
@@ -12,25 +12,25 @@ export interface NewsroomReadyMetric {
  * collector can consume without coupling the article to one analytics vendor.
  */
 export function markNewsroomArticleReady(slug: string): NewsroomReadyMetric | null {
-  if (typeof window === 'undefined' || measuredSlugs.has(slug)) return null
-  measuredSlugs.add(slug)
+  if (typeof window === 'undefined' || measuredSlugs.has(slug)) return null;
+  measuredSlugs.add(slug);
 
-  const duration = performance.now()
-  performance.mark('newsroom-article-ready', { detail: { slug } })
+  const duration = performance.now();
+  performance.mark('newsroom-article-ready', { detail: { slug } });
   performance.measure('newsroom_article_ready', {
     start: 0,
     end: duration,
     detail: { slug },
-  })
+  });
   const navigationType = performance.getEntriesByType('navigation')[0]
     ? (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming).type
-    : undefined
+    : undefined;
   const metric: NewsroomReadyMetric = {
     name: 'newsroom_article_ready',
     slug,
     duration,
     navigationType,
-  }
-  window.dispatchEvent(new CustomEvent('oxy:performance', { detail: metric }))
-  return metric
+  };
+  window.dispatchEvent(new CustomEvent('oxy:performance', { detail: metric }));
+  return metric;
 }

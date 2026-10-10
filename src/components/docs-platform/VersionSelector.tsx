@@ -1,23 +1,23 @@
-import { Badge } from '@oxy.so/bloom/badge'
-import { Button } from '@oxy.so/bloom/button'
+import { Badge } from '@oxy.so/bloom/badge';
+import { Button } from '@oxy.so/bloom/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from '@oxy.so/bloom/dropdown-menu'
-import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
-import { useNavigate } from '../../lib/navigation'
-import { useTranslation } from '../../lib/i18n'
-import type { SyncedPackage } from '../../../scripts/types'
-import { buildDocsHref } from '../../content/docs-loader'
+} from '@oxy.so/bloom/dropdown-menu';
+import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine';
+import { useNavigate } from '../../lib/navigation';
+import { useTranslation } from '../../lib/i18n';
+import type { SyncedPackage } from '../../../scripts/types';
+import { buildDocsHref } from '../../content/docs-loader';
 
 interface VersionSelectorProps {
-  pkg: SyncedPackage
-  currentVersion: string
+  pkg: SyncedPackage;
+  currentVersion: string;
   /** Slug within the current package — preserved when switching versions. */
-  slug?: string
+  slug?: string;
 }
 
 /**
@@ -28,13 +28,13 @@ interface VersionSelectorProps {
  * version selector and we skip rendering entirely.
  */
 export default function VersionSelector({ pkg, currentVersion, slug }: VersionSelectorProps) {
-  const navigate = useNavigate()
-  const { t } = useTranslation()
+  const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  if (!pkg.versioned || pkg.versions.length <= 1) return null
+  if (!pkg.versioned || pkg.versions.length <= 1) return null;
 
-  const latestBadge = <Badge content={t('docs.versionLatest')} tone="accent" appearance="subtle" />
-  const label = t('docs.switchVersion', { version: currentVersion })
+  const latestBadge = <Badge content={t('docs.versionLatest')} tone="accent" appearance="subtle" />;
+  const label = t('docs.switchVersion', { version: currentVersion });
 
   return (
     <DropdownMenu>
@@ -73,5 +73,5 @@ export default function VersionSelector({ pkg, currentVersion, slug }: VersionSe
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

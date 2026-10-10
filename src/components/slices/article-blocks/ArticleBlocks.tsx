@@ -1,18 +1,7 @@
-import {
-  type ReactNode,
-  Suspense,
-  lazy,
-  useId,
-  useState,
-  useSyncExternalStore,
-} from 'react'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import {
-  ARTICLE_FRAME_BLOCK,
-  CENTERED_ARTICLE_BLOCK,
-  WIDE_ARTICLE_BLOCK,
-} from '../articleBlock'
+import { type ReactNode, Suspense, lazy, useId, useState, useSyncExternalStore } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { ARTICLE_FRAME_BLOCK, CENTERED_ARTICLE_BLOCK, WIDE_ARTICLE_BLOCK } from '../articleBlock';
 import type {
   ArticleCalloutProps,
   ArticleComparisonProps,
@@ -23,8 +12,8 @@ import type {
   ArticleTabsProps,
   ArticleTestimonialsProps,
   ParsedArticleFence,
-} from './schema'
-import { isSafeArticleUrl } from './schema'
+} from './schema';
+import { isSafeArticleUrl } from './schema';
 
 /*
  * Remix Icon glyphs, drawn inline. This module is rendered by the prerender's
@@ -33,42 +22,64 @@ import { isSafeArticleUrl } from './schema'
  * same Remix paths Bloom ships, as plain <svg>.
  */
 const REMIX_PATHS = {
-  arrowLeft: 'M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z',
-  arrowRight: 'M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z',
-  arrowRightUp: 'M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z',
-} as const
+  arrowLeft:
+    'M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z',
+  arrowRight:
+    'M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z',
+  arrowRightUp:
+    'M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z',
+} as const;
 
-function RemixGlyph({ name, size, className }: { name: keyof typeof REMIX_PATHS; size: number; className?: string }) {
+function RemixGlyph({
+  name,
+  size,
+  className,
+}: {
+  name: keyof typeof REMIX_PATHS;
+  size: number;
+  className?: string;
+}) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      className={className}
+    >
       <path d={REMIX_PATHS[name]} />
     </svg>
-  )
+  );
 }
 
-type ArticleWidth = 'prose' | 'wide' | 'full'
-type OptionalWidth<T extends { width: ArticleWidth }> = Omit<T, 'width'> & { width?: ArticleWidth }
+type ArticleWidth = 'prose' | 'wide' | 'full';
+type OptionalWidth<T extends { width: ArticleWidth }> = Omit<T, 'width'> & { width?: ArticleWidth };
 
 function placement(width: ArticleWidth = 'wide'): string {
-  if (width === 'prose') return CENTERED_ARTICLE_BLOCK
-  if (width === 'full') return ARTICLE_FRAME_BLOCK
-  return WIDE_ARTICLE_BLOCK
+  if (width === 'prose') return CENTERED_ARTICLE_BLOCK;
+  if (width === 'full') return ARTICLE_FRAME_BLOCK;
+  return WIDE_ARTICLE_BLOCK;
 }
 
 function collisionProps(width: ArticleWidth = 'wide') {
-  return width === 'prose' ? {} : { 'data-toc-collision-target': true }
+  return width === 'prose' ? {} : { 'data-toc-collision-target': true };
 }
 
 /** Small, safe Markdown subset for text nested inside a typed article block. */
 function RichText({ children }: { children: ReactNode }) {
-  if (typeof children !== 'string') return <>{children}</>
+  if (typeof children !== 'string') return <>{children}</>;
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
       components={{
         p: ({ children: value }) => <p className="mt-3 first:mt-0 text-blog-body">{value}</p>,
-        ul: ({ children: value }) => <ul className="mt-3 list-disc ps-5 text-blog-body">{value}</ul>,
-        ol: ({ children: value }) => <ol className="mt-3 list-decimal ps-5 text-blog-body">{value}</ol>,
+        ul: ({ children: value }) => (
+          <ul className="mt-3 list-disc ps-5 text-blog-body">{value}</ul>
+        ),
+        ol: ({ children: value }) => (
+          <ol className="mt-3 list-decimal ps-5 text-blog-body">{value}</ol>
+        ),
         li: ({ children: value }) => <li className="mt-1">{value}</li>,
         a: ({ href, children: value }) => (
           <a
@@ -84,7 +95,7 @@ function RichText({ children }: { children: ReactNode }) {
     >
       {children}
     </ReactMarkdown>
-  )
+  );
 }
 
 export function ArticleMedia({
@@ -98,10 +109,11 @@ export function ArticleMedia({
   aspect = 'video',
 }: OptionalWidth<ArticleMediaProps>) {
   if (!isSafeArticleUrl(src) || (poster && !isSafeArticleUrl(poster))) {
-    return <ArticleBlockUnavailable message="This media URL is not allowed." />
+    return <ArticleBlockUnavailable message="This media URL is not allowed." />;
   }
 
-  const aspectClass = aspect === 'square' ? 'aspect-square' : aspect === 'auto' ? 'h-auto' : 'aspect-video'
+  const aspectClass =
+    aspect === 'square' ? 'aspect-square' : aspect === 'auto' ? 'h-auto' : 'aspect-video';
   return (
     <figure
       data-toc-skip
@@ -110,7 +122,13 @@ export function ArticleMedia({
       className={`${placement(width)} my-8 w-full`}
     >
       {type === 'image' && (
-        <img src={src} alt={alt} loading="lazy" decoding="async" className={`${aspectClass} w-full rounded-radius-12 object-cover`} />
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          className={`${aspectClass} w-full rounded-radius-12 object-cover`}
+        />
       )}
       {type === 'video' && (
         <video
@@ -134,9 +152,11 @@ export function ArticleMedia({
           className={`${aspectClass} w-full rounded-radius-12 bg-surface`}
         />
       )}
-      {caption && <figcaption className="mt-3 text-body-sm text-muted-foreground">{caption}</figcaption>}
+      {caption && (
+        <figcaption className="mt-3 text-body-sm text-muted-foreground">{caption}</figcaption>
+      )}
     </figure>
-  )
+  );
 }
 
 export function ArticleCallout({
@@ -146,11 +166,12 @@ export function ArticleCallout({
   tone = 'primary',
   width = 'prose',
 }: OptionalWidth<ArticleCalloutProps>) {
-  const surface = tone === 'tertiary'
-    ? 'bg-[color-mix(in_srgb,var(--tertiary)_16%,var(--background))]'
-    : tone === 'quiet'
-      ? 'bg-surface'
-      : 'bg-[color-mix(in_srgb,var(--primary)_12%,var(--background))]'
+  const surface =
+    tone === 'tertiary'
+      ? 'bg-[color-mix(in_srgb,var(--tertiary)_16%,var(--background))]'
+      : tone === 'quiet'
+        ? 'bg-surface'
+        : 'bg-[color-mix(in_srgb,var(--primary)_12%,var(--background))]';
 
   return (
     <aside
@@ -161,12 +182,19 @@ export function ArticleCallout({
     >
       {eyebrow && <p className="text-body-sm text-tertiary">{eyebrow}</p>}
       <h3 className={`${eyebrow ? 'mt-2' : ''} text-primary text-subheading-2`}>{title}</h3>
-      <div className="mt-3"><RichText>{body}</RichText></div>
+      <div className="mt-3">
+        <RichText>{body}</RichText>
+      </div>
     </aside>
-  )
+  );
 }
 
-export function ArticleStats({ eyebrow, title, items, width = 'wide' }: OptionalWidth<ArticleStatsProps>) {
+export function ArticleStats({
+  eyebrow,
+  title,
+  items,
+  width = 'wide',
+}: OptionalWidth<ArticleStatsProps>) {
   return (
     <section
       data-toc-skip
@@ -175,18 +203,25 @@ export function ArticleStats({ eyebrow, title, items, width = 'wide' }: Optional
       className={`${placement(width)} my-10 w-full rounded-radius-12 bg-primary p-6 text-primary-foreground sm:p-8`}
     >
       {eyebrow && <p className="text-body-sm text-primary-foreground/70">{eyebrow}</p>}
-      {title && <h3 className="mt-2 max-w-[32em] text-primary-foreground text-subheading-2">{title}</h3>}
+      {title && (
+        <h3 className="mt-2 max-w-[32em] text-primary-foreground text-subheading-2">{title}</h3>
+      )}
       <dl className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((item) => (
-          <div key={`${item.value}-${item.label}`} className="border-t border-primary-foreground/25 pt-4">
+          <div
+            key={`${item.value}-${item.label}`}
+            className="border-t border-primary-foreground/25 pt-4"
+          >
             <dt className="text-primary-foreground text-subheading-1">{item.value}</dt>
             <dd className="mt-2 text-body-3 text-primary-foreground">{item.label}</dd>
-            {item.detail && <dd className="mt-1 text-body-sm text-primary-foreground/70">{item.detail}</dd>}
+            {item.detail && (
+              <dd className="mt-1 text-body-sm text-primary-foreground/70">{item.detail}</dd>
+            )}
           </div>
         ))}
       </dl>
     </section>
-  )
+  );
 }
 
 /*
@@ -195,10 +230,10 @@ export function ArticleStats({ eyebrow, title, items, width = 'wide' }: Optional
  * a separate chunk, and `ArticleTabs` only renders it once `onClient` is true —
  * which it never is on the server — so Node never executes that chunk.
  */
-const ArticleTabsBloom = lazy(() => import('./ArticleTabsBloom'))
+const ArticleTabsBloom = lazy(() => import('./ArticleTabsBloom'));
 
-const subscribeNever = () => () => {}
-const renderRichText = (content: string) => <RichText>{content}</RichText>
+const subscribeNever = () => () => {};
+const renderRichText = (content: string) => <RichText>{content}</RichText>;
 
 /**
  * The tab block as static markup: the prerendered document's view (and the
@@ -207,10 +242,14 @@ const renderRichText = (content: string) => <RichText>{content}</RichText>
  * no-JS reader gets, not just the first tab's.
  */
 function StaticArticleTabs({ label, tabs }: { label: string; tabs: ArticleTabsProps['tabs'] }) {
-  const baseId = useId()
+  const baseId = useId();
   return (
     <>
-      <div role="tablist" aria-label={label} className="flex gap-1 overflow-x-auto p-2 [scrollbar-width:none]">
+      <div
+        role="tablist"
+        aria-label={label}
+        className="flex gap-1 overflow-x-auto p-2 [scrollbar-width:none]"
+      >
         {tabs.map((tab, index) => (
           <button
             key={tab.id}
@@ -240,12 +279,20 @@ function StaticArticleTabs({ label, tabs }: { label: string; tabs: ArticleTabsPr
         </div>
       ))}
     </>
-  )
+  );
 }
 
-export function ArticleTabs({ label = 'Article tabs', tabs, width = 'wide' }: OptionalWidth<ArticleTabsProps>) {
-  const onClient = useSyncExternalStore(subscribeNever, () => true, () => false)
-  const fallback = <StaticArticleTabs label={label} tabs={tabs} />
+export function ArticleTabs({
+  label = 'Article tabs',
+  tabs,
+  width = 'wide',
+}: OptionalWidth<ArticleTabsProps>) {
+  const onClient = useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
+  const fallback = <StaticArticleTabs label={label} tabs={tabs} />;
 
   return (
     <section
@@ -258,9 +305,11 @@ export function ArticleTabs({ label = 'Article tabs', tabs, width = 'wide' }: Op
         <Suspense fallback={fallback}>
           <ArticleTabsBloom label={label} tabs={tabs} renderContent={renderRichText} />
         </Suspense>
-      ) : fallback}
+      ) : (
+        fallback
+      )}
     </section>
-  )
+  );
 }
 
 export function ArticleTestimonialCarousel({
@@ -268,11 +317,12 @@ export function ArticleTestimonialCarousel({
   items,
   width = 'wide',
 }: OptionalWidth<ArticleTestimonialsProps>) {
-  const [index, setIndex] = useState(0)
-  const item = items[index]
-  if (!item) return null
+  const [index, setIndex] = useState(0);
+  const item = items[index];
+  if (!item) return null;
 
-  const move = (direction: number) => setIndex((current) => (current + direction + items.length) % items.length)
+  const move = (direction: number) =>
+    setIndex((current) => (current + direction + items.length) % items.length);
   return (
     <section
       data-toc-skip
@@ -283,10 +333,17 @@ export function ArticleTestimonialCarousel({
       className={`${placement(width)} my-10 w-full rounded-radius-12 bg-[color-mix(in_srgb,var(--tertiary)_14%,var(--background))] p-6 sm:p-8`}
     >
       <div aria-live="polite" aria-atomic="true">
-        <blockquote className="max-w-[36em] text-primary text-subheading-2">“{item.quote}”</blockquote>
+        <blockquote className="max-w-[36em] text-primary text-subheading-2">
+          “{item.quote}”
+        </blockquote>
         <div className="mt-6 flex items-center gap-3">
           {item.image && isSafeArticleUrl(item.image) && (
-            <img src={item.image} alt="" loading="lazy" className="size-11 rounded-full object-cover" />
+            <img
+              src={item.image}
+              alt=""
+              loading="lazy"
+              className="size-11 rounded-full object-cover"
+            />
           )}
           <p className="text-body-sm text-foreground">
             <strong className="block font-medium">{item.name}</strong>
@@ -296,19 +353,31 @@ export function ArticleTestimonialCarousel({
       </div>
       {items.length > 1 && (
         <div className="mt-8 flex items-center justify-between border-t border-tertiary/25 pt-4">
-          <p className="text-body-sm tabular-nums text-muted-foreground">{index + 1} / {items.length}</p>
+          <p className="text-body-sm tabular-nums text-muted-foreground">
+            {index + 1} / {items.length}
+          </p>
           <div className="flex gap-2">
-            <button type="button" onClick={() => move(-1)} aria-label="Previous testimonial" className="rounded-full border border-primary/35 p-2 text-primary outline-none hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+            <button
+              type="button"
+              onClick={() => move(-1)}
+              aria-label="Previous testimonial"
+              className="rounded-full border border-primary/35 p-2 text-primary outline-none hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
               <RemixGlyph name="arrowLeft" size={18} />
             </button>
-            <button type="button" onClick={() => move(1)} aria-label="Next testimonial" className="rounded-full border border-primary/35 p-2 text-primary outline-none hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+            <button
+              type="button"
+              onClick={() => move(1)}
+              aria-label="Next testimonial"
+              className="rounded-full border border-primary/35 p-2 text-primary outline-none hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
               <RemixGlyph name="arrowRight" size={18} />
             </button>
           </div>
         </div>
       )}
     </section>
-  )
+  );
 }
 
 export function ArticleComparison({
@@ -333,15 +402,22 @@ export function ArticleComparison({
             className={`rounded-radius-12 p-6 ${index === 0 ? 'bg-surface' : 'bg-[color-mix(in_srgb,var(--primary)_12%,var(--background))]'}`}
           >
             <h4 className="text-body-2 text-primary">{panel.label}</h4>
-            <div className="mt-4 text-foreground"><RichText>{panel.content}</RichText></div>
+            <div className="mt-4 text-foreground">
+              <RichText>{panel.content}</RichText>
+            </div>
           </article>
         ))}
       </div>
     </section>
-  )
+  );
 }
 
-export function ArticleTable({ caption, columns, rows, width = 'wide' }: OptionalWidth<ArticleTableProps>) {
+export function ArticleTable({
+  caption,
+  columns,
+  rows,
+  width = 'wide',
+}: OptionalWidth<ArticleTableProps>) {
   return (
     <div
       data-toc-skip
@@ -350,73 +426,132 @@ export function ArticleTable({ caption, columns, rows, width = 'wide' }: Optiona
       className={`${placement(width)} my-10 w-full overflow-x-auto [scrollbar-width:thin]`}
     >
       <table className="min-w-full text-start text-body-sm text-foreground">
-        {caption && <caption className="pb-4 text-start text-body-3 text-primary">{caption}</caption>}
+        {caption && (
+          <caption className="pb-4 text-start text-body-3 text-primary">{caption}</caption>
+        )}
         <thead>
           <tr>
-            {columns.map((column) => <th key={column} scope="col" className="border-b border-primary/35 px-4 py-3 text-start font-medium">{column}</th>)}
+            {columns.map((column) => (
+              <th
+                key={column}
+                scope="col"
+                className="border-b border-primary/35 px-4 py-3 text-start font-medium"
+              >
+                {column}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
           {rows.map((row, rowIndex) => (
             <tr key={`${rowIndex}-${row.join('-')}`} className="odd:bg-surface/45">
               {row.map((cell, cellIndex) => (
-                <td key={`${cellIndex}-${cell}`} className="border-b border-border px-4 py-3 align-top text-muted-foreground first:text-foreground">{cell}</td>
+                <td
+                  key={`${cellIndex}-${cell}`}
+                  className="border-b border-border px-4 py-3 align-top text-muted-foreground first:text-foreground"
+                >
+                  {cell}
+                </td>
               ))}
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-  )
+  );
 }
 
 export function ArticleCitation({ id, children }: { id: string; children?: ReactNode }) {
   return (
     <sup id={`fnref-${id}`} className="ms-0.5 me-1">
-      <a href={`#fn-${id}`} aria-label={`See note ${id}`} className="text-primary underline underline-offset-2">{children ?? id}</a>
+      <a
+        href={`#fn-${id}`}
+        aria-label={`See note ${id}`}
+        className="text-primary underline underline-offset-2"
+      >
+        {children ?? id}
+      </a>
     </sup>
-  )
+  );
 }
 
-export function ArticleFootnotes({ title = 'Notes', items, width = 'prose' }: OptionalWidth<ArticleFootnotesProps>) {
+export function ArticleFootnotes({
+  title = 'Notes',
+  items,
+  width = 'prose',
+}: OptionalWidth<ArticleFootnotesProps>) {
   return (
-    <section data-toc-skip data-article-block-width={width} {...collisionProps(width)} className={`${placement(width)} mt-14 w-full border-t border-border pt-6`}>
+    <section
+      data-toc-skip
+      data-article-block-width={width}
+      {...collisionProps(width)}
+      className={`${placement(width)} mt-14 w-full border-t border-border pt-6`}
+    >
       <h3 className="text-primary text-body-3">{title}</h3>
       <ol className="mt-4 grid gap-3 ps-5 text-body-sm text-muted-foreground">
         {items.map((item) => (
           <li key={item.id} id={`fn-${item.id}`}>
             <span>{item.text}</span>{' '}
             {item.url && (
-              <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
-                {item.linkLabel || 'Source'} <RemixGlyph name="arrowRightUp" size={12} className="inline" />
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline underline-offset-2"
+              >
+                {item.linkLabel || 'Source'}{' '}
+                <RemixGlyph name="arrowRightUp" size={12} className="inline" />
               </a>
             )}{' '}
-            <a href={`#fnref-${item.id}`} aria-label={`Back to citation ${item.id}`} className="text-primary no-underline">↩</a>
+            <a
+              href={`#fnref-${item.id}`}
+              aria-label={`Back to citation ${item.id}`}
+              className="text-primary no-underline"
+            >
+              ↩
+            </a>
           </li>
         ))}
       </ol>
     </section>
-  )
+  );
 }
 
-export function ArticleBlockUnavailable({ message = 'This article block is unavailable.' }: { message?: string }) {
+export function ArticleBlockUnavailable({
+  message = 'This article block is unavailable.',
+}: {
+  message?: string;
+}) {
   return (
-    <aside data-toc-skip data-article-block-width="prose" className={`${CENTERED_ARTICLE_BLOCK} my-6 w-full rounded-radius-12 bg-surface p-4 text-body-sm text-muted-foreground`}>
+    <aside
+      data-toc-skip
+      data-article-block-width="prose"
+      className={`${CENTERED_ARTICLE_BLOCK} my-6 w-full rounded-radius-12 bg-surface p-4 text-body-sm text-muted-foreground`}
+    >
       {message}
     </aside>
-  )
+  );
 }
 
 export function ArticleCustomBlock({ block }: { block: ParsedArticleFence }) {
   switch (block.kind) {
-    case 'article-media': return <ArticleMedia {...block.props} />
-    case 'article-callout': return <ArticleCallout {...block.props} />
-    case 'article-stats': return <ArticleStats {...block.props} />
-    case 'article-tabs': return <ArticleTabs {...block.props} />
-    case 'article-testimonials': return <ArticleTestimonialCarousel {...block.props} />
-    case 'article-comparison': return <ArticleComparison {...block.props} />
-    case 'article-table': return <ArticleTable {...block.props} />
-    case 'article-footnotes': return <ArticleFootnotes {...block.props} />
-    default: return <ArticleBlockUnavailable />
+    case 'article-media':
+      return <ArticleMedia {...block.props} />;
+    case 'article-callout':
+      return <ArticleCallout {...block.props} />;
+    case 'article-stats':
+      return <ArticleStats {...block.props} />;
+    case 'article-tabs':
+      return <ArticleTabs {...block.props} />;
+    case 'article-testimonials':
+      return <ArticleTestimonialCarousel {...block.props} />;
+    case 'article-comparison':
+      return <ArticleComparison {...block.props} />;
+    case 'article-table':
+      return <ArticleTable {...block.props} />;
+    case 'article-footnotes':
+      return <ArticleFootnotes {...block.props} />;
+    default:
+      return <ArticleBlockUnavailable />;
   }
 }

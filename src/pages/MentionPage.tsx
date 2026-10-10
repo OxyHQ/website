@@ -1,7 +1,7 @@
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import MentionContent from '../components/mention/MentionContent'
-import { APP_CARD_IMAGES } from '../data/appCardImages'
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import MentionContent from '../components/mention/MentionContent';
+import { APP_CARD_IMAGES } from '../data/appCardImages';
 
 export default function MentionPage() {
   return (
@@ -19,5 +19,5 @@ export default function MentionPage() {
     >
       <MentionContent />
     </PageShell>
-  )
+  );
 }

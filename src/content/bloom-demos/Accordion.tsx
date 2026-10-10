@@ -1,15 +1,20 @@
-import { useState } from 'react'
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@oxy.so/bloom/accordion'
-import type { PlaygroundValues } from './_playground'
+import { useState } from 'react';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@oxy.so/bloom/accordion';
+import type { PlaygroundValues } from './_playground';
 
-type AccordionType = 'single' | 'multiple'
+type AccordionType = 'single' | 'multiple';
 
 export const meta = {
   description: 'Collapsible content sections, single or multiple expanded items.',
-}
+};
 
 export default function AccordionDemo() {
-  const [open, setOpen] = useState<string | string[] | undefined>('first')
+  const [open, setOpen] = useState<string | string[] | undefined>('first');
   return (
     <div className="w-full max-w-md">
       <Accordion type="single" value={open} onValueChange={setOpen}>
@@ -33,22 +38,22 @@ export default function AccordionDemo() {
         </AccordionItem>
       </Accordion>
     </div>
-  )
+  );
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const type = values.type === 'multiple' ? 'multiple' : 'single'
-  const firstLabel = typeof values.firstLabel === 'string' ? values.firstLabel : ''
-  const firstBody = typeof values.firstBody === 'string' ? values.firstBody : ''
-  const secondLabel = typeof values.secondLabel === 'string' ? values.secondLabel : ''
-  const secondBody = typeof values.secondBody === 'string' ? values.secondBody : ''
+  const type = values.type === 'multiple' ? 'multiple' : 'single';
+  const firstLabel = typeof values.firstLabel === 'string' ? values.firstLabel : '';
+  const firstBody = typeof values.firstBody === 'string' ? values.firstBody : '';
+  const secondLabel = typeof values.secondLabel === 'string' ? values.secondLabel : '';
+  const secondBody = typeof values.secondBody === 'string' ? values.secondBody : '';
   const [open, setOpen] = useState<string | string[] | undefined>(
     type === 'multiple' ? ['first'] : 'first',
-  )
-  const [lastType, setLastType] = useState<AccordionType>(type)
+  );
+  const [lastType, setLastType] = useState<AccordionType>(type);
   if (type !== lastType) {
-    setLastType(type)
-    setOpen(type === 'multiple' ? ['first'] : 'first')
+    setLastType(type);
+    setOpen(type === 'multiple' ? ['first'] : 'first');
   }
   return (
     <div style={{ width: 360 }}>
@@ -67,5 +72,5 @@ export function Playground({ values }: { values: PlaygroundValues }) {
         </AccordionItem>
       </Accordion>
     </div>
-  )
+  );
 }

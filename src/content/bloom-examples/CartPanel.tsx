@@ -1,10 +1,12 @@
-import { useState } from 'react'
-import { CartPanel } from '@oxy.so/bloom/cart-panel'
-import { Button } from '@oxy.so/bloom/button'
+import { useState } from 'react';
+import { CartPanel } from '@oxy.so/bloom/cart-panel';
+import { Button } from '@oxy.so/bloom/button';
 
 export default function CartPanelExample() {
-  const [quantity, setQuantity] = useState(1)
-  const amount = new Intl.NumberFormat('en', { style: 'currency', currency: 'EUR' }).format(28 * quantity)
+  const [quantity, setQuantity] = useState(1);
+  const amount = new Intl.NumberFormat('en', { style: 'currency', currency: 'EUR' }).format(
+    28 * quantity,
+  );
   return (
     <div className="w-full max-w-lg space-y-4 text-foreground">
       <CartPanel
@@ -18,5 +20,5 @@ export default function CartPanelExample() {
       />
       {!quantity && <Button onPress={() => setQuantity(1)}>Add example item</Button>}
     </div>
-  )
+  );
 }

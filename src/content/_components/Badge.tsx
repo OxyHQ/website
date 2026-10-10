@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
-import { cn } from '../../lib/utils'
+import type { ReactNode } from 'react';
+import { cn } from '../../lib/utils';
 
 /* ──────────────────────────────────────────────
  * <Badge variant="new|deprecated|preview">
@@ -11,11 +11,11 @@ import { cn } from '../../lib/utils'
  *   ## OldApi <Badge variant="deprecated">Deprecated</Badge>
  * ──────────────────────────────────────────── */
 
-type BadgeVariant = 'new' | 'deprecated' | 'preview' | 'default'
+type BadgeVariant = 'new' | 'deprecated' | 'preview' | 'default';
 
 interface BadgeProps {
-  variant?: BadgeVariant
-  children: ReactNode
+  variant?: BadgeVariant;
+  children: ReactNode;
 }
 
 const STYLES: Record<BadgeVariant, string> = {
@@ -23,7 +23,7 @@ const STYLES: Record<BadgeVariant, string> = {
   new: 'bg-success-subtle text-success-text border-success/30',
   deprecated: 'bg-error-subtle text-error-text border-error/30',
   preview: 'bg-warning-subtle text-warning-text border-warning/30',
-}
+};
 
 export default function Badge({ variant = 'default', children }: BadgeProps) {
   return (
@@ -35,5 +35,5 @@ export default function Badge({ variant = 'default', children }: BadgeProps) {
     >
       {children}
     </span>
-  )
+  );
 }

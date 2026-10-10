@@ -6,13 +6,13 @@
  * contractual, and a marketing page that publishes them has made a commitment
  * nobody signed. What the page can say is what is negotiable, and who to ask.
  */
-import type { Availability } from '../../lib/ai/availability'
-import type { InquiryInterest } from '../../../server/contracts/salesInquiry'
+import type { Availability } from '../../lib/ai/availability';
+import type { InquiryInterest } from '../../../server/contracts/salesInquiry';
 
 export interface EnterpriseCapability {
-  key: string
-  title: string
-  description: string
+  key: string;
+  title: string;
+  description: string;
 }
 
 export const enterpriseInferenceCapabilities: EnterpriseCapability[] = [
@@ -31,8 +31,7 @@ export const enterpriseInferenceCapabilities: EnterpriseCapability[] = [
   {
     key: 'dedicated',
     title: 'Private endpoints',
-    description:
-      'An endpoint scoped to one organization, not shared with other tenants.',
+    description: 'An endpoint scoped to one organization, not shared with other tenants.',
   },
   {
     key: 'reserved',
@@ -76,7 +75,7 @@ export const enterpriseInferenceCapabilities: EnterpriseCapability[] = [
     description:
       'A scoped evaluation with the models, regions and constraints you actually need, before a commitment exists.',
   },
-]
+];
 
 /**
  * Deliberately explicit about what is NOT published.
@@ -86,19 +85,18 @@ export const enterpriseInferenceCapabilities: EnterpriseCapability[] = [
  */
 export const enterpriseUndefinedTerms = {
   heading: 'What we are not publishing yet',
-  body:
-    'Support levels, service-level agreements and compliance certifications are agreed per contract. We are not publishing platform-wide figures for them, because a number on this page would be a commitment nobody signed. Ask, and you will get the current, scoped answer with the evidence behind it.',
-}
+  body: 'Support levels, service-level agreements and compliance certifications are agreed per contract. We are not publishing platform-wide figures for them, because a number on this page would be a commitment nobody signed. Ask, and you will get the current, scoped answer with the evidence behind it.',
+};
 
 export interface EnterpriseService {
-  key: string
-  name: string
-  description: string
-  availability: Availability
-  href: string
-  external?: boolean
+  key: string;
+  name: string;
+  description: string;
+  availability: Availability;
+  href: string;
+  external?: boolean;
   /** Sales-form option to preselect. Omitted where sales is not the next step. */
-  salesInterest?: InquiryInterest
+  salesInterest?: InquiryInterest;
 }
 
 /**
@@ -144,12 +142,11 @@ export const enterpriseServices: EnterpriseService[] = [
     availability: 'coming_soon',
     href: '/peable',
   },
-]
+];
 
 export const enterpriseHubIntro = {
   heading: 'Oxy for organizations',
-  body:
-    'What Oxy sells to companies, and the state each of it is genuinely in. If you are looking for how Oxy itself makes money and where that money goes, that is a different page.',
+  body: 'What Oxy sells to companies, and the state each of it is genuinely in. If you are looking for how Oxy itself makes money and where that money goes, that is a different page.',
   businessLinkLabel: 'How our business works',
   businessLinkHref: '/transparency/business',
-}
+};

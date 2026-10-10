@@ -24,24 +24,24 @@
  * drifting `<title>` is visible only to a crawler.
  */
 
-import { bloomIndex } from '../src/content/bloom-catalog.generated'
-import { pascalPath, type BloomSurfaceEntry } from '../src/content/bloom-catalog'
+import { bloomIndex } from '../src/content/bloom-catalog.generated';
+import { pascalPath, type BloomSurfaceEntry } from '../src/content/bloom-catalog';
 
 /** Where the hub lives; every surface hangs off it. */
-export const BLOOM_COMPONENTS_BASE = '/developers/docs/bloom/components'
+export const BLOOM_COMPONENTS_BASE = '/developers/docs/bloom/components';
 
 export interface BloomComponentRoute {
-  url: string
+  url: string;
   seo: {
-    title: string
-    description: string
-    canonicalPath: string
-  }
+    title: string;
+    description: string;
+    canonicalPath: string;
+  };
 }
 
 /** The URL a surface's page is served at. */
 export function bloomComponentUrl(subpath: string): string {
-  return `${BLOOM_COMPONENTS_BASE}/${subpath}`
+  return `${BLOOM_COMPONENTS_BASE}/${subpath}`;
 }
 
 /**
@@ -54,10 +54,12 @@ export function bloomComponentUrl(subpath: string): string {
  * page shows: what group it belongs to, and what you import.
  */
 function describe(entry: BloomSurfaceEntry, name: string): string {
-  const principal = entry.components.find((component) => component.name === name)
-  if (principal?.description) return principal.description
-  return `${name} from Bloom, the Oxy UI library — every prop it takes, with types and `
-    + `descriptions. Part of ${entry.category}, imported from ${entry.importPath}.`
+  const principal = entry.components.find((component) => component.name === name);
+  if (principal?.description) return principal.description;
+  return (
+    `${name} from Bloom, the Oxy UI library — every prop it takes, with types and ` +
+    `descriptions. Part of ${entry.category}, imported from ${entry.importPath}.`
+  );
 }
 
 /**
@@ -76,16 +78,16 @@ export function bloomComponentRoutes(
       seo: {
         title: 'Bloom components, Oxy Docs',
         description:
-          `Every one of the ${index.length} surfaces Bloom publishes, grouped the way its own `
-          + 'README groups them, with the props each one takes.',
+          `Every one of the ${index.length} surfaces Bloom publishes, grouped the way its own ` +
+          'README groups them, with the props each one takes.',
         canonicalPath: BLOOM_COMPONENTS_BASE,
       },
     },
-  ]
+  ];
 
   for (const entry of index) {
-    const name = pascalPath(entry.subpath)
-    const url = bloomComponentUrl(entry.subpath)
+    const name = pascalPath(entry.subpath);
+    const url = bloomComponentUrl(entry.subpath);
     routes.push({
       url,
       seo: {
@@ -93,8 +95,8 @@ export function bloomComponentRoutes(
         description: describe(entry, name),
         canonicalPath: url,
       },
-    })
+    });
   }
 
-  return routes
+  return routes;
 }

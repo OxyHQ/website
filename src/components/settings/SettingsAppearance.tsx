@@ -1,25 +1,27 @@
-import { useBloomTheme, useTheme } from '@oxy.so/bloom/theme'
+import { useBloomTheme, useTheme } from '@oxy.so/bloom/theme';
 import {
   SegmentedControl,
   SegmentedControlItem,
   SegmentedControlItemText,
-} from '@oxy.so/bloom/segmented-control'
-import { getPresetVars } from '@oxy.so/bloom/design-tokens'
-import { type ColorPresetRecipe } from '@oxy.so/bloom/color-presets'
-import { type AppColorName } from '../../theme'
-import { PUBLIC_COLOR_PRESET_GROUPS } from '../../theme/preset-catalog'
-import { AnimatedTitle } from '../ui/AnimatedTitle'
+} from '@oxy.so/bloom/segmented-control';
+import { getPresetVars } from '@oxy.so/bloom/design-tokens';
+import { type ColorPresetRecipe } from '@oxy.so/bloom/color-presets';
+import { type AppColorName } from '../../theme';
+import { PUBLIC_COLOR_PRESET_GROUPS } from '../../theme/preset-catalog';
+import { AnimatedTitle } from '../ui/AnimatedTitle';
 
 export default function SettingsAppearance() {
-  const { colorPreset: currentPreset, setMode, setColorPreset } = useBloomTheme()
+  const { colorPreset: currentPreset, setMode, setColorPreset } = useBloomTheme();
   // The mode on screen: a `system` mode still resolves to one of the two.
-  const previewMode = useTheme().isDark ? 'dark' : 'light'
+  const previewMode = useTheme().isDark ? 'dark' : 'light';
 
   return (
     <div className="container py-16 lg:py-24">
       <div className="mx-auto max-w-2xl">
         {/* Page header */}
-        <AnimatedTitle as="h1" className="text-heading-responsive-md">Settings</AnimatedTitle>
+        <AnimatedTitle as="h1" className="text-heading-responsive-md">
+          Settings
+        </AnimatedTitle>
         <p className="mt-3 text-base text-muted-foreground">
           Customize the look and feel of the website.
         </p>
@@ -36,7 +38,12 @@ export default function SettingsAppearance() {
           <div className="mt-8">
             <h3 className="text-sm font-medium text-foreground">Theme</h3>
             <div className="mt-3 flex">
-              <SegmentedControl label="Theme" type="radio" value={previewMode} onValueChange={setMode}>
+              <SegmentedControl
+                label="Theme"
+                type="radio"
+                value={previewMode}
+                onValueChange={setMode}
+              >
                 <SegmentedControlItem value="light">
                   <SegmentedControlItemText>Light</SegmentedControlItemText>
                 </SegmentedControlItem>
@@ -61,13 +68,17 @@ export default function SettingsAppearance() {
           <div className="mt-10">
             <h3 className="text-sm font-medium text-foreground">Accent color</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Each recipe resolves its own surfaces and supporting action colors in light and dark mode.
+              Each recipe resolves its own surfaces and supporting action colors in light and dark
+              mode.
             </p>
             <div className="mt-6 space-y-8">
               {PUBLIC_COLOR_PRESET_GROUPS.map((group) => (
                 <section key={group.name} aria-labelledby={`preset-family-${group.name}`}>
                   <div className="mb-3">
-                    <h4 id={`preset-family-${group.name}`} className="text-sm font-semibold text-foreground">
+                    <h4
+                      id={`preset-family-${group.name}`}
+                      className="text-sm font-semibold text-foreground"
+                    >
                       {group.displayName}
                     </h4>
                     <p className="text-body-xs text-muted-foreground">{group.description}</p>
@@ -90,7 +101,7 @@ export default function SettingsAppearance() {
         </section>
       </div>
     </div>
-  )
+  );
 }
 
 function PresetChoice({
@@ -99,12 +110,12 @@ function PresetChoice({
   active,
   onClick,
 }: {
-  recipe: ColorPresetRecipe
-  mode: 'light' | 'dark'
-  active: boolean
-  onClick: () => void
+  recipe: ColorPresetRecipe;
+  mode: 'light' | 'dark';
+  active: boolean;
+  onClick: () => void;
 }) {
-  const tokens = getPresetVars(recipe.name, mode)
+  const tokens = getPresetVars(recipe.name, mode);
   return (
     <button
       type="button"
@@ -116,43 +127,84 @@ function PresetChoice({
       title={`${recipe.displayName}: ${recipe.description}`}
       aria-pressed={active}
     >
-      <span className="relative size-10 shrink-0 overflow-hidden rounded-xl shadow-s" aria-hidden="true">
-        <span className="absolute inset-y-0 left-0 w-1/2" style={{ backgroundColor: tokens['--primary'] }} />
-        <span className="absolute top-0 right-0 h-1/2 w-1/2" style={{ backgroundColor: tokens['--secondary'] }} />
-        <span className="absolute right-0 bottom-0 h-1/2 w-1/2" style={{ backgroundColor: tokens['--tertiary'] }} />
+      <span
+        className="relative size-10 shrink-0 overflow-hidden rounded-xl shadow-s"
+        aria-hidden="true"
+      >
+        <span
+          className="absolute inset-y-0 left-0 w-1/2"
+          style={{ backgroundColor: tokens['--primary'] }}
+        />
+        <span
+          className="absolute top-0 right-0 h-1/2 w-1/2"
+          style={{ backgroundColor: tokens['--secondary'] }}
+        />
+        <span
+          className="absolute right-0 bottom-0 h-1/2 w-1/2"
+          style={{ backgroundColor: tokens['--tertiary'] }}
+        />
       </span>
       <span className="min-w-0">
-        <span className="block text-sm font-medium leading-tight text-foreground">{recipe.displayName}</span>
+        <span className="block text-sm font-medium leading-tight text-foreground">
+          {recipe.displayName}
+        </span>
         <span className="mt-0.5 block text-body-xs leading-tight text-muted-foreground">
           {recipe.pairing === 'curated' ? 'Curated pairing' : 'Dynamic pairing'}
         </span>
       </span>
     </button>
-  )
+  );
 }
 
 /* ── Theme preview thumbnails ── */
 
 function ThemePreview({ preset, mode }: { preset: AppColorName; mode: 'light' | 'dark' }) {
-  const tokens = getPresetVars(preset, mode)
+  const tokens = getPresetVars(preset, mode);
   return (
-    <div className="flex h-full w-full flex-col p-2.5" style={{ backgroundColor: tokens['--background'] }}>
-      <div className="flex items-center gap-1.5 rounded-md p-1.5 shadow-sm" style={{ backgroundColor: tokens['--card'] }}>
+    <div
+      className="flex h-full w-full flex-col p-2.5"
+      style={{ backgroundColor: tokens['--background'] }}
+    >
+      <div
+        className="flex items-center gap-1.5 rounded-md p-1.5 shadow-sm"
+        style={{ backgroundColor: tokens['--card'] }}
+      >
         <div className="h-1.5 w-6 rounded-full" style={{ backgroundColor: tokens['--primary'] }} />
         <div className="h-1.5 w-4 rounded-full" style={{ backgroundColor: tokens['--muted'] }} />
-        <div className="ml-auto h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tokens['--secondary'] }} />
+        <div
+          className="ml-auto h-1.5 w-1.5 rounded-full"
+          style={{ backgroundColor: tokens['--secondary'] }}
+        />
       </div>
       <div className="mt-2 flex flex-1 gap-1.5">
         <div className="w-1/3 rounded-md p-1.5" style={{ backgroundColor: tokens['--surface'] }}>
-          <div className="h-1 w-full rounded-full" style={{ backgroundColor: tokens['--muted-foreground'] }} />
-          <div className="mt-1 h-1 w-3/4 rounded-full" style={{ backgroundColor: tokens['--border'] }} />
+          <div
+            className="h-1 w-full rounded-full"
+            style={{ backgroundColor: tokens['--muted-foreground'] }}
+          />
+          <div
+            className="mt-1 h-1 w-3/4 rounded-full"
+            style={{ backgroundColor: tokens['--border'] }}
+          />
         </div>
-        <div className="flex-1 rounded-md p-1.5 shadow-sm" style={{ backgroundColor: tokens['--card'] }}>
-          <div className="h-1 w-3/4 rounded-full" style={{ backgroundColor: tokens['--foreground'] }} />
-          <div className="mt-1 h-1 w-1/2 rounded-full" style={{ backgroundColor: tokens['--muted-foreground'] }} />
-          <div className="mt-2 h-3 w-full rounded" style={{ backgroundColor: tokens['--primary-subtle'] }} />
+        <div
+          className="flex-1 rounded-md p-1.5 shadow-sm"
+          style={{ backgroundColor: tokens['--card'] }}
+        >
+          <div
+            className="h-1 w-3/4 rounded-full"
+            style={{ backgroundColor: tokens['--foreground'] }}
+          />
+          <div
+            className="mt-1 h-1 w-1/2 rounded-full"
+            style={{ backgroundColor: tokens['--muted-foreground'] }}
+          />
+          <div
+            className="mt-2 h-3 w-full rounded"
+            style={{ backgroundColor: tokens['--primary-subtle'] }}
+          />
         </div>
       </div>
     </div>
-  )
+  );
 }

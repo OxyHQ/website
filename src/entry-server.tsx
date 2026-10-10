@@ -42,15 +42,15 @@
  * client-side, and the static markup matches what it produces, so there is no
  * diff and no flash there either.
  */
-import { HelmetProvider, type HelmetServerState } from 'react-helmet-async'
-import { renderToString, renderToStaticMarkup } from 'react-dom/server'
-import { MemoryRouter } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import SEO from './components/SEO'
-import { serializeStructuredData } from './lib/structuredData'
-import ArticleMarkdown from './components/newsroom/article/ArticleMarkdown'
-import { LocaleProvider } from './lib/i18n'
-import type { SeoData } from './lib/seo'
+import { HelmetProvider, type HelmetServerState } from 'react-helmet-async';
+import { renderToString, renderToStaticMarkup } from 'react-dom/server';
+import { MemoryRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import SEO from './components/SEO';
+import { serializeStructuredData } from './lib/structuredData';
+import ArticleMarkdown from './components/newsroom/article/ArticleMarkdown';
+import { LocaleProvider } from './lib/i18n';
+import type { SeoData } from './lib/seo';
 
 /**
  * A page's prose, as HTML, for the document the crawler is served.
@@ -72,12 +72,12 @@ import type { SeoData } from './lib/seo'
  * to reconcile.
  */
 export function renderMarkdownBody(markdown: string): string {
-  return renderToStaticMarkup(<ArticleMarkdown content={markdown} />)
+  return renderToStaticMarkup(<ArticleMarkdown content={markdown} />);
 }
 
 /** Serialize route-specific JSON-LD with the same escaping as the client. */
 export function renderStructuredData(data: Record<string, unknown>): string {
-  return `<script type="application/ld+json">${serializeStructuredData(data)}</script>`
+  return `<script type="application/ld+json">${serializeStructuredData(data)}</script>`;
 }
 
 /**
@@ -87,33 +87,33 @@ export function renderStructuredData(data: Record<string, unknown>): string {
  * `scripts/prerender.ts`.
  */
 export interface SEORenderInput {
-  title: string
-  description: string
+  title: string;
+  description: string;
   /**
    * Always the BARE path (`/pricing`), never locale-prefixed. `<SEO>`'s
    * `buildLocalizedUrl` adds the `/<locale>` prefix itself for canonical,
    * hreflang and x-default — passing `/es/pricing` here would double-prefix.
    */
-  canonicalPath: string
-  ogImage?: string
-  ogType?: string
-  noIndex?: boolean
-  publishedTime?: string
-  modifiedTime?: string
-  author?: string
+  canonicalPath: string;
+  ogImage?: string;
+  ogType?: string;
+  noIndex?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
   /** Absolute canonical for a page whose content is published on another site. */
-  canonicalUrl?: string
+  canonicalUrl?: string;
 }
 
 /** One entry of `GET /api/locales`, as far as `<SEO>`'s hreflang block cares. */
 export interface SEOLocaleSeed {
-  code: string
-  name?: string
-  nativeName?: string
-  isDefault?: boolean
-  enabled?: boolean
-  translationCount?: number
-  translationReady?: boolean
+  code: string;
+  name?: string;
+  nativeName?: string;
+  isDefault?: boolean;
+  enabled?: boolean;
+  translationCount?: number;
+  translationReady?: boolean;
 }
 
 export interface SEORenderOptions {
@@ -122,19 +122,19 @@ export interface SEORenderOptions {
    * so we seed the router at `/<locale><canonicalPath>` while `<SEO>` still
    * receives the bare `canonicalPath`. Omitted → the default locale.
    */
-  locale?: string
+  locale?: string;
   /**
    * Seeds the `public-locales` query. Without it the provider sees no API data
    * and every entry is `translationReady: false`, so a prerendered page emits
    * ZERO hreflang links — the crawler-facing case this whole pipeline exists
    * for. The prerender passes the same list it derives its locale set from.
    */
-  locales?: SEOLocaleSeed[]
+  locales?: SEOLocaleSeed[];
 }
 
 export interface SEORenderResult {
   /** Serialized `<head>` fragment, ready to splice into HTML. */
-  head: string
+  head: string;
 }
 
 export function renderSEO(
@@ -142,22 +142,22 @@ export function renderSEO(
   seoData: SeoData | null = null,
   options: SEORenderOptions = {},
 ): SEORenderResult {
-  const helmetContext: { helmet?: HelmetServerState } = {}
+  const helmetContext: { helmet?: HelmetServerState } = {};
 
   // Fresh QueryClient per call — never let cache state leak across routes.
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { staleTime: Infinity, retry: false, refetchOnWindowFocus: false },
     },
-  })
+  });
   // Seed the CMS-managed SEO so `<SEO>`'s `useSeo()` resolves synchronously from
   // cache. staleTime Infinity means no per-route network fetch during the build;
   // `null` (API unseeded/unreachable) makes `<SEO>` fall back to the props below.
-  queryClient.setQueryData(['seo', 'oxy', input.canonicalPath], seoData)
+  queryClient.setQueryData(['seo', 'oxy', input.canonicalPath], seoData);
   // Same key `LocaleProvider`'s `useQuery` reads. Seeding it is what lets the
   // prerendered <head> carry real hreflang links instead of none.
   if (options.locales) {
-    queryClient.setQueryData(['public-locales'], options.locales)
+    queryClient.setQueryData(['public-locales'], options.locales);
   }
 
   // Router path carries the locale prefix so `LocaleProvider` detects it;
@@ -167,7 +167,7 @@ export function renderSEO(
       ? `/${options.locale}`
       : options.locale
         ? `/${options.locale}${input.canonicalPath}`
-        : input.canonicalPath
+        : input.canonicalPath;
 
   // `<SEO>` reads `useLocaleContext()` to emit hreflang entries. The
   // LocaleProvider's `useQuery('public-locales')` returns `undefined`
@@ -198,24 +198,20 @@ export function renderSEO(
         </MemoryRouter>
       </QueryClientProvider>
     </HelmetProvider>,
-  )
+  );
 
   // React 18 path: helmet captures into context.
-  const helmet = helmetContext.helmet
+  const helmet = helmetContext.helmet;
   if (helmet) {
-    const head = [
-      helmet.title.toString(),
-      helmet.meta.toString(),
-      helmet.link.toString(),
-    ]
+    const head = [helmet.title.toString(), helmet.meta.toString(), helmet.link.toString()]
       .filter((part) => part.trim().length > 0)
-      .join('\n    ')
-    if (head.length > 0) return { head }
+      .join('\n    ');
+    if (head.length > 0) return { head };
   }
 
   // React 19 path: head tags are emitted inline in the `renderToString`
   // payload. The current React/react-helmet-async pair takes this branch.
-  return { head: extractHeadFromBody(body) }
+  return { head: extractHeadFromBody(body) };
 }
 
 /**
@@ -230,11 +226,11 @@ function extractHeadFromBody(body: string): string {
     /<title[^>]*>[\s\S]*?<\/title>/gi,
     /<meta\s[^>]*\/?>/gi,
     /<link\s[^>]*\/?>/gi,
-  ]
-  const collected: string[] = []
+  ];
+  const collected: string[] = [];
   for (const pattern of tagPatterns) {
-    const matches = body.match(pattern)
-    if (matches) collected.push(...matches)
+    const matches = body.match(pattern);
+    if (matches) collected.push(...matches);
   }
   // Normalize React's camelCase attribute names back to canonical lowercase.
   // Crawlers accept either, but lowercase matches what the rest of the
@@ -245,6 +241,6 @@ function extractHeadFromBody(body: string): string {
       .replace(/\shttpEquiv=/g, ' http-equiv=')
       .replace(/\scharSet=/g, ' charset=')
       .trim(),
-  )
-  return Array.from(new Set(normalized)).join('\n    ')
+  );
+  return Array.from(new Set(normalized)).join('\n    ');
 }

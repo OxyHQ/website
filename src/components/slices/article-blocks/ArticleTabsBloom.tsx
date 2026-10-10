@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs'
-import { SurfaceLevelProvider } from '@oxy.so/bloom/styles'
-import { useTheme } from '@oxy.so/bloom/theme'
-import type { ArticleTabsProps } from './schema'
-import type { ReactNode } from 'react'
+import { useState } from 'react';
+import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs';
+import { SurfaceLevelProvider } from '@oxy.so/bloom/styles';
+import { useTheme } from '@oxy.so/bloom/theme';
+import type { ArticleTabsProps } from './schema';
+import type { ReactNode } from 'react';
 
 /**
  * The interactive article tab strip, on Bloom's `Tabs` — which owns the
@@ -20,13 +20,13 @@ export default function ArticleTabsBloom({
   tabs,
   renderContent,
 }: {
-  label: string
-  tabs: ArticleTabsProps['tabs']
-  renderContent: (content: string) => ReactNode
+  label: string;
+  tabs: ArticleTabsProps['tabs'];
+  renderContent: (content: string) => ReactNode;
 }) {
-  const { colors } = useTheme()
-  const [activeId, setActiveId] = useState(tabs[0]?.id ?? '')
-  const activeTab = tabs.find((tab) => tab.id === activeId) ?? tabs[0]
+  const { colors } = useTheme();
+  const [activeId, setActiveId] = useState(tabs[0]?.id ?? '');
+  const activeTab = tabs.find((tab) => tab.id === activeId) ?? tabs[0];
 
   return (
     // The section paints `bg-surface` (Bloom's `--surface`, `primaryLight` on
@@ -35,7 +35,9 @@ export default function ArticleTabsBloom({
     <SurfaceLevelProvider level={1} fill={colors.primaryLight}>
       <div className="p-2">
         <Tabs variant="pill" label={label} value={activeTab?.id} onValueChange={setActiveId}>
-          {tabs.map((tab) => <TabsTrigger key={tab.id} value={tab.id} label={tab.label} />)}
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.id} value={tab.id} label={tab.label} />
+          ))}
         </Tabs>
       </div>
       {activeTab && (
@@ -51,5 +53,5 @@ export default function ArticleTabsBloom({
         </div>
       )}
     </SurfaceLevelProvider>
-  )
+  );
 }

@@ -8,38 +8,35 @@
  */
 
 /** Bridge enforces 20–64 chars, base58 alphabet, leading FTM. */
-const FAIR_ADDRESS_PATTERN = /^[FTM][a-km-zA-HJ-NP-Z1-9]{19,63}$/
+const FAIR_ADDRESS_PATTERN = /^[FTM][a-km-zA-HJ-NP-Z1-9]{19,63}$/;
 
 /** ≤ 8 fractional digits (FAIR has 8 decimals). */
-const FAIR_AMOUNT_PATTERN = /^\d+(\.\d{1,8})?$/
+const FAIR_AMOUNT_PATTERN = /^\d+(\.\d{1,8})?$/;
 
 export function isValidFairAddress(value: string): boolean {
-  return FAIR_ADDRESS_PATTERN.test(value)
+  return FAIR_ADDRESS_PATTERN.test(value);
 }
 
 function isWellFormedFairAmount(value: string): boolean {
-  return FAIR_AMOUNT_PATTERN.test(value)
+  return FAIR_AMOUNT_PATTERN.test(value);
 }
 
 export interface AmountBounds {
-  min: number
-  max: number
+  min: number;
+  max: number;
 }
 
 export type AmountValidation =
   | { ok: true; value: number }
-  | { ok: false; reason: 'empty' | 'malformed' | 'below_min' | 'above_max' }
+  | { ok: false; reason: 'empty' | 'malformed' | 'below_min' | 'above_max' };
 
-export function validateAmount(
-  raw: string,
-  bounds: AmountBounds,
-): AmountValidation {
-  const trimmed = raw.trim()
-  if (trimmed.length === 0) return { ok: false, reason: 'empty' }
-  if (!isWellFormedFairAmount(trimmed)) return { ok: false, reason: 'malformed' }
-  const numeric = Number(trimmed)
-  if (!Number.isFinite(numeric)) return { ok: false, reason: 'malformed' }
-  if (numeric < bounds.min) return { ok: false, reason: 'below_min' }
-  if (numeric > bounds.max) return { ok: false, reason: 'above_max' }
-  return { ok: true, value: numeric }
+export function validateAmount(raw: string, bounds: AmountBounds): AmountValidation {
+  const trimmed = raw.trim();
+  if (trimmed.length === 0) return { ok: false, reason: 'empty' };
+  if (!isWellFormedFairAmount(trimmed)) return { ok: false, reason: 'malformed' };
+  const numeric = Number(trimmed);
+  if (!Number.isFinite(numeric)) return { ok: false, reason: 'malformed' };
+  if (numeric < bounds.min) return { ok: false, reason: 'below_min' };
+  if (numeric > bounds.max) return { ok: false, reason: 'above_max' };
+  return { ok: true, value: numeric };
 }

@@ -1,17 +1,17 @@
-import type { ReactNode } from 'react'
-import { useParams } from 'react-router-dom'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import { Link } from '../../lib/navigation'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
-import Button from '../ui/Button'
-import { useJob } from '../../api/hooks'
-import { errorStatus } from '../../api/client'
-import SEO from '../SEO'
-import { AnimatedTitle } from '../ui/AnimatedTitle'
-import { useLocaleContext, useTranslation } from '../../lib/i18n'
-import { useCopyToClipboard } from '../../lib/useCopyToClipboard'
+import type { ReactNode } from 'react';
+import { useParams } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Link } from '../../lib/navigation';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine';
+import Button from '../ui/Button';
+import { useJob } from '../../api/hooks';
+import { errorStatus } from '../../api/client';
+import SEO from '../SEO';
+import { AnimatedTitle } from '../ui/AnimatedTitle';
+import { useLocaleContext, useTranslation } from '../../lib/i18n';
+import { useCopyToClipboard } from '../../lib/useCopyToClipboard';
 import {
   careerEmploymentLabel,
   careerJobMarkdown,
@@ -21,7 +21,7 @@ import {
   careerSeoDescription,
   careerSourceHost,
   careerTeam,
-} from '../../lib/careers'
+} from '../../lib/careers';
 
 /* ──────────────────────────────────────────────
  * /company/careers/:id
@@ -36,7 +36,7 @@ import {
  * ──────────────────────────────────────────── */
 
 function SectionHeading({ children }: { children?: ReactNode }) {
-  return <h3 className="relative not-first:mt-7 not-last:mb-3 font-medium text-lg">{children}</h3>
+  return <h3 className="relative not-first:mt-7 not-last:mb-3 font-medium text-lg">{children}</h3>;
 }
 
 /**
@@ -49,25 +49,42 @@ function JobDescription({ markdown }: { markdown: string }) {
       remarkPlugins={[remarkGfm]}
       components={{
         p: ({ children }) => (
-          <p className="not-first:mt-[13px] text-pretty text-muted-foreground leading-[26px]">{children}</p>
+          <p className="not-first:mt-[13px] text-pretty text-muted-foreground leading-[26px]">
+            {children}
+          </p>
         ),
         // The page's h1 is the role title, so a listing's own headings start below it.
         h1: SectionHeading,
         h2: SectionHeading,
         h3: SectionHeading,
-        h4: ({ children }) => <h4 className="relative not-first:mt-5 not-last:mb-2 font-medium">{children}</h4>,
+        h4: ({ children }) => (
+          <h4 className="relative not-first:mt-5 not-last:mb-2 font-medium">{children}</h4>
+        ),
         ul: ({ children }) => (
-          <ul className="not-first:mt-1.5 list-[square] pl-3.5 marker:text-muted-foreground">{children}</ul>
+          <ul className="not-first:mt-1.5 list-[square] pl-3.5 marker:text-muted-foreground">
+            {children}
+          </ul>
         ),
         ol: ({ children }) => (
-          <ol className="not-first:mt-1.5 list-decimal pl-5 marker:text-muted-foreground">{children}</ol>
+          <ol className="not-first:mt-1.5 list-decimal pl-5 marker:text-muted-foreground">
+            {children}
+          </ol>
         ),
         li: ({ children }) => (
-          <li className="pt-1 pl-1.5 text-pretty text-muted-foreground leading-[26px] first:pt-1.5">{children}</li>
+          <li className="pt-1 pl-1.5 text-pretty text-muted-foreground leading-[26px] first:pt-1.5">
+            {children}
+          </li>
         ),
-        strong: ({ children }) => <strong className="font-medium text-foreground">{children}</strong>,
+        strong: ({ children }) => (
+          <strong className="font-medium text-foreground">{children}</strong>
+        ),
         a: ({ href, children }) => (
-          <a className="underline underline-offset-4" href={href} target="_blank" rel="noopener noreferrer">
+          <a
+            className="underline underline-offset-4"
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {children}
           </a>
         ),
@@ -75,7 +92,7 @@ function JobDescription({ markdown }: { markdown: string }) {
     >
       {markdown}
     </ReactMarkdown>
-  )
+  );
 }
 
 function Fact({ label, value }: { label: string; value: string }) {
@@ -84,13 +101,13 @@ function Fact({ label, value }: { label: string; value: string }) {
       <p className="text-muted-foreground text-xs uppercase tracking-wider">{label}</p>
       <p>{value}</p>
     </div>
-  )
+  );
 }
 
 /** Apply where the role is published, plus the copy-link button and its confirmation. */
 function ApplyActions({ href }: { href: string }) {
-  const { t } = useTranslation()
-  const { copied, copy } = useCopyToClipboard()
+  const { t } = useTranslation();
+  const { copied, copy } = useCopyToClipboard();
 
   return (
     <div className="flex gap-2">
@@ -126,13 +143,13 @@ function ApplyActions({ href }: { href: string }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function CareerDetailContent() {
-  const { id = '' } = useParams<{ id: string }>()
-  const { locale } = useLocaleContext()
-  const { data: job, isPending, error } = useJob(id)
+  const { id = '' } = useParams<{ id: string }>();
+  const { locale } = useLocaleContext();
+  const { data: job, isPending, error } = useJob(id);
 
   if (isPending) {
     return (
@@ -148,18 +165,20 @@ export default function CareerDetailContent() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (!job) {
-    const unavailable = error !== null && errorStatus(error) !== 404
+    const unavailable = error !== null && errorStatus(error) !== 404;
     return (
       <>
         <SEO
           title={unavailable ? 'Open roles unavailable' : 'Position not found'}
-          description={unavailable
-            ? 'Open roles could not be loaded right now.'
-            : "This job posting doesn't exist or may have been removed."}
+          description={
+            unavailable
+              ? 'Open roles could not be loaded right now.'
+              : "This job posting doesn't exist or may have been removed."
+          }
           canonicalPath={careerJobPath({ id })}
           noIndex
         />
@@ -168,7 +187,9 @@ export default function CareerDetailContent() {
             {unavailable ? 'Open roles are unavailable.' : 'Position not found.'}
           </AnimatedTitle>
           <p className="pt-6 text-muted-foreground">
-            {unavailable ? 'Please try again in a few minutes.' : 'This role doesn’t exist or has been filled.'}
+            {unavailable
+              ? 'Please try again in a few minutes.'
+              : 'This role doesn’t exist or has been filled.'}
           </p>
           <p className="pt-8">
             <Link to="/company/careers#open-positions" className="underline underline-offset-4">
@@ -177,16 +198,16 @@ export default function CareerDetailContent() {
           </p>
         </div>
       </>
-    )
+    );
   }
 
-  const team = careerTeam(job)
-  const employment = careerEmploymentLabel(job)
-  const location = careerLocationLabel(job)
-  const salary = careerSalaryLabel(job.salary, locale)
-  const sourceHost = careerSourceHost(job)
-  const applyHref = job.applyUrl ?? job.canonicalUrl
-  const markdown = careerJobMarkdown(job)
+  const team = careerTeam(job);
+  const employment = careerEmploymentLabel(job);
+  const location = careerLocationLabel(job);
+  const salary = careerSalaryLabel(job.salary, locale);
+  const sourceHost = careerSourceHost(job);
+  const applyHref = job.applyUrl ?? job.canonicalUrl;
+  const markdown = careerJobMarkdown(job);
 
   return (
     <section className="mb-12 border-border border-b">
@@ -208,8 +229,17 @@ export default function CareerDetailContent() {
                   Careers
                 </Link>
               </div>
-              {employment && <div className="inline-block rounded-sm bg-surface px-1.5 py-0.5 text-sm">{employment}</div>}
-              <AnimatedTitle as="h1" className="mb-10 mt-2 max-w-[450px] text-heading-responsive-md">{job.title}</AnimatedTitle>
+              {employment && (
+                <div className="inline-block rounded-sm bg-surface px-1.5 py-0.5 text-sm">
+                  {employment}
+                </div>
+              )}
+              <AnimatedTitle
+                as="h1"
+                className="mb-10 mt-2 max-w-[450px] text-heading-responsive-md"
+              >
+                {job.title}
+              </AnimatedTitle>
               <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-8 sm:flex-row sm:gap-16 md:flex-col md:gap-8">
                   {location && <Fact label="Location" value={location} />}
@@ -230,7 +260,9 @@ export default function CareerDetailContent() {
                   <h3 className="font-medium text-lg">Skills</h3>
                   <ul className="mt-3 flex flex-wrap gap-2">
                     {job.skills.map((skill) => (
-                      <li key={skill} className="rounded-sm bg-surface px-2 py-1 text-sm">{skill}</li>
+                      <li key={skill} className="rounded-sm bg-surface px-2 py-1 text-sm">
+                        {skill}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -240,7 +272,12 @@ export default function CareerDetailContent() {
                 <h3 className="font-medium text-lg">How to apply</h3>
                 <p className="mt-3 text-pretty text-muted-foreground leading-[26px]">
                   Applications for this role are handled on{' '}
-                  <a className="underline underline-offset-4" href={applyHref} target="_blank" rel="noopener noreferrer">
+                  <a
+                    className="underline underline-offset-4"
+                    href={applyHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     {sourceHost}
                   </a>
                   , where the listing is published. We read every application.
@@ -253,5 +290,5 @@ export default function CareerDetailContent() {
         </div>
       </div>
     </section>
-  )
+  );
 }

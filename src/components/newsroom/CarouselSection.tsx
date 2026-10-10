@@ -1,24 +1,19 @@
-import type { NewsroomPostSummary } from '../../data/newsroom'
-import { NewsCardCarousel } from './NewsCard'
-import SectionHeaderWithLink from './SectionHeaderWithLink'
+import type { NewsroomPostSummary } from '../../data/newsroom';
+import { NewsCardCarousel } from './NewsCard';
+import SectionHeaderWithLink from './SectionHeaderWithLink';
 
 interface CarouselSectionProps {
-  title: string
-  href: string
-  articles: NewsroomPostSummary[]
-  linkText?: string
+  title: string;
+  href: string;
+  articles: NewsroomPostSummary[];
+  linkText?: string;
 }
 
 /* ──────────────────────────────────────────────────
  * Horizontal scroll carousel section
  * ────────────────────────────────────────────── */
-export default function CarouselSection({
-  title,
-  href,
-  articles,
-  linkText,
-}: CarouselSectionProps) {
-  if (articles.length === 0) return null
+export default function CarouselSection({ title, href, articles, linkText }: CarouselSectionProps) {
+  if (articles.length === 0) return null;
 
   return (
     <section className="w-full">
@@ -45,5 +40,5 @@ export default function CarouselSection({
         </div>
       </div>
     </section>
-  )
+  );
 }

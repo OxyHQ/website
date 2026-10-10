@@ -13,4 +13,4 @@
  * (which has its own DOM-based implementation) keep working.
  */
 
-export default null as unknown as never
+export default null as unknown as never;

@@ -1,20 +1,21 @@
-import { useState } from 'react'
-import Button from '../ui/Button'
-import { useCopyToClipboard } from '../../lib/useCopyToClipboard'
+import { useState } from 'react';
+import Button from '../ui/Button';
+import { useCopyToClipboard } from '../../lib/useCopyToClipboard';
 
-const TNP_DOWNLOADS_URL = 'https://tnp.network/downloads'
-const VERIFY_INSTRUCTIONS = 'Verify the published checksum and signature before running the installer.'
+const TNP_DOWNLOADS_URL = 'https://tnp.network/downloads';
+const VERIFY_INSTRUCTIONS =
+  'Verify the published checksum and signature before running the installer.';
 
-type Platform = 'macos' | 'linux' | 'windows'
+type Platform = 'macos' | 'linux' | 'windows';
 
 const platforms: { id: Platform; label: string }[] = [
   { id: 'macos', label: 'macOS' },
   { id: 'linux', label: 'Linux' },
   { id: 'windows', label: 'Windows' },
-]
+];
 
 function CopyButton({ text }: { text: string }) {
-  const { copied, copy } = useCopyToClipboard()
+  const { copied, copy } = useCopyToClipboard();
 
   return (
     <button
@@ -24,12 +25,12 @@ function CopyButton({ text }: { text: string }) {
     >
       {copied ? 'Copied' : 'Copy'}
     </button>
-  )
+  );
 }
 
 export default function TNPInstallContent() {
-  const [platform, setPlatform] = useState<Platform>('macos')
-  const downloadUrl = TNP_DOWNLOADS_URL
+  const [platform, setPlatform] = useState<Platform>('macos');
+  const downloadUrl = TNP_DOWNLOADS_URL;
 
   return (
     <div className="cursor-theme tnp-theme">
@@ -40,11 +41,10 @@ export default function TNPInstallContent() {
             <div className="mono-tag mb-v1 flex items-center justify-center gap-2 text-sm">
               <span>[</span> <span>Install</span> <span>]</span>
             </div>
-            <h1 className="type-xl sm:type-2xl text-balance mb-v1 gradient-text">
-              Install TNP
-            </h1>
+            <h1 className="type-xl sm:type-2xl text-balance mb-v1 gradient-text">Install TNP</h1>
             <p className="type-base text-muted-foreground text-pretty mb-v1">
-              Download a signed installer, verify it, then run it locally to start resolving TNP domains.
+              Download a signed installer, verify it, then run it locally to start resolving TNP
+              domains.
             </p>
           </div>
         </div>
@@ -84,8 +84,9 @@ export default function TNPInstallContent() {
                 <div className="type-base space-y-4">
                   <h3>macOS</h3>
                   <p className="text-muted-foreground">
-                    After verification, the installer configures your system DNS resolver to query TNP nameservers for
-                    TNP domains, while forwarding everything else to your default resolver.
+                    After verification, the installer configures your system DNS resolver to query
+                    TNP nameservers for TNP domains, while forwarding everything else to your
+                    default resolver.
                   </p>
                   <div className="space-y-2 text-muted-foreground">
                     <p className="type-sm">Requirements:</p>
@@ -98,7 +99,13 @@ export default function TNPInstallContent() {
                     <p className="type-sm">What the installer does:</p>
                     <ul className="type-sm list-disc pl-5 space-y-1">
                       <li>Installs the verified TNP resolver binary</li>
-                      <li>Creates a resolver entry in <code className="rounded bg-card px-1.5 py-0.5 text-xs text-foreground">/etc/resolver/</code> for each TNP TLD</li>
+                      <li>
+                        Creates a resolver entry in{' '}
+                        <code className="rounded bg-card px-1.5 py-0.5 text-xs text-foreground">
+                          /etc/resolver/
+                        </code>{' '}
+                        for each TNP TLD
+                      </li>
                       <li>Starts a lightweight background service via launchd</li>
                     </ul>
                   </div>
@@ -125,7 +132,9 @@ export default function TNPInstallContent() {
                     <p className="type-sm">What the installer does:</p>
                     <ul className="type-sm list-disc pl-5 space-y-1">
                       <li>Installs the verified TNP resolver binary</li>
-                      <li>Configures systemd-resolved split DNS (or adds entries to resolv.conf)</li>
+                      <li>
+                        Configures systemd-resolved split DNS (or adds entries to resolv.conf)
+                      </li>
                       <li>Enables a systemd service for the TNP resolver</li>
                     </ul>
                   </div>
@@ -151,7 +160,8 @@ export default function TNPInstallContent() {
                         className="text-primary-text hover:text-primary transition-colors"
                       >
                         tnp.network
-                      </a>.
+                      </a>
+                      .
                     </p>
                   </div>
                 </div>
@@ -165,32 +175,42 @@ export default function TNPInstallContent() {
             <div className="type-base text-muted-foreground space-y-4 max-w-prose">
               <p>
                 TNP runs a small local DNS resolver on your machine. When you visit a TNP domain
-                (like <code className="rounded bg-card px-1.5 py-0.5 text-xs text-foreground">nate.ox</code>),
-                the resolver queries TNP nameservers and returns the right IP address. For all other
-                domains, it forwards the query to your normal DNS provider.
+                (like{' '}
+                <code className="rounded bg-card px-1.5 py-0.5 text-xs text-foreground">
+                  nate.ox
+                </code>
+                ), the resolver queries TNP nameservers and returns the right IP address. For all
+                other domains, it forwards the query to your normal DNS provider.
               </p>
               <p>
                 There is no VPN. There is no traffic routing. There is no proxy. TNP only touches
-                DNS resolution. Your traffic goes directly to the destination, just like it always does.
+                DNS resolution. Your traffic goes directly to the destination, just like it always
+                does.
               </p>
               <p>
-                To uninstall, run <code className="rounded bg-card px-1.5 py-0.5 text-xs text-foreground">tnp uninstall</code> and
-                everything is cleaned up.
+                To uninstall, run{' '}
+                <code className="rounded bg-card px-1.5 py-0.5 text-xs text-foreground">
+                  tnp uninstall
+                </code>{' '}
+                and everything is cleaned up.
               </p>
             </div>
           </div>
 
           {/* ── Back CTA ── */}
           <div className="mt-v2 flex gap-x-g1 items-center flex-wrap">
-            <Button href="/tnp">
-              Back to TNP
-            </Button>
-            <Button variant="outline" href="https://tnp.network/register" target="_blank" rel="noopener noreferrer">
+            <Button href="/tnp">Back to TNP</Button>
+            <Button
+              variant="outline"
+              href="https://tnp.network/register"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Register a Domain
             </Button>
           </div>
         </div>
       </section>
     </div>
-  )
+  );
 }

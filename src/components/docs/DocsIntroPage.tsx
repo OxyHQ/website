@@ -1,27 +1,39 @@
-import { Link } from '../../lib/navigation'
-import { useReducedMotion } from 'framer-motion'
-import { useLottie } from 'lottie-react'
-import docsHeroAnimation from '../../assets/lottie/docs-hero.json'
-import { buildDocsHref, getPackages } from '../../content/docs-loader'
-import type { SyncedPackage } from '../../../scripts/types'
-import DocsSubNav from './DocsSubNav'
-import { DocsPackageSidebar, buildSidebar } from './DocsPackageSidebar'
-import { getPackageLogo } from './getPackageLogo'
-import { AnimatedTitle } from '../ui/AnimatedTitle'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { Link } from '../../lib/navigation';
+import { useReducedMotion } from 'framer-motion';
+import { useLottie } from 'lottie-react';
+import docsHeroAnimation from '../../assets/lottie/docs-hero.json';
+import { buildDocsHref, getPackages } from '../../content/docs-loader';
+import type { SyncedPackage } from '../../../scripts/types';
+import DocsSubNav from './DocsSubNav';
+import { DocsPackageSidebar, buildSidebar } from './DocsPackageSidebar';
+import { getPackageLogo } from './getPackageLogo';
+import { AnimatedTitle } from '../ui/AnimatedTitle';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
 
 interface CategoryConfig {
-  category: SyncedPackage['category']
-  title: string
-  description: string
+  category: SyncedPackage['category'];
+  title: string;
+  description: string;
 }
 
 const categoryOrder: CategoryConfig[] = [
-  { category: 'ui-library', title: 'UI Library', description: 'Cross-platform components and theming primitives.' },
-  { category: 'sdk', title: 'SDKs', description: 'TypeScript clients, React hooks, and React Native components.' },
-  { category: 'app', title: 'Apps', description: 'Guides for the Oxy product surface: accounts, inbox, console, auth.' },
+  {
+    category: 'ui-library',
+    title: 'UI Library',
+    description: 'Cross-platform components and theming primitives.',
+  },
+  {
+    category: 'sdk',
+    title: 'SDKs',
+    description: 'TypeScript clients, React hooks, and React Native components.',
+  },
+  {
+    category: 'app',
+    title: 'Apps',
+    description: 'Guides for the Oxy product surface: accounts, inbox, console, auth.',
+  },
   { category: 'service', title: 'Services', description: 'Backend services and REST APIs.' },
-]
+];
 
 const categoryVisuals: Record<SyncedPackage['category'], { icon: string; hover: string }> = {
   'ui-library': {
@@ -40,7 +52,7 @@ const categoryVisuals: Record<SyncedPackage['category'], { icon: string; hover: 
     icon: 'bg-primary/15 text-primary',
     hover: 'hover:bg-primary/8',
   },
-}
+};
 
 /**
  * Canonical landing URL for a package card. Versioned packages link to
@@ -48,14 +60,14 @@ const categoryVisuals: Record<SyncedPackage['category'], { icon: string; hover: 
  * to the bare package URL (no version segment).
  */
 function pageHref(pkg: SyncedPackage): string {
-  return buildDocsHref(pkg, pkg.latestVersion, '')
+  return buildDocsHref(pkg, pkg.latestVersion, '');
 }
 
 /* ─── Main Component ─── */
 export default function DocsIntroPage() {
-  const packages = getPackages()
-  const sections = buildSidebar()
-  const reduceMotion = useReducedMotion()
+  const packages = getPackages();
+  const sections = buildSidebar();
+  const reduceMotion = useReducedMotion();
   const { View: docsHeroAnimationView } = useLottie(
     {
       animationData: docsHeroAnimation,
@@ -65,7 +77,7 @@ export default function DocsIntroPage() {
       rendererSettings: { preserveAspectRatio: 'xMidYMid meet' },
     },
     { width: '100%', height: '100%' },
-  )
+  );
 
   return (
     <div className="relative antialiased bg-[color-mix(in_srgb,var(--primary)_5%,var(--background))]">
@@ -97,87 +109,112 @@ export default function DocsIntroPage() {
           <div className="container relative z-10">
             {/* Hero content */}
             <div className="mx-auto w-full max-w-3xl py-12 lg:py-20 lg:pb-10">
-              <AnimatedTitle as="h1" className="block text-heading-responsive-lg text-center font-semibold text-foreground">
+              <AnimatedTitle
+                as="h1"
+                className="block text-heading-responsive-lg text-center font-semibold text-foreground"
+              >
                 Documentation
               </AnimatedTitle>
               <div className="max-w-xl mx-auto px-4 mt-4 text-lg text-center text-muted-foreground">
                 Everything you need to build on the Oxy platform: open source, no vendor lock-in.
               </div>
-
             </div>
 
             {/* Category sections */}
             <div className="w-full space-y-8 pb-14">
               {categoryOrder.map((cfg) => {
-                const pkgs = packages.filter((p) => p.category === cfg.category)
-                if (pkgs.length === 0) return null
-                const visual = categoryVisuals[cfg.category]
+                const pkgs = packages.filter((p) => p.category === cfg.category);
+                if (pkgs.length === 0) return null;
+                const visual = categoryVisuals[cfg.category];
                 return (
-                  <section key={cfg.category} className="grid gap-4 xl:grid-cols-[minmax(0,13rem)_1fr] xl:gap-8">
+                  <section
+                    key={cfg.category}
+                    className="grid gap-4 xl:grid-cols-[minmax(0,13rem)_1fr] xl:gap-8"
+                  >
                     <div className="sticky top-[calc(var(--site-header-occlusion-bottom)+0.5rem)] z-10 -mx-2 self-start rounded-xl bg-[color-mix(in_srgb,var(--primary)_5%,var(--background))] px-2 py-2 lg:top-[calc(var(--site-header-occlusion-bottom)+3.5rem)] xl:mx-0 xl:px-0 xl:py-3">
-                      <h2 className="text-2xl font-semibold tracking-tight text-primary">{cfg.title}</h2>
-                      <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">{cfg.description}</p>
+                      <h2 className="text-2xl font-semibold tracking-tight text-primary">
+                        {cfg.title}
+                      </h2>
+                      <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
+                        {cfg.description}
+                      </p>
                     </div>
-                  <div className="grid self-start gap-1.5 sm:grid-cols-2 xl:grid-cols-3">
-                    {pkgs.map((pkg) => {
-                      const logo = getPackageLogo(pkg.shortName)
-                      return (
-                        <Link
-                          key={pkg.shortName}
-                          to={pageHref(pkg)}
-                          className={`group grid grid-cols-[2rem_minmax(0,1fr)_1.5rem] items-center gap-x-2 overflow-hidden rounded-2xl bg-card px-2 py-1.5 text-card-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${visual.hover}`}
-                          data-docs-package-card
-                        >
-                          {logo ? (
-                            <span
-                              aria-hidden="true"
-                              className="size-8 shrink-0 overflow-hidden rounded-full"
-                              data-docs-package-logo
-                            >
-                              <img src={logo} alt="" className="size-full object-cover" loading="lazy" decoding="async" />
-                            </span>
-                          ) : (
-                            <span
-                              aria-hidden="true"
-                              className={`flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full ${visual.icon}`}
-                              data-docs-package-logo
-                            >
-                              <span className="text-xs font-semibold">
-                                {pkg.displayName.replace(/^@[^/]+\//, '').charAt(0).toUpperCase() || '?'}
+                    <div className="grid self-start gap-1.5 sm:grid-cols-2 xl:grid-cols-3">
+                      {pkgs.map((pkg) => {
+                        const logo = getPackageLogo(pkg.shortName);
+                        return (
+                          <Link
+                            key={pkg.shortName}
+                            to={pageHref(pkg)}
+                            className={`group grid grid-cols-[2rem_minmax(0,1fr)_1.5rem] items-center gap-x-2 overflow-hidden rounded-2xl bg-card px-2 py-1.5 text-card-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${visual.hover}`}
+                            data-docs-package-card
+                          >
+                            {logo ? (
+                              <span
+                                aria-hidden="true"
+                                className="size-8 shrink-0 overflow-hidden rounded-full"
+                                data-docs-package-logo
+                              >
+                                <img
+                                  src={logo}
+                                  alt=""
+                                  className="size-full object-cover"
+                                  loading="lazy"
+                                  decoding="async"
+                                />
                               </span>
-                            </span>
-                          )}
-                          <div className="min-w-0" data-docs-package-copy>
-                            <div className="truncate text-base font-semibold leading-5 tracking-tight text-card-foreground">
-                              {pkg.displayName}
-                            </div>
-                            <div className="flex min-h-[15px] min-w-0 items-center gap-1.5">
-                              <span className="min-w-0 truncate font-mono text-xs leading-4 text-muted-foreground">
-                                {pkg.package}
-                              </span>
-                              {pkg.versioned ? (
-                                <span className="shrink-0 rounded-full bg-background/70 px-1.5 py-0.5 text-[11px] font-medium uppercase leading-4 tracking-wider text-muted-foreground">
-                                  v{pkg.latestVersion}
+                            ) : (
+                              <span
+                                aria-hidden="true"
+                                className={`flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full ${visual.icon}`}
+                                data-docs-package-logo
+                              >
+                                <span className="text-xs font-semibold">
+                                  {pkg.displayName
+                                    .replace(/^@[^/]+\//, '')
+                                    .charAt(0)
+                                    .toUpperCase() || '?'}
                                 </span>
+                              </span>
+                            )}
+                            <div className="min-w-0" data-docs-package-copy>
+                              <div className="truncate text-base font-semibold leading-5 tracking-tight text-card-foreground">
+                                {pkg.displayName}
+                              </div>
+                              <div className="flex min-h-[15px] min-w-0 items-center gap-1.5">
+                                <span className="min-w-0 truncate font-mono text-xs leading-4 text-muted-foreground">
+                                  {pkg.package}
+                                </span>
+                                {pkg.versioned ? (
+                                  <span className="shrink-0 rounded-full bg-background/70 px-1.5 py-0.5 text-[11px] font-medium uppercase leading-4 tracking-wider text-muted-foreground">
+                                    v{pkg.latestVersion}
+                                  </span>
+                                ) : null}
+                              </div>
+                              {pkg.description ? (
+                                <p className="mt-0.5 truncate text-sm leading-[15px] text-muted-foreground">
+                                  {pkg.description}
+                                </p>
                               ) : null}
                             </div>
-                            {pkg.description ? (
-                              <p className="mt-0.5 truncate text-sm leading-[15px] text-muted-foreground">{pkg.description}</p>
-                            ) : null}
-                          </div>
-                          <span
-                            aria-hidden="true"
-                            className="grid size-6 place-items-center rounded-full bg-background/70 text-muted-foreground transition-colors duration-200 group-hover:bg-primary group-hover:text-primary-foreground"
-                            data-docs-package-affordance
-                          >
-                            <RiArrowRightLine width={14} height={14} fill="currentColor" aria-hidden />
-                          </span>
-                        </Link>
-                      )
-                    })}
-                  </div>
+                            <span
+                              aria-hidden="true"
+                              className="grid size-6 place-items-center rounded-full bg-background/70 text-muted-foreground transition-colors duration-200 group-hover:bg-primary group-hover:text-primary-foreground"
+                              data-docs-package-affordance
+                            >
+                              <RiArrowRightLine
+                                width={14}
+                                height={14}
+                                fill="currentColor"
+                                aria-hidden
+                              />
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
                   </section>
-                )
+                );
               })}
 
               {packages.length === 0 ? (
@@ -193,5 +230,5 @@ export default function DocsIntroPage() {
         </main>
       </div>
     </div>
-  )
+  );
 }

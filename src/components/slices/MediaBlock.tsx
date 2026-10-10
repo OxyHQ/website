@@ -1,17 +1,17 @@
 interface MediaBlockProps {
-  src: string
-  alt: string
+  src: string;
+  alt: string;
   /** A `poster` turns the block into an autoplaying, muted, looping video. */
-  poster?: string
+  poster?: string;
   /** Aspect ratio classes — defaults to the wide editorial crop. */
-  ratioClassName?: string
+  ratioClassName?: string;
   /**
    * `card` insets the media to the content width and rounds it;
    * `bleed` fills the viewport out to the tight gutter, square-cornered.
    */
-  variant?: 'card' | 'bleed'
+  variant?: 'card' | 'bleed';
   /** Outer spacing, so a page can butt two media blocks together. */
-  className?: string
+  className?: string;
 }
 
 /** A full-width image or video, either inset as a card or bled to the edges. */
@@ -23,7 +23,7 @@ export default function MediaBlock({
   variant = 'card',
   className = '',
 }: MediaBlockProps) {
-  const media = `size-full object-cover ${variant === 'card' ? 'sm:rounded-xl lg:rounded-2xl' : ''} ${ratioClassName}`
+  const media = `size-full object-cover ${variant === 'card' ? 'sm:rounded-xl lg:rounded-2xl' : ''} ${ratioClassName}`;
 
   return (
     <div
@@ -35,12 +35,20 @@ export default function MediaBlock({
       } ${className}`}
     >
       {poster ? (
-        <video className={`${media} block transform-gpu will-change-transform`} loop autoPlay muted playsInline preload="metadata" poster={poster}>
+        <video
+          className={`${media} block transform-gpu will-change-transform`}
+          loop
+          autoPlay
+          muted
+          playsInline
+          preload="metadata"
+          poster={poster}
+        >
           <source src={src} type="video/mp4" />
         </video>
       ) : (
         <img alt={alt} loading="lazy" decoding="async" className={media} src={src} />
       )}
     </div>
-  )
+  );
 }

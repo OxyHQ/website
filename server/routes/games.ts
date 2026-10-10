@@ -1,13 +1,13 @@
-import { Router } from 'express'
-import { count, desc, eq, max, sum } from 'drizzle-orm'
-import { z } from 'zod'
-import { db } from '../db/postgres.js'
-import { memoryGameRuns } from '../db/schema/index.js'
-import { requireAuth } from '../middleware/auth.js'
-import { toErrorMessage } from '../utils/errorMessage.js'
-import { validate } from '../utils/validate.js'
+import { Router } from 'express';
+import { count, desc, eq, max, sum } from 'drizzle-orm';
+import { z } from 'zod';
+import { db } from '../db/postgres.js';
+import { memoryGameRuns } from '../db/schema/index.js';
+import { requireAuth } from '../middleware/auth.js';
+import { toErrorMessage } from '../utils/errorMessage.js';
+import { validate } from '../utils/validate.js';
 
-const router = Router()
+const router = Router();
 
 /* ──────────────────────────────────────────────
  * The 404 page's memory game.
@@ -24,34 +24,40 @@ const router = Router()
  * spare. The client cannot be trusted with its own arithmetic, so a run that
  * claims more than a perfect one is rejected rather than stored.
  */
-const MAX_LEVEL = 4
-const MAX_MOVES = 66
-const MAX_SCORE = 4800
+const MAX_LEVEL = 4;
+const MAX_MOVES = 66;
+const MAX_SCORE = 4800;
 
 /** Points per account level. Level 1 is where everyone starts. */
-const POINTS_PER_LEVEL = 2500
+const POINTS_PER_LEVEL = 2500;
 
 function accountLevel(totalPoints: number): number {
-  return Math.floor(totalPoints / POINTS_PER_LEVEL) + 1
+  return Math.floor(totalPoints / POINTS_PER_LEVEL) + 1;
 }
 
-const runBodySchema = z.object({
-  score: z.number().int().min(0).max(MAX_SCORE),
-  level: z.number().int().min(1).max(MAX_LEVEL),
-  moves: z.number().int().min(0).max(MAX_MOVES),
-  pairsFound: z.number().int().min(0).max(36),
-  clearedAll: z.boolean(),
-  durationMs: z.number().int().min(0).max(2 * 60 * 60 * 1000),
-}).passthrough()
+const runBodySchema = z
+  .object({
+    score: z.number().int().min(0).max(MAX_SCORE),
+    level: z.number().int().min(1).max(MAX_LEVEL),
+    moves: z.number().int().min(0).max(MAX_MOVES),
+    pairsFound: z.number().int().min(0).max(36),
+    clearedAll: z.boolean(),
+    durationMs: z
+      .number()
+      .int()
+      .min(0)
+      .max(2 * 60 * 60 * 1000),
+  })
+  .passthrough();
 
 export interface MemoryGameStats {
-  runs: number
-  bestScore: number
-  bestLevel: number
-  totalPoints: number
-  accountLevel: number
+  runs: number;
+  bestScore: number;
+  bestLevel: number;
+  totalPoints: number;
+  accountLevel: number;
   /** Points still owed for the next account level, so the panel can say it. */
-  pointsToNextLevel: number
+  pointsToNextLevel: number;
 }
 
 async function statsFor(userId: string): Promise<MemoryGameStats> {
@@ -64,10 +70,10 @@ async function statsFor(userId: string): Promise<MemoryGameStats> {
       totalPoints: sum(memoryGameRuns.score),
     })
     .from(memoryGameRuns)
-    .where(eq(memoryGameRuns.userId, userId))
+    .where(eq(memoryGameRuns.userId, userId));
 
-  const totalPoints = Number(row?.totalPoints ?? 0)
-  const level = accountLevel(totalPoints)
+  const totalPoints = Number(row?.totalPoints ?? 0);
+  const level = accountLevel(totalPoints);
   return {
     runs: Number(row?.runs ?? 0),
     bestScore: Number(row?.bestScore ?? 0),
@@ -75,23 +81,23 @@ async function statsFor(userId: string): Promise<MemoryGameStats> {
     totalPoints,
     accountLevel: level,
     pointsToNextLevel: level * POINTS_PER_LEVEL - totalPoints,
-  }
+  };
 }
 
 router.get('/memory/stats', requireAuth, async (req, res) => {
-  const user = req.user
-  if (!user) return res.status(401).json({ error: 'Authentication required' })
+  const user = req.user;
+  if (!user) return res.status(401).json({ error: 'Authentication required' });
 
   try {
-    res.json(await statsFor(user.id))
+    res.json(await statsFor(user.id));
   } catch (err) {
-    res.status(500).json({ error: `Failed to fetch game stats: ${toErrorMessage(err)}` })
+    res.status(500).json({ error: `Failed to fetch game stats: ${toErrorMessage(err)}` });
   }
-})
+});
 
 router.get('/memory/runs', requireAuth, async (req, res) => {
-  const user = req.user
-  if (!user) return res.status(401).json({ error: 'Authentication required' })
+  const user = req.user;
+  if (!user) return res.status(401).json({ error: 'Authentication required' });
 
   try {
     const runs = await db
@@ -99,18 +105,18 @@ router.get('/memory/runs', requireAuth, async (req, res) => {
       .from(memoryGameRuns)
       .where(eq(memoryGameRuns.userId, user.id))
       .orderBy(desc(memoryGameRuns._id))
-      .limit(20)
-    res.json(runs)
+      .limit(20);
+    res.json(runs);
   } catch (err) {
-    res.status(500).json({ error: `Failed to fetch game runs: ${toErrorMessage(err)}` })
+    res.status(500).json({ error: `Failed to fetch game runs: ${toErrorMessage(err)}` });
   }
-})
+});
 
 router.post('/memory/runs', requireAuth, async (req, res) => {
-  const user = req.user
-  if (!user) return res.status(401).json({ error: 'Authentication required' })
+  const user = req.user;
+  if (!user) return res.status(401).json({ error: 'Authentication required' });
 
-  const run = validate(runBodySchema, req.body)
+  const run = validate(runBodySchema, req.body);
 
   try {
     // The owner comes from the credential, never from the body.
@@ -126,12 +132,12 @@ router.post('/memory/runs', requireAuth, async (req, res) => {
         clearedAll: run.clearedAll,
         durationMs: run.durationMs,
       })
-      .returning()
+      .returning();
 
-    res.status(201).json({ run: saved, stats: await statsFor(user.id) })
+    res.status(201).json({ run: saved, stats: await statsFor(user.id) });
   } catch (err) {
-    res.status(500).json({ error: `Failed to save the run: ${toErrorMessage(err)}` })
+    res.status(500).json({ error: `Failed to save the run: ${toErrorMessage(err)}` });
   }
-})
+});
 
-export default router
+export default router;

@@ -1,58 +1,51 @@
-import { useState } from 'react'
-import { Avatar } from '@oxy.so/bloom/avatar'
-import { Badge } from '@oxy.so/bloom/badge'
+import { useState } from 'react';
+import { Avatar } from '@oxy.so/bloom/avatar';
+import { Badge } from '@oxy.so/bloom/badge';
 import {
   DataTable,
   DataTableFilter,
   DataTableSearch,
   DataTableSelect,
   DataTableRowActions,
-} from '@oxy.so/bloom/data-table'
-import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
-import { useTranslation } from '../../lib/i18n'
+} from '@oxy.so/bloom/data-table';
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine';
+import { useTranslation } from '../../lib/i18n';
 
 const customers = Array.from({ length: 48 }, (_, i) => ({
   id: String(i),
-  name: [
-    'Maya Collins',
-    'Alex Rivera',
-    'Sam Morgan',
-    'Jamie Lee',
-    'Robin Taylor',
-    'Morgan Chen',
-  ][i % 6]!,
+  name: ['Maya Collins', 'Alex Rivera', 'Sam Morgan', 'Jamie Lee', 'Robin Taylor', 'Morgan Chen'][
+    i % 6
+  ]!,
   price: 145 + ((i * 193) % 3100),
   purchase: ['waiting', 'completed', 'processing'][i % 3]!,
   status: ['failed', 'delivered', 'pending'][i % 3]!,
   product: ['web', 'native'][i % 2]!,
   region: ['eu', 'us'][i % 2]!,
   updated: new Date(2026, 8, 30 - (i % 20)),
-}))
+}));
 
 /** Bloom's table and its own filters, selects, badges and row actions. */
 export default function TableDemo() {
-  const { t, locale } = useTranslation()
-  const [price, setPrice] = useState('all')
-  const [product, setProduct] = useState('all')
-  const [region, setRegion] = useState('all')
-  const [search, setSearch] = useState('')
-  const [purchases, setPurchases] = useState<Record<string, string>>({})
-  const [copied, setCopied] = useState(false)
-  const text = (key: string) => t(`bloom.table.${key}`)
+  const { t, locale } = useTranslation();
+  const [price, setPrice] = useState('all');
+  const [product, setProduct] = useState('all');
+  const [region, setRegion] = useState('all');
+  const [search, setSearch] = useState('');
+  const [purchases, setPurchases] = useState<Record<string, string>>({});
+  const [copied, setCopied] = useState(false);
+  const text = (key: string) => t(`bloom.table.${key}`);
   const rows = customers.filter(
     (row) =>
       (price === 'all' || row.price < 1000) &&
       (product === 'all' || row.product === product) &&
       (region === 'all' || row.region === region) &&
-      row.name
-        .toLocaleLowerCase(locale)
-        .includes(search.toLocaleLowerCase(locale)),
-  )
+      row.name.toLocaleLowerCase(locale).includes(search.toLocaleLowerCase(locale)),
+  );
   const options = [
     { value: 'waiting', label: text('waiting'), dot: 'warning' as const },
     { value: 'completed', label: text('completed'), dot: 'success' as const },
     { value: 'processing', label: text('processing'), dot: 'info' as const },
-  ]
+  ];
   return (
     <DataTable
       rows={rows}
@@ -149,9 +142,7 @@ export default function TableDemo() {
                   icon: RiFileCopyLine,
                   label: copied ? t('docs.copied') : t('common.copyCode'),
                   onPress: () => {
-                    void navigator.clipboard
-                      .writeText(row.name)
-                      .then(() => setCopied(true))
+                    void navigator.clipboard.writeText(row.name).then(() => setCopied(true));
                   },
                 },
               ]}
@@ -200,5 +191,5 @@ export default function TableDemo() {
       }
       style={{ width: '100%' }}
     />
-  )
+  );
 }

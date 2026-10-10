@@ -1,26 +1,26 @@
-import { useLocation, useParams } from 'react-router-dom'
-import { Navigate } from '../../lib/navigation'
-import { buildDocsHref, getPackage, getPage, resolveVersion } from '../../content/docs-loader'
-import { DocsApiBody } from './DocsApiBody'
-import { DocsMdxBody } from './DocsMdxBody'
-import { BloomOverviewLinks } from '../docs-platform/BloomOverviewLinks'
-import { buildSidebar } from './DocsPackageSidebar'
-import { DocsShell } from './DocsShell'
-import type { DocsRouteParams } from './docsTypes'
-import { resolveDocsRoute } from './resolveDocsRoute'
+import { useLocation, useParams } from 'react-router-dom';
+import { Navigate } from '../../lib/navigation';
+import { buildDocsHref, getPackage, getPage, resolveVersion } from '../../content/docs-loader';
+import { DocsApiBody } from './DocsApiBody';
+import { DocsMdxBody } from './DocsMdxBody';
+import { BloomOverviewLinks } from '../docs-platform/BloomOverviewLinks';
+import { buildSidebar } from './DocsPackageSidebar';
+import { DocsShell } from './DocsShell';
+import type { DocsRouteParams } from './docsTypes';
+import { resolveDocsRoute } from './resolveDocsRoute';
 
 export default function DocsPage() {
-  const params = useParams<DocsRouteParams>()
-  const location = useLocation()
+  const params = useParams<DocsRouteParams>();
+  const location = useLocation();
 
   // `/developers/docs/api[/:version]` — Scalar-rendered REST reference.
-  const onApiRoute = location.pathname.startsWith('/developers/docs/api')
+  const onApiRoute = location.pathname.startsWith('/developers/docs/api');
 
   if (onApiRoute) {
-    const apiPkg = getPackage('api')
-    const requestedVersion = typeof params.version === 'string' ? params.version : ''
-    const resolvedVersion = apiPkg ? resolveVersion(apiPkg, requestedVersion) : undefined
-    const version = resolvedVersion?.version ?? apiPkg?.latestVersion ?? 'main'
+    const apiPkg = getPackage('api');
+    const requestedVersion = typeof params.version === 'string' ? params.version : '';
+    const resolvedVersion = apiPkg ? resolveVersion(apiPkg, requestedVersion) : undefined;
+    const version = resolvedVersion?.version ?? apiPkg?.latestVersion ?? 'main';
     // Scalar renders its own tag/operation/search sidebar inside ApiReference,
     // so we mount this route without our own sidebar — otherwise we ship two
     // nav rails plus the surrounding shell aside and Scalar gets squeezed
@@ -39,29 +39,29 @@ export default function DocsPage() {
       >
         <DocsApiBody version={version} />
       </DocsShell>
-    )
+    );
   }
 
-  const resolved = resolveDocsRoute(params)
+  const resolved = resolveDocsRoute(params);
 
   if (resolved === null) {
     // Unknown package → 404 within docs surfaces; bounce to the hub.
-    return <Navigate to="/developers/docs" replace />
+    return <Navigate to="/developers/docs" replace />;
   }
   if (resolved === 'redirect') {
-    const fallbackPkg = params.package ? getPackage(params.package) : undefined
+    const fallbackPkg = params.package ? getPackage(params.package) : undefined;
     const dest = fallbackPkg
       ? buildDocsHref(fallbackPkg, fallbackPkg.latestVersion, '')
-      : '/developers/docs'
-    return <Navigate to={dest} replace />
+      : '/developers/docs';
+    return <Navigate to={dest} replace />;
   }
   if (resolved.kind === 'empty') {
     // Package + version exist but no docs have been published yet. Render
     // the shell with a friendly placeholder so the sidebar (and active
     // package highlight) still appears. Slug intentionally left blank so
     // the package row matches `activePath === node.href` and highlights.
-    const { pkg, version } = resolved
-    const sections = buildSidebar(pkg, version)
+    const { pkg, version } = resolved;
+    const sections = buildSidebar(pkg, version);
     return (
       <DocsShell
         sections={sections}
@@ -78,16 +78,16 @@ export default function DocsPage() {
           </p>
         </div>
       </DocsShell>
-    )
+    );
   }
 
-  const { pkg, version, slug } = resolved
-  const page = getPage(version, slug)
+  const { pkg, version, slug } = resolved;
+  const page = getPage(version, slug);
   if (!page) {
     // Defensive — resolveRoute guards this, but keep TypeScript narrowing happy.
-    return <Navigate to={buildDocsHref(pkg, pkg.latestVersion, '')} replace />
+    return <Navigate to={buildDocsHref(pkg, pkg.latestVersion, '')} replace />;
   }
-  const sections = buildSidebar(pkg, version)
+  const sections = buildSidebar(pkg, version);
   return (
     <DocsShell
       sections={sections}
@@ -103,5 +103,5 @@ export default function DocsPage() {
       <DocsMdxBody file={page.file} />
       {pkg.shortName === 'bloom' && slug === '' ? <BloomOverviewLinks /> : null}
     </DocsShell>
-  )
+  );
 }

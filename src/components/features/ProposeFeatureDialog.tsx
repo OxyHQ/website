@@ -1,16 +1,16 @@
-import { useRef, useState } from 'react'
-import { Link } from '../../lib/navigation'
-import { Dialog } from '@oxy.so/bloom/dialog'
-import { Field } from '@oxy.so/bloom/field'
-import { TextField, TextFieldInput, TextFieldSuffix } from '@oxy.so/bloom/text-field'
-import { Textarea } from '@oxy.so/bloom/textarea'
-import { useAuth } from '@oxy.so/services/ui/client'
-import { RiArrowUpSLine } from '@oxy.so/bloom/icons/RiArrowUpSLine'
-import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
-import Button from '../ui/Button'
-import OptionSelect from '../ui/OptionSelect'
-import FeatureStatusBadge from './FeatureStatusBadge'
-import { featureRequestPath } from '../../lib/featureRequest'
+import { useRef, useState } from 'react';
+import { Link } from '../../lib/navigation';
+import { Dialog } from '@oxy.so/bloom/dialog';
+import { Field } from '@oxy.so/bloom/field';
+import { TextField, TextFieldInput, TextFieldSuffix } from '@oxy.so/bloom/text-field';
+import { Textarea } from '@oxy.so/bloom/textarea';
+import { useAuth } from '@oxy.so/services/ui/client';
+import { RiArrowUpSLine } from '@oxy.so/bloom/icons/RiArrowUpSLine';
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine';
+import Button from '../ui/Button';
+import OptionSelect from '../ui/OptionSelect';
+import FeatureStatusBadge from './FeatureStatusBadge';
+import { featureRequestPath } from '../../lib/featureRequest';
 import {
   useProposeFeature,
   useSimilarFeatures,
@@ -18,16 +18,16 @@ import {
   type FeatureAppOption,
   type FeatureAppsResponse,
   type FeatureRequestData,
-} from '../../api/hooks'
+} from '../../api/hooks';
 
 /** How long typing settles before the duplicate lookup runs, in ms. */
-const SIMILAR_DEBOUNCE_MS = 300
+const SIMILAR_DEBOUNCE_MS = 300;
 
 interface ProposeFeatureDialogProps {
-  open: boolean
-  onClose: () => void
-  apps: FeatureAppOption[]
-  limits: FeatureAppsResponse['limits']
+  open: boolean;
+  onClose: () => void;
+  apps: FeatureAppOption[];
+  limits: FeatureAppsResponse['limits'];
 }
 
 /**
@@ -38,33 +38,38 @@ interface ProposeFeatureDialogProps {
  * once GitHub's search index has it, which is not instant, and claiming
  * otherwise would look like the proposal had been lost.
  */
-export default function ProposeFeatureDialog({ open, onClose, apps, limits }: ProposeFeatureDialogProps) {
-  const targets = apps.filter((option) => option.acceptsProposals)
-  const [chosenApp, setChosenApp] = useState('')
-  const [title, setTitle] = useState('')
-  const [body, setBody] = useState('')
-  const [settledTitle, setSettledTitle] = useState('')
-  const [acknowledged, setAcknowledged] = useState(false)
-  const similarTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const propose = useProposeFeature()
+export default function ProposeFeatureDialog({
+  open,
+  onClose,
+  apps,
+  limits,
+}: ProposeFeatureDialogProps) {
+  const targets = apps.filter((option) => option.acceptsProposals);
+  const [chosenApp, setChosenApp] = useState('');
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [settledTitle, setSettledTitle] = useState('');
+  const [acknowledged, setAcknowledged] = useState(false);
+  const similarTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const propose = useProposeFeature();
 
   // Runs against the same in-memory set the board searches, so looking for a
   // duplicate while someone types costs no GitHub request.
-  const similar = useSimilarFeatures(settledTitle, { enabled: open })
-  const matches = similar.data?.matches ?? []
+  const similar = useSimilarFeatures(settledTitle, { enabled: open });
+  const matches = similar.data?.matches ?? [];
 
   // Derived rather than seeded into state: the apps arrive from a query, so
   // state initialised on the first render would keep an empty selection forever
   // when the dialog mounts before the list resolves.
-  const app = chosenApp || targets[0]?.key || ''
+  const app = chosenApp || targets[0]?.key || '';
 
-  const trimmedTitle = title.trim()
-  const trimmedBody = body.trim()
+  const trimmedTitle = title.trim();
+  const trimmedBody = body.trim();
   // A speed bump, not a barrier. Token overlap produces false positives freely,
   // and a hard block on one of those means the proposal never gets written at
   // all. So matches never disable the button; they only ask for one click that
   // says you looked.
-  const needsAcknowledgement = matches.length > 0 && !acknowledged
+  const needsAcknowledgement = matches.length > 0 && !acknowledged;
   const canSubmit =
     app !== '' &&
     trimmedTitle.length >= limits.titleMin &&
@@ -72,28 +77,28 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
     trimmedBody.length >= limits.bodyMin &&
     trimmedBody.length <= limits.bodyMax &&
     !needsAcknowledgement &&
-    !propose.isPending
+    !propose.isPending;
 
   function handleTitleChange(next: string) {
-    setTitle(next)
-    setAcknowledged(false)
-    if (similarTimer.current) clearTimeout(similarTimer.current)
-    similarTimer.current = setTimeout(() => setSettledTitle(next), SIMILAR_DEBOUNCE_MS)
+    setTitle(next);
+    setAcknowledged(false);
+    if (similarTimer.current) clearTimeout(similarTimer.current);
+    similarTimer.current = setTimeout(() => setSettledTitle(next), SIMILAR_DEBOUNCE_MS);
   }
 
   function handleClose() {
-    if (similarTimer.current) clearTimeout(similarTimer.current)
-    setTitle('')
-    setBody('')
-    setSettledTitle('')
-    setAcknowledged(false)
-    propose.reset()
-    onClose()
+    if (similarTimer.current) clearTimeout(similarTimer.current);
+    setTitle('');
+    setBody('');
+    setSettledTitle('');
+    setAcknowledged(false);
+    propose.reset();
+    onClose();
   }
 
   function handleSubmit() {
-    if (!canSubmit) return
-    propose.mutate({ app, title: trimmedTitle, body: trimmedBody })
+    if (!canSubmit) return;
+    propose.mutate({ app, title: trimmedTitle, body: trimmedBody });
   }
 
   return (
@@ -103,8 +108,8 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
           <div>
             <h2 className="text-start text-subheading-2">Proposal submitted</h2>
             <p className="mt-3 text-sm text-muted-foreground">
-              It is now issue #{propose.data.issueNumber} in {propose.data.app.displayName}. It joins the
-              board once GitHub has indexed it, usually within a minute.
+              It is now issue #{propose.data.issueNumber} in {propose.data.app.displayName}. It
+              joins the board once GitHub has indexed it, usually within a minute.
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <a
@@ -116,7 +121,9 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
                 View it on GitHub
                 <RiExternalLinkLine width={14} height={14} fill="currentColor" />
               </a>
-              <Button variant="outline" onClick={handleClose}>Done</Button>
+              <Button variant="outline" onClick={handleClose}>
+                Done
+              </Button>
             </div>
           </div>
         ) : (
@@ -137,7 +144,10 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
                     label="App"
                     value={app}
                     onValueChange={setChosenApp}
-                    options={targets.map((option) => ({ value: option.key, label: option.displayName }))}
+                    options={targets.map((option) => ({
+                      value: option.key,
+                      label: option.displayName,
+                    }))}
                   />
                 </Field>
 
@@ -181,7 +191,9 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
                 )}
 
                 <div className="flex items-center justify-end gap-3">
-                  <Button variant="ghost" onClick={handleClose}>Cancel</Button>
+                  <Button variant="ghost" onClick={handleClose}>
+                    Cancel
+                  </Button>
                   <Button variant="primary" onClick={handleSubmit} disabled={!canSubmit}>
                     {propose.isPending ? 'Submitting…' : 'Submit proposal'}
                   </Button>
@@ -192,7 +204,7 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
         )}
       </div>
     </Dialog>
-  )
+  );
 }
 
 /**
@@ -203,19 +215,26 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
  * best outcome here is not a blocked submission: it is a vote on the proposal
  * that already exists, which counts for more than a sixth copy of it.
  */
-function SimilarPanel({ matches, searched, isFetching, hasTitle, acknowledged, onAcknowledge }: {
-  matches: FeatureRequestData[]
-  searched: boolean
-  isFetching: boolean
-  hasTitle: boolean
-  acknowledged: boolean
-  onAcknowledge: () => void
+function SimilarPanel({
+  matches,
+  searched,
+  isFetching,
+  hasTitle,
+  acknowledged,
+  onAcknowledge,
+}: {
+  matches: FeatureRequestData[];
+  searched: boolean;
+  isFetching: boolean;
+  hasTitle: boolean;
+  acknowledged: boolean;
+  onAcknowledge: () => void;
 }) {
-  if (!hasTitle) return null
+  if (!hasTitle) return null;
 
   if (matches.length === 0) {
     if (isFetching) {
-      return <p className="text-xs text-muted-foreground">Checking for existing proposals...</p>
+      return <p className="text-xs text-muted-foreground">Checking for existing proposals...</p>;
     }
     // Deliberately not "nothing like this exists". The lookup matches on words,
     // over a list that can be a few minutes old, so the honest claim is about
@@ -226,13 +245,15 @@ function SimilarPanel({ matches, searched, isFetching, hasTitle, acknowledged, o
           ? 'No existing proposal matched those words. Worth a look at the board too, since this matches on wording.'
           : 'Could not check for existing proposals just now.'}
       </p>
-    )
+    );
   }
 
   return (
     <section className="rounded-2xl border border-border px-3 py-3">
       <h3 className="text-sm font-medium text-foreground">
-        {matches.length === 1 ? 'One proposal looks similar' : `${matches.length} proposals look similar`}
+        {matches.length === 1
+          ? 'One proposal looks similar'
+          : `${matches.length} proposals look similar`}
       </h3>
       <p className="mt-0.5 text-xs text-muted-foreground">
         Voting on one that already exists carries further than a new copy. The same idea for a
@@ -254,20 +275,20 @@ function SimilarPanel({ matches, searched, isFetching, hasTitle, acknowledged, o
         </button>
       )}
     </section>
-  )
+  );
 }
 
 /** One match, votable without leaving the form. */
 function SimilarMatch({ match }: { match: FeatureRequestData }) {
-  const { isAuthenticated, signIn } = useAuth()
-  const toggleVote = useToggleFeatureVote(match.owner, match.repoName, match.number)
+  const { isAuthenticated, signIn } = useAuth();
+  const toggleVote = useToggleFeatureVote(match.owner, match.repoName, match.number);
 
   function handleVote() {
     if (!isAuthenticated) {
-      signIn()
-      return
+      signIn();
+      return;
     }
-    toggleVote.mutate()
+    toggleVote.mutate();
   }
 
   return (
@@ -302,5 +323,5 @@ function SimilarMatch({ match }: { match: FeatureRequestData }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

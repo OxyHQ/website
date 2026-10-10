@@ -18,9 +18,9 @@ export const AVAILABILITY_STATES = [
   'coming_soon',
   'internal_only',
   'deprecated',
-] as const
+] as const;
 
-export type Availability = (typeof AVAILABILITY_STATES)[number]
+export type Availability = (typeof AVAILABILITY_STATES)[number];
 
 /**
  * What a visitor is allowed to be asked to do next, given a state.
@@ -35,7 +35,7 @@ export type CtaIntent =
   | 'request_access'
   | 'join_waitlist'
   | 'see_replacement'
-  | 'none'
+  | 'none';
 
 const CTA_BY_STATE: Record<Availability, CtaIntent> = {
   available: 'start_building',
@@ -44,10 +44,10 @@ const CTA_BY_STATE: Record<Availability, CtaIntent> = {
   coming_soon: 'join_waitlist',
   internal_only: 'none',
   deprecated: 'see_replacement',
-}
+};
 
 export function ctaIntentFor(availability: Availability): CtaIntent {
-  return CTA_BY_STATE[availability]
+  return CTA_BY_STATE[availability];
 }
 
 /**
@@ -58,12 +58,12 @@ export function ctaIntentFor(availability: Availability): CtaIntent {
  * its sunset date and its replacement to remain readable.
  */
 export function isPubliclyListable(availability: Availability): boolean {
-  return availability !== 'internal_only'
+  return availability !== 'internal_only';
 }
 
 /** Whether the state permits a real purchase/checkout call to action. */
 export function isPurchasable(availability: Availability): boolean {
-  return availability === 'available' || availability === 'beta'
+  return availability === 'available' || availability === 'beta';
 }
 
 /**
@@ -71,7 +71,7 @@ export function isPurchasable(availability: Availability): boolean {
  * raw colour. Never the only carrier of the state — the badge always renders
  * its text label too, so the information is not conveyed by colour alone.
  */
-export type AvailabilityTone = 'positive' | 'info' | 'notice' | 'neutral' | 'muted'
+export type AvailabilityTone = 'positive' | 'info' | 'notice' | 'neutral' | 'muted';
 
 const TONE_BY_STATE: Record<Availability, AvailabilityTone> = {
   available: 'positive',
@@ -80,8 +80,8 @@ const TONE_BY_STATE: Record<Availability, AvailabilityTone> = {
   coming_soon: 'neutral',
   internal_only: 'muted',
   deprecated: 'muted',
-}
+};
 
 export function availabilityTone(availability: Availability): AvailabilityTone {
-  return TONE_BY_STATE[availability]
+  return TONE_BY_STATE[availability];
 }

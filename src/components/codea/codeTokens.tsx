@@ -1,5 +1,5 @@
-import { useMemo, type ReactNode } from 'react'
-import { tokenColor, tokenizeCode, useCodePalette, type CodePalette } from '@oxy.so/bloom/code'
+import { useMemo, type ReactNode } from 'react';
+import { tokenColor, tokenizeCode, useCodePalette, type CodePalette } from '@oxy.so/bloom/code';
 
 /**
  * The code palette for the surface the mock-up actually sits on.
@@ -19,7 +19,7 @@ import { tokenColor, tokenizeCode, useCodePalette, type CodePalette } from '@oxy
  * either mode and stay exactly as Bloom resolves them.
  */
 function useSurfaceCodePalette(): CodePalette {
-  const palette = useCodePalette()
+  const palette = useCodePalette();
   return useMemo(
     () => ({
       ...palette,
@@ -28,7 +28,7 @@ function useSurfaceCodePalette(): CodePalette {
       punctuation: 'var(--muted-foreground)',
     }),
     [palette],
-  )
+  );
 }
 
 /**
@@ -41,7 +41,7 @@ function useSurfaceCodePalette(): CodePalette {
  * none of it; only the tokenizing and the colouring are Bloom's.
  */
 export function useHighlightedLines(source: string): ReactNode[] {
-  const palette = useSurfaceCodePalette()
+  const palette = useSurfaceCodePalette();
   return useMemo(
     () =>
       tokenizeCode(source, 'tsx').map((line) =>
@@ -52,5 +52,5 @@ export function useHighlightedLines(source: string): ReactNode[] {
         )),
       ),
     [source, palette],
-  )
+  );
 }

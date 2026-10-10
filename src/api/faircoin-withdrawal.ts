@@ -6,7 +6,7 @@
  * client-side via the wagmi contract write, then we poll this endpoint until
  * the bridge releases native FAIR.
  */
-import { getBridgeBaseUrl } from './faircoin-buy'
+import { getBridgeBaseUrl } from './faircoin-buy';
 
 export const WITHDRAWAL_STATUSES = [
   'DETECTED',
@@ -15,49 +15,49 @@ export const WITHDRAWAL_STATUSES = [
   'BROADCAST',
   'FINAL',
   'FAILED',
-] as const
+] as const;
 
-export type WithdrawalStatus = (typeof WITHDRAWAL_STATUSES)[number]
+export type WithdrawalStatus = (typeof WITHDRAWAL_STATUSES)[number];
 
 export interface WithdrawalStatusResponse {
-  id: string
-  baseBurnTxHash: string
-  baseBlockNumber: number
-  logIndex: number
-  fromBaseAddress: string
-  destinationFairAddress: string
-  amountWei: string
-  amountSats: string
-  status: WithdrawalStatus
-  fairTxid: string | null
-  fairConfirmations: number
-  fairBroadcastAt: string | null
-  createdAt: string
-  updatedAt: string
+  id: string;
+  baseBurnTxHash: string;
+  baseBlockNumber: number;
+  logIndex: number;
+  fromBaseAddress: string;
+  destinationFairAddress: string;
+  amountWei: string;
+  amountSats: string;
+  status: WithdrawalStatus;
+  fairTxid: string | null;
+  fairConfirmations: number;
+  fairBroadcastAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export class WithdrawalApiError extends Error {
-  readonly status: number
-  readonly code: string | null
+  readonly status: number;
+  readonly code: string | null;
   constructor(message: string, status: number, code: string | null) {
-    super(message)
-    this.name = 'WithdrawalApiError'
-    this.status = status
-    this.code = code
+    super(message);
+    this.name = 'WithdrawalApiError';
+    this.status = status;
+    this.code = code;
   }
 }
 
 interface BridgeErrorBody {
-  error?: string
-  code?: string
-  message?: string
+  error?: string;
+  code?: string;
+  message?: string;
 }
 
 async function parseErrorBody(res: Response): Promise<BridgeErrorBody> {
   try {
-    return (await res.json()) as BridgeErrorBody
+    return (await res.json()) as BridgeErrorBody;
   } catch {
-    return {}
+    return {};
   }
 }
 
@@ -71,26 +71,25 @@ async function parseErrorBody(res: Response): Promise<BridgeErrorBody> {
 export async function getWithdrawalStatus(
   burnTxHash: string,
 ): Promise<WithdrawalStatusResponse | null> {
-  let res: Response
+  let res: Response;
   try {
     res = await fetch(
       `${getBridgeBaseUrl()}/api/bridge/withdrawal/status/${encodeURIComponent(burnTxHash)}`,
-    )
+    );
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'network_error'
-    throw new WithdrawalApiError(message, 0, 'network_error')
+    const message = err instanceof Error ? err.message : 'network_error';
+    throw new WithdrawalApiError(message, 0, 'network_error');
   }
-  if (res.status === 404) return null
+  if (res.status === 404) return null;
   if (!res.ok) {
-    const body = await parseErrorBody(res)
-    const code = body.code ?? body.error ?? null
-    const msg = body.message ?? body.error ?? `Bridge API error: ${res.status}`
-    throw new WithdrawalApiError(msg, res.status, code)
+    const body = await parseErrorBody(res);
+    const code = body.code ?? body.error ?? null;
+    const msg = body.message ?? body.error ?? `Bridge API error: ${res.status}`;
+    throw new WithdrawalApiError(msg, res.status, code);
   }
-  return (await res.json()) as WithdrawalStatusResponse
+  return (await res.json()) as WithdrawalStatusResponse;
 }
 
 /** Bridge stops emitting updates once a withdrawal reaches one of these. */
-export const TERMINAL_WITHDRAWAL_STATUSES: ReadonlySet<WithdrawalStatus> = new Set<
-  WithdrawalStatus
->(['FINAL', 'FAILED'])
+export const TERMINAL_WITHDRAWAL_STATUSES: ReadonlySet<WithdrawalStatus> =
+  new Set<WithdrawalStatus>(['FINAL', 'FAILED']);

@@ -1,77 +1,81 @@
-import { useState } from 'react'
-import { NewsCardGrid } from './NewsCard'
-import Button from '../ui/Button'
-import { NewsroomActiveFilters, NewsroomFilterMenu, NewsroomSortMenu } from './NewsroomListControls'
-import { useNewsroomPosts } from '../../api/hooks'
-import { newsCategories } from '../../data/newsroom'
+import { useState } from 'react';
+import { NewsCardGrid } from './NewsCard';
+import Button from '../ui/Button';
+import {
+  NewsroomActiveFilters,
+  NewsroomFilterMenu,
+  NewsroomSortMenu,
+} from './NewsroomListControls';
+import { useNewsroomPosts } from '../../api/hooks';
+import { newsCategories } from '../../data/newsroom';
 
-type SortOption = 'newest' | 'oldest'
+type SortOption = 'newest' | 'oldest';
 
 interface ArticleGridUI {
-  filter?: string
-  newest?: string
-  oldest?: string
-  loadMore?: string
-  clearAll?: string
-  noResults?: string
-  clearFilters?: string
+  filter?: string;
+  newest?: string;
+  oldest?: string;
+  loadMore?: string;
+  clearAll?: string;
+  noResults?: string;
+  clearFilters?: string;
 }
 
-const filterCategories = newsCategories.filter((c) => c !== 'All')
+const filterCategories = newsCategories.filter((c) => c !== 'All');
 
 interface ArticleGridSectionProps {
-  ui?: ArticleGridUI
+  ui?: ArticleGridUI;
   /**
    * When set, scopes the underlying query to a single category and hides the
    * category filter UI (since there's nothing else to filter to). Used by
    * /company/news.
    */
-  category?: string
+  category?: string;
 }
 
 export default function ArticleGridSection({ ui = {}, category }: ArticleGridSectionProps) {
   const sortLabels: Record<SortOption, string> = {
     newest: ui.newest ?? 'Newest',
     oldest: ui.oldest ?? 'Oldest',
-  }
-  const { data } = useNewsroomPosts({ category })
-  const gridArticles = data?.posts ?? []
-  const [visibleCount, setVisibleCount] = useState(6)
-  const [activeFilters, setActiveFilters] = useState<string[]>([])
-  const [sortBy, setSortBy] = useState<SortOption>('newest')
+  };
+  const { data } = useNewsroomPosts({ category });
+  const gridArticles = data?.posts ?? [];
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<SortOption>('newest');
 
   function toggleFilter(cat: string) {
     setActiveFilters((prev) =>
-      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
-    )
-    setVisibleCount(6)
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
+    );
+    setVisibleCount(6);
   }
 
   function clearFilters() {
-    setActiveFilters([])
-    setVisibleCount(6)
+    setActiveFilters([]);
+    setVisibleCount(6);
   }
 
   function selectSort(option: SortOption) {
-    setSortBy(option)
-    setVisibleCount(6)
+    setSortBy(option);
+    setVisibleCount(6);
   }
 
   // Filter articles
   const filtered =
     activeFilters.length === 0
       ? gridArticles
-      : gridArticles.filter((a) => a.categories.some((c) => activeFilters.includes(c)))
+      : gridArticles.filter((a) => a.categories.some((c) => activeFilters.includes(c)));
 
   // Sort articles
   const sorted = [...filtered].sort((a, b) => {
-    const da = new Date(a.publishedAt).getTime()
-    const db = new Date(b.publishedAt).getTime()
-    return sortBy === 'newest' ? db - da : da - db
-  })
+    const da = new Date(a.publishedAt).getTime();
+    const db = new Date(b.publishedAt).getTime();
+    return sortBy === 'newest' ? db - da : da - db;
+  });
 
-  const visible = sorted.slice(0, visibleCount)
-  const hasMore = visibleCount < sorted.length
+  const visible = sorted.slice(0, visibleCount);
+  const hasMore = visibleCount < sorted.length;
 
   return (
     <section className="container">
@@ -134,15 +138,11 @@ export default function ArticleGridSection({ ui = {}, category }: ArticleGridSec
       {/* ── Load more ── */}
       {hasMore && (
         <div className="mt-12 flex justify-center">
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={() => setVisibleCount((c) => c + 3)}
-          >
+          <Button variant="ghost" type="button" onClick={() => setVisibleCount((c) => c + 3)}>
             {ui.loadMore ?? 'Load more'}
           </Button>
         </div>
       )}
     </section>
-  )
+  );
 }

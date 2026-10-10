@@ -1,8 +1,8 @@
-import type { ReactNode } from 'react'
-import { CodeBlock as BloomCodeBlock } from '@oxy.so/bloom/code'
-import { cn } from '../../lib/utils'
-import { useTranslation } from '../../lib/i18n'
-import { reactNodeToText, useCopyToClipboard } from '../../lib/useCopyToClipboard'
+import type { ReactNode } from 'react';
+import { CodeBlock as BloomCodeBlock } from '@oxy.so/bloom/code';
+import { cn } from '../../lib/utils';
+import { useTranslation } from '../../lib/i18n';
+import { reactNodeToText, useCopyToClipboard } from '../../lib/useCopyToClipboard';
 
 /* ──────────────────────────────────────────────
  * <CodeBlock language="ts" filename="foo.ts">
@@ -19,18 +19,18 @@ import { reactNodeToText, useCopyToClipboard } from '../../lib/useCopyToClipboar
  * ──────────────────────────────────────────── */
 
 interface CodeBlockProps {
-  language?: string
-  filename?: string
-  children: ReactNode
-  className?: string
+  language?: string;
+  filename?: string;
+  children: ReactNode;
+  className?: string;
 }
 
 export default function CodeBlock({ language, filename, children, className }: CodeBlockProps) {
-  const { t } = useTranslation()
-  const { copy } = useCopyToClipboard()
+  const { t } = useTranslation();
+  const { copy } = useCopyToClipboard();
   // A fenced block's text ends in its closing newline, which would render as
   // an empty numbered line.
-  const code = reactNodeToText(children).replace(/\n+$/, '')
+  const code = reactNodeToText(children).replace(/\n+$/, '');
 
   return (
     <div className={cn('not-prose my-6', className)}>
@@ -43,9 +43,9 @@ export default function CodeBlock({ language, filename, children, className }: C
         labels={{ copy: t('common.copyCode'), copied: t('common.codeCopied') }}
         onCopy={async (text) => {
           // Rejecting leaves Bloom's glyph as it was; the hook has toasted why.
-          if (!(await copy(text, t('common.codeCopied')))) throw new Error('copy failed')
+          if (!(await copy(text, t('common.codeCopied')))) throw new Error('copy failed');
         }}
       />
     </div>
-  )
+  );
 }

@@ -1,8 +1,8 @@
-import PageShell from '../components/layout/PageShell'
-import Navbar from '../components/layout/Navbar'
-import AstroPageContent from '../components/astro/AstroPage'
-import FaqSection from '../components/sections/FaqSection'
-import { APP_CARD_IMAGES } from '../data/appCardImages'
+import PageShell from '../components/layout/PageShell';
+import Navbar from '../components/layout/Navbar';
+import AstroPageContent from '../components/astro/AstroPage';
+import FaqSection from '../components/sections/FaqSection';
+import { APP_CARD_IMAGES } from '../data/appCardImages';
 
 const MERCARIA_FAQ_GROUPS = [
   {
@@ -10,15 +10,18 @@ const MERCARIA_FAQ_GROUPS = [
     items: [
       {
         question: 'What is Mercaria?',
-        answer: 'Mercaria is Oxy\'s marketplace for buying and selling new products from shops and secondhand items from people.',
+        answer:
+          "Mercaria is Oxy's marketplace for buying and selling new products from shops and secondhand items from people.",
       },
       {
         question: 'Can both shops and individuals sell on Mercaria?',
-        answer: 'Yes. A listing can belong to a person or a store, so secondhand sales and shop orders share the same catalogue, cart, checkout and refund paths.',
+        answer:
+          'Yes. A listing can belong to a person or a store, so secondhand sales and shop orders share the same catalogue, cart, checkout and refund paths.',
       },
       {
         question: 'What can I do in the Mercaria storefront?',
-        answer: 'The storefront brings browsing, search, cart, checkout and orders together in one marketplace experience.',
+        answer:
+          'The storefront brings browsing, search, cart, checkout and orders together in one marketplace experience.',
       },
     ],
   },
@@ -27,19 +30,22 @@ const MERCARIA_FAQ_GROUPS = [
     items: [
       {
         question: 'Do I need a separate Mercaria account?',
-        answer: 'No. Mercaria uses your Oxy identity, so there is no separate Mercaria account to create or manage.',
+        answer:
+          'No. Mercaria uses your Oxy identity, so there is no separate Mercaria account to create or manage.',
       },
       {
         question: 'Does Mercaria support multiple currencies?',
-        answer: 'Yes. Listings keep their native currency, while Mercaria can present prices in the currency selected for the shopping experience.',
+        answer:
+          'Yes. Listings keep their native currency, while Mercaria can present prices in the currency selected for the shopping experience.',
       },
       {
         question: 'How do the Mercaria apps work together?',
-        answer: 'The customer storefront, merchant dashboard and point-of-sale app are separate experiences backed by one commerce API.',
+        answer:
+          'The customer storefront, merchant dashboard and point-of-sale app are separate experiences backed by one commerce API.',
       },
     ],
   },
-] as const
+] as const;
 
 export default function MercariaPage() {
   return (
@@ -76,5 +82,5 @@ export default function MercariaPage() {
         className="mercaria-faq-theme bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
       />
     </PageShell>
-  )
+  );
 }

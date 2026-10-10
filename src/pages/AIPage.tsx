@@ -1,10 +1,10 @@
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import StructuredData from '../components/StructuredData'
-import AiLanding from '../components/ai/platform/AiLanding'
-import { useTranslation } from '../lib/i18n'
-import { aiServices } from '../data/ai/taxonomy'
-import { isPurchasable } from '../lib/ai/availability'
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import StructuredData from '../components/StructuredData';
+import AiLanding from '../components/ai/platform/AiLanding';
+import { useTranslation } from '../lib/i18n';
+import { aiServices } from '../data/ai/taxonomy';
+import { isPurchasable } from '../lib/ai/availability';
 
 /**
  * `/ai` — the Oxy AI umbrella landing.
@@ -17,7 +17,7 @@ import { isPurchasable } from '../lib/ai/availability'
  * enumerating the cards.
  */
 export default function AIPage() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <PageShell
@@ -53,5 +53,5 @@ export default function AIPage() {
       />
       <AiLanding />
     </PageShell>
-  )
+  );
 }

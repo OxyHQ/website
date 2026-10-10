@@ -1,28 +1,32 @@
-import { useState } from 'react'
-import { Chip } from '@oxy.so/bloom/chip'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { NewsCardFeatured, NewsCardGrid } from './NewsCard'
-import { useNewsroomPosts } from '../../api/hooks'
-import { newsCategories, type NewsCategory } from '../../data/newsroom'
-import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { useState } from 'react';
+import { Chip } from '@oxy.so/bloom/chip';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import { NewsCardFeatured, NewsCardGrid } from './NewsCard';
+import { useNewsroomPosts } from '../../api/hooks';
+import { newsCategories, type NewsCategory } from '../../data/newsroom';
+import { AnimatedTitle } from '../ui/AnimatedTitle';
 
 interface NewsroomHeroSectionProps {
-  title?: string
+  title?: string;
   /**
    * When set, scopes the hero (featured + sidebar) to a single category and
    * hides the category tab nav. Used by /company/news.
    */
-  category?: string
+  category?: string;
 }
 
 /* Local category tab nav — kept as a sub-component so the `useState` hook is
  * only mounted on the unscoped /newsroom hero, not the scoped /company/news one. */
 function CategoryNav() {
-  const [activeCategory, setActiveCategory] = useState<NewsCategory>('Company')
+  const [activeCategory, setActiveCategory] = useState<NewsCategory>('Company');
   return (
     <div className="pointer-events-none z-10 mt-4 grid grid-cols-1 lg:grid-cols-4">
       <nav className="pointer-events-auto col-span-full overflow-x-auto py-0.5 lg:col-span-3">
-        <div role="radiogroup" aria-label="News category" className="flex min-w-fit items-center gap-2">
+        <div
+          role="radiogroup"
+          aria-label="News category"
+          className="flex min-w-fit items-center gap-2"
+        >
           {newsCategories.map((cat) => (
             <Chip
               key={cat}
@@ -37,21 +41,33 @@ function CategoryNav() {
         </div>
       </nav>
     </div>
-  )
+  );
 }
 
 /* ──────────────────────────────────────────────────
  * Hero section
  * ────────────────────────────────────────────── */
-export default function NewsroomHeroSection({ title = 'Newsroom', category }: NewsroomHeroSectionProps) {
+export default function NewsroomHeroSection({
+  title = 'Newsroom',
+  category,
+}: NewsroomHeroSectionProps) {
   // Featured: prefer a `featured: true` post in scope; fall back to the latest
   // in-scope post so the hero always renders when any post exists.
-  const { data: featuredData, isPending: featuredPending } = useNewsroomPosts({ category, featured: true, limit: 1 })
-  const { data: fallbackData, isPending: fallbackPending } = useNewsroomPosts({ category, limit: 1 })
-  const featuredArticle = featuredData?.posts?.[0] ?? fallbackData?.posts?.[0] ?? null
-  const { data: sidebarData, isPending: sidebarPending } = useNewsroomPosts({ category, limit: 5 })
-  const sidebarArticles = (sidebarData?.posts ?? []).filter((a) => a._id !== featuredArticle?._id).slice(0, 3)
-  const isLoading = featuredPending || fallbackPending || sidebarPending
+  const { data: featuredData, isPending: featuredPending } = useNewsroomPosts({
+    category,
+    featured: true,
+    limit: 1,
+  });
+  const { data: fallbackData, isPending: fallbackPending } = useNewsroomPosts({
+    category,
+    limit: 1,
+  });
+  const featuredArticle = featuredData?.posts?.[0] ?? fallbackData?.posts?.[0] ?? null;
+  const { data: sidebarData, isPending: sidebarPending } = useNewsroomPosts({ category, limit: 5 });
+  const sidebarArticles = (sidebarData?.posts ?? [])
+    .filter((a) => a._id !== featuredArticle?._id)
+    .slice(0, 3);
+  const isLoading = featuredPending || fallbackPending || sidebarPending;
 
   return (
     <section className="container pt-[5rem] md:pt-10">
@@ -71,15 +87,18 @@ export default function NewsroomHeroSection({ title = 'Newsroom', category }: Ne
       <div className="mt-8 grid w-full grid-cols-1 gap-4 md:mt-12 lg:grid-cols-4">
         {/* Left — featured card (sticky on desktop) */}
         <div className="mb-4 self-start lg:sticky lg:top-[80px] lg:col-span-3 lg:mb-0">
-          {isLoading && <Skeleton.Box width="100%" borderRadius={16} style={{ aspectRatio: 4 / 5 }} />}
+          {isLoading && (
+            <Skeleton.Box width="100%" borderRadius={16} style={{ aspectRatio: 4 / 5 }} />
+          )}
           {!isLoading && featuredArticle && <NewsCardFeatured article={featuredArticle} />}
         </div>
 
         {/* Right — sidebar cards (desktop: stacked 1-col, hidden on mobile) */}
         <div className="hidden gap-x-1 gap-y-8 lg:grid lg:grid-cols-1 lg:px-0">
-          {isLoading && [1, 2, 3].map((i) => (
-            <Skeleton.Box key={i} width="100%" borderRadius={16} style={{ aspectRatio: 1 }} />
-          ))}
+          {isLoading &&
+            [1, 2, 3].map((i) => (
+              <Skeleton.Box key={i} width="100%" borderRadius={16} style={{ aspectRatio: 1 }} />
+            ))}
           {sidebarArticles.map((article) => (
             <NewsCardGrid key={article._id} article={article} />
           ))}
@@ -87,14 +106,15 @@ export default function NewsroomHeroSection({ title = 'Newsroom', category }: Ne
 
         {/* Mobile/tablet fallback — sidebar cards in row */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:hidden">
-          {isLoading && [1, 2, 3].map((i) => (
-            <Skeleton.Box key={i} width="100%" borderRadius={16} style={{ aspectRatio: 1 }} />
-          ))}
+          {isLoading &&
+            [1, 2, 3].map((i) => (
+              <Skeleton.Box key={i} width="100%" borderRadius={16} style={{ aspectRatio: 1 }} />
+            ))}
           {sidebarArticles.map((article) => (
             <NewsCardGrid key={article._id} article={article} />
           ))}
         </div>
       </div>
     </section>
-  )
+  );
 }

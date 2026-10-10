@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { useTranslation } from '../../lib/i18n'
+import { useEffect, useState } from 'react';
+import { useTranslation } from '../../lib/i18n';
 
 const USE_CASE_KEYS = [
   'home.useCase1',
@@ -12,46 +12,46 @@ const USE_CASE_KEYS = [
   'home.useCase8',
   'home.useCase9',
   'home.useCase10',
-] as const
+] as const;
 
-const ITEM_HEIGHT = 64
-const ROLO_HEIGHT = 576
+const ITEM_HEIGHT = 64;
+const ROLO_HEIGHT = 576;
 
 function itemOpacity(distance: number) {
-  if (distance === 0) return 1
-  if (distance === 1) return 0.68
-  if (distance === 2) return 0.42
-  if (distance === 3) return 0.2
-  return 0.07
+  if (distance === 0) return 1;
+  if (distance === 1) return 0.68;
+  if (distance === 2) return 0.42;
+  if (distance === 3) return 0.2;
+  return 0.07;
 }
 
 export default function OxyUseCasesRolo() {
-  const { t } = useTranslation()
-  const useCases = USE_CASE_KEYS.map((key) => t(key))
-  const roloItems = [...useCases, ...useCases, ...useCases]
-  const [activeIndex, setActiveIndex] = useState(useCases.length + Math.floor(useCases.length / 2))
-  const [paused, setPaused] = useState(false)
-  const [transitionEnabled, setTransitionEnabled] = useState(true)
+  const { t } = useTranslation();
+  const useCases = USE_CASE_KEYS.map((key) => t(key));
+  const roloItems = [...useCases, ...useCases, ...useCases];
+  const [activeIndex, setActiveIndex] = useState(useCases.length + Math.floor(useCases.length / 2));
+  const [paused, setPaused] = useState(false);
+  const [transitionEnabled, setTransitionEnabled] = useState(true);
 
   useEffect(() => {
-    if (paused) return
-    const timer = window.setInterval(() => setActiveIndex((index) => index + 1), 2200)
-    return () => window.clearInterval(timer)
-  }, [paused])
+    if (paused) return;
+    const timer = window.setInterval(() => setActiveIndex((index) => index + 1), 2200);
+    return () => window.clearInterval(timer);
+  }, [paused]);
 
   useEffect(() => {
-    if (activeIndex < useCases.length * 2) return
+    if (activeIndex < useCases.length * 2) return;
     const resetTimer = window.setTimeout(() => {
-      setTransitionEnabled(false)
-      setActiveIndex(useCases.length)
+      setTransitionEnabled(false);
+      setActiveIndex(useCases.length);
       window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => setTransitionEnabled(true))
-      })
-    }, 620)
-    return () => window.clearTimeout(resetTimer)
-  }, [activeIndex, useCases.length])
+        window.requestAnimationFrame(() => setTransitionEnabled(true));
+      });
+    }, 620);
+    return () => window.clearTimeout(resetTimer);
+  }, [activeIndex, useCases.length]);
 
-  const translateY = ROLO_HEIGHT / 2 - ITEM_HEIGHT / 2 - activeIndex * ITEM_HEIGHT
+  const translateY = ROLO_HEIGHT / 2 - ITEM_HEIGHT / 2 - activeIndex * ITEM_HEIGHT;
 
   return (
     <section
@@ -71,14 +71,17 @@ export default function OxyUseCasesRolo() {
           <div
             className="relative h-[36rem] overflow-hidden"
             aria-hidden="true"
-            style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%)' }}
+            style={{
+              maskImage:
+                'linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%)',
+            }}
           >
             <ul
               className={`absolute inset-x-0 top-0 flex flex-col ${transitionEnabled ? 'transition-transform duration-[620ms] ease-[cubic-bezier(0.22,1,0.36,1)]' : ''}`}
               style={{ transform: `translateY(${translateY}px)` }}
             >
               {roloItems.map((item, index) => {
-                const distance = Math.abs(index - activeIndex)
+                const distance = Math.abs(index - activeIndex);
                 return (
                   <li
                     key={`${item}-${index}`}
@@ -88,16 +91,18 @@ export default function OxyUseCasesRolo() {
                   >
                     {item}
                   </li>
-                )
+                );
               })}
             </ul>
           </div>
 
           <ul className="sr-only">
-            {useCases.map((item) => <li key={item}>{item}</li>)}
+            {useCases.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
           </ul>
         </div>
       </div>
     </section>
-  )
+  );
 }

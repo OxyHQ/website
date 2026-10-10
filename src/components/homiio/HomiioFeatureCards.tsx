@@ -1,27 +1,28 @@
-import type { ReactNode } from 'react'
-import { RiEmotionHappyLine } from '@oxy.so/bloom/icons/RiEmotionHappyLine'
-import { RiSearchFill } from '@oxy.so/bloom/icons/RiSearchFill'
-import { RiEarthLine } from '@oxy.so/bloom/icons/RiEarthLine'
-import { RiLockLine } from '@oxy.so/bloom/icons/RiLockLine'
+import type { ReactNode } from 'react';
+import { RiEmotionHappyLine } from '@oxy.so/bloom/icons/RiEmotionHappyLine';
+import { RiSearchFill } from '@oxy.so/bloom/icons/RiSearchFill';
+import { RiEarthLine } from '@oxy.so/bloom/icons/RiEarthLine';
+import { RiLockLine } from '@oxy.so/bloom/icons/RiLockLine';
 
 interface Feature {
-  title: string
-  description: string
-  icon: ReactNode
+  title: string;
+  description: string;
+  icon: ReactNode;
   /**
    * Top → bottom of the grainy gradient tile, and the ink on it: Bloom tokens,
    * read inside `.homiio-landing-accent-theme` (the landing's dark ramp, where
    * the vivid tones live).
    */
-  from: string
-  to: string
-  ink: string
+  from: string;
+  to: string;
+  ink: string;
 }
 
 const FEATURES: readonly Feature[] = [
   {
     title: 'Meet Sindi',
-    description: 'AI assistant gives step-by-step legal guidance, explains tenant rights, and automates defense letters.',
+    description:
+      'AI assistant gives step-by-step legal guidance, explains tenant rights, and automates defense letters.',
     icon: (
       <span aria-hidden="true" className="inline-flex h-1/3 w-1/3 [&_svg]:size-full">
         <RiEmotionHappyLine width={24} height={24} fill="currentColor" />
@@ -33,7 +34,8 @@ const FEATURES: readonly Feature[] = [
   },
   {
     title: 'Advanced property search',
-    description: 'Find properties using a smart map, detailed filters, and search by community standards and ethical pricing.',
+    description:
+      'Find properties using a smart map, detailed filters, and search by community standards and ethical pricing.',
     icon: (
       <span aria-hidden="true" className="inline-flex h-1/3 w-1/3 [&_svg]:size-full">
         <RiSearchFill width={24} height={24} fill="currentColor" />
@@ -45,13 +47,17 @@ const FEATURES: readonly Feature[] = [
   },
   {
     title: 'Secure Oxy integration',
-    description: 'All actions linked to your Oxy account, ensuring privacy, security, and unified identity across the ecosystem.',
+    description:
+      'All actions linked to your Oxy account, ensuring privacy, security, and unified identity across the ecosystem.',
     icon: (
       <div className="relative grid h-1/3 w-1/3 place-items-center">
         <span aria-hidden="true" className="inline-flex h-full w-full [&_svg]:size-full">
           <RiEarthLine width={24} height={24} fill="currentColor" />
         </span>
-        <span aria-hidden="true" className="absolute -bottom-1 -right-1 inline-flex h-1/2 w-1/2 drop-shadow [&_svg]:size-full">
+        <span
+          aria-hidden="true"
+          className="absolute -bottom-1 -right-1 inline-flex h-1/2 w-1/2 drop-shadow [&_svg]:size-full"
+        >
           <RiLockLine width={24} height={24} fill="currentColor" />
         </span>
       </div>
@@ -60,14 +66,14 @@ const FEATURES: readonly Feature[] = [
     to: 'var(--success)',
     ink: 'text-success-foreground',
   },
-]
+];
 
 /** Ribbed-scanline texture layered over each tile's colour gradient. */
 function tileBackground(from: string, to: string): string {
   return [
     'repeating-linear-gradient(180deg, color-mix(in srgb, var(--background) 18%, transparent) 0px, color-mix(in srgb, var(--background) 18%, transparent) 7px, color-mix(in srgb, var(--foreground) 6%, transparent) 7px, color-mix(in srgb, var(--foreground) 6%, transparent) 14px)',
     `linear-gradient(180deg, ${from}, ${to})`,
-  ].join(', ')
+  ].join(', ');
 }
 
 export default function HomiioFeatureCards() {
@@ -83,9 +89,11 @@ export default function HomiioFeatureCards() {
             {feature.icon}
           </div>
           <h3 className="mt-4 text-lg font-bold text-foreground">{feature.title}</h3>
-          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+            {feature.description}
+          </p>
         </div>
       ))}
     </div>
-  )
+  );
 }

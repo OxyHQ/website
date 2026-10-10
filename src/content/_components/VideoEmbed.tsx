@@ -11,10 +11,10 @@
  * ──────────────────────────────────────────── */
 
 interface VideoEmbedProps {
-  src: string
-  title: string
+  src: string;
+  title: string;
   /** Optional aspect ratio override. Defaults to 16:9. */
-  aspectRatio?: '16/9' | '4/3' | '1/1' | '9/16'
+  aspectRatio?: '16/9' | '4/3' | '1/1' | '9/16';
 }
 
 const ASPECT: Record<NonNullable<VideoEmbedProps['aspectRatio']>, string> = {
@@ -22,7 +22,7 @@ const ASPECT: Record<NonNullable<VideoEmbedProps['aspectRatio']>, string> = {
   '4/3': 'aspect-4/3',
   '1/1': 'aspect-square',
   '9/16': 'aspect-9/16',
-}
+};
 
 export default function VideoEmbed({ src, title, aspectRatio = '16/9' }: VideoEmbedProps) {
   return (
@@ -38,5 +38,5 @@ export default function VideoEmbed({ src, title, aspectRatio = '16/9' }: VideoEm
         />
       </div>
     </figure>
-  )
+  );
 }

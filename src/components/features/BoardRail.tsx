@@ -1,7 +1,7 @@
-import { Link } from '../../lib/navigation'
-import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
-import FeatureSearch from './FeatureSearch'
-import { ORG_ROADMAP_PROJECT_URL, ROADMAP_GROUPS } from './roadmapGroups'
+import { Link } from '../../lib/navigation';
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine';
+import FeatureSearch from './FeatureSearch';
+import { ORG_ROADMAP_PROJECT_URL, ROADMAP_GROUPS } from './roadmapGroups';
 
 /**
  * Legal links and the credit line, in the rail rather than in a page footer.
@@ -17,21 +17,26 @@ const FOOTER_LINKS = [
   { label: 'Privacy', to: '/transparency/legal/privacy' },
   { label: 'Terms', to: '/transparency/legal/terms' },
   { label: 'Cookies', to: '/transparency/legal/cookies' },
-] as const
+] as const;
 
 interface BoardRailProps {
-  query: string
-  onQueryChange: (value: string) => void
+  query: string;
+  onQueryChange: (value: string) => void;
   /** Per-status totals from the list response, for the roadmap summary. */
-  statusCounts: Record<string, number>
-  onOpenRoadmap: () => void
+  statusCounts: Record<string, number>;
+  onOpenRoadmap: () => void;
 }
 
-export default function BoardRail({ query, onQueryChange, statusCounts, onOpenRoadmap }: BoardRailProps) {
+export default function BoardRail({
+  query,
+  onQueryChange,
+  statusCounts,
+  onOpenRoadmap,
+}: BoardRailProps) {
   const summary = ROADMAP_GROUPS.map((group) => ({
     ...group,
     count: statusCounts[group.status] ?? 0,
-  })).filter((group) => group.count > 0)
+  })).filter((group) => group.count > 0);
 
   return (
     <div className="flex flex-col gap-4 pb-6 pt-2">
@@ -63,9 +68,9 @@ export default function BoardRail({ query, onQueryChange, statusCounts, onOpenRo
       <section className="rounded-2xl border border-border bg-card p-4">
         <h2 className="text-body-md font-semibold text-foreground">How this works</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Every proposal here is a real issue on GitHub. Votes from this site and reactions there are
-          counted together, and the total sets a priority label on the issue, so what you vote for is
-          what the people building it see.
+          Every proposal here is a real issue on GitHub. Votes from this site and reactions there
+          are counted together, and the total sets a priority label on the issue, so what you vote
+          for is what the people building it see.
         </p>
         <a
           href={ORG_ROADMAP_PROJECT_URL}
@@ -90,8 +95,10 @@ export default function BoardRail({ query, onQueryChange, statusCounts, onOpenRo
             </Link>
           ))}
         </div>
-        <p className="pt-0.5 text-body-xs text-muted-foreground">Made with love in the world by Oxy.</p>
+        <p className="pt-0.5 text-body-xs text-muted-foreground">
+          Made with love in the world by Oxy.
+        </p>
       </footer>
     </div>
-  )
+  );
 }

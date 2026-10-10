@@ -1,57 +1,96 @@
-import { useState } from 'react'
-import { useChangelog, type ChangelogEntry } from '../../../api/hooks'
-import { apiFetch } from '../../../api/client'
-import { Button } from '@oxy.so/bloom/button'
-import { Badge } from '@oxy.so/bloom/badge'
-import { LabeledTextField } from '../LabeledTextField'
-import { Textarea } from '@oxy.so/bloom/textarea'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
-import MediaPicker from '../MediaPicker'
+import { useState } from 'react';
+import { useChangelog, type ChangelogEntry } from '../../../api/hooks';
+import { apiFetch } from '../../../api/client';
+import { Button } from '@oxy.so/bloom/button';
+import { Badge } from '@oxy.so/bloom/badge';
+import { LabeledTextField } from '../LabeledTextField';
+import { Textarea } from '@oxy.so/bloom/textarea';
+import ConfirmDialog from '../ConfirmDialog';
+import { useConfirmAction } from '../useConfirmAction';
+import MediaPicker from '../MediaPicker';
 
 export default function ChangelogAdmin() {
-  const { data, refetch } = useChangelog()
-  const [editing, setEditing] = useState<ChangelogEntry | null>(null)
-  const [saving, setSaving] = useState(false)
-  const entries = data?.entries ?? []
+  const { data, refetch } = useChangelog();
+  const [editing, setEditing] = useState<ChangelogEntry | null>(null);
+  const [saving, setSaving] = useState(false);
+  const entries = data?.entries ?? [];
 
   const save = async () => {
-    if (!editing) return
-    setSaving(true)
+    if (!editing) return;
+    setSaving(true);
     if (editing._id) {
-      await apiFetch(`/changelog/${editing._id}`, { method: 'PUT', body: JSON.stringify(editing) })
+      await apiFetch(`/changelog/${editing._id}`, { method: 'PUT', body: JSON.stringify(editing) });
     } else {
-      await apiFetch('/changelog', { method: 'POST', body: JSON.stringify(editing) })
+      await apiFetch('/changelog', { method: 'POST', body: JSON.stringify(editing) });
     }
-    await refetch()
-    setSaving(false)
-    setEditing(null)
-  }
+    await refetch();
+    setSaving(false);
+    setEditing(null);
+  };
 
   const deleteAction = useConfirmAction<ChangelogEntry>({
     onConfirm: async (entry) => {
-      if (!entry._id) return
-      await apiFetch(`/changelog/${entry._id}`, { method: 'DELETE' })
-      await refetch()
+      if (!entry._id) return;
+      await apiFetch(`/changelog/${entry._id}`, { method: 'DELETE' });
+      await refetch();
     },
-  })
+  });
 
   if (editing) {
     return (
       <div>
-        <div className="mb-4"><Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back</Button></div>
-        <h2 className="text-xl font-semibold text-foreground">{editing._id ? 'Edit Entry' : 'New Entry'}</h2>
+        <div className="mb-4">
+          <Button appearance="subtle" onPress={() => setEditing(null)}>
+            &larr; Back
+          </Button>
+        </div>
+        <h2 className="text-xl font-semibold text-foreground">
+          {editing._id ? 'Edit Entry' : 'New Entry'}
+        </h2>
         {editing.repoDisplayName && (
           <p className="mt-1 text-xs text-muted-foreground">
-            Synced from GitHub: {editing.repoDisplayName} {editing.tagName && `(${editing.tagName})`}
+            Synced from GitHub: {editing.repoDisplayName}{' '}
+            {editing.tagName && `(${editing.tagName})`}
           </p>
         )}
         <div className="mt-6 flex flex-col gap-4">
-          <LabeledTextField label="Title" value={editing.title} onValueChange={(v) => setEditing({ ...editing, title: v })} />
-          <LabeledTextField label="Date" placeholder="YYYY-MM-DD" value={editing.date?.slice(0, 10) ?? ''} onValueChange={(v) => setEditing({ ...editing, date: v })} />
-          <Textarea label="Content (Markdown)" value={editing.content} onValueChange={(v) => setEditing({ ...editing, content: v })} rows={6} />
-          <LabeledTextField label="Tags (comma-separated)" value={(editing.tags ?? []).join(', ')} onValueChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })} />
-          <Textarea label="Items (one per line)" value={(editing.items ?? []).join('\n')} onValueChange={(v) => setEditing({ ...editing, items: v.split('\n').filter(Boolean) })} rows={4} inputStyle={{ fontFamily: 'monospace' }} />
+          <LabeledTextField
+            label="Title"
+            value={editing.title}
+            onValueChange={(v) => setEditing({ ...editing, title: v })}
+          />
+          <LabeledTextField
+            label="Date"
+            placeholder="YYYY-MM-DD"
+            value={editing.date?.slice(0, 10) ?? ''}
+            onValueChange={(v) => setEditing({ ...editing, date: v })}
+          />
+          <Textarea
+            label="Content (Markdown)"
+            value={editing.content}
+            onValueChange={(v) => setEditing({ ...editing, content: v })}
+            rows={6}
+          />
+          <LabeledTextField
+            label="Tags (comma-separated)"
+            value={(editing.tags ?? []).join(', ')}
+            onValueChange={(v) =>
+              setEditing({
+                ...editing,
+                tags: v
+                  .split(',')
+                  .map((t: string) => t.trim())
+                  .filter(Boolean),
+              })
+            }
+          />
+          <Textarea
+            label="Items (one per line)"
+            value={(editing.items ?? []).join('\n')}
+            onValueChange={(v) => setEditing({ ...editing, items: v.split('\n').filter(Boolean) })}
+            rows={4}
+            inputStyle={{ fontFamily: 'monospace' }}
+          />
           <MediaPicker
             value={editing.media}
             onChange={(id) => setEditing({ ...editing, media: id || '' })}
@@ -60,28 +99,52 @@ export default function ChangelogAdmin() {
             accept="image/*,video/*"
           />
           <div className="flex gap-3">
-            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
-            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
+              {saving ? 'Saving...' : 'Save'}
+            </Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>
+              Cancel
+            </Button>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div>
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-foreground">Changelog</h2>
-        <Button appearance="solid" tone="accent" onPress={() => setEditing({ title: '', content: '', tags: [], date: new Date().toISOString(), items: [], media: '' })}>New entry</Button>
+        <Button
+          appearance="solid"
+          tone="accent"
+          onPress={() =>
+            setEditing({
+              title: '',
+              content: '',
+              tags: [],
+              date: new Date().toISOString(),
+              items: [],
+              media: '',
+            })
+          }
+        >
+          New entry
+        </Button>
       </div>
       <div className="mt-6 flex flex-col gap-2">
         {entries.map((e) => (
-          <div key={e._id} className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition-colors hover:bg-muted/50">
+          <div
+            key={e._id}
+            className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition-colors hover:bg-muted/50"
+          >
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="truncate text-sm font-medium text-foreground">{e.title}</span>
                 {e.tagName && <Badge tone="neutral" content={e.tagName} />}
-                {e.repoDisplayName && <span className="text-xs text-muted-foreground">{e.repoDisplayName}</span>}
+                {e.repoDisplayName && (
+                  <span className="text-xs text-muted-foreground">{e.repoDisplayName}</span>
+                )}
               </div>
               <div className="mt-0.5 text-xs text-muted-foreground">
                 {new Date(e.date).toLocaleDateString()}
@@ -89,17 +152,25 @@ export default function ChangelogAdmin() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button appearance="subtle" onPress={() => setEditing({ ...e })}>Edit</Button>
-              <Button appearance="subtle" onPress={() => e._id && deleteAction.request(e)}>Delete</Button>
+              <Button appearance="subtle" onPress={() => setEditing({ ...e })}>
+                Edit
+              </Button>
+              <Button appearance="subtle" onPress={() => e._id && deleteAction.request(e)}>
+                Delete
+              </Button>
             </div>
           </div>
         ))}
-        {entries.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No entries yet.</p>}
+        {entries.length === 0 && (
+          <p className="py-8 text-center text-sm text-muted-foreground">No entries yet.</p>
+        )}
       </div>
 
       <ConfirmDialog
         control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.title}”?` : 'Delete changelog entry?'}
+        title={
+          deleteAction.target ? `Delete “${deleteAction.target.title}”?` : 'Delete changelog entry?'
+        }
         description="This permanently removes the changelog entry. This cannot be undone."
         confirmLabel="Delete"
         tone="danger"
@@ -108,5 +179,5 @@ export default function ChangelogAdmin() {
         onConfirm={deleteAction.confirm}
       />
     </div>
-  )
+  );
 }

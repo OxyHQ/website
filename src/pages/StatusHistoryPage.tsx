@@ -1,15 +1,15 @@
-import { useParams } from 'react-router-dom'
-import { Link } from '../lib/navigation'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import { useIncidentHistory } from '../api/hooks'
-import IncidentCard from '../components/status/IncidentCard'
+import { useParams } from 'react-router-dom';
+import { Link } from '../lib/navigation';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import { useIncidentHistory } from '../api/hooks';
+import IncidentCard from '../components/status/IncidentCard';
 
 export default function StatusHistoryPage() {
-  const { page: pageParam } = useParams<{ page: string }>()
-  const page = Math.max(1, parseInt(pageParam ?? '1', 10) || 1)
-  const { data, isLoading } = useIncidentHistory(page)
+  const { page: pageParam } = useParams<{ page: string }>();
+  const page = Math.max(1, parseInt(pageParam ?? '1', 10) || 1);
+  const { data, isLoading } = useIncidentHistory(page);
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -75,5 +75,5 @@ export default function StatusHistoryPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

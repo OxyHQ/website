@@ -4,26 +4,26 @@
  * session-bound client; EventSource cannot carry its Authorization header.
  */
 
-import type { OxyServices } from '@oxy.so/core'
+import type { OxyServices } from '@oxy.so/core';
 
 export interface PlatformStats {
-  totalUsers: number
-  activeSessions: number
-  totalMessages: number
-  totalNotifications: number
-  totalFiles: number
-  totalTransactions: number
-  totalDeveloperApps: number
-  totalFollows: number
-  aiModels: number
-  topCountries: Array<{ location: string; count: number }>
-  regions: number
-  timestamp: string
+  totalUsers: number;
+  activeSessions: number;
+  totalMessages: number;
+  totalNotifications: number;
+  totalFiles: number;
+  totalTransactions: number;
+  totalDeveloperApps: number;
+  totalFollows: number;
+  aiModels: number;
+  topCountries: Array<{ location: string; count: number }>;
+  regions: number;
+  timestamp: string;
 }
 
 export interface PlatformStatsState {
-  data: PlatformStats
-  isConnected: boolean
+  data: PlatformStats;
+  isConnected: boolean;
 }
 
 const DEFAULT_PLATFORM_STATS: PlatformStats = {
@@ -39,43 +39,43 @@ const DEFAULT_PLATFORM_STATS: PlatformStats = {
   topCountries: [],
   regions: 0,
   timestamp: new Date().toISOString(),
-}
+};
 
 const INITIAL_STATE: PlatformStatsState = {
   data: DEFAULT_PLATFORM_STATS,
   isConnected: false,
-}
-const POLL_INTERVAL_MS = 5_000
+};
+const POLL_INTERVAL_MS = 5_000;
 
-type Listener = () => void
+type Listener = () => void;
 
-let state: PlatformStatsState = INITIAL_STATE
-const listeners = new Set<Listener>()
-let client: OxyServices['http'] | null = null
-let pollTimer: ReturnType<typeof setInterval> | null = null
+let state: PlatformStatsState = INITIAL_STATE;
+const listeners = new Set<Listener>();
+let client: OxyServices['http'] | null = null;
+let pollTimer: ReturnType<typeof setInterval> | null = null;
 
 function emit() {
-  listeners.forEach((listener) => listener())
+  listeners.forEach((listener) => listener());
 }
 
 function setState(next: PlatformStatsState) {
-  state = next
-  emit()
+  state = next;
+  emit();
 }
 
 interface UpstreamPlatformStats {
-  totalUsers: number
-  activeSessions: number
-  totalMessages: number
-  totalNotifications: number
-  totalFiles: number
-  totalTransactions: number
-  totalApplications: number
-  totalFollows: number
-  aiModels: number
-  timestamp: string
-  topCountries?: Array<{ location: string; count: number }>
-  regions?: number
+  totalUsers: number;
+  activeSessions: number;
+  totalMessages: number;
+  totalNotifications: number;
+  totalFiles: number;
+  totalTransactions: number;
+  totalApplications: number;
+  totalFollows: number;
+  aiModels: number;
+  timestamp: string;
+  topCountries?: Array<{ location: string; count: number }>;
+  regions?: number;
 }
 
 function ingest(upstream: UpstreamPlatformStats) {
@@ -84,57 +84,59 @@ function ingest(upstream: UpstreamPlatformStats) {
     totalDeveloperApps: upstream.totalApplications,
     topCountries: upstream.topCountries ?? [],
     regions: upstream.regions ?? 0,
-  }
+  };
   setState({
     data: parsed,
     isConnected: true,
-  })
+  });
 }
 
 async function fetchStats() {
-  if (!client) return
+  if (!client) return;
   try {
-    ingest(await client.request<UpstreamPlatformStats>({
-      method: 'GET',
-      url: '/platform-stats',
-      retry: false,
-      deduplicate: false,
-    }))
+    ingest(
+      await client.request<UpstreamPlatformStats>({
+        method: 'GET',
+        url: '/platform-stats',
+        retry: false,
+        deduplicate: false,
+      }),
+    );
   } catch (err) {
-    setState({ ...state, isConnected: false })
-    console.warn('[platformStatsStore] authenticated refresh failed:', err)
+    setState({ ...state, isConnected: false });
+    console.warn('[platformStatsStore] authenticated refresh failed:', err);
   }
 }
 
 export function setPlatformStatsOxyServices(oxyServices: OxyServices): void {
-  client = oxyServices.http
-  if (listeners.size > 0) void fetchStats()
+  client = oxyServices.http;
+  if (listeners.size > 0) void fetchStats();
 }
 
 function teardown() {
   if (pollTimer) {
-    clearInterval(pollTimer)
-    pollTimer = null
+    clearInterval(pollTimer);
+    pollTimer = null;
   }
 }
 
 export function subscribePlatformStats(listener: Listener): () => void {
-  const wasEmpty = listeners.size === 0
-  listeners.add(listener)
+  const wasEmpty = listeners.size === 0;
+  listeners.add(listener);
   if (wasEmpty) {
-    void fetchStats()
-    pollTimer = setInterval(fetchStats, POLL_INTERVAL_MS)
+    void fetchStats();
+    pollTimer = setInterval(fetchStats, POLL_INTERVAL_MS);
   }
   return () => {
-    listeners.delete(listener)
-    if (listeners.size === 0) teardown()
-  }
+    listeners.delete(listener);
+    if (listeners.size === 0) teardown();
+  };
 }
 
 export function getPlatformStatsSnapshot(): PlatformStatsState {
-  return state
+  return state;
 }
 
 export function getPlatformStatsServerSnapshot(): PlatformStatsState {
-  return INITIAL_STATE
+  return INITIAL_STATE;
 }

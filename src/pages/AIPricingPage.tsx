@@ -1,18 +1,18 @@
-import { useMemo } from 'react'
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import Button from '../components/ui/Button'
-import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge'
-import CostEstimator from '../components/ai/platform/CostEstimator'
-import { CatalogEmptyState, CatalogFreshness } from '../components/ai/platform/CatalogNotice'
-import { Link } from '../lib/navigation'
-import { useTranslation } from '../lib/i18n'
-import { useCatalog } from '../lib/ai/useCatalog'
-import { isCatalogUnpublished } from '../lib/ai/snapshot'
-import { entriesForListing, publisherName, type UnitPrice } from '../lib/ai/catalog'
-import { displayPrice, isPerMillionUnit } from '../lib/ai/estimator'
-import { modelPath } from '../lib/ai/modelId'
-import { OXY_INFERENCE_AVAILABILITY, consoleLinks } from '../data/ai/taxonomy'
+import { useMemo } from 'react';
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import Button from '../components/ui/Button';
+import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge';
+import CostEstimator from '../components/ai/platform/CostEstimator';
+import { CatalogEmptyState, CatalogFreshness } from '../components/ai/platform/CatalogNotice';
+import { Link } from '../lib/navigation';
+import { useTranslation } from '../lib/i18n';
+import { useCatalog } from '../lib/ai/useCatalog';
+import { isCatalogUnpublished } from '../lib/ai/snapshot';
+import { entriesForListing, publisherName, type UnitPrice } from '../lib/ai/catalog';
+import { displayPrice, isPerMillionUnit } from '../lib/ai/estimator';
+import { modelPath } from '../lib/ai/modelId';
+import { OXY_INFERENCE_AVAILABILITY, consoleLinks } from '../data/ai/taxonomy';
 
 /**
  * `/ai/pricing` — what INFERENCE costs.
@@ -29,9 +29,9 @@ import { OXY_INFERENCE_AVAILABILITY, consoleLinks } from '../data/ai/taxonomy'
  * belong to, and an estimator that computes in integers.
  */
 export default function AIPricingPage() {
-  const { t } = useTranslation()
-  const { catalog } = useCatalog()
-  const unpublished = isCatalogUnpublished(catalog)
+  const { t } = useTranslation();
+  const { catalog } = useCatalog();
+  const unpublished = isCatalogUnpublished(catalog);
 
   const rows = useMemo(() => {
     return entriesForListing(catalog)
@@ -48,8 +48,8 @@ export default function AIPricingPage() {
               price.unit,
             ),
         ),
-      }))
-  }, [catalog])
+      }));
+  }, [catalog]);
 
   return (
     <PageShell
@@ -99,7 +99,9 @@ export default function AIPricingPage() {
 
       {/* ── Per-model price table ────────────────────────────────────── */}
       <section id="table" className="container scroll-mt-24 pb-16">
-        <h2 className="text-heading-responsive-md text-foreground">{t('ai.pricing.tableHeading')}</h2>
+        <h2 className="text-heading-responsive-md text-foreground">
+          {t('ai.pricing.tableHeading')}
+        </h2>
         <div className="mt-6">
           {unpublished || rows.length === 0 ? (
             <CatalogEmptyState />
@@ -131,12 +133,15 @@ export default function AIPricingPage() {
                 </thead>
                 <tbody>
                   {rows.map((row) => {
-                    const href = modelPath(row.entry.id)
+                    const href = modelPath(row.entry.id);
                     return (
                       <tr key={row.entry.id} className="border-b border-border/60">
                         <th scope="row" className="py-2 pe-4 text-start font-normal">
                           {href ? (
-                            <Link to={href} className="text-foreground underline-offset-4 hover:underline">
+                            <Link
+                              to={href}
+                              className="text-foreground underline-offset-4 hover:underline"
+                            >
                               {row.entry.name}
                             </Link>
                           ) : (
@@ -154,7 +159,7 @@ export default function AIPricingPage() {
                         <PriceCell price={row.output} />
                         <PriceCell price={row.reasoning} last />
                       </tr>
-                    )
+                    );
                   })}
                 </tbody>
               </table>
@@ -182,7 +187,9 @@ export default function AIPricingPage() {
 
       {/* ── Terms ────────────────────────────────────────────────────── */}
       <section className="container pb-16">
-        <h2 className="text-heading-responsive-md text-foreground">{t('ai.pricing.termsHeading')}</h2>
+        <h2 className="text-heading-responsive-md text-foreground">
+          {t('ai.pricing.termsHeading')}
+        </h2>
         <p className="mt-3 max-w-3xl text-pretty text-muted-foreground">
           {t('ai.pricing.termsBody')}
         </p>
@@ -190,7 +197,9 @@ export default function AIPricingPage() {
 
       {/* ── Which path is yours ──────────────────────────────────────── */}
       <section className="container pb-24">
-        <h2 className="text-heading-responsive-md text-foreground">{t('ai.pricing.pathsHeading')}</h2>
+        <h2 className="text-heading-responsive-md text-foreground">
+          {t('ai.pricing.pathsHeading')}
+        </h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <PathCard
             title={t('ai.pricing.pathSelfServe')}
@@ -221,11 +230,11 @@ export default function AIPricingPage() {
         </div>
       </section>
     </PageShell>
-  )
+  );
 }
 
 function PriceCell({ price, last = false }: { price?: UnitPrice; last?: boolean }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <td className={`py-2 text-end ${last ? '' : 'pe-4'}`}>
       {price ? (
@@ -243,7 +252,7 @@ function PriceCell({ price, last = false }: { price?: UnitPrice; last?: boolean 
         </span>
       )}
     </td>
-  )
+  );
 }
 
 function Handoff({
@@ -253,11 +262,11 @@ function Handoff({
   href,
   external = false,
 }: {
-  title: string
-  body: string
-  cta: string
-  href: string
-  external?: boolean
+  title: string;
+  body: string;
+  cta: string;
+  href: string;
+  external?: boolean;
 }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-5">
@@ -268,7 +277,7 @@ function Handoff({
         {external && <span className="sr-only"> (external)</span>}
       </Button>
     </div>
-  )
+  );
 }
 
 function PathCard({
@@ -278,11 +287,11 @@ function PathCard({
   href,
   external = false,
 }: {
-  title: string
-  body: string
-  cta: string
-  href: string
-  external?: boolean
+  title: string;
+  body: string;
+  cta: string;
+  href: string;
+  external?: boolean;
 }) {
   return (
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-5">
@@ -293,5 +302,5 @@ function PathCard({
         {external && <span className="sr-only"> (external)</span>}
       </Button>
     </div>
-  )
+  );
 }

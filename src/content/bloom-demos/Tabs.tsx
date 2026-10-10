@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs'
-import type { TabsVariant } from '@oxy.so/bloom/tabs'
-import type { PlaygroundValues } from './_playground'
+import { useState } from 'react';
+import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs';
+import type { TabsVariant } from '@oxy.so/bloom/tabs';
+import type { PlaygroundValues } from './_playground';
 
 export const meta = {
   description: 'Horizontally-scrollable tab bar with three visual variants.',
-}
+};
 
 export default function TabsDemo() {
-  const [tab, setTab] = useState('overview')
+  const [tab, setTab] = useState('overview');
   return (
     <div className="flex w-full max-w-md flex-col gap-3">
       <Tabs value={tab} onValueChange={setTab} variant="underline">
@@ -26,17 +26,17 @@ export default function TabsDemo() {
         You are viewing the {tab} panel.
       </div>
     </div>
-  )
+  );
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const variant = values.variant as TabsVariant
-  const initial = typeof values.value === 'string' ? values.value : 'overview'
-  const [tab, setTab] = useState(initial)
-  const [lastInitial, setLastInitial] = useState(initial)
+  const variant = values.variant as TabsVariant;
+  const initial = typeof values.value === 'string' ? values.value : 'overview';
+  const [tab, setTab] = useState(initial);
+  const [lastInitial, setLastInitial] = useState(initial);
   if (initial !== lastInitial) {
-    setLastInitial(initial)
-    setTab(initial)
+    setLastInitial(initial);
+    setTab(initial);
   }
   return (
     <div style={{ width: 360 }}>
@@ -46,5 +46,5 @@ export function Playground({ values }: { values: PlaygroundValues }) {
         <TabsTrigger value="settings" label="Settings" />
       </Tabs>
     </div>
-  )
+  );
 }

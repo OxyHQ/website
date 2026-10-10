@@ -28,7 +28,7 @@ export const UNTRANSLATED_PREFIXES: readonly string[] = [
   // Courses and lessons are English MDX with no `.es.mdx`/`.ca.mdx` siblings;
   // the chrome is translated, the teaching is not. Drop this once lessons are.
   '/academy',
-]
+];
 
 /**
  * True when `path` (a bare, default-locale route path) has a real translation
@@ -36,8 +36,8 @@ export const UNTRANSLATED_PREFIXES: readonly string[] = [
  * alternates.
  */
 export function hasLocalizedVariants(path: string): boolean {
-  const normalized = path.replace(/\/+$/, '') || '/'
+  const normalized = path.replace(/\/+$/, '') || '/';
   return !UNTRANSLATED_PREFIXES.some(
     (prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`),
-  )
+  );
 }

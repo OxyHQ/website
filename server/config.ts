@@ -1,13 +1,18 @@
-import dotenv from 'dotenv'
-dotenv.config()
+import dotenv from 'dotenv';
+dotenv.config();
 
 function parseCsvEnv(value: string | undefined): string[] {
-  return value?.split(',').map((item) => item.trim()).filter(Boolean) ?? []
+  return (
+    value
+      ?.split(',')
+      .map((item) => item.trim())
+      .filter(Boolean) ?? []
+  );
 }
 
 function parsePositiveIntEnv(value: string | undefined, fallback: number): number {
-  const parsed = parseInt(value ?? '', 10)
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
+  const parsed = parseInt(value ?? '', 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
 export const config = {
@@ -45,8 +50,9 @@ export const config = {
      * The MCP endpoint's canonical URL. Oxy binds every access token to it, so
      * it must match the host clients connect to exactly.
      */
-    resource: process.env.MCP_RESOURCE_URL
-      || (process.env.NODE_ENV === 'production'
+    resource:
+      process.env.MCP_RESOURCE_URL ||
+      (process.env.NODE_ENV === 'production'
         ? 'https://website-api.oxy.so/mcp'
         : `http://localhost:${process.env.PORT || '4000'}/mcp`),
     /** Browser origins allowed to call the endpoint, on top of Claude's. */
@@ -90,7 +96,10 @@ export const config = {
     proposalBurstPerMinute: parsePositiveIntEnv(process.env.FEATURE_PROPOSAL_BURST_PER_MINUTE, 2),
     // Raw JSON tier table; parsed and validated by `resolvePriorityTiers`.
     priorityTiers: process.env.FEATURE_PRIORITY_TIERS || '',
-    priorityReconcileMinutes: parsePositiveIntEnv(process.env.FEATURE_PRIORITY_RECONCILE_MINUTES, 60),
+    priorityReconcileMinutes: parsePositiveIntEnv(
+      process.env.FEATURE_PRIORITY_RECONCILE_MINUTES,
+      60,
+    ),
     // Compute and report the label changes without sending them to GitHub.
     priorityDryRun: process.env.FEATURE_PRIORITY_DRY_RUN === 'true',
   },
@@ -112,4 +121,4 @@ export const config = {
     // Public base URL fronting the bucket (AWS CloudFront: cloud.oxy.so).
     cdnBaseUrl: process.env.CDN_BASE_URL || 'https://cloud.oxy.so',
   },
-}
+};

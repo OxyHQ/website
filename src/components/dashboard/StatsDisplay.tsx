@@ -1,7 +1,7 @@
-import { formatNumber } from "../../lib/utils";
-import type { PlatformActivityEvent, PlatformStats } from "../../api/hooks";
-import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
-import { useTranslation } from "../../lib/i18n";
+import { formatNumber } from '../../lib/utils';
+import type { PlatformActivityEvent, PlatformStats } from '../../api/hooks';
+import { INFRA_NODES } from '../../data/dashboard/infra-nodes';
+import { useTranslation } from '../../lib/i18n';
 
 export function TotalRequests({ stats }: { stats: PlatformStats }) {
   const { t } = useTranslation();
@@ -22,7 +22,12 @@ export function LiveOrigins({ events }: { events: PlatformActivityEvent[] }) {
   const latestClientsByOrigin = new Map<string, { country: string; clients: number }>();
   for (let index = events.length - 1; index >= 0; index -= 1) {
     const event = events[index];
-    if (!event.sourceCountry || !event.sourceRegion || latestClientsByOrigin.has(event.sourceRegion)) continue;
+    if (
+      !event.sourceCountry ||
+      !event.sourceRegion ||
+      latestClientsByOrigin.has(event.sourceRegion)
+    )
+      continue;
     latestClientsByOrigin.set(event.sourceRegion, {
       country: event.sourceCountry,
       clients: event.activeClients ?? 0,
@@ -35,19 +40,28 @@ export function LiveOrigins({ events }: { events: PlatformActivityEvent[] }) {
   const countries = [...connectionsByCountry.entries()]
     .sort((left, right) => right[1] - left[1])
     .slice(0, 4);
-  const displayNames = typeof Intl.DisplayNames === 'function'
-    ? new Intl.DisplayNames([locale], { type: 'region' })
-    : null;
+  const displayNames =
+    typeof Intl.DisplayNames === 'function'
+      ? new Intl.DisplayNames([locale], { type: 'region' })
+      : null;
 
   return (
     <div className="hidden text-right min-[961px]:block">
-      <h2 className="mb-2 font-mono text-sm font-medium uppercase tracking-tight text-muted-foreground">{t('dashboard.networkOrigins')}</h2>
-      {countries.length > 0 ? countries.map(([country, connections]) => (
-        <div key={country} className="flex justify-end gap-4 font-mono text-sm">
-          <span className="text-primary">{displayNames?.of(country) ?? country}</span>
-          <span className="w-[7ch] tabular-nums text-foreground">{formatNumber(connections)}</span>
-        </div>
-      )) : <p className="font-mono text-xs text-muted-foreground">{t('dashboard.waitingOrigins')}</p>}
+      <h2 className="mb-2 font-mono text-sm font-medium uppercase tracking-tight text-muted-foreground">
+        {t('dashboard.networkOrigins')}
+      </h2>
+      {countries.length > 0 ? (
+        countries.map(([country, connections]) => (
+          <div key={country} className="flex justify-end gap-4 font-mono text-sm">
+            <span className="text-primary">{displayNames?.of(country) ?? country}</span>
+            <span className="w-[7ch] tabular-nums text-foreground">
+              {formatNumber(connections)}
+            </span>
+          </div>
+        ))
+      ) : (
+        <p className="font-mono text-xs text-muted-foreground">{t('dashboard.waitingOrigins')}</p>
+      )}
     </div>
   );
 }
@@ -56,12 +70,12 @@ function LocationRow({ location, count }: { location: string; count: number }) {
   return (
     <li className="flex items-center w-full md:w-fit justify-between md:justify-start">
       <span aria-hidden="true" className="inline-block translate-y-[-2px] translate-x-[2px]">
-        <span className="text-primary" style={{ opacity: 1 }}>■</span>
+        <span className="text-primary" style={{ opacity: 1 }}>
+          ■
+        </span>
       </span>
       <div className="text-left">
-        <h3 className="inline-block my-0 font-medium text-[16px] text-primary">
-          &nbsp;{location}
-        </h3>
+        <h3 className="inline-block my-0 font-medium text-[16px] text-primary">&nbsp;{location}</h3>
       </div>
       <div className="w-[16ch] text-right">
         <span className="inline-flex tabular-nums">{formatNumber(count)}</span>
@@ -91,14 +105,12 @@ export function LiveActivity({ events }: { events: PlatformActivityEvent[] }) {
       <ul className="list-none pl-0 space-y-1">
         {regions.length > 0 ? (
           regions.map((entry) => (
-            <LocationRow
-              key={entry.location}
-              location={entry.location}
-              count={entry.count}
-            />
+            <LocationRow key={entry.location} location={entry.location} count={entry.count} />
           ))
         ) : (
-          <li className="text-sm text-muted-foreground font-mono">{t('dashboard.waitingActivity')}</li>
+          <li className="text-sm text-muted-foreground font-mono">
+            {t('dashboard.waitingActivity')}
+          </li>
         )}
       </ul>
     </div>
@@ -113,8 +125,12 @@ export function RegionCount({ stats }: { stats: PlatformStats }) {
         <span className="text-[10px]">▲</span>
       </span>
       <div className="text-left">
-        <span className="inline-block my-0 font-medium text-[16px]">&nbsp;{stats.regions || 0}</span>
-        <span className="font-medium text-[16px] text-muted-foreground tracking-tight">&nbsp;{t('dashboard.activeRegions')}</span>
+        <span className="inline-block my-0 font-medium text-[16px]">
+          &nbsp;{stats.regions || 0}
+        </span>
+        <span className="font-medium text-[16px] text-muted-foreground tracking-tight">
+          &nbsp;{t('dashboard.activeRegions')}
+        </span>
       </div>
     </div>
   );

@@ -1,48 +1,48 @@
-import { useMemo } from 'react'
-import { RiMessage2Line } from '@oxy.so/bloom/icons/RiMessage2Line'
-import { useAuth } from '@oxy.so/services/ui/client'
-import { useComments } from '../../api/hooks'
-import type { CommentData } from '../../api/hooks'
-import CommentComposer from './CommentComposer'
-import CommentThread from './CommentThread'
+import { useMemo } from 'react';
+import { RiMessage2Line } from '@oxy.so/bloom/icons/RiMessage2Line';
+import { useAuth } from '@oxy.so/services/ui/client';
+import { useComments } from '../../api/hooks';
+import type { CommentData } from '../../api/hooks';
+import CommentComposer from './CommentComposer';
+import CommentThread from './CommentThread';
 
 interface CommentSectionProps {
-  targetType: string
-  targetId: string
+  targetType: string;
+  targetId: string;
 }
 
 export default function CommentSection({ targetType, targetId }: CommentSectionProps) {
-  const { isAuthenticated, signIn } = useAuth()
-  const { data: comments, isLoading } = useComments(targetType, targetId)
+  const { isAuthenticated, signIn } = useAuth();
+  const { data: comments, isLoading } = useComments(targetType, targetId);
 
   const { topLevel, repliesByParent } = useMemo(() => {
-    const top: CommentData[] = []
-    const byParent: Record<string, CommentData[]> = {}
+    const top: CommentData[] = [];
+    const byParent: Record<string, CommentData[]> = {};
 
     for (const c of comments ?? []) {
       if (c.parentId === null) {
-        top.push(c)
+        top.push(c);
       } else {
-        const list = byParent[c.parentId] ?? []
-        list.push(c)
-        byParent[c.parentId] = list
+        const list = byParent[c.parentId] ?? [];
+        list.push(c);
+        byParent[c.parentId] = list;
       }
     }
 
-    return { topLevel: top, repliesByParent: byParent }
-  }, [comments])
+    return { topLevel: top, repliesByParent: byParent };
+  }, [comments]);
 
-  const totalCount = comments?.length ?? 0
+  const totalCount = comments?.length ?? 0;
 
   return (
     <section className="mt-10">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <span className="inline-flex text-muted-foreground" aria-hidden="true"><RiMessage2Line width={20} height={20} fill="currentColor" /></span>
+        <span className="inline-flex text-muted-foreground" aria-hidden="true">
+          <RiMessage2Line width={20} height={20} fill="currentColor" />
+        </span>
         <h3 className="text-base font-semibold text-foreground">
-          {totalCount === 0
-            ? 'Comments'
-            : `Comments (${totalCount})`}
+          {totalCount === 0 ? 'Comments' : `Comments (${totalCount})`}
         </h3>
       </div>
 
@@ -58,17 +58,15 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
               className="cursor-pointer font-medium text-primary hover:underline"
             >
               Sign in
-            </button>
-            {' '}to join the discussion.
+            </button>{' '}
+            to join the discussion.
           </div>
         )}
       </div>
 
       {/* Comments list */}
       <div className="mt-4">
-        {isLoading && (
-          <p className="text-sm text-muted-foreground">Loading comments...</p>
-        )}
+        {isLoading && <p className="text-sm text-muted-foreground">Loading comments...</p>}
 
         {!isLoading && totalCount === 0 && (
           <p className="text-sm text-muted-foreground">
@@ -87,5 +85,5 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
         ))}
       </div>
     </section>
-  )
+  );
 }

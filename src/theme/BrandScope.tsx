@@ -1,6 +1,6 @@
-import { useSyncExternalStore, type ReactNode } from 'react'
-import { BloomSeedScope, useTheme } from '@oxy.so/bloom/theme'
-import { BRAND_SURFACES, type BrandSurface } from './brands'
+import { useSyncExternalStore, type ReactNode } from 'react';
+import { BloomSeedScope, useTheme } from '@oxy.so/bloom/theme';
+import { BRAND_SURFACES, type BrandSurface } from './brands';
 
 /**
  * The brand surface a page root's classes select, if any.
@@ -11,11 +11,11 @@ import { BRAND_SURFACES, type BrandSurface } from './brands'
  * returned here.
  */
 function brandSurfaceFor(className: string): BrandSurface | undefined {
-  const classes = new Set(className.split(/\s+/))
-  return BRAND_SURFACES.findLast((surface) => classes.has(surface.selector.slice(1)))
+  const classes = new Set(className.split(/\s+/));
+  return BRAND_SURFACES.findLast((surface) => classes.has(surface.selector.slice(1)));
 }
 
-const subscribeNever = () => () => {}
+const subscribeNever = () => () => {};
 
 /**
  * Carries a brand surface's palette to the Bloom components inside it.
@@ -38,11 +38,15 @@ const subscribeNever = () => () => {}
  * old rule and are never scoped.
  */
 export function BrandScope({ className, children }: { className: string; children: ReactNode }) {
-  const onClient = useSyncExternalStore(subscribeNever, () => true, () => false)
-  const { isDark } = useTheme()
-  const surface = brandSurfaceFor(className)
-  const scoped = surface?.mode === 'auto' || (surface?.mode === 'light' && !isDark)
-  if (!onClient || !surface || !scoped) return children
+  const onClient = useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
+  const { isDark } = useTheme();
+  const surface = brandSurfaceFor(className);
+  const scoped = surface?.mode === 'auto' || (surface?.mode === 'light' && !isDark);
+  if (!onClient || !surface || !scoped) return children;
   return (
     <BloomSeedScope
       seed={surface.seed}
@@ -52,5 +56,5 @@ export function BrandScope({ className, children }: { className: string; childre
     >
       {children}
     </BloomSeedScope>
-  )
+  );
 }

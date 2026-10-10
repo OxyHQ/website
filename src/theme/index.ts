@@ -21,64 +21,64 @@ import {
   applyPresetVarsToDocument,
   hexToAppColorName,
   type AppColorName,
-} from '@oxy.so/bloom/theme'
-import { isFairCoinHost } from '../lib/host'
+} from '@oxy.so/bloom/theme';
+import { isFairCoinHost } from '../lib/host';
 // The same two names the build-time stylesheet is generated from, so a page
 // cannot boot on one palette and hydrate into another.
-import { FAIRCOIN_PRESET, SITE_PRESET } from './brands'
+import { FAIRCOIN_PRESET, SITE_PRESET } from './brands';
 
-export { APP_COLOR_PRESETS, APP_COLOR_NAMES, hexToAppColorName }
-export type { AppColorName }
+export { APP_COLOR_PRESETS, APP_COLOR_NAMES, hexToAppColorName };
+export type { AppColorName };
 
-export type ThemeMode = 'light' | 'dark'
+export type ThemeMode = 'light' | 'dark';
 
-const STORAGE_KEY_MODE = 'theme'
-const STORAGE_KEY_PRESET = 'colorPreset'
-const PUBLIC_PRESET_NAMES = new Set<AppColorName>(FREE_COLOR_NAMES)
+const STORAGE_KEY_MODE = 'theme';
+const STORAGE_KEY_PRESET = 'colorPreset';
+const PUBLIC_PRESET_NAMES = new Set<AppColorName>(FREE_COLOR_NAMES);
 
-const DEFAULT_PRESET: AppColorName = SITE_PRESET
-const DEFAULT_MODE: ThemeMode = 'dark'
+const DEFAULT_PRESET: AppColorName = SITE_PRESET;
+const DEFAULT_MODE: ThemeMode = 'dark';
 
 /* ── Getters ── */
 
 export function getSavedMode(): ThemeMode {
-  const saved = localStorage.getItem(STORAGE_KEY_MODE)
-  return saved === 'light' ? 'light' : DEFAULT_MODE
+  const saved = localStorage.getItem(STORAGE_KEY_MODE);
+  return saved === 'light' ? 'light' : DEFAULT_MODE;
 }
 
 export function getSavedPreset(): AppColorName {
-  if (isFairCoinHost()) return FAIRCOIN_PRESET
-  const saved = localStorage.getItem(STORAGE_KEY_PRESET) as AppColorName | null
+  if (isFairCoinHost()) return FAIRCOIN_PRESET;
+  const saved = localStorage.getItem(STORAGE_KEY_PRESET) as AppColorName | null;
   // The website has no handle/subscription entitlement signal. Keep persisted
   // state aligned with the public picker and its generated prepaint CSS.
-  if (saved && PUBLIC_PRESET_NAMES.has(saved)) return saved
-  return DEFAULT_PRESET
+  if (saved && PUBLIC_PRESET_NAMES.has(saved)) return saved;
+  return DEFAULT_PRESET;
 }
 
 /* ── Persistence ── */
 
 /** Persist only. Once React mounts, BloomThemeProvider is the sole paint authority. */
 export function saveModePreference(mode: ThemeMode) {
-  localStorage.setItem(STORAGE_KEY_MODE, mode)
+  localStorage.setItem(STORAGE_KEY_MODE, mode);
 }
 
 /** Persist only. BloomThemeProvider applies the controlled preset. */
 export function saveColorPresetPreference(preset: AppColorName) {
-  localStorage.setItem(STORAGE_KEY_PRESET, preset)
+  localStorage.setItem(STORAGE_KEY_PRESET, preset);
 }
 
 /* ── Core: inject Bloom CSS variables onto :root ── */
 
 function applyPreset(preset: AppColorName, mode: ThemeMode) {
-  if (!APP_COLOR_PRESETS[preset]) return
+  if (!APP_COLOR_PRESETS[preset]) return;
 
-  document.documentElement.setAttribute('data-color-preset', preset)
+  document.documentElement.setAttribute('data-color-preset', preset);
 
   // Delegate to Bloom's canonical writer (0.8.0+). It resolves the preset's
   // tokens to full `rgb(...)` colors via getResolvedTokens and writes both the
   // base palette and the extended (card/chart/sidebar) tokens onto :root, so
   // `var(--x)` — the form Tailwind v4 @theme compiles to — resolves directly.
-  applyPresetVarsToDocument(preset, mode)
+  applyPresetVarsToDocument(preset, mode);
 }
 
 /**
@@ -88,18 +88,18 @@ function applyPreset(preset: AppColorName, mode: ThemeMode) {
  * No-op on the FairCoin apex — the FairCoin brand always wins there.
  */
 export function applyUserColor(userColorHex?: string | null) {
-  if (isFairCoinHost()) return
+  if (isFairCoinHost()) return;
   if (userColorHex) {
-    const presetName = hexToAppColorName(userColorHex)
-    saveColorPresetPreference(presetName)
+    const presetName = hexToAppColorName(userColorHex);
+    saveColorPresetPreference(presetName);
   }
 }
 
 /* ── Initialise on import (called once from main.tsx) ── */
 
 export function initTheme() {
-  const mode = getSavedMode()
-  const preset = getSavedPreset()
-  document.documentElement.classList.toggle('dark', mode === 'dark')
-  applyPreset(preset, mode)
+  const mode = getSavedMode();
+  const preset = getSavedPreset();
+  document.documentElement.classList.toggle('dark', mode === 'dark');
+  applyPreset(preset, mode);
 }

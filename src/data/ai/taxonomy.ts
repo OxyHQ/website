@@ -13,8 +13,8 @@
  * service to `available` is a one-line edit here plus a claims-registry entry —
  * deliberately a decision someone makes, never a side effect of a page shipping.
  */
-import type { Availability } from '../../lib/ai/availability'
-import type { InquiryInterest } from '../../../server/contracts/salesInquiry'
+import type { Availability } from '../../lib/ai/availability';
+import type { InquiryInterest } from '../../../server/contracts/salesInquiry';
 
 /**
  * The state of the public inference service, named once.
@@ -23,10 +23,10 @@ import type { InquiryInterest } from '../../../server/contracts/salesInquiry'
  * quickstart all read this constant, so the site cannot advertise a preview in
  * one place and a purchase in another.
  */
-export const OXY_INFERENCE_AVAILABILITY: Availability = 'private_preview'
+export const OXY_INFERENCE_AVAILABILITY: Availability = 'private_preview';
 
 /** Where self-service configuration and billing actually happen. */
-export const CONSOLE_URL = 'https://console.oxy.so'
+export const CONSOLE_URL = 'https://console.oxy.so';
 
 /** Console deep links. A target that is not deployed yet falls back to the root. */
 export const consoleLinks = {
@@ -40,18 +40,18 @@ export const consoleLinks = {
   billing: `${CONSOLE_URL}/billing`,
   routing: `${CONSOLE_URL}/routing`,
   providerConnections: `${CONSOLE_URL}/providers`,
-} as const
+} as const;
 
-export type ConsoleLink = keyof typeof consoleLinks
+export type ConsoleLink = keyof typeof consoleLinks;
 
 /** The base URL the published quickstarts call. */
-export const INFERENCE_API_BASE = 'https://api.oxy.so/v1'
+export const INFERENCE_API_BASE = 'https://api.oxy.so/v1';
 
-export type ServiceAudience = 'developers' | 'organizations' | 'people'
+export type ServiceAudience = 'developers' | 'organizations' | 'people';
 
 export interface AiService {
   /** Stable key, used for anchors and analytics event names. */
-  key: string
+  key: string;
   /**
    * Which sales-form option this service preselects.
    *
@@ -64,20 +64,20 @@ export interface AiService {
    * Absent where talking to sales is not the next step, which is what keeps a
    * `coming_soon` service from opening a form about something nobody can buy.
    */
-  salesInterest?: InquiryInterest
-  name: string
+  salesInterest?: InquiryInterest;
+  name: string;
   /** One line: what it is. */
-  summary: string
+  summary: string;
   /** One line: who it is for. */
-  audience: ServiceAudience
-  audienceLabel: string
-  availability: Availability
+  audience: ServiceAudience;
+  audienceLabel: string;
+  availability: Availability;
   /** Where the card's primary action goes. */
-  href: string
+  href: string;
   /** True when `href` leaves the site. */
-  external?: boolean
+  external?: boolean;
   /** Secondary link, usually documentation for the service. */
-  docs?: { label: string; href: string; external?: boolean }
+  docs?: { label: string; href: string; external?: boolean };
 }
 
 /**
@@ -152,7 +152,7 @@ export const aiServices: AiService[] = [
     availability: 'coming_soon',
     href: '/ai#alia-models',
   },
-]
+];
 
 /** Retired model aliases the site must never present as Alia-owned models. */
-export const RETIRED_MODEL_ALIASES: readonly string[] = ['alia-v1', 'alia-v1-pro', 'alia-lite']
+export const RETIRED_MODEL_ALIASES: readonly string[] = ['alia-v1', 'alia-v1-pro', 'alia-lite'];

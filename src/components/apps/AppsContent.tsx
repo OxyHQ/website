@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
-import { Link } from '../../lib/navigation'
-import { useProducts, type ProductRecord } from '../../api/hooks'
-import Button from '../ui/Button'
-import AppCard from './AppCard'
-import BannerCta from '../slices/BannerCta'
+import { useMemo } from 'react';
+import { Link } from '../../lib/navigation';
+import { useProducts, type ProductRecord } from '../../api/hooks';
+import Button from '../ui/Button';
+import AppCard from './AppCard';
+import BannerCta from '../slices/BannerCta';
 
 /* ──────────────────────────────────────────────
  * /apps
@@ -18,7 +18,10 @@ import BannerCta from '../slices/BannerCta'
  * ──────────────────────────────────────────── */
 
 const ArrowGlyph = () => (
-  <span aria-hidden="true" className="inline-block ps-[0.375em] transition-transform will-change-transform group-hover/link:translate-x-1">
+  <span
+    aria-hidden="true"
+    className="inline-block ps-[0.375em] transition-transform will-change-transform group-hover/link:translate-x-1"
+  >
     <svg viewBox="0 0 6 10" fill="currentColor" className="mb-[0.025em] inline h-[0.5em]">
       <path
         fillRule="evenodd"
@@ -27,7 +30,7 @@ const ArrowGlyph = () => (
       />
     </svg>
   </span>
-)
+);
 
 function HeroSection({ products }: { products: ProductRecord[] }) {
   return (
@@ -68,7 +71,7 @@ function HeroSection({ products }: { products: ProductRecord[] }) {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function AppGridSection({
@@ -76,11 +79,11 @@ function AppGridSection({
   products,
   columns,
 }: {
-  title: string
-  products: ProductRecord[]
-  columns: string
+  title: string;
+  products: ProductRecord[];
+  columns: string;
 }) {
-  if (products.length === 0) return null
+  if (products.length === 0) return null;
   return (
     <section className="flex w-full flex-col gap-space-gutter lg:gap-x-space-gutter-lg">
       <div className="flex flex-wrap justify-between">
@@ -92,7 +95,7 @@ function AppGridSection({
         ))}
       </div>
     </section>
-  )
+  );
 }
 
 /** The editorial card beside the grid: a real document, not a promo. */
@@ -114,7 +117,7 @@ function EditorialCard() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 const ADVANTAGES = [
@@ -130,7 +133,7 @@ const ADVANTAGES = [
     title: 'Nobody is the product',
     body: 'No advertising and no data sales anywhere in the ecosystem. That constraint is written into the charter, not into a settings page.',
   },
-]
+];
 
 function AdvantageSection() {
   return (
@@ -139,7 +142,8 @@ function AdvantageSection() {
         <div className="flex basis-1/2 flex-col justify-start md:items-start">
           <h2 className="mb-space-sm text-heading-3xl md:mb-space-md">The Oxy app advantage</h2>
           <p className="text-body-xl text-muted-foreground lg:max-w-[24em]">
-            Every app here is built on the same identity, the same design system and the same promises.
+            Every app here is built on the same identity, the same design system and the same
+            promises.
           </p>
           <div className="mt-8 hidden md:block">
             <Button variant="primary" href="/transparency/charter">
@@ -162,7 +166,7 @@ function AdvantageSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /**
@@ -179,21 +183,21 @@ function ClosingSection() {
       secondary={{ label: 'Read the API reference', href: '/developers/docs/api' }}
       background={{ image: '/images/commons/crowd-poster.jpg', video: '/videos/commons-crowd.mp4' }}
     />
-  )
+  );
 }
 
 export default function AppsContent() {
-  const { data: products, isPending } = useProducts({ surface: 'products' })
+  const { data: products, isPending } = useProducts({ surface: 'products' });
 
   const { featured, live, upcoming } = useMemo(() => {
-    const all = [...(products ?? [])].sort((a, b) => a.order - b.order)
-    const published = all.filter((product) => product.lifecycle === 'live')
+    const all = [...(products ?? [])].sort((a, b) => a.order - b.order);
+    const published = all.filter((product) => product.lifecycle === 'live');
     return {
       featured: published.slice(0, 6),
       live: published.slice(6),
       upcoming: all.filter((product) => product.lifecycle !== 'live'),
-    }
-  }, [products])
+    };
+  }, [products]);
 
   return (
     <>
@@ -233,5 +237,5 @@ export default function AppsContent() {
       <AdvantageSection />
       <ClosingSection />
     </>
-  )
+  );
 }

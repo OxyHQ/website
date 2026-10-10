@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Button } from '@oxy.so/bloom/button'
-import { Checkbox } from '@oxy.so/bloom/checkbox'
-import { apiFetch } from '../../../api/client'
-import { LabeledTextField } from '../LabeledTextField'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
+import { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@oxy.so/bloom/button';
+import { Checkbox } from '@oxy.so/bloom/checkbox';
+import { apiFetch } from '../../../api/client';
+import { LabeledTextField } from '../LabeledTextField';
+import ConfirmDialog from '../ConfirmDialog';
+import { useConfirmAction } from '../useConfirmAction';
 
 interface TrackedRepoRecord {
-  _id: string
-  owner: string
-  repo: string
-  displayName: string
-  active: boolean
-  featureBoard: boolean
-  acceptsProposals: boolean
-  lastSyncAt: string | null
-  lastSyncError: string | null
+  _id: string;
+  owner: string;
+  repo: string;
+  displayName: string;
+  active: boolean;
+  featureBoard: boolean;
+  acceptsProposals: boolean;
+  lastSyncAt: string | null;
+  lastSyncError: string | null;
 }
 
 interface NewRepoDraft {
-  owner: string
-  repo: string
-  displayName: string
-  active: boolean
-  featureBoard: boolean
-  acceptsProposals: boolean
+  owner: string;
+  repo: string;
+  displayName: string;
+  active: boolean;
+  featureBoard: boolean;
+  acceptsProposals: boolean;
 }
 
 function emptyDraft(): NewRepoDraft {
-  return { owner: '', repo: '', displayName: '', active: false, featureBoard: false, acceptsProposals: false }
+  return {
+    owner: '',
+    repo: '',
+    displayName: '',
+    active: false,
+    featureBoard: false,
+    acceptsProposals: false,
+  };
 }
 
 /**
@@ -41,41 +48,44 @@ function emptyDraft(): NewRepoDraft {
  * start accepting public issues.
  */
 export default function ReposAdmin() {
-  const queryClient = useQueryClient()
-  const [draft, setDraft] = useState<NewRepoDraft | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [savingId, setSavingId] = useState<string | null>(null)
+  const queryClient = useQueryClient();
+  const [draft, setDraft] = useState<NewRepoDraft | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [savingId, setSavingId] = useState<string | null>(null);
 
   const { data, isPending } = useQuery({
     queryKey: ['tracked-repos'],
     queryFn: () => apiFetch<TrackedRepoRecord[]>('/changelog/repos'),
-  })
+  });
 
-  const repos = data ?? []
+  const repos = data ?? [];
 
   const invalidate = () => {
-    queryClient.invalidateQueries({ queryKey: ['tracked-repos'] })
+    queryClient.invalidateQueries({ queryKey: ['tracked-repos'] });
     // The board's app list and its cached issues both come from these rows.
-    queryClient.invalidateQueries({ queryKey: ['feature-apps'] })
-    queryClient.invalidateQueries({ queryKey: ['admin-features'] })
-  }
+    queryClient.invalidateQueries({ queryKey: ['feature-apps'] });
+    queryClient.invalidateQueries({ queryKey: ['admin-features'] });
+  };
 
   const patch = async (repo: TrackedRepoRecord, fields: Partial<TrackedRepoRecord>) => {
-    setError(null)
-    setSavingId(repo._id)
+    setError(null);
+    setSavingId(repo._id);
     try {
-      await apiFetch(`/changelog/repos/${repo._id}`, { method: 'PUT', body: JSON.stringify(fields) })
-      invalidate()
+      await apiFetch(`/changelog/repos/${repo._id}`, {
+        method: 'PUT',
+        body: JSON.stringify(fields),
+      });
+      invalidate();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update repository')
+      setError(err instanceof Error ? err.message : 'Failed to update repository');
     } finally {
-      setSavingId(null)
+      setSavingId(null);
     }
-  }
+  };
 
   const create = async () => {
-    if (!draft) return
-    setError(null)
+    if (!draft) return;
+    setError(null);
     try {
       await apiFetch('/changelog/repos', {
         method: 'POST',
@@ -83,20 +93,20 @@ export default function ReposAdmin() {
           ...draft,
           displayName: draft.displayName.trim() || `${draft.owner}/${draft.repo}`,
         }),
-      })
-      invalidate()
-      setDraft(null)
+      });
+      invalidate();
+      setDraft(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add repository')
+      setError(err instanceof Error ? err.message : 'Failed to add repository');
     }
-  }
+  };
 
   const deleteAction = useConfirmAction<TrackedRepoRecord>({
     onConfirm: async (repo) => {
-      await apiFetch(`/changelog/repos/${repo._id}`, { method: 'DELETE' })
-      invalidate()
+      await apiFetch(`/changelog/repos/${repo._id}`, { method: 'DELETE' });
+      invalidate();
     },
-  })
+  });
 
   return (
     <div>
@@ -104,14 +114,18 @@ export default function ReposAdmin() {
         <div>
           <h2 className="text-xl font-semibold text-foreground">Repositories</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            GitHub repositories the site tracks. <span className="font-medium">Sync</span> pulls releases
-            into the changelog. <span className="font-medium">Board</span> lists the repo's
+            GitHub repositories the site tracks. <span className="font-medium">Sync</span> pulls
+            releases into the changelog. <span className="font-medium">Board</span> lists the repo's
             feature-request issues at /features and allows votes on them.{' '}
-            <span className="font-medium">Proposals</span> lets signed-in visitors open an issue there
-            from the site.
+            <span className="font-medium">Proposals</span> lets signed-in visitors open an issue
+            there from the site.
           </p>
         </div>
-        {!draft && <Button appearance="solid" tone="accent" onPress={() => setDraft(emptyDraft())}>Add repository</Button>}
+        {!draft && (
+          <Button appearance="solid" tone="accent" onPress={() => setDraft(emptyDraft())}>
+            Add repository
+          </Button>
+        )}
       </div>
 
       {error && <p className="mt-4 text-sm text-error-text">{error}</p>}
@@ -150,11 +164,13 @@ export default function ReposAdmin() {
             <Checkbox
               label="Show on the feature board"
               checked={draft.featureBoard}
-              onCheckedChange={(featureBoard) => setDraft({
-                ...draft,
-                featureBoard,
-                acceptsProposals: featureBoard && draft.acceptsProposals,
-              })}
+              onCheckedChange={(featureBoard) =>
+                setDraft({
+                  ...draft,
+                  featureBoard,
+                  acceptsProposals: featureBoard && draft.acceptsProposals,
+                })
+              }
             />
             <Checkbox
               label="Accept proposals from the site"
@@ -165,8 +181,24 @@ export default function ReposAdmin() {
           </div>
 
           <div className="mt-4 flex items-center gap-2">
-            <Button appearance="solid" tone="accent" onPress={create} disabled={!draft.owner || !draft.repo}>Add</Button>
-            <Button appearance="outline" tone="neutral" onPress={() => { setDraft(null); setError(null) }}>Cancel</Button>
+            <Button
+              appearance="solid"
+              tone="accent"
+              onPress={create}
+              disabled={!draft.owner || !draft.repo}
+            >
+              Add
+            </Button>
+            <Button
+              appearance="outline"
+              tone="neutral"
+              onPress={() => {
+                setDraft(null);
+                setError(null);
+              }}
+            >
+              Cancel
+            </Button>
           </div>
         </div>
       )}
@@ -175,8 +207,9 @@ export default function ReposAdmin() {
 
       {!isPending && repos.length === 0 && (
         <p className="mt-6 text-sm text-muted-foreground">
-          No repositories tracked yet. Run <span className="font-mono">bun run seed:feature-board</span> to
-          add the Oxy and FairCoin apps, or add one above.
+          No repositories tracked yet. Run{' '}
+          <span className="font-mono">bun run seed:feature-board</span> to add the Oxy and FairCoin
+          apps, or add one above.
         </p>
       )}
 
@@ -185,7 +218,9 @@ export default function ReposAdmin() {
           {repos.map((repo) => (
             <div key={repo._id} className="flex flex-wrap items-center gap-4 px-4 py-3">
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium text-foreground">{repo.displayName}</div>
+                <div className="truncate text-sm font-medium text-foreground">
+                  {repo.displayName}
+                </div>
                 <div className="truncate font-mono text-xs text-muted-foreground">
                   {repo.owner}/{repo.repo}
                 </div>
@@ -216,7 +251,9 @@ export default function ReposAdmin() {
               </div>
 
               <div className="shrink-0">
-                <Button appearance="subtle" onPress={() => deleteAction.request(repo)}>Remove</Button>
+                <Button appearance="subtle" onPress={() => deleteAction.request(repo)}>
+                  Remove
+                </Button>
               </div>
             </div>
           ))}
@@ -225,7 +262,11 @@ export default function ReposAdmin() {
 
       <ConfirmDialog
         control={deleteAction.control}
-        title={deleteAction.target ? `Stop tracking ${deleteAction.target.displayName}?` : 'Stop tracking repository?'}
+        title={
+          deleteAction.target
+            ? `Stop tracking ${deleteAction.target.displayName}?`
+            : 'Stop tracking repository?'
+        }
         description="Changelog entries already synced from it are kept. Its feature requests leave the board, and votes already cast on them are kept but stop being counted."
         confirmLabel="Remove"
         tone="danger"
@@ -234,5 +275,5 @@ export default function ReposAdmin() {
         onConfirm={deleteAction.confirm}
       />
     </div>
-  )
+  );
 }

@@ -6,20 +6,20 @@
  * `scripts/build-docs-search-index.ts`.
  */
 export interface NewsroomPost {
-  slug: string
-  title: string
-  description?: string
-  resume?: string
-  status?: string
+  slug: string;
+  title: string;
+  description?: string;
+  resume?: string;
+  status?: string;
 }
 
 /**
  * Slugs become file paths *and* URLs, so only accept safe characters — defends
  * against a malformed or hostile slug (path traversal, stray HTML in a URL).
  */
-const SAFE_NEWSROOM_SLUG = /^[a-z0-9-]+$/i
+const SAFE_NEWSROOM_SLUG = /^[a-z0-9-]+$/i;
 
 /** A post is worth indexing when it's published and has a safe slug. */
 export function isIndexablePost(post: NewsroomPost): boolean {
-  return SAFE_NEWSROOM_SLUG.test(post.slug ?? '') && (post.status ?? 'published') === 'published'
+  return SAFE_NEWSROOM_SLUG.test(post.slug ?? '') && (post.status ?? 'published') === 'published';
 }

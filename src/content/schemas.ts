@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 /* ──────────────────────────────────────────────
  * Content frontmatter schemas
@@ -26,9 +26,9 @@ export const HelpFrontmatter = z.object({
   coverImage: z.string().optional(),
   /** Tags for filtering / SEO. */
   tags: z.array(z.string()).default([]),
-})
+});
 
-export type HelpFrontmatter = z.infer<typeof HelpFrontmatter>
+export type HelpFrontmatter = z.infer<typeof HelpFrontmatter>;
 
 export const AcademyFrontmatter = z.object({
   title: z.string(),
@@ -40,9 +40,9 @@ export const AcademyFrontmatter = z.object({
   duration: z.string().optional(),
   level: z.enum(['beginner', 'intermediate', 'advanced']).default('beginner'),
   tags: z.array(z.string()).default([]),
-})
+});
 
-export type AcademyFrontmatter = z.infer<typeof AcademyFrontmatter>
+export type AcademyFrontmatter = z.infer<typeof AcademyFrontmatter>;
 
 /**
  * Frontmatter for course landing pages (e.g. `academy/getting-started/index.mdx`).
@@ -58,9 +58,9 @@ export const AcademyCourseFrontmatter = z.object({
   featured: z.boolean().default(false),
   coverImage: z.string().optional(),
   tags: z.array(z.string()).default([]),
-})
+});
 
-export type AcademyCourseFrontmatter = z.infer<typeof AcademyCourseFrontmatter>
+export type AcademyCourseFrontmatter = z.infer<typeof AcademyCourseFrontmatter>;
 
 export const CompanyFrontmatter = z.object({
   title: z.string(),
@@ -74,9 +74,9 @@ export const CompanyFrontmatter = z.object({
   readingTime: z.string().optional(),
   /** Downloadable version offered next to the table of contents. */
   pdfHref: z.string().optional(),
-})
+});
 
-export type CompanyFrontmatter = z.infer<typeof CompanyFrontmatter>
+export type CompanyFrontmatter = z.infer<typeof CompanyFrontmatter>;
 
 /* ─── Locale parsing helpers ─── */
 
@@ -85,13 +85,13 @@ export type CompanyFrontmatter = z.infer<typeof CompanyFrontmatter>
  * Loaders return this when a caller asks for a locale that has no
  * translation for a given slug.
  */
-export const DEFAULT_LOCALE = 'en'
+export const DEFAULT_LOCALE = 'en';
 
 /**
  * Match a 2-letter locale suffix in front of `.mdx` — e.g. `.es.mdx`.
  * Captures the locale code so callers can extract and strip it.
  */
-export const LOCALE_SUFFIX_RE = /\.([a-z]{2})\.mdx$/
+export const LOCALE_SUFFIX_RE = /\.([a-z]{2})\.mdx$/;
 
 /**
  * Extract `{ slug, locale }` from an MDX path relative to its content
@@ -108,13 +108,13 @@ export const LOCALE_SUFFIX_RE = /\.([a-z]{2})\.mdx$/
  */
 export function parseLocaleFromPath(relativePath: string): { slug: string; locale: string } {
   // Strip leading `./` if present.
-  const cleaned = relativePath.replace(/^\.\//, '')
-  const match = cleaned.match(LOCALE_SUFFIX_RE)
+  const cleaned = relativePath.replace(/^\.\//, '');
+  const match = cleaned.match(LOCALE_SUFFIX_RE);
   if (match) {
-    const locale = match[1] ?? DEFAULT_LOCALE
-    const slug = cleaned.replace(LOCALE_SUFFIX_RE, '')
-    return { slug, locale }
+    const locale = match[1] ?? DEFAULT_LOCALE;
+    const slug = cleaned.replace(LOCALE_SUFFIX_RE, '');
+    return { slug, locale };
   }
-  const slug = cleaned.replace(/\.mdx$/, '')
-  return { slug, locale: DEFAULT_LOCALE }
+  const slug = cleaned.replace(/\.mdx$/, '');
+  return { slug, locale: DEFAULT_LOCALE };
 }

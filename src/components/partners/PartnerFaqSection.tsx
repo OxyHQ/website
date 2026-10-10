@@ -1,4 +1,4 @@
-import FaqSection, { type FaqGroup } from '../sections/FaqSection'
+import FaqSection, { type FaqGroup } from '../sections/FaqSection';
 
 const PARTNER_FAQ_GROUPS: readonly FaqGroup[] = [
   {
@@ -61,7 +61,7 @@ const PARTNER_FAQ_GROUPS: readonly FaqGroup[] = [
       },
     ],
   },
-]
+];
 
 export default function PartnerFaqSection() {
   return (
@@ -71,5 +71,5 @@ export default function PartnerFaqSection() {
       groups={PARTNER_FAQ_GROUPS}
       className="partners-faq-theme flex min-h-[100svh] items-center bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
     />
-  )
+  );
 }

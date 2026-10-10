@@ -1,10 +1,10 @@
-import { Suspense, createElement } from 'react'
-import { MDXProvider } from '@mdx-js/react'
-import PageShell from '../components/layout/PageShell'
-import TransparencyDocument from '../components/slices/TransparencyDocument'
-import { useCurrentLocale } from '../lib/i18n'
-import { loadCompanyPage } from '../content/company-loader'
-import { articleMdxComponents } from '../components/slices/articleMdxComponents'
+import { Suspense, createElement } from 'react';
+import { MDXProvider } from '@mdx-js/react';
+import PageShell from '../components/layout/PageShell';
+import TransparencyDocument from '../components/slices/TransparencyDocument';
+import { useCurrentLocale } from '../lib/i18n';
+import { loadCompanyPage } from '../content/company-loader';
+import { articleMdxComponents } from '../components/slices/articleMdxComponents';
 
 /* ──────────────────────────────────────────────
  * Long-form company documents: `/transparency/manifesto`, `/transparency/charter`.
@@ -17,16 +17,16 @@ import { articleMdxComponents } from '../components/slices/articleMdxComponents'
 
 interface CompanyArticlePageProps {
   /** MDX file under `src/content/company/`. */
-  slug: string
-  canonicalPath: string
+  slug: string;
+  canonicalPath: string;
   /** Closing band under the body. */
-  cta: { title: string; label: string; href: string; external?: boolean }
+  cta: { title: string; label: string; href: string; external?: boolean };
 }
 
 export default function CompanyArticlePage({ slug, canonicalPath, cta }: CompanyArticlePageProps) {
-  const locale = useCurrentLocale()
-  const entry = loadCompanyPage(slug, locale)
-  const pageTheme = slug === 'manifesto' ? 'manifesto-theme slice-theme' : 'slice-theme'
+  const locale = useCurrentLocale();
+  const entry = loadCompanyPage(slug, locale);
+  const pageTheme = slug === 'manifesto' ? 'manifesto-theme slice-theme' : 'slice-theme';
 
   if (!entry) {
     // The MDX file is required — a hard failure during build/dev so missing
@@ -41,10 +41,10 @@ export default function CompanyArticlePage({ slug, canonicalPath, cta }: Company
           Copy missing — see <code>src/content/company/{slug}.mdx</code>.
         </p>
       </PageShell>
-    )
+    );
   }
 
-  const { frontmatter, headings, Component } = entry
+  const { frontmatter, headings, Component } = entry;
   return (
     <TransparencyDocument
       canonicalPath={canonicalPath}
@@ -60,8 +60,10 @@ export default function CompanyArticlePage({ slug, canonicalPath, cta }: Company
       cta={cta}
     >
       <MDXProvider components={articleMdxComponents}>
-        <Suspense fallback={<p className="text-b3 text-muted-foreground">Loading…</p>}>{createElement(Component)}</Suspense>
+        <Suspense fallback={<p className="text-b3 text-muted-foreground">Loading…</p>}>
+          {createElement(Component)}
+        </Suspense>
       </MDXProvider>
     </TransparencyDocument>
-  )
+  );
 }

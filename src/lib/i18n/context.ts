@@ -1,20 +1,15 @@
-import { createContext } from 'react'
-import {
-  DEFAULT_LOCALE,
-  LOCALE_DISPLAY,
-  type Locale,
-  type TranslateFn,
-} from './types'
+import { createContext } from 'react';
+import { DEFAULT_LOCALE, LOCALE_DISPLAY, type Locale, type TranslateFn } from './types';
 
 export interface LocaleContextValue {
   /** The active locale (always one of `SUPPORTED_LOCALES`). */
-  locale: Locale
+  locale: Locale;
   /** The default locale exposed by the CMS, or `'en'` while loading. */
-  defaultLocale: Locale
+  defaultLocale: Locale;
   /** `true` when the active locale matches the default. */
-  isDefaultLocale: boolean
+  isDefaultLocale: boolean;
   /** `true` when the active locale renders right-to-left (currently only `'ar'`). */
-  isRtl: boolean
+  isRtl: boolean;
   /**
    * Locales available in the picker. Sourced from `/locales`, falls back to the
    * static list. `translationReady` marks the ones whose `/<code>/…` URLs may be
@@ -22,17 +17,17 @@ export interface LocaleContextValue {
    * the static fallback and on the default locale, which lives at the bare path.
    */
   locales: Array<{
-    code: Locale
-    name: string
-    nativeName: string
-    isDefault: boolean
-    translationCount: number
-    translationReady: boolean
-  }>
+    code: Locale;
+    name: string;
+    nativeName: string;
+    isDefault: boolean;
+    translationCount: number;
+    translationReady: boolean;
+  }>;
   /** Switches the active locale by rewriting the current pathname. Persists in localStorage. */
-  setLocale: (code: Locale) => void
+  setLocale: (code: Locale) => void;
   /** Resolves a key against the active locale dictionary with `{var}` interpolation. */
-  t: TranslateFn
+  t: TranslateFn;
 }
 
 export const LocaleContext = createContext<LocaleContextValue>({
@@ -48,4 +43,4 @@ export const LocaleContext = createContext<LocaleContextValue>({
   })),
   setLocale: () => {},
   t: (key) => key,
-})
+});

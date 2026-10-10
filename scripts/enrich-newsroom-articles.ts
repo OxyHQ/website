@@ -1,11 +1,11 @@
-import postgres from 'postgres'
-import { parseArticleFence } from '../src/components/slices/article-blocks/schema'
+import postgres from 'postgres';
+import { parseArticleFence } from '../src/components/slices/article-blocks/schema';
 
-type ArticleBlock = { name: string; payload: Record<string, unknown> }
+type ArticleBlock = { name: string; payload: Record<string, unknown> };
 
 export interface ArticleEnrichment {
-  beforeHeading: string
-  block: ArticleBlock
+  beforeHeading: string;
+  block: ArticleBlock;
 }
 
 /**
@@ -40,11 +40,13 @@ export const ARTICLE_ENRICHMENTS: Readonly<Record<string, ArticleEnrichment>> = 
         panels: [
           {
             label: 'A closed boundary',
-            content: 'Reaching people on another service requires another account and leaves each conversation inside one product.',
+            content:
+              'Reaching people on another service requires another account and leaves each conversation inside one product.',
           },
           {
             label: 'Mention with ActivityPub',
-            content: 'Compatible services can discover accounts and exchange eligible posts, follows and interactions while fediverse sharing remains an explicit choice.',
+            content:
+              'Compatible services can discover accounts and exchange eligible posts, follows and interactions while fediverse sharing remains an explicit choice.',
           },
         ],
         width: 'wide',
@@ -61,11 +63,13 @@ export const ARTICLE_ENRICHMENTS: Readonly<Record<string, ArticleEnrichment>> = 
         panels: [
           {
             label: 'Temporary listing',
-            content: 'An offer can change, disappear or be duplicated by several agencies. It is a sourced claim about a place.',
+            content:
+              'An offer can change, disappear or be duplicated by several agencies. It is a sourced claim about a place.',
           },
           {
             label: 'Durable home',
-            content: 'The physical dwelling keeps its history, reviews, rent records and relevant events after any one advert expires.',
+            content:
+              'The physical dwelling keeps its history, reviews, rent records and relevant events after any one advert expires.',
           },
         ],
         width: 'wide',
@@ -105,10 +109,28 @@ export const ARTICLE_ENRICHMENTS: Readonly<Record<string, ArticleEnrichment>> = 
       payload: {
         label: 'Explore the update',
         tabs: [
-          { id: 'voice', label: 'Voice', content: 'Real-time streaming audio, natural turn-taking, interruptions, and speech-to-text.' },
-          { id: 'canvas', label: 'Canvas', content: 'Interactive interfaces generated inside the conversation instead of static text alone.' },
-          { id: 'channels', label: 'Channels', content: 'One assistant available through several communication surfaces.' },
-          { id: 'workflows', label: 'Workflows', content: 'A durable execution layer for multi-step jobs, tools, and automations.' },
+          {
+            id: 'voice',
+            label: 'Voice',
+            content:
+              'Real-time streaming audio, natural turn-taking, interruptions, and speech-to-text.',
+          },
+          {
+            id: 'canvas',
+            label: 'Canvas',
+            content:
+              'Interactive interfaces generated inside the conversation instead of static text alone.',
+          },
+          {
+            id: 'channels',
+            label: 'Channels',
+            content: 'One assistant available through several communication surfaces.',
+          },
+          {
+            id: 'workflows',
+            label: 'Workflows',
+            content: 'A durable execution layer for multi-step jobs, tools, and automations.',
+          },
         ],
         width: 'wide',
       },
@@ -121,9 +143,23 @@ export const ARTICLE_ENRICHMENTS: Readonly<Record<string, ArticleEnrichment>> = 
       payload: {
         label: 'How Rooms is organized',
         tabs: [
-          { id: 'control-plane', label: 'Control plane', content: 'Socket.IO coordinates participants, requests, room lifecycle, and live interface state.' },
-          { id: 'media-plane', label: 'Media plane', content: 'A self-hosted LiveKit SFU carries real-time WebRTC audio.' },
-          { id: 'roles', label: 'Roles', content: 'Hosts, speakers, and listeners receive different permissions for a predictable live session.' },
+          {
+            id: 'control-plane',
+            label: 'Control plane',
+            content:
+              'Socket.IO coordinates participants, requests, room lifecycle, and live interface state.',
+          },
+          {
+            id: 'media-plane',
+            label: 'Media plane',
+            content: 'A self-hosted LiveKit SFU carries real-time WebRTC audio.',
+          },
+          {
+            id: 'roles',
+            label: 'Roles',
+            content:
+              'Hosts, speakers, and listeners receive different permissions for a predictable live session.',
+          },
         ],
         width: 'wide',
       },
@@ -137,8 +173,14 @@ export const ARTICLE_ENRICHMENTS: Readonly<Record<string, ArticleEnrichment>> = 
         caption: 'The February release in two workstreams',
         columns: ['Area', 'What shipped'],
         rows: [
-          ['Product', 'Advanced search, muting, reporting, trending, post actions, and image optimization'],
-          ['Engineering', 'Stricter TypeScript, structured frontend logging, and richer backend error context'],
+          [
+            'Product',
+            'Advanced search, muting, reporting, trending, post actions, and image optimization',
+          ],
+          [
+            'Engineering',
+            'Stricter TypeScript, structured frontend logging, and richer backend error context',
+          ],
         ],
         width: 'wide',
       },
@@ -178,10 +220,10 @@ export const ARTICLE_ENRICHMENTS: Readonly<Record<string, ArticleEnrichment>> = 
       },
     },
   },
-}
+};
 
 function serializeFence(name: string, payload: Record<string, unknown>): string {
-  return `\`\`\`${name}\n${JSON.stringify(payload, null, 2)}\n\`\`\``
+  return `\`\`\`${name}\n${JSON.stringify(payload, null, 2)}\n\`\`\``;
 }
 
 export function enrichNewsroomMarkdown(
@@ -189,42 +231,44 @@ export function enrichNewsroomMarkdown(
   options: { slug: string },
 ): { content: string; changed: boolean; blockCount: number } {
   if (/^```article-/m.test(markdown)) {
-    return { content: markdown, changed: false, blockCount: 0 }
+    return { content: markdown, changed: false, blockCount: 0 };
   }
 
-  const enrichment = ARTICLE_ENRICHMENTS[options.slug]
-  if (!enrichment) return { content: markdown, changed: false, blockCount: 0 }
+  const enrichment = ARTICLE_ENRICHMENTS[options.slug];
+  if (!enrichment) return { content: markdown, changed: false, blockCount: 0 };
 
-  const parsed = parseArticleFence(enrichment.block.name, JSON.stringify(enrichment.block.payload))
+  const parsed = parseArticleFence(enrichment.block.name, JSON.stringify(enrichment.block.payload));
   if (!parsed?.ok) {
-    throw new Error(`Invalid ${enrichment.block.name} block for ${options.slug}: ${parsed?.message ?? 'unknown block'}`)
+    throw new Error(
+      `Invalid ${enrichment.block.name} block for ${options.slug}: ${parsed?.message ?? 'unknown block'}`,
+    );
   }
 
-  const markerIndex = markdown.indexOf(enrichment.beforeHeading)
+  const markerIndex = markdown.indexOf(enrichment.beforeHeading);
   if (markerIndex < 0) {
-    throw new Error(`Insertion heading not found for ${options.slug}: ${enrichment.beforeHeading}`)
+    throw new Error(`Insertion heading not found for ${options.slug}: ${enrichment.beforeHeading}`);
   }
 
-  const before = markdown.slice(0, markerIndex).trimEnd()
-  const after = markdown.slice(markerIndex).trimStart()
-  const content = `${before}\n\n${serializeFence(enrichment.block.name, enrichment.block.payload)}\n\n${after}`
-  return { content, changed: content !== markdown, blockCount: 1 }
+  const before = markdown.slice(0, markerIndex).trimEnd();
+  const after = markdown.slice(markerIndex).trimStart();
+  const content = `${before}\n\n${serializeFence(enrichment.block.name, enrichment.block.payload)}\n\n${after}`;
+  return { content, changed: content !== markdown, blockCount: 1 };
 }
 
 interface PostRow {
-  _id: string
-  slug: string
-  status: string
-  content: string
-  oxyUserId: string | null
-  authorUsername: string | null
+  _id: string;
+  slug: string;
+  status: string;
+  content: string;
+  oxyUserId: string | null;
+  authorUsername: string | null;
 }
 
 async function run() {
-  const databaseUrl = process.env.DATABASE_URL
-  if (!databaseUrl) throw new Error('DATABASE_URL is required')
-  const apply = process.argv.includes('--apply')
-  const sql = postgres(databaseUrl, { max: 1 })
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) throw new Error('DATABASE_URL is required');
+  const apply = process.argv.includes('--apply');
+  const sql = postgres(databaseUrl, { max: 1 });
 
   try {
     const result = await sql.begin(async (transaction) => {
@@ -239,33 +283,40 @@ async function run() {
         from newsroom_posts
         order by status, published_at desc, _id asc
         for update
-      `
+      `;
 
-      if (posts.length === 0) throw new Error('No Newsroom posts found; refusing a vacuous migration')
-      const publishedSlugs = new Set(posts.filter((post) => post.status === 'published').map((post) => post.slug))
-      const unknownTargets = Object.keys(ARTICLE_ENRICHMENTS).filter((slug) => !publishedSlugs.has(slug))
+      if (posts.length === 0)
+        throw new Error('No Newsroom posts found; refusing a vacuous migration');
+      const publishedSlugs = new Set(
+        posts.filter((post) => post.status === 'published').map((post) => post.slug),
+      );
+      const unknownTargets = Object.keys(ARTICLE_ENRICHMENTS).filter(
+        (slug) => !publishedSlugs.has(slug),
+      );
       if (unknownTargets.length > 0) {
-        throw new Error(`Curated article targets are not published: ${unknownTargets.join(', ')}`)
+        throw new Error(`Curated article targets are not published: ${unknownTargets.join(', ')}`);
       }
 
-      let changedPosts = 0
-      let changedAuthors = 0
-      let generatedBlocks = 0
+      let changedPosts = 0;
+      let changedAuthors = 0;
+      let generatedBlocks = 0;
 
       for (const post of posts) {
-        const enriched = post.status === 'published'
-          ? enrichNewsroomMarkdown(post.content, { slug: post.slug })
-          : { content: post.content, changed: false, blockCount: 0 }
-        const authorUsername = post.oxyUserId === 'mcp-admin' && !post.authorUsername
-          ? 'Oxy Editorial'
-          : post.authorUsername
-        const authorChanged = authorUsername !== post.authorUsername
-        if (!enriched.changed && !authorChanged) continue
+        const enriched =
+          post.status === 'published'
+            ? enrichNewsroomMarkdown(post.content, { slug: post.slug })
+            : { content: post.content, changed: false, blockCount: 0 };
+        const authorUsername =
+          post.oxyUserId === 'mcp-admin' && !post.authorUsername
+            ? 'Oxy Editorial'
+            : post.authorUsername;
+        const authorChanged = authorUsername !== post.authorUsername;
+        if (!enriched.changed && !authorChanged) continue;
         if (enriched.changed) {
-          changedPosts += 1
-          generatedBlocks += enriched.blockCount
+          changedPosts += 1;
+          generatedBlocks += enriched.blockCount;
         }
-        if (authorChanged) changedAuthors += 1
+        if (authorChanged) changedAuthors += 1;
 
         if (apply) {
           const updated = await transaction`
@@ -279,8 +330,9 @@ async function run() {
               and content = ${post.content}
               and author_username is not distinct from ${post.authorUsername}
             returning _id
-          `
-          if (updated.length !== 1) throw new Error(`Concurrent article change detected for ${post.slug}`)
+          `;
+          if (updated.length !== 1)
+            throw new Error(`Concurrent article change detected for ${post.slug}`);
         }
       }
 
@@ -293,12 +345,12 @@ async function run() {
         changedPosts,
         changedAuthors,
         generatedBlocks,
-      }
-    })
-    console.info(JSON.stringify(result, null, 2))
+      };
+    });
+    console.info(JSON.stringify(result, null, 2));
   } finally {
-    await sql.end()
+    await sql.end();
   }
 }
 
-if (import.meta.main) await run()
+if (import.meta.main) await run();

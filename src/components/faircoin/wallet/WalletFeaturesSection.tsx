@@ -1,18 +1,18 @@
-import { motion } from 'framer-motion'
-import type { BloomIconComponent } from '@oxy.so/bloom/icons'
-import { RiKey2Line } from '@oxy.so/bloom/icons/RiKey2Line'
-import { RiWifiLine } from '@oxy.so/bloom/icons/RiWifiLine'
-import { RiSmartphoneLine } from '@oxy.so/bloom/icons/RiSmartphoneLine'
-import { RiBankCardLine } from '@oxy.so/bloom/icons/RiBankCardLine'
-import { RiArrowLeftRightLine } from '@oxy.so/bloom/icons/RiArrowLeftRightLine'
-import { RiContactsBookLine } from '@oxy.so/bloom/icons/RiContactsBookLine'
-import { RiFlashlightLine } from '@oxy.so/bloom/icons/RiFlashlightLine'
-import { RiMapPinLine } from '@oxy.so/bloom/icons/RiMapPinLine'
+import { motion } from 'framer-motion';
+import type { BloomIconComponent } from '@oxy.so/bloom/icons';
+import { RiKey2Line } from '@oxy.so/bloom/icons/RiKey2Line';
+import { RiWifiLine } from '@oxy.so/bloom/icons/RiWifiLine';
+import { RiSmartphoneLine } from '@oxy.so/bloom/icons/RiSmartphoneLine';
+import { RiBankCardLine } from '@oxy.so/bloom/icons/RiBankCardLine';
+import { RiArrowLeftRightLine } from '@oxy.so/bloom/icons/RiArrowLeftRightLine';
+import { RiContactsBookLine } from '@oxy.so/bloom/icons/RiContactsBookLine';
+import { RiFlashlightLine } from '@oxy.so/bloom/icons/RiFlashlightLine';
+import { RiMapPinLine } from '@oxy.so/bloom/icons/RiMapPinLine';
 
 interface Feature {
-  icon: BloomIconComponent
-  title: string
-  description: string
+  icon: BloomIconComponent;
+  title: string;
+  description: string;
 }
 
 const FEATURES: readonly Feature[] = [
@@ -64,7 +64,7 @@ const FEATURES: readonly Feature[] = [
     description:
       'Discover merchants accepting FAIR near you. Community-curated map, pinned to your location.',
   },
-]
+];
 
 export default function WalletFeaturesSection() {
   return (
@@ -96,8 +96,8 @@ export default function WalletFeaturesSection() {
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
             className="mt-5 text-pretty text-lg leading-relaxed text-muted-foreground"
           >
-            Eight years of FAIRWallet refinement, distilled into a wallet you
-            can hand to your aunt without explanation.
+            Eight years of FAIRWallet refinement, distilled into a wallet you can hand to your aunt
+            without explanation.
           </motion.p>
         </div>
 
@@ -125,5 +125,5 @@ export default function WalletFeaturesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

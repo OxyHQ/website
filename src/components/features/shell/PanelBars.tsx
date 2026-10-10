@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
-import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs'
-import { PANEL_HEADER_HEIGHT, PANEL_TABBAR_HEIGHT } from './boardChrome'
+import type { ReactNode } from 'react';
+import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs';
+import { PANEL_HEADER_HEIGHT, PANEL_TABBAR_HEIGHT } from './boardChrome';
 
 /**
  * The panel's header row: a title on the left, one action on the right.
@@ -9,10 +9,14 @@ import { PANEL_HEADER_HEIGHT, PANEL_TABBAR_HEIGHT } from './boardChrome'
  * exactly this height. If the header could grow, the two tiers would overlap
  * the moment a title wrapped.
  */
-export function PanelHeader({ title, subtitle, action }: {
-  title: string
-  subtitle?: string
-  action?: ReactNode
+export function PanelHeader({
+  title,
+  subtitle,
+  action,
+}: {
+  title: string;
+  subtitle?: string;
+  action?: ReactNode;
 }) {
   return (
     <div
@@ -20,17 +24,21 @@ export function PanelHeader({ title, subtitle, action }: {
       style={{ height: PANEL_HEADER_HEIGHT }}
     >
       <div className="min-w-0">
-        <h1 className="truncate text-body-md font-semibold leading-tight text-foreground">{title}</h1>
-        {subtitle && <p className="truncate text-body-xs leading-tight text-muted-foreground">{subtitle}</p>}
+        <h1 className="truncate text-body-md font-semibold leading-tight text-foreground">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="truncate text-body-xs leading-tight text-muted-foreground">{subtitle}</p>
+        )}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
-  )
+  );
 }
 
 export interface PanelTab {
-  key: string
-  label: string
+  key: string;
+  label: string;
 }
 
 /**
@@ -40,12 +48,17 @@ export interface PanelTab {
  * competes with the feed underneath it. Bloom draws the baseline that used to
  * be this row's bottom border.
  */
-export function PanelTabs({ label, tabs, active, onSelect }: {
+export function PanelTabs({
+  label,
+  tabs,
+  active,
+  onSelect,
+}: {
   /** The tab list's accessible name. */
-  label: string
-  tabs: readonly PanelTab[]
-  active: string
-  onSelect: (key: string) => void
+  label: string;
+  tabs: readonly PanelTab[];
+  active: string;
+  onSelect: (key: string) => void;
 }) {
   return (
     <div className="flex flex-col justify-end" style={{ height: PANEL_TABBAR_HEIGHT }}>
@@ -55,5 +68,5 @@ export function PanelTabs({ label, tabs, active, onSelect }: {
         ))}
       </Tabs>
     </div>
-  )
+  );
 }

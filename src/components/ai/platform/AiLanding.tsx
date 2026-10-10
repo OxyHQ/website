@@ -1,19 +1,19 @@
-import { useTranslation } from '../../../lib/i18n'
-import { Link } from '../../../lib/navigation'
-import Button from '../../ui/Button'
-import RecentNewsSection from '../../newsroom/RecentNewsSection'
-import AIResearchSection from '../AIResearchSection'
-import AiSection from './AiSection'
-import AvailabilityBadge from './AvailabilityBadge'
-import ServiceCard from './ServiceCard'
-import CodeSampleTabs from './CodeSampleTabs'
-import ModelCard from './ModelCard'
-import RoutingDiagram from './RoutingDiagram'
-import { CatalogEmptyState, CatalogFreshness } from './CatalogNotice'
-import { useCatalog } from '../../../lib/ai/useCatalog'
-import { entriesForListing } from '../../../lib/ai/catalog'
-import { aiServices, OXY_INFERENCE_AVAILABILITY, consoleLinks } from '../../../data/ai/taxonomy'
-import { quickstartSamples } from '../../../data/ai/quickstart'
+import { useTranslation } from '../../../lib/i18n';
+import { Link } from '../../../lib/navigation';
+import Button from '../../ui/Button';
+import RecentNewsSection from '../../newsroom/RecentNewsSection';
+import AIResearchSection from '../AIResearchSection';
+import AiSection from './AiSection';
+import AvailabilityBadge from './AvailabilityBadge';
+import ServiceCard from './ServiceCard';
+import CodeSampleTabs from './CodeSampleTabs';
+import ModelCard from './ModelCard';
+import RoutingDiagram from './RoutingDiagram';
+import { CatalogEmptyState, CatalogFreshness } from './CatalogNotice';
+import { useCatalog } from '../../../lib/ai/useCatalog';
+import { entriesForListing } from '../../../lib/ai/catalog';
+import { aiServices, OXY_INFERENCE_AVAILABILITY, consoleLinks } from '../../../data/ai/taxonomy';
+import { quickstartSamples } from '../../../data/ai/quickstart';
 import {
   aliaModelsPreview,
   infrastructureTiers,
@@ -21,12 +21,12 @@ import {
   productsOnPlatform,
   routingCapabilities,
   trustSummary,
-} from '../../../data/ai/landing'
-import { enterpriseInferenceCapabilities } from '../../../data/ai/enterprise'
-import { ctaIntentFor } from '../../../lib/ai/availability'
+} from '../../../data/ai/landing';
+import { enterpriseInferenceCapabilities } from '../../../data/ai/enterprise';
+import { ctaIntentFor } from '../../../lib/ai/availability';
 
 /** How many catalogue entries the landing previews before sending people on. */
-const PREVIEW_COUNT = 6
+const PREVIEW_COUNT = 6;
 
 /**
  * `/ai` — the Oxy AI umbrella.
@@ -44,14 +44,14 @@ const PREVIEW_COUNT = 6
  * document.
  */
 export default function AiLanding() {
-  const { t } = useTranslation()
-  const { catalog } = useCatalog()
-  const entries = entriesForListing(catalog).slice(0, PREVIEW_COUNT)
-  const inferenceIntent = ctaIntentFor(OXY_INFERENCE_AVAILABILITY)
+  const { t } = useTranslation();
+  const { catalog } = useCatalog();
+  const entries = entriesForListing(catalog).slice(0, PREVIEW_COUNT);
+  const inferenceIntent = ctaIntentFor(OXY_INFERENCE_AVAILABILITY);
   const primaryHref =
     inferenceIntent === 'start_building'
       ? consoleLinks.createApplication
-      : '/contact/sales?interest=oxy_inference'
+      : '/contact/sales?interest=oxy_inference';
 
   return (
     <>
@@ -72,7 +72,9 @@ export default function AiLanding() {
           </p>
           <div className="flex flex-wrap gap-3">
             <Button href={primaryHref} responsive>
-              {t(`ai.cta.${inferenceIntent === 'start_building' ? 'startBuilding' : 'requestAccess'}`)}
+              {t(
+                `ai.cta.${inferenceIntent === 'start_building' ? 'startBuilding' : 'requestAccess'}`,
+              )}
             </Button>
             <Button href="/ai/models" variant="outline" responsive>
               {t('ai.cta.exploreModels')}
@@ -105,7 +107,10 @@ export default function AiLanding() {
         description={t('ai.quickstart.description')}
         meta={<AvailabilityBadge availability={OXY_INFERENCE_AVAILABILITY} />}
       >
-        <CodeSampleTabs samples={quickstartSamples} caption={t('ai.quickstart.modelPlaceholderNote')} />
+        <CodeSampleTabs
+          samples={quickstartSamples}
+          caption={t('ai.quickstart.modelPlaceholderNote')}
+        />
         <div className="mt-6 flex flex-wrap gap-3">
           <Button href="/ai/inference#quickstart" variant="outline">
             {t('ai.cta.readQuickstart')}
@@ -202,25 +207,25 @@ export default function AiLanding() {
           <Button href="/ai/enterprise" variant="outline">
             {t('common.learnMore')}
           </Button>
-          <Button href="/contact/sales">
-            {t('ai.cta.talkToSales')}
-          </Button>
+          <Button href="/contact/sales">{t('ai.cta.talkToSales')}</Button>
         </div>
       </AiSection>
 
       {/* ── Data and policy ──────────────────────────────────────────── */}
       <AiSection id="trust" heading={t('ai.sections.trust')} description={trustSummary.heading}>
         <div className="grid gap-4 md:grid-cols-3">
-          {[trustSummary.oxyStatement, trustSummary.routeStatement, trustSummary.constraintStatement].map(
-            (statement) => (
-              <p
-                key={statement.slice(0, 24)}
-                className="rounded-2xl border border-border bg-card p-6 text-pretty text-sm text-foreground/80"
-              >
-                {statement}
-              </p>
-            ),
-          )}
+          {[
+            trustSummary.oxyStatement,
+            trustSummary.routeStatement,
+            trustSummary.constraintStatement,
+          ].map((statement) => (
+            <p
+              key={statement.slice(0, 24)}
+              className="rounded-2xl border border-border bg-card p-6 text-pretty text-sm text-foreground/80"
+            >
+              {statement}
+            </p>
+          ))}
         </div>
         <div className="mt-6">
           <Button href="/ai/trust" variant="outline">
@@ -296,7 +301,9 @@ export default function AiLanding() {
         meta={<AvailabilityBadge availability="coming_soon" />}
         description={aliaModelsPreview.body}
       >
-        <p className="max-w-3xl text-pretty text-muted-foreground">{aliaModelsPreview.commitment}</p>
+        <p className="max-w-3xl text-pretty text-muted-foreground">
+          {aliaModelsPreview.commitment}
+        </p>
         <p className="mt-6 text-sm text-muted-foreground">
           <Link to="/newsroom" className="underline underline-offset-4 hover:text-foreground">
             {t('ai.sections.news')}
@@ -319,5 +326,5 @@ export default function AiLanding() {
         />
       </section>
     </>
-  )
+  );
 }

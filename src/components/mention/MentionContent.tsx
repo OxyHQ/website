@@ -1,29 +1,37 @@
-import { useRef, useState, type ReactNode } from 'react'
-import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion'
-import { RiFlashlightLine } from '@oxy.so/bloom/icons/RiFlashlightLine'
-import { RiPencilLine } from '@oxy.so/bloom/icons/RiPencilLine'
-import { RiCloudLine } from '@oxy.so/bloom/icons/RiCloudLine'
-import { Link } from '../../lib/navigation'
-import mBrushSvg from '../../assets/mention/m-brush.svg?raw'
-import sky from '../../assets/mention/sky.jpg'
-import logo from '../../assets/mention/logo.png'
-import phoneFrame from '../../assets/mention/phone.png'
-import pinterestLogo from '../../assets/mention/integrations/pinterest.svg'
-import discordLogo from '../../assets/mention/integrations/discord.svg'
-import behanceLogo from '../../assets/mention/integrations/behance.svg'
-import facebookLogo from '../../assets/mention/integrations/facebook.svg'
-import threadsLogo from '../../assets/mention/integrations/threads.svg'
-import mastodonLogo from '../../assets/mention/integrations/mastodon.svg'
-import instagramLogo from '../../assets/mention/integrations/instagram.svg'
-import devLogo from '../../assets/mention/integrations/devdotto.svg'
-import mediumLogo from '../../assets/mention/integrations/medium.svg'
-import MentionPostCard from './MentionPostCard'
-import MentionProfileCard from './MentionProfileCard'
-import MentionPhone from './MentionPhone'
-import MentionFAQ from './MentionFAQ'
-import { MENTION_POSTS, MENTION_PROFILES, MENTION_HANDLES, type MentionPost } from './data'
+import { useRef, useState, type ReactNode } from 'react';
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+  useReducedMotion,
+  type MotionValue,
+} from 'framer-motion';
+import { RiFlashlightLine } from '@oxy.so/bloom/icons/RiFlashlightLine';
+import { RiPencilLine } from '@oxy.so/bloom/icons/RiPencilLine';
+import { RiCloudLine } from '@oxy.so/bloom/icons/RiCloudLine';
+import { Link } from '../../lib/navigation';
+import mBrushSvg from '../../assets/mention/m-brush.svg?raw';
+import sky from '../../assets/mention/sky.jpg';
+import logo from '../../assets/mention/logo.png';
+import phoneFrame from '../../assets/mention/phone.png';
+import pinterestLogo from '../../assets/mention/integrations/pinterest.svg';
+import discordLogo from '../../assets/mention/integrations/discord.svg';
+import behanceLogo from '../../assets/mention/integrations/behance.svg';
+import facebookLogo from '../../assets/mention/integrations/facebook.svg';
+import threadsLogo from '../../assets/mention/integrations/threads.svg';
+import mastodonLogo from '../../assets/mention/integrations/mastodon.svg';
+import instagramLogo from '../../assets/mention/integrations/instagram.svg';
+import devLogo from '../../assets/mention/integrations/devdotto.svg';
+import mediumLogo from '../../assets/mention/integrations/medium.svg';
+import MentionPostCard from './MentionPostCard';
+import MentionProfileCard from './MentionProfileCard';
+import MentionPhone from './MentionPhone';
+import MentionFAQ from './MentionFAQ';
+import { MENTION_POSTS, MENTION_PROFILES, MENTION_HANDLES, type MentionPost } from './data';
 
-const post = (id: string): MentionPost => MENTION_POSTS.find((p) => p.id === id) ?? MENTION_POSTS[0]
+const post = (id: string): MentionPost =>
+  MENTION_POSTS.find((p) => p.id === id) ?? MENTION_POSTS[0];
 
 /* ------------------------------------------------------------------ */
 /* Building blocks                                                     */
@@ -31,25 +39,39 @@ const post = (id: string): MentionPost => MENTION_POSTS.find((p) => p.id === id)
 
 function Display({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <h2 className={`font-display font-semibold uppercase leading-[0.95] tracking-tight text-foreground drop-shadow-lg ${className}`}>
+    <h2
+      className={`font-display font-semibold uppercase leading-[0.95] tracking-tight text-foreground drop-shadow-lg ${className}`}
+    >
       {children}
     </h2>
-  )
+  );
 }
 
-function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
-  const reduce = useReducedMotion()
+function Reveal({
+  children,
+  className = '',
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const reduce = useReducedMotion();
   return (
     <motion.div
       className={`absolute ${className}`}
       initial={reduce ? false : { opacity: 0, y: 24, scale: 0.96 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: reduce ? 0 : 0.6, delay: reduce ? 0 : delay, ease: [0.16, 1, 0.3, 1] }}
+      transition={{
+        duration: reduce ? 0 : 0.6,
+        delay: reduce ? 0 : delay,
+        ease: [0.16, 1, 0.3, 1],
+      }}
     >
       {children}
     </motion.div>
-  )
+  );
 }
 
 function GiantM({ className = '' }: { className?: string }) {
@@ -59,7 +81,7 @@ function GiantM({ className = '' }: { className?: string }) {
       className={`block [&_path]:fill-primary [&_svg]:block [&_svg]:size-full ${className}`}
       dangerouslySetInnerHTML={{ __html: mBrushSvg }}
     />
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -68,16 +90,16 @@ function GiantM({ className = '' }: { className?: string }) {
 
 interface FlyIn {
   /** Hero scatter offset relative to this post's resting slot in the feed. */
-  x: number
-  y: number
-  rot: number
-  enter: number
+  x: number;
+  y: number;
+  rot: number;
+  enter: number;
 }
 
 interface FeedSpec {
-  id: string
+  id: string;
   /** Hero scatter start — every card flies in from one. */
-  fly: FlyIn
+  fly: FlyIn;
 }
 
 /**
@@ -95,32 +117,45 @@ const FEED: readonly FeedSpec[] = [
   { id: 'joan-1', fly: { x: -250, y: -10, rot: -5, enter: 0.45 } },
   { id: 'nate-1', fly: { x: 370, y: -211, rot: -3, enter: 0.47 } },
   { id: 'vecna-2', fly: { x: -470, y: -279, rot: -2, enter: 0.43 } },
-]
+];
 
 /** One feed post; flies in from the hero scatter to its flex slot. */
-function FeedPost({ spec, progress, flat }: { spec: FeedSpec; progress: MotionValue<number>; flat: boolean }) {
-  const { fly } = spec
-  const range: [number, number] = [0.26, fly.enter]
-  const x = useTransform(progress, range, [fly.x, 0])
-  const y = useTransform(progress, range, [fly.y, 0])
+function FeedPost({
+  spec,
+  progress,
+  flat,
+}: {
+  spec: FeedSpec;
+  progress: MotionValue<number>;
+  flat: boolean;
+}) {
+  const { fly } = spec;
+  const range: [number, number] = [0.26, fly.enter];
+  const x = useTransform(progress, range, [fly.x, 0]);
+  const y = useTransform(progress, range, [fly.y, 0]);
   // Hero cards are bigger; in the feed they sit at full (compact, flat) size.
-  const scale = useTransform(progress, range, [1.28, 1])
-  const rotate = useTransform(progress, range, [fly.rot, 0])
+  const scale = useTransform(progress, range, [1.28, 1]);
+  const rotate = useTransform(progress, range, [fly.rot, 0]);
   return (
     <motion.div style={{ x, y, scale, rotate }} className="w-full shrink-0">
       <MentionPostCard post={post(spec.id)} flat={flat} className="w-full" />
     </motion.div>
-  )
+  );
 }
 
 function HeroCopy({ opacity }: { opacity: MotionValue<number> }) {
   return (
-    <motion.div style={{ opacity }} className="pointer-events-none absolute inset-0 z-30 flex items-center">
+    <motion.div
+      style={{ opacity }}
+      className="pointer-events-none absolute inset-0 z-30 flex items-center"
+    >
       <div className="container">
         <div className="max-w-[600px]">
           <div className="flex items-center gap-3">
             <img src={logo} alt="" className="size-12 rounded-full object-cover sm:size-14" />
-            <span className="font-display text-3xl font-semibold uppercase tracking-tight text-foreground sm:text-4xl">Mention</span>
+            <span className="font-display text-3xl font-semibold uppercase tracking-tight text-foreground sm:text-4xl">
+              Mention
+            </span>
           </div>
           <Display className="mt-4 text-left text-[clamp(2rem,4.4vw,3.6rem)]">
             Every one of your posts displayed in an intelligent feed
@@ -131,36 +166,38 @@ function HeroCopy({ opacity }: { opacity: MotionValue<number> }) {
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 /** Phone-box width; the feed sits in a box of the same size so it lines up. */
-const PHONE_W = 270
+const PHONE_W = 270;
 /** Screen clip, as insets of the phone box — measured from phone.png's screen
  *  (thin bezel: ~1.2% sides, ~0.2% top, ~2.8% bottom). */
-const PHONE_SCREEN_CLIP = 'inset(0.4% 1.3% 2.8% 1.3% round 40px)'
+const PHONE_SCREEN_CLIP = 'inset(0.4% 1.3% 2.8% 1.3% round 40px)';
 
 function FeedExperience() {
-  const ref = useRef<HTMLDivElement>(null)
-  const reduce = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
-  const [clipped, setClipped] = useState(false)
-  useMotionValueEvent(scrollYProgress, 'change', (v) => setClipped(v >= 0.47))
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const [clipped, setClipped] = useState(false);
+  useMotionValueEvent(scrollYProgress, 'change', (v) => setClipped(v >= 0.47));
 
-  const heroCopyOpacity = useTransform(scrollYProgress, [0, 0.1, 0.22], [1, 1, 0])
-  const subHeadingOpacity = useTransform(scrollYProgress, [0.16, 0.24, 0.34, 0.42], [0, 1, 1, 0])
-  const frameScale = useTransform(scrollYProgress, [0.1, 0.24], [0.85, 1])
-  const frameOpacity = useTransform(scrollYProgress, [0.12, 0.22], [0, 1])
+  const heroCopyOpacity = useTransform(scrollYProgress, [0, 0.1, 0.22], [1, 1, 0]);
+  const subHeadingOpacity = useTransform(scrollYProgress, [0.16, 0.24, 0.34, 0.42], [0, 1, 1, 0]);
+  const frameScale = useTransform(scrollYProgress, [0.1, 0.24], [0.85, 1]);
+  const frameOpacity = useTransform(scrollYProgress, [0.12, 0.22], [0, 1]);
   // Once the cards have landed, the whole feed scrolls up — a normal app scroll.
-  const feedScroll = useTransform(scrollYProgress, [0.5, 1], [0, -660])
+  const feedScroll = useTransform(scrollYProgress, [0.5, 1], [0, -660]);
 
   if (reduce) {
     return (
       <section className="relative flex flex-col items-center gap-12 px-6 pb-24 pt-32">
-        <Display className="text-center text-[clamp(2rem,5vw,4rem)]">Every one of your posts displayed in an intelligent feed</Display>
+        <Display className="text-center text-[clamp(2rem,5vw,4rem)]">
+          Every one of your posts displayed in an intelligent feed
+        </Display>
         <MentionPhone />
       </section>
-    )
+    );
   }
 
   return (
@@ -170,14 +207,26 @@ function FeedExperience() {
 
         <HeroCopy opacity={heroCopyOpacity} />
 
-        <motion.div style={{ opacity: subHeadingOpacity }} className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
-          <Display className="text-center text-[clamp(2rem,5vw,4rem)]">Your profile.<br />Your content.</Display>
+        <motion.div
+          style={{ opacity: subHeadingOpacity }}
+          className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
+        >
+          <Display className="text-center text-[clamp(2rem,5vw,4rem)]">
+            Your profile.
+            <br />
+            Your content.
+          </Display>
         </motion.div>
 
         {/* Screen background — the feed sits on it; follows the theme (white in
             light mode, near-black in dark mode). */}
         <motion.div
-          style={{ scale: frameScale, opacity: frameOpacity, width: PHONE_W, clipPath: PHONE_SCREEN_CLIP }}
+          style={{
+            scale: frameScale,
+            opacity: frameOpacity,
+            width: PHONE_W,
+            clipPath: PHONE_SCREEN_CLIP,
+          }}
           className="pointer-events-none absolute left-1/2 top-1/2 z-0 aspect-[500/1046] -translate-x-1/2 -translate-y-1/2 bg-background"
         />
 
@@ -208,7 +257,7 @@ function FeedExperience() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -225,7 +274,7 @@ function TypographySection() {
         All your things are in Mention.
       </Display>
     </section>
-  )
+  );
 }
 
 const INTEGRATIONS = [
@@ -238,12 +287,14 @@ const INTEGRATIONS = [
   { src: instagramLogo, name: 'Instagram' },
   { src: devLogo, name: 'DEV' },
   { src: mediumLogo, name: 'Medium' },
-] as const
+] as const;
 
 function IntegrationsSection() {
   return (
     <section className="relative px-6 py-[8vh] text-center">
-      <p className="font-display text-lg font-semibold text-foreground/90">Integrations coming soon…</p>
+      <p className="font-display text-lg font-semibold text-foreground/90">
+        Integrations coming soon…
+      </p>
       <div className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-4">
         {INTEGRATIONS.map(({ src, name }, i) => (
           <motion.div
@@ -259,7 +310,7 @@ function IntegrationsSection() {
         ))}
       </div>
     </section>
-  )
+  );
 }
 
 /**
@@ -268,27 +319,27 @@ function IntegrationsSection() {
  * once from the module constant.
  */
 const ROLL = (() => {
-  const names = MENTION_HANDLES
-  const N = names.length
-  const unit = 100 / (N + 1)
-  const HOLD = 0.6
-  const yframes: string[] = []
-  const times: number[] = []
+  const names = MENTION_HANDLES;
+  const N = names.length;
+  const unit = 100 / (N + 1);
+  const HOLD = 0.6;
+  const yframes: string[] = [];
+  const times: number[] = [];
   for (let i = 0; i < N; i++) {
-    const y = (-i * unit).toFixed(3) + '%'
-    yframes.push(y, y)
-    times.push(i / N, (i + HOLD) / N)
+    const y = (-i * unit).toFixed(3) + '%';
+    yframes.push(y, y);
+    times.push(i / N, (i + HOLD) / N);
   }
-  yframes.push((-N * unit).toFixed(3) + '%')
-  times.push(1)
+  yframes.push((-N * unit).toFixed(3) + '%');
+  times.push(1);
   return {
     yframes,
     times,
     duration: N * 1.5,
     items: [...names, names[0]],
     longest: names.reduce((a, b) => (b.length > a.length ? b : a)),
-  }
-})()
+  };
+})();
 
 function UsernameRoll() {
   return (
@@ -301,15 +352,22 @@ function UsernameRoll() {
         <motion.span
           className="flex flex-col"
           animate={{ y: ROLL.yframes }}
-          transition={{ duration: ROLL.duration, times: ROLL.times, ease: [0.76, 0, 0.24, 1], repeat: Infinity }}
+          transition={{
+            duration: ROLL.duration,
+            times: ROLL.times,
+            ease: [0.76, 0, 0.24, 1],
+            repeat: Infinity,
+          }}
         >
           {ROLL.items.map((h, i) => (
-            <span key={i} className="block">{h}</span>
+            <span key={i} className="block">
+              {h}
+            </span>
           ))}
         </motion.span>
       </span>
     </span>
-  )
+  );
 }
 
 function UniqueLinkSection() {
@@ -329,33 +387,45 @@ function UniqueLinkSection() {
             <UsernameRoll />
           </p>
         </div>
-        <Reveal className="hidden -left-2 -top-10 sm:block sm:-left-10 lg:-left-24" delay={0.1}><MentionProfileCard profile={MENTION_PROFILES[0]} className="rotate-[-5deg]" /></Reveal>
-        <Reveal className="hidden -right-2 top-1/2 sm:block sm:-right-10 lg:-right-24" delay={0.2}><MentionProfileCard profile={MENTION_PROFILES[1]} className="rotate-[5deg]" /></Reveal>
+        <Reveal className="hidden -left-2 -top-10 sm:block sm:-left-10 lg:-left-24" delay={0.1}>
+          <MentionProfileCard profile={MENTION_PROFILES[0]} className="rotate-[-5deg]" />
+        </Reveal>
+        <Reveal className="hidden -right-2 top-1/2 sm:block sm:-right-10 lg:-right-24" delay={0.2}>
+          <MentionProfileCard profile={MENTION_PROFILES[1]} className="rotate-[5deg]" />
+        </Reveal>
       </div>
     </section>
-  )
+  );
 }
 
 function JoinSection() {
   return (
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center gap-6 px-6 pb-[12vh] pt-[6vh]">
       <div className="flex items-center gap-4 text-foreground/80 sm:gap-6">
-        <span aria-hidden="true" className="hidden sm:flex"><RiFlashlightLine width={28} height={28} fill="currentColor" /></span>
-        <span aria-hidden="true" className="hidden sm:flex"><RiPencilLine width={28} height={28} fill="currentColor" /></span>
+        <span aria-hidden="true" className="hidden sm:flex">
+          <RiFlashlightLine width={28} height={28} fill="currentColor" />
+        </span>
+        <span aria-hidden="true" className="hidden sm:flex">
+          <RiPencilLine width={28} height={28} fill="currentColor" />
+        </span>
         <Link
           to="/inbox"
           className="rounded-full bg-card px-7 py-3 font-display text-base font-semibold uppercase tracking-tight text-foreground shadow-xl transition-transform hover:scale-105"
         >
           Join Mention
         </Link>
-        <span aria-hidden="true" className="hidden -scale-x-100 sm:flex"><RiPencilLine width={28} height={28} fill="currentColor" /></span>
-        <span aria-hidden="true" className="hidden sm:flex"><RiCloudLine width={28} height={28} fill="currentColor" /></span>
+        <span aria-hidden="true" className="hidden -scale-x-100 sm:flex">
+          <RiPencilLine width={28} height={28} fill="currentColor" />
+        </span>
+        <span aria-hidden="true" className="hidden sm:flex">
+          <RiCloudLine width={28} height={28} fill="currentColor" />
+        </span>
       </div>
       <Reveal className="bottom-0 left-[14%]" delay={0.1}>
         <MentionPostCard post={post('nate-1')} className="w-[240px] rotate-[-5deg]" />
       </Reveal>
     </section>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -368,7 +438,9 @@ export default function MentionContent() {
       {/* Sky — full strength in light mode, dimmed to a night sky in dark mode */}
       <div
         className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat dark:opacity-20"
-        style={{ backgroundImage: `linear-gradient(180deg, color-mix(in srgb, var(--primary) 15%, transparent), color-mix(in srgb, var(--background) 65%, transparent)), url(${sky})` }}
+        style={{
+          backgroundImage: `linear-gradient(180deg, color-mix(in srgb, var(--primary) 15%, transparent), color-mix(in srgb, var(--background) 65%, transparent)), url(${sky})`,
+        }}
       />
       {/* Dark wash only in dark mode */}
       <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-b from-background/40 to-background/70 dark:block" />
@@ -382,5 +454,5 @@ export default function MentionContent() {
         <JoinSection />
       </div>
     </div>
-  )
+  );
 }

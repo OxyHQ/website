@@ -1,295 +1,957 @@
 /** Synthetic catalogue fixtures only; blocks every external network request. */
-import {chromium} from 'playwright'
-import {join} from 'node:path'
-const root=join(import.meta.dir,'..')
-const reserved=Bun.serve({port:0,fetch:()=>new Response('reserved')});const port=reserved.port;reserved.stop(true)
-const preview=Bun.spawn(['bun','x','vite','preview','--host','127.0.0.1','--port',String(port),'--strictPort'],{cwd:root,stdout:'ignore',stderr:'ignore'})
-const origin=`http://127.0.0.1:${port}`
-let browser: Awaited<ReturnType<typeof chromium.launch>> | undefined
-function assert(value:unknown,message:string):asserts value {if(!value)throw new Error(message)}
+import { chromium } from 'playwright';
+import { join } from 'node:path';
+const root = join(import.meta.dir, '..');
+const reserved = Bun.serve({ port: 0, fetch: () => new Response('reserved') });
+const port = reserved.port;
+reserved.stop(true);
+const preview = Bun.spawn(
+  ['bun', 'x', 'vite', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'],
+  { cwd: root, stdout: 'ignore', stderr: 'ignore' },
+);
+const origin = `http://127.0.0.1:${port}`;
+let browser: Awaited<ReturnType<typeof chromium.launch>> | undefined;
+function assert(value: unknown, message: string): asserts value {
+  if (!value) throw new Error(message);
+}
 try {
- // The preview server is not listening yet on the first attempts; keep polling.
- let ready=false
- for(let i=0;i<50&&!ready;i++){try{ready=(await fetch(origin)).ok}catch{/* not ready */}if(!ready)await Bun.sleep(100)}
- assert(ready,'vite preview did not start')
- browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_EXECUTABLE||undefined,args:['--no-sandbox']})
- const page=await browser.newPage({viewport:{width:1440,height:1000}})
- await page.emulateMedia({reducedMotion:'reduce'})
- let configured=false
- let priceMinorUnits: number | undefined=2999
- await page.route('**/*',route=>{
-  const url=new URL(route.request().url())
-  if(url.pathname.endsWith('/billing/plans'))return route.fulfill({json:{plans:[{id:'synthetic-pro',name:'Pro',creditsPerMonth:10000,price:2999,currency:'usd',stripePriceId:''},{id:'synthetic-business',name:'Business',creditsPerMonth:50000,price:9999,currency:'usd',stripePriceId:''}]}})
-  if(url.pathname.endsWith('/billing/personal-plans'))return route.fulfill({json:configured?
-   {schemaVersion:1,state:'configured',purchase:'unavailable',plans:[{offerId:'synthetic-qa-only',offerVersion:1,displayName:'Synthetic QA · Oxy One Personal',audience:'personal',kind:'oxy_one',...(priceMinorUnits===undefined?{}:{price:{currency:'USD',amountMinorUnits:priceMinorUnits,interval:'month',trial:'none',taxTreatment:'inclusive',merchantTotal:'final'}}),benefits:[
-    {displayName:'Alia · monthly credits; existing daily refill remains',benefit:{kind:'quota',productId:'synthetic-alia',key:'monthly_credits',unit:'alia_credit',included:10000,combination:'maximum'}},
-    {displayName:'Shared storage · including Noted attachments',benefit:{kind:'quota',productId:'synthetic-storage',key:'storage_bytes',unit:'byte',included:100000000000,combination:'maximum'}},
-    {displayName:'Mention · mono personalization',benefit:{kind:'capability',productId:'synthetic-mention',key:'mono_theme'}}]}]}:
-   {schemaVersion:1,state:'unconfigured',purchase:'unavailable',plans:[]}})
-  // The site's own backend is outside this test too. Without VITE_API_URL the
-  // preview proxies /api to localhost:4000, which can hang instead of refusing
-  // and so never let the page go network-idle; abort it like any other origin.
-  if(url.origin===origin&&url.pathname.startsWith('/api/'))return route.abort()
-  return url.origin===origin?route.continue():route.abort()
- })
- await page.goto(`${origin}/one/`,{waitUntil:'networkidle'})
- await page.locator('[data-one-tiers]').first().waitFor()
- assert(await page.locator('[data-one-tiers] article').count()===5,'Unconfigured One must still show the approved personal catalogue')
- assert(await page.getByTestId('one-price').count()===0,'Unconfigured catalogue must not invent a price')
- assert(await page.getByRole('link',{name:'Manage your account',exact:true}).count()===1,'Accounts handoff missing')
- configured=true;await page.reload({waitUntil:'networkidle'})
- await page.getByText('Synthetic QA · Oxy One Personal',{exact:true}).waitFor()
- await page.locator('[data-one-offers]').getByText('100 GB',{exact:true}).waitFor()
- assert((await page.getByTestId('one-price').innerText()).replace(/\s/g,' ')==='USD 29.99','SDK monthly price missing')
- await page.getByText('No trial. Monthly only; no annual plan.',{exact:true}).waitFor()
- await page.locator('[data-one-offers]').getByText('per month',{exact:true}).waitFor()
- await page.getByTestId('one-tax-terms').getByText('Final price, including applicable purchase taxes.',{exact:true}).waitFor()
- await page.getByText('Mention · mono personalization',{exact:true}).waitFor()
- await page.getByText('Shared storage · including Noted attachments',{exact:true}).waitFor()
- await page.getByText('Purchasing is unavailable',{exact:true}).waitFor()
- assert(await page.locator('[data-one-offers]').locator('a[href*="checkout"],button:has-text("Buy")').count()===0,'Checkout must remain unavailable')
- priceMinorUnits=3100;await page.reload({waitUntil:'networkidle'})
- await page.getByTestId('one-price').getByText('USD 31.00',{exact:true}).waitFor()
- priceMinorUnits=undefined;await page.reload({waitUntil:'networkidle'})
- await page.getByText('Synthetic QA · Oxy One Personal',{exact:true}).waitFor()
- assert(await page.getByTestId('one-price').count()===0,'A catalogue without price must not invent one')
- assert(await page.getByTestId('one-tax-terms').count()===0,'A catalogue without price must not claim inclusive taxes')
- priceMinorUnits=2999;await page.reload({waitUntil:'networkidle'})
- await page.getByTestId('one-price').getByText('USD 29.99',{exact:true}).waitFor()
- assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Desktop overflow')
- await page.evaluate(()=>document.fonts.ready)
- await page.waitForTimeout(600)
- if(process.env.ONE_QA_SCREENSHOT_DIR)await page.screenshot({path:join(process.env.ONE_QA_SCREENSHOT_DIR,'oxy-one-configured-qa-desktop.png'),fullPage:true,animations:'disabled'})
- await page.setViewportSize({width:390,height:844})
- assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile overflow')
- if(process.env.ONE_QA_SCREENSHOT_DIR)await page.screenshot({path:join(process.env.ONE_QA_SCREENSHOT_DIR,'oxy-one-configured-qa-mobile.png'),fullPage:true,animations:'disabled'})
- await page.goto(`${origin}/one/`,{waitUntil:'networkidle'})
- const pricingOne=page.locator('#oxy-one')
- const personalPrimary=await page.locator('header').evaluate(el=>getComputedStyle(el).getPropertyValue('--primary'))
- const subnav=page.getByRole('navigation',{name:'Explore plans',exact:true})
- assert(await subnav.evaluate(el=>Math.abs(el.getBoundingClientRect().bottom-innerHeight)<2),'Plan tabs must start at the bottom of the full-height hero')
- assert(await page.locator('img[src="/images/pricing/oxy-one-hero.png"]').evaluate(el=>(el as HTMLImageElement).complete&&(el as HTMLImageElement).naturalWidth>0),'Hero must load the supplied artwork')
- assert((await pricingOne.locator('[data-plan-name]').allTextContents()).join(',')==='Free,Go,Pro,Max,Ultra','Personal tab must show only personal plans')
- assert(await page.locator('#pricing-plans').count()===1,'The original plan layout must be reused exactly once')
- const tierCards=pricingOne.locator('[data-one-tiers] article')
- assert((await page.locator('#pricing-plans [data-plan-name]').allTextContents()).join(',')==='Free,Go,Pro,Max,Ultra','Personal section must contain five plans')
- assert(await page.locator('#business-creator-plans').count()===0,'Professional plans must live in their own tabs')
- await tierCards.filter({has:page.getByRole('heading',{name:'Go',exact:true})}).getByTestId('one-tier-price').getByText('$15',{exact:true}).waitFor()
- await tierCards.filter({has:page.getByRole('heading',{name:'Ultra',exact:true})}).getByTestId('one-tier-price').getByText('$400',{exact:true}).waitFor()
- for(const [name,discount] of [['Go',5],['Pro',10],['Ultra',20]]) {
-  assert(await tierCards.filter({has:page.getByRole('heading',{name:String(name),exact:true})}).getByText(`${discount}% off credit packs`,{exact:true}).count()===1,`${name} credit discount missing`)
- }
+  // The preview server is not listening yet on the first attempts; keep polling.
+  let ready = false;
+  for (let i = 0; i < 50 && !ready; i++) {
+    try {
+      ready = (await fetch(origin)).ok;
+    } catch {
+      /* not ready */
+    }
+    if (!ready) await Bun.sleep(100);
+  }
+  assert(ready, 'vite preview did not start');
+  browser = await chromium.launch({
+    headless: true,
+    executablePath: process.env.CHROME_EXECUTABLE || undefined,
+    args: ['--no-sandbox'],
+  });
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  let configured = false;
+  let priceMinorUnits: number | undefined = 2999;
+  await page.route('**/*', (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname.endsWith('/billing/plans'))
+      return route.fulfill({
+        json: {
+          plans: [
+            {
+              id: 'synthetic-pro',
+              name: 'Pro',
+              creditsPerMonth: 10000,
+              price: 2999,
+              currency: 'usd',
+              stripePriceId: '',
+            },
+            {
+              id: 'synthetic-business',
+              name: 'Business',
+              creditsPerMonth: 50000,
+              price: 9999,
+              currency: 'usd',
+              stripePriceId: '',
+            },
+          ],
+        },
+      });
+    if (url.pathname.endsWith('/billing/personal-plans'))
+      return route.fulfill({
+        json: configured
+          ? {
+              schemaVersion: 1,
+              state: 'configured',
+              purchase: 'unavailable',
+              plans: [
+                {
+                  offerId: 'synthetic-qa-only',
+                  offerVersion: 1,
+                  displayName: 'Synthetic QA · Oxy One Personal',
+                  audience: 'personal',
+                  kind: 'oxy_one',
+                  ...(priceMinorUnits === undefined
+                    ? {}
+                    : {
+                        price: {
+                          currency: 'USD',
+                          amountMinorUnits: priceMinorUnits,
+                          interval: 'month',
+                          trial: 'none',
+                          taxTreatment: 'inclusive',
+                          merchantTotal: 'final',
+                        },
+                      }),
+                  benefits: [
+                    {
+                      displayName: 'Alia · monthly credits; existing daily refill remains',
+                      benefit: {
+                        kind: 'quota',
+                        productId: 'synthetic-alia',
+                        key: 'monthly_credits',
+                        unit: 'alia_credit',
+                        included: 10000,
+                        combination: 'maximum',
+                      },
+                    },
+                    {
+                      displayName: 'Shared storage · including Noted attachments',
+                      benefit: {
+                        kind: 'quota',
+                        productId: 'synthetic-storage',
+                        key: 'storage_bytes',
+                        unit: 'byte',
+                        included: 100000000000,
+                        combination: 'maximum',
+                      },
+                    },
+                    {
+                      displayName: 'Mention · mono personalization',
+                      benefit: {
+                        kind: 'capability',
+                        productId: 'synthetic-mention',
+                        key: 'mono_theme',
+                      },
+                    },
+                  ],
+                },
+              ],
+            }
+          : { schemaVersion: 1, state: 'unconfigured', purchase: 'unavailable', plans: [] },
+      });
+    // The site's own backend is outside this test too. Without VITE_API_URL the
+    // preview proxies /api to localhost:4000, which can hang instead of refusing
+    // and so never let the page go network-idle; abort it like any other origin.
+    if (url.origin === origin && url.pathname.startsWith('/api/')) return route.abort();
+    return url.origin === origin ? route.continue() : route.abort();
+  });
+  await page.goto(`${origin}/one/`, { waitUntil: 'networkidle' });
+  await page.locator('[data-one-tiers]').first().waitFor();
+  assert(
+    (await page.locator('[data-one-tiers] article').count()) === 5,
+    'Unconfigured One must still show the approved personal catalogue',
+  );
+  assert(
+    (await page.getByTestId('one-price').count()) === 0,
+    'Unconfigured catalogue must not invent a price',
+  );
+  assert(
+    (await page.getByRole('link', { name: 'Manage your account', exact: true }).count()) === 1,
+    'Accounts handoff missing',
+  );
+  configured = true;
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.getByText('Synthetic QA · Oxy One Personal', { exact: true }).waitFor();
+  await page.locator('[data-one-offers]').getByText('100 GB', { exact: true }).waitFor();
+  assert(
+    (await page.getByTestId('one-price').innerText()).replace(/\s/g, ' ') === 'USD 29.99',
+    'SDK monthly price missing',
+  );
+  await page.getByText('No trial. Monthly only; no annual plan.', { exact: true }).waitFor();
+  await page.locator('[data-one-offers]').getByText('per month', { exact: true }).waitFor();
+  await page
+    .getByTestId('one-tax-terms')
+    .getByText('Final price, including applicable purchase taxes.', { exact: true })
+    .waitFor();
+  await page.getByText('Mention · mono personalization', { exact: true }).waitFor();
+  await page.getByText('Shared storage · including Noted attachments', { exact: true }).waitFor();
+  await page.getByText('Purchasing is unavailable', { exact: true }).waitFor();
+  assert(
+    (await page
+      .locator('[data-one-offers]')
+      .locator('a[href*="checkout"],button:has-text("Buy")')
+      .count()) === 0,
+    'Checkout must remain unavailable',
+  );
+  priceMinorUnits = 3100;
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.getByTestId('one-price').getByText('USD 31.00', { exact: true }).waitFor();
+  priceMinorUnits = undefined;
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.getByText('Synthetic QA · Oxy One Personal', { exact: true }).waitFor();
+  assert(
+    (await page.getByTestId('one-price').count()) === 0,
+    'A catalogue without price must not invent one',
+  );
+  assert(
+    (await page.getByTestId('one-tax-terms').count()) === 0,
+    'A catalogue without price must not claim inclusive taxes',
+  );
+  priceMinorUnits = 2999;
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.getByTestId('one-price').getByText('USD 29.99', { exact: true }).waitFor();
+  assert(
+    await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+    'Desktop overflow',
+  );
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(600);
+  if (process.env.ONE_QA_SCREENSHOT_DIR)
+    await page.screenshot({
+      path: join(process.env.ONE_QA_SCREENSHOT_DIR, 'oxy-one-configured-qa-desktop.png'),
+      fullPage: true,
+      animations: 'disabled',
+    });
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert(
+    await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+    'Mobile overflow',
+  );
+  if (process.env.ONE_QA_SCREENSHOT_DIR)
+    await page.screenshot({
+      path: join(process.env.ONE_QA_SCREENSHOT_DIR, 'oxy-one-configured-qa-mobile.png'),
+      fullPage: true,
+      animations: 'disabled',
+    });
+  await page.goto(`${origin}/one/`, { waitUntil: 'networkidle' });
+  const pricingOne = page.locator('#oxy-one');
+  const personalPrimary = await page
+    .locator('header')
+    .evaluate((el) => getComputedStyle(el).getPropertyValue('--primary'));
+  const subnav = page.getByRole('navigation', { name: 'Explore plans', exact: true });
+  assert(
+    await subnav.evaluate((el) => Math.abs(el.getBoundingClientRect().bottom - innerHeight) < 2),
+    'Plan tabs must start at the bottom of the full-height hero',
+  );
+  assert(
+    await page
+      .locator('img[src="/images/pricing/oxy-one-hero.png"]')
+      .evaluate(
+        (el) => (el as HTMLImageElement).complete && (el as HTMLImageElement).naturalWidth > 0,
+      ),
+    'Hero must load the supplied artwork',
+  );
+  assert(
+    (await pricingOne.locator('[data-plan-name]').allTextContents()).join(',') ===
+      'Free,Go,Pro,Max,Ultra',
+    'Personal tab must show only personal plans',
+  );
+  assert(
+    (await page.locator('#pricing-plans').count()) === 1,
+    'The original plan layout must be reused exactly once',
+  );
+  const tierCards = pricingOne.locator('[data-one-tiers] article');
+  assert(
+    (await page.locator('#pricing-plans [data-plan-name]').allTextContents()).join(',') ===
+      'Free,Go,Pro,Max,Ultra',
+    'Personal section must contain five plans',
+  );
+  assert(
+    (await page.locator('#business-creator-plans').count()) === 0,
+    'Professional plans must live in their own tabs',
+  );
+  await tierCards
+    .filter({ has: page.getByRole('heading', { name: 'Go', exact: true }) })
+    .getByTestId('one-tier-price')
+    .getByText('$15', { exact: true })
+    .waitFor();
+  await tierCards
+    .filter({ has: page.getByRole('heading', { name: 'Ultra', exact: true }) })
+    .getByTestId('one-tier-price')
+    .getByText('$400', { exact: true })
+    .waitFor();
+  for (const [name, discount] of [
+    ['Go', 5],
+    ['Pro', 10],
+    ['Ultra', 20],
+  ]) {
+    assert(
+      (await tierCards
+        .filter({ has: page.getByRole('heading', { name: String(name), exact: true }) })
+        .getByText(`${discount}% off credit packs`, { exact: true })
+        .count()) === 1,
+      `${name} credit discount missing`,
+    );
+  }
 
- await tierCards.filter({has:page.getByRole('heading',{name:'Pro',exact:true})}).getByTestId('one-tier-price').getByText('$29.99',{exact:true}).waitFor()
- assert(await tierCards.getByText('Credits for Alia and the Oxy API',{exact:true}).count()===4,'Paid personal tiers must explain their included credits')
- for (const [name, credits] of [['Go','4,000'],['Pro','10,000'],['Max','50,000'],['Ultra','200,000']]) {
-  await tierCards.filter({has:page.getByRole('heading',{name,exact:true})}).locator('[data-monthly-credits]').getByText(`${credits} credits / month`,{exact:true}).waitFor()
- }
- assert(await pricingOne.getByText('One Oxy account',{exact:true}).count()===0,'Account access is not a paid differentiator')
- assert(await pricingOne.getByText('Free and open-source apps',{exact:true}).count()===0,'Free apps must not be listed as a paid benefit')
- assert(await tierCards.filter({has:page.getByRole('heading',{name:'Creator',exact:true})}).getByTestId('one-tier-price').count()===0,'Do not invent Creator pricing')
- assert(await pricingOne.locator('a[href="https://accounts.oxy.so/"]').count()===1,'Free signup from the original plans must survive the migration')
- await pricingOne.getByTestId('one-price').getByText('USD 29.99',{exact:true}).waitFor()
- await pricingOne.locator('[data-one-offers]').getByText('100 GB',{exact:true}).waitFor()
- await pricingOne.getByText('Purchasing is unavailable',{exact:true}).waitFor()
- assert(await page.locator('h1').count()===1,'Embedded One catalogue must not add another page heading')
- assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Pricing One mobile overflow')
- // Use the same Bloom comparison rows and billing selector as Alia.
- assert(await pricingOne.locator('[data-plan-comparison]').first().isVisible(),'Mobile must keep the comparison table')
- const planScroll=pricingOne.locator('[data-plan-scroll]').first()
- assert(await planScroll.evaluate(el=>getComputedStyle(el).overflowY==='hidden'),'Plan comparison must not create a vertical scroll area')
- assert(await planScroll.evaluate(el=>{const r=el.getBoundingClientRect();return Math.abs(r.left)<1&&Math.abs(r.right-innerWidth)<1}),'Mobile comparison must reach both viewport edges')
- assert(await planScroll.evaluate(el=>el.scrollWidth>el.clientWidth),'Mobile plans must scroll horizontally')
- await planScroll.evaluate(el=>el.scrollTo({left:el.scrollWidth,behavior:'instant'}))
- await page.waitForFunction(()=>{
-  const original=document.querySelector('[data-plan-title-placeholder] [role=columnheader]:last-child')!.getBoundingClientRect()
-  const sticky=document.querySelector('[data-plan-sticky-titles] [role=columnheader]:last-child')!.getBoundingClientRect()
-  return Math.abs(original.left-sticky.left)<1
- })
- const creatorBox=await tierCards.filter({has:page.getByRole('heading',{name:'Ultra',exact:true})}).boundingBox()
- assert(creatorBox&&creatorBox.x>=0&&creatorBox.x<390,'Horizontal scroll must reveal Ultra')
- await planScroll.evaluate(el=>el.scrollTo({left:0,behavior:'instant'}))
- await page.setViewportSize({width:1440,height:1000})
- assert(await planScroll.evaluate(el=>{const r=el.getBoundingClientRect();return r.left>0&&r.right<innerWidth}),'Desktop comparison must retain its maximum width')
- const comparison=pricingOne.locator('[data-plan-comparison]').first()
- assert(await comparison.isVisible(),'Desktop comparison missing')
- assert(await comparison.evaluate(el=>{
-  const container=el.closest('.container')!
-  const bounds=container.getBoundingClientRect(),style=getComputedStyle(container),table=el.getBoundingClientRect()
-  return Math.abs(table.left-bounds.left-parseFloat(style.paddingLeft))<1&&Math.abs(table.right-bounds.right+parseFloat(style.paddingRight))<1
- }),'Comparison must use the shared container width')
- assert((await comparison.getByRole('columnheader').allTextContents()).join(',')==='Free,Go,Pro,Max,Ultra','Comparison columns must match the cards')
- const rows=comparison.getByRole('row')
- const featureRow=comparison.getByTestId('one-comparison-body').getByRole('row').nth(1)
- await featureRow.evaluate(el=>el.scrollIntoView({block:'center',behavior:'instant'}))
- await page.waitForTimeout(200)
- assert(await subnav.evaluate(el=>Math.abs(el.getBoundingClientRect().top-document.querySelector('header')!.getBoundingClientRect().bottom)<1),'Sticky plan tabs must meet the website header without a gap')
- await page.mouse.move(0,0)
- const restingBackground=await featureRow.evaluate(el=>getComputedStyle(el).backgroundColor)
- await featureRow.hover()
- await page.waitForTimeout(200)
- assert(await featureRow.evaluate(el=>getComputedStyle(el).backgroundColor)!==restingBackground,'Hover must highlight the entire comparison row')
+  await tierCards
+    .filter({ has: page.getByRole('heading', { name: 'Pro', exact: true }) })
+    .getByTestId('one-tier-price')
+    .getByText('$29.99', { exact: true })
+    .waitFor();
+  assert(
+    (await tierCards.getByText('Credits for Alia and the Oxy API', { exact: true }).count()) === 4,
+    'Paid personal tiers must explain their included credits',
+  );
+  for (const [name, credits] of [
+    ['Go', '4,000'],
+    ['Pro', '10,000'],
+    ['Max', '50,000'],
+    ['Ultra', '200,000'],
+  ]) {
+    await tierCards
+      .filter({ has: page.getByRole('heading', { name, exact: true }) })
+      .locator('[data-monthly-credits]')
+      .getByText(`${credits} credits / month`, { exact: true })
+      .waitFor();
+  }
+  assert(
+    (await pricingOne.getByText('One Oxy account', { exact: true }).count()) === 0,
+    'Account access is not a paid differentiator',
+  );
+  assert(
+    (await pricingOne.getByText('Free and open-source apps', { exact: true }).count()) === 0,
+    'Free apps must not be listed as a paid benefit',
+  );
+  assert(
+    (await tierCards
+      .filter({ has: page.getByRole('heading', { name: 'Creator', exact: true }) })
+      .getByTestId('one-tier-price')
+      .count()) === 0,
+    'Do not invent Creator pricing',
+  );
+  assert(
+    (await pricingOne.locator('a[href="https://accounts.oxy.so/"]').count()) === 1,
+    'Free signup from the original plans must survive the migration',
+  );
+  await pricingOne.getByTestId('one-price').getByText('USD 29.99', { exact: true }).waitFor();
+  await pricingOne.locator('[data-one-offers]').getByText('100 GB', { exact: true }).waitFor();
+  await pricingOne.getByText('Purchasing is unavailable', { exact: true }).waitFor();
+  assert(
+    (await page.locator('h1').count()) === 1,
+    'Embedded One catalogue must not add another page heading',
+  );
+  assert(
+    await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+    'Pricing One mobile overflow',
+  );
+  // Use the same Bloom comparison rows and billing selector as Alia.
+  assert(
+    await pricingOne.locator('[data-plan-comparison]').first().isVisible(),
+    'Mobile must keep the comparison table',
+  );
+  const planScroll = pricingOne.locator('[data-plan-scroll]').first();
+  assert(
+    await planScroll.evaluate((el) => getComputedStyle(el).overflowY === 'hidden'),
+    'Plan comparison must not create a vertical scroll area',
+  );
+  assert(
+    await planScroll.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return Math.abs(r.left) < 1 && Math.abs(r.right - innerWidth) < 1;
+    }),
+    'Mobile comparison must reach both viewport edges',
+  );
+  assert(
+    await planScroll.evaluate((el) => el.scrollWidth > el.clientWidth),
+    'Mobile plans must scroll horizontally',
+  );
+  await planScroll.evaluate((el) => el.scrollTo({ left: el.scrollWidth, behavior: 'instant' }));
+  await page.waitForFunction(() => {
+    const original = document
+      .querySelector('[data-plan-title-placeholder] [role=columnheader]:last-child')!
+      .getBoundingClientRect();
+    const sticky = document
+      .querySelector('[data-plan-sticky-titles] [role=columnheader]:last-child')!
+      .getBoundingClientRect();
+    return Math.abs(original.left - sticky.left) < 1;
+  });
+  const creatorBox = await tierCards
+    .filter({ has: page.getByRole('heading', { name: 'Ultra', exact: true }) })
+    .boundingBox();
+  assert(
+    creatorBox && creatorBox.x >= 0 && creatorBox.x < 390,
+    'Horizontal scroll must reveal Ultra',
+  );
+  await planScroll.evaluate((el) => el.scrollTo({ left: 0, behavior: 'instant' }));
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  assert(
+    await planScroll.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return r.left > 0 && r.right < innerWidth;
+    }),
+    'Desktop comparison must retain its maximum width',
+  );
+  const comparison = pricingOne.locator('[data-plan-comparison]').first();
+  assert(await comparison.isVisible(), 'Desktop comparison missing');
+  assert(
+    await comparison.evaluate((el) => {
+      const container = el.closest('.container')!;
+      const bounds = container.getBoundingClientRect(),
+        style = getComputedStyle(container),
+        table = el.getBoundingClientRect();
+      return (
+        Math.abs(table.left - bounds.left - parseFloat(style.paddingLeft)) < 1 &&
+        Math.abs(table.right - bounds.right + parseFloat(style.paddingRight)) < 1
+      );
+    }),
+    'Comparison must use the shared container width',
+  );
+  assert(
+    (await comparison.getByRole('columnheader').allTextContents()).join(',') ===
+      'Free,Go,Pro,Max,Ultra',
+    'Comparison columns must match the cards',
+  );
+  const rows = comparison.getByRole('row');
+  const featureRow = comparison.getByTestId('one-comparison-body').getByRole('row').nth(1);
+  await featureRow.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  await page.waitForTimeout(200);
+  assert(
+    await subnav.evaluate(
+      (el) =>
+        Math.abs(
+          el.getBoundingClientRect().top -
+            document.querySelector('header')!.getBoundingClientRect().bottom,
+        ) < 1,
+    ),
+    'Sticky plan tabs must meet the website header without a gap',
+  );
+  await page.mouse.move(0, 0);
+  const restingBackground = await featureRow.evaluate((el) => getComputedStyle(el).backgroundColor);
+  await featureRow.hover();
+  await page.waitForTimeout(200);
+  assert(
+    (await featureRow.evaluate((el) => getComputedStyle(el).backgroundColor)) !== restingBackground,
+    'Hover must highlight the entire comparison row',
+  );
 
- assert(await comparison.getByText('Noted+',{exact:true}).count()===4,'Name the Noted subscription precisely')
- assert(await comparison.getByText('Clarity Plus',{exact:true}).count()===3,'Clarity starts at Pro')
- assert(await rows.count()===16,'Compare bundle subscriptions, storage and credits without duplicating app feature lists')
- assert(await comparison.getByText(/Alia ·|concurrent tasks/).count()===0,'Internal Alia features belong to Alia pricing')
- for(const capacity of ['2 GB','20 GB','100 GB','500 GB','2 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Every personal tier must show its storage capacity')
- assert(await comparison.getByText('Mention Plus',{exact:true}).count()===4,'Paid Mention inclusions must name their proposed subscription')
- assert(await rows.nth(0).getByText('App subscriptions',{exact:true}).count()===5,'Repeat each category in every plan column')
- assert(await rows.filter({hasText:'Credits'}).getByText('Credits',{exact:true}).count()===5,'Usage category missing from a plan')
- assert(await comparison.getByTestId('one-comparison-body').getByRole('row').last().evaluate(el=>getComputedStyle(el).borderBottomWidth)==='0px','Last comparison row must not have a bottom border')
- assert(await pricingOne.locator('[data-pricing-apps]').count()===0,'App logos belong in the comparison, not beneath the heading')
- assert(await comparison.getByText('Alia Max',{exact:true}).count()===1,'Included subscriptions must name the app tier')
- assert(await comparison.getByText('Homiio Plus',{exact:true}).count()===4,'Every paid personal bundle must include Homiio Plus')
- assert(await comparison.getByText('Inbox Plus',{exact:true}).count()===3,'Inbox Plus starts at Pro and keeps its own name in Max and Ultra')
- assert(await comparison.getByText('Inbox',{exact:true}).count()===0,'Do not advertise free Inbox access as an included subscription')
- assert(await comparison.locator('[data-subscription-missing]').count()===8,'Excluded subscriptions use a dash')
- for(const cell of await comparison.locator('[data-subscription-missing]').all()) assert((await cell.innerText())==='—','An excluded app must show only a dash')
- assert(await comparison.getByText(/Inbox (Go|Pro|Max|Ultra)/).count()===0,'Oxy One levels must never generate app subscription names')
- assert(await comparison.locator('[data-subscription-app]').count()===22,'Only included subscriptions show app icons')
- assert((await comparison.locator('img[data-subscription-app=homiio]').first().getAttribute('src'))==='/images/apps/homiio.png','Use the official Homiio PNG image')
- await comparison.locator('img[data-subscription-app]').evaluateAll(images=>Promise.all(images.map(image=>(image as HTMLImageElement).decode())))
- await page.setViewportSize({width:1440,height:600})
- await comparison.evaluate(el=>scrollTo({top:el.getBoundingClientRect().top+scrollY-350,behavior:'instant'}))
- const stickyTitles=pricingOne.locator('[data-plan-sticky-titles]').first()
- await page.waitForFunction(()=>Math.abs(document.querySelector('[data-plan-sticky-titles]')!.getBoundingClientRect().bottom-innerHeight)<1)
- assert(await stickyTitles.evaluate(el=>getComputedStyle(el.parentElement!.parentElement!).position)==='sticky','Pinning must use native CSS sticky')
- assert(await stickyTitles.locator('[role=columnheader]').first().evaluate(el=>getComputedStyle(el).boxShadow)!=='none','Sticky columns need separators')
- assert(await stickyTitles.evaluate(el=>Math.abs(el.getBoundingClientRect().bottom-innerHeight)<1),'Plan titles must stick to the viewport bottom during comparison')
- assert(await stickyTitles.evaluate(el=>getComputedStyle(el).borderTopWidth==='1px'&&getComputedStyle(el).borderBottomWidth==='1px'),'Sticky titles must have horizontal separators')
- await comparison.evaluate(el=>scrollTo({top:el.getBoundingClientRect().bottom+scrollY-250,behavior:'instant'}))
- await page.waitForFunction(()=>document.querySelector('[data-plan-sticky-titles]')!.getBoundingClientRect().bottom<innerHeight)
- assert(await stickyTitles.evaluate(el=>el.getBoundingClientRect().bottom<innerHeight),'Sticky titles must stop at the comparison boundary')
- await page.setViewportSize({width:1440,height:1000})
- await pricingOne.getByRole('radio',{name:'Annual',exact:true}).click()
- await pricingOne.getByText('Save 20% with annual billing',{exact:true}).waitFor()
- assert(await pricingOne.getByRole('radio',{name:'Annual',exact:true}).count()===1,'Each audience needs a billing toggle')
- assert(await pricingOne.getByRole('radio',{name:'Annual',exact:true}).first().getAttribute('aria-checked')==='true','Both billing toggles must share the selected period')
- assert(await pricingOne.getByTestId('one-tier-price').count()===5,'Annual selection must show every personal price')
- for(const [name,price,total] of [['Go','$12','$144 billed annually'],['Pro','$23.99','$287.90 billed annually'],['Max','$79.20','$950.40 billed annually'],['Ultra','$320','$3,840 billed annually']]) {
-  const card=tierCards.filter({has:page.getByRole('heading',{name,exact:true})})
-  await card.getByTestId('one-tier-price').getByText(price,{exact:true}).waitFor()
-  await card.getByText(total,{exact:true}).waitFor()
- }
- assert(await pricingOne.getByText('Coming soon',{exact:true}).count()===0,'Pricing must not show Coming soon placeholders')
- await pricingOne.getByRole('radio',{name:'Family',exact:true}).click()
- assert((await pricingOne.locator('[data-plan-name]').allTextContents()).join(',')==='Go,Pro,Max,Ultra','Family has four shared plans')
- assert(await page.getByRole('button',{name:'How many people does Family include?',exact:true}).count()===1,'Family FAQ must follow the membership control')
- assert(await comparison.getByText('Homiio Plus',{exact:true}).count()===4,'Family must retain the personal Homiio subscription')
- assert(await pricingOne.getByTestId('business-seats').count()===0,'Family is a flat package, not per-seat billing')
- for(const capacity of ['40 GB','200 GB','1 TB','4 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Family storage belongs to the whole group')
- assert(await pricingOne.getByTestId('one-price').count()===0,'Individual SDK offers must not be advertised as Family offers')
- for (const [name,price,total,credits] of [['Go','$20','$240 billed annually','8,000'],['Pro','$39.20','$470.40 billed annually','20,000'],['Max','$135.20','$1,622.40 billed annually','100,000'],['Ultra','$479.20','$5,750.40 billed annually','300,000']]) {
-  const card=tierCards.filter({has:page.getByRole('heading',{name,exact:true})})
-  await card.getByTestId('one-tier-price').getByText(price,{exact:true}).waitFor()
-  await card.getByText(total,{exact:true}).waitFor()
-  await card.locator('[data-monthly-credits]').getByText(`${credits} credits / month`,{exact:true}).waitFor()
-  await card.getByText('Up to 6 people',{exact:true}).waitFor()
- }
- await pricingOne.getByRole('radio',{name:'Monthly',exact:true}).click()
- for (const [name,price] of [['Go','$25'],['Pro','$49'],['Max','$169'],['Ultra','$599']]) {
-  await tierCards.filter({has:page.getByRole('heading',{name,exact:true})}).getByTestId('one-tier-price').getByText(price,{exact:true}).waitFor()
- }
- await pricingOne.getByRole('radio',{name:'Annual',exact:true}).click()
- await pricingOne.getByRole('radio',{name:'Individual',exact:true}).click()
- assert(await page.getByRole('button',{name:'How many people does Family include?',exact:true}).count()===0,'Individual FAQ must not retain Family-specific questions')
- const tabs=page.getByRole('tablist',{name:'Explore plans',exact:true})
- await tabs.getByRole('tab',{name:'Business',exact:true}).click()
- assert((await pricingOne.locator('[data-plan-name]').allTextContents()).join(',')==='Go,Pro,Max,Ultra','Business tab must show its four plans')
- const businessPrimary=await page.locator('header').evaluate(el=>getComputedStyle(el).getPropertyValue('--primary'))
- assert(businessPrimary!==personalPrimary,'Business must change the whole page theme')
- assert(await page.locator('footer').evaluate(el=>getComputedStyle(el).getPropertyValue('--primary'))===businessPrimary,'Footer must inherit the selected audience theme')
- assert(await pricingOne.evaluate(el=>getComputedStyle(el).getPropertyValue('--primary'))===businessPrimary,'Header and plan content must share the audience palette')
- for(const [name,price,total,discount,base,seatPrice] of [['Go','$38.40','$460.80 billed annually',15,'$31.20','$7.20'],['Pro','$95.19','$1,142.30 billed annually',25,'$79.99','$15.20'],['Max','$182.40','$2,188.80 billed annually',30,'$159.20','$23.20'],['Ultra','$518.40','$6,220.80 billed annually',35,'$479.20','$39.20']]) {
-  const card=tierCards.filter({has:page.getByRole('heading',{name:String(name),exact:true})})
-  await card.getByTestId('one-tier-price').getByText(String(price),{exact:true}).waitFor()
-  await card.getByText(String(total),{exact:true}).waitFor()
-  await card.getByText(`${discount}% off credit packs`,{exact:true}).waitFor()
-  await card.getByText(`${base} base per month`,{exact:true}).waitFor()
-  await card.locator('[data-seat-price]').getByText(`+ ${seatPrice} per user per month`,{exact:true}).waitFor()
- }
- await page.waitForFunction(()=>{
-  const panel=document.querySelector('#pricing-panel')!.getBoundingClientRect()
-  const nav=document.querySelector('nav[aria-label="Explore plans"]')!.getBoundingClientRect()
-  const backdrop=document.querySelector('[data-pricing-header-backdrop]')!.getBoundingClientRect()
-  return Math.abs(panel.top-nav.bottom)<2&&Math.abs(backdrop.bottom-nav.bottom)<2
- })
- assert(await page.locator('[data-pricing-subnav-backdrop]').evaluate(el=>getComputedStyle(el).visibility)==='hidden','Docked bars must use one shared backdrop')
- assert(await page.locator('[data-pricing-header-backdrop]').evaluate(el=>getComputedStyle(el).backdropFilter)==='blur(12px)','Shared header must retain its blur')
- assert(await pricingOne.getByRole('radio',{name:'Annual',exact:true}).getAttribute('aria-checked')==='true','Billing period must survive audience changes')
- assert(await page.getByRole('button',{name:'Who is the Business plan for?',exact:true}).count()===1,'Business FAQ must change with the plans')
- const businessChoices=comparison.locator('[data-business-app-choice]')
- assert(await businessChoices.count()===4,'Every Business column must show one shared cell for its app alternatives')
- for(const [index,cell] of (await businessChoices.all()).entries()) {
-  assert(await cell.locator('[data-subscription-app=mercaria]').count()===1,'The choice cell must show Mercaria with its icon')
-  assert(await cell.getByText(['Mercaria Go','Mercaria Plus','Mercaria Plus','Mercaria Ultra'][index],{exact:true}).count()===1,'Name the candidate Mercaria subscription')
-  assert(await cell.getByText('Homiio Plus',{exact:true}).count()===1,'The same choice cell must show Homiio Plus')
-  assert(await cell.getByText('One included, your choice',{exact:true}).count()===1,'Alternatives must clearly include only one app')
- }
- assert(await pricingOne.getByRole('radio',{name:/Mercaria|Homiio/}).count()===0,'Do not add an app selector above the grid')
- const seatCount=pricingOne.getByTestId('business-seats-value')
- assert(await seatCount.getAttribute('aria-valuenow')==='1','Seat estimate starts with one member')
- assert(await pricingOne.getByTestId('business-seats-decrement').isDisabled(),'Cannot estimate fewer than one member')
- assert(await pricingOne.locator('[data-seats-chip]').getByTestId('business-seats').count()===1,'Seats label and native Stepper share one chip')
- await pricingOne.getByTestId('business-seats-increment').click()
- await pricingOne.getByTestId('business-seats-increment').click()
- assert(await seatCount.getAttribute('aria-valuenow')==='3','Stepper must update the member count')
- for(const capacity of ['35 GB','130 GB','575 GB','2.15 TB']) assert(await comparison.getByText(capacity,{exact:true}).count()===1,'Business storage must sum base and selected seats')
- for (const [name,credits] of [['Go','14,000'],['Pro','40,000'],['Max','84,000'],['Ultra','245,000']]) {
-  await tierCards.filter({has:page.getByRole('heading',{name,exact:true})}).locator('[data-monthly-credits]').getByText(`${credits} credits / month`,{exact:true}).waitFor()
- }
- for(const [name,price,total] of [['Go','$52.80','$633.60 billed annually'],['Pro','$125.59','$1,507.10 billed annually'],['Max','$228.80','$2,745.60 billed annually'],['Ultra','$596.80','$7,161.60 billed annually']]) {
-  const card=tierCards.filter({has:page.getByRole('heading',{name,exact:true})})
-  await card.getByTestId('one-tier-price').getByText(price,{exact:true}).waitFor()
-  await card.getByText(total,{exact:true}).waitFor()
- }
- await pricingOne.getByRole('radio',{name:'Monthly',exact:true}).click()
- for(const [name,price] of [['Go','$66'],['Pro','$156.99'],['Max','$286'],['Ultra','$746']]) {
-  await tierCards.filter({has:page.getByRole('heading',{name,exact:true})}).getByTestId('one-tier-price').getByText(price,{exact:true}).waitFor()
- }
- await seatCount.press('Home')
- assert(await seatCount.getAttribute('aria-valuenow')==='1','Home must return to the minimum')
- await seatCount.press('ArrowUp')
- assert(await seatCount.getAttribute('aria-valuenow')==='2','Native keyboard increment must work')
- assert(await seatCount.evaluate(el=>document.activeElement===el),'Animating the value must preserve keyboard focus')
- await pricingOne.getByRole('radio',{name:'Annual',exact:true}).click()
- await tabs.getByRole('tab',{name:'Creator',exact:true}).click()
- assert(await comparison.getByText('Mercaria Creator',{exact:true}).count()===4,'Creator bundles must include the merchandise subscription')
- assert(await comparison.getByText('Mercaria Pro',{exact:true}).count()===0,'Creator bundles must not promise the business subscription')
- assert(await pricingOne.getByTestId('business-seats').count()===0,'Creator must not show the Business seat control')
- assert(await pricingOne.locator('[data-business-app-choice]').count()===0,'Only Business offers the industry app choice')
- assert((await pricingOne.locator('[data-plan-name]').allTextContents()).join(',')==='Go,Pro,Max,Ultra','Creator must show its four tiers')
- const creatorPrimary=await page.locator('header').evaluate(el=>getComputedStyle(el).getPropertyValue('--primary'))
- assert(creatorPrimary!==personalPrimary&&creatorPrimary!==businessPrimary,'Creator must have its own page palette')
- assert(await page.locator('footer').evaluate(el=>getComputedStyle(el).getPropertyValue('--primary'))===creatorPrimary,'Creator theme must reach the footer')
- assert(await pricingOne.getByTestId('one-tier-price').count()===4,'Every Creator tier must publish its annual price')
- for(const [name,price,total,discount] of [['Go','$23.20','$278.40 billed annually',10],['Pro','$55.20','$662.40 billed annually',15],['Max','$119.20','$1,430.40 billed annually',20],['Ultra','$399.20','$4,790.40 billed annually',25]]) {
-  const card=tierCards.filter({has:page.getByRole('heading',{name:String(name),exact:true})})
-  await card.getByTestId('one-tier-price').getByText(String(price),{exact:true}).waitFor()
-  await card.getByText(String(total),{exact:true}).waitFor()
-  await card.getByText(`${discount}% off credit packs`,{exact:true}).waitFor()
- }
- for (const [name,credits] of [['Go','10,000'],['Pro','25,000'],['Max','60,000'],['Ultra','250,000']]) {
-  await tierCards.filter({has:page.getByRole('heading',{name,exact:true})}).locator('[data-monthly-credits]').getByText(`${credits} credits / month`,{exact:true}).waitFor()
- }
- assert(await tierCards.getByRole('link',{name:'Get started',exact:true}).count()===4,'Creator tiers need their normal subscription actions')
- assert(await pricingOne.getByText('Access to the verified badge',{exact:false}).count()===0,'Verification must never be a paid plan benefit')
- assert(await tabs.getByRole('tab').evaluateAll(els=>els.every(el=>el.classList.contains('bloom-btn'))),'Audience controls must use native Bloom buttons')
- const verification=page.getByRole('button',{name:'Can I pay for a verified badge?',exact:true})
- await verification.click()
- await page.getByText('No. Verified badges are not sold or included in paid plans. Anyone can apply for verification; it is awarded to real people of public relevance based on authenticity and notability. A paid subscription is not required.',{exact:true}).waitFor()
- assert(await page.getByRole('button',{name:'Who is the Creator plan for?',exact:true}).count()===1,'Creator FAQ must change with the plans')
- await tabs.getByRole('tab',{name:'Creator',exact:true}).press('Home')
- assert(await tabs.getByRole('tab',{name:'Personal',exact:true}).getAttribute('aria-selected')==='true','Keyboard navigation must change the active audience')
- assert(await pricingOne.getByTestId('one-price').count()===0,'Monthly-only catalogue must not be offered as annual')
- await pricingOne.getByRole('radio',{name:'Monthly',exact:true}).first().click()
- await tierCards.filter({has:page.getByRole('heading',{name:'Pro',exact:true})}).getByTestId('one-tier-price').getByText('$29.99',{exact:true}).waitFor()
- await pricingOne.getByTestId('one-price').waitFor()
- assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Pricing comparison desktop overflow')
- configured=false;await page.reload({waitUntil:'networkidle'})
- await pricingOne.locator('[data-one-tiers]').first().waitFor()
- assert(await pricingOne.locator('[data-one-tiers] article').count()===5,'Pricing must show personal plans without a published catalogue')
- assert(await pricingOne.getByTestId('one-price').count()===0,'Pricing must not invent an unconfigured One price')
- console.log('[one-catalogue] passed: production route, SDK fixtures, disabled checkout, SDK final tax-inclusive monthly price, bundle subscriptions and shared storage, monthly/annual availability, desktop/mobile limits')
-}finally {await browser?.close();preview.kill();await preview.exited}
+  assert(
+    (await comparison.getByText('Noted+', { exact: true }).count()) === 4,
+    'Name the Noted subscription precisely',
+  );
+  assert(
+    (await comparison.getByText('Clarity Plus', { exact: true }).count()) === 3,
+    'Clarity starts at Pro',
+  );
+  assert(
+    (await rows.count()) === 16,
+    'Compare bundle subscriptions, storage and credits without duplicating app feature lists',
+  );
+  assert(
+    (await comparison.getByText(/Alia ·|concurrent tasks/).count()) === 0,
+    'Internal Alia features belong to Alia pricing',
+  );
+  for (const capacity of ['2 GB', '20 GB', '100 GB', '500 GB', '2 TB'])
+    assert(
+      (await comparison.getByText(capacity, { exact: true }).count()) === 1,
+      'Every personal tier must show its storage capacity',
+    );
+  assert(
+    (await comparison.getByText('Mention Plus', { exact: true }).count()) === 4,
+    'Paid Mention inclusions must name their proposed subscription',
+  );
+  assert(
+    (await rows.nth(0).getByText('App subscriptions', { exact: true }).count()) === 5,
+    'Repeat each category in every plan column',
+  );
+  assert(
+    (await rows.filter({ hasText: 'Credits' }).getByText('Credits', { exact: true }).count()) === 5,
+    'Usage category missing from a plan',
+  );
+  assert(
+    (await comparison
+      .getByTestId('one-comparison-body')
+      .getByRole('row')
+      .last()
+      .evaluate((el) => getComputedStyle(el).borderBottomWidth)) === '0px',
+    'Last comparison row must not have a bottom border',
+  );
+  assert(
+    (await pricingOne.locator('[data-pricing-apps]').count()) === 0,
+    'App logos belong in the comparison, not beneath the heading',
+  );
+  assert(
+    (await comparison.getByText('Alia Max', { exact: true }).count()) === 1,
+    'Included subscriptions must name the app tier',
+  );
+  assert(
+    (await comparison.getByText('Homiio Plus', { exact: true }).count()) === 4,
+    'Every paid personal bundle must include Homiio Plus',
+  );
+  assert(
+    (await comparison.getByText('Inbox Plus', { exact: true }).count()) === 3,
+    'Inbox Plus starts at Pro and keeps its own name in Max and Ultra',
+  );
+  assert(
+    (await comparison.getByText('Inbox', { exact: true }).count()) === 0,
+    'Do not advertise free Inbox access as an included subscription',
+  );
+  assert(
+    (await comparison.locator('[data-subscription-missing]').count()) === 8,
+    'Excluded subscriptions use a dash',
+  );
+  for (const cell of await comparison.locator('[data-subscription-missing]').all())
+    assert((await cell.innerText()) === '—', 'An excluded app must show only a dash');
+  assert(
+    (await comparison.getByText(/Inbox (Go|Pro|Max|Ultra)/).count()) === 0,
+    'Oxy One levels must never generate app subscription names',
+  );
+  assert(
+    (await comparison.locator('[data-subscription-app]').count()) === 22,
+    'Only included subscriptions show app icons',
+  );
+  assert(
+    (await comparison.locator('img[data-subscription-app=homiio]').first().getAttribute('src')) ===
+      '/images/apps/homiio.png',
+    'Use the official Homiio PNG image',
+  );
+  await comparison
+    .locator('img[data-subscription-app]')
+    .evaluateAll((images) =>
+      Promise.all(images.map((image) => (image as HTMLImageElement).decode())),
+    );
+  await page.setViewportSize({ width: 1440, height: 600 });
+  await comparison.evaluate((el) =>
+    scrollTo({ top: el.getBoundingClientRect().top + scrollY - 350, behavior: 'instant' }),
+  );
+  const stickyTitles = pricingOne.locator('[data-plan-sticky-titles]').first();
+  await page.waitForFunction(
+    () =>
+      Math.abs(
+        document.querySelector('[data-plan-sticky-titles]')!.getBoundingClientRect().bottom -
+          innerHeight,
+      ) < 1,
+  );
+  assert(
+    (await stickyTitles.evaluate(
+      (el) => getComputedStyle(el.parentElement!.parentElement!).position,
+    )) === 'sticky',
+    'Pinning must use native CSS sticky',
+  );
+  assert(
+    (await stickyTitles
+      .locator('[role=columnheader]')
+      .first()
+      .evaluate((el) => getComputedStyle(el).boxShadow)) !== 'none',
+    'Sticky columns need separators',
+  );
+  assert(
+    await stickyTitles.evaluate(
+      (el) => Math.abs(el.getBoundingClientRect().bottom - innerHeight) < 1,
+    ),
+    'Plan titles must stick to the viewport bottom during comparison',
+  );
+  assert(
+    await stickyTitles.evaluate(
+      (el) =>
+        getComputedStyle(el).borderTopWidth === '1px' &&
+        getComputedStyle(el).borderBottomWidth === '1px',
+    ),
+    'Sticky titles must have horizontal separators',
+  );
+  await comparison.evaluate((el) =>
+    scrollTo({ top: el.getBoundingClientRect().bottom + scrollY - 250, behavior: 'instant' }),
+  );
+  await page.waitForFunction(
+    () =>
+      document.querySelector('[data-plan-sticky-titles]')!.getBoundingClientRect().bottom <
+      innerHeight,
+  );
+  assert(
+    await stickyTitles.evaluate((el) => el.getBoundingClientRect().bottom < innerHeight),
+    'Sticky titles must stop at the comparison boundary',
+  );
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await pricingOne.getByRole('radio', { name: 'Annual', exact: true }).click();
+  await pricingOne.getByText('Save 20% with annual billing', { exact: true }).waitFor();
+  assert(
+    (await pricingOne.getByRole('radio', { name: 'Annual', exact: true }).count()) === 1,
+    'Each audience needs a billing toggle',
+  );
+  assert(
+    (await pricingOne
+      .getByRole('radio', { name: 'Annual', exact: true })
+      .first()
+      .getAttribute('aria-checked')) === 'true',
+    'Both billing toggles must share the selected period',
+  );
+  assert(
+    (await pricingOne.getByTestId('one-tier-price').count()) === 5,
+    'Annual selection must show every personal price',
+  );
+  for (const [name, price, total] of [
+    ['Go', '$12', '$144 billed annually'],
+    ['Pro', '$23.99', '$287.90 billed annually'],
+    ['Max', '$79.20', '$950.40 billed annually'],
+    ['Ultra', '$320', '$3,840 billed annually'],
+  ]) {
+    const card = tierCards.filter({ has: page.getByRole('heading', { name, exact: true }) });
+    await card.getByTestId('one-tier-price').getByText(price, { exact: true }).waitFor();
+    await card.getByText(total, { exact: true }).waitFor();
+  }
+  assert(
+    (await pricingOne.getByText('Coming soon', { exact: true }).count()) === 0,
+    'Pricing must not show Coming soon placeholders',
+  );
+  await pricingOne.getByRole('radio', { name: 'Family', exact: true }).click();
+  assert(
+    (await pricingOne.locator('[data-plan-name]').allTextContents()).join(',') ===
+      'Go,Pro,Max,Ultra',
+    'Family has four shared plans',
+  );
+  assert(
+    (await page
+      .getByRole('button', { name: 'How many people does Family include?', exact: true })
+      .count()) === 1,
+    'Family FAQ must follow the membership control',
+  );
+  assert(
+    (await comparison.getByText('Homiio Plus', { exact: true }).count()) === 4,
+    'Family must retain the personal Homiio subscription',
+  );
+  assert(
+    (await pricingOne.getByTestId('business-seats').count()) === 0,
+    'Family is a flat package, not per-seat billing',
+  );
+  for (const capacity of ['40 GB', '200 GB', '1 TB', '4 TB'])
+    assert(
+      (await comparison.getByText(capacity, { exact: true }).count()) === 1,
+      'Family storage belongs to the whole group',
+    );
+  assert(
+    (await pricingOne.getByTestId('one-price').count()) === 0,
+    'Individual SDK offers must not be advertised as Family offers',
+  );
+  for (const [name, price, total, credits] of [
+    ['Go', '$20', '$240 billed annually', '8,000'],
+    ['Pro', '$39.20', '$470.40 billed annually', '20,000'],
+    ['Max', '$135.20', '$1,622.40 billed annually', '100,000'],
+    ['Ultra', '$479.20', '$5,750.40 billed annually', '300,000'],
+  ]) {
+    const card = tierCards.filter({ has: page.getByRole('heading', { name, exact: true }) });
+    await card.getByTestId('one-tier-price').getByText(price, { exact: true }).waitFor();
+    await card.getByText(total, { exact: true }).waitFor();
+    await card
+      .locator('[data-monthly-credits]')
+      .getByText(`${credits} credits / month`, { exact: true })
+      .waitFor();
+    await card.getByText('Up to 6 people', { exact: true }).waitFor();
+  }
+  await pricingOne.getByRole('radio', { name: 'Monthly', exact: true }).click();
+  for (const [name, price] of [
+    ['Go', '$25'],
+    ['Pro', '$49'],
+    ['Max', '$169'],
+    ['Ultra', '$599'],
+  ]) {
+    await tierCards
+      .filter({ has: page.getByRole('heading', { name, exact: true }) })
+      .getByTestId('one-tier-price')
+      .getByText(price, { exact: true })
+      .waitFor();
+  }
+  await pricingOne.getByRole('radio', { name: 'Annual', exact: true }).click();
+  await pricingOne.getByRole('radio', { name: 'Individual', exact: true }).click();
+  assert(
+    (await page
+      .getByRole('button', { name: 'How many people does Family include?', exact: true })
+      .count()) === 0,
+    'Individual FAQ must not retain Family-specific questions',
+  );
+  const tabs = page.getByRole('tablist', { name: 'Explore plans', exact: true });
+  await tabs.getByRole('tab', { name: 'Business', exact: true }).click();
+  assert(
+    (await pricingOne.locator('[data-plan-name]').allTextContents()).join(',') ===
+      'Go,Pro,Max,Ultra',
+    'Business tab must show its four plans',
+  );
+  const businessPrimary = await page
+    .locator('header')
+    .evaluate((el) => getComputedStyle(el).getPropertyValue('--primary'));
+  assert(businessPrimary !== personalPrimary, 'Business must change the whole page theme');
+  assert(
+    (await page
+      .locator('footer')
+      .evaluate((el) => getComputedStyle(el).getPropertyValue('--primary'))) === businessPrimary,
+    'Footer must inherit the selected audience theme',
+  );
+  assert(
+    (await pricingOne.evaluate((el) => getComputedStyle(el).getPropertyValue('--primary'))) ===
+      businessPrimary,
+    'Header and plan content must share the audience palette',
+  );
+  for (const [name, price, total, discount, base, seatPrice] of [
+    ['Go', '$38.40', '$460.80 billed annually', 15, '$31.20', '$7.20'],
+    ['Pro', '$95.19', '$1,142.30 billed annually', 25, '$79.99', '$15.20'],
+    ['Max', '$182.40', '$2,188.80 billed annually', 30, '$159.20', '$23.20'],
+    ['Ultra', '$518.40', '$6,220.80 billed annually', 35, '$479.20', '$39.20'],
+  ]) {
+    const card = tierCards.filter({
+      has: page.getByRole('heading', { name: String(name), exact: true }),
+    });
+    await card.getByTestId('one-tier-price').getByText(String(price), { exact: true }).waitFor();
+    await card.getByText(String(total), { exact: true }).waitFor();
+    await card.getByText(`${discount}% off credit packs`, { exact: true }).waitFor();
+    await card.getByText(`${base} base per month`, { exact: true }).waitFor();
+    await card
+      .locator('[data-seat-price]')
+      .getByText(`+ ${seatPrice} per user per month`, { exact: true })
+      .waitFor();
+  }
+  await page.waitForFunction(() => {
+    const panel = document.querySelector('#pricing-panel')!.getBoundingClientRect();
+    const nav = document.querySelector('nav[aria-label="Explore plans"]')!.getBoundingClientRect();
+    const backdrop = document
+      .querySelector('[data-pricing-header-backdrop]')!
+      .getBoundingClientRect();
+    return Math.abs(panel.top - nav.bottom) < 2 && Math.abs(backdrop.bottom - nav.bottom) < 2;
+  });
+  assert(
+    (await page
+      .locator('[data-pricing-subnav-backdrop]')
+      .evaluate((el) => getComputedStyle(el).visibility)) === 'hidden',
+    'Docked bars must use one shared backdrop',
+  );
+  assert(
+    (await page
+      .locator('[data-pricing-header-backdrop]')
+      .evaluate((el) => getComputedStyle(el).backdropFilter)) === 'blur(12px)',
+    'Shared header must retain its blur',
+  );
+  assert(
+    (await pricingOne
+      .getByRole('radio', { name: 'Annual', exact: true })
+      .getAttribute('aria-checked')) === 'true',
+    'Billing period must survive audience changes',
+  );
+  assert(
+    (await page
+      .getByRole('button', { name: 'Who is the Business plan for?', exact: true })
+      .count()) === 1,
+    'Business FAQ must change with the plans',
+  );
+  const businessChoices = comparison.locator('[data-business-app-choice]');
+  assert(
+    (await businessChoices.count()) === 4,
+    'Every Business column must show one shared cell for its app alternatives',
+  );
+  for (const [index, cell] of (await businessChoices.all()).entries()) {
+    assert(
+      (await cell.locator('[data-subscription-app=mercaria]').count()) === 1,
+      'The choice cell must show Mercaria with its icon',
+    );
+    assert(
+      (await cell
+        .getByText(['Mercaria Go', 'Mercaria Plus', 'Mercaria Plus', 'Mercaria Ultra'][index], {
+          exact: true,
+        })
+        .count()) === 1,
+      'Name the candidate Mercaria subscription',
+    );
+    assert(
+      (await cell.getByText('Homiio Plus', { exact: true }).count()) === 1,
+      'The same choice cell must show Homiio Plus',
+    );
+    assert(
+      (await cell.getByText('One included, your choice', { exact: true }).count()) === 1,
+      'Alternatives must clearly include only one app',
+    );
+  }
+  assert(
+    (await pricingOne.getByRole('radio', { name: /Mercaria|Homiio/ }).count()) === 0,
+    'Do not add an app selector above the grid',
+  );
+  const seatCount = pricingOne.getByTestId('business-seats-value');
+  assert(
+    (await seatCount.getAttribute('aria-valuenow')) === '1',
+    'Seat estimate starts with one member',
+  );
+  assert(
+    await pricingOne.getByTestId('business-seats-decrement').isDisabled(),
+    'Cannot estimate fewer than one member',
+  );
+  assert(
+    (await pricingOne.locator('[data-seats-chip]').getByTestId('business-seats').count()) === 1,
+    'Seats label and native Stepper share one chip',
+  );
+  await pricingOne.getByTestId('business-seats-increment').click();
+  await pricingOne.getByTestId('business-seats-increment').click();
+  assert(
+    (await seatCount.getAttribute('aria-valuenow')) === '3',
+    'Stepper must update the member count',
+  );
+  for (const capacity of ['35 GB', '130 GB', '575 GB', '2.15 TB'])
+    assert(
+      (await comparison.getByText(capacity, { exact: true }).count()) === 1,
+      'Business storage must sum base and selected seats',
+    );
+  for (const [name, credits] of [
+    ['Go', '14,000'],
+    ['Pro', '40,000'],
+    ['Max', '84,000'],
+    ['Ultra', '245,000'],
+  ]) {
+    await tierCards
+      .filter({ has: page.getByRole('heading', { name, exact: true }) })
+      .locator('[data-monthly-credits]')
+      .getByText(`${credits} credits / month`, { exact: true })
+      .waitFor();
+  }
+  for (const [name, price, total] of [
+    ['Go', '$52.80', '$633.60 billed annually'],
+    ['Pro', '$125.59', '$1,507.10 billed annually'],
+    ['Max', '$228.80', '$2,745.60 billed annually'],
+    ['Ultra', '$596.80', '$7,161.60 billed annually'],
+  ]) {
+    const card = tierCards.filter({ has: page.getByRole('heading', { name, exact: true }) });
+    await card.getByTestId('one-tier-price').getByText(price, { exact: true }).waitFor();
+    await card.getByText(total, { exact: true }).waitFor();
+  }
+  await pricingOne.getByRole('radio', { name: 'Monthly', exact: true }).click();
+  for (const [name, price] of [
+    ['Go', '$66'],
+    ['Pro', '$156.99'],
+    ['Max', '$286'],
+    ['Ultra', '$746'],
+  ]) {
+    await tierCards
+      .filter({ has: page.getByRole('heading', { name, exact: true }) })
+      .getByTestId('one-tier-price')
+      .getByText(price, { exact: true })
+      .waitFor();
+  }
+  await seatCount.press('Home');
+  assert(
+    (await seatCount.getAttribute('aria-valuenow')) === '1',
+    'Home must return to the minimum',
+  );
+  await seatCount.press('ArrowUp');
+  assert(
+    (await seatCount.getAttribute('aria-valuenow')) === '2',
+    'Native keyboard increment must work',
+  );
+  assert(
+    await seatCount.evaluate((el) => document.activeElement === el),
+    'Animating the value must preserve keyboard focus',
+  );
+  await pricingOne.getByRole('radio', { name: 'Annual', exact: true }).click();
+  await tabs.getByRole('tab', { name: 'Creator', exact: true }).click();
+  assert(
+    (await comparison.getByText('Mercaria Creator', { exact: true }).count()) === 4,
+    'Creator bundles must include the merchandise subscription',
+  );
+  assert(
+    (await comparison.getByText('Mercaria Pro', { exact: true }).count()) === 0,
+    'Creator bundles must not promise the business subscription',
+  );
+  assert(
+    (await pricingOne.getByTestId('business-seats').count()) === 0,
+    'Creator must not show the Business seat control',
+  );
+  assert(
+    (await pricingOne.locator('[data-business-app-choice]').count()) === 0,
+    'Only Business offers the industry app choice',
+  );
+  assert(
+    (await pricingOne.locator('[data-plan-name]').allTextContents()).join(',') ===
+      'Go,Pro,Max,Ultra',
+    'Creator must show its four tiers',
+  );
+  const creatorPrimary = await page
+    .locator('header')
+    .evaluate((el) => getComputedStyle(el).getPropertyValue('--primary'));
+  assert(
+    creatorPrimary !== personalPrimary && creatorPrimary !== businessPrimary,
+    'Creator must have its own page palette',
+  );
+  assert(
+    (await page
+      .locator('footer')
+      .evaluate((el) => getComputedStyle(el).getPropertyValue('--primary'))) === creatorPrimary,
+    'Creator theme must reach the footer',
+  );
+  assert(
+    (await pricingOne.getByTestId('one-tier-price').count()) === 4,
+    'Every Creator tier must publish its annual price',
+  );
+  for (const [name, price, total, discount] of [
+    ['Go', '$23.20', '$278.40 billed annually', 10],
+    ['Pro', '$55.20', '$662.40 billed annually', 15],
+    ['Max', '$119.20', '$1,430.40 billed annually', 20],
+    ['Ultra', '$399.20', '$4,790.40 billed annually', 25],
+  ]) {
+    const card = tierCards.filter({
+      has: page.getByRole('heading', { name: String(name), exact: true }),
+    });
+    await card.getByTestId('one-tier-price').getByText(String(price), { exact: true }).waitFor();
+    await card.getByText(String(total), { exact: true }).waitFor();
+    await card.getByText(`${discount}% off credit packs`, { exact: true }).waitFor();
+  }
+  for (const [name, credits] of [
+    ['Go', '10,000'],
+    ['Pro', '25,000'],
+    ['Max', '60,000'],
+    ['Ultra', '250,000'],
+  ]) {
+    await tierCards
+      .filter({ has: page.getByRole('heading', { name, exact: true }) })
+      .locator('[data-monthly-credits]')
+      .getByText(`${credits} credits / month`, { exact: true })
+      .waitFor();
+  }
+  assert(
+    (await tierCards.getByRole('link', { name: 'Get started', exact: true }).count()) === 4,
+    'Creator tiers need their normal subscription actions',
+  );
+  assert(
+    (await pricingOne.getByText('Access to the verified badge', { exact: false }).count()) === 0,
+    'Verification must never be a paid plan benefit',
+  );
+  assert(
+    await tabs
+      .getByRole('tab')
+      .evaluateAll((els) => els.every((el) => el.classList.contains('bloom-btn'))),
+    'Audience controls must use native Bloom buttons',
+  );
+  const verification = page.getByRole('button', {
+    name: 'Can I pay for a verified badge?',
+    exact: true,
+  });
+  await verification.click();
+  await page
+    .getByText(
+      'No. Verified badges are not sold or included in paid plans. Anyone can apply for verification; it is awarded to real people of public relevance based on authenticity and notability. A paid subscription is not required.',
+      { exact: true },
+    )
+    .waitFor();
+  assert(
+    (await page
+      .getByRole('button', { name: 'Who is the Creator plan for?', exact: true })
+      .count()) === 1,
+    'Creator FAQ must change with the plans',
+  );
+  await tabs.getByRole('tab', { name: 'Creator', exact: true }).press('Home');
+  assert(
+    (await tabs
+      .getByRole('tab', { name: 'Personal', exact: true })
+      .getAttribute('aria-selected')) === 'true',
+    'Keyboard navigation must change the active audience',
+  );
+  assert(
+    (await pricingOne.getByTestId('one-price').count()) === 0,
+    'Monthly-only catalogue must not be offered as annual',
+  );
+  await pricingOne.getByRole('radio', { name: 'Monthly', exact: true }).first().click();
+  await tierCards
+    .filter({ has: page.getByRole('heading', { name: 'Pro', exact: true }) })
+    .getByTestId('one-tier-price')
+    .getByText('$29.99', { exact: true })
+    .waitFor();
+  await pricingOne.getByTestId('one-price').waitFor();
+  assert(
+    await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+    'Pricing comparison desktop overflow',
+  );
+  configured = false;
+  await page.reload({ waitUntil: 'networkidle' });
+  await pricingOne.locator('[data-one-tiers]').first().waitFor();
+  assert(
+    (await pricingOne.locator('[data-one-tiers] article').count()) === 5,
+    'Pricing must show personal plans without a published catalogue',
+  );
+  assert(
+    (await pricingOne.getByTestId('one-price').count()) === 0,
+    'Pricing must not invent an unconfigured One price',
+  );
+  console.log(
+    '[one-catalogue] passed: production route, SDK fixtures, disabled checkout, SDK final tax-inclusive monthly price, bundle subscriptions and shared storage, monthly/annual availability, desktop/mobile limits',
+  );
+} finally {
+  await browser?.close();
+  preview.kill();
+  await preview.exited;
+}

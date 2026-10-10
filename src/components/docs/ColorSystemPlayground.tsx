@@ -21,11 +21,7 @@ import {
   SegmentedControlItem,
   SegmentedControlItemText,
 } from '@oxy.so/bloom/segmented-control';
-import {
-  resolveLabPalette,
-  type ColorMode,
-  type LabPalette,
-} from '../../theme/color-lab-palette';
+import { resolveLabPalette, type ColorMode, type LabPalette } from '../../theme/color-lab-palette';
 import mentionAvatarAthina from '../../assets/mention/avatar-athina.jpg';
 import mentionAvatarJoan from '../../assets/mention/avatar-joan.jpg';
 import mentionAvatarNate from '../../assets/mention/avatar-nate.jpg';
@@ -130,7 +126,15 @@ function MentionIcon({
       {name === 'search' && (
         <>
           <Circle cx="10.5" cy="10.5" r="8.5" stroke={color} strokeWidth="2" />
-          <Line x1="16.5" y1="16.5" x2="22" y2="22" stroke={color} strokeWidth="2" strokeLinecap="round" />
+          <Line
+            x1="16.5"
+            y1="16.5"
+            x2="22"
+            y2="22"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
         </>
       )}
       {name === 'bell' && (
@@ -142,42 +146,87 @@ function MentionIcon({
       {name === 'live' && (
         <>
           <Circle cx="12" cy="12" r="2.25" fill={color} />
-          <Path d="M8.6 8.4a5 5 0 0 0 0 7.2M15.4 8.4a5 5 0 0 1 0 7.2M5.6 5.4a9 9 0 0 0 0 13.2M18.4 5.4a9 9 0 0 1 0 13.2" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+          <Path
+            d="M8.6 8.4a5 5 0 0 0 0 7.2M15.4 8.4a5 5 0 0 1 0 7.2M5.6 5.4a9 9 0 0 0 0 13.2M18.4 5.4a9 9 0 0 1 0 13.2"
+            stroke={color}
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
         </>
       )}
       {name === 'bookmark' && (
-        <Path fill={color} d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z" />
+        <Path
+          fill={color}
+          d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"
+        />
       )}
       {name === 'hashtag' && (
-        <Path fill={color} d="M10.09 3.098 9.72 7h5.99l.39-4.089 1.99.187L17.72 7h3.78v2h-3.97l-.56 6h3.53v2h-3.72l-.38 4.089-1.99-.187.36-3.902H8.78l-.38 4.089-1.99-.187L6.77 17H2.5v-2h4.46l.56-6H3.5V7h4.21l.39-4.089 1.99.187zM14.96 15l.56-6H9.53l-.56 6h5.99z" />
+        <Path
+          fill={color}
+          d="M10.09 3.098 9.72 7h5.99l.39-4.089 1.99.187L17.72 7h3.78v2h-3.97l-.56 6h3.53v2h-3.72l-.38 4.089-1.99-.187.36-3.902H8.78l-.38 4.089-1.99-.187L6.77 17H2.5v-2h4.46l.56-6H3.5V7h4.21l.39-4.089 1.99.187zM14.96 15l.56-6H9.53l-.56 6h5.99z"
+        />
       )}
       {name === 'list' && (
-        <Path fill={color} fillRule="evenodd" d="M6 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM3 7a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm9 0a1 1 0 0 1 1-1h7a1 1 0 1 1 0 2h-7a1 1 0 0 1-1-1Zm-6 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm-3 1a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm9 0a1 1 0 0 1 1-1h7a1 1 0 1 1 0 2h-7a1 1 0 0 1-1-1Z" />
+        <Path
+          fill={color}
+          fillRule="evenodd"
+          d="M6 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM3 7a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm9 0a1 1 0 0 1 1-1h7a1 1 0 1 1 0 2h-7a1 1 0 0 1-1-1Zm-6 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm-3 1a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm9 0a1 1 0 0 1 1-1h7a1 1 0 1 1 0 2h-7a1 1 0 0 1-1-1Z"
+        />
       )}
       {name === 'video' && (
         <>
-          <Path d="M2 12V8.55C2 5.7 2.7 4.55 3.61 3.61 4.55 2.7 5.7 2 8.55 2h6.9c2.85 0 4 .7 4.94 1.61C21.3 4.55 22 5.7 22 8.55v6.9c0 2.85-.7 4-1.61 4.94C19.45 21.3 18.3 22 15.45 22h-6.9c-2.85 0-4-.7-4.94-1.61C2.7 19.45 2 18.3 2 15.45V12Z" stroke={color} strokeWidth="2" />
+          <Path
+            d="M2 12V8.55C2 5.7 2.7 4.55 3.61 3.61 4.55 2.7 5.7 2 8.55 2h6.9c2.85 0 4 .7 4.94 1.61C21.3 4.55 22 5.7 22 8.55v6.9c0 2.85-.7 4-1.61 4.94C19.45 21.3 18.3 22 15.45 22h-6.9c-2.85 0-4-.7-4.94-1.61C2.7 19.45 2 18.3 2 15.45V12Z"
+            stroke={color}
+            strokeWidth="2"
+          />
           <Line x1="2.05" y1="7" x2="21.95" y2="7" stroke={color} strokeWidth="2" />
-          <Path fill={color} d="M9.76 17.66a.91.91 0 0 1-.45-.79v-5.24a.91.91 0 0 1 1.36-.79l4.55 2.63a.91.91 0 0 1 0 1.57l-4.55 2.63a.91.91 0 0 1-.91 0Z" />
+          <Path
+            fill={color}
+            d="M9.76 17.66a.91.91 0 0 1-.45-.79v-5.24a.91.91 0 0 1 1.36-.79l4.55 2.63a.91.91 0 0 1 0 1.57l-4.55 2.63a.91.91 0 0 1-.91 0Z"
+          />
         </>
       )}
       {name === 'gear' && (
-        <Path fill={color} d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zM12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5Zm0 2A1.5 1.5 0 1 1 12 13.5 1.5 1.5 0 0 1 12 10.5Z" />
+        <Path
+          fill={color}
+          d="M10.54 1.75h2.92l1.57 2.36c.11.17.32.25.53.21l2.53-.59 2.17 2.17-.58 2.54c-.05.2.04.41.21.53l2.36 1.57v2.92l-2.36 1.57c-.17.12-.26.33-.21.53l.58 2.54-2.17 2.17-2.53-.59c-.21-.04-.42.04-.53.21l-1.57 2.36h-2.92l-1.58-2.36c-.11-.17-.32-.25-.52-.21l-2.54.59-2.17-2.17.58-2.54c.05-.2-.03-.41-.21-.53l-2.35-1.57v-2.92L4.1 8.97c.18-.12.26-.33.21-.53L3.73 5.9 5.9 3.73l2.54.59c.2.04.41-.04.52-.21l1.58-2.36zM12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5Zm0 2A1.5 1.5 0 1 1 12 13.5 1.5 1.5 0 0 1 12 10.5Z"
+        />
       )}
       {name === 'compose' && (
-        <Path fill={color} d="M23 3c-6.62-.1-10.38 2.421-13.05 6.03C7.29 12.61 6 17.331 6 22h2c0-1.007.07-2.012.19-3H12c4.1 0 7.48-3.082 7.94-7.054C22.79 10.147 23.17 6.359 23 3zm-7 8h-1.5v2H16c.63-.016 1.2-.08 1.72-.188C16.95 15.24 14.68 17 12 17H8.55c.57-2.512 1.57-4.851 3-6.78 2.16-2.912 5.29-4.911 9.45-5.187C20.95 8.079 19.9 11 16 11zM4 9V6H1V4h3V1h2v3h3v2H6v3H4z" />
+        <Path
+          fill={color}
+          d="M23 3c-6.62-.1-10.38 2.421-13.05 6.03C7.29 12.61 6 17.331 6 22h2c0-1.007.07-2.012.19-3H12c4.1 0 7.48-3.082 7.94-7.054C22.79 10.147 23.17 6.359 23 3zm-7 8h-1.5v2H16c.63-.016 1.2-.08 1.72-.188C16.95 15.24 14.68 17 12 17H8.55c.57-2.512 1.57-4.851 3-6.78 2.16-2.912 5.29-4.911 9.45-5.187C20.95 8.079 19.9 11 16 11zM4 9V6H1V4h3V1h2v3h3v2H6v3H4z"
+        />
       )}
       {name === 'heart' && (
-        <Path stroke={color} fill="transparent" d="M2.34 9.53c0 2.2.7 3.9 2.94 6.22 1.82 1.82 3.8 3.27 4.55 3.8a1.4 1.4 0 0 0 1.67 0c.75-.53 2.74-1.98 4.55-3.8C18.3 13.5 19 11.8 19 9.53c0-2.3-1.57-4.28-4-4.28-2.02 0-3.4 1.68-4.33 3.57-.93-1.89-2.31-3.57-4.33-3.57-2.43 0-4 1.98-4 4.28Z" strokeWidth="1.8" />
+        <Path
+          stroke={color}
+          fill="transparent"
+          d="M2.34 9.53c0 2.2.7 3.9 2.94 6.22 1.82 1.82 3.8 3.27 4.55 3.8a1.4 1.4 0 0 0 1.67 0c.75-.53 2.74-1.98 4.55-3.8C18.3 13.5 19 11.8 19 9.53c0-2.3-1.57-4.28-4-4.28-2.02 0-3.4 1.68-4.33 3.57-.93-1.89-2.31-3.57-4.33-3.57-2.43 0-4 1.98-4 4.28Z"
+          strokeWidth="1.8"
+        />
       )}
       {name === 'comment' && (
-        <Path stroke={color} fill="transparent" d="M18.5 16.2 20 21l-4.8-1.5a8.3 8.3 0 1 1 3.3-3.3Z" strokeWidth="1.7" strokeLinejoin="round" />
+        <Path
+          stroke={color}
+          fill="transparent"
+          d="M18.5 16.2 20 21l-4.8-1.5a8.3 8.3 0 1 1 3.3-3.3Z"
+          strokeWidth="1.7"
+          strokeLinejoin="round"
+        />
       )}
       {name === 'boost' && (
-        <Path fill={color} d="m4.5 3.88 4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z" />
+        <Path
+          fill={color}
+          d="m4.5 3.88 4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+        />
       )}
       {name === 'share' && (
-        <Path fill={color} d="m12 2.59 5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z" />
+        <Path
+          fill={color}
+          d="m12 2.59 5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"
+        />
       )}
       {name === 'more' && (
         <>
@@ -187,12 +236,26 @@ function MentionIcon({
         </>
       )}
       {name === 'image' && (
-        <Path d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm0 16h16v-3l-4.5-4.5-3.2 3.2-2.2-2.2L4 18.6V19Zm4-9a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" fill={color} />
+        <Path
+          d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm0 16h16v-3l-4.5-4.5-3.2 3.2-2.2-2.2L4 18.6V19Zm4-9a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
+          fill={color}
+        />
       )}
       {name === 'sign-in' && (
         <>
-          <Path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4" stroke={color} strokeWidth="2" strokeLinecap="round" />
-          <Path d="m14 8 4 4-4 4M18 12H8" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <Path
+            d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <Path
+            d="m14 8 4 4-4 4M18 12H8"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </>
       )}
     </Svg>
@@ -235,7 +298,9 @@ function SidebarItem({
       <View style={styles.sidebarIcon}>
         <MentionIcon name={icon} active={active} color={color} size={24} />
       </View>
-      <Text style={[styles.sidebarLabel, { color }, active && styles.sidebarLabelActive]}>{label}</Text>
+      <Text style={[styles.sidebarLabel, { color }, active && styles.sidebarLabelActive]}>
+        {label}
+      </Text>
     </View>
   );
 }
@@ -248,18 +313,12 @@ function PostAction({ name, palette }: { name: MentionIconName; palette: LabPale
   );
 }
 
-function MentionPost({
-  palette,
-  second = false,
-}: {
-  palette: LabPalette;
-  second?: boolean;
-}) {
-  const avatar = second
-    ? mentionAvatarJoan
-    : mentionAvatarOxy;
+function MentionPost({ palette, second = false }: { palette: LabPalette; second?: boolean }) {
+  const avatar = second ? mentionAvatarJoan : mentionAvatarOxy;
   return (
-    <View style={[styles.post, { backgroundColor: palette.canvas, borderBottomColor: palette.shell }]}>
+    <View
+      style={[styles.post, { backgroundColor: palette.canvas, borderBottomColor: palette.shell }]}
+    >
       <Image accessibilityLabel="" source={{ uri: avatar }} style={styles.postAvatarImage} />
       <View style={styles.postBody}>
         <View style={styles.postIdentityRow}>
@@ -292,7 +351,12 @@ function MentionPost({
             />
           </View>
         ) : (
-          <View style={[styles.linkPreview, { borderColor: palette.shell, backgroundColor: palette.raised }]}>
+          <View
+            style={[
+              styles.linkPreview,
+              { borderColor: palette.shell, backgroundColor: palette.raised },
+            ]}
+          >
             <Image
               accessibilityLabel="404 Media article cover"
               source={{ uri: mentionPostNate }}
@@ -303,8 +367,12 @@ function MentionPost({
               <Text numberOfLines={2} style={[styles.linkTitle, { color: palette.text }]}>
                 We Tracked a Shipment of Rare Books. It Ended at an Amazon AI Training Facility
               </Text>
-              <Text numberOfLines={2} style={[styles.linkDescription, { color: palette.textMuted }]}>
-                We placed a tracking device in a shipment of rare books to see which AI company was buying it.
+              <Text
+                numberOfLines={2}
+                style={[styles.linkDescription, { color: palette.textMuted }]}
+              >
+                We placed a tracking device in a shipment of rare books to see which AI company was
+                buying it.
               </Text>
             </View>
           </View>
@@ -343,7 +411,13 @@ function TrendRow({
       </View>
       <View style={styles.trendSpark}>
         <Svg viewBox="0 0 50 18" width={50} height={18}>
-          <Path d={rank % 2 ? 'M1 14h19l4-8 5 7h13l7-5' : 'M1 12h10l5-5 7 6h16l10 3'} stroke={palette.identity} strokeWidth="1.8" fill="none" strokeLinecap="round" />
+          <Path
+            d={rank % 2 ? 'M1 14h19l4-8 5 7h13l7-5' : 'M1 12h10l5-5 7 6h16l10 3'}
+            stroke={palette.identity}
+            strokeWidth="1.8"
+            fill="none"
+            strokeLinecap="round"
+          />
         </Svg>
       </View>
       <MentionIcon name="more" color={palette.textMuted} size={18} />
@@ -380,15 +454,25 @@ function RightRail({ palette }: { palette: LabPalette }) {
         <View key={name} style={[styles.followRow, { borderBottomColor: palette.shell }]}>
           <Image accessibilityLabel="" source={{ uri: avatar }} style={styles.followAvatar} />
           <View style={styles.followCopy}>
-            <Text numberOfLines={1} style={[styles.followName, { color: palette.text }]}>{name}</Text>
-            <Text numberOfLines={1} style={[styles.followHandle, { color: palette.textMuted }]}>{handle}</Text>
+            <Text numberOfLines={1} style={[styles.followName, { color: palette.text }]}>
+              {name}
+            </Text>
+            <Text numberOfLines={1} style={[styles.followHandle, { color: palette.textMuted }]}>
+              {handle}
+            </Text>
           </View>
         </View>
       ))}
       <Text style={[styles.showMore, { color: palette.identity }]}>Show more</Text>
-      <Text style={[styles.footerLinks, { color: palette.textMuted }]}>About   Privacy   Terms   Cookies   Oxy</Text>
-      <Text style={[styles.footerCopy, { color: palette.textMuted }]}>Made with ❤️ in the 🌎 by Oxy.</Text>
-      <Text style={[styles.footerCopy, { color: palette.textMuted }]}>Mention™ is a trademark of The Oxy Collective, Inc.</Text>
+      <Text style={[styles.footerLinks, { color: palette.textMuted }]}>
+        About Privacy Terms Cookies Oxy
+      </Text>
+      <Text style={[styles.footerCopy, { color: palette.textMuted }]}>
+        Made with ❤️ in the 🌎 by Oxy.
+      </Text>
+      <Text style={[styles.footerCopy, { color: palette.textMuted }]}>
+        Mention™ is a trademark of The Oxy Collective, Inc.
+      </Text>
     </View>
   );
 }
@@ -410,60 +494,72 @@ function ThemePreview({
         <Text style={styles.previewModeTitle}>{mode === 'light' ? 'Light mode' : 'Dark mode'}</Text>
         <Text style={styles.previewModeNote}>Mention desktop · 1500 px · expanded shell</Text>
       </View>
-      <View testID={`mention-preview-${mode}`} style={[styles.preview, { backgroundColor: palette.canvas }]}>
+      <View
+        testID={`mention-preview-${mode}`}
+        style={[styles.preview, { backgroundColor: palette.canvas }]}
+      >
         <View style={styles.appFrame}>
-          {compact ? null : <View style={styles.sidebar}>
-            <View style={styles.sidebarNavigation}>
-              <SidebarItem active icon="home" label="Home" palette={palette} />
-              {authenticated ? (
-                <View style={styles.sidebarItem}>
-                  <Image
-                    accessibilityLabel=""
-                    source={{ uri: mentionAvatarNate }}
-                    style={styles.sidebarProfileAvatar}
+          {compact ? null : (
+            <View style={styles.sidebar}>
+              <View style={styles.sidebarNavigation}>
+                <SidebarItem active icon="home" label="Home" palette={palette} />
+                {authenticated ? (
+                  <View style={styles.sidebarItem}>
+                    <Image
+                      accessibilityLabel=""
+                      source={{ uri: mentionAvatarNate }}
+                      style={styles.sidebarProfileAvatar}
+                    />
+                    <Text style={[styles.sidebarLabel, { color: palette.text }]}>Profile</Text>
+                  </View>
+                ) : null}
+                {NAV_ITEMS.slice(1).map((item) => (
+                  <SidebarItem
+                    key={item.label}
+                    icon={item.icon}
+                    label={item.label}
+                    palette={palette}
                   />
-                  <Text style={[styles.sidebarLabel, { color: palette.text }]}>Profile</Text>
+                ))}
+                <View style={[styles.composeButton, { backgroundColor: palette.action }]}>
+                  <Text style={[styles.composeButtonText, { color: palette.onAction }]}>
+                    New Post
+                  </Text>
                 </View>
-              ) : null}
-              {NAV_ITEMS.slice(1).map((item) => (
-                <SidebarItem
-                  key={item.label}
-                  icon={item.icon}
-                  label={item.label}
-                  palette={palette}
-                />
-              ))}
-              <View style={[styles.composeButton, { backgroundColor: palette.action }]}>
-                <Text style={[styles.composeButtonText, { color: palette.onAction }]}>New Post</Text>
+              </View>
+              <View style={styles.profileRow}>
+                {authenticated ? (
+                  <>
+                    <Image
+                      accessibilityLabel="Nate"
+                      source={{ uri: mentionAvatarNate }}
+                      style={styles.profileAvatar}
+                    />
+                    <View style={styles.profileCopy}>
+                      <Text style={[styles.profileName, { color: palette.text }]}>Nate</Text>
+                      <Text style={[styles.profileHandle, { color: palette.textMuted }]}>
+                        @nate
+                      </Text>
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <MentionIcon name="sign-in" color={palette.text} size={24} />
+                    <Text style={[styles.sidebarLabel, { color: palette.text }]}>Sign In</Text>
+                  </>
+                )}
               </View>
             </View>
-            <View style={styles.profileRow}>
-              {authenticated ? (
-                <>
-                  <Image
-                    accessibilityLabel="Nate"
-                    source={{ uri: mentionAvatarNate }}
-                    style={styles.profileAvatar}
-                  />
-                  <View style={styles.profileCopy}>
-                    <Text style={[styles.profileName, { color: palette.text }]}>Nate</Text>
-                    <Text style={[styles.profileHandle, { color: palette.textMuted }]}>@nate</Text>
-                  </View>
-                </>
-              ) : (
-                <>
-                  <MentionIcon name="sign-in" color={palette.text} size={24} />
-                  <Text style={[styles.sidebarLabel, { color: palette.text }]}>Sign In</Text>
-                </>
-              )}
-            </View>
-          </View>}
+          )}
 
           <View style={styles.mainShell}>
             <View style={styles.panelGutter}>
               <View
                 testID={`mention-content-${mode}`}
-                style={[styles.contentPanel, { backgroundColor: palette.canvas, borderColor: palette.shell }]}
+                style={[
+                  styles.contentPanel,
+                  { backgroundColor: palette.canvas, borderColor: palette.shell },
+                ]}
               >
                 <View style={styles.contentHeader}>
                   <MentionLogo color={palette.text} />
@@ -501,7 +597,9 @@ function ThemePreview({
                       source={{ uri: mentionAvatarNate }}
                       style={styles.composerAvatar}
                     />
-                    <Text style={[styles.composerPlaceholder, { color: palette.textMuted }]}>What&apos;s up?</Text>
+                    <Text style={[styles.composerPlaceholder, { color: palette.textMuted }]}>
+                      What&apos;s up?
+                    </Text>
                     <MentionIcon name="image" color={palette.textMuted} size={22} />
                   </View>
                 ) : null}
@@ -511,11 +609,17 @@ function ThemePreview({
                 {!authenticated ? (
                   <View style={[styles.signInBanner, { backgroundColor: palette.identity }]}>
                     <View>
-                      <Text style={[styles.signInTitle, { color: palette.onIdentity }]}>Don&apos;t miss what&apos;s happening</Text>
-                      <Text style={[styles.signInSubtitle, { color: palette.onIdentity }]}>People on Mention are the first to know.</Text>
+                      <Text style={[styles.signInTitle, { color: palette.onIdentity }]}>
+                        Don&apos;t miss what&apos;s happening
+                      </Text>
+                      <Text style={[styles.signInSubtitle, { color: palette.onIdentity }]}>
+                        People on Mention are the first to know.
+                      </Text>
                     </View>
                     <View style={[styles.signInButton, { backgroundColor: palette.raised }]}>
-                      <Text style={[styles.signInButtonText, { color: palette.text }]}>Sign In</Text>
+                      <Text style={[styles.signInButtonText, { color: palette.text }]}>
+                        Sign In
+                      </Text>
                     </View>
                   </View>
                 ) : null}
@@ -576,7 +680,7 @@ export default function ColorSystemPlayground() {
       testID="color-system-playground"
       onLayout={(event: LayoutChangeEvent) => {
         const nextWidth = event.nativeEvent.layout.width;
-        setCanvasWidth((current) => current === nextWidth ? current : nextWidth);
+        setCanvasWidth((current) => (current === nextWidth ? current : nextWidth));
       }}
       style={[styles.page, compact && styles.pageCompact]}
     >
@@ -600,7 +704,9 @@ export default function ColorSystemPlayground() {
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: 'var(--border)' }]} />
-            <Text style={styles.legendText}>Hierarchy: flow, spacing and radius without decorative boxes</Text>
+            <Text style={styles.legendText}>
+              Hierarchy: flow, spacing and radius without decorative boxes
+            </Text>
           </View>
         </View>
       </View>
@@ -682,11 +788,12 @@ export default function ColorSystemPlayground() {
       <View testID="color-lab-recipes" style={styles.recipeGrid}>
         {visibleRecipes.map((recipe, index) => {
           const selected = index === activeRecipeIndex;
-          const availability = recipe.gate === undefined
-            ? 'free'
-            : recipe.gate === 'handle'
-              ? 'handle required'
-              : recipe.gate;
+          const availability =
+            recipe.gate === undefined
+              ? 'free'
+              : recipe.gate === 'handle'
+                ? 'handle required'
+                : recipe.gate;
           const light = resolveLabPalette(recipe.name, 'light');
           const dark = resolveLabPalette(recipe.name, 'dark');
           return (
@@ -730,7 +837,9 @@ export default function ColorSystemPlayground() {
           <Text style={styles.recipeIdea}>{activeRecipe.description}</Text>
         </View>
         <View style={styles.rulePill}>
-          <Text style={styles.rulePillText}>The palette changes by mode; the relationship stays intact</Text>
+          <Text style={styles.rulePillText}>
+            The palette changes by mode; the relationship stays intact
+          </Text>
         </View>
       </View>
 
@@ -752,8 +861,18 @@ export default function ColorSystemPlayground() {
       </View>
 
       <View style={styles.previewRow}>
-        <ThemePreview authenticated={authenticated} compact={compact} mode="light" palette={activeLight} />
-        <ThemePreview authenticated={authenticated} compact={compact} mode="dark" palette={activeDark} />
+        <ThemePreview
+          authenticated={authenticated}
+          compact={compact}
+          mode="light"
+          palette={activeLight}
+        />
+        <ThemePreview
+          authenticated={authenticated}
+          compact={compact}
+          mode="dark"
+          palette={activeDark}
+        />
       </View>
 
       <View style={styles.swatchSection}>
@@ -783,7 +902,6 @@ export default function ColorSystemPlayground() {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   page: {

@@ -76,26 +76,26 @@
  * output is committed so a plain `vite build` is never left without a catalog.
  */
 
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
-import { createRequire } from 'node:module'
-import { dirname, join } from 'node:path'
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
 
-import ts from 'typescript'
+import ts from 'typescript';
 
 import type {
   BloomCategory,
   BloomComponentEntry,
   BloomProp,
   BloomSurfaceEntry,
-} from '../src/content/bloom-catalog'
+} from '../src/content/bloom-catalog';
 
-const CONTENT_DIR = join(import.meta.dir, '..', 'src', 'content')
+const CONTENT_DIR = join(import.meta.dir, '..', 'src', 'content');
 
 /** The committed index. Read back by `validate-bloom-catalog.ts`. */
-export const CATALOG_PATH = join(CONTENT_DIR, 'bloom-catalog.generated.ts')
+export const CATALOG_PATH = join(CONTENT_DIR, 'bloom-catalog.generated.ts');
 
 /** The committed per-surface prop modules, one file per subpath. */
-export const PROPS_DIR = join(CONTENT_DIR, 'bloom-catalog-props')
+export const PROPS_DIR = join(CONTENT_DIR, 'bloom-catalog-props');
 
 /**
  * The README groups that publish infrastructure rather than surfaces a reader
@@ -109,8 +109,8 @@ export const PROPS_DIR = join(CONTENT_DIR, 'bloom-catalog-props')
  * looks at. Marking that whole group a utility would hide them from the hub,
  * so it is carded, and `icons`, `typography` and `fonts` card with it.
  */
-const UTILITY_GROUPS = ['Providers and theme']
-const UNCATEGORIZED_GROUP = 'Uncategorized'
+const UTILITY_GROUPS = ['Providers and theme'];
+const UNCATEGORIZED_GROUP = 'Uncategorized';
 
 /**
  * Set below today's 87 surfaces and 1023 emitted prop entries — Bloom's own
@@ -118,54 +118,54 @@ const UNCATEGORIZED_GROUP = 'Uncategorized'
  * far enough that ordinary churn upstream does not trip them and a broken walk
  * cannot pass.
  */
-const FLOORS = { surfaces: 70, props: 800 }
+const FLOORS = { surfaces: 70, props: 800 };
 
 /**
  * Export conditions in the order this site resolves them. Vite's client build
  * keeps `browser` in its default conditions and prefers `.web.*` extensions.
  */
-const WEB_CONDITIONS = ['browser', 'import', 'require', 'react-native']
+const WEB_CONDITIONS = ['browser', 'import', 'require', 'react-native'];
 
 export interface CatalogStats {
-  surfaces: number
-  components: number
+  surfaces: number;
+  components: number;
   /** Distinct props types across every surface. */
-  propTypes: number
+  propTypes: number;
   /** Prop entries emitted — one per prop per distinct props TYPE, not per component. */
-  props: number
+  props: number;
   /** Props left out because a type outside Bloom declares them. */
-  inheritedProps: number
+  inheritedProps: number;
 }
 
 export interface BuildOptions {
   /** Root of the `@oxy.so/bloom` package to read. Defaults to the installed one. */
-  bloomDir?: string
+  bloomDir?: string;
   /** Vacuity floors. Fixtures relax them; nothing else should. */
-  floors?: { surfaces: number; props: number }
+  floors?: { surfaces: number; props: number };
 }
 
 export interface BuildResult {
   /** The `@oxy.so/bloom` version the catalog was built from. */
-  version: string
+  version: string;
   /** Source of the eager index module. */
-  index: string
+  index: string;
   /** Per-surface prop modules, keyed by their path relative to `PROPS_DIR`. */
-  modules: Map<string, string>
-  stats: CatalogStats
+  modules: Map<string, string>;
+  stats: CatalogStats;
   /** Non-fatal disagreements between Bloom's prose and its `exports` map. */
-  drift: string[]
+  drift: string[];
 }
 
 export function resolveInstalledBloomDir(): string {
-  const require = createRequire(import.meta.url)
-  return dirname(require.resolve('@oxy.so/bloom/package.json'))
+  const require = createRequire(import.meta.url);
+  return dirname(require.resolve('@oxy.so/bloom/package.json'));
 }
 
 // --------------------------------------------------------------- exports ---
 
 interface BloomPackage {
-  version: string
-  exports: Record<string, unknown>
+  version: string;
+  exports: Record<string, unknown>;
 }
 
 /**
@@ -173,57 +173,60 @@ interface BloomPackage {
  * the entry declares none — an asset export, or `./package.json` itself.
  */
 function typesTargetOf(entry: unknown): string | null {
-  if (typeof entry !== 'object' || entry === null) return null
-  const conditions = entry as Record<string, unknown>
+  if (typeof entry !== 'object' || entry === null) return null;
+  const conditions = entry as Record<string, unknown>;
   for (const condition of WEB_CONDITIONS) {
-    const nested = conditions[condition]
+    const nested = conditions[condition];
     if (typeof nested === 'object' && nested !== null) {
-      const target = (nested as Record<string, unknown>).types
-      if (typeof target === 'string') return target
+      const target = (nested as Record<string, unknown>).types;
+      if (typeof target === 'string') return target;
     }
   }
-  return typeof conditions.types === 'string' ? conditions.types : null
+  return typeof conditions.types === 'string' ? conditions.types : null;
 }
 
 // ---------------------------------------------------------------- README ---
 
 interface ComponentTable {
-  categories: BloomCategory[]
+  categories: BloomCategory[];
   /** Subpath → group name, exactly as the table spells both. */
-  categoryOf: Map<string, string>
+  categoryOf: Map<string, string>;
   /** The count Bloom's own prose claims, when the section states one. */
-  claimedSubpathCount: number | null
+  claimedSubpathCount: number | null;
 }
 
 function parseComponentTable(readme: string): ComponentTable {
-  const heading = readme.match(/^## Components$/m)
+  const heading = readme.match(/^## Components$/m);
   if (!heading || heading.index === undefined) {
     throw new Error(
-      "Bloom's README has no `## Components` heading, so no subpath can be categorised.\n"
-      + '    Every category in this catalog comes from the table under it.',
-    )
+      "Bloom's README has no `## Components` heading, so no subpath can be categorised.\n" +
+        '    Every category in this catalog comes from the table under it.',
+    );
   }
-  const rest = readme.slice(heading.index + heading[0].length)
-  const nextHeading = rest.search(/^## /m)
-  const section = nextHeading === -1 ? rest : rest.slice(0, nextHeading)
+  const rest = readme.slice(heading.index + heading[0].length);
+  const nextHeading = rest.search(/^## /m);
+  const section = nextHeading === -1 ? rest : rest.slice(0, nextHeading);
 
-  const categories: BloomCategory[] = []
-  const categoryOf = new Map<string, string>()
+  const categories: BloomCategory[] = [];
+  const categoryOf = new Map<string, string>();
 
   for (const line of section.split('\n')) {
-    if (!line.trimStart().startsWith('|')) continue
-    const cells = line.split('|').slice(1, -1).map((cell) => cell.trim())
-    if (cells.length !== 2) continue
-    const [group, exportsCell] = cells
-    if (!group || !exportsCell) continue
-    if (group === 'Group') continue
-    if (/^:?-+:?$/.test(group)) continue
+    if (!line.trimStart().startsWith('|')) continue;
+    const cells = line
+      .split('|')
+      .slice(1, -1)
+      .map((cell) => cell.trim());
+    if (cells.length !== 2) continue;
+    const [group, exportsCell] = cells;
+    if (!group || !exportsCell) continue;
+    if (group === 'Group') continue;
+    if (/^:?-+:?$/.test(group)) continue;
 
-    const names = [...exportsCell.matchAll(/`([^`]+)`/g)].map((match) => match[1] as string)
-    if (names.length === 0) continue
+    const names = [...exportsCell.matchAll(/`([^`]+)`/g)].map((match) => match[1] as string);
+    if (names.length === 0) continue;
 
-    categories.push({ name: group, utility: UTILITY_GROUPS.includes(group) })
-    for (const name of names) categoryOf.set(name, group)
+    categories.push({ name: group, utility: UTILITY_GROUPS.includes(group) });
+    for (const name of names) categoryOf.set(name, group);
   }
 
   // A positive control for the parse itself. A table that stopped matching —
@@ -232,28 +235,28 @@ function parseComponentTable(readme: string): ComponentTable {
   // "uncategorised" instead of the one sentence that explains it.
   if (categories.length === 0) {
     throw new Error(
-      "Bloom's README `## Components` section parsed to zero groups.\n"
-      + '    The table shape changed upstream; fix the parse rather than the data.',
-    )
+      "Bloom's README `## Components` section parsed to zero groups.\n" +
+        '    The table shape changed upstream; fix the parse rather than the data.',
+    );
   }
 
   const missingUtility = UTILITY_GROUPS.filter(
     (group) => !categories.some((category) => category.name === group),
-  )
+  );
   if (missingUtility.length > 0) {
     throw new Error(
-      `Bloom's README component table no longer has the utility group(s): ${missingUtility.join(', ')}.\n`
-      + '    They were renamed or removed upstream. Until UTILITY_GROUPS is updated to match,\n'
-      + '    every export in them would be published as a component card.',
-    )
+      `Bloom's README component table no longer has the utility group(s): ${missingUtility.join(', ')}.\n` +
+        '    They were renamed or removed upstream. Until UTILITY_GROUPS is updated to match,\n' +
+        '    every export in them would be published as a component card.',
+    );
   }
 
-  const claimed = section.match(/Bloom publishes (\d+) subpath exports/)
+  const claimed = section.match(/Bloom publishes (\d+) subpath exports/);
   return {
     categories,
     categoryOf,
     claimedSubpathCount: claimed ? Number(claimed[1]) : null,
-  }
+  };
 }
 
 /**
@@ -262,16 +265,16 @@ function parseComponentTable(readme: string): ComponentTable {
  * naming any of the three variants Bloom ships today.
  */
 function categoryFor(subpath: string, categoryOf: Map<string, string>): string | undefined {
-  const direct = categoryOf.get(subpath)
-  if (direct !== undefined) return direct
-  const parent = subpath.lastIndexOf('/')
-  return parent > 0 ? categoryFor(subpath.slice(0, parent), categoryOf) : undefined
+  const direct = categoryOf.get(subpath);
+  if (direct !== undefined) return direct;
+  const parent = subpath.lastIndexOf('/');
+  return parent > 0 ? categoryFor(subpath.slice(0, parent), categoryOf) : undefined;
 }
 
 // ------------------------------------------------------------ extraction ---
 
 function collapse(text: string): string {
-  return text.replace(/\s+/g, ' ').trim()
+  return text.replace(/\s+/g, ' ').trim();
 }
 
 /**
@@ -286,36 +289,36 @@ function collapse(text: string): string {
  * promise. `{@linkcode}` and `{@linkplain}` arrive as the same three parts.
  */
 function documentationText(parts: readonly ts.SymbolDisplayPart[]): string {
-  let text = ''
+  let text = '';
   for (let index = 0; index < parts.length; index += 1) {
-    const part = parts[index] as ts.SymbolDisplayPart
+    const part = parts[index] as ts.SymbolDisplayPart;
     // `{@link ` and the closing `}`.
-    if (part.kind === 'link') continue
+    if (part.kind === 'link') continue;
     if (part.kind === 'linkName') {
       // A tag carrying a label renders the label; a bare one renders its target.
-      const next = parts[index + 1]
+      const next = parts[index + 1];
       if (next?.kind === 'linkText' && next.text.trim() !== '') {
-        text += next.text.replace(/^[|\s]+/, '')
-        index += 1
-        continue
+        text += next.text.replace(/^[|\s]+/, '');
+        index += 1;
+        continue;
       }
-      text += part.text
-      continue
+      text += part.text;
+      continue;
     }
     if (part.kind === 'linkText') {
-      text += part.text.replace(/^[|\s]+/, '')
-      continue
+      text += part.text.replace(/^[|\s]+/, '');
+      continue;
     }
-    text += part.text
+    text += part.text;
   }
-  return text
+  return text;
 }
 
 /** First paragraph of a symbol's JSDoc, whitespace collapsed. */
 function documentationOf(symbol: ts.Symbol, checker: ts.TypeChecker): string | undefined {
-  const comment = documentationText(symbol.getDocumentationComment(checker)).trim()
-  if (!comment) return undefined
-  return collapse(comment.split(/\n[ \t]*\n/)[0] ?? '') || undefined
+  const comment = documentationText(symbol.getDocumentationComment(checker)).trim();
+  if (!comment) return undefined;
+  return collapse(comment.split(/\n[ \t]*\n/)[0] ?? '') || undefined;
 }
 
 /**
@@ -326,23 +329,23 @@ function documentationOf(symbol: ts.Symbol, checker: ts.TypeChecker): string | u
  */
 function declaredTypeText(node: ts.TypeNode, optional: boolean): string {
   if (optional && ts.isUnionTypeNode(node)) {
-    const kept = node.types.filter((member) => member.kind !== ts.SyntaxKind.UndefinedKeyword)
+    const kept = node.types.filter((member) => member.kind !== ts.SyntaxKind.UndefinedKeyword);
     if (kept.length > 0 && kept.length < node.types.length) {
-      return kept.map((member) => collapse(member.getText())).join(' | ')
+      return kept.map((member) => collapse(member.getText())).join(' | ');
     }
   }
-  return collapse(node.getText())
+  return collapse(node.getText());
 }
 
 /** The string-literal members of a union type NODE, in the order they were written. */
 function writtenUnionMembers(node: ts.TypeNode): string[] | undefined {
-  if (!ts.isUnionTypeNode(node)) return undefined
-  const members: string[] = []
+  if (!ts.isUnionTypeNode(node)) return undefined;
+  const members: string[] = [];
   for (const member of node.types) {
-    if (!ts.isLiteralTypeNode(member) || !ts.isStringLiteral(member.literal)) return undefined
-    members.push(member.literal.text)
+    if (!ts.isLiteralTypeNode(member) || !ts.isStringLiteral(member.literal)) return undefined;
+    members.push(member.literal.text);
   }
-  return members
+  return members;
 }
 
 /**
@@ -360,21 +363,23 @@ function orderedOptions(
   declared: ts.TypeNode | undefined,
   members: string[],
 ): string[] {
-  const aliasDeclaration = resolved.aliasSymbol?.declarations?.[0]
+  const aliasDeclaration = resolved.aliasSymbol?.declarations?.[0];
   const candidates = [
     declared ? writtenUnionMembers(declared) : undefined,
     aliasDeclaration && ts.isTypeAliasDeclaration(aliasDeclaration)
       ? writtenUnionMembers(aliasDeclaration.type)
       : undefined,
-  ]
+  ];
   for (const candidate of candidates) {
-    if (candidate
-      && candidate.length === members.length
-      && members.every((member) => candidate.includes(member))) {
-      return candidate
+    if (
+      candidate &&
+      candidate.length === members.length &&
+      members.every((member) => candidate.includes(member))
+    ) {
+      return candidate;
     }
   }
-  return members
+  return members;
 }
 
 /**
@@ -394,7 +399,7 @@ function orderedOptions(
  * than a map.
  */
 /** Longest base name worth printing whole; past this a generic is named by its head. */
-const MAX_BASE_NAME = 80
+const MAX_BASE_NAME = 80;
 
 /**
  * How a base type is named in `inheritsFrom`.
@@ -407,12 +412,14 @@ const MAX_BASE_NAME = 80
  * to read is named by its head, which is the part a reader needs.
  */
 function baseName(node: ts.TypeNode | ts.ExpressionWithTypeArguments): string {
-  const text = collapse(node.getText().replace(/\/\*[\s\S]*?\*\//g, ' '))
-  if (text.length <= MAX_BASE_NAME) return text
+  const text = collapse(node.getText().replace(/\/\*[\s\S]*?\*\//g, ' '));
+  if (text.length <= MAX_BASE_NAME) return text;
   const head = ts.isTypeReferenceNode(node)
     ? node.typeName.getText()
-    : ts.isExpressionWithTypeArguments(node) ? node.expression.getText() : null
-  return head ? `${head}<\u2026>` : `${text.slice(0, MAX_BASE_NAME - 1)}\u2026`
+    : ts.isExpressionWithTypeArguments(node)
+      ? node.expression.getText()
+      : null;
+  return head ? `${head}<\u2026>` : `${text.slice(0, MAX_BASE_NAME - 1)}\u2026`;
 }
 
 function collectExternalBases(
@@ -423,11 +430,11 @@ function collectExternalBases(
   found: Array<{ name: string; type: ts.Type }>,
   seen: Set<ts.Type>,
 ): void {
-  if (seen.has(type)) return
-  seen.add(type)
+  if (seen.has(type)) return;
+  seen.add(type);
 
   const owned = (declaration: ts.Declaration): boolean =>
-    declaration.getSourceFile().fileName.startsWith(`${bloomDir}/`)
+    declaration.getSourceFile().fileName.startsWith(`${bloomDir}/`);
 
   // A declaration Bloom owns is read BEFORE the type is treated as an
   // intersection, and the order is the whole correctness of this. `DialogProps`
@@ -438,9 +445,14 @@ function collectExternalBases(
   // instead names each half by what Bloom actually wrote there.
   const descend = (node: ts.TypeNode | ts.ExpressionWithTypeArguments): void => {
     collectExternalBases(
-      checker.getTypeAtLocation(node), baseName(node), checker, bloomDir, found, seen,
-    )
-  }
+      checker.getTypeAtLocation(node),
+      baseName(node),
+      checker,
+      bloomDir,
+      found,
+      seen,
+    );
+  };
 
   // EVERY declaration, not the first. An interface can be declared twice and
   // merged — which is how a typings package adds a base to someone else's
@@ -449,37 +461,38 @@ function collectExternalBases(
   const ownedDeclarations = [
     ...(type.symbol?.declarations ?? []),
     ...(type.aliasSymbol?.declarations ?? []),
-  ].filter(owned)
+  ].filter(owned);
 
-  let label = name
-  let transparent = false
+  let label = name;
+  let transparent = false;
   for (const declaration of ownedDeclarations) {
     if (ts.isInterfaceDeclaration(declaration)) {
-      for (const clause of declaration.heritageClauses ?? []) for (const node of clause.types) descend(node)
-      continue
+      for (const clause of declaration.heritageClauses ?? [])
+        for (const node of clause.types) descend(node);
+      continue;
     }
     // Anything else Bloom declares inline — a type literal — contributes only
     // its own properties, which are emitted rather than attributed.
-    if (!ts.isTypeAliasDeclaration(declaration)) continue
+    if (!ts.isTypeAliasDeclaration(declaration)) continue;
 
-    const right = declaration.type
+    const right = declaration.type;
     if (ts.isIntersectionTypeNode(right)) {
-      for (const node of right.types) descend(node)
-      continue
+      for (const node of right.types) descend(node);
+      continue;
     }
     if (checker.getTypeAtLocation(right) !== type) {
-      descend(right)
-      continue
+      descend(right);
+      continue;
     }
     // An alias to a single type is TRANSPARENT: the right-hand side resolves to
     // this very type object, so descending would hit the cycle guard above and
     // record nothing at all. `type DialogProps = React.PropsWithChildren<{…}>`
     // is that shape, and it is how `children` went missing with nothing to
     // attribute it to. Adopt the name Bloom wrote there and carry on below.
-    transparent = true
-    label = baseName(right)
+    transparent = true;
+    label = baseName(right);
   }
-  if (ownedDeclarations.length > 0 && !transparent) return
+  if (ownedDeclarations.length > 0 && !transparent) return;
 
   // No declaration Bloom owns. A synthesised intersection — what `forwardRef`
   // produces — has no node to read a name from, so its constituents keep
@@ -488,21 +501,21 @@ function collectExternalBases(
   // than as the `{ children?: ReactNode; }` half it resolves to.
   if (type.isIntersection()) {
     for (const member of type.types) {
-      collectExternalBases(member, label, checker, bloomDir, found, seen)
+      collectExternalBases(member, label, checker, bloomDir, found, seen);
     }
-    return
+    return;
   }
 
-  found.push({ name: label ?? collapse(checker.typeToString(type)), type })
+  found.push({ name: label ?? collapse(checker.typeToString(type)), type });
 }
 
 interface ExtractedProps {
-  props: BloomProp[]
-  inheritsFrom: string[]
+  props: BloomProp[];
+  inheritsFrom: string[];
   /** Props left out, by name. Every one must be covered by `inheritsFrom`. */
-  omitted: string[]
+  omitted: string[];
   /** Omitted props no base accounts for. Non-empty means the emit is lying. */
-  unattributed: string[]
+  unattributed: string[];
 }
 
 function extractProps(
@@ -511,60 +524,64 @@ function extractProps(
   checker: ts.TypeChecker,
   bloomDir: string,
 ): ExtractedProps {
-  const props: BloomProp[] = []
-  const omitted = new Set<string>()
+  const props: BloomProp[] = [];
+  const omitted = new Set<string>();
 
   for (const symbol of checker.getPropertiesOfType(propsType)) {
-    const declaration = symbol.valueDeclaration ?? symbol.declarations?.[0]
-    if (!declaration) continue
+    const declaration = symbol.valueDeclaration ?? symbol.declarations?.[0];
+    if (!declaration) continue;
 
     if (!declaration.getSourceFile().fileName.startsWith(`${bloomDir}/`)) {
-      omitted.add(symbol.getName())
-      continue
+      omitted.add(symbol.getName());
+      continue;
     }
 
-    const optional = (symbol.flags & ts.SymbolFlags.Optional) !== 0
-    const node = ts.isPropertySignature(declaration) || ts.isPropertyDeclaration(declaration)
-      ? declaration.type
-      : undefined
-    const type = checker.getTypeOfSymbolAtLocation(symbol, declaration)
+    const optional = (symbol.flags & ts.SymbolFlags.Optional) !== 0;
+    const node =
+      ts.isPropertySignature(declaration) || ts.isPropertyDeclaration(declaration)
+        ? declaration.type
+        : undefined;
+    const type = checker.getTypeOfSymbolAtLocation(symbol, declaration);
 
     // Resolved through the alias, so a prop typed `ButtonVariant` still yields
     // its members. The declared text above deliberately cannot do this.
-    const resolved = checker.getNonNullableType(type)
-    const members = resolved.isUnion()
-      && resolved.types.length > 1
-      && resolved.types.every((member) => member.isStringLiteral())
-      ? resolved.types.map((member) => (member as ts.StringLiteralType).value)
-      : undefined
+    const resolved = checker.getNonNullableType(type);
+    const members =
+      resolved.isUnion() &&
+      resolved.types.length > 1 &&
+      resolved.types.every((member) => member.isStringLiteral())
+        ? resolved.types.map((member) => (member as ts.StringLiteralType).value)
+        : undefined;
 
-    const description = documentationOf(symbol, checker)
+    const description = documentationOf(symbol, checker);
     props.push({
       name: symbol.getName(),
       type: node ? declaredTypeText(node, optional) : collapse(checker.typeToString(type)),
       ...(members ? { options: orderedOptions(resolved, node, members) } : {}),
       optional,
       ...(description ? { description } : {}),
-    })
+    });
   }
 
   // Only bases that actually contribute an omitted prop are named. Without
   // that filter a component reports `Omit<ButtonProps, "variant">` — a wrapper
   // around one of BLOOM's own types, whose props are all listed above anyway.
-  const entryName = entryTypeNode && checker.getTypeAtLocation(entryTypeNode) === propsType
-    ? baseName(entryTypeNode)
-    : undefined
-  const bases: Array<{ name: string; type: ts.Type }> = []
-  collectExternalBases(propsType, entryName, checker, bloomDir, bases, new Set())
+  const entryName =
+    entryTypeNode && checker.getTypeAtLocation(entryTypeNode) === propsType
+      ? baseName(entryTypeNode)
+      : undefined;
+  const bases: Array<{ name: string; type: ts.Type }> = [];
+  collectExternalBases(propsType, entryName, checker, bloomDir, bases, new Set());
 
-  const inheritsFrom: string[] = []
-  const covered = new Set<string>()
+  const inheritsFrom: string[] = [];
+  const covered = new Set<string>();
   for (const base of bases) {
-    const contributes = checker.getPropertiesOfType(base.type)
-      .filter((property) => omitted.has(property.getName()))
-    if (contributes.length === 0) continue
-    if (!inheritsFrom.includes(base.name)) inheritsFrom.push(base.name)
-    for (const property of contributes) covered.add(property.getName())
+    const contributes = checker
+      .getPropertiesOfType(base.type)
+      .filter((property) => omitted.has(property.getName()));
+    if (contributes.length === 0) continue;
+    if (!inheritsFrom.includes(base.name)) inheritsFrom.push(base.name);
+    for (const property of contributes) covered.add(property.getName());
   }
 
   return {
@@ -572,11 +589,11 @@ function extractProps(
     inheritsFrom,
     omitted: [...omitted],
     unattributed: [...omitted].filter((name) => !covered.has(name)),
-  }
+  };
 }
 
 interface ExtractedComponent {
-  entry: BloomComponentEntry
+  entry: BloomComponentEntry;
   /**
    * The props type itself, so identical types can be recognised as identical.
    * Ten button components share one `ButtonProps`, and comparing the emitted
@@ -584,13 +601,13 @@ interface ExtractedComponent {
    * today — a coincidence, not a shared type, and it would come apart the
    * moment one of them gained a prop.
    */
-  propsType: ts.Type | null
+  propsType: ts.Type | null;
   /** The name Bloom gives that type, when it has one. */
-  propsTypeName: string | null
-  props: readonly BloomProp[]
-  inheritsFrom: readonly string[]
-  omittedCount: number
-  unattributed: string[]
+  propsTypeName: string | null;
+  props: readonly BloomProp[];
+  inheritsFrom: readonly string[];
+  omittedCount: number;
+  unattributed: string[];
 }
 
 /**
@@ -611,9 +628,9 @@ function propsTypeNameOf(type: ts.Type, checker: ts.TypeChecker): string | null 
     // `forwardRef` widens a props type to `P & RefAttributes<T>`. The ref half
     // is plumbing, it is already reported in `inheritsFrom`, and leaving it in
     // the name turns `SwitchProps` into `SwitchProps & RefAttributes<View>`.
-    .replace(/\s*&\s*RefAttributes<[^<>]*>$/, '')
-  if (!/^[A-Za-z_$][\w$.]*(<.+>)?$/.test(printed)) return null
-  return printed.length <= MAX_BASE_NAME ? printed : printed.replace(/<.+>$/, '<\u2026>')
+    .replace(/\s*&\s*RefAttributes<[^<>]*>$/, '');
+  if (!/^[A-Za-z_$][\w$.]*(<.+>)?$/.test(printed)) return null;
+  return printed.length <= MAX_BASE_NAME ? printed : printed.replace(/<.+>$/, '<\u2026>');
 }
 
 /**
@@ -632,36 +649,38 @@ function extractComponents(
   checker: ts.TypeChecker,
   bloomDir: string,
 ): ExtractedComponent[] {
-  const moduleSymbol = checker.getSymbolAtLocation(sourceFile)
-  if (!moduleSymbol) return []
+  const moduleSymbol = checker.getSymbolAtLocation(sourceFile);
+  if (!moduleSymbol) return [];
 
-  const components: ExtractedComponent[] = []
+  const components: ExtractedComponent[] = [];
   for (const exported of checker.getExportsOfModule(moduleSymbol)) {
-    const name = exported.getName()
-    if (!/^[A-Z][A-Za-z0-9]*$/.test(name)) continue
+    const name = exported.getName();
+    if (!/^[A-Z][A-Za-z0-9]*$/.test(name)) continue;
 
-    let symbol = exported
-    if (symbol.flags & ts.SymbolFlags.Alias) symbol = checker.getAliasedSymbol(symbol)
-    const declaration = symbol.valueDeclaration ?? symbol.declarations?.[0]
-    if (!declaration) continue
+    let symbol = exported;
+    if (symbol.flags & ts.SymbolFlags.Alias) symbol = checker.getAliasedSymbol(symbol);
+    const declaration = symbol.valueDeclaration ?? symbol.declarations?.[0];
+    if (!declaration) continue;
 
-    const type = checker.getTypeOfSymbolAtLocation(symbol, declaration)
-    const signature = type.getCallSignatures()[0] ?? type.getConstructSignatures()[0]
-    if (!signature) continue
+    const type = checker.getTypeOfSymbolAtLocation(symbol, declaration);
+    const signature = type.getCallSignatures()[0] ?? type.getConstructSignatures()[0];
+    if (!signature) continue;
 
-    const parameter = signature.getParameters()[0]
-    const parameterDeclaration = parameter?.valueDeclaration ?? parameter?.declarations?.[0]
-    const propsType = parameter && parameterDeclaration
-      ? checker.getTypeOfSymbolAtLocation(parameter, parameterDeclaration)
-      : null
-    const propsTypeNode = parameterDeclaration && ts.isParameter(parameterDeclaration)
-      ? parameterDeclaration.type
-      : undefined
+    const parameter = signature.getParameters()[0];
+    const parameterDeclaration = parameter?.valueDeclaration ?? parameter?.declarations?.[0];
+    const propsType =
+      parameter && parameterDeclaration
+        ? checker.getTypeOfSymbolAtLocation(parameter, parameterDeclaration)
+        : null;
+    const propsTypeNode =
+      parameterDeclaration && ts.isParameter(parameterDeclaration)
+        ? parameterDeclaration.type
+        : undefined;
     const extracted = propsType
       ? extractProps(propsType, propsTypeNode, checker, bloomDir)
-      : { props: [], inheritsFrom: [], omitted: [], unattributed: [] }
+      : { props: [], inheritsFrom: [], omitted: [], unattributed: [] };
 
-    const description = documentationOf(exported, checker) ?? documentationOf(symbol, checker)
+    const description = documentationOf(exported, checker) ?? documentationOf(symbol, checker);
     components.push({
       entry: { name, ...(description ? { description } : {}) },
       propsType,
@@ -670,14 +689,14 @@ function extractComponents(
       inheritsFrom: extracted.inheritsFrom,
       omittedCount: extracted.omitted.length,
       unattributed: extracted.unattributed,
-    })
+    });
   }
-  return components
+  return components;
 }
 
 // ---------------------------------------------------------------- emitter ---
 
-const DO_NOT_EDIT = '// Generated by scripts/generate-bloom-catalog.ts. Do not edit.'
+const DO_NOT_EDIT = '// Generated by scripts/generate-bloom-catalog.ts. Do not edit.';
 
 function quote(rawValue: string): string {
   // Bloom's own doc comments escape a backtick with a backslash to keep it
@@ -685,24 +704,24 @@ function quote(rawValue: string): string {
   // text lands in a single- or double-quoted JS string — this emitter never
   // produces a template literal — so it must be dropped here or it survives
   // into generated output as a lint error no one wrote.
-  const value = rawValue.replace(/\\`/g, '`')
-  if (value.includes("'") && !value.includes('"')) return `"${value}"`
-  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
+  const value = rawValue.replace(/\\`/g, '`');
+  if (value.includes("'") && !value.includes('"')) return `"${value}"`;
+  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
 }
 
 function emitProp(prop: BloomProp, indent: string): string {
-  const fields = [`name: ${quote(prop.name)}`, `type: ${quote(prop.type)}`]
-  if (prop.options) fields.push(`options: [${prop.options.map(quote).join(', ')}]`)
-  fields.push(`optional: ${prop.optional}`)
-  if (prop.description) fields.push(`description: ${quote(prop.description)}`)
-  return `${indent}{ ${fields.join(', ')} },`
+  const fields = [`name: ${quote(prop.name)}`, `type: ${quote(prop.type)}`];
+  if (prop.options) fields.push(`options: [${prop.options.map(quote).join(', ')}]`);
+  fields.push(`optional: ${prop.optional}`);
+  if (prop.description) fields.push(`description: ${quote(prop.description)}`);
+  return `${indent}{ ${fields.join(', ')} },`;
 }
 
 interface SurfacePropTypes {
   /** Distinct props types on the surface, in the order their first component appears. */
-  entries: Array<{ key: string; props: readonly BloomProp[]; inheritsFrom: readonly string[] }>
+  entries: Array<{ key: string; props: readonly BloomProp[]; inheritsFrom: readonly string[] }>;
   /** Component name -> key into `entries`. Absent for a component with nothing to point at. */
-  keyOfComponent: Map<string, string>
+  keyOfComponent: Map<string, string>;
 }
 
 /**
@@ -734,44 +753,50 @@ interface SurfacePropTypes {
  * what makes the fallback always available.
  */
 function groupPropTypes(components: readonly ExtractedComponent[]): SurfacePropTypes {
-  const entries: SurfacePropTypes['entries'] = []
-  const keyOfComponent = new Map<string, string>()
-  const byIdentity = new Map<ts.Type, string>()
-  const byShape = new Map<string, string>()
-  const taken = new Map<string, string>()
+  const entries: SurfacePropTypes['entries'] = [];
+  const keyOfComponent = new Map<string, string>();
+  const byIdentity = new Map<ts.Type, string>();
+  const byShape = new Map<string, string>();
+  const taken = new Map<string, string>();
 
   for (const component of components) {
-    const name = component.entry.name
-    if (component.props.length === 0 && component.inheritsFrom.length === 0) continue
+    const name = component.entry.name;
+    if (component.props.length === 0 && component.inheritsFrom.length === 0) continue;
 
-    const named = component.propsTypeName !== null
-    const shape = JSON.stringify([component.props, component.inheritsFrom])
+    const named = component.propsTypeName !== null;
+    const shape = JSON.stringify([component.props, component.inheritsFrom]);
 
     const existing = named
-      ? (component.propsType ? byIdentity.get(component.propsType) : undefined)
-      : byShape.get(shape)
+      ? component.propsType
+        ? byIdentity.get(component.propsType)
+        : undefined
+      : byShape.get(shape);
     if (existing !== undefined) {
-      keyOfComponent.set(name, existing)
-      continue
+      keyOfComponent.set(name, existing);
+      continue;
     }
 
-    const preferred = component.propsTypeName
-    const key = preferred !== null && !taken.has(preferred) ? preferred : name
-    taken.set(key, shape)
-    entries.push({ key, props: component.props, inheritsFrom: component.inheritsFrom })
+    const preferred = component.propsTypeName;
+    const key = preferred !== null && !taken.has(preferred) ? preferred : name;
+    taken.set(key, shape);
+    entries.push({ key, props: component.props, inheritsFrom: component.inheritsFrom });
     if (named) {
-      if (component.propsType) byIdentity.set(component.propsType, key)
+      if (component.propsType) byIdentity.set(component.propsType, key);
     } else {
-      byShape.set(shape, key)
+      byShape.set(shape, key);
     }
-    keyOfComponent.set(name, key)
+    keyOfComponent.set(name, key);
   }
 
-  return { entries, keyOfComponent }
+  return { entries, keyOfComponent };
 }
 
-function emitPropsModule(subpath: string, grouped: SurfacePropTypes, components: readonly BloomComponentEntry[]): string {
-  const depth = subpath.split('/').length
+function emitPropsModule(
+  subpath: string,
+  grouped: SurfacePropTypes,
+  components: readonly BloomComponentEntry[],
+): string {
+  const depth = subpath.split('/').length;
   const lines = [
     DO_NOT_EDIT,
     '',
@@ -780,30 +805,30 @@ function emitPropsModule(subpath: string, grouped: SurfacePropTypes, components:
     'export const props: BloomSurfaceProps = {',
     `  subpath: ${quote(subpath)},`,
     '  propTypes: {',
-  ]
+  ];
   for (const entry of grouped.entries) {
-    lines.push(`    ${quote(entry.key)}: {`)
+    lines.push(`    ${quote(entry.key)}: {`);
     if (entry.props.length === 0) {
-      lines.push('      props: [],')
+      lines.push('      props: [],');
     } else {
-      lines.push('      props: [')
-      for (const prop of entry.props) lines.push(emitProp(prop, '        '))
-      lines.push('      ],')
+      lines.push('      props: [');
+      for (const prop of entry.props) lines.push(emitProp(prop, '        '));
+      lines.push('      ],');
     }
     if (entry.inheritsFrom.length > 0) {
-      lines.push(`      inheritsFrom: [${entry.inheritsFrom.map(quote).join(', ')}],`)
+      lines.push(`      inheritsFrom: [${entry.inheritsFrom.map(quote).join(', ')}],`);
     }
-    lines.push('    },')
+    lines.push('    },');
   }
-  lines.push('  },', '  components: [')
+  lines.push('  },', '  components: [');
   for (const component of components) {
-    const key = grouped.keyOfComponent.get(component.name)
-    const fields = [`name: ${quote(component.name)}`]
-    if (key !== undefined) fields.push(`propsType: ${quote(key)}`)
-    lines.push(`    { ${fields.join(', ')} },`)
+    const key = grouped.keyOfComponent.get(component.name);
+    const fields = [`name: ${quote(component.name)}`];
+    if (key !== undefined) fields.push(`propsType: ${quote(key)}`);
+    lines.push(`    { ${fields.join(', ')} },`);
   }
-  lines.push('  ],', '}', '')
-  return lines.join('\n')
+  lines.push('  ],', '}', '');
+  return lines.join('\n');
 }
 
 function emitIndex(
@@ -823,7 +848,11 @@ function emitIndex(
     `// (${stats.inheritedProps} more reach them from outside Bloom and are named`,
     '// per component as `inheritsFrom` rather than listed).',
     ...(drift.length > 0
-      ? ['//', '// Upstream drift, reported rather than enforced:', ...drift.map((line) => `//   ${line}`)]
+      ? [
+          '//',
+          '// Upstream drift, reported rather than enforced:',
+          ...drift.map((line) => `//   ${line}`),
+        ]
       : []),
     '',
     "import type { BloomCategory, BloomSurfaceEntry } from './bloom-catalog'",
@@ -840,12 +869,14 @@ function emitIndex(
     '',
     "/** Bloom's component groups, in the order its README lists them. */",
     'export const bloomCategories: readonly BloomCategory[] = [',
-    ...categories.map((category) => `  { name: ${quote(category.name)}, utility: ${category.utility} },`),
+    ...categories.map(
+      (category) => `  { name: ${quote(category.name)}, utility: ${category.utility} },`,
+    ),
     ']',
     '',
     '/** Every subpath Bloom publishes types for, sorted by subpath. */',
     'export const bloomIndex: readonly BloomSurfaceEntry[] = [',
-  ]
+  ];
 
   for (const surface of surfaces) {
     lines.push(
@@ -853,67 +884,72 @@ function emitIndex(
       `    subpath: ${quote(surface.subpath)},`,
       `    importPath: ${quote(surface.importPath)},`,
       `    category: ${quote(surface.category)},`,
-    )
+    );
     if (surface.components.length === 0) {
-      lines.push('    components: [],')
+      lines.push('    components: [],');
     } else {
-      lines.push('    components: [')
+      lines.push('    components: [');
       for (const component of surface.components) {
-        const fields = [`name: ${quote(component.name)}`]
-        if (component.description) fields.push(`description: ${quote(component.description)}`)
-        lines.push(`      { ${fields.join(', ')} },`)
+        const fields = [`name: ${quote(component.name)}`];
+        if (component.description) fields.push(`description: ${quote(component.description)}`);
+        lines.push(`      { ${fields.join(', ')} },`);
       }
-      lines.push('    ],')
+      lines.push('    ],');
     }
-    lines.push('  },')
+    lines.push('  },');
   }
 
-  lines.push(']', '')
+  lines.push(']', '');
 
-  return lines.join('\n')
+  return lines.join('\n');
 }
 
 // ------------------------------------------------------------------ build ---
 
 export function buildBloomCatalog(options: BuildOptions = {}): BuildResult {
-  const bloomDir = options.bloomDir ?? resolveInstalledBloomDir()
-  const floors = options.floors ?? FLOORS
+  const bloomDir = options.bloomDir ?? resolveInstalledBloomDir();
+  const floors = options.floors ?? FLOORS;
 
-  const manifest = JSON.parse(readFileSync(join(bloomDir, 'package.json'), 'utf8')) as BloomPackage
-  const table = parseComponentTable(readFileSync(join(bloomDir, 'README.md'), 'utf8'))
+  const manifest = JSON.parse(readFileSync(join(bloomDir, 'package.json'), 'utf8')) as BloomPackage;
+  const table = parseComponentTable(readFileSync(join(bloomDir, 'README.md'), 'utf8'));
 
   // `.` is the barrel, not a surface: it re-exports everything below it. A
   // pattern key (`./icons/Ri*`) is not a surface either — it is a per-glyph
   // direct-import path standing in for members the `./icons` barrel already
   // re-exports and this catalog already reads there.
-  const subpathKeys = Object.keys(manifest.exports).filter((key) => key.startsWith('./') && !key.includes('*'))
+  const subpathKeys = Object.keys(manifest.exports).filter(
+    (key) => key.startsWith('./') && !key.includes('*'),
+  );
 
-  const typesFileOf = new Map<string, string>()
-  const unresolved: string[] = []
+  const typesFileOf = new Map<string, string>();
+  const unresolved: string[] = [];
   for (const key of subpathKeys) {
-    const target = typesTargetOf(manifest.exports[key])
-    if (target === null) continue // an asset export, or ./package.json itself
-    const file = join(bloomDir, target)
+    const target = typesTargetOf(manifest.exports[key]);
+    if (target === null) continue; // an asset export, or ./package.json itself
+    const file = join(bloomDir, target);
     if (!existsSync(file)) {
-      unresolved.push(`${key} declares types "${target}", which does not exist`)
-      continue
+      unresolved.push(`${key} declares types "${target}", which does not exist`);
+      continue;
     }
-    typesFileOf.set(key.slice(2), file)
+    typesFileOf.set(key.slice(2), file);
   }
 
   if (unresolved.length > 0) {
     throw new Error(
-      `${unresolved.length} @oxy.so/bloom export(s) declare a types path that does not resolve:\n`
-      + unresolved.map((line) => `    - ${line}`).join('\n'),
-    )
+      `${unresolved.length} @oxy.so/bloom export(s) declare a types path that does not resolve:\n` +
+        unresolved.map((line) => `    - ${line}`).join('\n'),
+    );
   }
 
-  const subpaths = [...typesFileOf.keys()].sort()
+  const subpaths = [...typesFileOf.keys()].sort();
 
-  const uncategorised = subpaths.filter((subpath) => categoryFor(subpath, table.categoryOf) === undefined)
-  const categories = uncategorised.length > 0
-    ? [...table.categories, { name: UNCATEGORIZED_GROUP, utility: false }]
-    : table.categories
+  const uncategorised = subpaths.filter(
+    (subpath) => categoryFor(subpath, table.categoryOf) === undefined,
+  );
+  const categories =
+    uncategorised.length > 0
+      ? [...table.categories, { name: UNCATEGORIZED_GROUP, utility: false }]
+      : table.categories;
 
   const program = ts.createProgram([...typesFileOf.values()], {
     target: ts.ScriptTarget.ES2022,
@@ -923,36 +959,36 @@ export function buildBloomCatalog(options: BuildOptions = {}): BuildResult {
     skipLibCheck: true,
     strict: true,
     noEmit: true,
-  })
-  const checker = program.getTypeChecker()
+  });
+  const checker = program.getTypeChecker();
 
-  const surfaces: BloomSurfaceEntry[] = []
-  const modules = new Map<string, string>()
-  const unattributed: string[] = []
-  let componentCount = 0
-  let propTypeCount = 0
-  let propCount = 0
-  let inheritedCount = 0
+  const surfaces: BloomSurfaceEntry[] = [];
+  const modules = new Map<string, string>();
+  const unattributed: string[] = [];
+  let componentCount = 0;
+  let propTypeCount = 0;
+  let propCount = 0;
+  let inheritedCount = 0;
 
   for (const subpath of subpaths) {
-    const file = typesFileOf.get(subpath) as string
-    const sourceFile = program.getSourceFile(file)
+    const file = typesFileOf.get(subpath) as string;
+    const sourceFile = program.getSourceFile(file);
     if (!sourceFile) {
       throw new Error(
-        `The TypeScript program did not include ${file}, declared by ./${subpath}.\n`
-        + '    Every surface must be read, or its props go missing without an error.',
-      )
+        `The TypeScript program did not include ${file}, declared by ./${subpath}.\n` +
+          '    Every surface must be read, or its props go missing without an error.',
+      );
     }
 
-    const components = extractComponents(sourceFile, checker, bloomDir)
-    const grouped = groupPropTypes(components)
-    componentCount += components.length
-    propTypeCount += grouped.entries.length
-    for (const entry of grouped.entries) propCount += entry.props.length
+    const components = extractComponents(sourceFile, checker, bloomDir);
+    const grouped = groupPropTypes(components);
+    componentCount += components.length;
+    propTypeCount += grouped.entries.length;
+    for (const entry of grouped.entries) propCount += entry.props.length;
     for (const component of components) {
-      inheritedCount += component.omittedCount
+      inheritedCount += component.omittedCount;
       for (const name of component.unattributed) {
-        unattributed.push(`${subpath}: ${component.entry.name}.${name}`)
+        unattributed.push(`${subpath}: ${component.entry.name}.${name}`);
       }
     }
 
@@ -961,11 +997,15 @@ export function buildBloomCatalog(options: BuildOptions = {}): BuildResult {
       importPath: `@oxy.so/bloom/${subpath}`,
       category: categoryFor(subpath, table.categoryOf) ?? UNCATEGORIZED_GROUP,
       components: components.map((component) => component.entry),
-    })
+    });
     modules.set(
       `${subpath}.ts`,
-      emitPropsModule(subpath, grouped, components.map((component) => component.entry)),
-    )
+      emitPropsModule(
+        subpath,
+        grouped,
+        components.map((component) => component.entry),
+      ),
+    );
   }
 
   // The guarantee that makes leaving props out honest. If a prop is neither
@@ -973,12 +1013,15 @@ export function buildBloomCatalog(options: BuildOptions = {}): BuildResult {
   // silently — which is the failure mode this whole catalog exists to end.
   if (unattributed.length > 0) {
     throw new Error(
-      `${unattributed.length} prop(s) were left out with nothing to attribute them to:\n`
-      + unattributed.slice(0, 20).map((line) => `    - ${line}`).join('\n')
-      + '\n    Every prop Bloom does not declare must come from a type named in that'
-      + "\n    component's `inheritsFrom`. Widen collectExternalBases rather than emitting"
-      + '\n    a props table that quietly loses a prop.',
-    )
+      `${unattributed.length} prop(s) were left out with nothing to attribute them to:\n` +
+        unattributed
+          .slice(0, 20)
+          .map((line) => `    - ${line}`)
+          .join('\n') +
+        '\n    Every prop Bloom does not declare must come from a type named in that' +
+        "\n    component's `inheritsFrom`. Widen collectExternalBases rather than emitting" +
+        '\n    a props table that quietly loses a prop.',
+    );
   }
 
   const stats: CatalogStats = {
@@ -987,35 +1030,35 @@ export function buildBloomCatalog(options: BuildOptions = {}): BuildResult {
     propTypes: propTypeCount,
     props: propCount,
     inheritedProps: inheritedCount,
-  }
+  };
 
   if (stats.surfaces < floors.surfaces) {
     throw new Error(
-      `Only ${stats.surfaces} surfaces found, below the ${floors.surfaces} floor.\n`
-      + '    A walk that stops early emits a short catalog and looks healthy. Something\n'
-      + "    stopped reading Bloom's exports map — fix that, do not lower the floor.",
-    )
+      `Only ${stats.surfaces} surfaces found, below the ${floors.surfaces} floor.\n` +
+        '    A walk that stops early emits a short catalog and looks healthy. Something\n' +
+        "    stopped reading Bloom's exports map — fix that, do not lower the floor.",
+    );
   }
   if (stats.props < floors.props) {
     throw new Error(
-      `Only ${stats.props} props found, below the ${floors.props} floor.\n`
-      + "    Props come from a TypeScript program over Bloom's .d.ts files; a program that\n"
-      + '    resolved nothing reports every prop type as `any` and every surface as empty.',
-    )
+      `Only ${stats.props} props found, below the ${floors.props} floor.\n` +
+        "    Props come from a TypeScript program over Bloom's .d.ts files; a program that\n" +
+        '    resolved nothing reports every prop type as `any` and every surface as empty.',
+    );
   }
 
-  const drift: string[] = []
+  const drift: string[] = [];
   if (table.claimedSubpathCount !== null && table.claimedSubpathCount !== subpathKeys.length) {
     drift.push(
-      `Bloom's README says it publishes ${table.claimedSubpathCount} subpath exports; `
-      + `its exports map has ${subpathKeys.length} (${stats.surfaces} of them declare types).`,
-    )
+      `Bloom's README says it publishes ${table.claimedSubpathCount} subpath exports; ` +
+        `its exports map has ${subpathKeys.length} (${stats.surfaces} of them declare types).`,
+    );
   }
   if (uncategorised.length > 0) {
     drift.push(
-      `${uncategorised.length} typed surface(s) are absent from Bloom's README component table and `
-      + `remain visible under ${UNCATEGORIZED_GROUP}: ${uncategorised.join(', ')}.`,
-    )
+      `${uncategorised.length} typed surface(s) are absent from Bloom's README component table and ` +
+        `remain visible under ${UNCATEGORIZED_GROUP}: ${uncategorised.join(', ')}.`,
+    );
   }
 
   return {
@@ -1024,21 +1067,21 @@ export function buildBloomCatalog(options: BuildOptions = {}): BuildResult {
     modules,
     stats,
     drift,
-  }
+  };
 }
 
 /** Every `.ts` file under `PROPS_DIR`, relative to it, sorted. */
 export function listPropModules(dir: string = PROPS_DIR): string[] {
-  if (!existsSync(dir)) return []
+  if (!existsSync(dir)) return [];
   return readdirSync(dir, { recursive: true, encoding: 'utf8' })
     .filter((entry) => entry.endsWith('.ts'))
     .map((entry) => entry.split('\\').join('/'))
-    .sort()
+    .sort();
 }
 
 export interface WriteTargets {
-  index?: string
-  propsDir?: string
+  index?: string;
+  propsDir?: string;
 }
 
 /**
@@ -1051,31 +1094,33 @@ export interface WriteTargets {
  * that running the generator again can reach.
  */
 export function writeBloomCatalog(built: BuildResult, targets: WriteTargets = {}): void {
-  const index = targets.index ?? CATALOG_PATH
-  const propsDir = targets.propsDir ?? PROPS_DIR
+  const index = targets.index ?? CATALOG_PATH;
+  const propsDir = targets.propsDir ?? PROPS_DIR;
 
-  writeFileSync(index, built.index)
+  writeFileSync(index, built.index);
   for (const [relative, source] of built.modules) {
-    const file = join(propsDir, relative)
-    mkdirSync(dirname(file), { recursive: true })
-    writeFileSync(file, source)
+    const file = join(propsDir, relative);
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, source);
   }
-  for (const stale of listPropModules(propsDir).filter((relative) => !built.modules.has(relative))) {
-    rmSync(join(propsDir, stale))
+  for (const stale of listPropModules(propsDir).filter(
+    (relative) => !built.modules.has(relative),
+  )) {
+    rmSync(join(propsDir, stale));
   }
 }
 
 if (import.meta.main) {
-  const built = buildBloomCatalog()
-  const { modules, stats, drift } = built
+  const built = buildBloomCatalog();
+  const { modules, stats, drift } = built;
 
-  writeBloomCatalog(built)
+  writeBloomCatalog(built);
 
   console.log(
-    `[generate-bloom-catalog] wrote ${CATALOG_PATH} and ${modules.size} prop modules`
-    + ` (${stats.surfaces} surfaces, ${stats.components} components,`
-    + ` ${stats.propTypes} distinct props types carrying ${stats.props} props,`
-    + ` ${stats.inheritedProps} inherited and named rather than listed)`,
-  )
-  for (const line of drift) console.warn(`[generate-bloom-catalog] upstream drift: ${line}`)
+    `[generate-bloom-catalog] wrote ${CATALOG_PATH} and ${modules.size} prop modules` +
+      ` (${stats.surfaces} surfaces, ${stats.components} components,` +
+      ` ${stats.propTypes} distinct props types carrying ${stats.props} props,` +
+      ` ${stats.inheritedProps} inherited and named rather than listed)`,
+  );
+  for (const line of drift) console.warn(`[generate-bloom-catalog] upstream drift: ${line}`);
 }

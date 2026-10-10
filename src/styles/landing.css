@@ -8,7 +8,6 @@
   overflow-x: clip;
 }
 
-
 @layer base {
   .oxy-landing a {
     color: inherit;
@@ -26,7 +25,6 @@
     max-width: 100%;
   }
 }
-
 
 .oxy-landing strong {
   font-weight: 600;

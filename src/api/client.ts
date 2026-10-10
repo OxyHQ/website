@@ -1,9 +1,9 @@
-import { getBrowserTelemetryHeaders } from '@oxy.so/telemetry/browser'
-import type { OxyServices, LinkedHttpClient } from '@oxy.so/core'
+import { getBrowserTelemetryHeaders } from '@oxy.so/telemetry/browser';
+import type { OxyServices, LinkedHttpClient } from '@oxy.so/core';
 
-export const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api'
+export const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api';
 
-let oxyServices: OxyServices | null = null
+let oxyServices: OxyServices | null = null;
 
 /**
  * Session-linked HTTP client for the website's own backend.
@@ -14,15 +14,15 @@ let oxyServices: OxyServices | null = null
  * owner when a linked 401 can't be refreshed). We do NOT hand-roll
  * `Authorization` headers or read `getAccessToken()` per request anymore.
  */
-let linked: LinkedHttpClient | null = null
+let linked: LinkedHttpClient | null = null;
 
 export function setOxyServices(oxy: OxyServices) {
-  if (oxyServices === oxy && linked) return
+  if (oxyServices === oxy && linked) return;
   // Tear down the previous linked client before re-linking to a new session
   // owner so its token subscription / refresh handler don't leak.
-  linked?.dispose()
-  oxyServices = oxy
-  linked = oxy.createLinkedClient({ baseURL: API_BASE })
+  linked?.dispose();
+  oxyServices = oxy;
+  linked = oxy.createLinkedClient({ baseURL: API_BASE });
 }
 
 /**
@@ -31,17 +31,17 @@ export function setOxyServices(oxy: OxyServices) {
  * not a hand-rolled credential.
  */
 export async function getAuthHeaders(): Promise<Record<string, string>> {
-  const telemetry = await getBrowserTelemetryHeaders()
-  const token = oxyServices ? oxyServices.session.accessToken : null
-  return token ? { ...telemetry, Authorization: `Bearer ${token}` } : telemetry
+  const telemetry = await getBrowserTelemetryHeaders();
+  const token = oxyServices ? oxyServices.session.accessToken : null;
+  return token ? { ...telemetry, Authorization: `Bearer ${token}` } : telemetry;
 }
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 function normalizeMethod(method: RequestInit['method']): HttpMethod {
-  const m = (method ?? 'GET').toUpperCase()
-  if (m === 'POST' || m === 'PUT' || m === 'PATCH' || m === 'DELETE') return m
-  return 'GET'
+  const m = (method ?? 'GET').toUpperCase();
+  if (m === 'POST' || m === 'PUT' || m === 'PATCH' || m === 'DELETE') return m;
+  return 'GET';
 }
 
 /**
@@ -51,17 +51,17 @@ function normalizeMethod(method: RequestInit['method']): HttpMethod {
  * Blob, …) and `undefined` pass through unchanged.
  */
 function toRequestData(body: RequestInit['body']): unknown {
-  if (body == null) return undefined
+  if (body == null) return undefined;
   if (typeof body === 'string') {
-    if (body.length === 0) return undefined
+    if (body.length === 0) return undefined;
     try {
-      return JSON.parse(body)
+      return JSON.parse(body);
     } catch {
       // Not JSON — send the raw string through as-is.
-      return body
+      return body;
     }
   }
-  return body
+  return body;
 }
 
 /**
@@ -88,26 +88,29 @@ function toRequestData(body: RequestInit['body']): unknown {
  * backend is unwell" should not have to know how the wrapping works.
  */
 export function errorStatus(error: unknown): number | undefined {
-  const cause = (error as { cause?: unknown } | null)?.cause
-  const status = (cause as { status?: unknown } | null)?.status
-  return typeof status === 'number' ? status : undefined
+  const cause = (error as { cause?: unknown } | null)?.cause;
+  const status = (cause as { status?: unknown } | null)?.status;
+  return typeof status === 'number' ? status : undefined;
 }
 
-export async function apiFetch<T>(path: string, options?: RequestInit & { locale?: string }): Promise<T> {
+export async function apiFetch<T>(
+  path: string,
+  options?: RequestInit & { locale?: string },
+): Promise<T> {
   if (!linked) {
-    throw new Error('API client not initialized: setOxyServices() must run before apiFetch()')
+    throw new Error('API client not initialized: setOxyServices() must run before apiFetch()');
   }
 
-  let url = path
+  let url = path;
   if (options?.locale) {
-    const separator = url.includes('?') ? '&' : '?'
-    url += `${separator}locale=${options.locale}`
+    const separator = url.includes('?') ? '&' : '?';
+    url += `${separator}locale=${options.locale}`;
   }
 
-  const method = normalizeMethod(options?.method)
-  const data = toRequestData(options?.body)
+  const method = normalizeMethod(options?.method);
+  const data = toRequestData(options?.body);
 
-  let result: T
+  let result: T;
   try {
     result = await linked.client.request<T>({
       method,
@@ -120,7 +123,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit & { locale
       timeout: 0,
       retry: false,
       deduplicate: false,
-    })
+    });
   } catch (err) {
     // Preserve the original error contract: `body.error || 'API error <status>'`,
     // thrown as an `Error`. The SDK normalizes HTTP failures into an `ApiError`
@@ -131,21 +134,22 @@ export async function apiFetch<T>(path: string, options?: RequestInit & { locale
     // `API error <status>` wording; a real `{ error }` message passes through
     // unchanged. (The website backend always sends `{ error }`, so the rewrite
     // is a safety net for the no-JSON-body edge.)
-    const status = (err as { status?: number } | null)?.status
-    const message = err instanceof Error
-      ? err.message
-      : ((err as { message?: string } | null)?.message ?? String(err))
+    const status = (err as { status?: number } | null)?.status;
+    const message =
+      err instanceof Error
+        ? err.message
+        : ((err as { message?: string } | null)?.message ?? String(err));
     if (typeof status === 'number' && message.startsWith(`HTTP ${status}:`)) {
-      throw new Error(`API error ${status}`, { cause: err })
+      throw new Error(`API error ${status}`, { cause: err });
     }
-    throw err instanceof Error ? err : new Error(message, { cause: err })
+    throw err instanceof Error ? err : new Error(message, { cause: err });
   }
   // The website backend answers JSON (or nothing, for a 204). Markup here is a
   // page — a proxy's or the static host's HTML fallback for an /api path it
   // doesn't route — and handing it on as data puts `.map` on a string in
   // whatever renders it, which blanks the page.
   if (typeof result === 'string' && result.trimStart().startsWith('<')) {
-    throw new Error(`API error: ${url} answered with a non-JSON body`)
+    throw new Error(`API error: ${url} answered with a non-JSON body`);
   }
-  return result
+  return result;
 }

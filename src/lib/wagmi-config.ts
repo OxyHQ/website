@@ -10,18 +10,18 @@
  * with a fall-through dev placeholder so previews still load. Production
  * deployments should provision a real Project ID at https://cloud.reown.com.
  */
-import { http, createConfig } from 'wagmi'
-import { base } from 'wagmi/chains'
-import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
+import { http, createConfig } from 'wagmi';
+import { base } from 'wagmi/chains';
+import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors';
 
-const PUBLIC_BASE_RPC = 'https://mainnet.base.org'
+const PUBLIC_BASE_RPC = 'https://mainnet.base.org';
 
 // Only enable WalletConnect when the operator provisions a real project at
 // https://cloud.reown.com. The placeholder ID returns 403 on getWallets and
 // 3000 "Project not found" on the relayer socket, which spams the console.
 const WALLETCONNECT_PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID as
   | string
-  | undefined
+  | undefined;
 
 const connectors = [
   injected({ shimDisconnect: true }),
@@ -47,7 +47,7 @@ const connectors = [
         }),
       ]
     : []),
-]
+];
 
 export const FAIRCOIN_WAGMI_CONFIG = createConfig({
   chains: [base],
@@ -56,10 +56,10 @@ export const FAIRCOIN_WAGMI_CONFIG = createConfig({
     [base.id]: http(PUBLIC_BASE_RPC),
   },
   ssr: false,
-})
+});
 
 declare module 'wagmi' {
   interface Register {
-    config: typeof FAIRCOIN_WAGMI_CONFIG
+    config: typeof FAIRCOIN_WAGMI_CONFIG;
   }
 }

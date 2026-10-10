@@ -17,7 +17,7 @@
  * named owner has the evidence; `draft` keeps a claim out of published copy.
  */
 
-export type ClaimStatus = 'approved' | 'draft' | 'retired'
+export type ClaimStatus = 'approved' | 'draft' | 'retired';
 
 /** How wide the statement is. Getting this wrong is the whole failure mode. */
 export type ClaimScope =
@@ -28,22 +28,22 @@ export type ClaimScope =
   /** True only under a signed contract. */
   | 'contractual'
   /** A statement about a product (Alia, Codea), not about the platform. */
-  | 'product'
+  | 'product';
 
 export interface Claim {
-  id: string
+  id: string;
   /** The statement as it is allowed to be published, verbatim. */
-  text: string
-  scope: ClaimScope
+  text: string;
+  scope: ClaimScope;
   /** Who holds the evidence. A team, so it survives a person leaving. */
-  evidenceOwner: string
+  evidenceOwner: string;
   /** ISO date. After this the claim is unpublishable until it is re-checked. */
-  reviewBy: string
-  status: ClaimStatus
+  reviewBy: string;
+  status: ClaimStatus;
   /** Where the claim is rendered, for the reviewer. */
-  surfaces: readonly string[]
+  surfaces: readonly string[];
   /** Why it is scoped the way it is. */
-  note?: string
+  note?: string;
 }
 
 /**
@@ -71,7 +71,7 @@ export const PROHIBITED_UNQUALIFIED_TERMS: readonly string[] = [
   '99.99%',
   'bank-grade',
   'military-grade',
-]
+];
 
 /**
  * Phrases that make a prohibited term acceptable by naming what it applies to.
@@ -90,7 +90,7 @@ export const SCOPE_QUALIFIERS: readonly string[] = [
   'when a deployment',
   'for deployments that',
   'this deployment',
-]
+];
 
 export const claims: readonly Claim[] = [
   {
@@ -101,8 +101,7 @@ export const claims: readonly Claim[] = [
     reviewBy: '2027-03-31',
     status: 'approved',
     surfaces: ['/ai', '/ai/inference', '/ai/models', '/ai/pricing', 'navigation'],
-    note:
-      'Moves to `available` only after the API, credentials, billing and commercial route gates in docs/AI-CONTENT-ARCHITECTURE.md §7 pass. One constant: OXY_INFERENCE_AVAILABILITY.',
+    note: 'Moves to `available` only after the API, credentials, billing and commercial route gates in docs/AI-CONTENT-ARCHITECTURE.md §7 pass. One constant: OXY_INFERENCE_AVAILABILITY.',
   },
   {
     id: 'no-second-control-plane',
@@ -121,8 +120,7 @@ export const claims: readonly Claim[] = [
     reviewBy: '2027-03-31',
     status: 'approved',
     surfaces: ['/ai/trust', '/ai'],
-    note:
-      'Deliberately about OXY. It says nothing about what an upstream provider does with a routed request; that is per-route metadata and is stated per route.',
+    note: 'Deliberately about OXY. It says nothing about what an upstream provider does with a routed request; that is per-route metadata and is stated per route.',
   },
   {
     id: 'route-policy-disclosure',
@@ -162,8 +160,7 @@ export const claims: readonly Claim[] = [
     reviewBy: '2027-03-31',
     status: 'approved',
     surfaces: ['/ai'],
-    note:
-      'The retired aliases alia-v1, alia-v1-pro and alia-lite are not models and are never listed as such.',
+    note: 'The retired aliases alia-v1, alia-v1-pro and alia-lite are not models and are never listed as such.',
   },
   {
     id: 'enterprise-terms-undefined',
@@ -192,8 +189,8 @@ export const claims: readonly Claim[] = [
     status: 'approved',
     surfaces: ['/ai/pricing', '/one'],
   },
-]
+];
 
 export function approvedClaims(): Claim[] {
-  return claims.filter((claim) => claim.status === 'approved')
+  return claims.filter((claim) => claim.status === 'approved');
 }

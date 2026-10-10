@@ -1,14 +1,9 @@
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import Button from '../components/ui/Button'
-import { Link } from '../lib/navigation'
-import { useTranslation } from '../lib/i18n'
-import {
-  trustDocumentLinks,
-  trustIntro,
-  trustStatements,
-  type TrustScope,
-} from '../data/ai/trust'
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import Button from '../components/ui/Button';
+import { Link } from '../lib/navigation';
+import { useTranslation } from '../lib/i18n';
+import { trustDocumentLinks, trustIntro, trustStatements, type TrustScope } from '../data/ai/trust';
 
 /**
  * `/ai/trust` — what happens to what you send.
@@ -26,16 +21,16 @@ const SCOPE_LABEL_KEYS: Record<TrustScope, string> = {
   oxy: 'ai.trust.scopeOxy',
   route: 'ai.trust.scopeRoute',
   contract: 'ai.trust.scopeContract',
-}
+};
 
 const SCOPE_CLASSES: Record<TrustScope, string> = {
   oxy: 'border-success/30 bg-success-subtle text-success-text',
   route: 'border-info/30 bg-info-subtle text-info-text',
   contract: 'border-border bg-surface text-muted-foreground',
-}
+};
 
 export default function AITrustPage() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <PageShell
@@ -54,7 +49,9 @@ export default function AITrustPage() {
         <h1 className="mt-3 text-heading-responsive-lg text-balance text-foreground">
           {t('ai.trust.heroTitle')}
         </h1>
-        <p className="mt-4 max-w-3xl text-pretty text-lg text-muted-foreground">{trustIntro.body}</p>
+        <p className="mt-4 max-w-3xl text-pretty text-lg text-muted-foreground">
+          {trustIntro.body}
+        </p>
       </section>
 
       <section className="container pb-16">
@@ -109,5 +106,5 @@ export default function AITrustPage() {
         </div>
       </section>
     </PageShell>
-  )
+  );
 }

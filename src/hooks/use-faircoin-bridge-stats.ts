@@ -9,47 +9,47 @@
  * snapshot is recorded — we treat that as "no data yet" rather than an error
  * so the UI can render a graceful placeholder.
  */
-import { useQuery } from '@tanstack/react-query'
-import { getBridgeBaseUrl } from '../api/faircoin-buy'
+import { useQuery } from '@tanstack/react-query';
+import { getBridgeBaseUrl } from '../api/faircoin-buy';
 
-const REFETCH_INTERVAL_MS = 30_000
+const REFETCH_INTERVAL_MS = 30_000;
 
 export interface BridgeReserves {
   /** WFAIR supply on Base (in raw wei strings). */
-  wfairSupplyWei: string
+  wfairSupplyWei: string;
   /** Native FAIR held by the bridge (in raw sats strings). */
-  fairCustodySats: string
+  fairCustodySats: string;
   /** Snapshot wall-clock. */
-  snapshotAt: string
+  snapshotAt: string;
   /** True when WFAIR supply ≤ FAIR custody (peg is fully backed). */
-  pegHealthy: boolean
+  pegHealthy: boolean;
 }
 
 interface ReservesApiBody {
-  wfairSupplyWei?: string
-  fairCustodySats?: string
-  snapshotAt?: string
-  pegHealthy?: boolean
+  wfairSupplyWei?: string;
+  fairCustodySats?: string;
+  snapshotAt?: string;
+  pegHealthy?: boolean;
 }
 
 async function fetchReserves(): Promise<BridgeReserves | null> {
-  const res = await fetch(`${getBridgeBaseUrl()}/api/bridge/reserves`)
-  if (res.status === 503) return null
-  if (!res.ok) throw new Error(`Reserves request failed: ${res.status}`)
-  const body = (await res.json()) as ReservesApiBody
+  const res = await fetch(`${getBridgeBaseUrl()}/api/bridge/reserves`);
+  if (res.status === 503) return null;
+  if (!res.ok) throw new Error(`Reserves request failed: ${res.status}`);
+  const body = (await res.json()) as ReservesApiBody;
   if (
     typeof body.wfairSupplyWei !== 'string' ||
     typeof body.fairCustodySats !== 'string' ||
     typeof body.snapshotAt !== 'string'
   ) {
-    return null
+    return null;
   }
   return {
     wfairSupplyWei: body.wfairSupplyWei,
     fairCustodySats: body.fairCustodySats,
     snapshotAt: body.snapshotAt,
     pegHealthy: body.pegHealthy === true,
-  }
+  };
 }
 
 export function useBridgeReserves() {
@@ -60,5 +60,5 @@ export function useBridgeReserves() {
     refetchIntervalInBackground: false,
     staleTime: 15_000,
     retry: 1,
-  })
+  });
 }

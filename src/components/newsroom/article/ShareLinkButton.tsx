@@ -1,15 +1,15 @@
-import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
-import { RiLinkM } from '@oxy.so/bloom/icons/RiLinkM'
-import { useTranslation } from '../../../lib/i18n'
-import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine';
+import { RiLinkM } from '@oxy.so/bloom/icons/RiLinkM';
+import { useTranslation } from '../../../lib/i18n';
+import { useCopyToClipboard } from '../../../lib/useCopyToClipboard';
 
 /**
  * Copies the article's URL. The label stays put and only the icon swaps, so the
  * button does not resize under the cursor at the moment it is clicked.
  */
 export default function ShareLinkButton({ url }: { url: string }) {
-  const { t } = useTranslation()
-  const { copied, copy } = useCopyToClipboard()
+  const { t } = useTranslation();
+  const { copied, copy } = useCopyToClipboard();
 
   return (
     <button
@@ -25,5 +25,5 @@ export default function ShareLinkButton({ url }: { url: string }) {
         <RiLinkM width={16} height={16} fill="currentColor" aria-hidden />
       )}
     </button>
-  )
+  );
 }

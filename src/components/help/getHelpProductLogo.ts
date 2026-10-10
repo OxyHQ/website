@@ -1,5 +1,5 @@
-import { getBrandMark } from '../../data/brand-assets'
-import type { HelpCategoryId } from '../../content/help-loader'
+import { getBrandMark } from '../../data/brand-assets';
+import type { HelpCategoryId } from '../../content/help-loader';
 
 /* ──────────────────────────────────────────────
  * Map a help category to the Oxy ecosystem product logo it represents.
@@ -17,8 +17,8 @@ const HELP_CATEGORY_LOGO: Record<HelpCategoryId, string | undefined> = {
   auth: getBrandMark('auth'),
   console: undefined,
   'getting-started': undefined,
-}
+};
 
 export function getHelpProductLogo(category: HelpCategoryId): string | undefined {
-  return HELP_CATEGORY_LOGO[category]
+  return HELP_CATEGORY_LOGO[category];
 }

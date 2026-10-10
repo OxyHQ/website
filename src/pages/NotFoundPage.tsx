@@ -1,7 +1,7 @@
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import { isFairCoinHost } from '../lib/host'
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import { isFairCoinHost } from '../lib/host';
 import {
   useFairCoinDropdowns,
   useFairCoinFooterBrand,
@@ -11,10 +11,10 @@ import {
   useFairCoinNavCtaButtons,
   useFairCoinNavbarBrand,
   useFairCoinSimpleNavLinks,
-} from '../lib/faircoin-chrome'
-import MemoryBoard from '../components/notfound/MemoryBoard'
-import FaqSection, { type FaqEntry } from '../components/sections/FaqSection'
-import { BrandScope } from '../theme/BrandScope'
+} from '../lib/faircoin-chrome';
+import MemoryBoard from '../components/notfound/MemoryBoard';
+import FaqSection, { type FaqEntry } from '../components/sections/FaqSection';
+import { BrandScope } from '../theme/BrandScope';
 
 /** Where to go from a page that is not there. */
 const OXY_HELP: readonly FaqEntry[] = [
@@ -48,13 +48,19 @@ const OXY_HELP: readonly FaqEntry[] = [
     answer: (
       <ul className="list-disc space-y-2 pl-5">
         <li>
-          <a className="underline underline-offset-2 hover:text-foreground" href="/developers/docs/">
+          <a
+            className="underline underline-offset-2 hover:text-foreground"
+            href="/developers/docs/"
+          >
             Read the docs
           </a>{' '}
           — guides and references for building on Oxy.
         </li>
         <li>
-          <a className="underline underline-offset-2 hover:text-foreground" href="/developers/docs/api/">
+          <a
+            className="underline underline-offset-2 hover:text-foreground"
+            href="/developers/docs/api/"
+          >
             REST API reference
           </a>{' '}
           — every endpoint, versioned.
@@ -73,7 +79,7 @@ const OXY_HELP: readonly FaqEntry[] = [
       </ul>
     ),
   },
-]
+];
 
 const FAIRCOIN_HELP: readonly FaqEntry[] = [
   {
@@ -81,13 +87,19 @@ const FAIRCOIN_HELP: readonly FaqEntry[] = [
     answer: (
       <ul className="list-disc space-y-2 pl-5">
         <li>
-          <a className="underline underline-offset-2 hover:text-foreground" href="https://explorer.fairco.in">
+          <a
+            className="underline underline-offset-2 hover:text-foreground"
+            href="https://explorer.fairco.in"
+          >
             Explorer
           </a>{' '}
           — browse blocks, transactions and addresses.
         </li>
         <li>
-          <a className="underline underline-offset-2 hover:text-foreground" href="https://fairco.in/wallet/">
+          <a
+            className="underline underline-offset-2 hover:text-foreground"
+            href="https://fairco.in/wallet/"
+          >
             Wallet
           </a>{' '}
           — send, receive and track balances.
@@ -95,24 +107,26 @@ const FAIRCOIN_HELP: readonly FaqEntry[] = [
       </ul>
     ),
   },
-]
+];
 
 export default function NotFoundPage() {
-  const onFairCoinHost = isFairCoinHost()
+  const onFairCoinHost = isFairCoinHost();
   // Each FairCoin chrome hook returns `undefined` off-host, so the Navbar /
   // Footer naturally fall back to the Oxy defaults — no prop branching needed.
-  const navbarBrand = useFairCoinNavbarBrand()
-  const dropdowns = useFairCoinDropdowns()
-  const simpleNavLinks = useFairCoinSimpleNavLinks()
-  const ctaButtons = useFairCoinNavCtaButtons()
-  const footerBrand = useFairCoinFooterBrand()
-  const footerColumns = useFairCoinFooterColumns()
-  const footerLegalLinks = useFairCoinFooterLegalLinks()
-  const footerCopyright = useFairCoinFooterCopyright()
+  const navbarBrand = useFairCoinNavbarBrand();
+  const dropdowns = useFairCoinDropdowns();
+  const simpleNavLinks = useFairCoinSimpleNavLinks();
+  const ctaButtons = useFairCoinNavCtaButtons();
+  const footerBrand = useFairCoinFooterBrand();
+  const footerColumns = useFairCoinFooterColumns();
+  const footerLegalLinks = useFairCoinFooterLegalLinks();
+  const footerCopyright = useFairCoinFooterCopyright();
 
   return (
     <BrandScope className={`not-found-theme ${onFairCoinHost ? 'faircoin-theme' : ''}`}>
-      <div className={`not-found-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background ${onFairCoinHost ? 'faircoin-theme' : ''}`}>
+      <div
+        className={`not-found-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background ${onFairCoinHost ? 'faircoin-theme' : ''}`}
+      >
         <SEO
           title="Page Not Found"
           description="The page you're looking for doesn't exist."
@@ -149,5 +163,5 @@ export default function NotFoundPage() {
         />
       </div>
     </BrandScope>
-  )
+  );
 }

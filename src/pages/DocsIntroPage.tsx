@@ -1,5 +1,5 @@
-import PageShell from '../components/layout/PageShell'
-import DocsIntroContent from '../components/docs/DocsIntroPage'
+import PageShell from '../components/layout/PageShell';
+import DocsIntroContent from '../components/docs/DocsIntroPage';
 
 export default function DocsIntroPage() {
   return (
@@ -16,5 +16,5 @@ export default function DocsIntroPage() {
     >
       <DocsIntroContent />
     </PageShell>
-  )
+  );
 }

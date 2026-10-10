@@ -1,9 +1,9 @@
-import type { ReactNode } from 'react'
-import { Link } from '../../../lib/navigation'
-import { ctaIntentFor } from '../../../lib/ai/availability'
-import { useTranslation } from '../../../lib/i18n'
-import AvailabilityBadge from './AvailabilityBadge'
-import type { AiService } from '../../../data/ai/taxonomy'
+import type { ReactNode } from 'react';
+import { Link } from '../../../lib/navigation';
+import { ctaIntentFor } from '../../../lib/ai/availability';
+import { useTranslation } from '../../../lib/i18n';
+import AvailabilityBadge from './AvailabilityBadge';
+import type { AiService } from '../../../data/ai/taxonomy';
 
 /**
  * One member of the Oxy AI umbrella.
@@ -15,9 +15,9 @@ import type { AiService } from '../../../data/ai/taxonomy'
  * treatment of something that should not have reached a public page.
  */
 export default function ServiceCard({ service }: { service: AiService }) {
-  const { t } = useTranslation()
-  const intent = ctaIntentFor(service.availability)
-  const ctaLabel = t(`ai.cta.${camel(intent)}`)
+  const { t } = useTranslation();
+  const intent = ctaIntentFor(service.availability);
+  const ctaLabel = t(`ai.cta.${camel(intent)}`);
   // `request_access` is a conversation, and it goes to the form with the right
   // option preselected — `salesInterest`, never `key`, because the form's
   // options are a server contract with their own spelling.
@@ -28,7 +28,7 @@ export default function ServiceCard({ service }: { service: AiService }) {
   const href =
     intent === 'request_access' && service.salesInterest
       ? `/contact/sales?interest=${service.salesInterest}`
-      : service.href
+      : service.href;
 
   return (
     <article className="group relative flex h-full flex-col gap-4 rounded-2xl border border-border bg-card p-6 transition-colors hover:bg-accent/40">
@@ -55,7 +55,7 @@ export default function ServiceCard({ service }: { service: AiService }) {
         )}
       </div>
     </article>
-  )
+  );
 }
 
 function ServiceLink({
@@ -63,24 +63,24 @@ function ServiceLink({
   external,
   children,
 }: {
-  href: string
-  external?: boolean
-  children: ReactNode
+  href: string;
+  external?: boolean;
+  children: ReactNode;
 }) {
   const className =
-    'text-sm font-medium text-foreground underline-offset-4 hover:underline focus-visible:underline'
+    'text-sm font-medium text-foreground underline-offset-4 hover:underline focus-visible:underline';
   if (external || !href.startsWith('/')) {
     return (
       <a className={className} href={href} rel="noreferrer">
         {children}
       </a>
-    )
+    );
   }
   return (
     <Link className={className} to={href}>
       {children}
     </Link>
-  )
+  );
 }
 
 /**
@@ -93,26 +93,26 @@ function DocsLink({
   external,
   children,
 }: {
-  href: string
-  external?: boolean
-  children: ReactNode
+  href: string;
+  external?: boolean;
+  children: ReactNode;
 }) {
   const className =
-    'relative z-10 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline'
+    'relative z-10 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline';
   if (external || !href.startsWith('/')) {
     return (
       <a className={className} href={href} rel="noreferrer">
         {children}
       </a>
-    )
+    );
   }
   return (
     <Link className={className} to={href}>
       {children}
     </Link>
-  )
+  );
 }
 
 function camel(value: string): string {
-  return value.replace(/_([a-z])/g, (_, char: string) => char.toUpperCase())
+  return value.replace(/_([a-z])/g, (_, char: string) => char.toUpperCase());
 }

@@ -1,8 +1,8 @@
-import { Helmet } from 'react-helmet-async'
-import { serializeStructuredData } from '../lib/structuredData'
+import { Helmet } from 'react-helmet-async';
+import { serializeStructuredData } from '../lib/structuredData';
 
 interface StructuredDataProps {
-  data: Record<string, unknown>
+  data: Record<string, unknown>;
 }
 
 export default function StructuredData({ data }: StructuredDataProps) {
@@ -13,5 +13,5 @@ export default function StructuredData({ data }: StructuredDataProps) {
         dangerouslySetInnerHTML={{ __html: serializeStructuredData(data) }}
       />
     </Helmet>
-  )
+  );
 }

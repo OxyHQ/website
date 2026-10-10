@@ -11,18 +11,18 @@
  * ──────────────────────────────────────────── */
 
 interface RollingDigitProps {
-  digit: number
+  digit: number;
   /** Extra full cycles before landing, so neighbouring digits do not spin alike. */
-  cycles: number
-  active: boolean
+  cycles: number;
+  active: boolean;
 }
 
 function RollingDigit({ digit, cycles, active }: RollingDigitProps) {
-  const reel: number[] = []
+  const reel: number[] = [];
   for (let cycle = 0; cycle < cycles; cycle += 1) {
-    for (let i = 0; i < 10; i += 1) reel.push(i)
+    for (let i = 0; i < 10; i += 1) reel.push(i);
   }
-  for (let i = 0; i < digit; i += 1) reel.push(i)
+  for (let i = 0; i < digit; i += 1) reel.push(i);
 
   return (
     <div className="relative inline-block">
@@ -39,17 +39,17 @@ function RollingDigit({ digit, cycles, active }: RollingDigitProps) {
         <span className="absolute bottom-0 translate-y-full">{digit}</span>
       </span>
     </div>
-  )
+  );
 }
 
 interface RollingNumberProps {
   /** Digits roll; `$`, `+`, `k`, `.` and the rest stay put. */
-  value: string
-  active: boolean
+  value: string;
+  active: boolean;
 }
 
 export default function RollingNumber({ value, active }: RollingNumberProps) {
-  let digitIndex = 0
+  let digitIndex = 0;
   return (
     <div className="overflow-hidden whitespace-nowrap tracking-tighter">
       {value.split('').map((char, i) => {
@@ -58,11 +58,11 @@ export default function RollingNumber({ value, active }: RollingNumberProps) {
             <span key={i} className="inline-block">
               {char}
             </span>
-          )
+          );
         }
-        const cycles = digitIndex++ === 0 ? 1 : 2
-        return <RollingDigit key={i} digit={Number(char)} cycles={cycles} active={active} />
+        const cycles = digitIndex++ === 0 ? 1 : 2;
+        return <RollingDigit key={i} digit={Number(char)} cycles={cycles} active={active} />;
       })}
     </div>
-  )
+  );
 }

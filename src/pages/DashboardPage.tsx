@@ -1,32 +1,32 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { useSearchParams } from "react-router-dom";
-import { dashboardPresentation } from "../lib/dashboardPresentation";
-import { Button } from "@oxy.so/bloom/button";
-import { RiCollapseDiagonalLine } from "@oxy.so/bloom/icons/RiCollapseDiagonalLine";
-import { RiFullscreenLine } from "@oxy.so/bloom/icons/RiFullscreenLine";
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { dashboardPresentation } from '../lib/dashboardPresentation';
+import { Button } from '@oxy.so/bloom/button';
+import { RiCollapseDiagonalLine } from '@oxy.so/bloom/icons/RiCollapseDiagonalLine';
+import { RiFullscreenLine } from '@oxy.so/bloom/icons/RiFullscreenLine';
 import {
   SegmentedControl,
   SegmentedControlItem,
   SegmentedControlItemText,
-} from "@oxy.so/bloom/segmented-control";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
-import SEO from "../components/SEO";
-import MapContainer from "../components/dashboard/MapContainer";
+} from '@oxy.so/bloom/segmented-control';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import MapContainer from '../components/dashboard/MapContainer';
 import {
   TotalRequests,
   LiveActivity,
   RegionCount,
   LiveOrigins,
-} from "../components/dashboard/StatsDisplay";
-import ReferenceMetricsGrid from "../components/dashboard/ReferenceMetricsGrid";
-import Logo from "../components/ui/Logo";
-import { usePlatformActivity, usePlatformStats, useInfraStatus } from "../api/hooks";
-import { useTranslation } from "../lib/i18n";
+} from '../components/dashboard/StatsDisplay';
+import ReferenceMetricsGrid from '../components/dashboard/ReferenceMetricsGrid';
+import Logo from '../components/ui/Logo';
+import { usePlatformActivity, usePlatformStats, useInfraStatus } from '../api/hooks';
+import { useTranslation } from '../lib/i18n';
 
 function subscribeFullscreen(callback: () => void): () => void {
-  document.addEventListener("fullscreenchange", callback);
-  return () => document.removeEventListener("fullscreenchange", callback);
+  document.addEventListener('fullscreenchange', callback);
+  return () => document.removeEventListener('fullscreenchange', callback);
 }
 
 function getFullscreenSnapshot(): boolean {
@@ -49,7 +49,7 @@ export default function DashboardPage() {
   const displayedStats = {
     ...stats,
     regions: infraNodes
-      ? infraNodes.filter(node => node.status !== 'offline').length
+      ? infraNodes.filter((node) => node.status !== 'offline').length
       : stats.regions,
   };
   const dashboardRef = useRef<HTMLDivElement>(null);
@@ -59,7 +59,12 @@ export default function DashboardPage() {
     getFullscreenServerSnapshot,
   );
 
-  const { fullscreen: isFullscreen, fullscreenLayout, widgetRows, hideControls } = dashboardPresentation(searchParams, nativeFullscreen, windowFullscreen);
+  const {
+    fullscreen: isFullscreen,
+    fullscreenLayout,
+    widgetRows,
+    hideControls,
+  } = dashboardPresentation(searchParams, nativeFullscreen, windowFullscreen);
 
   useEffect(() => {
     if (!isFullscreen) return;
@@ -67,11 +72,14 @@ export default function DashboardPage() {
       if (event.key !== 'Escape') return;
       setWindowFullscreen(false);
       if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
-      setSearchParams((current) => {
-        const next = new URLSearchParams(current);
-        next.delete('fullscreen');
-        return next;
-      }, { replace: true });
+      setSearchParams(
+        (current) => {
+          const next = new URLSearchParams(current);
+          next.delete('fullscreen');
+          return next;
+        },
+        { replace: true },
+      );
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
@@ -110,69 +118,88 @@ export default function DashboardPage() {
       <h1 className="sr-only">Oxy · {t('dashboard.platformActivity')}</h1>
       {!isFullscreen && <Navbar />}
       <main className="flex-1">
-        <div ref={dashboardRef} data-dashboard-fullscreen={isFullscreen} data-fullscreen-layout={fullscreenLayout} className={isFullscreen ? "fixed inset-0 z-[100] h-dvh overflow-y-auto bg-background" : undefined}>
-        <div className={`container relative isolate font-mono flex flex-col bg-background ${isFullscreen ? "h-dvh" : "min-h-[calc(100dvh-var(--site-header-height))]"} ${fullscreenLayout ? "max-w-none px-8" : ""}`}>
-          <div className="absolute inset-y-0 left-1/2 z-0 w-screen -translate-x-1/2 touch-none cursor-grab active:cursor-grabbing">
-            <MapContainer
-              isGlobe={isGlobe}
-              infraStatus={infraNodes}
-              activityEvents={activityEvents}
-            />
-          </div>
-
-
-          <header className="relative z-10 flex items-center justify-between font-mono text-sm uppercase gap-2 pt-6 mb-4 shrink-0">
-            <span className="inline-flex items-center gap-2 rounded-full bg-error px-3 py-1.5 font-sans text-xs font-bold tracking-wide text-error-foreground">
-              LIVE
-              <span aria-hidden="true" className="size-2 rounded-full bg-error-foreground" />
-            </span>
-            {isFullscreen && (
-              <div className="absolute top-6 left-1/2 -translate-x-1/2">
-                <Logo className="h-8" />
-              </div>
-            )}
-            {!hideControls && <div className="flex items-center gap-2">
-              <SegmentedControl
-                label={t('dashboard.mapView')}
-                type="radio"
-                value={isGlobe ? "globe" : "flat"}
-                onValueChange={(next) => setIsGlobe(next === "globe")}
-              >
-                <SegmentedControlItem value="flat" accessibilityLabel={t('dashboard.mapFlat')}>
-                  <SegmentedControlItemText>2D</SegmentedControlItemText>
-                </SegmentedControlItem>
-                <SegmentedControlItem value="globe" accessibilityLabel={t('dashboard.mapGlobe')}>
-                  <SegmentedControlItemText>3D</SegmentedControlItemText>
-                </SegmentedControlItem>
-              </SegmentedControl>
-              <Button
-                appearance="outline"
-                tone="neutral"
-                icon={isFullscreen ? RiCollapseDiagonalLine : RiFullscreenLine}
-                accessibilityLabel={isFullscreen ? t('dashboard.exitFullscreen') : t('dashboard.enterFullscreen')}
-                onPress={toggleFullscreen}
+        <div
+          ref={dashboardRef}
+          data-dashboard-fullscreen={isFullscreen}
+          data-fullscreen-layout={fullscreenLayout}
+          className={
+            isFullscreen ? 'fixed inset-0 z-[100] h-dvh overflow-y-auto bg-background' : undefined
+          }
+        >
+          <div
+            className={`container relative isolate font-mono flex flex-col bg-background ${isFullscreen ? 'h-dvh' : 'min-h-[calc(100dvh-var(--site-header-height))]'} ${fullscreenLayout ? 'max-w-none px-8' : ''}`}
+          >
+            <div className="absolute inset-y-0 left-1/2 z-0 w-screen -translate-x-1/2 touch-none cursor-grab active:cursor-grabbing">
+              <MapContainer
+                isGlobe={isGlobe}
+                infraStatus={infraNodes}
+                activityEvents={activityEvents}
               />
-            </div>}
-          </header>
+            </div>
 
-          <div className={`pointer-events-none relative z-10 flex-1 ${isFullscreen ? "min-h-0" : "min-h-[520px]"}`}>
-            <div className="min-[961px]:absolute min-[961px]:bottom-0 min-[961px]:left-0 z-10 pb-2">
-              <div className="flex flex-col gap-y-4">
-                <TotalRequests stats={displayedStats} />
-                <LiveActivity events={activityEvents} />
+            <header className="relative z-10 flex items-center justify-between font-mono text-sm uppercase gap-2 pt-6 mb-4 shrink-0">
+              <span className="inline-flex items-center gap-2 rounded-full bg-error px-3 py-1.5 font-sans text-xs font-bold tracking-wide text-error-foreground">
+                LIVE
+                <span aria-hidden="true" className="size-2 rounded-full bg-error-foreground" />
+              </span>
+              {isFullscreen && (
+                <div className="absolute top-6 left-1/2 -translate-x-1/2">
+                  <Logo className="h-8" />
+                </div>
+              )}
+              {!hideControls && (
+                <div className="flex items-center gap-2">
+                  <SegmentedControl
+                    label={t('dashboard.mapView')}
+                    type="radio"
+                    value={isGlobe ? 'globe' : 'flat'}
+                    onValueChange={(next) => setIsGlobe(next === 'globe')}
+                  >
+                    <SegmentedControlItem value="flat" accessibilityLabel={t('dashboard.mapFlat')}>
+                      <SegmentedControlItemText>2D</SegmentedControlItemText>
+                    </SegmentedControlItem>
+                    <SegmentedControlItem
+                      value="globe"
+                      accessibilityLabel={t('dashboard.mapGlobe')}
+                    >
+                      <SegmentedControlItemText>3D</SegmentedControlItemText>
+                    </SegmentedControlItem>
+                  </SegmentedControl>
+                  <Button
+                    appearance="outline"
+                    tone="neutral"
+                    icon={isFullscreen ? RiCollapseDiagonalLine : RiFullscreenLine}
+                    accessibilityLabel={
+                      isFullscreen ? t('dashboard.exitFullscreen') : t('dashboard.enterFullscreen')
+                    }
+                    onPress={toggleFullscreen}
+                  />
+                </div>
+              )}
+            </header>
+
+            <div
+              className={`pointer-events-none relative z-10 flex-1 ${isFullscreen ? 'min-h-0' : 'min-h-[520px]'}`}
+            >
+              <div className="min-[961px]:absolute min-[961px]:bottom-0 min-[961px]:left-0 z-10 pb-2">
+                <div className="flex flex-col gap-y-4">
+                  <TotalRequests stats={displayedStats} />
+                  <LiveActivity events={activityEvents} />
+                </div>
+                <RegionCount stats={displayedStats} />
               </div>
-              <RegionCount stats={displayedStats} />
+
+              <div className="min-[961px]:absolute min-[961px]:bottom-0 min-[961px]:right-0 z-10 pb-2">
+                <LiveOrigins events={activityEvents} />
+              </div>
             </div>
 
-            <div className="min-[961px]:absolute min-[961px]:bottom-0 min-[961px]:right-0 z-10 pb-2">
-              <LiveOrigins events={activityEvents} />
-            </div>
+            <section
+              className={`relative z-10 shrink-0 transform-gpu ${fullscreenLayout ? 'pb-6 pt-4' : 'pb-12 pt-8 md:pb-16'}`}
+            >
+              <ReferenceMetricsGrid stats={displayedStats} compact={widgetRows === 1} />
+            </section>
           </div>
-
-          <section className={`relative z-10 shrink-0 transform-gpu ${fullscreenLayout ? "pb-6 pt-4" : "pb-12 pt-8 md:pb-16"}`}>
-            <ReferenceMetricsGrid stats={displayedStats} compact={widgetRows === 1} />
-          </section>
-        </div>
         </div>
       </main>
       {!isFullscreen && <Footer />}

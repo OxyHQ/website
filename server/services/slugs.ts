@@ -1,7 +1,7 @@
-import { isUniqueViolation, pgErrorOf } from '../db/pgErrors.js'
-import { newObjectId } from '../db/schema/columns.js'
-import { DomainError } from '../utils/domainError.js'
-import { db } from '../db/postgres.js'
+import { isUniqueViolation, pgErrorOf } from '../db/pgErrors.js';
+import { newObjectId } from '../db/schema/columns.js';
+import { DomainError } from '../utils/domainError.js';
+import { db } from '../db/postgres.js';
 
 /* ──────────────────────────────────────────────
  * Slugs: one rule for every table that has one.
@@ -17,11 +17,11 @@ import { db } from '../db/postgres.js'
  * whole enclosing transaction, and the next candidate could never be tried.
  * ──────────────────────────────────────────── */
 
-export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
-export const MAX_SLUG_LENGTH = 120
+export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export const MAX_SLUG_LENGTH = 120;
 
 /** Candidates tried with a numeric suffix before falling back to a random one. */
-const NUMBERED_ATTEMPTS = 8
+const NUMBERED_ATTEMPTS = 8;
 
 /**
  * A URL slug from free text. Diacritics fold to their base letter ("Diseñador
@@ -40,25 +40,25 @@ export function slugify(text: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, MAX_SLUG_LENGTH)
-    .replace(/-+$/g, '')
+    .replace(/-+$/g, '');
 }
 
 /** The base a generated slug starts from; never empty. */
 export function slugBase(source: string, fallbackPrefix: string): string {
-  return slugify(source) || `${fallbackPrefix}-${newObjectId().slice(-8)}`
+  return slugify(source) || `${fallbackPrefix}-${newObjectId().slice(-8)}`;
 }
 
 /** Whether a unique violation came from the slug index rather than another unique column. */
 function isSlugCollision(error: unknown): boolean {
-  if (!isUniqueViolation(error)) return false
-  const fields = pgErrorOf(error)
-  return /slug/.test(fields?.constraint_name ?? '') || /\(slug\)/.test(fields?.detail ?? '')
+  if (!isUniqueViolation(error)) return false;
+  const fields = pgErrorOf(error);
+  return /slug/.test(fields?.constraint_name ?? '') || /\(slug\)/.test(fields?.detail ?? '');
 }
 
 export class SlugConflictError extends DomainError {
-  override name = 'SlugConflictError'
+  override name = 'SlugConflictError';
   constructor(readonly slug: string) {
-    super('conflict', `The slug "${slug}" is already in use`, { slug })
+    super('conflict', `The slug "${slug}" is already in use`, { slug });
   }
 }
 
@@ -75,30 +75,31 @@ export async function insertWithSlug<T>(
 ): Promise<T> {
   if (options.explicit) {
     try {
-      return await db.transaction(() => insert(options.explicit as string))
+      return await db.transaction(() => insert(options.explicit as string));
     } catch (error) {
-      if (isSlugCollision(error)) throw new SlugConflictError(options.explicit)
-      throw error
+      if (isSlugCollision(error)) throw new SlugConflictError(options.explicit);
+      throw error;
     }
   }
 
-  const candidates = [options.base]
-  for (let n = 2; n < NUMBERED_ATTEMPTS + 2; n += 1) candidates.push(withSuffix(options.base, String(n)))
-  candidates.push(withSuffix(options.base, newObjectId().slice(-8)))
+  const candidates = [options.base];
+  for (let n = 2; n < NUMBERED_ATTEMPTS + 2; n += 1)
+    candidates.push(withSuffix(options.base, String(n)));
+  candidates.push(withSuffix(options.base, newObjectId().slice(-8)));
 
-  let lastCollision: unknown
+  let lastCollision: unknown;
   for (const candidate of candidates) {
     try {
-      return await db.transaction(() => insert(candidate))
+      return await db.transaction(() => insert(candidate));
     } catch (error) {
-      if (!isSlugCollision(error)) throw error
-      lastCollision = error
+      if (!isSlugCollision(error)) throw error;
+      lastCollision = error;
     }
   }
-  throw lastCollision
+  throw lastCollision;
 }
 
 function withSuffix(base: string, suffix: string): string {
-  const room = MAX_SLUG_LENGTH - suffix.length - 1
-  return `${base.slice(0, room).replace(/-+$/g, '')}-${suffix}`
+  const room = MAX_SLUG_LENGTH - suffix.length - 1;
+  return `${base.slice(0, room).replace(/-+$/g, '')}-${suffix}`;
 }

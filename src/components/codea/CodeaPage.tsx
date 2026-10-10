@@ -6,8 +6,8 @@ import {
   frontierCards,
   changelogEntries,
   highlights,
-} from '../../data/codea'
-import IDEDemoMockup from './IDEDemoMockup'
+} from '../../data/codea';
+import IDEDemoMockup from './IDEDemoMockup';
 
 export default function CodeaPage() {
   return (
@@ -16,9 +16,7 @@ export default function CodeaPage() {
       <section className="section bg-background text-foreground">
         <div className="container">
           <div className="text-left mb-v2.5 max-w-prose">
-            <h1 className="type-md-lg text-balance mb-v1">
-              {heroTitle}
-            </h1>
+            <h1 className="type-md-lg text-balance mb-v1">{heroTitle}</h1>
             <div className="flex justify-start gap-x-g1 items-center">
               <div>
                 <div className="hidden items-center md:flex">
@@ -78,7 +76,10 @@ export default function CodeaPage() {
       {/* ── 3. Feature Cards ── */}
       <section className="section section--flush-x">
         {features.map((feature, i) => (
-          <section key={feature.title} className="section bg-background text-foreground section--flush-y">
+          <section
+            key={feature.title}
+            className="section bg-background text-foreground section--flush-y"
+          >
             <div className={i < features.length - 1 ? 'container mb-v4' : 'container'}>
               <div className="grid grid-rows-[auto_1fr]">
                 <a
@@ -93,7 +94,9 @@ export default function CodeaPage() {
                         : 'lg:col-start-1 lg:col-end-9 lg:pl-g0.25 lg:pr-g3'
                     }`}
                   >
-                    <div className={`w-full max-w-prose ${feature.layout === 'right' ? 'lg:justify-self-end' : 'lg:justify-self-start'}`}>
+                    <div
+                      className={`w-full max-w-prose ${feature.layout === 'right' ? 'lg:justify-self-end' : 'lg:justify-self-start'}`}
+                    >
                       <div className="type-base">
                         <h3 className="type-base md:type-md text-pretty">{feature.title}</h3>
                         <div className="type-base md:type-md text-muted-foreground text-pretty">
@@ -243,7 +246,8 @@ export default function CodeaPage() {
                 <div className="w-full max-w-prose lg:justify-self-start">
                   <div className="type-base">
                     <h3 className="type-base md:type-md text-pretty">
-                      Codea is an applied research team focused on building the future of software development.
+                      Codea is an applied research team focused on building the future of software
+                      development.
                     </h3>
                   </div>
                   <div className="mt-v1">
@@ -277,16 +281,23 @@ export default function CodeaPage() {
           <div className="container">
             <div className="grid-cursor gap-0">
               <div className="col-span-full md:col-start-1 md:col-end-7 lg:col-start-1 lg:col-end-9 xl:col-start-1 xl:col-end-7">
-                <h2 className="type-base text-foreground mb-v1 sticky top-0 lg:mb-0">Recent highlights</h2>
+                <h2 className="type-base text-foreground mb-v1 sticky top-0 lg:mb-0">
+                  Recent highlights
+                </h2>
               </div>
               <div className="col-span-full md:col-start-7 md:col-end-25 lg:col-start-9 lg:col-end-25 xl:col-start-7 xl:col-end-19">
                 {highlights.map((h, i) => (
-                  <article key={h.title} className={`flex grow-1 flex-col${i < highlights.length - 1 ? ' mb-g1' : ''}`}>
+                  <article
+                    key={h.title}
+                    className={`flex grow-1 flex-col${i < highlights.length - 1 ? ' mb-g1' : ''}`}
+                  >
                     <a className="card card--text grow-1" href={h.href}>
                       <div className="flex flex-col">
                         <div className="grow-1">
                           <p className="type-base text-foreground text-pretty">{h.title}</p>
-                          <p className="type-base text-muted-foreground text-pretty">{h.description}</p>
+                          <p className="type-base text-muted-foreground text-pretty">
+                            {h.description}
+                          </p>
                         </div>
                         <div className="mt-v1 text-muted-foreground flex shrink-0 items-center">
                           <span className="capitalize">{h.category}&nbsp;&middot;&nbsp;</span>
@@ -296,7 +307,9 @@ export default function CodeaPage() {
                     </a>
                   </article>
                 ))}
-                <a className="btn-text mt-v1 inline-flex" href="/company/news/">View more posts &rarr;</a>
+                <a className="btn-text mt-v1 inline-flex" href="/company/news/">
+                  View more posts &rarr;
+                </a>
               </div>
             </div>
           </div>
@@ -307,9 +320,7 @@ export default function CodeaPage() {
       <section className="section bg-background text-foreground section--headline">
         <div className="container">
           <div className="text-center mx-auto max-w-prose-medium-wide">
-            <h2 className="type-xl sm:type-2xl text-balance mx-auto mb-v1">
-              Try Codea now.
-            </h2>
+            <h2 className="type-xl sm:type-2xl text-balance mx-auto mb-v1">Try Codea now.</h2>
             <div className="flex justify-center gap-x-g1 items-center">
               <div>
                 <div className="hidden items-center md:flex">
@@ -336,5 +347,5 @@ export default function CodeaPage() {
 
       {/* Footer handled by shared Footer component in page wrapper */}
     </div>
-  )
+  );
 }

@@ -1,24 +1,29 @@
-import { useState, type CSSProperties } from 'react'
-import { Link } from '../lib/navigation'
-import { motion, useReducedMotion } from 'framer-motion'
-import { RiAddLine } from '@oxy.so/bloom/icons/RiAddLine'
-import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine'
-import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
-import { RiSubtractLine } from '@oxy.so/bloom/icons/RiSubtractLine'
-import { LogoIcon, LogoText } from '@oxy.so/services/ui/client'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@oxy.so/bloom/accordion'
-import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets'
+import { useState, type CSSProperties } from 'react';
+import { Link } from '../lib/navigation';
+import { motion, useReducedMotion } from 'framer-motion';
+import { RiAddLine } from '@oxy.so/bloom/icons/RiAddLine';
+import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine';
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine';
+import { RiSubtractLine } from '@oxy.so/bloom/icons/RiSubtractLine';
+import { LogoIcon, LogoText } from '@oxy.so/services/ui/client';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@oxy.so/bloom/accordion';
+import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets';
 import {
   SegmentedControl,
   SegmentedControlItem,
   SegmentedControlItemText,
-} from '@oxy.so/bloom/segmented-control'
-import PageShell from '../components/layout/PageShell'
-import { recipeStyle } from '../components/brand/recipe-style'
-import { useSiteHeaderBottom } from '../hooks/useSiteHeaderBottom'
-import { BRAND_MARKS } from '../data/brand-assets'
-import homePhoto from '../assets/homiio/industria.jpg'
-import '../styles/brand-book.css'
+} from '@oxy.so/bloom/segmented-control';
+import PageShell from '../components/layout/PageShell';
+import { recipeStyle } from '../components/brand/recipe-style';
+import { useSiteHeaderBottom } from '../hooks/useSiteHeaderBottom';
+import { BRAND_MARKS } from '../data/brand-assets';
+import homePhoto from '../assets/homiio/industria.jpg';
+import '../styles/brand-book.css';
 
 const chapters = [
   ['idea', 'The idea'],
@@ -30,8 +35,8 @@ const chapters = [
   ['voice', 'Voice'],
   ['applications', 'In the world'],
   ['resources', 'Resources'],
-] as const
-const recipes: AppColorName[] = ['orange', 'cobalt', 'grove', 'pink', 'yellow', 'oxy']
+] as const;
+const recipes: AppColorName[] = ['orange', 'cobalt', 'grove', 'pink', 'yellow', 'oxy'];
 const voices = {
   Principles: {
     headline: 'Your attention belongs to you.',
@@ -57,7 +62,7 @@ const voices = {
     rule: 'Show the change, say where it is available and give people a way to try it.',
     avoid: 'Big things are coming. The future is here.',
   },
-} as const
+} as const;
 
 function Chapter({ number, title }: { number: string; title: string }) {
   return (
@@ -65,7 +70,7 @@ function Chapter({ number, title }: { number: string; title: string }) {
       <span>{number}</span>
       <span>{title}</span>
     </div>
-  )
+  );
 }
 function Mark({ word = false, className = '' }: { word?: boolean; className?: string }) {
   return (
@@ -76,7 +81,7 @@ function Mark({ word = false, className = '' }: { word?: boolean; className?: st
         <LogoIcon height={220} color="currentColor" letterColor="var(--primary)" />
       )}
     </div>
-  )
+  );
 }
 function Rules({ items }: { items: [string, string][] }) {
   return (
@@ -88,11 +93,11 @@ function Rules({ items }: { items: [string, string][] }) {
         </article>
       ))}
     </div>
-  )
+  );
 }
 function ColourStudio() {
-  const [recipe, setRecipe] = useState<AppColorName>('cobalt')
-  const [mode, setMode] = useState<'light' | 'dark'>('light')
+  const [recipe, setRecipe] = useState<AppColorName>('cobalt');
+  const [mode, setMode] = useState<'light' | 'dark'>('light');
   return (
     <>
       <div className="brand-studio-controls">
@@ -158,10 +163,9 @@ function ColourStudio() {
             <span className="brand-meta">Bloom / Components</span>
             <h3>Make it yours.</h3>
             <p>Explore the details that make an interface feel right.</p>
-            <Link
-              to="/developers/docs/bloom/color-system/"
-            >
-              Explore colour recipes <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
+            <Link to="/developers/docs/bloom/color-system/">
+              Explore colour recipes{' '}
+              <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
             </Link>
             <div className="brand-ui-secondary">Built with Bloom.</div>
           </div>
@@ -186,15 +190,16 @@ function ColourStudio() {
           A working interface reserves stronger colour for actions and emphasis.
         </p>
         <Link to="/developers/docs/bloom/color-system">
-          Explore all Bloom recipes <RiArrowRightUpLine width={18} height={18} fill="currentColor" aria-hidden />
+          Explore all Bloom recipes{' '}
+          <RiArrowRightUpLine width={18} height={18} fill="currentColor" aria-hidden />
         </Link>
       </div>
     </>
-  )
+  );
 }
 function TypeStudio() {
-  const [text, setText] = useState('Made for everyone.')
-  const [size, setSize] = useState(96)
+  const [text, setText] = useState('Made for everyone.');
+  const [size, setSize] = useState(96);
   return (
     <div className="brand-type-studio">
       <div className="brand-type-controls">
@@ -231,17 +236,17 @@ function TypeStudio() {
         <span>0123456789?!&</span>
       </div>
     </div>
-  )
+  );
 }
 /** The specimen's rhythm: room above the question, the rule close under it. */
-const DISCLOSURE_TRIGGER_STYLE = { paddingTop: 48, paddingBottom: 24, paddingHorizontal: 0 }
+const DISCLOSURE_TRIGGER_STYLE = { paddingTop: 48, paddingBottom: 24, paddingHorizontal: 0 };
 
-const MARKS_TRIGGER_STYLE = { paddingVertical: 24, paddingHorizontal: 0 }
+const MARKS_TRIGGER_STYLE = { paddingVertical: 24, paddingHorizontal: 0 };
 
 function MotionStudio() {
-  const [replay, setReplay] = useState(0)
-  const [open, setOpen] = useState<string | string[] | undefined>(undefined)
-  const reduce = useReducedMotion()
+  const [replay, setReplay] = useState(0);
+  const [open, setOpen] = useState<string | string[] | undefined>(undefined);
+  const reduce = useReducedMotion();
   return (
     <div className="brand-motion-studio" style={recipeStyle('grove', 'light')}>
       <div className="brand-motion-stage">
@@ -294,14 +299,14 @@ function MotionStudio() {
         </small>
       </div>
     </div>
-  )
+  );
 }
 
 export default function BrandPage() {
-  const [voice, setVoice] = useState<keyof typeof voices>('Principles')
-  const [marksOpen, setMarksOpen] = useState<string | string[] | undefined>(undefined)
-  const headerBottom = useSiteHeaderBottom()
-  const example = voices[voice]
+  const [voice, setVoice] = useState<keyof typeof voices>('Principles');
+  const [marksOpen, setMarksOpen] = useState<string | string[] | undefined>(undefined);
+  const headerBottom = useSiteHeaderBottom();
+  const example = voices[voice];
   return (
     <PageShell
       className="brand-book bg-background text-foreground"
@@ -333,7 +338,8 @@ export default function BrandPage() {
             What we stand for.
           </p>
           <a href="#idea">
-            Explore the identity <RiArrowDownLine width={22} height={22} fill="currentColor" aria-hidden />
+            Explore the identity{' '}
+            <RiArrowDownLine width={22} height={22} fill="currentColor" aria-hidden />
           </a>
         </div>
       </header>
@@ -368,7 +374,8 @@ export default function BrandPage() {
               else’s ideas.
             </p>
             <Link to="/transparency/charter">
-              Read our charter <RiArrowRightUpLine width={18} height={18} fill="currentColor" aria-hidden />
+              Read our charter{' '}
+              <RiArrowRightUpLine width={18} height={18} fill="currentColor" aria-hidden />
             </Link>
           </div>
         </div>
@@ -678,13 +685,16 @@ export default function BrandPage() {
         </h2>
         <div className="brand-resource-links">
           <Link to="/developers/docs/bloom/components">
-            Bloom components <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
+            Bloom components{' '}
+            <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
           </Link>
           <Link to="/developers/docs/bloom/color-system/">
-            Colour recipes <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
+            Colour recipes{' '}
+            <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
           </Link>
           <Link to="/transparency/charter">
-            Our charter <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
+            Our charter{' '}
+            <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
           </Link>
         </div>
         <div className="mt-12 border-t border-current">
@@ -713,5 +723,5 @@ export default function BrandPage() {
         </p>
       </section>
     </PageShell>
-  )
+  );
 }

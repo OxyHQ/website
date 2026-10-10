@@ -19,22 +19,22 @@
 
 export interface BloomProp {
   /** Prop name exactly as declared, e.g. `variant`. */
-  name: string
+  name: string;
   /**
    * The type as Bloom spells it, e.g. `ButtonVariant` or `StyleProp<ViewStyle>`
    * — the declared text, not the resolved union, so a named type stays named.
    * An optional prop's redundant `| undefined` is stripped: `optional` carries
    * that fact once.
    */
-  type: string
+  type: string;
   /**
    * Members of the string-literal union `type` resolves to, when it is one.
    * Resolved through the alias, so `ButtonVariant` still yields its members.
    */
-  options?: readonly string[]
-  optional: boolean
+  options?: readonly string[];
+  optional: boolean;
   /** First paragraph of the prop's JSDoc, whitespace collapsed. */
-  description?: string
+  description?: string;
 }
 
 /**
@@ -48,7 +48,7 @@ export interface BloomProp {
  */
 export interface BloomPropType {
   /** Props Bloom itself declares. */
-  props: readonly BloomProp[]
+  props: readonly BloomProp[];
   /**
    * The types these props reach outside Bloom, as Bloom writes them —
    * `ViewProps`, `Omit<SvgProps, "size" | "style">`, `RefAttributes<View>`.
@@ -58,12 +58,12 @@ export interface BloomPropType {
    * table renders the list above and a line naming these. Every prop left out
    * is attributable to a name here — the generator fails if one is not.
    */
-  inheritsFrom?: readonly string[]
+  inheritsFrom?: readonly string[];
 }
 
 export interface BloomComponentProps {
   /** Exported name, e.g. `Button`. */
-  name: string
+  name: string;
   /**
    * Key into the surface's `propTypes` — the name Bloom gives the type, e.g.
    * `ButtonProps` or `Omit<ButtonProps, "variant">`. Absent when the component
@@ -76,50 +76,50 @@ export interface BloomComponentProps {
    * of a component on the same surface is a handle. Print it as a type name only
    * when it does not.
    */
-  propsType?: string
+  propsType?: string;
 }
 
 /** One surface's props, loaded on demand by `loadBloomSurfaceProps`. */
 export interface BloomSurfaceProps {
-  subpath: string
+  subpath: string;
   /**
    * Every distinct props type on the surface, keyed by the name Bloom gives it.
    * Several components may share one key; that they do is the point.
    */
-  propTypes: Readonly<Record<string, BloomPropType>>
-  components: readonly BloomComponentProps[]
+  propTypes: Readonly<Record<string, BloomPropType>>;
+  components: readonly BloomComponentProps[];
 }
 
 export interface BloomComponentEntry {
   /** Exported name, e.g. `Button`. */
-  name: string
+  name: string;
   /** First paragraph of the component's JSDoc, whitespace collapsed. */
-  description?: string
+  description?: string;
 }
 
 export interface BloomSurfaceEntry {
   /** Export subpath without its leading `./`, e.g. `button`, `tabs/expo-router`. */
-  subpath: string
+  subpath: string;
   /** What a consumer imports from, e.g. `@oxy.so/bloom/button`. */
-  importPath: string
+  importPath: string;
   /** Group name from Bloom's own README component table. */
-  category: string
+  category: string;
   /**
    * Every exported component on the surface. Empty for a surface that publishes
    * only hooks, adapters or constants — `image-aspect-ratio-cache` is a real
    * component surface by category and exports no component at all.
    */
-  components: readonly BloomComponentEntry[]
+  components: readonly BloomComponentEntry[];
 }
 
 export interface BloomCategory {
   /** Group name, in the order Bloom's README lists it. */
-  name: string
+  name: string;
   /**
    * True for the groups that publish infrastructure rather than surfaces a
    * reader can look at — providers, tokens, fonts. They get no component card.
    */
-  utility: boolean
+  utility: boolean;
 }
 
 /**
@@ -143,7 +143,7 @@ export function pascalPath(subpath: string): string {
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(''),
     )
-    .join('/')
+    .join('/');
 }
 
 /** A `<BloomPlayground>` control, derived from a prop's declared type. */
@@ -151,7 +151,7 @@ export type BloomKnob =
   | { kind: 'select'; options: readonly string[] }
   | { kind: 'boolean' }
   | { kind: 'text' }
-  | { kind: 'number' }
+  | { kind: 'number' };
 
 /**
  * The single mapping from a prop to the control that edits it, used by the
@@ -161,9 +161,9 @@ export type BloomKnob =
  * keeps one answer to "is this knobbable" instead of one per generation.
  */
 export function knobFor(prop: BloomProp): BloomKnob | null {
-  if (prop.options) return { kind: 'select', options: prop.options }
-  if (prop.type === 'boolean') return { kind: 'boolean' }
-  if (prop.type === 'string') return { kind: 'text' }
-  if (prop.type === 'number') return { kind: 'number' }
-  return null
+  if (prop.options) return { kind: 'select', options: prop.options };
+  if (prop.type === 'boolean') return { kind: 'boolean' };
+  if (prop.type === 'string') return { kind: 'text' };
+  if (prop.type === 'number') return { kind: 'number' };
+  return null;
 }

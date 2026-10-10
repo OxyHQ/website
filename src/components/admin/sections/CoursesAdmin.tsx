@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import {
   useCourses,
   useCategories,
@@ -8,34 +8,37 @@ import {
   type CourseLesson,
   type CourseLevel,
   type CourseStatus,
-} from '../../../api/hooks'
-import { apiFetch } from '../../../api/client'
-import { Button } from '@oxy.so/bloom/button'
-import { Switch } from '@oxy.so/bloom/switch'
-import { Badge } from '@oxy.so/bloom/badge'
-import { LabeledTextField } from '../LabeledTextField'
-import { Textarea } from '@oxy.so/bloom/textarea'
-import { Label } from '@oxy.so/bloom/label'
-import LocaleSwitcher from '../LocaleSwitcher'
-import { TranslationFields } from '../TranslationEditor'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
-import MediaPicker from '../MediaPicker'
-import OptionSelect from '../../ui/OptionSelect'
-import { AdminField } from '../AdminField'
+} from '../../../api/hooks';
+import { apiFetch } from '../../../api/client';
+import { Button } from '@oxy.so/bloom/button';
+import { Switch } from '@oxy.so/bloom/switch';
+import { Badge } from '@oxy.so/bloom/badge';
+import { LabeledTextField } from '../LabeledTextField';
+import { Textarea } from '@oxy.so/bloom/textarea';
+import { Label } from '@oxy.so/bloom/label';
+import LocaleSwitcher from '../LocaleSwitcher';
+import { TranslationFields } from '../TranslationEditor';
+import ConfirmDialog from '../ConfirmDialog';
+import { useConfirmAction } from '../useConfirmAction';
+import MediaPicker from '../MediaPicker';
+import OptionSelect from '../../ui/OptionSelect';
+import { AdminField } from '../AdminField';
 
 function slugify(input: string): string {
-  return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 function mediaIdString(cover: unknown): string {
-  if (!cover) return ''
-  if (typeof cover === 'string') return cover
+  if (!cover) return '';
+  if (typeof cover === 'string') return cover;
   if (typeof cover === 'object' && cover !== null && '_id' in cover) {
-    const id = (cover as { _id?: unknown })._id
-    return typeof id === 'string' ? id : ''
+    const id = (cover as { _id?: unknown })._id;
+    return typeof id === 'string' ? id : '';
   }
-  return ''
+  return '';
 }
 
 function stripRefsForEditing(course: CourseRecord): CourseRecord {
@@ -43,7 +46,7 @@ function stripRefsForEditing(course: CourseRecord): CourseRecord {
     ...course,
     coverImage: mediaIdString(course.coverImage) || null,
     category: resolveCourseCategoryId(course) || null,
-  }
+  };
 }
 
 function emptyCourse(): CourseRecord {
@@ -62,7 +65,7 @@ function emptyCourse(): CourseRecord {
     status: 'published',
     publishedAt: new Date().toISOString(),
     order: 0,
-  }
+  };
 }
 
 function emptyLesson(order: number): CourseLesson {
@@ -73,24 +76,24 @@ function emptyLesson(order: number): CourseLesson {
     order,
     videoUrl: '',
     durationMinutes: undefined,
-  }
+  };
 }
 
 interface SavePayload {
-  slug: string
-  title: string
-  summary: string
-  description: string
-  coverImage: string | null
-  category: string | null
-  level: CourseLevel
-  durationMinutes?: number
-  lessons: CourseLesson[]
-  tags: string[]
-  featured: boolean
-  status: CourseStatus
-  publishedAt: string
-  order: number
+  slug: string;
+  title: string;
+  summary: string;
+  description: string;
+  coverImage: string | null;
+  category: string | null;
+  level: CourseLevel;
+  durationMinutes?: number;
+  lessons: CourseLesson[];
+  tags: string[];
+  featured: boolean;
+  status: CourseStatus;
+  publishedAt: string;
+  order: number;
 }
 
 function toPayload(course: CourseRecord): SavePayload {
@@ -109,101 +112,109 @@ function toPayload(course: CourseRecord): SavePayload {
         slug: lesson.slug,
         content: lesson.content,
         order: lesson.order,
-      }
-      if (lesson.videoUrl && lesson.videoUrl.length > 0) clean.videoUrl = lesson.videoUrl
-      if (lesson.durationMinutes && lesson.durationMinutes > 0) clean.durationMinutes = lesson.durationMinutes
-      return clean
+      };
+      if (lesson.videoUrl && lesson.videoUrl.length > 0) clean.videoUrl = lesson.videoUrl;
+      if (lesson.durationMinutes && lesson.durationMinutes > 0)
+        clean.durationMinutes = lesson.durationMinutes;
+      return clean;
     }),
     tags: course.tags,
     featured: course.featured,
     status: course.status,
     publishedAt: course.publishedAt,
     order: course.order,
-  }
+  };
 }
 
 export default function CoursesAdmin() {
-  const { data, refetch } = useCourses({ limit: 50, status: 'published' })
-  const { data: draftData, refetch: refetchDrafts } = useCourses({ limit: 50, status: 'draft' })
-  const { data: locales } = useLocales()
-  const { data: categoriesData } = useCategories('generic')
-  const categories = categoriesData ?? []
-  const [editing, setEditing] = useState<CourseRecord | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [activeLocale, setActiveLocale] = useState('')
-  const [translating, setTranslating] = useState<CourseRecord | null>(null)
+  const { data, refetch } = useCourses({ limit: 50, status: 'published' });
+  const { data: draftData, refetch: refetchDrafts } = useCourses({ limit: 50, status: 'draft' });
+  const { data: locales } = useLocales();
+  const { data: categoriesData } = useCategories('generic');
+  const categories = categoriesData ?? [];
+  const [editing, setEditing] = useState<CourseRecord | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [activeLocale, setActiveLocale] = useState('');
+  const [translating, setTranslating] = useState<CourseRecord | null>(null);
 
-  const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
-  const courses = [...(data?.courses ?? []), ...(draftData?.courses ?? [])]
-  const isDefault = !activeLocale || activeLocale === defaultLocale
+  const defaultLocale = locales?.find((l) => l.isDefault)?.code ?? 'en';
+  const courses = [...(data?.courses ?? []), ...(draftData?.courses ?? [])];
+  const isDefault = !activeLocale || activeLocale === defaultLocale;
 
   const refresh = async () => {
-    await Promise.all([refetch(), refetchDrafts()])
-  }
+    await Promise.all([refetch(), refetchDrafts()]);
+  };
 
   const save = async () => {
-    if (!editing) return
-    setError(null)
-    setSaving(true)
+    if (!editing) return;
+    setError(null);
+    setSaving(true);
     try {
-      const payload = toPayload(editing)
+      const payload = toPayload(editing);
       if (editing._id) {
-        await apiFetch(`/courses/${editing.slug}`, { method: 'PUT', body: JSON.stringify(payload) })
+        await apiFetch(`/courses/${editing.slug}`, {
+          method: 'PUT',
+          body: JSON.stringify(payload),
+        });
       } else {
-        await apiFetch('/courses', { method: 'POST', body: JSON.stringify(payload) })
+        await apiFetch('/courses', { method: 'POST', body: JSON.stringify(payload) });
       }
-      await refresh()
-      setEditing(null)
+      await refresh();
+      setEditing(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to save course')
+      setError(e instanceof Error ? e.message : 'Failed to save course');
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const deleteAction = useConfirmAction<CourseRecord>({
     onConfirm: async (course) => {
-      await apiFetch(`/courses/${course.slug}`, { method: 'DELETE' })
-      await refresh()
+      await apiFetch(`/courses/${course.slug}`, { method: 'DELETE' });
+      await refresh();
     },
-  })
+  });
 
   const updateLesson = (index: number, patch: Partial<CourseLesson>) => {
-    if (!editing) return
-    const nextLessons = editing.lessons.map((lesson, i) => i === index ? { ...lesson, ...patch } : lesson)
-    setEditing({ ...editing, lessons: nextLessons })
-  }
+    if (!editing) return;
+    const nextLessons = editing.lessons.map((lesson, i) =>
+      i === index ? { ...lesson, ...patch } : lesson,
+    );
+    setEditing({ ...editing, lessons: nextLessons });
+  };
 
   const addLesson = () => {
-    if (!editing) return
-    setEditing({ ...editing, lessons: [...editing.lessons, emptyLesson(editing.lessons.length)] })
-  }
+    if (!editing) return;
+    setEditing({ ...editing, lessons: [...editing.lessons, emptyLesson(editing.lessons.length)] });
+  };
 
   const removeLesson = (index: number) => {
-    if (!editing) return
+    if (!editing) return;
     const nextLessons = editing.lessons
       .filter((_, i) => i !== index)
-      .map((lesson, i) => ({ ...lesson, order: i }))
-    setEditing({ ...editing, lessons: nextLessons })
-  }
+      .map((lesson, i) => ({ ...lesson, order: i }));
+    setEditing({ ...editing, lessons: nextLessons });
+  };
 
   const moveLesson = (index: number, direction: -1 | 1) => {
-    if (!editing) return
-    const target = index + direction
-    if (target < 0 || target >= editing.lessons.length) return
-    const next = [...editing.lessons]
-    const [moved] = next.splice(index, 1)
-    next.splice(target, 0, moved)
-    setEditing({ ...editing, lessons: next.map((l, i) => ({ ...l, order: i })) })
-  }
+    if (!editing) return;
+    const target = index + direction;
+    if (target < 0 || target >= editing.lessons.length) return;
+    const next = [...editing.lessons];
+    const [moved] = next.splice(index, 1);
+    next.splice(target, 0, moved);
+    setEditing({ ...editing, lessons: next.map((l, i) => ({ ...l, order: i })) });
+  };
 
   if (editing) {
-    const isNew = !editing._id
+    const isNew = !editing._id;
     return (
       <div>
         <div className="mb-4">
-          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>
+            &larr; Back to list
+          </Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {isNew ? 'New course' : `Edit: ${editing.title}`}
@@ -214,11 +225,13 @@ export default function CoursesAdmin() {
             <AdminField
               label="Title"
               value={editing.title}
-              onChange={(v) => setEditing({
-                ...editing,
-                title: v,
-                ...(isNew && !editing.slug ? { slug: slugify(v) } : {}),
-              })}
+              onChange={(v) =>
+                setEditing({
+                  ...editing,
+                  title: v,
+                  ...(isNew && !editing.slug ? { slug: slugify(v) } : {}),
+                })
+              }
             />
             <AdminField
               label="Slug"
@@ -280,10 +293,12 @@ export default function CoursesAdmin() {
               label="Duration (minutes)"
               inputMode="numeric"
               value={editing.durationMinutes != null ? String(editing.durationMinutes) : ''}
-              onValueChange={(v) => setEditing({
-                ...editing,
-                durationMinutes: v ? Number(v) : undefined,
-              })}
+              onValueChange={(v) =>
+                setEditing({
+                  ...editing,
+                  durationMinutes: v ? Number(v) : undefined,
+                })
+              }
             />
           </div>
 
@@ -291,7 +306,15 @@ export default function CoursesAdmin() {
             <AdminField
               label="Tags (comma-separated)"
               value={editing.tags.join(', ')}
-              onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t) => t.trim()).filter(Boolean) })}
+              onChange={(v) =>
+                setEditing({
+                  ...editing,
+                  tags: v
+                    .split(',')
+                    .map((t) => t.trim())
+                    .filter(Boolean),
+                })
+              }
             />
             <LabeledTextField
               label="Order"
@@ -303,13 +326,18 @@ export default function CoursesAdmin() {
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Switch checked={editing.featured} onCheckedChange={(val) => setEditing({ ...editing, featured: val })} />
+              <Switch
+                checked={editing.featured}
+                onCheckedChange={(val) => setEditing({ ...editing, featured: val })}
+              />
               <Label>Featured</Label>
             </div>
             <div className="flex items-center gap-2">
               <Switch
                 checked={editing.status === 'published'}
-                onCheckedChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })}
+                onCheckedChange={(val) =>
+                  setEditing({ ...editing, status: val ? 'published' : 'draft' })
+                }
               />
               <Label>{editing.status === 'published' ? 'Published' : 'Draft'}</Label>
             </div>
@@ -324,7 +352,12 @@ export default function CoursesAdmin() {
                   Embedded course lessons. Reorder with the arrows.
                 </p>
               </div>
-              <Button appearance="outline" tone="neutral" onPress={addLesson} style={{ paddingBlock: 6, paddingInline: 12 }}>
+              <Button
+                appearance="outline"
+                tone="neutral"
+                onPress={addLesson}
+                style={{ paddingBlock: 6, paddingInline: 12 }}
+              >
                 <span style={{ fontSize: 13 }}>Add lesson</span>
               </Button>
             </div>
@@ -340,9 +373,15 @@ export default function CoursesAdmin() {
                       Lesson {index + 1}
                     </span>
                     <div className="flex gap-1">
-                      <Button appearance="subtle" onPress={() => moveLesson(index, -1)}>&uarr;</Button>
-                      <Button appearance="subtle" onPress={() => moveLesson(index, 1)}>&darr;</Button>
-                      <Button appearance="subtle" onPress={() => removeLesson(index)}>Remove</Button>
+                      <Button appearance="subtle" onPress={() => moveLesson(index, -1)}>
+                        &uarr;
+                      </Button>
+                      <Button appearance="subtle" onPress={() => moveLesson(index, 1)}>
+                        &darr;
+                      </Button>
+                      <Button appearance="subtle" onPress={() => removeLesson(index)}>
+                        Remove
+                      </Button>
                     </div>
                   </div>
 
@@ -350,10 +389,12 @@ export default function CoursesAdmin() {
                     <AdminField
                       label="Title"
                       value={lesson.title}
-                      onChange={(v) => updateLesson(index, {
-                        title: v,
-                        ...(lesson.slug ? {} : { slug: slugify(v) }),
-                      })}
+                      onChange={(v) =>
+                        updateLesson(index, {
+                          title: v,
+                          ...(lesson.slug ? {} : { slug: slugify(v) }),
+                        })
+                      }
                     />
                     <AdminField
                       label="Slug"
@@ -371,9 +412,11 @@ export default function CoursesAdmin() {
                       label="Duration (minutes)"
                       inputMode="numeric"
                       value={lesson.durationMinutes != null ? String(lesson.durationMinutes) : ''}
-                      onValueChange={(v) => updateLesson(index, {
-                        durationMinutes: v ? Number(v) : undefined,
-                      })}
+                      onValueChange={(v) =>
+                        updateLesson(index, {
+                          durationMinutes: v ? Number(v) : undefined,
+                        })
+                      }
                     />
                   </div>
                   <div className="mt-3">
@@ -395,18 +438,22 @@ export default function CoursesAdmin() {
             <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving…' : isNew ? 'Publish' : 'Update'}
             </Button>
-            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>
+              Cancel
+            </Button>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (translating && !isDefault) {
     return (
       <div>
         <div className="mb-4">
-          <Button appearance="subtle" onPress={() => setTranslating(null)}>&larr; Back</Button>
+          <Button appearance="subtle" onPress={() => setTranslating(null)}>
+            &larr; Back
+          </Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">Translate: {translating.title}</h2>
         <div className="mt-4">
@@ -426,7 +473,7 @@ export default function CoursesAdmin() {
           />
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -437,7 +484,9 @@ export default function CoursesAdmin() {
           <p className="mt-1 text-sm text-muted-foreground">{courses.length} courses</p>
         </div>
         {isDefault && (
-          <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyCourse())}>New course</Button>
+          <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyCourse())}>
+            New course
+          </Button>
         )}
       </div>
 
@@ -447,9 +496,10 @@ export default function CoursesAdmin() {
 
       <div className="mt-6 flex flex-col gap-2">
         {courses.map((course) => {
-          const categoryLabel = typeof course.category === 'object' && course.category?.label
-            ? course.category.label
-            : ''
+          const categoryLabel =
+            typeof course.category === 'object' && course.category?.label
+              ? course.category.label
+              : '';
           return (
             <div
               key={course._id ?? course.slug}
@@ -457,7 +507,9 @@ export default function CoursesAdmin() {
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-medium text-foreground">{course.title}</span>
+                  <span className="truncate text-sm font-medium text-foreground">
+                    {course.title}
+                  </span>
                   {course.featured && <Badge tone="accent" content="Featured" />}
                   {course.status === 'draft' && <Badge tone="warning" content="Draft" />}
                 </div>
@@ -470,15 +522,24 @@ export default function CoursesAdmin() {
               <div className="flex items-center gap-2">
                 {isDefault ? (
                   <>
-                    <Button appearance="subtle" onPress={() => setEditing(stripRefsForEditing(course))}>Edit</Button>
-                    <Button appearance="subtle" onPress={() => deleteAction.request(course)}>Delete</Button>
+                    <Button
+                      appearance="subtle"
+                      onPress={() => setEditing(stripRefsForEditing(course))}
+                    >
+                      Edit
+                    </Button>
+                    <Button appearance="subtle" onPress={() => deleteAction.request(course)}>
+                      Delete
+                    </Button>
                   </>
                 ) : (
-                  <Button appearance="subtle" onPress={() => setTranslating(course)}>Translate</Button>
+                  <Button appearance="subtle" onPress={() => setTranslating(course)}>
+                    Translate
+                  </Button>
                 )}
               </div>
             </div>
-          )
+          );
         })}
         {courses.length === 0 && (
           <p className="py-8 text-center text-sm text-muted-foreground">No courses yet.</p>
@@ -487,7 +548,11 @@ export default function CoursesAdmin() {
 
       <ConfirmDialog
         control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.title || deleteAction.target.slug}”?` : 'Delete course?'}
+        title={
+          deleteAction.target
+            ? `Delete “${deleteAction.target.title || deleteAction.target.slug}”?`
+            : 'Delete course?'
+        }
         description="This permanently removes the course. This cannot be undone."
         confirmLabel="Delete"
         tone="danger"
@@ -496,5 +561,5 @@ export default function CoursesAdmin() {
         onConfirm={deleteAction.confirm}
       />
     </div>
-  )
+  );
 }

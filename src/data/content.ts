@@ -1,49 +1,49 @@
-import { BRAND_MARKS } from './brand-assets'
+import { BRAND_MARKS } from './brand-assets';
 
 export interface Testimonial {
-  quote: string
-  name: string
-  role: string
-  company: string
+  quote: string;
+  name: string;
+  role: string;
+  company: string;
 }
 
 export interface NavItem {
-  label: string
-  href: string
+  label: string;
+  href: string;
   /**
    * When `true`, the Navbar renders this link as an `<a target="_blank">`
    * regardless of the href scheme. Useful for cross-host links that still
    * start with `/` (e.g. a sub-brand linking to a tokenlist.json file).
    */
-  external?: boolean
+  external?: boolean;
 }
 
 export interface NavDropdownItemImage {
-  _id?: string
-  url?: string
-  thumbnails?: { sm?: string; md?: string; lg?: string }
+  _id?: string;
+  url?: string;
+  thumbnails?: { sm?: string; md?: string; lg?: string };
 }
 
 export interface NavDropdownItem {
-  title: string
-  description: string
-  href: string
+  title: string;
+  description: string;
+  href: string;
   /** Opens outside the website, including links whose path happens to start with `/`. */
-  external?: boolean
-  icon?: string
-  image?: string | NavDropdownItemImage | null
-  logoColor?: string
-  preserveImageColors?: boolean
+  external?: boolean;
+  icon?: string;
+  image?: string | NavDropdownItemImage | null;
+  logoColor?: string;
+  preserveImageColors?: boolean;
 }
 
 export interface NavDropdownSection {
-  heading: string
-  items: NavDropdownItem[]
+  heading: string;
+  items: NavDropdownItem[];
 }
 
 export interface NavSidePanel {
-  heading?: string
-  links: NavItem[]
+  heading?: string;
+  links: NavItem[];
 }
 
 /**
@@ -52,11 +52,11 @@ export interface NavSidePanel {
  * the whole card links to `href`.
  */
 export interface NavDropdownCard {
-  href: string
-  image: string
-  title: string
-  description: string
-  alt?: string
+  href: string;
+  image: string;
+  title: string;
+  description: string;
+  alt?: string;
 }
 
 /**
@@ -66,17 +66,17 @@ export interface NavDropdownCard {
  * one or the other.
  */
 export interface NavFeatureGrid {
-  features: NavDropdownItem[]
-  cards: NavDropdownCard[]
+  features: NavDropdownItem[];
+  cards: NavDropdownCard[];
 }
 
 export interface NavDropdown {
-  label: string
-  sections: NavDropdownSection[]
-  card?: NavDropdownCard
-  cards?: NavDropdownCard[]
-  sidePanel?: NavSidePanel
-  featureGrid?: NavFeatureGrid
+  label: string;
+  sections: NavDropdownSection[];
+  card?: NavDropdownCard;
+  cards?: NavDropdownCard[];
+  sidePanel?: NavSidePanel;
+  featureGrid?: NavFeatureGrid;
 }
 
 /**
@@ -154,43 +154,95 @@ export const productNavDropdown: NavDropdown = {
       { label: 'Careers', href: '/company/careers' },
     ],
   },
-}
+};
 
 /** Resources navigation is part of the site shell, so it is intentionally code-owned. */
 export const resourcesNavDropdown: NavDropdown = {
   label: 'Resources',
   sections: [
-    { heading: 'Plans', items: [
-      { title: 'Oxy One', description: 'More features, AI and storage across your Oxy apps', href: '/one/', icon: 'apps' },
-      { title: 'Pricing', description: 'Explore subscriptions, credits and inference', href: '/pricing/', icon: 'data' },
-      { title: 'The Oxy Store', description: 'Objects for everyday life', href: '/store/', icon: 'apps' },
-    ] },
+    {
+      heading: 'Plans',
+      items: [
+        {
+          title: 'Oxy One',
+          description: 'More features, AI and storage across your Oxy apps',
+          href: '/one/',
+          icon: 'apps',
+        },
+        {
+          title: 'Pricing',
+          description: 'Explore subscriptions, credits and inference',
+          href: '/pricing/',
+          icon: 'data',
+        },
+        {
+          title: 'The Oxy Store',
+          description: 'Objects for everyday life',
+          href: '/store/',
+          icon: 'apps',
+        },
+      ],
+    },
     {
       heading: 'Support',
       items: [
-        { title: 'Help center', description: "Learn more about Oxy's features", href: '/help', image: '/images/apps/help-center.svg' },
-        { title: 'Academy', description: 'Essential Oxy features explained', href: '/academy', image: '/images/apps/academy.svg' },
+        {
+          title: 'Help center',
+          description: "Learn more about Oxy's features",
+          href: '/help',
+          image: '/images/apps/help-center.svg',
+        },
+        {
+          title: 'Academy',
+          description: 'Essential Oxy features explained',
+          href: '/academy',
+          image: '/images/apps/academy.svg',
+        },
       ],
     },
     {
       heading: 'Developers',
-      items: [{ title: 'Developer docs', description: 'Start building Oxy apps', href: '/developers/docs', icon: 'developers' }],
+      items: [
+        {
+          title: 'Developer docs',
+          description: 'Start building Oxy apps',
+          href: '/developers/docs',
+          icon: 'developers',
+        },
+      ],
     },
     {
       heading: 'Partners',
-      items: [{ title: 'Partner programs', description: 'Developers, creators, consultants', href: '/partners', image: '/images/apps/partner-programs.svg' }],
+      items: [
+        {
+          title: 'Partner programs',
+          description: 'Developers, creators, consultants',
+          href: '/partners',
+          image: '/images/apps/partner-programs.svg',
+        },
+      ],
     },
     {
       heading: 'Build',
       items: [
-        { title: 'Developer platform', description: 'Build on Oxy', href: '/developers/docs', image: '/images/apps/developer-platform.svg' },
+        {
+          title: 'Developer platform',
+          description: 'Build on Oxy',
+          href: '/developers/docs',
+          image: '/images/apps/developer-platform.svg',
+        },
         {
           title: 'API reference',
           description: 'Every endpoint, versioned',
           href: '/developers/docs/api',
           image: '/images/apps/api-reference.svg',
         },
-        { title: 'Status', description: 'Live health of every service', href: '/status', image: '/images/apps/status.svg' },
+        {
+          title: 'Status',
+          description: 'Live health of every service',
+          href: '/status',
+          image: '/images/apps/status.svg',
+        },
         {
           title: 'Open source',
           description: 'Read and run what we ship',
@@ -217,25 +269,153 @@ export const resourcesNavDropdown: NavDropdown = {
  * items with the current products marked `showInNav`.
  */
 export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: string }> = [
-  { title: 'Mention', description: 'Decentralized social media', href: '/mention', image: '/images/apps/mention.png', logoColor: '#40c2ed', section: 'Social & Communication' },
-  { title: 'Allo', description: 'Private communication', href: 'https://allo.you', image: BRAND_MARKS.allo, section: 'Social & Communication' },
-  { title: 'Inbox by Oxy', description: 'A calmer way to handle email', href: '/inbox', image: BRAND_MARKS.inbox, logoColor: '#bf40ed', section: 'Tools' },
-  { title: 'Noted', description: "Oxy's workspace for notes and ideas", href: 'https://noted.oxy.so', image: BRAND_MARKS.noted, section: 'Tools' },
-  { title: 'Nilo', description: 'Workspace for docs and databases', href: 'https://nilo.so', section: 'Tools' },
-  { title: 'Alia', description: 'The Oxy assistant for people and teams', href: 'https://alia.onl/', image: '/images/apps/alia-dropdown.svg', logoColor: '#fab8ff', preserveImageColors: true, section: 'AI & Research' },
-  { title: 'Clarity', description: 'AI-Powered search engine', href: '/clarity', image: '/images/apps/clarity.png', logoColor: '#664100', section: 'AI & Research' },
-  { title: 'Astro Browser', description: 'A private browser for the open web', href: '/astro', image: '/images/apps/astro.svg', logoColor: '#009699', section: 'AI & Research' },
-  { title: 'Kaana', description: 'Oxy\'s own inference provider', href: 'https://kaana.ai', image: '/images/apps/kaana.svg', preserveImageColors: true, section: 'AI & Research' },
-  { title: 'Horizon', description: 'A clearer view of what matters', href: '/', section: 'Housing' },
-  { title: 'FairCoin Explorer', description: 'Explore the FairCoin network', href: 'https://explorer.fairco.in', image: '/images/apps/faircoin-explorer.png', logoColor: '#185c00', section: 'Finance' },
-  { title: 'Peable', description: 'Simple payments across Oxy', href: '/peable', image: '/images/apps/peable.png', preserveImageColors: true, section: 'Finance' },
-  { title: 'FairCoin', description: 'Ethical Digital Currency', href: 'https://fairco.in', image: '/images/apps/faircoin.svg', logoColor: '#204700', preserveImageColors: true, section: 'Finance' },
-  { title: 'FAIRWallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: '/images/apps/faircoin-wallet.svg', logoColor: '#0c6600', preserveImageColors: true, section: 'Finance' },
-  { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/mercaria', image: BRAND_MARKS.mercaria, logoColor: '#ed4040', section: 'Commerce' },
-  { title: 'Wholesale by Mercaria', description: 'Manage products, suppliers and wholesale sales', href: 'https://dashboard.mercaria.co', image: '/images/apps/wholesale.svg', preserveImageColors: true, section: 'Commerce' },
-  { title: 'Homiio', description: 'Rental made easy', href: '/homiio', image: BRAND_MARKS.homiio, section: 'Housing' },
-  { title: 'Moovo', description: 'Mobility and urban transport', href: 'https://moovo.now', image: BRAND_MARKS.moovo, section: 'Mobility' },
-  { title: 'TNP', description: 'The network protocol', href: '/tnp', image: '/images/apps/tnp.png', logoColor: '#2f9e00', section: 'Infrastructure' },
+  {
+    title: 'Mention',
+    description: 'Decentralized social media',
+    href: '/mention',
+    image: '/images/apps/mention.png',
+    logoColor: '#40c2ed',
+    section: 'Social & Communication',
+  },
+  {
+    title: 'Allo',
+    description: 'Private communication',
+    href: 'https://allo.you',
+    image: BRAND_MARKS.allo,
+    section: 'Social & Communication',
+  },
+  {
+    title: 'Inbox by Oxy',
+    description: 'A calmer way to handle email',
+    href: '/inbox',
+    image: BRAND_MARKS.inbox,
+    logoColor: '#bf40ed',
+    section: 'Tools',
+  },
+  {
+    title: 'Noted',
+    description: "Oxy's workspace for notes and ideas",
+    href: 'https://noted.oxy.so',
+    image: BRAND_MARKS.noted,
+    section: 'Tools',
+  },
+  {
+    title: 'Nilo',
+    description: 'Workspace for docs and databases',
+    href: 'https://nilo.so',
+    section: 'Tools',
+  },
+  {
+    title: 'Alia',
+    description: 'The Oxy assistant for people and teams',
+    href: 'https://alia.onl/',
+    image: '/images/apps/alia-dropdown.svg',
+    logoColor: '#fab8ff',
+    preserveImageColors: true,
+    section: 'AI & Research',
+  },
+  {
+    title: 'Clarity',
+    description: 'AI-Powered search engine',
+    href: '/clarity',
+    image: '/images/apps/clarity.png',
+    logoColor: '#664100',
+    section: 'AI & Research',
+  },
+  {
+    title: 'Astro Browser',
+    description: 'A private browser for the open web',
+    href: '/astro',
+    image: '/images/apps/astro.svg',
+    logoColor: '#009699',
+    section: 'AI & Research',
+  },
+  {
+    title: 'Kaana',
+    description: "Oxy's own inference provider",
+    href: 'https://kaana.ai',
+    image: '/images/apps/kaana.svg',
+    preserveImageColors: true,
+    section: 'AI & Research',
+  },
+  {
+    title: 'Horizon',
+    description: 'A clearer view of what matters',
+    href: '/',
+    section: 'Housing',
+  },
+  {
+    title: 'FairCoin Explorer',
+    description: 'Explore the FairCoin network',
+    href: 'https://explorer.fairco.in',
+    image: '/images/apps/faircoin-explorer.png',
+    logoColor: '#185c00',
+    section: 'Finance',
+  },
+  {
+    title: 'Peable',
+    description: 'Simple payments across Oxy',
+    href: '/peable',
+    image: '/images/apps/peable.png',
+    preserveImageColors: true,
+    section: 'Finance',
+  },
+  {
+    title: 'FairCoin',
+    description: 'Ethical Digital Currency',
+    href: 'https://fairco.in',
+    image: '/images/apps/faircoin.svg',
+    logoColor: '#204700',
+    preserveImageColors: true,
+    section: 'Finance',
+  },
+  {
+    title: 'FAIRWallet',
+    description: 'Manage your FairCoin',
+    href: 'https://fairco.in/wallet',
+    image: '/images/apps/faircoin-wallet.svg',
+    logoColor: '#0c6600',
+    preserveImageColors: true,
+    section: 'Finance',
+  },
+  {
+    title: 'Mercaria',
+    description: 'An open marketplace for people and goods',
+    href: '/mercaria',
+    image: BRAND_MARKS.mercaria,
+    logoColor: '#ed4040',
+    section: 'Commerce',
+  },
+  {
+    title: 'Wholesale by Mercaria',
+    description: 'Manage products, suppliers and wholesale sales',
+    href: 'https://dashboard.mercaria.co',
+    image: '/images/apps/wholesale.svg',
+    preserveImageColors: true,
+    section: 'Commerce',
+  },
+  {
+    title: 'Homiio',
+    description: 'Rental made easy',
+    href: '/homiio',
+    image: BRAND_MARKS.homiio,
+    section: 'Housing',
+  },
+  {
+    title: 'Moovo',
+    description: 'Mobility and urban transport',
+    href: 'https://moovo.now',
+    image: BRAND_MARKS.moovo,
+    section: 'Mobility',
+  },
+  {
+    title: 'TNP',
+    description: 'The network protocol',
+    href: '/tnp',
+    image: '/images/apps/tnp.png',
+    logoColor: '#2f9e00',
+    section: 'Infrastructure',
+  },
 ];
 
 export const technologiesNavSidePanel: NavSidePanel = {
@@ -311,13 +491,17 @@ const technologyNavProductOrder: Record<string, number> = {
 };
 
 export function technologyNavSection(productId: string, section?: string): string {
-  return technologyNavProductSections[productId.toLowerCase()]
-    ?? technologySectionLabels[section?.toLowerCase() ?? '']
-    ?? section
-    ?? 'Other';
+  return (
+    technologyNavProductSections[productId.toLowerCase()] ??
+    technologySectionLabels[section?.toLowerCase() ?? ''] ??
+    section ??
+    'Other'
+  );
 }
 
-export function makeTechnologiesNavDropdown(items: readonly (NavDropdownItem & { section?: string })[]): NavDropdown {
+export function makeTechnologiesNavDropdown(
+  items: readonly (NavDropdownItem & { section?: string })[],
+): NavDropdown {
   const grouped = new Map<string, NavDropdownItem[]>();
   for (const item of items) {
     const section = technologySectionLabels[item.section ?? ''] ?? item.section ?? 'Other';
@@ -329,12 +513,20 @@ export function makeTechnologiesNavDropdown(items: readonly (NavDropdownItem & {
   }
 
   for (const items of grouped.values()) {
-    items.sort((a, b) => (technologyNavProductOrder[a.title] ?? 50) - (technologyNavProductOrder[b.title] ?? 50));
+    items.sort(
+      (a, b) =>
+        (technologyNavProductOrder[a.title] ?? 50) - (technologyNavProductOrder[b.title] ?? 50),
+    );
   }
 
   const sections = [
     ...technologiesNavSectionOrder,
-    ...[...grouped.keys()].filter((heading) => !technologiesNavSectionOrder.includes(heading as typeof technologiesNavSectionOrder[number])),
+    ...[...grouped.keys()].filter(
+      (heading) =>
+        !technologiesNavSectionOrder.includes(
+          heading as (typeof technologiesNavSectionOrder)[number],
+        ),
+    ),
   ]
     .filter((heading) => grouped.has(heading))
     .map((heading) => ({ heading, items: grouped.get(heading)! }));
@@ -436,7 +628,7 @@ export const aiNavDropdown: NavDropdown = {
       { label: 'Talk to sales', href: '/contact/sales' },
     ],
   },
-}
+};
 
 /** Promo card injected into the `AI` dropdown. */
 export const aiNavCard: NavDropdownCard = {
@@ -445,7 +637,7 @@ export const aiNavCard: NavDropdownCard = {
   title: 'One API, every approved model',
   description: 'One credential and one bill for the whole catalogue',
   alt: 'The Oxy AI model catalogue',
-}
+};
 
 /**
  * The Platform dropdown, in the repo.
@@ -464,7 +656,12 @@ export const platformNavDropdown: NavDropdown = {
           href: '/commons',
           image: '/images/apps/commons-app.png',
         },
-        { title: 'Oxy AI', description: 'Models, inference and the products built on them', href: '/ai', image: '/images/apps/oxy-ai.svg' },
+        {
+          title: 'Oxy AI',
+          description: 'Models, inference and the products built on them',
+          href: '/ai',
+          image: '/images/apps/oxy-ai.svg',
+        },
         {
           title: 'Bloom',
           description: 'The design system behind every app',
@@ -482,7 +679,7 @@ export const platformNavDropdown: NavDropdown = {
       { label: 'Partner programs', href: '/partners' },
     ],
   },
-}
+};
 
 export const resourcesNavCard: NavDropdownCard = {
   href: '/academy',
@@ -490,7 +687,7 @@ export const resourcesNavCard: NavDropdownCard = {
   title: 'Start with the Academy',
   description: 'Short courses on Oxy ID, building on the platform and running it yourself',
   alt: 'Oxy Academy',
-}
+};
 
 export const resourcesBloomCard: NavDropdownCard = {
   href: '/bloom/',
@@ -498,18 +695,18 @@ export const resourcesBloomCard: NavDropdownCard = {
   title: 'Bloom UI',
   description: 'The open design system behind the Oxy ecosystem',
   alt: 'Bloom UI design system',
-}
+};
 
 export interface FooterLink {
-  label: string
-  href: string
-  isExternal?: boolean
-  isNewBadge?: boolean
+  label: string;
+  href: string;
+  isExternal?: boolean;
+  isNewBadge?: boolean;
 }
 
 export interface FooterColumn {
-  title: string
-  links: FooterLink[]
+  title: string;
+  links: FooterLink[];
 }
 
 /**
@@ -597,18 +794,16 @@ export const defaultFooterColumns: FooterColumn[] = [
       { label: 'Peable', href: '/peable' },
     ],
   },
-]
+];
 
-export const simpleNavLinks: NavItem[] = [
-  { label: 'Newsroom', href: '/newsroom' },
-]
+export const simpleNavLinks: NavItem[] = [{ label: 'Newsroom', href: '/newsroom' }];
 
 // Keep Up To Date Cards
 export interface KeepUpToDateCard {
-  title: string
-  description: string
-  href: string
-  iconType: 'linkedin' | 'x' | 'blog' | 'changelog'
+  title: string;
+  description: string;
+  href: string;
+  iconType: 'linkedin' | 'x' | 'blog' | 'changelog';
 }
 
 export const keepUpToDateCards: KeepUpToDateCard[] = [
@@ -620,7 +815,7 @@ export const keepUpToDateCards: KeepUpToDateCard[] = [
   },
   {
     title: 'X',
-    description: 'Stay in the loop with what we\'re working on.',
+    description: "Stay in the loop with what we're working on.",
     href: 'https://x.com/oxyhqinc',
     iconType: 'x',
   },
@@ -636,4 +831,4 @@ export const keepUpToDateCards: KeepUpToDateCard[] = [
     href: '/changelog',
     iconType: 'changelog',
   },
-]
+];

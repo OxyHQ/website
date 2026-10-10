@@ -1,17 +1,22 @@
-import { useState } from 'react'
-import CommentItem from './CommentItem'
-import CommentComposer from './CommentComposer'
-import type { CommentData } from '../../api/hooks'
+import { useState } from 'react';
+import CommentItem from './CommentItem';
+import CommentComposer from './CommentComposer';
+import type { CommentData } from '../../api/hooks';
 
 interface CommentThreadProps {
-  comment: CommentData
-  replies: CommentData[]
-  targetType: string
-  targetId: string
+  comment: CommentData;
+  replies: CommentData[];
+  targetType: string;
+  targetId: string;
 }
 
-export default function CommentThread({ comment, replies, targetType, targetId }: CommentThreadProps) {
-  const [replying, setReplying] = useState(false)
+export default function CommentThread({
+  comment,
+  replies,
+  targetType,
+  targetId,
+}: CommentThreadProps) {
+  const [replying, setReplying] = useState(false);
 
   return (
     <div>
@@ -50,5 +55,5 @@ export default function CommentThread({ comment, replies, targetType, targetId }
         </div>
       )}
     </div>
-  )
+  );
 }

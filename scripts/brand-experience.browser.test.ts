@@ -1,20 +1,16 @@
-import { join, resolve, extname } from 'node:path'
-import { chromium } from 'playwright'
+import { join, resolve, extname } from 'node:path';
+import { chromium } from 'playwright';
 
 // Exercise the built routes with the response policies used by Cloudflare.
 // Unlike vite preview, this serves the dedicated canvas CSP and asset CORS.
-const root = resolve(import.meta.dir, '..', 'dist')
-const headers = await Bun.file(join(root, '_headers')).text()
-const policies = [...headers.matchAll(/^ {2}Content-Security-Policy: (.+)$/gm)].map((m) => m[1])
+const root = resolve(import.meta.dir, '..', 'dist');
+const headers = await Bun.file(join(root, '_headers')).text();
+const policies = [...headers.matchAll(/^ {2}Content-Security-Policy: (.+)$/gm)].map((m) => m[1]);
 // The main policy, then the canvas's — declared twice, for `/bloom-preview.html`
 // and for the extensionless path Cloudflare Pages redirects it to. Both
 // canvas declarations must stay identical.
-if (
-  policies.length !== 3 ||
-  policies[0].includes("'unsafe-eval'") ||
-  policies[1] !== policies[2]
-)
-  throw new Error('Unexpected main/canvas CSP policies')
+if (policies.length !== 3 || policies[0].includes("'unsafe-eval'") || policies[1] !== policies[2])
+  throw new Error('Unexpected main/canvas CSP policies');
 const mime: Record<string, string> = {
   '.html': 'text/html',
   '.js': 'text/javascript',
@@ -24,74 +20,74 @@ const mime: Record<string, string> = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.webp': 'image/webp',
-}
+};
 const server = Bun.serve({
   port: 0,
   async fetch(request) {
-    const path = decodeURIComponent(new URL(request.url).pathname)
-    let file = resolve(root, `.${path}`)
+    const path = decodeURIComponent(new URL(request.url).pathname);
+    let file = resolve(root, `.${path}`);
     if (!file.startsWith(`${root}/`) && file !== root)
-      return new Response('Not found', { status: 404 })
-    if (path.endsWith('/')) file = join(file, 'index.html')
-    if (!(await Bun.file(file).exists())) file = join(root, 'index.html')
+      return new Response('Not found', { status: 404 });
+    if (path.endsWith('/')) file = join(file, 'index.html');
+    if (!(await Bun.file(file).exists())) file = join(root, 'index.html');
     const responseHeaders: Record<string, string> = {
       'Content-Type': mime[extname(file)] ?? 'application/octet-stream',
-    }
+    };
     if (extname(file) === '.html')
       responseHeaders['Content-Security-Policy'] =
-        path === '/bloom-preview.html' ? policies[1] : policies[0]
-    if (path.startsWith('/assets/')) responseHeaders['Access-Control-Allow-Origin'] = '*'
-    return new Response(Bun.file(file), { headers: responseHeaders })
+        path === '/bloom-preview.html' ? policies[1] : policies[0];
+    if (path.startsWith('/assets/')) responseHeaders['Access-Control-Allow-Origin'] = '*';
+    return new Response(Bun.file(file), { headers: responseHeaders });
   },
-})
-const origin = `http://localhost:${server.port}`
+});
+const origin = `http://localhost:${server.port}`;
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.CHROME_EXECUTABLE || undefined,
   args: process.env.CHROME_EXECUTABLE ? ['--no-sandbox', '--disable-dev-shm-usage'] : [],
-})
-const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
-const page = await context.newPage()
+});
+const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+const page = await context.newPage();
 const invariant = (value: unknown, message: string) => {
-  if (!value) throw new Error(message)
-}
+  if (!value) throw new Error(message);
+};
 try {
   // Third-party services are outside this UI gate; the app's fetch fallbacks remain exercised.
   await context.route('**/*', (route) =>
     new URL(route.request().url()).origin === origin ? route.continue() : route.abort(),
-  )
-  await page.goto(`${origin}/brand/`)
-  await page.getByRole('heading', { name: 'Technology belongs to people.' }).waitFor()
-  await page.getByRole('button', { name: 'Support', exact: true }).click()
+  );
+  await page.goto(`${origin}/brand/`);
+  await page.getByRole('heading', { name: 'Technology belongs to people.' }).waitFor();
+  await page.getByRole('button', { name: 'Support', exact: true }).click();
   await page
     .getByRole('heading', { name: 'Your message has not been sent.', exact: true })
-    .waitFor()
-  await page.getByRole('button', { name: 'Orange recipe', exact: true }).click()
+    .waitFor();
+  await page.getByRole('button', { name: 'Orange recipe', exact: true }).click();
   invariant(
     (await page.getByTestId('brand-colour-composition').getAttribute('data-recipe')) === 'orange',
     'Colour studio did not apply the selected recipe',
-  )
-  console.log('PASS brand guide: chapters, voice examples and recipes')
+  );
+  console.log('PASS brand guide: chapters, voice examples and recipes');
 
-  await page.goto(`${origin}/developers/docs/bloom/components/`)
-  await page.getByPlaceholder('Search buttons, composers, calendars…').fill('button')
-  await page.getByRole('link', { name: 'Button', exact: true }).waitFor()
+  await page.goto(`${origin}/developers/docs/bloom/components/`);
+  await page.getByPlaceholder('Search buttons, composers, calendars…').fill('button');
+  await page.getByRole('link', { name: 'Button', exact: true }).waitFor();
   invariant(
     (await page.getByText('Example pending', { exact: true }).count()) === 0,
     'Empty preview tiles remain',
-  )
-  await page.goto(`${origin}/developers/docs/bloom/playground/`)
-  await page.waitForURL(`${origin}/developers/docs/bloom/components/`)
-  console.log('PASS retired playground redirects to the component catalog')
+  );
+  await page.goto(`${origin}/developers/docs/bloom/playground/`);
+  await page.waitForURL(`${origin}/developers/docs/bloom/components/`);
+  console.log('PASS retired playground redirects to the component catalog');
 
-  await page.goto(`${origin}/inbox/`)
-  await page.getByRole('heading', { name: 'Email. Room to think.' }).waitFor()
-  await page.getByLabel('Search example messages').fill('Saturday')
-  await page.getByRole('button', { name: /Sam.*See you on Saturday/ }).click()
-  await page.getByLabel('Try a reply').fill('See you there.')
-  await page.getByRole('button', { name: 'Preview reply', exact: true }).click()
-  await page.getByText('Example reply added. No message was sent.').waitFor()
-  console.log('PASS Inbox: search, conversation and local reply illustration')
+  await page.goto(`${origin}/inbox/`);
+  await page.getByRole('heading', { name: 'Email. Room to think.' }).waitFor();
+  await page.getByLabel('Search example messages').fill('Saturday');
+  await page.getByRole('button', { name: /Sam.*See you on Saturday/ }).click();
+  await page.getByLabel('Try a reply').fill('See you there.');
+  await page.getByRole('button', { name: 'Preview reply', exact: true }).click();
+  await page.getByText('Example reply added. No message was sent.').waitFor();
+  console.log('PASS Inbox: search, conversation and local reply illustration');
 
   for (const path of [
     '/brand/',
@@ -99,16 +95,16 @@ try {
     '/developers/docs/bloom/components/',
     '/developers/docs/bloom/playground/',
   ]) {
-    await page.setViewportSize({ width: 390, height: 844 })
-    await page.goto(`${origin}${path}`)
-    await page.locator('h1').first().waitFor()
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${origin}${path}`);
+    await page.locator('h1').first().waitFor();
     invariant(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
       `Horizontal overflow at ${path}`,
-    )
+    );
   }
-  console.log('PASS mobile layout: brand, Inbox, catalog and playground')
+  console.log('PASS mobile layout: brand, Inbox, catalog and playground');
 } finally {
-  await browser.close()
-  server.stop(true)
+  await browser.close();
+  server.stop(true);
 }

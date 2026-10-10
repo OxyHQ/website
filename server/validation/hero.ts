@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 /**
  * Shared zod schemas for the hero singleton.
@@ -14,14 +14,14 @@ import { z } from 'zod'
  * The model stores both forms — strings are returned as-is to the client,
  * ObjectIds are populated and normalized to URL strings on the frontend.
  */
-const mediaRefSchema = z.string()
+const mediaRefSchema = z.string();
 
 export const heroUpdateSchema = z.object({
   title: z.string().optional(),
   backgroundVideoWebm: mediaRefSchema.optional(),
   backgroundVideoMp4: mediaRefSchema.optional(),
   backgroundPoster: mediaRefSchema.optional(),
-})
+});
 
 /**
  * Raw zod shapes (not wrapped in z.object) for use as MCP tool input schemas.
@@ -32,6 +32,6 @@ export const heroUpdateRawShape = {
   backgroundVideoWebm: mediaRefSchema.optional(),
   backgroundVideoMp4: mediaRefSchema.optional(),
   backgroundPoster: mediaRefSchema.optional(),
-}
+};
 
-export type HeroUpdate = z.infer<typeof heroUpdateSchema>
+export type HeroUpdate = z.infer<typeof heroUpdateSchema>;

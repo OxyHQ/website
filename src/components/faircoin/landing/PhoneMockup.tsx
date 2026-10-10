@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'framer-motion';
 
 /**
  * PhoneMockup — a 1:1 web replica of the FAIRWallet home screen.
@@ -28,24 +28,24 @@ import { motion } from 'framer-motion'
  * viewport entry; no continuous animation.
  */
 
-const WALLET_HERO_URL = '/images/faircoin/wallet-hero.jpg'
+const WALLET_HERO_URL = '/images/faircoin/wallet-hero.jpg';
 
 const PHUDU_BLACK: React.CSSProperties = {
   fontFamily: "'Phudu', system-ui, sans-serif",
   fontWeight: 900,
-}
+};
 const PHUDU_LIGHT: React.CSSProperties = {
   fontFamily: "'Phudu', system-ui, sans-serif",
   fontWeight: 300,
-}
+};
 const PHUDU_SEMIBOLD: React.CSSProperties = {
   fontFamily: "'Phudu', system-ui, sans-serif",
   fontWeight: 700,
-}
+};
 
 const TEXT_SHADOW_LIGHT: React.CSSProperties = {
   textShadow: '0 1px 2px color-mix(in srgb, var(--background) 50%, transparent)',
-}
+};
 
 const TAB_ITEMS = [
   { label: 'Home', icon: 'wallet', active: true },
@@ -53,7 +53,7 @@ const TAB_ITEMS = [
   { label: 'Receive', icon: 'arrow-down', active: false },
   { label: 'Buy', icon: 'plus', active: false },
   { label: 'Settings', icon: 'cog', active: false },
-] as const
+] as const;
 
 const ACTION_ITEMS = [
   { label: 'Send', icon: 'arrow-up' as const },
@@ -62,26 +62,18 @@ const ACTION_ITEMS = [
   { label: 'Places', icon: 'pin' as const },
   { label: 'Contacts', icon: 'people' as const },
   { label: 'Nodes', icon: 'server' as const },
-]
+];
 
-type IconName =
-  | 'arrow-up'
-  | 'arrow-down'
-  | 'plus'
-  | 'pin'
-  | 'people'
-  | 'server'
-  | 'cog'
-  | 'wallet'
+type IconName = 'arrow-up' | 'arrow-down' | 'plus' | 'pin' | 'people' | 'server' | 'cog' | 'wallet';
 
-type TxType = 'receive' | 'send' | 'masternode_reward'
+type TxType = 'receive' | 'send' | 'masternode_reward';
 
 interface TxItem {
-  type: TxType
-  title: string
-  address: string
-  amount: string
-  time: string
+  type: TxType;
+  title: string;
+  address: string;
+  amount: string;
+  time: string;
 }
 
 const TX_ITEMS: readonly TxItem[] = [
@@ -113,7 +105,7 @@ const TX_ITEMS: readonly TxItem[] = [
     amount: '+50.00',
     time: 'Yesterday',
   },
-]
+];
 
 const TX_STYLE: Record<
   TxType,
@@ -137,7 +129,7 @@ const TX_STYLE: Record<
     iconColor: 'text-info-text',
     amountColor: 'text-info-text',
   },
-}
+};
 
 export default function PhoneMockup() {
   return (
@@ -169,7 +161,10 @@ export default function PhoneMockup() {
             <span style={TEXT_SHADOW_LIGHT}>9:41</span>
             <span
               className="flex items-center gap-1"
-              style={{ filter: 'drop-shadow(0 1px 2px color-mix(in srgb, var(--background) 50%, transparent))' }}
+              style={{
+                filter:
+                  'drop-shadow(0 1px 2px color-mix(in srgb, var(--background) 50%, transparent))',
+              }}
             >
               <SignalGlyph />
               <WifiGlyph />
@@ -222,10 +217,7 @@ export default function PhoneMockup() {
           {/* ---- Balance (matches real BalanceDisplay size="lg") ---- */}
           <div className="relative z-10 flex flex-col items-center pb-6">
             <div className="flex items-baseline">
-              <span
-                className="mr-1 text-[34px] leading-none text-foreground"
-                style={PHUDU_LIGHT}
-              >
+              <span className="mr-1 text-[34px] leading-none text-foreground" style={PHUDU_LIGHT}>
                 {'\u229C'}
               </span>
               <span
@@ -235,9 +227,7 @@ export default function PhoneMockup() {
                 247.50
               </span>
             </div>
-            <p className="mt-1 text-[13px] text-muted-foreground">
-              {'\u2248'} $247.50 USD
-            </p>
+            <p className="mt-1 text-[13px] text-muted-foreground">{'\u2248'} $247.50 USD</p>
             <div className="mt-3 rounded-full bg-success-subtle px-2 py-0.5">
               <span className="text-[11px] font-bold text-success-text">+2.0% today</span>
             </div>
@@ -270,9 +260,7 @@ export default function PhoneMockup() {
               {TX_ITEMS.map((tx, idx) => (
                 <div key={`${tx.type}-${idx}`}>
                   <TransactionRow tx={tx} />
-                  {idx < TX_ITEMS.length - 1 && (
-                    <div className="ml-[60px] h-px bg-border" />
-                  )}
+                  {idx < TX_ITEMS.length - 1 && <div className="ml-[60px] h-px bg-border" />}
                 </div>
               ))}
             </div>
@@ -302,7 +290,7 @@ export default function PhoneMockup() {
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 /* ───────────────────────── Sub-components ───────────────────────── */
@@ -315,16 +303,14 @@ function ActionButton({ icon, label }: { icon: IconName; label: string }) {
       </div>
       <span className="mt-1.5 text-[10px] font-medium text-muted-foreground">{label}</span>
     </div>
-  )
+  );
 }
 
 function TransactionRow({ tx }: { tx: TxItem }) {
-  const style = TX_STYLE[tx.type]
+  const style = TX_STYLE[tx.type];
   return (
     <div className="flex items-center px-3 py-3">
-      <div
-        className={`flex h-10 w-10 items-center justify-center rounded-full ${style.bg} mr-3`}
-      >
+      <div className={`flex h-10 w-10 items-center justify-center rounded-full ${style.bg} mr-3`}>
         <ActionIcon name={style.icon} size={18} className={style.iconColor} />
       </div>
       <div className="min-w-0 flex-1 pr-2">
@@ -339,7 +325,7 @@ function TransactionRow({ tx }: { tx: TxItem }) {
         <span className="text-[9px] text-muted-foreground">{tx.time}</span>
       </div>
     </div>
-  )
+  );
 }
 
 /* ───────────────────────── Icon glyphs ───────────────────────── */
@@ -349,18 +335,18 @@ function ActionIcon({
   size,
   className = '',
 }: {
-  name: IconName
-  size: number
-  className?: string
+  name: IconName;
+  size: number;
+  className?: string;
 }) {
-  const stroke = 2.2
+  const stroke = 2.2;
   const props = {
     width: size,
     height: size,
     viewBox: '0 0 24 24',
     fill: 'none',
     className,
-  }
+  };
   if (name === 'arrow-up') {
     return (
       <svg {...props}>
@@ -372,7 +358,7 @@ function ActionIcon({
           strokeLinejoin="round"
         />
       </svg>
-    )
+    );
   }
   if (name === 'arrow-down') {
     return (
@@ -385,7 +371,7 @@ function ActionIcon({
           strokeLinejoin="round"
         />
       </svg>
-    )
+    );
   }
   if (name === 'plus') {
     return (
@@ -397,7 +383,7 @@ function ActionIcon({
           strokeLinecap="round"
         />
       </svg>
-    )
+    );
   }
   if (name === 'pin') {
     return (
@@ -411,7 +397,7 @@ function ActionIcon({
         />
         <circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth={stroke} />
       </svg>
-    )
+    );
   }
   if (name === 'people') {
     return (
@@ -424,20 +410,12 @@ function ActionIcon({
           strokeLinejoin="round"
         />
       </svg>
-    )
+    );
   }
   if (name === 'server') {
     return (
       <svg {...props}>
-        <rect
-          x="3"
-          y="4"
-          width="18"
-          height="7"
-          rx="2"
-          stroke="currentColor"
-          strokeWidth={stroke}
-        />
+        <rect x="3" y="4" width="18" height="7" rx="2" stroke="currentColor" strokeWidth={stroke} />
         <rect
           x="3"
           y="13"
@@ -447,9 +425,14 @@ function ActionIcon({
           stroke="currentColor"
           strokeWidth={stroke}
         />
-        <path d="M7 7.5h.01M7 16.5h.01" stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" />
+        <path
+          d="M7 7.5h.01M7 16.5h.01"
+          stroke="currentColor"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+        />
       </svg>
-    )
+    );
   }
   if (name === 'cog') {
     return (
@@ -463,7 +446,7 @@ function ActionIcon({
           strokeLinejoin="round"
         />
       </svg>
-    )
+    );
   }
   if (name === 'wallet') {
     return (
@@ -484,9 +467,9 @@ function ActionIcon({
           strokeLinecap="round"
         />
       </svg>
-    )
+    );
   }
-  return null
+  return null;
 }
 
 function ChevronDownGlyph() {
@@ -500,7 +483,7 @@ function ChevronDownGlyph() {
         strokeLinejoin="round"
       />
     </svg>
-  )
+  );
 }
 
 function SignalGlyph() {
@@ -511,7 +494,7 @@ function SignalGlyph() {
       <rect x="7" y="2" width="2" height="8" rx="0.4" />
       <rect x="10.5" y="0" width="2" height="10" rx="0.4" />
     </svg>
-  )
+  );
 }
 
 function WifiGlyph() {
@@ -524,7 +507,7 @@ function WifiGlyph() {
         strokeLinecap="round"
       />
     </svg>
-  )
+  );
 }
 
 function BatteryGlyph() {
@@ -534,5 +517,5 @@ function BatteryGlyph() {
       <rect x="2" y="2" width="13" height="7" rx="1" fill="currentColor" />
       <rect x="20" y="3.5" width="1.5" height="4" rx="0.4" fill="currentColor" />
     </svg>
-  )
+  );
 }

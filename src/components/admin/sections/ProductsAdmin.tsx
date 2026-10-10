@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link } from '../../../lib/navigation'
+import { useState } from 'react';
+import { Link } from '../../../lib/navigation';
 import {
   useProducts,
   useCategories,
@@ -7,48 +7,48 @@ import {
   resolveProductCategoryId,
   type ProductRecord,
   type ProductLifecycle,
-} from '../../../api/hooks'
-import { apiFetch } from '../../../api/client'
-import { Button } from '@oxy.so/bloom/button'
-import { Checkbox } from '@oxy.so/bloom/checkbox'
-import { LabeledTextField } from '../LabeledTextField'
-import { Textarea } from '@oxy.so/bloom/textarea'
-import { Label } from '@oxy.so/bloom/label'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
-import MediaPicker from '../MediaPicker'
-import OptionSelect from '../../ui/OptionSelect'
+} from '../../../api/hooks';
+import { apiFetch } from '../../../api/client';
+import { Button } from '@oxy.so/bloom/button';
+import { Checkbox } from '@oxy.so/bloom/checkbox';
+import { LabeledTextField } from '../LabeledTextField';
+import { Textarea } from '@oxy.so/bloom/textarea';
+import { Label } from '@oxy.so/bloom/label';
+import ConfirmDialog from '../ConfirmDialog';
+import { useConfirmAction } from '../useConfirmAction';
+import MediaPicker from '../MediaPicker';
+import OptionSelect from '../../ui/OptionSelect';
 
 function mediaId(logo: unknown): string {
-  if (!logo) return ''
-  if (typeof logo === 'string') return logo
+  if (!logo) return '';
+  if (typeof logo === 'string') return logo;
   if (typeof logo === 'object' && logo !== null && '_id' in logo) {
-    const id = (logo as { _id?: unknown })._id
-    return typeof id === 'string' ? id : ''
+    const id = (logo as { _id?: unknown })._id;
+    return typeof id === 'string' ? id : '';
   }
-  return ''
+  return '';
 }
 
 function mediaUrl(logo: unknown): string {
-  if (!logo) return ''
-  if (typeof logo === 'string') return logo.startsWith('http') || logo.startsWith('/') ? logo : ''
+  if (!logo) return '';
+  if (typeof logo === 'string') return logo.startsWith('http') || logo.startsWith('/') ? logo : '';
   if (typeof logo === 'object' && logo !== null) {
-    const obj = logo as { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } }
-    return obj.url || obj.thumbnails?.lg || obj.thumbnails?.md || obj.thumbnails?.sm || ''
+    const obj = logo as { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } };
+    return obj.url || obj.thumbnails?.lg || obj.thumbnails?.md || obj.thumbnails?.sm || '';
   }
-  return ''
+  return '';
 }
 
 function ProductMark({ product, size = 'md' }: { product: ProductRecord; size?: 'sm' | 'md' }) {
   // When logo is a plain id string (list view after normalizeLogo), pull the Media doc
   // so we can render the actual image instead of just the letter mark.
-  const logoIdOrObject = product.logo
-  const needsLookup = typeof logoIdOrObject === 'string' && logoIdOrObject.length > 0
-  const { data: lookedUp } = useMediaItem(needsLookup ? (logoIdOrObject as string) : '')
-  const directUrl = mediaUrl(logoIdOrObject)
-  const logoUrl = directUrl || mediaUrl(lookedUp)
-  const hasLogo = Boolean(logoUrl)
-  const sizeClass = size === 'sm' ? 'size-10 rounded-xl text-sm' : 'size-11 rounded-2xl text-lg'
+  const logoIdOrObject = product.logo;
+  const needsLookup = typeof logoIdOrObject === 'string' && logoIdOrObject.length > 0;
+  const { data: lookedUp } = useMediaItem(needsLookup ? (logoIdOrObject as string) : '');
+  const directUrl = mediaUrl(logoIdOrObject);
+  const logoUrl = directUrl || mediaUrl(lookedUp);
+  const hasLogo = Boolean(logoUrl);
+  const sizeClass = size === 'sm' ? 'size-10 rounded-xl text-sm' : 'size-11 rounded-2xl text-lg';
   return (
     <span
       className={`relative flex shrink-0 items-center justify-center overflow-hidden font-semibold tracking-tight ${sizeClass} ${
@@ -56,7 +56,14 @@ function ProductMark({ product, size = 'md' }: { product: ProductRecord; size?: 
       }`}
       // The mark sits on the product's own brand colour, not on the page, so
       // it takes `.force-dark`: `--foreground` is light ink in either theme.
-      style={hasLogo ? undefined : { backgroundColor: product.brand, color: product.brandForeground || 'var(--foreground)' }}
+      style={
+        hasLogo
+          ? undefined
+          : {
+              backgroundColor: product.brand,
+              color: product.brandForeground || 'var(--foreground)',
+            }
+      }
       aria-hidden="true"
     >
       {hasLogo ? (
@@ -71,7 +78,7 @@ function ProductMark({ product, size = 'md' }: { product: ProductRecord; size?: 
         product.mark || '?'
       )}
     </span>
-  )
+  );
 }
 
 function emptyProduct(): ProductRecord {
@@ -97,7 +104,7 @@ function emptyProduct(): ProductRecord {
     showInNav: true,
     navOpensApp: false,
     order: 0,
-  }
+  };
 }
 
 // Only collapse populated refs to plain id strings when we're about to
@@ -108,61 +115,69 @@ function stripRefsForEditing(product: ProductRecord): ProductRecord {
     ...product,
     logo: mediaId(product.logo) || null,
     category: resolveProductCategoryId(product) || null,
-  }
+  };
 }
 
 function slugify(input: string): string {
-  return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 export default function ProductsAdmin() {
-  const { data, refetch } = useProducts()
-  const { data: categoriesData } = useCategories('apps')
-  const categories = categoriesData ?? []
-  const [editing, setEditing] = useState<ProductRecord | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { data, refetch } = useProducts();
+  const { data: categoriesData } = useCategories('apps');
+  const categories = categoriesData ?? [];
+  const [editing, setEditing] = useState<ProductRecord | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const products = data ?? []
-  const liveProducts = products.filter((p) => p.lifecycle === 'live')
-  const newProducts = products.filter((p) => p.lifecycle === 'in-development')
+  const products = data ?? [];
+  const liveProducts = products.filter((p) => p.lifecycle === 'live');
+  const newProducts = products.filter((p) => p.lifecycle === 'in-development');
 
   const save = async () => {
-    if (!editing) return
-    setError(null)
-    setSaving(true)
+    if (!editing) return;
+    setError(null);
+    setSaving(true);
     try {
-      const payload: Partial<ProductRecord> = { ...editing }
-      if (!payload.brandForeground) delete payload.brandForeground
-      if (!payload.healthUrl) delete payload.healthUrl
-      if (!payload.landingUrl) delete payload.landingUrl
+      const payload: Partial<ProductRecord> = { ...editing };
+      if (!payload.brandForeground) delete payload.brandForeground;
+      if (!payload.healthUrl) delete payload.healthUrl;
+      if (!payload.landingUrl) delete payload.landingUrl;
       if (editing._id) {
-        await apiFetch(`/products/${editing.productId}`, { method: 'PUT', body: JSON.stringify(payload) })
+        await apiFetch(`/products/${editing.productId}`, {
+          method: 'PUT',
+          body: JSON.stringify(payload),
+        });
       } else {
-        await apiFetch('/products', { method: 'POST', body: JSON.stringify(payload) })
+        await apiFetch('/products', { method: 'POST', body: JSON.stringify(payload) });
       }
-      await refetch()
-      setEditing(null)
+      await refetch();
+      setEditing(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save product')
+      setError(err instanceof Error ? err.message : 'Failed to save product');
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const deleteAction = useConfirmAction<ProductRecord>({
     onConfirm: async (product) => {
-      await apiFetch(`/products/${product.productId}`, { method: 'DELETE' })
-      await refetch()
+      await apiFetch(`/products/${product.productId}`, { method: 'DELETE' });
+      await refetch();
     },
-  })
+  });
 
   if (editing) {
-    const isNew = !editing._id
+    const isNew = !editing._id;
     return (
       <div>
         <div className="mb-4">
-          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>
+            &larr; Back to list
+          </Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {isNew ? 'New product' : `Edit: ${editing.name}`}
@@ -179,7 +194,7 @@ export default function ProductsAdmin() {
                   name,
                   ...(isNew && !editing.productId ? { productId: slugify(name) } : {}),
                   ...(isNew && !editing.mark ? { mark: name.charAt(0).toUpperCase() } : {}),
-                })
+                });
               }}
             />
             <div className="flex flex-col gap-1.5">
@@ -189,7 +204,11 @@ export default function ProductsAdmin() {
                 onValueChange={(value) => setEditing({ ...editing, productId: slugify(value) })}
                 disabled={!isNew}
               />
-              {!isNew && <p className="text-xs text-muted-foreground">Id cannot be changed after creation.</p>}
+              {!isNew && (
+                <p className="text-xs text-muted-foreground">
+                  Id cannot be changed after creation.
+                </p>
+              )}
             </div>
           </div>
 
@@ -215,7 +234,9 @@ export default function ProductsAdmin() {
                 onValueChange={(href) => setEditing({ ...editing, href })}
                 placeholder="https://alia.onl/"
               />
-              <p className="text-xs text-muted-foreground">The actual running app, where "Open" buttons go. External URL or internal path.</p>
+              <p className="text-xs text-muted-foreground">
+                The actual running app, where "Open" buttons go. External URL or internal path.
+              </p>
             </div>
             <div className="flex flex-col gap-1.5">
               <LabeledTextField
@@ -224,7 +245,10 @@ export default function ProductsAdmin() {
                 onValueChange={(landingUrl) => setEditing({ ...editing, landingUrl })}
                 placeholder="/alia"
               />
-              <p className="text-xs text-muted-foreground">Local marketing/learn-more page on this site. When set, the /apps card and navbar link here first.</p>
+              <p className="text-xs text-muted-foreground">
+                Local marketing/learn-more page on this site. When set, the /apps card and navbar
+                link here first.
+              </p>
             </div>
             <div className="flex flex-col gap-1.5">
               <LabeledTextField
@@ -233,7 +257,9 @@ export default function ProductsAdmin() {
                 onValueChange={(healthUrl) => setEditing({ ...editing, healthUrl })}
                 placeholder="Defaults to App URL if empty"
               />
-              <p className="text-xs text-muted-foreground">Used by /status. Point at an unauthenticated health endpoint when possible.</p>
+              <p className="text-xs text-muted-foreground">
+                Used by /status. Point at an unauthenticated health endpoint when possible.
+              </p>
             </div>
           </div>
 
@@ -262,7 +288,9 @@ export default function ProductsAdmin() {
               folder="products"
               accept="image/*"
             />
-            <p className="text-xs text-muted-foreground">Upload or pick a square app icon. When set, it replaces the letter mark.</p>
+            <p className="text-xs text-muted-foreground">
+              Upload or pick a square app icon. When set, it replaces the letter mark.
+            </p>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
@@ -312,8 +340,14 @@ export default function ProductsAdmin() {
                 emptyIsPlaceholder
               />
               <p className="text-xs text-muted-foreground">
-                Manage in <Link to="/admin/categories" className="underline underline-offset-2 hover:text-foreground">Categories</Link>.
-                Drives grouping on /apps, /status, and the Ecosystem navbar dropdown.
+                Manage in{' '}
+                <Link
+                  to="/admin/categories"
+                  className="underline underline-offset-2 hover:text-foreground"
+                >
+                  Categories
+                </Link>
+                . Drives grouping on /apps, /status, and the Ecosystem navbar dropdown.
               </p>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -321,7 +355,9 @@ export default function ProductsAdmin() {
               <OptionSelect
                 label="Lifecycle"
                 value={editing.lifecycle}
-                onValueChange={(value) => setEditing({ ...editing, lifecycle: value as ProductLifecycle })}
+                onValueChange={(value) =>
+                  setEditing({ ...editing, lifecycle: value as ProductLifecycle })
+                }
                 options={[
                   { value: 'live', label: 'Live (built and shipped)' },
                   { value: 'in-development', label: 'In development (new)' },
@@ -338,8 +374,12 @@ export default function ProductsAdmin() {
 
           {/* Surface toggles */}
           <div className="rounded-xl border border-border p-4">
-            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Surfaces</div>
-            <p className="mt-1 text-xs text-muted-foreground">Which public surfaces should this product appear on?</p>
+            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Surfaces
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Which public surfaces should this product appear on?
+            </p>
             <div className="mt-3 grid grid-cols-3 gap-3">
               <Checkbox
                 label="/apps"
@@ -373,8 +413,12 @@ export default function ProductsAdmin() {
             <div className="inline-flex items-center gap-3 rounded-2xl border border-border bg-background p-4">
               <ProductMark product={editing} />
               <div>
-                <div className="text-xs uppercase tracking-wider text-muted-foreground">{editing.tagline || 'tagline'}</div>
-                <div className="text-lg font-medium text-foreground">{editing.name || 'Product name'}</div>
+                <div className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {editing.tagline || 'tagline'}
+                </div>
+                <div className="text-lg font-medium text-foreground">
+                  {editing.name || 'Product name'}
+                </div>
               </div>
             </div>
           </div>
@@ -385,11 +429,13 @@ export default function ProductsAdmin() {
             <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving…' : 'Save changes'}
             </Button>
-            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>
+              Cancel
+            </Button>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -397,9 +443,14 @@ export default function ProductsAdmin() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold text-foreground">Products</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Single source of truth for every Oxy app. Powers /apps, /status, and the ecosystem navbar dropdown.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Single source of truth for every Oxy app. Powers /apps, /status, and the ecosystem
+            navbar dropdown.
+          </p>
         </div>
-        <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyProduct())}>Add product</Button>
+        <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyProduct())}>
+          Add product
+        </Button>
       </div>
 
       {[
@@ -407,33 +458,46 @@ export default function ProductsAdmin() {
         { label: 'New and in development', items: newProducts },
       ].map((group) => (
         <section key={group.label} className="mt-8">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{group.label}</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            {group.label}
+          </h3>
           {group.items.length === 0 ? (
             <p className="mt-3 text-sm text-muted-foreground">Nothing in this group yet.</p>
           ) : (
             <div className="mt-3 divide-y divide-border rounded-2xl border border-border">
               {group.items.map((product) => {
-                const categoryLabel = categories.find((c) => c.slug === product.section)?.label ?? product.section
+                const categoryLabel =
+                  categories.find((c) => c.slug === product.section)?.label ?? product.section;
                 return (
-                <div key={product.productId} className="flex items-center gap-4 px-4 py-3">
-                  <ProductMark product={product} size="sm" />
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-medium text-foreground">{product.name}</div>
-                    <div className="truncate text-xs text-muted-foreground">
-                      <span className="font-mono">{product.productId}</span> · {categoryLabel} · {product.href}
+                  <div key={product.productId} className="flex items-center gap-4 px-4 py-3">
+                    <ProductMark product={product} size="sm" />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-medium text-foreground">
+                        {product.name}
+                      </div>
+                      <div className="truncate text-xs text-muted-foreground">
+                        <span className="font-mono">{product.productId}</span> · {categoryLabel} ·{' '}
+                        {product.href}
+                      </div>
+                    </div>
+                    <div className="hidden shrink-0 gap-1 text-xs text-muted-foreground md:flex">
+                      {product.showOnProducts && <span>prod</span>}
+                      {product.showOnStatus && <span>· status</span>}
+                      {product.showInNav && <span>· nav</span>}
+                    </div>
+                    <div className="shrink-0">
+                      <Button
+                        appearance="subtle"
+                        onPress={() => setEditing(stripRefsForEditing(product))}
+                      >
+                        Edit
+                      </Button>
+                      <Button appearance="subtle" onPress={() => deleteAction.request(product)}>
+                        Delete
+                      </Button>
                     </div>
                   </div>
-                  <div className="hidden shrink-0 gap-1 text-xs text-muted-foreground md:flex">
-                    {product.showOnProducts && <span>prod</span>}
-                    {product.showOnStatus && <span>· status</span>}
-                    {product.showInNav && <span>· nav</span>}
-                  </div>
-                  <div className="shrink-0">
-                    <Button appearance="subtle" onPress={() => setEditing(stripRefsForEditing(product))}>Edit</Button>
-                    <Button appearance="subtle" onPress={() => deleteAction.request(product)}>Delete</Button>
-                  </div>
-                </div>
-                )
+                );
               })}
             </div>
           )}
@@ -442,7 +506,11 @@ export default function ProductsAdmin() {
 
       <ConfirmDialog
         control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.name || deleteAction.target.productId}”?` : 'Delete product?'}
+        title={
+          deleteAction.target
+            ? `Delete “${deleteAction.target.name || deleteAction.target.productId}”?`
+            : 'Delete product?'
+        }
         description="This permanently removes the product entry. This cannot be undone."
         confirmLabel="Delete"
         tone="danger"
@@ -451,5 +519,5 @@ export default function ProductsAdmin() {
         onConfirm={deleteAction.confirm}
       />
     </div>
-  )
+  );
 }

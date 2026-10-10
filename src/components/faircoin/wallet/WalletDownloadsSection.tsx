@@ -1,22 +1,21 @@
-import { motion } from 'framer-motion'
-import type { BloomIconComponent } from '@oxy.so/bloom/icons'
-import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
-import { RiAndroidFill } from '@oxy.so/bloom/icons/RiAndroidFill'
-import { RiAppleFill } from '@oxy.so/bloom/icons/RiAppleFill'
-import { RiComputerLine } from '@oxy.so/bloom/icons/RiComputerLine'
-import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine'
-import { RiTerminalBoxLine } from '@oxy.so/bloom/icons/RiTerminalBoxLine'
+import { motion } from 'framer-motion';
+import type { BloomIconComponent } from '@oxy.so/bloom/icons';
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine';
+import { RiAndroidFill } from '@oxy.so/bloom/icons/RiAndroidFill';
+import { RiAppleFill } from '@oxy.so/bloom/icons/RiAppleFill';
+import { RiComputerLine } from '@oxy.so/bloom/icons/RiComputerLine';
+import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine';
+import { RiTerminalBoxLine } from '@oxy.so/bloom/icons/RiTerminalBoxLine';
 
 interface DownloadOption {
-  platform: string
-  description: string
-  primaryHref: string
-  primaryLabel: string
-  icon: BloomIconComponent
+  platform: string;
+  description: string;
+  primaryHref: string;
+  primaryLabel: string;
+  icon: BloomIconComponent;
 }
 
-const RELEASES_URL =
-  'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest'
+const RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest';
 
 const DOWNLOADS: readonly DownloadOption[] = [
   {
@@ -61,7 +60,7 @@ const DOWNLOADS: readonly DownloadOption[] = [
     primaryLabel: 'Get FAIRNode',
     icon: RiServerLine,
   },
-]
+];
 
 export default function WalletDownloadsSection() {
   return (
@@ -93,8 +92,7 @@ export default function WalletDownloadsSection() {
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
             className="mt-5 text-pretty text-lg leading-relaxed text-muted-foreground"
           >
-            Same wallet on every device. Sign in with your seed and your
-            balance is right there.
+            Same wallet on every device. Sign in with your seed and your balance is right there.
           </motion.p>
         </div>
 
@@ -115,7 +113,10 @@ export default function WalletDownloadsSection() {
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                   <download.icon width={24} height={24} fill="currentColor" />
                 </span>
-                <span aria-hidden="true" className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground">
+                <span
+                  aria-hidden="true"
+                  className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
+                >
                   <RiArrowRightUpLine width={16} height={16} fill="currentColor" />
                 </span>
               </div>
@@ -133,5 +134,5 @@ export default function WalletDownloadsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

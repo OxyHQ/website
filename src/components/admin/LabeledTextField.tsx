@@ -1,5 +1,5 @@
-import { Field } from '@oxy.so/bloom/field'
-import { TextFieldInput, type TextFieldInputProps } from '@oxy.so/bloom/text-field'
+import { Field } from '@oxy.so/bloom/field';
+import { TextFieldInput, type TextFieldInputProps } from '@oxy.so/bloom/text-field';
 
 /**
  * `TextFieldInput` rendered standalone (no enclosing `<TextField>`/`<Field>`)
@@ -14,5 +14,5 @@ export function LabeledTextField({ label, ...rest }: TextFieldInputProps) {
     <Field label={label}>
       <TextFieldInput label={label} {...rest} />
     </Field>
-  )
+  );
 }

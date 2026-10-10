@@ -1,9 +1,17 @@
-import { motion } from 'framer-motion'
-import { PAY_FEATURES } from './data'
-import PeableAccountsCloud from './PeableAccountsCloud'
-import PeableFAQ from './PeableFAQ'
-import { CashbackIcon, DotField, ShieldCheckIcon, TrendingIcon } from './PeableIcons'
-import { ActivityScene, CardArt, CardScene, CashbackScene, SecurityScene, SupportScene, TransfersScene } from './PeableScenes'
+import { motion } from 'framer-motion';
+import { PAY_FEATURES } from './data';
+import PeableAccountsCloud from './PeableAccountsCloud';
+import PeableFAQ from './PeableFAQ';
+import { CashbackIcon, DotField, ShieldCheckIcon, TrendingIcon } from './PeableIcons';
+import {
+  ActivityScene,
+  CardArt,
+  CardScene,
+  CashbackScene,
+  SecurityScene,
+  SupportScene,
+  TransfersScene,
+} from './PeableScenes';
 
 /** Maps a feature's `scene` key to the mock rendered beside its copy. */
 const SCENES = {
@@ -13,39 +21,47 @@ const SCENES = {
   cashback: CashbackScene,
   security: SecurityScene,
   support: SupportScene,
-} as const
+} as const;
 
 const HERO_LINES = [
   ['Money', 'that', 'answers', 'to', 'you,'],
   ['not', 'to', 'an', 'advertiser.'],
-]
+];
 
 /** Hero headline — each word rises into place, so the line reads as it lands. */
 function HeroHeadline() {
-  let word = 0
+  let word = 0;
   return (
-    <h1 className="whitespace-pre-line text-balance text-center font-display text-h3 text-fg-primary tablet-lg:text-display" style={{ perspective: '1200px' }}>
+    <h1
+      className="whitespace-pre-line text-balance text-center font-display text-h3 text-fg-primary tablet-lg:text-display"
+      style={{ perspective: '1200px' }}
+    >
       {HERO_LINES.map((line, lineIndex) => (
         <span key={lineIndex}>
-          {line.map((text) => {
-            const delay = word++ * 0.06
-            return (
-              <motion.span
-                key={text + delay}
-                className="relative inline-block"
-                initial={{ opacity: 0, y: '0.4em', rotateX: -40 }}
-                animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                transition={{ duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {text}
-              </motion.span>
-            )
-          }).reduce<React.ReactNode[]>((acc, node, i) => (i === 0 ? [node] : [...acc, ' ', node]), [])}
+          {line
+            .map((text) => {
+              const delay = word++ * 0.06;
+              return (
+                <motion.span
+                  key={text + delay}
+                  className="relative inline-block"
+                  initial={{ opacity: 0, y: '0.4em', rotateX: -40 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  transition={{ duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  {text}
+                </motion.span>
+              );
+            })
+            .reduce<React.ReactNode[]>(
+              (acc, node, i) => (i === 0 ? [node] : [...acc, ' ', node]),
+              [],
+            )}
           {lineIndex === 0 && <br />}
         </span>
       ))}
     </h1>
-  )
+  );
 }
 
 /**
@@ -74,22 +90,32 @@ function HeroEnvelope() {
           >
             <CardArt face="front" />
           </motion.div>
-          <div className="absolute inset-0 rounded-[2%] border border-border-normal bg-bg-secondary" style={{ boxShadow: '0 18px 44px rgba(0,0,0,0.14)' }} />
+          <div
+            className="absolute inset-0 rounded-[2%] border border-border-normal bg-bg-secondary"
+            style={{ boxShadow: '0 18px 44px rgba(0,0,0,0.14)' }}
+          />
           <div
             className="absolute inset-0 rounded-[2%]"
             style={{
-              background: 'linear-gradient(180deg, var(--pay-bg-tertiary) 0%, var(--pay-bg-secondary) 78%)',
+              background:
+                'linear-gradient(180deg, var(--pay-bg-tertiary) 0%, var(--pay-bg-secondary) 78%)',
               clipPath: 'polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%)',
             }}
           />
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 /** Shared panel frame for the two full-bleed statement sections. */
-function StatementPanel({ align, children }: { align: 'start' | 'end'; children: React.ReactNode }) {
+function StatementPanel({
+  align,
+  children,
+}: {
+  align: 'start' | 'end';
+  children: React.ReactNode;
+}) {
   return (
     <div
       className={`relative mt-10 flex w-full shrink-0 overflow-hidden bg-bg-secondary tablet-lg:col-start-2 tablet-lg:row-span-2 tablet-lg:row-start-1 tablet-lg:mt-0 tablet-lg:max-w-[400px] tablet-lg:self-start ${
@@ -99,7 +125,7 @@ function StatementPanel({ align, children }: { align: 'start' | 'end'; children:
       <DotField align={align === 'start' ? 'top' : 'bottom'} />
       {children}
     </div>
-  )
+  );
 }
 
 /** The in-app account screen shown inside the first statement panel. */
@@ -126,7 +152,7 @@ function AppScreen() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 /** The custody seal shown inside the second statement panel. */
@@ -139,7 +165,7 @@ function CoverageSeal() {
         <span className="text-caption text-fg-secondary">on your device</span>
       </div>
     </div>
-  )
+  );
 }
 
 export default function PeableContent() {
@@ -154,7 +180,8 @@ export default function PeableContent() {
               <HeroEnvelope />
               <div className="flex w-auto max-w-full flex-col items-center gap-3">
                 <p className="whitespace-nowrap text-center text-caption text-fg-secondary tablet-lg:text-[13px] tablet-lg:leading-5 tablet-lg:tracking-normal">
-                  <span className="text-fg-primary">In development</span>. Nothing here is open for deposits yet.
+                  <span className="text-fg-primary">In development</span>. Nothing here is open for
+                  deposits yet.
                 </p>
                 <div className="flex gap-3">
                   <a
@@ -163,7 +190,9 @@ export default function PeableContent() {
                     rel="noopener noreferrer"
                     className="group relative inline-flex h-6 min-w-6 items-center justify-center gap-2 rounded-full bg-button-primary px-3 text-nav text-fg-inverted transition-colors hover:bg-button-primary-hover active:bg-button-primary-pressed max-tablet:h-9 max-tablet:min-w-9 max-tablet:px-4 max-tablet:text-button"
                   >
-                    <span className="inline-flex items-center whitespace-nowrap">Follow for updates</span>
+                    <span className="inline-flex items-center whitespace-nowrap">
+                      Follow for updates
+                    </span>
                   </a>
                 </div>
               </div>
@@ -177,12 +206,16 @@ export default function PeableContent() {
             <div className="flex flex-1 flex-col gap-3 tablet-lg:col-start-1 tablet-lg:row-start-1">
               <div className="flex items-center gap-2">
                 <span className="size-1 shrink-0 bg-fg-tertiary" />
-                <span className="font-display text-h4 text-fg-primary [font-feature-settings:'ss11']">Peable</span>
+                <span className="font-display text-h4 text-fg-primary [font-feature-settings:'ss11']">
+                  Peable
+                </span>
               </div>
               <h2 className="text-balance font-display text-h3 [font-feature-settings:'ss11']">
                 <span className="text-fg-primary">Built to be understood</span>
                 <br />
-                <span className="text-fg-secondary">Every movement of money, explained before it happens</span>
+                <span className="text-fg-secondary">
+                  Every movement of money, explained before it happens
+                </span>
               </h2>
             </div>
 
@@ -192,22 +225,29 @@ export default function PeableContent() {
 
             <div className="mt-8 flex flex-1 flex-col justify-between gap-8 tablet-lg:col-start-1 tablet-lg:row-start-2 tablet-lg:mt-0 tablet-lg:flex-col tablet-lg:items-stretch tablet-lg:justify-between tablet-lg:gap-8">
               <p className="hidden text-balance font-display text-h4 text-fg-secondary tablet-lg:block [font-feature-settings:'ss11']">
-                Money apps are opaque by habit, not by necessity. This one states the fee, the rail and the recipient before you confirm.
+                Money apps are opaque by habit, not by necessity. This one states the fee, the rail
+                and the recipient before you confirm.
               </p>
               <div className="flex flex-col gap-5 tablet-lg:gap-4">
                 <div className="flex items-center gap-3">
                   <TrendingIcon className="size-5 shrink-0 text-fg-primary" />
-                  <span className="font-display text-h4 text-fg-primary">Every fee shown before you confirm</span>
+                  <span className="font-display text-h4 text-fg-primary">
+                    Every fee shown before you confirm
+                  </span>
                 </div>
                 <span className="h-px w-full bg-border-normal" />
                 <div className="flex items-center gap-3">
                   <CashbackIcon className="size-5 shrink-0 text-fg-primary" />
-                  <span className="font-display text-h4 text-fg-primary">No ads, no data sold, no exceptions</span>
+                  <span className="font-display text-h4 text-fg-primary">
+                    No ads, no data sold, no exceptions
+                  </span>
                 </div>
                 <span className="h-px w-full bg-border-normal" />
                 <div className="flex items-center gap-3">
                   <ShieldCheckIcon className="size-5 shrink-0 text-fg-primary" />
-                  <span className="font-display text-h4 text-fg-primary">Keys on your device, not in our database</span>
+                  <span className="font-display text-h4 text-fg-primary">
+                    Keys on your device, not in our database
+                  </span>
                 </div>
               </div>
             </div>
@@ -215,7 +255,10 @@ export default function PeableContent() {
         </section>
 
         {/* ── Automatic growth ─────────────────────────────────── */}
-        <section id="features" className="flex w-full scroll-mt-24 flex-col gap-12 border-border-normal border-t pt-4 pb-4 tablet-lg:pt-20 tablet-lg:pb-30">
+        <section
+          id="features"
+          className="flex w-full scroll-mt-24 flex-col gap-12 border-border-normal border-t pt-4 pb-4 tablet-lg:pt-20 tablet-lg:pb-30"
+        >
           <div className="flex flex-col gap-4 tablet-lg:grid tablet-lg:grid-cols-8 tablet-lg:gap-4">
             <div className="flex items-center gap-2 tablet-lg:col-span-4 tablet-lg:self-start tablet-lg:pt-1">
               <span aria-hidden="true" className="size-1 shrink-0 bg-fg-tertiary" />
@@ -234,13 +277,18 @@ export default function PeableContent() {
         <section className="flex w-full flex-col gap-14 border-border-normal border-t pt-[42px] pb-4 tablet-lg:pt-20 tablet-lg:pb-30">
           <div className="flex flex-col">
             <h3 className="text-balance text-h3 text-fg-primary">One app</h3>
-            <p className="text-balance text-h3 text-fg-secondary">The whole picture, in plain language</p>
+            <p className="text-balance text-h3 text-fg-secondary">
+              The whole picture, in plain language
+            </p>
           </div>
           <ol className="flex w-full flex-col gap-12 tablet-lg:grid tablet-lg:grid-cols-8 tablet-lg:gap-x-4 tablet-lg:gap-y-12">
             {PAY_FEATURES.map((feature) => {
-              const Scene = SCENES[feature.scene]
+              const Scene = SCENES[feature.scene];
               return (
-                <li key={feature.index} className="flex flex-col items-stretch gap-4 mobile:grid mobile:grid-cols-2 tablet-lg:contents">
+                <li
+                  key={feature.index}
+                  className="flex flex-col items-stretch gap-4 mobile:grid mobile:grid-cols-2 tablet-lg:contents"
+                >
                   <div
                     className={`flex aspect-[3/2] w-full items-center justify-center overflow-hidden bg-bg-secondary transition-opacity duration-500 ease-smooth mobile:aspect-[9/6] tablet-wide:aspect-[11/6] tablet-lg:h-auto tablet-lg:w-auto tablet-lg:order-none ${
                       feature.padded ? 'p-4 tablet-lg:p-6' : 'p-0'
@@ -260,7 +308,7 @@ export default function PeableContent() {
                     </div>
                   </div>
                 </li>
-              )
+              );
             })}
           </ol>
         </section>
@@ -271,12 +319,16 @@ export default function PeableContent() {
             <div className="flex flex-1 flex-col gap-3 tablet-lg:col-start-1 tablet-lg:row-start-1">
               <div className="flex items-center gap-2">
                 <span className="size-1 shrink-0 bg-fg-tertiary" />
-                <span className="font-display text-h4 text-fg-primary [font-feature-settings:'ss11']">Custody</span>
+                <span className="font-display text-h4 text-fg-primary [font-feature-settings:'ss11']">
+                  Custody
+                </span>
               </div>
               <h2 className="text-balance font-display text-h3 [font-feature-settings:'ss11']">
                 <span className="text-fg-primary">You will know who holds it</span>
                 <br />
-                <span className="text-fg-secondary">Named, licensed and published before launch</span>
+                <span className="text-fg-secondary">
+                  Named, licensed and published before launch
+                </span>
               </h2>
             </div>
 
@@ -292,17 +344,17 @@ export default function PeableContent() {
                 </div>
               </div>
               <p className="text-balance text-body text-fg-secondary">
-                Who holds the money, under which licence and in which country goes on this page before the first deposit,
-                not in a footnote afterwards. The FairCoin side is self-custodied today: the keys are already yours.
+                Who holds the money, under which licence and in which country goes on this page
+                before the first deposit, not in a footnote afterwards. The FairCoin side is
+                self-custodied today: the keys are already yours.
               </p>
             </div>
           </div>
         </section>
-
       </div>
 
       {/* ── FAQ ──────────────────────────────────────────────── */}
       <PeableFAQ />
     </article>
-  )
+  );
 }

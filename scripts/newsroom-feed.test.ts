@@ -1,6 +1,6 @@
-import { describe, expect, test } from 'bun:test'
-import { buildNewsroomRss } from './newsroom-feed'
-import type { NewsroomPost } from '../src/data/newsroom'
+import { describe, expect, test } from 'bun:test';
+import { buildNewsroomRss } from './newsroom-feed';
+import type { NewsroomPost } from '../src/data/newsroom';
 
 const post: NewsroomPost = {
   slug: 'safe-feed',
@@ -16,7 +16,7 @@ const post: NewsroomPost = {
   createdAt: '2026-08-30T12:00:00.000Z',
   updatedAt: '2026-08-30T13:00:00.000Z',
   coverImage: '/cover.jpg',
-}
+};
 
 describe('Newsroom RSS', () => {
   test('publishes canonical article URLs and XML-safe editorial fields', () => {
@@ -24,12 +24,12 @@ describe('Newsroom RSS', () => {
       siteUrl: 'https://oxy.so/',
       title: 'Oxy Newsroom',
       description: 'Oxy updates',
-    })
+    });
 
-    expect(xml).toContain('<rss version="2.0"')
-    expect(xml).toContain('https://oxy.so/newsroom/safe-feed/')
-    expect(xml).toContain('Oxy &amp; the &lt;open&gt; web')
-    expect(xml).toContain('https://oxy.so/cover.jpg')
-    expect(xml).not.toContain('<open>')
-  })
-})
+    expect(xml).toContain('<rss version="2.0"');
+    expect(xml).toContain('https://oxy.so/newsroom/safe-feed/');
+    expect(xml).toContain('Oxy &amp; the &lt;open&gt; web');
+    expect(xml).toContain('https://oxy.so/cover.jpg');
+    expect(xml).not.toContain('<open>');
+  });
+});

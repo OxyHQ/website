@@ -1,36 +1,26 @@
-import { useMemo } from 'react'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import {
-  ProjectBoard,
-  type ProjectColumn,
-  type ProjectMember,
-} from '@oxy.so/bloom/project-board'
-import { useTranslation } from '../../lib/i18n'
+import { useMemo } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ProjectBoard, type ProjectColumn, type ProjectMember } from '@oxy.so/bloom/project-board';
+import { useTranslation } from '../../lib/i18n';
 
 const members: Record<string, ProjectMember> = {
   maya: { id: 'maya', name: 'Maya Collins', initials: 'MC' },
   alex: { id: 'alex', name: 'Alex Rivera', initials: 'AR' },
   sam: { id: 'sam', name: 'Sam Morgan', initials: 'SM' },
-}
+};
 
 /** Product data stays here; ticket interactions and panels belong to Bloom. */
 export default function ProjectBoardDemo() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const columns = useMemo<ProjectColumn[]>(() => {
-    const columnKeys = [
-      'backlog',
-      'todo',
-      'inProgress',
-      'inReview',
-      'done',
-    ] as const
+    const columnKeys = ['backlog', 'todo', 'inProgress', 'inReview', 'done'] as const;
     const tickets = [
       ['attachments', 'search', 'limits'],
       ['loader', 'thinking'],
       ['table', 'calendar'],
       ['auth', 'meeting'],
       [],
-    ]
+    ];
     return columnKeys.map((key, column) => ({
       id: key,
       title: t(`bloom.board.${key}`),
@@ -71,12 +61,10 @@ export default function ProjectBoardDemo() {
           endLabel: '16',
         },
       })),
-    }))
-  }, [t])
+    }));
+  }, [t]);
   return (
-    <GestureHandlerRootView
-      style={{ flex: 1, minHeight: 0, width: '100%', height: '100%' }}
-    >
+    <GestureHandlerRootView style={{ flex: 1, minHeight: 0, width: '100%', height: '100%' }}>
       <ProjectBoard
         title={t('bloom.projects')}
         teamName="Bloom"
@@ -88,5 +76,5 @@ export default function ProjectBoardDemo() {
         style={{ height: '100%', minHeight: 600 }}
       />
     </GestureHandlerRootView>
-  )
+  );
 }

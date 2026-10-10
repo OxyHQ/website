@@ -1,6 +1,6 @@
-import PageShell from '../components/layout/PageShell'
-import OxyOSContent from '../components/oxyos/OxyOSPage'
-import { APP_CARD_IMAGES } from '../data/appCardImages'
+import PageShell from '../components/layout/PageShell';
+import OxyOSContent from '../components/oxyos/OxyOSPage';
+import { APP_CARD_IMAGES } from '../data/appCardImages';
 
 export default function OxyOSPage() {
   return (
@@ -19,5 +19,5 @@ export default function OxyOSPage() {
         <OxyOSContent />
       </div>
     </PageShell>
-  )
+  );
 }

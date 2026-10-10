@@ -1,8 +1,8 @@
-import { Link } from '../lib/navigation'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import { Link } from '../lib/navigation';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import { AnimatedTitle } from '../components/ui/AnimatedTitle';
 
 /* ──────────────────────────────────────────────
  * /account-deletion
@@ -31,8 +31,8 @@ import { AnimatedTitle } from '../components/ui/AnimatedTitle'
  * just a stale doc.
  * ──────────────────────────────────────────── */
 
-const SUPPORT_EMAIL = 'support@oxy.so'
-const PRIVACY_EMAIL = 'legal@oxy.so'
+const SUPPORT_EMAIL = 'support@oxy.so';
+const PRIVACY_EMAIL = 'legal@oxy.so';
 
 const DELETED_SERVER_SIDE = [
   'Your profile and account record — username, display name, avatar, and settings.',
@@ -40,7 +40,7 @@ const DELETED_SERVER_SIDE = [
   'The encrypted backup of your identity, if you chose to store one with us.',
   'Every active session, on every device, revoked immediately.',
   'Your social graph: who you follow, who follows you, blocks, and restrictions.',
-]
+];
 
 const RETAINED = [
   {
@@ -55,7 +55,7 @@ const RETAINED = [
     title: 'Records we are legally required to keep',
     body: 'Limited transaction and billing records may be retained where law requires it. These are kept separately from your profile and are not used to identify you afterwards.',
   },
-]
+];
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -63,7 +63,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
       <h2 className="mb-4 text-xl font-medium text-foreground">{title}</h2>
       <div className="space-y-4 text-muted-foreground">{children}</div>
     </section>
-  )
+  );
 }
 
 export default function AccountDeletionPage() {
@@ -76,7 +76,9 @@ export default function AccountDeletionPage() {
       />
       <Navbar />
       <main className="container max-w-3xl py-16">
-        <AnimatedTitle as="h1" className="text-heading-responsive-lg text-foreground">Delete your Oxy account</AnimatedTitle>
+        <AnimatedTitle as="h1" className="text-heading-responsive-lg text-foreground">
+          Delete your Oxy account
+        </AnimatedTitle>
         <p className="mt-4 text-lg text-muted-foreground">
           You can delete your Oxy account at any time, from your own device, without asking anyone
           for permission. This page explains how, and exactly what happens to your data.
@@ -104,8 +106,12 @@ export default function AccountDeletionPage() {
         <Section title="How to delete it">
           <p>Deletion is done from the Commons app, on a device where you are signed in:</p>
           <ol className="ml-5 list-decimal space-y-2">
-            <li>Open <strong className="text-foreground">Commons</strong>.</li>
-            <li>Go to <strong className="text-foreground">Settings → Delete account</strong>.</li>
+            <li>
+              Open <strong className="text-foreground">Commons</strong>.
+            </li>
+            <li>
+              Go to <strong className="text-foreground">Settings → Delete account</strong>.
+            </li>
             <li>Type your username to confirm. This has to match exactly.</li>
             <li>
               Approve the request. Your device signs it with your identity key, which is what proves
@@ -186,8 +192,8 @@ export default function AccountDeletionPage() {
 
         <Section title="Questions">
           <p>
-            If you cannot complete the steps above, or you want to know what we hold about you before
-            deciding, write to{' '}
+            If you cannot complete the steps above, or you want to know what we hold about you
+            before deciding, write to{' '}
             <a className="text-foreground underline" href={`mailto:${SUPPORT_EMAIL}`}>
               {SUPPORT_EMAIL}
             </a>
@@ -212,5 +218,5 @@ export default function AccountDeletionPage() {
       </main>
       <Footer />
     </>
-  )
+  );
 }

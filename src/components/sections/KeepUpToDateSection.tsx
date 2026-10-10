@@ -1,8 +1,8 @@
-import { RiFileList2Line } from '@oxy.so/bloom/icons/RiFileList2Line'
-import { RiNewspaperLine } from '@oxy.so/bloom/icons/RiNewspaperLine'
-import { keepUpToDateCards } from '../../data/content'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { RiFileList2Line } from '@oxy.so/bloom/icons/RiFileList2Line';
+import { RiNewspaperLine } from '@oxy.so/bloom/icons/RiNewspaperLine';
+import { keepUpToDateCards } from '../../data/content';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { AnimatedTitle } from '../ui/AnimatedTitle';
 
 function CardIcon({ type }: { type: string }) {
   switch (type) {
@@ -15,7 +15,7 @@ function CardIcon({ type }: { type: string }) {
             opacity="0.7"
           />
         </svg>
-      )
+      );
     case 'x':
       return (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="size-5">
@@ -25,20 +25,24 @@ function CardIcon({ type }: { type: string }) {
             opacity="0.7"
           />
         </svg>
-      )
+      );
     // Bloom glyphs, painted from the card's text colour at the same 70% the
     // brand marks above use. `fill` defaults to the theme's primary otherwise.
     case 'blog':
-      return <RiNewspaperLine width={20} height={20} fill="currentColor" style={{ opacity: 0.7 }} />
+      return (
+        <RiNewspaperLine width={20} height={20} fill="currentColor" style={{ opacity: 0.7 }} />
+      );
     case 'changelog':
-      return <RiFileList2Line width={20} height={20} fill="currentColor" style={{ opacity: 0.7 }} />
+      return (
+        <RiFileList2Line width={20} height={20} fill="currentColor" style={{ opacity: 0.7 }} />
+      );
     default:
-      return null
+      return null;
   }
 }
 
 interface KeepUpToDateSectionProps {
-  compact?: boolean
+  compact?: boolean;
 }
 
 export default function KeepUpToDateSection({ compact = false }: KeepUpToDateSectionProps = {}) {
@@ -48,24 +52,46 @@ export default function KeepUpToDateSection({ compact = false }: KeepUpToDateSec
       'bg-[color-mix(in_srgb,var(--secondary)_22%,var(--background))]',
       'bg-[color-mix(in_srgb,var(--tertiary)_20%,var(--background))]',
       'bg-[color-mix(in_srgb,var(--accent)_22%,var(--background))]',
-    ]
+    ];
 
     return (
       <section className="container py-16 md:py-24">
         <div className="mb-8 grid gap-4 md:mb-10 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:items-end md:gap-12">
-          <AnimatedTitle as="h2" className="text-pretty text-heading-responsive-lg text-primary-text">Keep up to date.</AnimatedTitle>
-          <p className="max-w-xl text-pretty text-base leading-7 text-foreground/70 md:justify-self-end md:text-lg">Get the latest updates on what we&apos;re building.</p>
+          <AnimatedTitle
+            as="h2"
+            className="text-pretty text-heading-responsive-lg text-primary-text"
+          >
+            Keep up to date.
+          </AnimatedTitle>
+          <p className="max-w-xl text-pretty text-base leading-7 text-foreground/70 md:justify-self-end md:text-lg">
+            Get the latest updates on what we&apos;re building.
+          </p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {keepUpToDateCards.map((card, index) => (
-            <a key={card.title} href={card.href} className={`group flex min-h-[150px] flex-col justify-between gap-6 rounded-3xl p-6 text-primary-text transition-[filter,transform] duration-300 hover:-translate-y-0.5 hover:brightness-105 ${tones[index % tones.length]}`}>
-              <div className="flex items-center justify-between"><CardIcon type={card.iconType} /><span aria-hidden="true" className="inline-flex -rotate-45 shrink-0 text-primary-text/70 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span></div>
-              <div><h3 className="font-semibold text-primary-text">{card.title}</h3><p className="mt-1 text-balance text-sm text-primary-text/70">{card.description}</p></div>
+            <a
+              key={card.title}
+              href={card.href}
+              className={`group flex min-h-[150px] flex-col justify-between gap-6 rounded-3xl p-6 text-primary-text transition-[filter,transform] duration-300 hover:-translate-y-0.5 hover:brightness-105 ${tones[index % tones.length]}`}
+            >
+              <div className="flex items-center justify-between">
+                <CardIcon type={card.iconType} />
+                <span
+                  aria-hidden="true"
+                  className="inline-flex -rotate-45 shrink-0 text-primary-text/70 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                >
+                  <RiArrowRightLine width={14} height={14} fill="currentColor" />
+                </span>
+              </div>
+              <div>
+                <h3 className="font-semibold text-primary-text">{card.title}</h3>
+                <p className="mt-1 text-balance text-sm text-primary-text/70">{card.description}</p>
+              </div>
             </a>
           ))}
         </div>
       </section>
-    )
+    );
   }
 
   return (
@@ -98,17 +124,18 @@ export default function KeepUpToDateSection({ compact = false }: KeepUpToDateSec
                 {/* Icon + arrow */}
                 <div className="relative flex items-center justify-between">
                   <CardIcon type={card.iconType} />
-                  <span aria-hidden="true" className="inline-flex relative -translate-x-0.5 -rotate-45 shrink-0 text-foreground opacity-0 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
+                  <span
+                    aria-hidden="true"
+                    className="inline-flex relative -translate-x-0.5 -rotate-45 shrink-0 text-foreground opacity-0 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150"
+                  >
+                    <RiArrowRightLine width={14} height={14} fill="currentColor" />
+                  </span>
                 </div>
 
                 {/* Text */}
                 <div className="relative flex flex-col gap-1">
-                  <h3 className="font-semibold text-foreground">
-                    {card.title}
-                  </h3>
-                  <p className="text-balance text-sm text-muted-foreground">
-                    {card.description}
-                  </p>
+                  <h3 className="font-semibold text-foreground">{card.title}</h3>
+                  <p className="text-balance text-sm text-muted-foreground">{card.description}</p>
                 </div>
               </a>
             ))}
@@ -124,5 +151,5 @@ export default function KeepUpToDateSection({ compact = false }: KeepUpToDateSec
         </div>
       </div>
     </section>
-  )
+  );
 }

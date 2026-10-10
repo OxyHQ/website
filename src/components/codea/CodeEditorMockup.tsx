@@ -1,9 +1,9 @@
-import { useHighlightedLines } from "./codeTokens";
+import { useHighlightedLines } from './codeTokens';
 
 const tabs = [
-  { name: "ThemeProvider.tsx", active: true },
-  { name: "useTheme.ts", active: false },
-  { name: "types.ts", active: false },
+  { name: 'ThemeProvider.tsx', active: true },
+  { name: 'useTheme.ts', active: false },
+  { name: 'types.ts', active: false },
 ];
 
 /** The file the editor has open. */
@@ -50,8 +50,8 @@ export default function CodeEditorMockup() {
             key={tab.name}
             className={`px-4 py-2 text-xs font-medium transition-colors ${
               tab.active
-                ? "bg-surface text-foreground/80 border-t border-t-primary/60"
-                : "bg-background text-foreground/35 hover:text-foreground/50"
+                ? 'bg-surface text-foreground/80 border-t border-t-primary/60'
+                : 'bg-background text-foreground/35 hover:text-foreground/50'
             }`}
           >
             {tab.name}
@@ -71,8 +71,8 @@ export default function CodeEditorMockup() {
                 key={num}
                 className={`flex ${
                   suggestion
-                    ? "bg-success/10 border-l-2 border-success/40"
-                    : "border-l-2 border-transparent"
+                    ? 'bg-success/10 border-l-2 border-success/40'
+                    : 'border-l-2 border-transparent'
                 }`}
               >
                 <span className="inline-block w-12 shrink-0 select-none pr-4 text-right text-foreground/20">
@@ -93,8 +93,8 @@ export default function CodeEditorMockup() {
             </span>
           </div>
           <p className="text-xs leading-relaxed text-foreground/55">
-            <span className="text-foreground/80 font-medium">Detected:</span> your
-            project uses CSS variables for theming. Applied consistent pattern.
+            <span className="text-foreground/80 font-medium">Detected:</span> your project uses CSS
+            variables for theming. Applied consistent pattern.
           </p>
         </div>
       </div>

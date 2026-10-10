@@ -31,7 +31,7 @@
 }
 .brand-cover-top,
 .brand-cover-bottom {
-  grid-column: 1/-1;
+  grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
   gap: 2rem;
@@ -58,7 +58,7 @@
 .brand-cover-wordmark {
   width: min(70vw, 58rem);
   justify-self: end;
-  grid-column: 1/-1;
+  grid-column: 1 / -1;
   margin-top: -8rem;
   margin-bottom: -1rem;
   pointer-events: none;
@@ -258,7 +258,7 @@
   font-size: 0.875rem;
   border-bottom: 2px solid transparent;
 }
-.brand-recipe-buttons button[aria-pressed='true'] {
+.brand-recipe-buttons button[aria-pressed="true"] {
   border-color: var(--foreground);
 }
 .brand-recipe-buttons button > span {
@@ -396,14 +396,14 @@
   display: grid;
   gap: 0.75rem;
 }
-.brand-type-controls input:not([type='range']) {
+.brand-type-controls input:not([type="range"]) {
   width: 100%;
   border-bottom: 1px solid currentColor;
   padding: 0.75rem 0;
   font-size: 1rem;
   background: transparent;
 }
-.brand-type-controls input[type='range'] {
+.brand-type-controls input[type="range"] {
   width: 100%;
   accent-color: var(--background);
 }
@@ -569,7 +569,7 @@
   border-bottom: 2px solid transparent;
   font-size: 1rem;
 }
-.brand-voice-tabs button[aria-pressed='true'] {
+.brand-voice-tabs button[aria-pressed="true"] {
   border-color: var(--foreground);
 }
 .brand-voice-spread {
@@ -611,7 +611,7 @@
   gap: 1rem;
 }
 .brand-social {
-  aspect-ratio: 4/5;
+  aspect-ratio: 4 / 5;
   background: var(--primary);
   color: var(--primary-foreground);
   padding: 1.5rem;
@@ -788,7 +788,7 @@
     gap: 2rem;
   }
   .brand-cover-title {
-    grid-column: 1/-1;
+    grid-column: 1 / -1;
     font-size: 2.5rem;
   }
   .brand-cover-top {

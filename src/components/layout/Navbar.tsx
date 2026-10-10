@@ -1,8 +1,21 @@
-import { lazy, Suspense, useState, useRef, useCallback, useId, useLayoutEffect, useMemo, useSyncExternalStore, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type FocusEvent as ReactFocusEvent } from 'react'
-import { Button } from '@oxy.so/bloom/button'
-import { useLocation } from 'react-router-dom'
-import { Link, useNavigate } from '../../lib/navigation'
-import { LogoIcon, useAuth, useOxy } from '@oxy.so/services/ui/client'
+import {
+  lazy,
+  Suspense,
+  useState,
+  useRef,
+  useCallback,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useSyncExternalStore,
+  type CSSProperties,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type FocusEvent as ReactFocusEvent,
+} from 'react';
+import { Button } from '@oxy.so/bloom/button';
+import { useLocation } from 'react-router-dom';
+import { Link, useNavigate } from '../../lib/navigation';
+import { LogoIcon, useAuth, useOxy } from '@oxy.so/services/ui/client';
 import {
   simpleNavLinks,
   aiNavCard,
@@ -19,39 +32,50 @@ import {
   type NavDropdown,
   type NavDropdownItem as NavDropdownItemData,
   type NavItem,
-} from '../../data/content'
-import { NavCard } from './NavMegaPanels'
-import { resolveProductLogoUrl, useProducts, useSiteSettings } from '../../api/hooks'
-import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '../../api/scrollStore'
-import { useTranslation, useLocaleContext } from '../../lib/i18n'
-import { searchSite, groupResults, searchContextGroups, type SearchResult } from '../../lib/site-search'
-import NavDropdownItem from '../ui/NavDropdownItem'
-import NavbarSearchResults from './NavbarSearchResults'
-import { RiLoginBoxLine } from '@oxy.so/bloom/icons/RiLoginBoxLine'
-import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
-import { RiSettings3Line } from '@oxy.so/bloom/icons/RiSettings3Line'
-import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
-import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
-import { RiArrowLeftSLine } from '@oxy.so/bloom/icons/RiArrowLeftSLine'
-import { RiArrowRightSLine } from '@oxy.so/bloom/icons/RiArrowRightSLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { NavBarButton, type NavBarInk } from './NavBarButton'
-import { useAdminAccess } from '../../hooks/useAdminAccess'
+} from '../../data/content';
+import { NavCard } from './NavMegaPanels';
+import { resolveProductLogoUrl, useProducts, useSiteSettings } from '../../api/hooks';
+import {
+  subscribeScrollY,
+  getScrollYSnapshot,
+  getScrollYServerSnapshot,
+} from '../../api/scrollStore';
+import { useTranslation, useLocaleContext } from '../../lib/i18n';
+import {
+  searchSite,
+  groupResults,
+  searchContextGroups,
+  type SearchResult,
+} from '../../lib/site-search';
+import NavDropdownItem from '../ui/NavDropdownItem';
+import NavbarSearchResults from './NavbarSearchResults';
+import { RiLoginBoxLine } from '@oxy.so/bloom/icons/RiLoginBoxLine';
+import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine';
+import { RiSettings3Line } from '@oxy.so/bloom/icons/RiSettings3Line';
+import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine';
+import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine';
+import { RiArrowLeftSLine } from '@oxy.so/bloom/icons/RiArrowLeftSLine';
+import { RiArrowRightSLine } from '@oxy.so/bloom/icons/RiArrowRightSLine';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { NavBarButton, type NavBarInk } from './NavBarButton';
+import { useAdminAccess } from '../../hooks/useAdminAccess';
 
-const WebsiteSettingsDialog = lazy(() => import('../settings/WebsiteSettingsDialog'))
+const WebsiteSettingsDialog = lazy(() => import('../settings/WebsiteSettingsDialog'));
 
 // ProfileButton pulls in native icon infrastructure. Authenticated visitors
 // still get the full account menu, while anonymous page loads keep it out of
 // the critical bundle and use a small local sign-in control instead.
-const ProfileButton = lazy(() => import('@oxy.so/services').then((module) => ({
-  default: module.ProfileButton,
-})))
+const ProfileButton = lazy(() =>
+  import('@oxy.so/services').then((module) => ({
+    default: module.ProfileButton,
+  })),
+);
 
 const NAV_LABEL_KEYS: Record<string, string> = {
   Platform: 'navbar.platform',
   Newsroom: 'navbar.newsroom',
   Pricing: 'navbar.pricing',
-}
+};
 
 const NAV_PRODUCT_DESCRIPTION_FALLBACKS: Record<string, string> = {
   'faircoin-explorer': 'Explore the FairCoin network',
@@ -59,26 +83,31 @@ const NAV_PRODUCT_DESCRIPTION_FALLBACKS: Record<string, string> = {
   mercaria: 'An open marketplace for people and goods',
   moovo: 'Mobility and urban transport',
   noted: 'A focused space for notes and ideas',
-  kaana: 'Oxy\'s own inference provider',
+  kaana: "Oxy's own inference provider",
   horizon: 'A clearer view of what matters',
   astro: 'A private browser for the open web',
-}
+};
 
 function translatedNavLabel(label: string, t: (key: string) => string): string {
-  const key = NAV_LABEL_KEYS[label]
-  return key ? t(key) : label
+  const key = NAV_LABEL_KEYS[label];
+  return key ? t(key) : label;
 }
 
 /* ─── Keyboard ─── */
 
 /** What Tab can reach inside a panel or the bar, in document order. */
-const TABBABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]'
+const TABBABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]';
 
 function tabbables(root: Element | null | undefined): HTMLElement[] {
-  if (!root) return []
+  if (!root) return [];
   return Array.from(root.querySelectorAll<HTMLElement>(TABBABLE)).filter(
-    (el) => el.tabIndex >= 0 && el.getAttribute('aria-hidden') !== 'true' && getComputedStyle(el).visibility !== 'hidden' && el.getClientRects().length > 0,
-  )
+    (el) =>
+      el.tabIndex >= 0 &&
+      el.getAttribute('aria-hidden') !== 'true' &&
+      getComputedStyle(el).visibility !== 'hidden' &&
+      el.getClientRects().length > 0,
+  );
 }
 
 /**
@@ -86,14 +115,18 @@ function tabbables(root: Element | null | undefined): HTMLElement[] {
  * roving-focus helpers (`hooks/roving-focus`) are internal to the package, so
  * the arrow keys are the few lines here.
  */
-function rovingTarget(items: HTMLElement[], current: Element | null, key: string): HTMLElement | null {
-  if (items.length === 0) return null
-  if (key === 'Home') return items[0]
-  if (key === 'End') return items[items.length - 1]
-  const index = current ? items.indexOf(current as HTMLElement) : -1
-  const step = key === 'ArrowDown' || key === 'ArrowRight' ? 1 : -1
-  if (index < 0) return step > 0 ? items[0] : items[items.length - 1]
-  return items[(index + step + items.length) % items.length]
+function rovingTarget(
+  items: HTMLElement[],
+  current: Element | null,
+  key: string,
+): HTMLElement | null {
+  if (items.length === 0) return null;
+  if (key === 'Home') return items[0];
+  if (key === 'End') return items[items.length - 1];
+  const index = current ? items.indexOf(current as HTMLElement) : -1;
+  const step = key === 'ArrowDown' || key === 'ArrowRight' ? 1 : -1;
+  if (index < 0) return step > 0 ? items[0] : items[items.length - 1];
+  return items[(index + step + items.length) % items.length];
 }
 
 /**
@@ -104,40 +137,62 @@ function rovingTarget(items: HTMLElement[], current: Element | null, key: string
  */
 function MenuGlyph({ open }: { open: boolean }) {
   return (
-    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="24" height="24" fill="none">
-      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d={open ? 'm12.5 5.5-7 7m7 0-7-7' : 'M15 6H3M15 12H3'} />
+    <svg
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 18 18"
+      width="24"
+      height="24"
+      fill="none"
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.2"
+        d={open ? 'm12.5 5.5-7 7m7 0-7-7' : 'M15 6H3M15 12H3'}
+      />
     </svg>
-  )
+  );
 }
 
 /** The trigger's chevron, in the 18px box the design's own glyph had. */
 function TriggerChevron({ open }: { open: boolean }) {
   return (
-    <span aria-hidden="true" className={`inline-flex size-[18px] items-center justify-center transition-transform duration-300 ${open ? 'translate-y-px' : ''}`}>
+    <span
+      aria-hidden="true"
+      className={`inline-flex size-[18px] items-center justify-center transition-transform duration-300 ${open ? 'translate-y-px' : ''}`}
+    >
       <RiArrowDownSLine width={16} height={16} fill="currentColor" />
     </span>
-  )
+  );
 }
 
 /* ─── Dropdown Content Panel ─── */
 
-function DropdownContent({ dropdown, loadImages = true }: { dropdown: NavDropdown; loadImages?: boolean }) {
-
+function DropdownContent({
+  dropdown,
+  loadImages = true,
+}: {
+  dropdown: NavDropdown;
+  loadImages?: boolean;
+}) {
   /*
    * A feature dropdown is the same panel with a different filling: one headless
    * list instead of headed sections, and more than one card. It went through a
    * layout of its own, which is why its columns sized themselves from their
    * content while every other dropdown's were fixed.
-  */
-  const featureGrid = dropdown.featureGrid
-  const cards = [...(dropdown.cards ?? []), ...(dropdown.card ? [dropdown.card] : [])]
-  const wideMenu = Boolean(dropdown.sidePanel && (featureGrid || cards.length > 0))
-  const sectionMenu = Boolean(dropdown.sidePanel && !featureGrid && cards.length === 0)
-  const renderSection = (section: NonNullable<NavDropdown['sections']>[number], items = section.items, listClassName = 'grid items-start gap-1') => (
-    <div
-      key={section.heading}
-      className="flex min-w-0 flex-col gap-space-md"
-    >
+   */
+  const featureGrid = dropdown.featureGrid;
+  const cards = [...(dropdown.cards ?? []), ...(dropdown.card ? [dropdown.card] : [])];
+  const wideMenu = Boolean(dropdown.sidePanel && (featureGrid || cards.length > 0));
+  const sectionMenu = Boolean(dropdown.sidePanel && !featureGrid && cards.length === 0);
+  const renderSection = (
+    section: NonNullable<NavDropdown['sections']>[number],
+    items = section.items,
+    listClassName = 'grid items-start gap-1',
+  ) => (
+    <div key={section.heading} className="flex min-w-0 flex-col gap-space-md">
       {section.heading ? (
         <p className="block px-space-sm pb-space-2xs text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
           {section.heading}
@@ -151,19 +206,27 @@ function DropdownContent({ dropdown, loadImages = true }: { dropdown: NavDropdow
         ))}
       </ul>
     </div>
-  )
-  const sectionContent = (dropdown.sections ?? []).map((section) => renderSection(
-    section,
-    section.items,
-    `grid items-start gap-1 ${sectionMenu && section.heading === 'Apps' ? 'grid-cols-2 gap-x-space-lg' : ''}`,
-  ))
-  const sectionsByHeading = new Map((dropdown.sections ?? []).map((section, index) => [section.heading, sectionContent[index]]))
+  );
+  const sectionContent = (dropdown.sections ?? []).map((section) =>
+    renderSection(
+      section,
+      section.items,
+      `grid items-start gap-1 ${sectionMenu && section.heading === 'Apps' ? 'grid-cols-2 gap-x-space-lg' : ''}`,
+    ),
+  );
+  const sectionsByHeading = new Map(
+    (dropdown.sections ?? []).map((section, index) => [section.heading, sectionContent[index]]),
+  );
   const sectionGroup = (headings: string[], className = '') => (
     <div className={`flex min-w-0 flex-col gap-space-lg ${className}`}>
       {headings.map((heading) => sectionsByHeading.get(heading))}
     </div>
-  )
-  const hasPlatformSectionLayout = sectionMenu && ['Platform', 'Social & Communication', 'Tools', 'Finance', 'Commerce'].every((heading) => sectionsByHeading.has(heading))
+  );
+  const hasPlatformSectionLayout =
+    sectionMenu &&
+    ['Platform', 'Social & Communication', 'Tools', 'Finance', 'Commerce'].every((heading) =>
+      sectionsByHeading.has(heading),
+    );
   const platformSectionLayout = hasPlatformSectionLayout ? (
     <div className="col-span-4 grid min-w-0 grid-cols-4 items-start gap-space-lg">
       {sectionGroup(['Platform', 'Tools'])}
@@ -171,28 +234,35 @@ function DropdownContent({ dropdown, loadImages = true }: { dropdown: NavDropdow
       {sectionGroup(['Finance', 'Housing'])}
       {sectionGroup(['Infrastructure', 'Commerce', 'Mobility', 'Developers'])}
     </div>
-  ) : null
-  const hasResourcesSectionLayout = wideMenu && !featureGrid && ['Support', 'Developers', 'Partners', 'Build'].every((heading) => sectionsByHeading.has(heading))
+  ) : null;
+  const hasResourcesSectionLayout =
+    wideMenu &&
+    !featureGrid &&
+    ['Support', 'Developers', 'Partners', 'Build'].every((heading) =>
+      sectionsByHeading.has(heading),
+    );
   const resourcesSectionLayout = hasResourcesSectionLayout ? (
     <div className="col-span-2 grid min-w-0 grid-cols-2 items-start gap-space-lg">
       {sectionGroup(['Support', 'Partners'])}
       {sectionGroup(['Developers', 'Build'])}
     </div>
-  ) : null
+  ) : null;
   return (
     <div
       // The panel starts a clear step below the row, so the first heading does not
       // sit against the trigger that opened it.
       className={`grid w-full auto-rows-min items-start gap-space-lg pt-space-xl pb-space-2xl ${
-        wideMenu ? 'grid-cols-5' : sectionMenu ? 'grid-cols-5' : 'grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]'
+        wideMenu
+          ? 'grid-cols-5'
+          : sectionMenu
+            ? 'grid-cols-5'
+            : 'grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]'
       }`}
     >
       {wideMenu && !featureGrid && hasResourcesSectionLayout ? (
         resourcesSectionLayout
       ) : wideMenu && !featureGrid ? (
-        <div className="col-span-2 min-w-0 columns-2 gap-space-lg">
-          {sectionContent}
-        </div>
+        <div className="col-span-2 min-w-0 columns-2 gap-space-lg">{sectionContent}</div>
       ) : sectionMenu && hasPlatformSectionLayout ? (
         platformSectionLayout
       ) : sectionMenu ? (
@@ -221,13 +291,22 @@ function DropdownContent({ dropdown, loadImages = true }: { dropdown: NavDropdow
       ) : null}
 
       {cards.length > 1 ? (
-        <div className={`grid min-w-0 grid-cols-2 items-start gap-space-lg ${wideMenu ? '[grid-column:span_2]' : ''}`}>
+        <div
+          className={`grid min-w-0 grid-cols-2 items-start gap-space-lg ${wideMenu ? '[grid-column:span_2]' : ''}`}
+        >
           {cards.map((card) => (
             <NavCard key={card.href} card={card} loadImage={loadImages} />
           ))}
         </div>
       ) : (
-        cards.map((card) => <NavCard key={card.href} card={card} loadImage={loadImages} className={wideMenu ? '[grid-column:span_2]' : ''} />)
+        cards.map((card) => (
+          <NavCard
+            key={card.href}
+            card={card}
+            loadImage={loadImages}
+            className={wideMenu ? '[grid-column:span_2]' : ''}
+          />
+        ))
       )}
 
       {dropdown.sidePanel && (
@@ -261,7 +340,7 @@ function DropdownContent({ dropdown, loadImages = true }: { dropdown: NavDropdow
         </ul>
       )}
     </div>
-  )
+  );
 }
 
 /* ─── Main Navbar ─── */
@@ -269,11 +348,11 @@ function DropdownContent({ dropdown, loadImages = true }: { dropdown: NavDropdow
 /** Brand block (logo + home link) rendered at the start of the navbar. */
 export interface NavbarBrand {
   /** Where the brand link points. Use `/` for Oxy, `fc('/')` for FairCoin. */
-  homeHref: string
+  homeHref: string;
   /** Accessible label for the brand link. */
-  ariaLabel: string
+  ariaLabel: string;
   /** Logo / wordmark element. Sized by the caller. */
-  logo: React.ReactNode
+  logo: React.ReactNode;
 }
 
 /**
@@ -282,21 +361,21 @@ export interface NavbarBrand {
  * CTA. External links are auto-detected by the `href` scheme.
  */
 export interface NavbarItem {
-  label: string
-  href: string
-  external?: boolean
+  label: string;
+  href: string;
+  external?: boolean;
 }
 
 interface NavbarProps {
   /** Override the brand block. Defaults to the Oxy logo linking to `/`. */
-  brand?: NavbarBrand
+  brand?: NavbarBrand;
   /**
    * Replace code-driven dropdowns with the supplied list. Both Oxy and
    * sub-brands (FairCoin) render through the SAME pipeline — the same
    * `DropdownContent`, the same measurement + animation, the same
    * `NavDropdownItem` item layout with icon, title, description.
    */
-  customDropdowns?: readonly NavDropdown[]
+  customDropdowns?: readonly NavDropdown[];
   /**
    * Replace the default `simpleNavLinks` (Products / Pricing) with a custom
    * flat link list rendered to the right of the dropdown triggers. FairCoin
@@ -305,29 +384,29 @@ interface NavbarProps {
    * Only applied when `customDropdowns` is also provided — pairing the two
    * signals a sub-brand nav and disables the CMS queries.
    */
-  customNavLinks?: readonly NavItem[]
+  customNavLinks?: readonly NavItem[];
   /** Replace the default Sign in / Start for free buttons. */
-  ctaButtons?: React.ReactNode
+  ctaButtons?: React.ReactNode;
   /** Hide the auth buttons / avatar entirely. */
-  hideAuth?: boolean
+  hideAuth?: boolean;
   /** Hide the global announcement banner. */
-  hideBanner?: boolean
+  hideBanner?: boolean;
   /** Page-specific content rendered in the existing global announcement banner. */
-  bannerContent?: React.ReactNode
+  bannerContent?: React.ReactNode;
   /** Hide the locale picker. */
-  hideLocalePicker?: boolean
+  hideLocalePicker?: boolean;
   /** Extra elements rendered before Sign in / Start for free on desktop, and before auth buttons on mobile */
-  rightActions?: React.ReactNode
+  rightActions?: React.ReactNode;
   /** Make navbar fully transparent with no border */
-  transparent?: boolean
+  transparent?: boolean;
   /** Extend one shared backdrop behind the pricing subheader when it docks. */
-  mergePricingSubheader?: boolean
+  mergePricingSubheader?: boolean;
   /**
    * What the transparent bar is sitting on. A dark hero takes light type
    * (the default); a light one — Astro's aluminium backdrop, say — takes dark
    * type, otherwise the links wash out against it.
    */
-  transparentOn?: 'dark' | 'light'
+  transparentOn?: 'dark' | 'light';
 }
 
 export default function Navbar({
@@ -344,58 +423,76 @@ export default function Navbar({
   mergePricingSubheader = false,
   transparentOn = 'dark',
 }: NavbarProps = {}) {
-  const { t } = useTranslation()
-  const { locales } = useLocaleContext()
-  const { oxyServices } = useOxy()
-  const { isAuthenticated, isAuthResolved, signIn } = useAuth()
+  const { t } = useTranslation();
+  const { locales } = useLocaleContext();
+  const { oxyServices } = useOxy();
+  const { isAuthenticated, isAuthResolved, signIn } = useAuth();
   // The settings gear (theme + language) always shows; the language section
   // inside it only when more than one locale is offered.
-  const showLanguageInSettings = !hideLocalePicker && locales.length > 1
+  const showLanguageInSettings = !hideLocalePicker && locales.length > 1;
   // Sub-brand mode: customDropdowns bypasses the global code-owned menu.
-  const useCustomNav = customDropdowns !== undefined
-  const { data: navProducts } = useProducts({ surface: 'nav' })
-  const { data: siteSettings } = useSiteSettings()
+  const useCustomNav = customDropdowns !== undefined;
+  const { data: navProducts } = useProducts({ surface: 'nav' });
+  const { data: siteSettings } = useSiteSettings();
   const productItems = useMemo(() => {
     // The navbar is on every page: an API that answers with something other
     // than a list (an HTML error page behind a proxy) must fall back to the
     // code-owned menu, not take the whole document down with it.
-    if (!Array.isArray(navProducts) || navProducts.length === 0) return technologiesNavFallbackItems
-    const hasPeable = navProducts.some((product) => product.productId.toLowerCase() === 'peable')
+    if (!Array.isArray(navProducts) || navProducts.length === 0)
+      return technologiesNavFallbackItems;
+    const hasPeable = navProducts.some((product) => product.productId.toLowerCase() === 'peable');
     const items: Array<NavDropdownItemData & { section: string }> = navProducts
       .filter((product) => !hasPeable || product.productId.toLowerCase() !== 'pay')
       .map((product) => {
-        const productKey = product.productId.toLowerCase()
+        const productKey = product.productId.toLowerCase();
         // Older CMS catalogues still publish Pay. Present its current identity
         // and canonical landing page in both desktop and mobile navigation.
         if (productKey === 'pay' || productKey === 'peable') {
-          return technologiesNavFallbackItems.find((item) => item.title === 'Peable')!
+          return technologiesNavFallbackItems.find((item) => item.title === 'Peable')!;
         }
         return {
           title: product.name,
-          description: product.tagline || product.description || NAV_PRODUCT_DESCRIPTION_FALLBACKS[productKey] || 'Explore this Oxy product',
-          href: productKey === 'marketplace' || productKey === 'mercaria'
-            ? '/mercaria'
-            : (product.navOpensApp ? product.href : (product.landingUrl || product.href)),
-          image: product.productId === 'alia' ? '/images/apps/alia-dropdown.svg' : (resolveProductLogoUrl(product) || undefined),
+          description:
+            product.tagline ||
+            product.description ||
+            NAV_PRODUCT_DESCRIPTION_FALLBACKS[productKey] ||
+            'Explore this Oxy product',
+          href:
+            productKey === 'marketplace' || productKey === 'mercaria'
+              ? '/mercaria'
+              : product.navOpensApp
+                ? product.href
+                : product.landingUrl || product.href,
+          image:
+            product.productId === 'alia'
+              ? '/images/apps/alia-dropdown.svg'
+              : resolveProductLogoUrl(product) || undefined,
           logoColor: product.brand,
-          preserveImageColors: product.productId === 'alia' || product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet' || product.productId === 'kaana',
+          preserveImageColors:
+            product.productId === 'alia' ||
+            product.productId === 'faircoin' ||
+            product.productId === 'fairwallet' ||
+            product.productId === 'faircoin-wallet' ||
+            product.productId === 'kaana',
           section: technologyNavSection(product.productId, product.section),
-        }
-      })
+        };
+      });
     for (const fallbackTitle of ['Noted', 'Wholesale by Mercaria']) {
-      if (items.some((item) => item.title === fallbackTitle)) continue
-      const fallbackItem = technologiesNavFallbackItems.find((item) => item.title === fallbackTitle)
-      if (fallbackItem) items.push(fallbackItem)
+      if (items.some((item) => item.title === fallbackTitle)) continue;
+      const fallbackItem = technologiesNavFallbackItems.find(
+        (item) => item.title === fallbackTitle,
+      );
+      if (fallbackItem) items.push(fallbackItem);
     }
-    return items
-  }, [navProducts])
+    return items;
+  }, [navProducts]);
   const dropdowns: readonly NavDropdown[] = useMemo(() => {
-    if (useCustomNav) return customDropdowns ?? []
-    const technologies = makeTechnologiesNavDropdown(productItems)
-    const platformLinks = platformNavDropdown.sidePanel?.links ?? []
+    if (useCustomNav) return customDropdowns ?? [];
+    const technologies = makeTechnologiesNavDropdown(productItems);
+    const platformLinks = platformNavDropdown.sidePanel?.links ?? [];
     const technologyLinks = technologiesNavSidePanel.links.filter(
       (link) => !platformLinks.some((existing) => existing.href === link.href),
-    )
+    );
     const platform = {
       ...platformNavDropdown,
       sections: [...platformNavDropdown.sections, ...technologies.sections],
@@ -403,7 +500,7 @@ export default function Navbar({
         heading: 'Explore',
         links: [...platformLinks, ...technologyLinks],
       },
-    }
+    };
     return [
       productNavDropdown,
       platform,
@@ -412,111 +509,116 @@ export default function Navbar({
       // replaced inside Platform could describe none of them correctly.
       { ...aiNavDropdown, card: aiNavCard },
       { ...resourcesNavDropdown, cards: [resourcesNavCard, resourcesBloomCard] },
-    ]
-  }, [useCustomNav, customDropdowns, productItems])
+    ];
+  }, [useCustomNav, customDropdowns, productItems]);
   const flatLinks: readonly NavItem[] = useMemo(
-    () => (useCustomNav ? customNavLinks ?? [] : simpleNavLinks),
+    () => (useCustomNav ? (customNavLinks ?? []) : simpleNavLinks),
     [useCustomNav, customNavLinks],
-  )
-  const banner = siteSettings?.banner
-  const dropdownLabels = useMemo(() => dropdowns.map((d) => d.label), [dropdowns])
+  );
+  const banner = siteSettings?.banner;
+  const dropdownLabels = useMemo(() => dropdowns.map((d) => d.label), [dropdowns]);
 
-  const scrollY = useSyncExternalStore(subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot)
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [settingsOpen, setSettingsOpen] = useState(false)
-  const [settingsMounted, setSettingsMounted] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([])
-  const [activeResult, setActiveResult] = useState(0)
-  const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const scrollY = useSyncExternalStore(
+    subscribeScrollY,
+    getScrollYSnapshot,
+    getScrollYServerSnapshot,
+  );
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsMounted, setSettingsMounted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [activeResult, setActiveResult] = useState(0);
+  const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   // The brand sits centred in the bar, but how far the dropdown triggers reach
   // depends on the window AND the language ("Sala de prensa" is far longer than
   // "Newsroom"), so no breakpoint can say when a centred brand would land on
   // them. Measure instead: centre it only while the triggers end short of the
   // middle. Laid out before paint, so the brand never visibly jumps.
-  const navRowRef = useRef<HTMLDivElement>(null)
-  const navLinksRef = useRef<HTMLUListElement>(null)
-  const brandRef = useRef<HTMLAnchorElement>(null)
-  const [brandCentred, setBrandCentred] = useState(true)
+  const navRowRef = useRef<HTMLDivElement>(null);
+  const navLinksRef = useRef<HTMLUListElement>(null);
+  const brandRef = useRef<HTMLAnchorElement>(null);
+  const [brandCentred, setBrandCentred] = useState(true);
   useLayoutEffect(() => {
-    const row = navRowRef.current
-    const links = navLinksRef.current
-    const brand = brandRef.current
-    if (!row || !links || !brand || typeof ResizeObserver === 'undefined') return
+    const row = navRowRef.current;
+    const links = navLinksRef.current;
+    const brand = brandRef.current;
+    if (!row || !links || !brand || typeof ResizeObserver === 'undefined') return;
     const measure = () => {
-      const bar = row.getBoundingClientRect()
-      const triggers = links.getBoundingClientRect()
-      const cell = brand.getBoundingClientRect().width
+      const bar = row.getBoundingClientRect();
+      const triggers = links.getBoundingClientRect();
+      const cell = brand.getBoundingClientRect().width;
       // Where the triggers would end with the brand centred: when it is not,
       // its cell is in the row ahead of them and pushes them right by its width.
-      const inFlow = getComputedStyle(brand).position !== 'absolute'
-      const end = triggers.right - (inFlow ? cell : 0)
+      const inFlow = getComputedStyle(brand).position !== 'absolute';
+      const end = triggers.right - (inFlow ? cell : 0);
       // The centred brand must start at or after the triggers end.
-      setBrandCentred(triggers.width === 0 || end <= bar.left + bar.width / 2 - cell / 2)
-    }
-    measure()
-    const observer = new ResizeObserver(measure)
-    observer.observe(row)
-    observer.observe(links)
-    observer.observe(brand)
-    return () => observer.disconnect()
-  }, [])
-  const searchRequest = useRef(0)
-  const navigate = useNavigate()
-  const { isAdmin } = useAdminAccess()
-  const searchPath = useLocation().pathname
-  const [bannerDismissed, setBannerDismissed] = useState(false)
-  const bannerVisible = !hideBanner && !bannerDismissed && (bannerContent !== undefined || (banner?.visible ?? true))
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
-  const [prevDropdown, setPrevDropdown] = useState<string | null>(null)
-  const [direction, setDirection] = useState<'left' | 'right' | null>(null)
+      setBrandCentred(triggers.width === 0 || end <= bar.left + bar.width / 2 - cell / 2);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(row);
+    observer.observe(links);
+    observer.observe(brand);
+    return () => observer.disconnect();
+  }, []);
+  const searchRequest = useRef(0);
+  const navigate = useNavigate();
+  const { isAdmin } = useAdminAccess();
+  const searchPath = useLocation().pathname;
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+  const bannerVisible =
+    !hideBanner && !bannerDismissed && (bannerContent !== undefined || (banner?.visible ?? true));
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [prevDropdown, setPrevDropdown] = useState<string | null>(null);
+  const [direction, setDirection] = useState<'left' | 'right' | null>(null);
   /** Which dropdown's subpanel is showing over the mobile panel. */
-  const [mobilePanel, setMobilePanel] = useState<string | null>(null)
+  const [mobilePanel, setMobilePanel] = useState<string | null>(null);
 
   /**
    * Panel heights, measured from the hidden off-screen copies. Only the height
    * is measured: the panels fill the band's width, so what the open/close
    * animation needs is how tall each one comes out at that width.
    */
-  const [panelHeights, setPanelHeights] = useState<Record<string, number>>({})
+  const [panelHeights, setPanelHeights] = useState<Record<string, number>>({});
   /**
    * The nav container's content width, published by {@link measureNavRow}. The
    * hidden copies are laid out at exactly this width, so their measured height
    * is the height the panel will have once it is on screen.
    */
-  const [navContentWidth, setNavContentWidth] = useState<number | null>(null)
+  const [navContentWidth, setNavContentWidth] = useState<number | null>(null);
 
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const measureRefs = useRef<Record<string, HTMLDivElement | null>>({})
-  const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({})
-  const prevDropdownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const measureRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const prevDropdownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** The on-screen panels (not the measurement copies), by dropdown key. */
-  const panelRefs = useRef<Record<string, HTMLDivElement | null>>({})
-  const bandRef = useRef<HTMLDivElement | null>(null)
-  const mobileToggleRef = useRef<HTMLButtonElement | null>(null)
+  const panelRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const bandRef = useRef<HTMLDivElement | null>(null);
+  const mobileToggleRef = useRef<HTMLButtonElement | null>(null);
   /**
    * Where focus goes once a panel opened from the keyboard is on screen. It is
    * hidden (`visibility`) until the render that opens it commits, so the move
    * waits for the layout effect below.
    */
-  const pendingFocusRef = useRef<{ key: string; edge: 'first' | 'last' } | null>(null)
-  const idBase = useId()
-  const panelId = (key: string) => `${idBase}-panel-${dropdownLabels.indexOf(key)}`
-  const mobilePanelId = `${idBase}-mobile`
-  const mobileRowRefs = useRef<Record<string, HTMLButtonElement | null>>({})
-  const mobileBackRefs = useRef<Record<string, HTMLButtonElement | null>>({})
-  const lastMobile = useRef<{ open: boolean; panel: string | null }>({ open: false, panel: null })
+  const pendingFocusRef = useRef<{ key: string; edge: 'first' | 'last' } | null>(null);
+  const idBase = useId();
+  const panelId = (key: string) => `${idBase}-panel-${dropdownLabels.indexOf(key)}`;
+  const mobilePanelId = `${idBase}-mobile`;
+  const mobileRowRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const mobileBackRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const lastMobile = useRef<{ open: boolean; panel: string | null }>({ open: false, panel: null });
 
   // Scheduled imperatively from openDropdown when we swap prevDropdown, so no
   // effect is needed to watch state transitions.
   const schedulePrevClear = useCallback(() => {
-    if (prevDropdownTimerRef.current) clearTimeout(prevDropdownTimerRef.current)
+    if (prevDropdownTimerRef.current) clearTimeout(prevDropdownTimerRef.current);
     prevDropdownTimerRef.current = setTimeout(() => {
-      setPrevDropdown(null)
-      prevDropdownTimerRef.current = null
-    }, 220)
-  }, [])
+      setPrevDropdown(null);
+      prevDropdownTimerRef.current = null;
+    }, 220);
+  }, []);
 
   // Measure each hidden panel so the shared dropdown viewport can size itself.
   // A ResizeObserver drives it — it fires once on observe and again on any
@@ -524,61 +626,61 @@ export default function Navbar({
   // rather than directly in the effect body.
   useLayoutEffect(() => {
     const measure = () => {
-      const heights: Record<string, number> = {}
+      const heights: Record<string, number> = {};
       for (const dd of dropdowns) {
-        const el = measureRefs.current[dd.label]
-        if (el) heights[dd.label] = el.scrollHeight
+        const el = measureRefs.current[dd.label];
+        if (el) heights[dd.label] = el.scrollHeight;
       }
-      setPanelHeights(heights)
-    }
-    const observer = new ResizeObserver(measure)
+      setPanelHeights(heights);
+    };
+    const observer = new ResizeObserver(measure);
     for (const dd of dropdowns) {
-      const el = measureRefs.current[dd.label]
-      if (el) observer.observe(el)
+      const el = measureRefs.current[dd.label];
+      if (el) observer.observe(el);
     }
-    return () => observer.disconnect()
-  }, [dropdowns])
+    return () => observer.disconnect();
+  }, [dropdowns]);
 
   const openDropdown = useCallback(
     (label: string) => {
       if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current)
-        closeTimeoutRef.current = null
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
       }
-      if (label === activeDropdown) return
+      if (label === activeDropdown) return;
 
       if (activeDropdown && activeDropdown !== label) {
-        const prevIndex = dropdownLabels.indexOf(activeDropdown)
-        const nextIndex = dropdownLabels.indexOf(label)
-        setDirection(nextIndex > prevIndex ? 'right' : 'left')
-        setPrevDropdown(activeDropdown)
-        schedulePrevClear()
+        const prevIndex = dropdownLabels.indexOf(activeDropdown);
+        const nextIndex = dropdownLabels.indexOf(label);
+        setDirection(nextIndex > prevIndex ? 'right' : 'left');
+        setPrevDropdown(activeDropdown);
+        schedulePrevClear();
       } else {
-        setDirection(null)
-        setPrevDropdown(null)
+        setDirection(null);
+        setPrevDropdown(null);
       }
-      setActiveDropdown(label)
+      setActiveDropdown(label);
     },
-    [activeDropdown, dropdownLabels, schedulePrevClear]
-  )
+    [activeDropdown, dropdownLabels, schedulePrevClear],
+  );
 
   const closeAll = useCallback(() => {
-    setActiveDropdown(null)
-    setPrevDropdown(null)
-    setDirection(null)
-  }, [])
+    setActiveDropdown(null);
+    setPrevDropdown(null);
+    setDirection(null);
+  }, []);
 
   const scheduleClose = useCallback(() => {
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
-    closeTimeoutRef.current = setTimeout(closeAll, 200)
-  }, [closeAll])
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = setTimeout(closeAll, 200);
+  }, [closeAll]);
 
   const cancelClose = useCallback(() => {
     if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current)
-      closeTimeoutRef.current = null
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
     }
-  }, [])
+  }, []);
 
   /*
    * ─── Keyboard: the WAI-ARIA disclosure-navigation pattern ───
@@ -596,172 +698,196 @@ export default function Navbar({
    * the trigger in the bar.
    */
   useLayoutEffect(() => {
-    const pending = pendingFocusRef.current
-    if (!pending || pending.key !== activeDropdown) return
-    pendingFocusRef.current = null
-    const items = tabbables(panelRefs.current[pending.key])
+    const pending = pendingFocusRef.current;
+    if (!pending || pending.key !== activeDropdown) return;
+    pendingFocusRef.current = null;
+    const items = tabbables(panelRefs.current[pending.key]);
     // The band is `overflow: hidden` and still growing: a scrolling focus()
     // would scroll the band itself and shift the panel out from under the bar.
-    ;(pending.edge === 'first' ? items[0] : items[items.length - 1])?.focus({ preventScroll: true })
-  }, [activeDropdown])
+    (pending.edge === 'first' ? items[0] : items[items.length - 1])?.focus({ preventScroll: true });
+  }, [activeDropdown]);
 
   // The mobile menu's levels: an opened subpanel takes focus on its back row,
   // so the keyboard lands where the eye does, and going back returns focus to
   // the row that opened it. Only while the menu stays open — opening the menu
   // leaves focus on its toggle.
   useLayoutEffect(() => {
-    const last = lastMobile.current
-    lastMobile.current = { open: mobileOpen, panel: mobilePanel }
-    if (!mobileOpen || !last.open || last.panel === mobilePanel) return
-    if (mobilePanel) mobileBackRefs.current[mobilePanel]?.focus({ preventScroll: true })
-    else if (last.panel) mobileRowRefs.current[last.panel]?.focus({ preventScroll: true })
-  }, [mobileOpen, mobilePanel])
+    const last = lastMobile.current;
+    lastMobile.current = { open: mobileOpen, panel: mobilePanel };
+    if (!mobileOpen || !last.open || last.panel === mobilePanel) return;
+    if (mobilePanel) mobileBackRefs.current[mobilePanel]?.focus({ preventScroll: true });
+    else if (last.panel) mobileRowRefs.current[last.panel]?.focus({ preventScroll: true });
+  }, [mobileOpen, mobilePanel]);
 
-  const openFromKeyboard = useCallback((key: string, edge: 'first' | 'last') => {
-    if (key === activeDropdown) {
-      const items = tabbables(panelRefs.current[key])
-      ;(edge === 'first' ? items[0] : items[items.length - 1])?.focus({ preventScroll: true })
-      return
-    }
-    pendingFocusRef.current = { key, edge }
-    openDropdown(key)
-  }, [activeDropdown, openDropdown])
+  const openFromKeyboard = useCallback(
+    (key: string, edge: 'first' | 'last') => {
+      if (key === activeDropdown) {
+        const items = tabbables(panelRefs.current[key]);
+        (edge === 'first' ? items[0] : items[items.length - 1])?.focus({ preventScroll: true });
+        return;
+      }
+      pendingFocusRef.current = { key, edge };
+      openDropdown(key);
+    },
+    [activeDropdown, openDropdown],
+  );
 
-  const closeToTrigger = useCallback((key: string) => {
-    closeAll()
-    triggerRefs.current[key]?.focus()
-  }, [closeAll])
+  const closeToTrigger = useCallback(
+    (key: string) => {
+      closeAll();
+      triggerRefs.current[key]?.focus();
+    },
+    [closeAll],
+  );
 
-  const onTriggerKeyDown = useCallback((event: ReactKeyboardEvent<HTMLButtonElement>, key: string) => {
-    switch (event.key) {
-      case 'Enter':
-      case ' ':
-        event.preventDefault()
-        if (key === activeDropdown) closeAll()
-        else openFromKeyboard(key, 'first')
-        return
-      case 'ArrowDown':
-        event.preventDefault()
-        openFromKeyboard(key, 'first')
-        return
-      case 'ArrowUp':
-        event.preventDefault()
-        openFromKeyboard(key, 'last')
-        return
-      case 'Tab':
-        if (!event.shiftKey && key === activeDropdown) {
-          const first = tabbables(panelRefs.current[key])[0]
-          if (first) {
-            event.preventDefault()
-            first.focus({ preventScroll: true })
+  const onTriggerKeyDown = useCallback(
+    (event: ReactKeyboardEvent<HTMLButtonElement>, key: string) => {
+      switch (event.key) {
+        case 'Enter':
+        case ' ':
+          event.preventDefault();
+          if (key === activeDropdown) closeAll();
+          else openFromKeyboard(key, 'first');
+          return;
+        case 'ArrowDown':
+          event.preventDefault();
+          openFromKeyboard(key, 'first');
+          return;
+        case 'ArrowUp':
+          event.preventDefault();
+          openFromKeyboard(key, 'last');
+          return;
+        case 'Tab':
+          if (!event.shiftKey && key === activeDropdown) {
+            const first = tabbables(panelRefs.current[key])[0];
+            if (first) {
+              event.preventDefault();
+              first.focus({ preventScroll: true });
+            }
+          }
+          return;
+        case 'ArrowLeft':
+        case 'ArrowRight':
+        case 'Home':
+        case 'End': {
+          const bar = Array.from(
+            navLinksRef.current?.querySelectorAll<HTMLElement>(
+              ':scope > li > button, :scope > li > a',
+            ) ?? [],
+          );
+          const target = rovingTarget(bar, event.currentTarget, event.key);
+          if (target) {
+            event.preventDefault();
+            target.focus();
+          }
+          return;
+        }
+      }
+    },
+    [activeDropdown, closeAll, openFromKeyboard],
+  );
+
+  const onBandKeyDown = useCallback(
+    (event: ReactKeyboardEvent<HTMLDivElement>) => {
+      const key = activeDropdown;
+      if (!key) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeToTrigger(key);
+        return;
+      }
+      const items = tabbables(panelRefs.current[key]);
+      const index = items.indexOf(document.activeElement as HTMLElement);
+      if (event.key === 'Tab') {
+        if (event.shiftKey && index === 0) {
+          event.preventDefault();
+          triggerRefs.current[key]?.focus();
+        } else if (!event.shiftKey && index === items.length - 1) {
+          const bar = tabbables(navRowRef.current);
+          const after = bar[bar.indexOf(triggerRefs.current[key] as HTMLElement) + 1];
+          closeAll();
+          if (after) {
+            event.preventDefault();
+            after.focus();
           }
         }
-        return
-      case 'ArrowLeft':
-      case 'ArrowRight':
-      case 'Home':
-      case 'End': {
-        const bar = Array.from(navLinksRef.current?.querySelectorAll<HTMLElement>(':scope > li > button, :scope > li > a') ?? [])
-        const target = rovingTarget(bar, event.currentTarget, event.key)
+        return;
+      }
+      if (
+        event.key === 'ArrowDown' ||
+        event.key === 'ArrowUp' ||
+        event.key === 'Home' ||
+        event.key === 'End'
+      ) {
+        const target = rovingTarget(items, document.activeElement, event.key);
         if (target) {
-          event.preventDefault()
-          target.focus()
-        }
-        return
-      }
-    }
-  }, [activeDropdown, closeAll, openFromKeyboard])
-
-  const onBandKeyDown = useCallback((event: ReactKeyboardEvent<HTMLDivElement>) => {
-    const key = activeDropdown
-    if (!key) return
-    if (event.key === 'Escape') {
-      event.preventDefault()
-      closeToTrigger(key)
-      return
-    }
-    const items = tabbables(panelRefs.current[key])
-    const index = items.indexOf(document.activeElement as HTMLElement)
-    if (event.key === 'Tab') {
-      if (event.shiftKey && index === 0) {
-        event.preventDefault()
-        triggerRefs.current[key]?.focus()
-      } else if (!event.shiftKey && index === items.length - 1) {
-        const bar = tabbables(navRowRef.current)
-        const after = bar[bar.indexOf(triggerRefs.current[key] as HTMLElement) + 1]
-        closeAll()
-        if (after) {
-          event.preventDefault()
-          after.focus()
+          event.preventDefault();
+          target.focus({ preventScroll: true });
         }
       }
-      return
-    }
-    if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Home' || event.key === 'End') {
-      const target = rovingTarget(items, document.activeElement, event.key)
-      if (target) {
-        event.preventDefault()
-        target.focus({ preventScroll: true })
-      }
-    }
-  }, [activeDropdown, closeAll, closeToTrigger])
+    },
+    [activeDropdown, closeAll, closeToTrigger],
+  );
 
   /**
    * Focus that leaves both the open panel and its trigger closes the panel. Only
    * a move to ANOTHER element counts: a click on a panel's empty padding blurs
    * to nothing, and the pointer resting on the panel still wants it open.
    */
-  const onDisclosureBlur = useCallback((event: ReactFocusEvent<HTMLElement>) => {
-    const key = activeDropdown
-    const next = event.relatedTarget as Node | null
-    if (!key || !next) return
-    if (bandRef.current?.contains(next) || triggerRefs.current[key] === next) return
-    closeAll()
-  }, [activeDropdown, closeAll])
+  const onDisclosureBlur = useCallback(
+    (event: ReactFocusEvent<HTMLElement>) => {
+      const key = activeDropdown;
+      const next = event.relatedTarget as Node | null;
+      if (!key || !next) return;
+      if (bandRef.current?.contains(next) || triggerRefs.current[key] === next) return;
+      closeAll();
+    },
+    [activeDropdown, closeAll],
+  );
 
   // React 19 callback ref — owns the global Escape handler lifecycle. Attaches when
   // the nav area mounts, detaches on unmount. Also clears every pending timer: the
   // navbar is mounted per-page, so it unmounts on each route change and any timer
   // left running would fire against a dead component.
   const escapeRef = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return
+    if (!node) return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return
-      setActiveDropdown(null)
-      setPrevDropdown(null)
-      setDirection(null)
-      setMobileOpen(false)
-    }
-    window.addEventListener('keydown', handler)
+      if (e.key !== 'Escape') return;
+      setActiveDropdown(null);
+      setPrevDropdown(null);
+      setDirection(null);
+      setMobileOpen(false);
+    };
+    window.addEventListener('keydown', handler);
     return () => {
-      window.removeEventListener('keydown', handler)
-      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
-      if (prevDropdownTimerRef.current) clearTimeout(prevDropdownTimerRef.current)
-      if (searchDebounce.current) clearTimeout(searchDebounce.current)
-    }
-  }, [])
+      window.removeEventListener('keydown', handler);
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+      if (prevDropdownTimerRef.current) clearTimeout(prevDropdownTimerRef.current);
+      if (searchDebounce.current) clearTimeout(searchDebounce.current);
+    };
+  }, []);
 
   const getAnimClass = (label: string) => {
     if (label === activeDropdown) {
-      if (!direction) return 'animate-nav-fade-in'
-      return direction === 'right' ? 'animate-nav-enter-right' : 'animate-nav-enter-left'
+      if (!direction) return 'animate-nav-fade-in';
+      return direction === 'right' ? 'animate-nav-enter-right' : 'animate-nav-enter-left';
     }
     if (label === prevDropdown && direction) {
-      return direction === 'right' ? 'animate-nav-exit-left' : 'animate-nav-exit-right'
+      return direction === 'right' ? 'animate-nav-exit-left' : 'animate-nav-exit-right';
     }
-    return ''
-  }
+    return '';
+  };
 
-  const isOpen = activeDropdown !== null
-  const measured = Object.keys(panelHeights).length > 0
-  const activeHeight = activeDropdown ? panelHeights[activeDropdown] : undefined
-  const easing = 'cubic-bezier(0.65,0,0.35,1)'
+  const isOpen = activeDropdown !== null;
+  const measured = Object.keys(panelHeights).length > 0;
+  const activeHeight = activeDropdown ? panelHeights[activeDropdown] : undefined;
+  const easing = 'cubic-bezier(0.65,0,0.35,1)';
 
   // Derived from scrollY — no extra state needed
-  const scrolled = scrollY > 50
-  const bannerHeight = 40 // matches --site-header-banner-visible-height
-  const bannerOffset = bannerVisible ? Math.max(0, bannerHeight - scrollY) : 0
-  const bannerOffsetRef = useRef(bannerOffset)
+  const scrolled = scrollY > 50;
+  const bannerHeight = 40; // matches --site-header-banner-visible-height
+  const bannerOffset = bannerVisible ? Math.max(0, bannerHeight - scrollY) : 0;
+  const bannerOffsetRef = useRef(bannerOffset);
 
   /**
    * Publish two facts about the nav row: its real height as
@@ -787,132 +913,146 @@ export default function Navbar({
    * full-bleed and the band is not.
    */
   const measureBandWidth = useCallback((node: HTMLElement | null) => {
-    if (!node) return
+    if (!node) return;
     const publish = () => {
-      const style = getComputedStyle(node)
-      const padding = (Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0)
-      setNavContentWidth(node.getBoundingClientRect().width - padding)
-    }
-    publish()
-    const observer = new ResizeObserver(publish)
-    observer.observe(node)
-    return () => observer.disconnect()
-  }, [])
+      const style = getComputedStyle(node);
+      const padding =
+        (Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0);
+      setNavContentWidth(node.getBoundingClientRect().width - padding);
+    };
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   const measureNavRow = useCallback((node: HTMLElement | null) => {
-    if (!node) return
+    if (!node) return;
     const publish = () => {
-      const rect = node.getBoundingClientRect()
+      const rect = node.getBoundingClientRect();
       document.documentElement.style.setProperty(
         '--site-header-height',
         `${Math.round(rect.height)}px`,
-      )
+      );
       document.documentElement.style.setProperty(
         '--site-header-occlusion-bottom',
         `${Math.round(bannerOffsetRef.current + rect.height)}px`,
-      )
-
-    }
-    publish()
-    const observer = new ResizeObserver(publish)
-    observer.observe(node)
-    return () => observer.disconnect()
-  }, [])
+      );
+    };
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   // The transparent home navbar sits over the hero. Keep the hero's frame
   // lines below the current banner + navbar stack so they do not double the
   // logo/control separators while the banner scrolls away.
   useLayoutEffect(() => {
-    bannerOffsetRef.current = bannerOffset
-    const headerHeight = Number.parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--site-header-height'),
-    ) || 0
+    bannerOffsetRef.current = bannerOffset;
+    const headerHeight =
+      Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--site-header-height'),
+      ) || 0;
     if (headerHeight > 0) {
       document.documentElement.style.setProperty(
         '--site-header-occlusion-bottom',
         `${Math.round(bannerOffset + headerHeight)}px`,
-      )
+      );
     }
-  }, [bannerOffset])
-  const isTransparent = transparent && !scrolled && !isOpen && !mobileOpen && !searchOpen
+  }, [bannerOffset]);
+  const isTransparent = transparent && !scrolled && !isOpen && !mobileOpen && !searchOpen;
   const headerSurface = mobileOpen
     ? 'var(--background)'
-    : 'color-mix(in srgb, var(--background) 80%, transparent)'
+    : 'color-mix(in srgb, var(--background) 80%, transparent)';
 
   const closeSearch = useCallback(() => {
-    searchRequest.current += 1
-    setSearchOpen(false)
-    setSearchQuery('')
-    setSearchResults([])
-    setActiveResult(0)
-  }, [])
-  const runSearch = useCallback((q: string) => {
-    const requestId = ++searchRequest.current
-    if (searchDebounce.current) clearTimeout(searchDebounce.current)
-    if (!q.trim()) {
-      setSearchResults([])
-      return
-    }
-    searchDebounce.current = setTimeout(() => {
-      // A remote handle is a federation lookup, not a native-user search.
-      // Avoid sending it through Core at all; native profile search remains
-      // available for ordinary names and usernames.
-      const looksLikeFederatedHandle = /^@?[^@\s]+@[^@\s]+$/.test(q.trim())
-      const profileSearch = looksLikeFederatedHandle
-        ? Promise.resolve([])
-        : oxyServices.users.search(q, { limit: 8 }).then((response) => response.data).catch(() => [])
-      void Promise.all([
-        searchSite(q).catch(() => [] as SearchResult[]),
-        profileSearch,
-      ]).then(([siteResults, users]) => {
-        if (requestId !== searchRequest.current) return
-        const nativeUsers = users.filter((user) =>
-          user.type === 'local' ||
-          (!user.type && !user.isFederated && !user.instance && !user.federation),
-        )
-        const userResults: SearchResult[] = nativeUsers.map((user) => ({
-          id: `user:${user.id}`,
-          url: `/u/${user.username}`,
-          title: user.name.displayName?.trim() || user.username,
-          group: 'users',
-          subtitle: `@${user.username}`,
-          kind: 'user',
-          avatar: user.avatar
-            ? user.avatar.startsWith('http')
-              ? user.avatar
-              : oxyServices.assets.publicUrl(user.avatar, 'thumb')
-            : undefined,
-        }))
-        setSearchResults([...siteResults, ...userResults])
-        setActiveResult(0)
-      })
-    }, 160)
-  }, [oxyServices])
+    searchRequest.current += 1;
+    setSearchOpen(false);
+    setSearchQuery('');
+    setSearchResults([]);
+    setActiveResult(0);
+  }, []);
+  const runSearch = useCallback(
+    (q: string) => {
+      const requestId = ++searchRequest.current;
+      if (searchDebounce.current) clearTimeout(searchDebounce.current);
+      if (!q.trim()) {
+        setSearchResults([]);
+        return;
+      }
+      searchDebounce.current = setTimeout(() => {
+        // A remote handle is a federation lookup, not a native-user search.
+        // Avoid sending it through Core at all; native profile search remains
+        // available for ordinary names and usernames.
+        const looksLikeFederatedHandle = /^@?[^@\s]+@[^@\s]+$/.test(q.trim());
+        const profileSearch = looksLikeFederatedHandle
+          ? Promise.resolve([])
+          : oxyServices.users
+              .search(q, { limit: 8 })
+              .then((response) => response.data)
+              .catch(() => []);
+        void Promise.all([searchSite(q).catch(() => [] as SearchResult[]), profileSearch]).then(
+          ([siteResults, users]) => {
+            if (requestId !== searchRequest.current) return;
+            const nativeUsers = users.filter(
+              (user) =>
+                user.type === 'local' ||
+                (!user.type && !user.isFederated && !user.instance && !user.federation),
+            );
+            const userResults: SearchResult[] = nativeUsers.map((user) => ({
+              id: `user:${user.id}`,
+              url: `/u/${user.username}`,
+              title: user.name.displayName?.trim() || user.username,
+              group: 'users',
+              subtitle: `@${user.username}`,
+              kind: 'user',
+              avatar: user.avatar
+                ? user.avatar.startsWith('http')
+                  ? user.avatar
+                  : oxyServices.assets.publicUrl(user.avatar, 'thumb')
+                : undefined,
+            }));
+            setSearchResults([...siteResults, ...userResults]);
+            setActiveResult(0);
+          },
+        );
+      }, 160);
+    },
+    [oxyServices],
+  );
   // Group-ordered results are the source of truth for keyboard navigation.
   const groupedResults = useMemo(
     () => groupResults(searchResults, searchContextGroups(searchPath)),
     [searchResults, searchPath],
-  )
-  const flatResults = useMemo(() => groupedResults.flatMap((g) => g.items), [groupedResults])
+  );
+  const flatResults = useMemo(() => groupedResults.flatMap((g) => g.items), [groupedResults]);
 
   // The ink the bar writes in. Over a dark hero each control takes the
   // `.force-dark` palette, so `foreground` is light ink whatever the toggle
   // says; a light hero follows the page's own palette (Astro's backdrop darkens
   // with the theme). The scope sits on the controls rather than the header so
   // the logo keeps the page's brand colour. `NavBarButton` paints each state.
-  const barInk: NavBarInk = !isTransparent ? 'page' : transparentOn === 'light' ? 'onLight' : 'onDark'
-  const flatLinkClass = 'inline-flex items-center justify-center text-link-md'
-  const iconButtonClass = 'group inline-flex select-none items-center justify-center'
+  const barInk: NavBarInk = !isTransparent
+    ? 'page'
+    : transparentOn === 'light'
+      ? 'onLight'
+      : 'onDark';
+  const flatLinkClass = 'inline-flex items-center justify-center text-link-md';
+  const iconButtonClass = 'group inline-flex select-none items-center justify-center';
   /** ArrowLeft/Right, Home/End walk the bar's triggers and links. */
   const onBarLinkKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
-    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
-    const bar = Array.from(navLinksRef.current?.querySelectorAll<HTMLElement>(':scope > li > button, :scope > li > a') ?? [])
-    const target = rovingTarget(bar, event.currentTarget, event.key)
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    const bar = Array.from(
+      navLinksRef.current?.querySelectorAll<HTMLElement>(':scope > li > button, :scope > li > a') ??
+        [],
+    );
+    const target = rovingTarget(bar, event.currentTarget, event.key);
     if (target) {
-      event.preventDefault()
-      target.focus()
+      event.preventDefault();
+      target.focus();
     }
-  }
+  };
   const authControl = (avatarSize: number) => {
     if (!isAuthResolved || !isAuthenticated) {
       return (
@@ -924,23 +1064,36 @@ export default function Navbar({
             className={iconButtonClass}
             aria-label={t('common.signIn')}
             disabled={!isAuthResolved}
-            onClick={() => { void signIn() }}
+            onClick={() => {
+              void signIn();
+            }}
           >
             <RiLoginBoxLine aria-hidden width={18} height={18} fill="currentColor" />
           </button>
         </NavBarButton>
-      )
+      );
     }
     return (
       <Suspense fallback={<span aria-hidden="true" className="block size-10" />}>
         <ProfileButton
           expanded={false}
           avatarSize={avatarSize}
-          menuItems={isAdmin ? [{ key: 'admin', label: 'Admin', icon: 'shield-account-outline', onPress: () => navigate('/admin') }] : []}
+          menuItems={
+            isAdmin
+              ? [
+                  {
+                    key: 'admin',
+                    label: 'Admin',
+                    icon: 'shield-account-outline',
+                    onPress: () => navigate('/admin'),
+                  },
+                ]
+              : []
+          }
         />
       </Suspense>
-    )
-  }
+    );
+  };
 
   const settingsButton = (
     <NavBarButton ink={barInk} square open={settingsOpen}>
@@ -951,17 +1104,22 @@ export default function Navbar({
         aria-haspopup="dialog"
         aria-expanded={settingsOpen}
         onClick={() => {
-          closeAll()
-          closeSearch()
-          setMobileOpen(false)
-          setSettingsMounted(true)
-          setSettingsOpen(true)
+          closeAll();
+          closeSearch();
+          setMobileOpen(false);
+          setSettingsMounted(true);
+          setSettingsOpen(true);
         }}
       >
-        <span aria-hidden="true" className="inline-flex transition-transform duration-300 group-hover:rotate-45"><RiSettings3Line width={18} height={18} fill="currentColor" /></span>
+        <span
+          aria-hidden="true"
+          className="inline-flex transition-transform duration-300 group-hover:rotate-45"
+        >
+          <RiSettings3Line width={18} height={18} fill="currentColor" />
+        </span>
       </button>
     </NavBarButton>
-  )
+  );
 
   return (
     <>
@@ -980,40 +1138,49 @@ export default function Navbar({
                 <div className="flex size-full items-center justify-center text-xs leading-tight text-primary-foreground max-md:justify-start">
                   {bannerContent}
                 </div>
-              ) : <Link
-                className="group relative flex size-full items-center justify-center gap-1.5 text-primary-foreground max-md:justify-start"
-                to={banner?.href ?? '/bloom/'}
-              >
-                <span className="group-hover-underline relative truncate text-body-sm">
-                  {banner?.text ?? t('navbar.bannerDefault')}
-                </span>
-                <span aria-hidden="true" className="inline-flex transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
-              </Link>}
+              ) : (
+                <Link
+                  className="group relative flex size-full items-center justify-center gap-1.5 text-primary-foreground max-md:justify-start"
+                  to={banner?.href ?? '/bloom/'}
+                >
+                  <span className="group-hover-underline relative truncate text-body-sm">
+                    {banner?.text ?? t('navbar.bannerDefault')}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="inline-flex transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50"
+                  >
+                    <RiArrowRightLine width={14} height={14} fill="currentColor" />
+                  </span>
+                </Link>
+              )}
               {/* Bloom's close control on the banner's own ground: primary
                   ink at 70%, a primary-foreground wash on hover. */}
-              <Button
-                asChild
-                appearance="plain"
-                tone="neutral"
-              >
+              <Button asChild appearance="plain" tone="neutral">
                 <button
                   type="button"
                   className="inline-flex items-center justify-center"
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    right: 0,
-                    transform: 'translateY(-50%)',
-                    width: 32,
-                    height: 32,
-                    paddingLeft: 0,
-                    paddingRight: 0,
-                    '--bloom-btn-fg': 'color-mix(in srgb, var(--color-primary-foreground) 70%, transparent)',
-                    '--bloom-btn-fg-hover': 'color-mix(in srgb, var(--color-primary-foreground) 70%, transparent)',
-                    '--bloom-btn-fg-active': 'var(--color-primary-foreground)',
-                    '--bloom-btn-bg-hover': 'color-mix(in srgb, var(--color-primary-foreground) 10%, transparent)',
-                    '--bloom-btn-bg-active': 'color-mix(in srgb, var(--color-primary-foreground) 15%, transparent)',
-                  } as CSSProperties}
+                  style={
+                    {
+                      position: 'absolute',
+                      top: '50%',
+                      right: 0,
+                      transform: 'translateY(-50%)',
+                      width: 32,
+                      height: 32,
+                      paddingLeft: 0,
+                      paddingRight: 0,
+                      '--bloom-btn-fg':
+                        'color-mix(in srgb, var(--color-primary-foreground) 70%, transparent)',
+                      '--bloom-btn-fg-hover':
+                        'color-mix(in srgb, var(--color-primary-foreground) 70%, transparent)',
+                      '--bloom-btn-fg-active': 'var(--color-primary-foreground)',
+                      '--bloom-btn-bg-hover':
+                        'color-mix(in srgb, var(--color-primary-foreground) 10%, transparent)',
+                      '--bloom-btn-bg-active':
+                        'color-mix(in srgb, var(--color-primary-foreground) 15%, transparent)',
+                    } as CSSProperties
+                  }
                   aria-label={t('common.dismissBanner')}
                   onClick={() => setBannerDismissed(true)}
                 >
@@ -1025,442 +1192,505 @@ export default function Navbar({
         </div>
       )}
 
-    <header
-      data-transparent={isTransparent}
-      data-menu-open={isOpen || mobileOpen || searchOpen}
-      className={`fixed left-0 right-0 z-50 transition-[backdrop-filter] duration-300 ${isTransparent || mergePricingSubheader ? '' : 'backdrop-blur-md'}`}
-      style={{
-        top: bannerOffset,
-        background: isTransparent || mergePricingSubheader ? 'transparent' : headerSurface,
-      }}
-    >
-      {mergePricingSubheader && (
-        <div
-          aria-hidden="true"
-          data-pricing-header-backdrop
-          className={`pointer-events-none absolute inset-0 -z-10 supports-[animation-timeline:scroll()]:animate-pricing-header-merge supports-[animation-timeline:scroll()]:[animation-timeline:--pricing-hero] supports-[animation-timeline:scroll()]:[animation-range:exit_99.999%_exit_100%] ${isTransparent ? '' : 'backdrop-blur-md'}`}
-          style={{ background: isTransparent ? 'transparent' : headerSurface }}
-        />
-      )}
-
-      {/* ─── Hidden measurement panels (off-screen, unstyled, for measuring natural size) ─── */}
-      <div
-        aria-hidden="true"
+      <header
+        data-transparent={isTransparent}
+        data-menu-open={isOpen || mobileOpen || searchOpen}
+        className={`fixed left-0 right-0 z-50 transition-[backdrop-filter] duration-300 ${isTransparent || mergePricingSubheader ? '' : 'backdrop-blur-md'}`}
         style={{
-          position: 'absolute',
-          left: -9999,
-          top: -9999,
-          visibility: 'hidden',
-          pointerEvents: 'none',
-          // Laid out at the container's width, not the viewport's: this sits
-          // inside the full-width header, and a panel whose columns are decided
-          // by `auto-fit` comes out a different height at a different width.
-          width: navContentWidth ?? undefined,
-          // Don't use display:none or opacity:0 — need real layout
+          top: bannerOffset,
+          background: isTransparent || mergePricingSubheader ? 'transparent' : headerSurface,
         }}
       >
-        {dropdowns.map((dd) => (
-          <div key={dd.label} ref={(el) => { measureRefs.current[dd.label] = el }}>
-            <DropdownContent dropdown={dd} loadImages={false} />
-          </div>
-        ))}
-      </div>
+        {mergePricingSubheader && (
+          <div
+            aria-hidden="true"
+            data-pricing-header-backdrop
+            className={`pointer-events-none absolute inset-0 -z-10 supports-[animation-timeline:scroll()]:animate-pricing-header-merge supports-[animation-timeline:scroll()]:[animation-timeline:--pricing-hero] supports-[animation-timeline:scroll()]:[animation-range:exit_99.999%_exit_100%] ${isTransparent ? '' : 'backdrop-blur-md'}`}
+            style={{ background: isTransparent ? 'transparent' : headerSurface }}
+          />
+        )}
 
-      {/* ─── Main nav ─── */}
-      <div ref={measureNavRow} className="container max-lg:!max-w-full">
-        <nav>
-          {/*
+        {/* ─── Hidden measurement panels (off-screen, unstyled, for measuring natural size) ─── */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: -9999,
+            top: -9999,
+            visibility: 'hidden',
+            pointerEvents: 'none',
+            // Laid out at the container's width, not the viewport's: this sits
+            // inside the full-width header, and a panel whose columns are decided
+            // by `auto-fit` comes out a different height at a different width.
+            width: navContentWidth ?? undefined,
+            // Don't use display:none or opacity:0 — need real layout
+          }}
+        >
+          {dropdowns.map((dd) => (
+            <div
+              key={dd.label}
+              ref={(el) => {
+                measureRefs.current[dd.label] = el;
+              }}
+            >
+              <DropdownContent dropdown={dd} loadImages={false} />
+            </div>
+          ))}
+        </div>
+
+        {/* ─── Main nav ─── */}
+        <div ref={measureNavRow} className="container max-lg:!max-w-full">
+          <nav>
+            {/*
             The row opens and closes on the same square, each flush to its own
             edge: the brand at the left, the last control at the right. The page
             gutter is that square, so a page's first column starts where the
             brand cell ends and its last ends where the final control begins.
           */}
-          {/* The shared surface stays continuous while a panel is open. */}
-          {/*
+            {/* The shared surface stays continuous while a panel is open. */}
+            {/*
             The brand centres itself only while the dropdown triggers end short
             of the middle (brandCentred); otherwise it keeps its cell at the left.
           */}
-          <div ref={navRowRef} className="relative flex min-h-12 items-center">
-            <Link
-              ref={brandRef}
-              to={brand?.homeHref ?? '/'}
-              className={`grid size-10 shrink-0 place-content-center rounded-full transition-[inset-inline-start,transform,background-color] duration-300 ease-out hover:bg-foreground/5 ${brandCentred ? `lg:absolute lg:start-1/2 lg:top-1/2 lg:z-20 lg:-translate-y-1/2 ${searchOpen ? 'lg:start-4 lg:translate-x-0' : 'lg:-translate-x-1/2'}` : ''}`}
-              aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            >
-              {brand?.logo ?? <LogoIcon height={28} color="var(--primary)" letterColor="var(--logo-letter-color, var(--primary-foreground))" />}
-            </Link>
-
-            {/* Middle: the dropdown triggers, or the search field while it is open */}
-            <div className="flex min-w-0 flex-1 items-stretch">
-            <div ref={escapeRef} className="relative z-10 flex items-stretch" onMouseLeave={scheduleClose}>
-                <ul ref={navLinksRef} className={`hidden items-stretch gap-1 transition-[opacity,transform] duration-200 ease-out lg:flex ${searchOpen ? 'lg:pointer-events-none lg:invisible lg:absolute lg:start-0 lg:top-0 lg:-translate-x-2 lg:opacity-0' : 'lg:translate-x-0 lg:opacity-100'}`}>
-                  {dropdowns.map((dd) => (
-                    <li key={dd.label}>
-                      <NavBarButton ink={barInk} open={activeDropdown === dd.label}>
-                        <button
-                          type="button"
-                          ref={(el) => { triggerRefs.current[dd.label] = el }}
-                          className="inline-flex select-none items-center justify-center text-link-md"
-                          onMouseEnter={() => openDropdown(dd.label)}
-                          // A tap (or a click once the pointer is already on it)
-                          // opens; it never closes what the hover just opened.
-                          onClick={() => openDropdown(dd.label)}
-                          onKeyDown={(event) => onTriggerKeyDown(event, dd.label)}
-                          onBlur={onDisclosureBlur}
-                          aria-expanded={activeDropdown === dd.label}
-                          aria-controls={panelId(dd.label)}
-                        >
-                          <span>{translatedNavLabel(dd.label, t)}</span>
-                          <TriggerChevron open={activeDropdown === dd.label} />
-                        </button>
-                      </NavBarButton>
-                    </li>
-                  ))}
-                  {flatLinks.map((link) => (
-                    <li key={link.label}>
-                      <NavBarButton ink={barInk} rest="soft">
-                        {link.href.startsWith('/') && !link.external ? (
-                          <Link
-                            to={link.href}
-                            className={flatLinkClass}
-                            onMouseEnter={scheduleClose}
-                            onKeyDown={onBarLinkKeyDown}
-                          >
-                            {translatedNavLabel(link.label, t)}
-                          </Link>
-                        ) : (
-                          <a
-                            href={link.href}
-                            {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                            className={flatLinkClass}
-                            onMouseEnter={scheduleClose}
-                            onKeyDown={onBarLinkKeyDown}
-                          >
-                            {translatedNavLabel(link.label, t)}
-                          </a>
-                        )}
-                      </NavBarButton>
-                    </li>
-                  ))}
-                </ul>
-
-              </div>
-
-            {searchOpen && (
-              <div className="relative mx-auto w-full max-w-[42rem]">
-                <span aria-hidden="true" className="inline-flex pointer-events-none absolute start-5 top-1/2 -translate-y-1/2 text-muted-foreground"><RiSearchLine width={20} height={20} fill="currentColor" /></span>
-                <input
-                  autoFocus
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value)
-                    runSearch(e.target.value)
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Escape') {
-                      closeSearch()
-                    } else if (e.key === 'ArrowDown') {
-                      e.preventDefault()
-                      setActiveResult((i) => Math.min(i + 1, flatResults.length - 1))
-                    } else if (e.key === 'ArrowUp') {
-                      e.preventDefault()
-                      setActiveResult((i) => Math.max(i - 1, 0))
-                    } else if (e.key === 'Enter') {
-                      const r = flatResults[activeResult]
-                      if (r) {
-                        e.preventDefault()
-                        closeSearch()
-                        navigate(r.url)
-                      }
-                    }
-                  }}
-                  placeholder={t('common.searchApps')}
-                  aria-label={t('common.search')}
-                  className={`h-11 w-full ps-12 pe-12 text-body-md text-foreground outline-none placeholder:text-muted-foreground ${searchQuery.trim() ? 'rounded-t-[2rem] border border-foreground/10 border-b-0 bg-background/60 shadow-none backdrop-blur-md' : 'rounded-full border border-foreground/10 bg-background/60 shadow-sm backdrop-blur-md'}`}
-                />
-                <NavBarButton ink="page" square size={44}>
-                  <button
-                    type="button"
-                    onClick={closeSearch}
-                    aria-label={t('common.closeSearch')}
-                    // Inline, because `.bloom-btn` sets `position: relative`
-                    // from an unlayered sheet that outranks a utility class.
-                    style={{ position: 'absolute', insetInlineEnd: 0, top: 0 }}
-                    className="inline-flex items-center justify-center"
-                  >
-                    <RiCloseLine aria-hidden width={16} height={16} fill="currentColor" />
-                  </button>
-                </NavBarButton>
-
-                {searchQuery.trim() ? (
-                  <NavbarSearchResults
-                    groups={groupedResults}
-                    flatResults={flatResults}
-                    activeResult={activeResult}
-                    noResultsLabel={t('common.noResults')}
-                    onHover={setActiveResult}
-                    onSelect={(result) => {
-                      closeSearch()
-                      navigate(result.url)
-                    }}
+            <div ref={navRowRef} className="relative flex min-h-12 items-center">
+              <Link
+                ref={brandRef}
+                to={brand?.homeHref ?? '/'}
+                className={`grid size-10 shrink-0 place-content-center rounded-full transition-[inset-inline-start,transform,background-color] duration-300 ease-out hover:bg-foreground/5 ${brandCentred ? `lg:absolute lg:start-1/2 lg:top-1/2 lg:z-20 lg:-translate-y-1/2 ${searchOpen ? 'lg:start-4 lg:translate-x-0' : 'lg:-translate-x-1/2'}` : ''}`}
+                aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                {brand?.logo ?? (
+                  <LogoIcon
+                    height={28}
+                    color="var(--primary)"
+                    letterColor="var(--logo-letter-color, var(--primary-foreground))"
                   />
-                ) : null}
-              </div>
-            )}
-            </div>
+                )}
+              </Link>
 
-            {/* Right controls (mobile + desktop) */}
-            <div className={`ms-auto flex items-stretch ${searchOpen ? 'lg:hidden' : ''}`}>
-              {/* Mobile controls */}
-            <div className="flex items-stretch gap-2 lg:hidden">
-              {settingsButton}
-              {/* The avatar is the only child of these toggles, and it renders
+              {/* Middle: the dropdown triggers, or the search field while it is open */}
+              <div className="flex min-w-0 flex-1 items-stretch">
+                <div
+                  ref={escapeRef}
+                  className="relative z-10 flex items-stretch"
+                  onMouseLeave={scheduleClose}
+                >
+                  <ul
+                    ref={navLinksRef}
+                    className={`hidden items-stretch gap-1 transition-[opacity,transform] duration-200 ease-out lg:flex ${searchOpen ? 'lg:pointer-events-none lg:invisible lg:absolute lg:start-0 lg:top-0 lg:-translate-x-2 lg:opacity-0' : 'lg:translate-x-0 lg:opacity-100'}`}
+                  >
+                    {dropdowns.map((dd) => (
+                      <li key={dd.label}>
+                        <NavBarButton ink={barInk} open={activeDropdown === dd.label}>
+                          <button
+                            type="button"
+                            ref={(el) => {
+                              triggerRefs.current[dd.label] = el;
+                            }}
+                            className="inline-flex select-none items-center justify-center text-link-md"
+                            onMouseEnter={() => openDropdown(dd.label)}
+                            // A tap (or a click once the pointer is already on it)
+                            // opens; it never closes what the hover just opened.
+                            onClick={() => openDropdown(dd.label)}
+                            onKeyDown={(event) => onTriggerKeyDown(event, dd.label)}
+                            onBlur={onDisclosureBlur}
+                            aria-expanded={activeDropdown === dd.label}
+                            aria-controls={panelId(dd.label)}
+                          >
+                            <span>{translatedNavLabel(dd.label, t)}</span>
+                            <TriggerChevron open={activeDropdown === dd.label} />
+                          </button>
+                        </NavBarButton>
+                      </li>
+                    ))}
+                    {flatLinks.map((link) => (
+                      <li key={link.label}>
+                        <NavBarButton ink={barInk} rest="soft">
+                          {link.href.startsWith('/') && !link.external ? (
+                            <Link
+                              to={link.href}
+                              className={flatLinkClass}
+                              onMouseEnter={scheduleClose}
+                              onKeyDown={onBarLinkKeyDown}
+                            >
+                              {translatedNavLabel(link.label, t)}
+                            </Link>
+                          ) : (
+                            <a
+                              href={link.href}
+                              {...(link.external
+                                ? { target: '_blank', rel: 'noopener noreferrer' }
+                                : {})}
+                              className={flatLinkClass}
+                              onMouseEnter={scheduleClose}
+                              onKeyDown={onBarLinkKeyDown}
+                            >
+                              {translatedNavLabel(link.label, t)}
+                            </a>
+                          )}
+                        </NavBarButton>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {searchOpen && (
+                  <div className="relative mx-auto w-full max-w-[42rem]">
+                    <span
+                      aria-hidden="true"
+                      className="inline-flex pointer-events-none absolute start-5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    >
+                      <RiSearchLine width={20} height={20} fill="currentColor" />
+                    </span>
+                    <input
+                      autoFocus
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        runSearch(e.target.value);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') {
+                          closeSearch();
+                        } else if (e.key === 'ArrowDown') {
+                          e.preventDefault();
+                          setActiveResult((i) => Math.min(i + 1, flatResults.length - 1));
+                        } else if (e.key === 'ArrowUp') {
+                          e.preventDefault();
+                          setActiveResult((i) => Math.max(i - 1, 0));
+                        } else if (e.key === 'Enter') {
+                          const r = flatResults[activeResult];
+                          if (r) {
+                            e.preventDefault();
+                            closeSearch();
+                            navigate(r.url);
+                          }
+                        }
+                      }}
+                      placeholder={t('common.searchApps')}
+                      aria-label={t('common.search')}
+                      className={`h-11 w-full ps-12 pe-12 text-body-md text-foreground outline-none placeholder:text-muted-foreground ${searchQuery.trim() ? 'rounded-t-[2rem] border border-foreground/10 border-b-0 bg-background/60 shadow-none backdrop-blur-md' : 'rounded-full border border-foreground/10 bg-background/60 shadow-sm backdrop-blur-md'}`}
+                    />
+                    <NavBarButton ink="page" square size={44}>
+                      <button
+                        type="button"
+                        onClick={closeSearch}
+                        aria-label={t('common.closeSearch')}
+                        // Inline, because `.bloom-btn` sets `position: relative`
+                        // from an unlayered sheet that outranks a utility class.
+                        style={{ position: 'absolute', insetInlineEnd: 0, top: 0 }}
+                        className="inline-flex items-center justify-center"
+                      >
+                        <RiCloseLine aria-hidden width={16} height={16} fill="currentColor" />
+                      </button>
+                    </NavBarButton>
+
+                    {searchQuery.trim() ? (
+                      <NavbarSearchResults
+                        groups={groupedResults}
+                        flatResults={flatResults}
+                        activeResult={activeResult}
+                        noResultsLabel={t('common.noResults')}
+                        onHover={setActiveResult}
+                        onSelect={(result) => {
+                          closeSearch();
+                          navigate(result.url);
+                        }}
+                      />
+                    ) : null}
+                  </div>
+                )}
+              </div>
+
+              {/* Right controls (mobile + desktop) */}
+              <div className={`ms-auto flex items-stretch ${searchOpen ? 'lg:hidden' : ''}`}>
+                {/* Mobile controls */}
+                <div className="flex items-stretch gap-2 lg:hidden">
+                  {settingsButton}
+                  {/* The avatar is the only child of these toggles, and it renders
                   no text, so without a label the button has no accessible name
                   at all — Lighthouse's `button-name` audit fails outright. */}
-              {!hideAuth && (
-                authControl(28)
-              )}
-              <NavBarButton ink={barInk} square>
-                <button
-                  type="button"
-                  ref={mobileToggleRef}
-                  className="inline-flex items-center justify-center"
-                  aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
-                  aria-expanded={mobileOpen}
-                  aria-controls={mobilePanelId}
-                  onClick={() => {
-                    setMobileOpen((open) => !open)
-                    setMobilePanel(null)
-                  }}
-                >
-                  <MenuGlyph open={mobileOpen} />
-                </button>
-              </NavBarButton>
-            </div>
+                  {!hideAuth && authControl(28)}
+                  <NavBarButton ink={barInk} square>
+                    <button
+                      type="button"
+                      ref={mobileToggleRef}
+                      className="inline-flex items-center justify-center"
+                      aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
+                      aria-expanded={mobileOpen}
+                      aria-controls={mobilePanelId}
+                      onClick={() => {
+                        setMobileOpen((open) => !open);
+                        setMobilePanel(null);
+                      }}
+                    >
+                      <MenuGlyph open={mobileOpen} />
+                    </button>
+                  </NavBarButton>
+                </div>
 
-            {/* Desktop buttons */}
-            <div className="hidden items-stretch gap-3 lg:flex">
-              <NavBarButton ink={barInk} square open={searchOpen}>
-                <button
-                  type="button"
-                  className={iconButtonClass}
-                  onClick={() => {
-                    closeAll()
-                    setSearchOpen((open) => !open)
-                  }}
-                  aria-label={t('common.search')}
-                  aria-expanded={searchOpen}
-                >
-                  <RiSearchLine aria-hidden width={18} height={18} fill="currentColor" />
-                </button>
-              </NavBarButton>
-              {settingsButton}
-              {rightActions}
-              {ctaButtons}
-              {!hideAuth && (
-                authControl(32)
-              )}
+                {/* Desktop buttons */}
+                <div className="hidden items-stretch gap-3 lg:flex">
+                  <NavBarButton ink={barInk} square open={searchOpen}>
+                    <button
+                      type="button"
+                      className={iconButtonClass}
+                      onClick={() => {
+                        closeAll();
+                        setSearchOpen((open) => !open);
+                      }}
+                      aria-label={t('common.search')}
+                      aria-expanded={searchOpen}
+                    >
+                      <RiSearchLine aria-hidden width={18} height={18} fill="currentColor" />
+                    </button>
+                  </NavBarButton>
+                  {settingsButton}
+                  {rightActions}
+                  {ctaButtons}
+                  {!hideAuth && authControl(32)}
+                </div>
+              </div>
             </div>
-            </div>
-          </div>
-        </nav>
-      </div>
+          </nav>
+        </div>
 
-      {/*
+        {/*
         ─── Shared Dropdown Band ───
 
         The panel stays on the header's surface and runs edge to edge. Only the
         panel content is held inside the same site frame as the nav row, so an
         item lines up with its trigger without centring the whole band.
       */}
-      {measured && (
-        <div
-          // The header owns the single translucent surface and its blur. Keep
-          // the panel transparent so it does not darken that surface a second
-          // time when it opens.
-          className="w-full bg-transparent"
-          style={{
-            pointerEvents: isOpen ? 'auto' : 'none',
-            opacity: isOpen ? 1 : 0,
-            maxHeight: isOpen && activeHeight ? activeHeight : 0,
-            overflow: 'hidden',
-            transition: `opacity ${isOpen ? '0.15s' : '0.12s'} ease-out, max-height 0.2s ${easing}`,
-          }}
-          ref={bandRef}
-          onMouseEnter={cancelClose}
-          onMouseLeave={scheduleClose}
-          onKeyDown={onBandKeyDown}
-          onBlur={onDisclosureBlur}
-        >
-          <div ref={measureBandWidth} className="container max-lg:!max-w-full max-lg:!px-4">
-            <div className="relative">
-              {dropdowns.map((dd) => {
-                const isActive = dd.label === activeDropdown
-                const isExiting = dd.label === prevDropdown
-                const show = isActive || isExiting
+        {measured && (
+          <div
+            // The header owns the single translucent surface and its blur. Keep
+            // the panel transparent so it does not darken that surface a second
+            // time when it opens.
+            className="w-full bg-transparent"
+            style={{
+              pointerEvents: isOpen ? 'auto' : 'none',
+              opacity: isOpen ? 1 : 0,
+              maxHeight: isOpen && activeHeight ? activeHeight : 0,
+              overflow: 'hidden',
+              transition: `opacity ${isOpen ? '0.15s' : '0.12s'} ease-out, max-height 0.2s ${easing}`,
+            }}
+            ref={bandRef}
+            onMouseEnter={cancelClose}
+            onMouseLeave={scheduleClose}
+            onKeyDown={onBandKeyDown}
+            onBlur={onDisclosureBlur}
+          >
+            <div ref={measureBandWidth} className="container max-lg:!max-w-full max-lg:!px-4">
+              <div className="relative">
+                {dropdowns.map((dd) => {
+                  const isActive = dd.label === activeDropdown;
+                  const isExiting = dd.label === prevDropdown;
+                  const show = isActive || isExiting;
 
-                return (
-                  <div
-                    key={dd.label}
-                    id={panelId(dd.label)}
-                    ref={(el) => { panelRefs.current[dd.label] = el }}
-                    className={getAnimClass(dd.label)}
-                    style={{
-                      position: isActive ? 'relative' : 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      visibility: show ? 'visible' : 'hidden',
-                      pointerEvents: isActive ? 'auto' : 'none',
-                    }}
-                  >
-                    <DropdownContent dropdown={dd} loadImages={show} />
-                  </div>
-                )
-              })}
-
+                  return (
+                    <div
+                      key={dd.label}
+                      id={panelId(dd.label)}
+                      ref={(el) => {
+                        panelRefs.current[dd.label] = el;
+                      }}
+                      className={getAnimClass(dd.label)}
+                      style={{
+                        position: isActive ? 'relative' : 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        visibility: show ? 'visible' : 'hidden',
+                        pointerEvents: isActive ? 'auto' : 'none',
+                      }}
+                    >
+                      <DropdownContent dropdown={dd} loadImages={show} />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ─── Mobile panel ─── */}
-      {/*
+        {/* ─── Mobile panel ─── */}
+        {/*
         One panel that slides in from the right, and one subpanel per dropdown
         sliding in on top of it. An accordion made every section push the ones
         below it down the page; this keeps each level on its own plane, so a tap
         never moves what you were reading.
       */}
-      <div
+        <div
           className={`fixed left-0 z-40 w-full overflow-hidden bg-background transition-transform duration-300 ease-out lg:hidden ${
-          mobileOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-        style={{
-          top: `calc(${bannerOffset}px + var(--site-header-height))`,
-          height: `calc(100dvh - ${bannerOffset}px - var(--site-header-height))`,
-        }}
-        id={mobilePanelId}
-        aria-hidden={!mobileOpen}
-        inert={!mobileOpen}
-        onKeyDown={(event) => {
-          // Escape closes the menu (the window handler); focus would otherwise
-          // be left on an element that just went inert.
-          if (event.key === 'Escape') mobileToggleRef.current?.focus()
-        }}
-      >
-        {/* Covered by an open subpanel, so out of the tab order until it closes. */}
-        <div className="absolute inset-0 flex flex-col" inert={mobilePanel !== null}>
-          <div className="flex-1 overflow-y-auto overscroll-contain">
-            {dropdowns.map((dd) => (
-              <button
-                key={dd.label}
-                type="button"
-                ref={(el) => { mobileRowRefs.current[dd.label] = el }}
-                className="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-foreground/5"
-                aria-expanded={mobilePanel === dd.label}
-                aria-controls={`${mobilePanelId}-${dropdownLabels.indexOf(dd.label)}`}
-                onClick={() => setMobilePanel(dd.label)}
-              >
-                <span className="text-title-sm text-foreground">{translatedNavLabel(dd.label, t)}</span>
-                <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground"><RiArrowRightSLine width={20} height={20} fill="currentColor" /></span>
-              </button>
-            ))}
-            {flatLinks.map((link) =>
-              link.href.startsWith('/') && !link.external ? (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  className="flex w-full items-center justify-between p-4 text-title-sm text-foreground transition-colors hover:bg-foreground/5"
-                  onClick={() => setMobileOpen(false)}
+            mobileOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          style={{
+            top: `calc(${bannerOffset}px + var(--site-header-height))`,
+            height: `calc(100dvh - ${bannerOffset}px - var(--site-header-height))`,
+          }}
+          id={mobilePanelId}
+          aria-hidden={!mobileOpen}
+          inert={!mobileOpen}
+          onKeyDown={(event) => {
+            // Escape closes the menu (the window handler); focus would otherwise
+            // be left on an element that just went inert.
+            if (event.key === 'Escape') mobileToggleRef.current?.focus();
+          }}
+        >
+          {/* Covered by an open subpanel, so out of the tab order until it closes. */}
+          <div className="absolute inset-0 flex flex-col" inert={mobilePanel !== null}>
+            <div className="flex-1 overflow-y-auto overscroll-contain">
+              {dropdowns.map((dd) => (
+                <button
+                  key={dd.label}
+                  type="button"
+                  ref={(el) => {
+                    mobileRowRefs.current[dd.label] = el;
+                  }}
+                  className="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-foreground/5"
+                  aria-expanded={mobilePanel === dd.label}
+                  aria-controls={`${mobilePanelId}-${dropdownLabels.indexOf(dd.label)}`}
+                  onClick={() => setMobilePanel(dd.label)}
                 >
-                  {translatedNavLabel(link.label, t)}
-                </Link>
-              ) : (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                  className="flex w-full items-center justify-between p-4 text-title-sm text-foreground transition-colors hover:bg-foreground/5"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {translatedNavLabel(link.label, t)}
-                </a>
-              ),
-            )}
-          </div>
-
-          {ctaButtons ? (
-            <div className="flex shrink-0 flex-col gap-2 p-4">{ctaButtons}</div>
-          ) : null}
-        </div>
-
-        {dropdowns.map((dd) => (
-          <div
-            key={dd.label}
-            id={`${mobilePanelId}-${dropdownLabels.indexOf(dd.label)}`}
-            className={`absolute inset-0 overflow-y-auto overscroll-contain bg-background transition-transform duration-300 ease-out ${
-              mobilePanel === dd.label ? 'translate-x-0' : 'translate-x-full'
-            }`}
-            // Off-screen subpanels were still in the tab order: Tab walked
-            // through every link of every closed one.
-            inert={mobilePanel !== dd.label}
-          >
-            <button
-              type="button"
-              ref={(el) => { mobileBackRefs.current[dd.label] = el }}
-              className="flex w-full items-center gap-2 p-4 text-left transition-colors hover:bg-foreground/5"
-              onClick={() => setMobilePanel(null)}
-            >
-              <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground"><RiArrowLeftSLine width={20} height={20} fill="currentColor" /></span>
-              <span className="text-title-sm text-foreground">{translatedNavLabel(dd.label, t)}</span>
-            </button>
-
-            <div className="flex flex-col gap-2 p-4" onClick={() => setMobileOpen(false)}>
-              {dd.featureGrid?.features.map((item) => (
-                <NavDropdownItem key={item.href} item={item} loadImage={mobileOpen && mobilePanel === dd.label} />
+                  <span className="text-title-sm text-foreground">
+                    {translatedNavLabel(dd.label, t)}
+                  </span>
+                  <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground">
+                    <RiArrowRightSLine width={20} height={20} fill="currentColor" />
+                  </span>
+                </button>
               ))}
-              {dd.sections.map((section) => (
-                <div key={section.heading} className="flex flex-col gap-2">
-                  {section.heading ? (
-                    <p className="px-space-sm pt-space-sm text-body-sm text-muted-foreground opacity-60">
-                      {section.heading}
-                    </p>
-                  ) : null}
-                  {section.items.map((item) => (
-                    <NavDropdownItem key={`${section.heading}-${item.title}`} item={item} loadImage={mobileOpen && mobilePanel === dd.label} />
-                  ))}
-                </div>
-              ))}
-              {[...(dd.featureGrid?.cards ?? []), ...(dd.cards ?? []), ...(dd.card ? [dd.card] : [])].map((card) => (
-                <div key={card.href} className="aspect-[4/3] overflow-hidden rounded-xl">
-                  <NavCard card={card} loadImage={mobileOpen && mobilePanel === dd.label} />
-                </div>
-              ))}
-              {dd.sidePanel?.links.map((link) =>
-                link.href.startsWith('/') ? (
-                  <Link key={link.label} to={link.href} className="px-space-sm py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+              {flatLinks.map((link) =>
+                link.href.startsWith('/') && !link.external ? (
+                  <Link
+                    key={link.label}
+                    to={link.href}
+                    className="flex w-full items-center justify-between p-4 text-title-sm text-foreground transition-colors hover:bg-foreground/5"
+                    onClick={() => setMobileOpen(false)}
+                  >
                     {translatedNavLabel(link.label, t)}
                   </Link>
                 ) : (
-                  <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="px-space-sm py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    className="flex w-full items-center justify-between p-4 text-title-sm text-foreground transition-colors hover:bg-foreground/5"
+                    onClick={() => setMobileOpen(false)}
+                  >
                     {translatedNavLabel(link.label, t)}
                   </a>
                 ),
               )}
             </div>
-          </div>
-        ))}
-      </div>
-    </header>
 
-    {settingsMounted && (
-      <Suspense fallback={null}>
-        <WebsiteSettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} showLanguage={showLanguageInSettings} />
-      </Suspense>
-    )}
-    {!transparent && <div style={{ height: `calc(var(--site-header-height) + ${bannerOffset}px)` }} />}
+            {ctaButtons ? (
+              <div className="flex shrink-0 flex-col gap-2 p-4">{ctaButtons}</div>
+            ) : null}
+          </div>
+
+          {dropdowns.map((dd) => (
+            <div
+              key={dd.label}
+              id={`${mobilePanelId}-${dropdownLabels.indexOf(dd.label)}`}
+              className={`absolute inset-0 overflow-y-auto overscroll-contain bg-background transition-transform duration-300 ease-out ${
+                mobilePanel === dd.label ? 'translate-x-0' : 'translate-x-full'
+              }`}
+              // Off-screen subpanels were still in the tab order: Tab walked
+              // through every link of every closed one.
+              inert={mobilePanel !== dd.label}
+            >
+              <button
+                type="button"
+                ref={(el) => {
+                  mobileBackRefs.current[dd.label] = el;
+                }}
+                className="flex w-full items-center gap-2 p-4 text-left transition-colors hover:bg-foreground/5"
+                onClick={() => setMobilePanel(null)}
+              >
+                <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground">
+                  <RiArrowLeftSLine width={20} height={20} fill="currentColor" />
+                </span>
+                <span className="text-title-sm text-foreground">
+                  {translatedNavLabel(dd.label, t)}
+                </span>
+              </button>
+
+              <div className="flex flex-col gap-2 p-4" onClick={() => setMobileOpen(false)}>
+                {dd.featureGrid?.features.map((item) => (
+                  <NavDropdownItem
+                    key={item.href}
+                    item={item}
+                    loadImage={mobileOpen && mobilePanel === dd.label}
+                  />
+                ))}
+                {dd.sections.map((section) => (
+                  <div key={section.heading} className="flex flex-col gap-2">
+                    {section.heading ? (
+                      <p className="px-space-sm pt-space-sm text-body-sm text-muted-foreground opacity-60">
+                        {section.heading}
+                      </p>
+                    ) : null}
+                    {section.items.map((item) => (
+                      <NavDropdownItem
+                        key={`${section.heading}-${item.title}`}
+                        item={item}
+                        loadImage={mobileOpen && mobilePanel === dd.label}
+                      />
+                    ))}
+                  </div>
+                ))}
+                {[
+                  ...(dd.featureGrid?.cards ?? []),
+                  ...(dd.cards ?? []),
+                  ...(dd.card ? [dd.card] : []),
+                ].map((card) => (
+                  <div key={card.href} className="aspect-[4/3] overflow-hidden rounded-xl">
+                    <NavCard card={card} loadImage={mobileOpen && mobilePanel === dd.label} />
+                  </div>
+                ))}
+                {dd.sidePanel?.links.map((link) =>
+                  link.href.startsWith('/') ? (
+                    <Link
+                      key={link.label}
+                      to={link.href}
+                      className="px-space-sm py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      {translatedNavLabel(link.label, t)}
+                    </Link>
+                  ) : (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-space-sm py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      {translatedNavLabel(link.label, t)}
+                    </a>
+                  ),
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </header>
+
+      {settingsMounted && (
+        <Suspense fallback={null}>
+          <WebsiteSettingsDialog
+            open={settingsOpen}
+            onClose={() => setSettingsOpen(false)}
+            showLanguage={showLanguageInSettings}
+          />
+        </Suspense>
+      )}
+      {!transparent && (
+        <div style={{ height: `calc(var(--site-header-height) + ${bannerOffset}px)` }} />
+      )}
     </>
-  )
+  );
 }

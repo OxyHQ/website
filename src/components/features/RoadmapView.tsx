@@ -1,23 +1,28 @@
-import { useState } from 'react'
-import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@oxy.so/bloom/accordion'
-import FeatureRow from './FeatureRow'
-import { ORG_ROADMAP_PROJECT_URL, ROADMAP_GROUPS } from './roadmapGroups'
-import type { FeatureRequestData } from '../../api/hooks'
+import { useState } from 'react';
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@oxy.so/bloom/accordion';
+import FeatureRow from './FeatureRow';
+import { ORG_ROADMAP_PROJECT_URL, ROADMAP_GROUPS } from './roadmapGroups';
+import type { FeatureRequestData } from '../../api/hooks';
 
 interface RoadmapViewProps {
   /** Every proposal, open and closed. Grouped here, not on the server. */
-  items: FeatureRequestData[]
+  items: FeatureRequestData[];
   /** Per-status totals for the whole board, which survive the page cap. */
-  statusCounts: Record<string, number>
+  statusCounts: Record<string, number>;
   /** True while the first page is still loading. */
-  isPending: boolean
+  isPending: boolean;
   /** The board holds more proposals than one response carries. */
-  truncated: boolean
+  truncated: boolean;
 }
 
 /** The group headers keep the board's 16px gutter; the rows bring their own. */
-const TRIGGER_STYLE = { paddingHorizontal: 16 }
+const TRIGGER_STYLE = { paddingHorizontal: 16 };
 
 /**
  * The roadmap: the same proposals the board lists, grouped by the status the
@@ -27,10 +32,15 @@ const TRIGGER_STYLE = { paddingHorizontal: 16 }
  * shipped request is closed on GitHub and a roadmap missing everything
  * delivered is missing its best news.
  */
-export default function RoadmapView({ items, statusCounts, isPending, truncated }: RoadmapViewProps) {
+export default function RoadmapView({
+  items,
+  statusCounts,
+  isPending,
+  truncated,
+}: RoadmapViewProps) {
   // Only the groups the reader has folded or opened; every other group follows
   // its `foldedByDefault`, including one that only appears once data arrives.
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const groups = ROADMAP_GROUPS.map((group) => ({
     ...group,
@@ -39,18 +49,18 @@ export default function RoadmapView({ items, statusCounts, isPending, truncated 
     // honest number.
     count: statusCounts[group.status] ?? 0,
     rows: items.filter((item) => item.status === group.status),
-  })).filter((group) => group.count > 0)
+  })).filter((group) => group.count > 0);
 
   const openGroups = groups
     .filter((group) => expanded[group.status] ?? !group.foldedByDefault)
-    .map((group) => group.status)
+    .map((group) => group.status);
   const setOpen = (next: string | string[] | undefined) => {
-    const open = new Set(Array.isArray(next) ? next : next ? [next] : [])
-    setExpanded(Object.fromEntries(groups.map((group) => [group.status, open.has(group.status)])))
-  }
+    const open = new Set(Array.isArray(next) ? next : next ? [next] : []);
+    setExpanded(Object.fromEntries(groups.map((group) => [group.status, open.has(group.status)])));
+  };
 
   if (isPending) {
-    return <p className="px-4 py-10 text-sm text-muted-foreground">Loading the roadmap...</p>
+    return <p className="px-4 py-10 text-sm text-muted-foreground">Loading the roadmap...</p>;
   }
 
   if (groups.length === 0) {
@@ -61,14 +71,14 @@ export default function RoadmapView({ items, statusCounts, isPending, truncated 
           Proposals appear here once they carry a status label.
         </p>
       </div>
-    )
+    );
   }
 
   return (
     <div>
       <Accordion type="multiple" value={openGroups} onValueChange={setOpen}>
         {groups.map((group) => {
-          const open = openGroups.includes(group.status)
+          const open = openGroups.includes(group.status);
           return (
             <AccordionItem key={group.status} value={group.status}>
               <AccordionTrigger style={TRIGGER_STYLE}>
@@ -99,14 +109,15 @@ export default function RoadmapView({ items, statusCounts, isPending, truncated 
                 </div>
               </AccordionContent>
             </AccordionItem>
-          )
+          );
         })}
       </Accordion>
 
       <div className="px-4 py-6">
         {truncated && (
           <p className="mb-3 text-xs text-muted-foreground">
-            This page shows the most voted proposals in each group. The counts above cover the whole board.
+            This page shows the most voted proposals in each group. The counts above cover the whole
+            board.
           </p>
         )}
         <a
@@ -120,5 +131,5 @@ export default function RoadmapView({ items, statusCounts, isPending, truncated 
         </a>
       </div>
     </div>
-  )
+  );
 }

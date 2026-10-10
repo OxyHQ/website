@@ -1,4 +1,4 @@
-import type { PlaygroundProp } from './_playground'
+import type { PlaygroundProp } from './_playground';
 
 export const props: PlaygroundProp[] = [
   { name: 'name', kind: 'text', default: 'Ada Lovelace' },
@@ -11,4 +11,4 @@ export const props: PlaygroundProp[] = [
   },
   { name: 'verified', kind: 'boolean', default: false },
   { name: 'source', kind: 'text', default: '' },
-]
+];

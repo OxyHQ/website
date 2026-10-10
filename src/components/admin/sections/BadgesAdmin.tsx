@@ -1,44 +1,45 @@
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { apiFetch } from '../../../api/client'
-import { BADGE_DEFINITIONS } from '../../../data/badges'
-import { Avatar } from '@oxy.so/bloom/avatar'
-import { Button } from '@oxy.so/bloom/button'
-import { LabeledTextField } from '../LabeledTextField'
-import OptionSelect from '../../ui/OptionSelect'
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiFetch } from '../../../api/client';
+import { BADGE_DEFINITIONS } from '../../../data/badges';
+import { Avatar } from '@oxy.so/bloom/avatar';
+import { Button } from '@oxy.so/bloom/button';
+import { LabeledTextField } from '../LabeledTextField';
+import OptionSelect from '../../ui/OptionSelect';
 
 export default function BadgesAdmin() {
-  const queryClient = useQueryClient()
-  const [username, setUsername] = useState('')
-  const [selectedBadge, setSelectedBadge] = useState('')
-  const [searchUser, setSearchUser] = useState('')
+  const queryClient = useQueryClient();
+  const [username, setUsername] = useState('');
+  const [selectedBadge, setSelectedBadge] = useState('');
+  const [searchUser, setSearchUser] = useState('');
 
   // Search awarded badges by username
   const { data: userBadges } = useQuery({
     queryKey: ['admin-badges', searchUser],
-    queryFn: () => apiFetch<Array<{ badgeId: string; awardedAt: string }>>(`/profiles/${searchUser}/badges`),
+    queryFn: () =>
+      apiFetch<Array<{ badgeId: string; awardedAt: string }>>(`/profiles/${searchUser}/badges`),
     enabled: searchUser.length > 0,
-  })
+  });
 
   const awardBadge = useMutation({
     mutationFn: (params: { userId: string; username: string; badgeId: string }) =>
       apiFetch('/badges/award', { method: 'POST', body: JSON.stringify(params) }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-badges'] })
-      setUsername('')
-      setSelectedBadge('')
+      queryClient.invalidateQueries({ queryKey: ['admin-badges'] });
+      setUsername('');
+      setSelectedBadge('');
     },
-  })
+  });
 
   const revokeBadge = useMutation({
     mutationFn: ({ userId, badgeId }: { userId: string; badgeId: string }) =>
       apiFetch(`/badges/${userId}/${badgeId}`, { method: 'DELETE' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-badges'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-badges'] });
     },
-  })
+  });
 
-  const badgeIds = Object.keys(BADGE_DEFINITIONS)
+  const badgeIds = Object.keys(BADGE_DEFINITIONS);
 
   return (
     <div>
@@ -49,12 +50,16 @@ export default function BadgesAdmin() {
       <div className="mt-6">
         <h3 className="text-sm font-medium text-foreground">Badge Catalog</h3>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {badgeIds.map(id => {
-            const badge = BADGE_DEFINITIONS[id]
+          {badgeIds.map((id) => {
+            const badge = BADGE_DEFINITIONS[id];
             return (
               <div key={id} className="rounded-xl border border-border p-3">
                 <div className="flex items-center gap-2">
-                  <Avatar initials={badge.name.charAt(0)} placeholderColor={badge.color} size="md" />
+                  <Avatar
+                    initials={badge.name.charAt(0)}
+                    placeholderColor={badge.color}
+                    size="md"
+                  />
                   <div>
                     <p className="text-sm font-medium text-foreground">{badge.name}</p>
                     <p className="text-xs capitalize text-muted-foreground">{badge.rarity}</p>
@@ -62,7 +67,7 @@ export default function BadgesAdmin() {
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">{badge.description}</p>
               </div>
-            )
+            );
           })}
         </div>
       </div>
@@ -82,7 +87,9 @@ export default function BadgesAdmin() {
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <span className="text-xs text-muted-foreground" aria-hidden="true">Badge</span>
+            <span className="text-xs text-muted-foreground" aria-hidden="true">
+              Badge
+            </span>
             <OptionSelect
               label="Badge"
               value={selectedBadge}
@@ -94,10 +101,12 @@ export default function BadgesAdmin() {
               emptyIsPlaceholder
             />
           </div>
-          <Button appearance="solid" tone="accent"
+          <Button
+            appearance="solid"
+            tone="accent"
             onPress={() => {
               if (username && selectedBadge) {
-                awardBadge.mutate({ userId: username, username, badgeId: selectedBadge })
+                awardBadge.mutate({ userId: username, username, badgeId: selectedBadge });
               }
             }}
             disabled={!username || !selectedBadge || awardBadge.isPending}
@@ -125,14 +134,23 @@ export default function BadgesAdmin() {
             {userBadges.length === 0 && (
               <p className="text-sm text-muted-foreground">No badges for @{searchUser}</p>
             )}
-            {userBadges.map(b => {
-              const def = BADGE_DEFINITIONS[b.badgeId]
+            {userBadges.map((b) => {
+              const def = BADGE_DEFINITIONS[b.badgeId];
               return (
-                <div key={b.badgeId} className="flex items-center justify-between rounded-xl border border-border p-3">
+                <div
+                  key={b.badgeId}
+                  className="flex items-center justify-between rounded-xl border border-border p-3"
+                >
                   <div className="flex items-center gap-3">
-                    <Avatar initials={def?.name.charAt(0) ?? '?'} placeholderColor={def?.color} size="md" />
+                    <Avatar
+                      initials={def?.name.charAt(0) ?? '?'}
+                      placeholderColor={def?.color}
+                      size="md"
+                    />
                     <div>
-                      <p className="text-sm font-medium text-foreground">{def?.name ?? b.badgeId}</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {def?.name ?? b.badgeId}
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         Awarded {new Date(b.awardedAt).toLocaleDateString()}
                       </p>
@@ -145,11 +163,11 @@ export default function BadgesAdmin() {
                     Revoke
                   </Button>
                 </div>
-              )
+              );
             })}
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

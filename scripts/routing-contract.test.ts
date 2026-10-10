@@ -13,17 +13,17 @@
  *
  * Runs in `postbuild`, against the artifact that is about to be uploaded.
  */
-import { existsSync, readFileSync, readdirSync } from 'node:fs'
-import path from 'node:path'
-import { isSpaFallbackPath } from '../src/lib/spaFallback'
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import path from 'node:path';
+import { isSpaFallbackPath } from '../src/lib/spaFallback';
 
-const ROOT = path.resolve(import.meta.dir, '..')
-const DIST = path.join(ROOT, 'dist')
+const ROOT = path.resolve(import.meta.dir, '..');
+const DIST = path.join(ROOT, 'dist');
 
 interface RedirectRule {
-  from: string
-  to: string
-  status: number
+  from: string;
+  to: string;
+  status: number;
 }
 
 function parseRedirects(contents: string): RedirectRule[] {
@@ -32,9 +32,9 @@ function parseRedirects(contents: string): RedirectRule[] {
     .map((line) => line.trim())
     .filter((line) => line.length > 0 && !line.startsWith('#'))
     .map((line) => {
-      const [from, to, status] = line.split(/\s+/)
-      return { from: from ?? '', to: to ?? '', status: Number(status ?? 200) }
-    })
+      const [from, to, status] = line.split(/\s+/);
+      return { from: from ?? '', to: to ?? '', status: Number(status ?? 200) };
+    });
 }
 
 /**
@@ -42,77 +42,77 @@ function parseRedirects(contents: string): RedirectRule[] {
  * `*` splat and a `:placeholder` standing for exactly one segment.
  */
 function ruleMatches(rule: RedirectRule, pathname: string): boolean {
-  const pattern = rule.from
+  const pattern = rule.from;
   const source = pattern
     .split('/')
     .map((segment) => {
-      if (segment === '*') return '.*'
-      if (segment.startsWith(':')) return '[^/]+'
-      return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      if (segment === '*') return '.*';
+      if (segment.startsWith(':')) return '[^/]+';
+      return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     })
-    .join('/')
+    .join('/');
   // Exact, like Cloudflare: `/dashboard` does not match `/dashboard/`. The
   // generator emits both forms for literal sources precisely because of this.
-  return new RegExp(`^${source}$`).test(pathname)
+  return new RegExp(`^${source}$`).test(pathname);
 }
 
 /** Every route path literal in the app's route table, as declared. */
 function declaredRoutes(): string[] {
-  const source = readFileSync(path.join(ROOT, 'src', 'App.tsx'), 'utf8')
-  const found = new Set<string>()
+  const source = readFileSync(path.join(ROOT, 'src', 'App.tsx'), 'utf8');
+  const found = new Set<string>();
   for (const match of source.matchAll(/path="([^"]*)"/g)) {
-    const value = match[1] ?? ''
+    const value = match[1] ?? '';
     // `*` and `/` are the catch-all and the layout root, not addressable pages.
-    if (value === '' || value === '*' || value === '/') continue
-    found.add(value.startsWith('/') ? value : `/${value}`)
+    if (value === '' || value === '*' || value === '/') continue;
+    found.add(value.startsWith('/') ? value : `/${value}`);
   }
-  return [...found].sort()
+  return [...found].sort();
 }
 
 /** Every route this build wrote a document for, as a bare path. */
 function prerenderedRoutes(): Set<string> {
-  const out = new Set<string>()
+  const out = new Set<string>();
   const walk = (dir: string, prefix: string) => {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
       if (entry.isDirectory()) {
-        walk(path.join(dir, entry.name), `${prefix}/${entry.name}`)
+        walk(path.join(dir, entry.name), `${prefix}/${entry.name}`);
       } else if (entry.name === 'index.html') {
-        out.add(prefix === '' ? '/' : prefix)
+        out.add(prefix === '' ? '/' : prefix);
       }
     }
-  }
-  walk(DIST, '')
-  return out
+  };
+  walk(DIST, '');
+  return out;
 }
 
 function patternToRegExp(routePath: string): RegExp {
   const source = routePath
     .split('/')
     .map((segment) => {
-      if (segment === '*') return '.+'
-      if (segment.startsWith(':')) return '[^/]+'
-      return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      if (segment === '*') return '.+';
+      if (segment.startsWith(':')) return '[^/]+';
+      return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     })
-    .join('/')
-  return new RegExp(`^${source}$`)
+    .join('/');
+  return new RegExp(`^${source}$`);
 }
 
 function main(): void {
-  if (!existsSync(DIST)) throw new Error('[routing-contract] dist missing — run the build first')
-  const redirectsFile = path.join(DIST, '_redirects')
-  if (!existsSync(redirectsFile)) throw new Error('[routing-contract] dist/_redirects missing')
+  if (!existsSync(DIST)) throw new Error('[routing-contract] dist missing — run the build first');
+  const redirectsFile = path.join(DIST, '_redirects');
+  if (!existsSync(redirectsFile)) throw new Error('[routing-contract] dist/_redirects missing');
 
-  const rules = parseRedirects(readFileSync(redirectsFile, 'utf8'))
-  const catchAll = rules.at(-1)
+  const rules = parseRedirects(readFileSync(redirectsFile, 'utf8'));
+  const catchAll = rules.at(-1);
   if (!catchAll || catchAll.from !== '/*' || catchAll.status !== 404) {
-    throw new Error('[routing-contract] _redirects must end in a `/*  /404.html  404` rule')
+    throw new Error('[routing-contract] _redirects must end in a `/*  /404.html  404` rule');
   }
-  const reachable = rules.slice(0, -1)
-  const documents = prerenderedRoutes()
+  const reachable = rules.slice(0, -1);
+  const documents = prerenderedRoutes();
   for (const required of ['/', '/404.html', '/app-shell.html']) {
-    const file = required === '/' ? 'index.html' : required.slice(1)
+    const file = required === '/' ? 'index.html' : required.slice(1);
     if (!existsSync(path.join(DIST, file))) {
-      throw new Error(`[routing-contract] dist/${file} missing`)
+      throw new Error(`[routing-contract] dist/${file} missing`);
     }
   }
 
@@ -122,29 +122,29 @@ function main(): void {
    * rule ahead of the catch-all.
    */
   const resolves = (pathname: string): boolean => {
-    const bare = pathname.replace(/\/+$/, '') || '/'
-    if (documents.has(bare)) return true
-    if (reachable.some((rule) => ruleMatches(rule, pathname))) return true
+    const bare = pathname.replace(/\/+$/, '') || '/';
+    if (documents.has(bare)) return true;
+    if (reachable.some((rule) => ruleMatches(rule, pathname))) return true;
     // The catch-all 404 is where the edge middleware picks the request up and
     // serves the shell. Coverage there counts as reachable.
-    return isSpaFallbackPath(pathname)
-  }
+    return isSpaFallbackPath(pathname);
+  };
 
-  const unreachable: string[] = []
+  const unreachable: string[] = [];
   for (const route of declaredRoutes()) {
     // A sample instance of the family: `/u/:username` -> `/u/x`.
-    const sample = route.replace(/[:*][^/]*/g, 'x')
+    const sample = route.replace(/[:*][^/]*/g, 'x');
     // Both forms, because they are two different requests. Links now publish
     // the trailing-slash one, so a rule written only as `/dashboard` would let
     // a reload of `/dashboard/` fall through to the 404.
-    if (resolves(sample) && resolves(`${sample}/`)) continue
+    if (resolves(sample) && resolves(`${sample}/`)) continue;
     if (route.includes(':') || route.includes('*')) {
       // Build-time-enumerated family: at least one real instance must exist,
       // otherwise nothing under it would resolve.
-      const pattern = patternToRegExp(route)
-      if ([...documents].some((doc) => pattern.test(doc))) continue
+      const pattern = patternToRegExp(route);
+      if ([...documents].some((doc) => pattern.test(doc))) continue;
     }
-    unreachable.push(route)
+    unreachable.push(route);
   }
 
   if (unreachable.length > 0) {
@@ -152,23 +152,25 @@ function main(): void {
       `[routing-contract] ${unreachable.length} declared route(s) would answer 404 in production:\n` +
         unreachable.map((route) => `  ${route}`).join('\n') +
         '\n\nEither prerender them, or add the family to SPA_FALLBACK_PATTERNS in src/lib/spaFallback.ts.',
-    )
+    );
   }
 
   // The other half of the contract: a path the app does not route must NOT be
   // absorbed by a fallback rule, or the 404 is decorative.
-  const mustNotMatch = ['/definitely-not-a-page', '/pricing-old', '/newsroom-old/thing']
+  const mustNotMatch = ['/definitely-not-a-page', '/pricing-old', '/newsroom-old/thing'];
   const absorbed = mustNotMatch.filter(
     (p) => reachable.some((rule) => ruleMatches(rule, p)) || isSpaFallbackPath(p),
-  )
+  );
   if (absorbed.length > 0) {
-    throw new Error(`[routing-contract] fallback rules swallow unknown paths: ${absorbed.join(', ')}`)
+    throw new Error(
+      `[routing-contract] fallback rules swallow unknown paths: ${absorbed.join(', ')}`,
+    );
   }
 
   console.log(
     `[routing-contract] ok — ${declaredRoutes().length} declared routes, ` +
       `${documents.size} documents, ${rules.length} redirect rules`,
-  )
+  );
 }
 
-main()
+main();

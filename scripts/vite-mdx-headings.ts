@@ -1,5 +1,5 @@
-import GithubSlugger from 'github-slugger'
-import type { Plugin } from 'vite'
+import GithubSlugger from 'github-slugger';
+import type { Plugin } from 'vite';
 
 /* ──────────────────────────────────────────────
  * vite-mdx-headings
@@ -16,39 +16,39 @@ import type { Plugin } from 'vite'
  * ──────────────────────────────────────────── */
 
 export interface MdxHeading {
-  id: string
-  label: string
+  id: string;
+  label: string;
   /** 2 for a section, 3+ for a subsection. */
-  level: number
+  level: number;
 }
 
-const HEADING = /^(#{2,4})\s+(.+?)\s*$/
-const FENCE = /^\s*(?:```|~~~)/
+const HEADING = /^(#{2,4})\s+(.+?)\s*$/;
+const FENCE = /^\s*(?:```|~~~)/;
 /** Inline emphasis and code marks, which are formatting rather than text. */
-const INLINE_MARKS = /[*_`]/g
+const INLINE_MARKS = /[*_`]/g;
 
 /** Every `##`–`####` in a document, in source order, outside code fences. */
 export function collectMdxHeadings(source: string): MdxHeading[] {
-  const slugger = new GithubSlugger()
-  const headings: MdxHeading[] = []
-  let insideFence = false
+  const slugger = new GithubSlugger();
+  const headings: MdxHeading[] = [];
+  let insideFence = false;
 
   for (const line of source.split('\n')) {
     if (FENCE.test(line)) {
-      insideFence = !insideFence
-      continue
+      insideFence = !insideFence;
+      continue;
     }
-    if (insideFence) continue
+    if (insideFence) continue;
 
-    const match = HEADING.exec(line)
-    if (!match) continue
+    const match = HEADING.exec(line);
+    if (!match) continue;
 
-    const label = match[2].replace(INLINE_MARKS, '').trim()
-    if (!label) continue
-    headings.push({ id: slugger.slug(label), label, level: match[1].length })
+    const label = match[2].replace(INLINE_MARKS, '').trim();
+    if (!label) continue;
+    headings.push({ id: slugger.slug(label), label, level: match[1].length });
   }
 
-  return headings
+  return headings;
 }
 
 export default function mdxHeadings(): Plugin {
@@ -58,9 +58,12 @@ export default function mdxHeadings(): Plugin {
     // MDX turns the export statement into a module export like any other.
     enforce: 'pre',
     transform(code, id) {
-      if (!id.endsWith('.mdx')) return null
-      const headings = collectMdxHeadings(code)
-      return { code: `${code}\n\nexport const headings = ${JSON.stringify(headings)}\n`, map: null }
+      if (!id.endsWith('.mdx')) return null;
+      const headings = collectMdxHeadings(code);
+      return {
+        code: `${code}\n\nexport const headings = ${JSON.stringify(headings)}\n`,
+        map: null,
+      };
     },
-  }
+  };
 }

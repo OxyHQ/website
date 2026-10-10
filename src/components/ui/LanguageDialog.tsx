@@ -1,12 +1,12 @@
-import { Dialog } from '@oxy.so/bloom/dialog'
-import { useLocation } from 'react-router-dom'
-import { Link } from '../../lib/navigation'
-import { DEFAULT_LOCALE, useLocaleContext, type Locale } from '../../lib/i18n'
-import SliceIcon from '../slices/SliceIcon'
+import { Dialog } from '@oxy.so/bloom/dialog';
+import { useLocation } from 'react-router-dom';
+import { Link } from '../../lib/navigation';
+import { DEFAULT_LOCALE, useLocaleContext, type Locale } from '../../lib/i18n';
+import SliceIcon from '../slices/SliceIcon';
 
 interface LanguageDialogProps {
-  open: boolean
-  onClose: () => void
+  open: boolean;
+  onClose: () => void;
 }
 
 /**
@@ -41,37 +41,37 @@ const REGION_BY_LANGUAGE: Record<string, string> = {
   th: 'Asia',
   vi: 'Asia',
   zh: 'Asia',
-}
+};
 
-const REGION_ORDER = ['Europe', 'Latin America', 'Middle East & Africa', 'Asia']
+const REGION_ORDER = ['Europe', 'Latin America', 'Middle East & Africa', 'Asia'];
 
 function regionOf(code: string): string | null {
   // `es-la`/`pt-br` are the Latin American cuts of European languages, so for
   // those the region comes from the country subtag, not the language.
-  const [language, country] = code.toLowerCase().split('-')
-  if (country && ['la', 'br', 'mx', 'ar', 'cl', 'co'].includes(country)) return 'Latin America'
-  return REGION_BY_LANGUAGE[language] ?? null
+  const [language, country] = code.toLowerCase().split('-');
+  if (country && ['la', 'br', 'mx', 'ar', 'cl', 'co'].includes(country)) return 'Latin America';
+  return REGION_BY_LANGUAGE[language] ?? null;
 }
 
 export default function LanguageDialog({ open, onClose }: LanguageDialogProps) {
-  const { locale, locales } = useLocaleContext()
-  const { pathname } = useLocation()
+  const { locale, locales } = useLocaleContext();
+  const { pathname } = useLocation();
 
   /* Same page, different locale: strip any existing prefix and re-add the new
    * one. The default locale is served unprefixed, so it gets the bare path. */
   const hrefFor = (code: string) => {
-    const segments = pathname.split('/').filter(Boolean)
-    const head = segments[0]
-    const rest = locales.some((entry) => entry.code === head) ? segments.slice(1) : segments
-    const path = rest.length > 0 ? `/${rest.join('/')}` : '/'
-    return code === DEFAULT_LOCALE ? path : `/${code}${path === '/' ? '' : path}`
-  }
+    const segments = pathname.split('/').filter(Boolean);
+    const head = segments[0];
+    const rest = locales.some((entry) => entry.code === head) ? segments.slice(1) : segments;
+    const path = rest.length > 0 ? `/${rest.join('/')}` : '/';
+    return code === DEFAULT_LOCALE ? path : `/${code}${path === '/' ? '' : path}`;
+  };
 
-  const ungrouped = locales.filter((entry) => regionOf(entry.code) === null)
+  const ungrouped = locales.filter((entry) => regionOf(entry.code) === null);
   const regions = REGION_ORDER.map((region) => ({
     region,
     entries: locales.filter((entry) => regionOf(entry.code) === region),
-  })).filter((group) => group.entries.length > 0)
+  })).filter((group) => group.entries.length > 0);
 
   const Entry = ({ entry }: { entry: { code: Locale; nativeName: string } }) => (
     <Link
@@ -82,7 +82,7 @@ export default function LanguageDialog({ open, onClose }: LanguageDialogProps) {
       {entry.nativeName}
       {entry.code === locale && <SliceIcon name="check" className="ms-1 size-5" />}
     </Link>
-  )
+  );
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth={420}>
@@ -99,7 +99,9 @@ export default function LanguageDialog({ open, onClose }: LanguageDialogProps) {
         </div>
         {regions.map((group) => (
           <div key={group.region} className="mt-5">
-            <h3 className="mb-2 text-start text-b4 uppercase tracking-wider text-alt-gray-e1">{group.region}</h3>
+            <h3 className="mb-2 text-start text-b4 uppercase tracking-wider text-alt-gray-e1">
+              {group.region}
+            </h3>
             <div className="grid grid-cols-2 justify-items-start gap-x-4 gap-y-1">
               {group.entries.map((entry) => (
                 <Entry key={entry.code} entry={entry} />
@@ -109,5 +111,5 @@ export default function LanguageDialog({ open, onClose }: LanguageDialogProps) {
         ))}
       </div>
     </Dialog>
-  )
+  );
 }

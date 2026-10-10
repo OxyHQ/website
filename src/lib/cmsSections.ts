@@ -1,4 +1,4 @@
-import type { PageSection } from '../api/hooks'
+import type { PageSection } from '../api/hooks';
 
 /**
  * Read one field of the first CMS page section of a given `type`, falling back
@@ -11,17 +11,29 @@ function sectionField(
   field: 'heading' | 'subheading' | 'content',
   fallback: string,
 ): string {
-  return sections?.find((s) => s.type === type)?.[field] || fallback
+  return sections?.find((s) => s.type === type)?.[field] || fallback;
 }
 
-export function sectionHeading(sections: PageSection[] | undefined, type: string, fallback: string): string {
-  return sectionField(sections, type, 'heading', fallback)
+export function sectionHeading(
+  sections: PageSection[] | undefined,
+  type: string,
+  fallback: string,
+): string {
+  return sectionField(sections, type, 'heading', fallback);
 }
 
-export function sectionSubheading(sections: PageSection[] | undefined, type: string, fallback: string): string {
-  return sectionField(sections, type, 'subheading', fallback)
+export function sectionSubheading(
+  sections: PageSection[] | undefined,
+  type: string,
+  fallback: string,
+): string {
+  return sectionField(sections, type, 'subheading', fallback);
 }
 
-export function sectionContent(sections: PageSection[] | undefined, type: string, fallback: string): string {
-  return sectionField(sections, type, 'content', fallback)
+export function sectionContent(
+  sections: PageSection[] | undefined,
+  type: string,
+  fallback: string,
+): string {
+  return sectionField(sections, type, 'content', fallback);
 }

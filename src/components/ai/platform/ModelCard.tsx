@@ -1,14 +1,14 @@
-import { Link } from '../../../lib/navigation'
-import { useTranslation } from '../../../lib/i18n'
-import { modelPath } from '../../../lib/ai/modelId'
-import { displayPrice, isPerMillionUnit } from '../../../lib/ai/estimator'
+import { Link } from '../../../lib/navigation';
+import { useTranslation } from '../../../lib/i18n';
+import { modelPath } from '../../../lib/ai/modelId';
+import { displayPrice, isPerMillionUnit } from '../../../lib/ai/estimator';
 import {
   publisherName,
   regionsForEntry,
   type CatalogEntry,
   type PublicCatalog,
-} from '../../../lib/ai/catalog'
-import AvailabilityBadge from './AvailabilityBadge'
+} from '../../../lib/ai/catalog';
+import AvailabilityBadge from './AvailabilityBadge';
 
 /**
  * One catalogue entry, as a card.
@@ -23,15 +23,15 @@ export default function ModelCard({
   catalog,
   entry,
 }: {
-  catalog: PublicCatalog
-  entry: CatalogEntry
+  catalog: PublicCatalog;
+  entry: CatalogEntry;
 }) {
-  const { t } = useTranslation()
-  const href = modelPath(entry.id)
-  const regions = regionsForEntry(catalog, entry)
-  const inputPrice = entry.prices.find((price) => price.unit === 'input_token')
-  const outputPrice = entry.prices.find((price) => price.unit === 'output_token')
-  const isProfile = entry.kind === 'routing_profile'
+  const { t } = useTranslation();
+  const href = modelPath(entry.id);
+  const regions = regionsForEntry(catalog, entry);
+  const inputPrice = entry.prices.find((price) => price.unit === 'input_token');
+  const outputPrice = entry.prices.find((price) => price.unit === 'output_token');
+  const isProfile = entry.kind === 'routing_profile';
 
   return (
     <article className="relative flex h-full flex-col gap-3 rounded-2xl border border-border bg-card p-5 transition-colors hover:bg-accent/40">
@@ -62,9 +62,7 @@ export default function ModelCard({
         <p className="mt-0.5 font-mono text-xs text-muted-foreground">{entry.id}</p>
       </div>
 
-      <p className="text-sm text-muted-foreground">
-        {publisherName(catalog, entry.publisherId)}
-      </p>
+      <p className="text-sm text-muted-foreground">{publisherName(catalog, entry.publisherId)}</p>
       <p className="line-clamp-3 text-pretty text-sm text-foreground/80">{entry.description}</p>
 
       {isProfile && (
@@ -75,9 +73,7 @@ export default function ModelCard({
         {entry.contextTokens !== undefined && (
           <>
             <dt className="text-muted-foreground">{t('ai.models.columnContext')}</dt>
-            <dd className="text-right text-foreground">
-              {entry.contextTokens.toLocaleString()}
-            </dd>
+            <dd className="text-right text-foreground">{entry.contextTokens.toLocaleString()}</dd>
           </>
         )}
         {inputPrice && (
@@ -86,7 +82,9 @@ export default function ModelCard({
             <dd className="text-right text-foreground">
               ${displayPrice(inputPrice)}{' '}
               <span className="text-xs text-muted-foreground">
-                {isPerMillionUnit(inputPrice.unit) ? t('ai.pricing.perMillion') : t('ai.pricing.perUnit')}
+                {isPerMillionUnit(inputPrice.unit)
+                  ? t('ai.pricing.perMillion')
+                  : t('ai.pricing.perUnit')}
               </span>
             </dd>
           </>
@@ -97,7 +95,9 @@ export default function ModelCard({
             <dd className="text-right text-foreground">
               ${displayPrice(outputPrice)}{' '}
               <span className="text-xs text-muted-foreground">
-                {isPerMillionUnit(outputPrice.unit) ? t('ai.pricing.perMillion') : t('ai.pricing.perUnit')}
+                {isPerMillionUnit(outputPrice.unit)
+                  ? t('ai.pricing.perMillion')
+                  : t('ai.pricing.perUnit')}
               </span>
             </dd>
           </>
@@ -110,5 +110,5 @@ export default function ModelCard({
         )}
       </dl>
     </article>
-  )
+  );
 }

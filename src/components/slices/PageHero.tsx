@@ -1,24 +1,31 @@
-import PillButton from './PillButton'
+import PillButton from './PillButton';
 
 interface PageHeroProps {
   /** Small label above the title — the product or section this page belongs to. */
-  eyebrow?: string
-  title: string
+  eyebrow?: string;
+  title: string;
   /** One line under the title. */
-  tagline?: string
+  tagline?: string;
   /** The opening paragraph. */
-  lede?: string
-  action?: { label: string; href: string; external?: boolean }
+  lede?: string;
+  action?: { label: string; href: string; external?: boolean };
   /**
    * `editorial` is the statement hero: display title full-width, lede in the
    * second column. `listing` opens a page whose body is a full-bleed list —
    * a smaller title held to a reading measure against the start gutter.
    */
-  variant?: 'editorial' | 'listing'
+  variant?: 'editorial' | 'listing';
 }
 
 /** The opening slice of a page: title, optional tagline, lede and one action. */
-export default function PageHero({ eyebrow, title, tagline, lede, action, variant = 'editorial' }: PageHeroProps) {
+export default function PageHero({
+  eyebrow,
+  title,
+  tagline,
+  lede,
+  action,
+  variant = 'editorial',
+}: PageHeroProps) {
   if (variant === 'listing') {
     return (
       <section className="grid grid-cols-8 gap-x-2.5 sm:grid-cols-12 sm:gap-x-5 md:gap-x-6 layout-px-large relative pt-30 lg:pt-40 pb-15 lg:pb-10 2xl:pt-56">
@@ -36,7 +43,7 @@ export default function PageHero({ eyebrow, title, tagline, lede, action, varian
           )}
         </div>
       </section>
-    )
+    );
   }
 
   return (
@@ -45,7 +52,9 @@ export default function PageHero({ eyebrow, title, tagline, lede, action, varian
         {eyebrow && <p className="text-h6">{eyebrow}</p>}
         <h1 className="text-h1">{title}</h1>
         {/* Held to a few words per line so it breaks like a pull quote. */}
-        {tagline && <p className="max-w-[11em] md:max-w-[12em] lg:max-w-none text-h7 mt-3">{tagline}</p>}
+        {tagline && (
+          <p className="max-w-[11em] md:max-w-[12em] lg:max-w-none text-h7 mt-3">{tagline}</p>
+        )}
       </div>
       {(lede || action) && (
         <div className="flex flex-col gap-y-8 lg:col-start-2">
@@ -60,5 +69,5 @@ export default function PageHero({ eyebrow, title, tagline, lede, action, varian
         </div>
       )}
     </section>
-  )
+  );
 }

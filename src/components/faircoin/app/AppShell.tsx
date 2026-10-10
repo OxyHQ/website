@@ -1,29 +1,29 @@
-import type { ReactNode } from 'react'
-import { Link } from '../../../lib/navigation'
-import { fc } from '../../../lib/faircoin-links'
+import type { ReactNode } from 'react';
+import { Link } from '../../../lib/navigation';
+import { fc } from '../../../lib/faircoin-links';
 
 interface WizardStep {
-  id: string
-  label: string
+  id: string;
+  label: string;
 }
 
 interface AppShellProps {
   /** Section eyebrow shown above the heading (e.g. "Buy FAIR"). */
-  eyebrow?: string
+  eyebrow?: string;
   /** App heading shown above the wizard stepper. */
-  title: string
+  title: string;
   /** One-line subtitle below the title. */
-  subtitle?: string
+  subtitle?: string;
   /** Wizard steps in order — pass `currentStep` to mark which is active. */
-  steps?: readonly WizardStep[]
+  steps?: readonly WizardStep[];
   /** Index of the active step; previous steps render as completed. */
-  currentStep?: number
+  currentStep?: number;
   /** Card body — typically the wizard content. */
-  children: ReactNode
+  children: ReactNode;
   /** Optional small actions rendered next to the title (e.g. "Connect wallet"). */
-  toolbar?: ReactNode
+  toolbar?: ReactNode;
   /** Optional muted note rendered under the card (e.g. "advanced users…"). */
-  footnote?: ReactNode
+  footnote?: ReactNode;
 }
 
 /**
@@ -83,8 +83,8 @@ export default function AppShell({
             className="mb-3 flex items-center justify-center gap-2 text-label-sm font-medium uppercase tracking-wider text-muted-foreground"
           >
             {steps.map((step, idx) => {
-              const done = idx < currentStep
-              const active = idx === currentStep
+              const done = idx < currentStep;
+              const active = idx === currentStep;
               return (
                 <div key={step.id} className="flex items-center gap-2">
                   <span
@@ -110,7 +110,7 @@ export default function AppShell({
                     />
                   ) : null}
                 </div>
-              )
+              );
             })}
           </nav>
         ) : null}
@@ -128,11 +128,14 @@ export default function AppShell({
         ) : null}
 
         <p className="mt-6 text-center text-xs text-muted-foreground/70">
-          <Link to={fc('/')} className="underline-offset-4 hover:text-muted-foreground hover:underline">
+          <Link
+            to={fc('/')}
+            className="underline-offset-4 hover:text-muted-foreground hover:underline"
+          >
             ← Back to FairCoin
           </Link>
         </p>
       </div>
     </section>
-  )
+  );
 }

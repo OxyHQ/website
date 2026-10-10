@@ -1,16 +1,16 @@
-import { useState } from 'react'
-import { Checkbox } from '@oxy.so/bloom/checkbox'
-import type { CheckboxSize } from '@oxy.so/bloom/checkbox'
-import type { BloomTone } from '@oxy.so/bloom/appearance'
-import type { PlaygroundValues } from './_playground'
+import { useState } from 'react';
+import { Checkbox } from '@oxy.so/bloom/checkbox';
+import type { CheckboxSize } from '@oxy.so/bloom/checkbox';
+import type { BloomTone } from '@oxy.so/bloom/appearance';
+import type { PlaygroundValues } from './_playground';
 
 export const meta = {
   description: 'Multi-select control with optional label and indeterminate state.',
-}
+};
 
 export default function CheckboxDemo() {
-  const [terms, setTerms] = useState(false)
-  const [marketing, setMarketing] = useState(true)
+  const [terms, setTerms] = useState(false);
+  const [marketing, setMarketing] = useState(true);
   return (
     <div className="flex flex-col gap-3">
       <Checkbox
@@ -38,22 +38,22 @@ export default function CheckboxDemo() {
         label="Indeterminate"
       />
     </div>
-  )
+  );
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const initial = values.checked === true
-  const label = typeof values.label === 'string' ? values.label : ''
-  const description = typeof values.description === 'string' ? values.description : ''
-  const size = values.size as CheckboxSize
-  const tone = values.tone as BloomTone
-  const disabled = values.disabled === true
-  const indeterminate = values.indeterminate === true
-  const [checked, setChecked] = useState(initial)
-  const [lastInitial, setLastInitial] = useState(initial)
+  const initial = values.checked === true;
+  const label = typeof values.label === 'string' ? values.label : '';
+  const description = typeof values.description === 'string' ? values.description : '';
+  const size = values.size as CheckboxSize;
+  const tone = values.tone as BloomTone;
+  const disabled = values.disabled === true;
+  const indeterminate = values.indeterminate === true;
+  const [checked, setChecked] = useState(initial);
+  const [lastInitial, setLastInitial] = useState(initial);
   if (initial !== lastInitial) {
-    setLastInitial(initial)
-    setChecked(initial)
+    setLastInitial(initial);
+    setChecked(initial);
   }
   return (
     <Checkbox
@@ -66,5 +66,5 @@ export function Playground({ values }: { values: PlaygroundValues }) {
       disabled={disabled}
       indeterminate={indeterminate}
     />
-  )
+  );
 }

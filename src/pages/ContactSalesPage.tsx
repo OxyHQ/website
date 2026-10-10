@@ -1,18 +1,18 @@
-import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { useOxy } from '@oxy.so/services/ui/client'
-import { getNormalizedUserHandle } from '@oxy.so/core'
-import { Checkbox } from '@oxy.so/bloom/checkbox'
-import { Field } from '@oxy.so/bloom/field'
-import { TextFieldInput } from '@oxy.so/bloom/text-field'
-import { Textarea } from '@oxy.so/bloom/textarea'
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import Button from '../components/ui/Button'
-import OptionSelect, { type SelectOption } from '../components/ui/OptionSelect'
-import { Link } from '../lib/navigation'
-import { useTranslation } from '../lib/i18n'
-import { apiFetch } from '../api/client'
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useOxy } from '@oxy.so/services/ui/client';
+import { getNormalizedUserHandle } from '@oxy.so/core';
+import { Checkbox } from '@oxy.so/bloom/checkbox';
+import { Field } from '@oxy.so/bloom/field';
+import { TextFieldInput } from '@oxy.so/bloom/text-field';
+import { Textarea } from '@oxy.so/bloom/textarea';
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import Button from '../components/ui/Button';
+import OptionSelect, { type SelectOption } from '../components/ui/OptionSelect';
+import { Link } from '../lib/navigation';
+import { useTranslation } from '../lib/i18n';
+import { apiFetch } from '../api/client';
 import {
   BUDGET_BANDS,
   COMPANY_SIZES,
@@ -25,7 +25,7 @@ import {
   PRIVACY_REQUIREMENTS,
   salesInquirySchema,
   type InquiryInterest,
-} from '../../server/contracts/salesInquiry'
+} from '../../server/contracts/salesInquiry';
 
 /**
  * `/contact/sales` — a real form, not a `mailto:`.
@@ -47,29 +47,29 @@ import {
  * API rejects with a 400 the visitor has no way to act on.
  */
 type FormState = {
-  interest: InquiryInterest
-  name: string
-  email: string
-  company: string
-  role: string
-  country: string
-  companySize: string
-  website: string
-  useCase: string
-  monthlyVolume: string
-  budget: string
-  modalities: string[]
-  preferredRegion: string
-  privacyRequirements: string[]
-  deploymentPreference: string
-  launchTimeline: string
-  message: string
-  marketingConsent: boolean
-  accountId: string
-  applicationId: string
+  interest: InquiryInterest;
+  name: string;
+  email: string;
+  company: string;
+  role: string;
+  country: string;
+  companySize: string;
+  website: string;
+  useCase: string;
+  monthlyVolume: string;
+  budget: string;
+  modalities: string[];
+  preferredRegion: string;
+  privacyRequirements: string[];
+  deploymentPreference: string;
+  launchTimeline: string;
+  message: string;
+  marketingConsent: boolean;
+  accountId: string;
+  applicationId: string;
   /** The honeypot. Hidden from people, tempting to a bot. */
-  company_url: string
-}
+  company_url: string;
+};
 
 /**
  * Enum value to i18n key.
@@ -84,7 +84,7 @@ const VOLUME_LABEL_KEYS: Record<string, string> = {
   '1m_50m_tokens': 'contactSales.volume1m50m',
   '50m_500m_tokens': 'contactSales.volume50m500m',
   over_500m_tokens: 'contactSales.volumeOver500m',
-}
+};
 
 const BUDGET_LABEL_KEYS: Record<string, string> = {
   undisclosed: 'contactSales.budgetUndisclosed',
@@ -92,7 +92,7 @@ const BUDGET_LABEL_KEYS: Record<string, string> = {
   '1k_10k': 'contactSales.budget1k10k',
   '10k_50k': 'contactSales.budget10k50k',
   over_50k: 'contactSales.budgetOver50k',
-}
+};
 
 const REQUIREMENT_LABEL_KEYS: Record<string, string> = {
   region_constraint: 'contactSales.requirementRegion',
@@ -101,7 +101,7 @@ const REQUIREMENT_LABEL_KEYS: Record<string, string> = {
   dpa_required: 'contactSales.requirementDpa',
   security_review: 'contactSales.requirementSecurityReview',
   none_yet: 'contactSales.requirementNone',
-}
+};
 
 const TIMELINE_LABEL_KEYS: Record<string, string> = {
   evaluating: 'contactSales.timelineEvaluating',
@@ -109,7 +109,7 @@ const TIMELINE_LABEL_KEYS: Record<string, string> = {
   within_3_months: 'contactSales.timelineWithin3Months',
   within_6_months: 'contactSales.timelineWithin6Months',
   later: 'contactSales.timelineLater',
-}
+};
 
 const DEPLOYMENT_LABEL_KEYS: Record<string, string> = {
   shared: 'contactSales.deploymentShared',
@@ -117,7 +117,7 @@ const DEPLOYMENT_LABEL_KEYS: Record<string, string> = {
   dedicated: 'contactSales.deploymentDedicated',
   byok: 'contactSales.deploymentByok',
   unsure: 'contactSales.deploymentUnsure',
-}
+};
 
 const INTEREST_LABEL_KEYS: Record<string, string> = {
   oxy_inference: 'contactSales.interestOxyInference',
@@ -127,7 +127,7 @@ const INTEREST_LABEL_KEYS: Record<string, string> = {
   enterprise_platform: 'contactSales.interestEnterprisePlatform',
   alia_for_teams: 'contactSales.interestAliaForTeams',
   other: 'contactSales.interestOther',
-}
+};
 
 const EMPTY_FORM: FormState = {
   interest: 'oxy_inference',
@@ -151,24 +151,24 @@ const EMPTY_FORM: FormState = {
   accountId: '',
   applicationId: '',
   company_url: '',
-}
+};
 
 interface Receipt {
-  id?: string
-  submittedAt: string
+  id?: string;
+  submittedAt: string;
 }
 
 export default function ContactSalesPage() {
-  const { t } = useTranslation()
-  const [searchParams] = useSearchParams()
-  const { user, isAuthenticated, oxyServices } = useOxy()
+  const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const { user, isAuthenticated, oxyServices } = useOxy();
 
   const presetInterest = useMemo(() => {
-    const raw = searchParams.get('interest')
+    const raw = searchParams.get('interest');
     return (INQUIRY_INTERESTS as readonly string[]).includes(raw ?? '')
       ? (raw as InquiryInterest)
-      : undefined
-  }, [searchParams])
+      : undefined;
+  }, [searchParams]);
 
   const [form, setForm] = useState<FormState>(() => ({
     ...EMPTY_FORM,
@@ -176,17 +176,19 @@ export default function ContactSalesPage() {
     // A model id arriving from a catalogue page is context for the sales side,
     // so it seeds the use-case field rather than being silently dropped.
     useCase: searchParams.get('model') ? `Interested in ${searchParams.get('model')}. ` : '',
-  }))
-  const [accounts, setAccounts] = useState<ReadonlyArray<{ id: string; label: string }>>([])
-  const [applications, setApplications] = useState<ReadonlyArray<{ id: string; label: string }>>([])
+  }));
+  const [accounts, setAccounts] = useState<ReadonlyArray<{ id: string; label: string }>>([]);
+  const [applications, setApplications] = useState<ReadonlyArray<{ id: string; label: string }>>(
+    [],
+  );
   /** Fields the visitor has edited. Until then the session prefill is shown. */
-  const [touched, setTouched] = useState<Record<string, boolean>>({})
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [submitting, setSubmitting] = useState(false)
-  const [failure, setFailure] = useState<string | undefined>()
-  const [receipt, setReceipt] = useState<Receipt | undefined>()
-  const summaryRef = useRef<HTMLDivElement>(null)
-  const formId = useId()
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [failure, setFailure] = useState<string | undefined>();
+  const [receipt, setReceipt] = useState<Receipt | undefined>();
+  const summaryRef = useRef<HTMLDivElement>(null);
+  const formId = useId();
 
   /**
    * Prefill from the session, DERIVED during render rather than written into
@@ -203,10 +205,10 @@ export default function ContactSalesPage() {
     isAuthenticated && user
       ? // `displayName` is optional; the one sanctioned fallback is the handle.
         user.name?.displayName || getNormalizedUserHandle(user) || ''
-      : ''
-  const sessionEmail = isAuthenticated && user ? user.email || '' : ''
-  const nameValue = touched.name ? form.name : form.name || sessionName
-  const emailValue = touched.email ? form.email : form.email || sessionEmail
+      : '';
+  const sessionEmail = isAuthenticated && user ? user.email || '' : '';
+  const nameValue = touched.name ? form.name : form.name || sessionName;
+  const emailValue = touched.email ? form.email : form.email || sessionEmail;
 
   /**
    * The accounts this visitor can actually see.
@@ -217,12 +219,12 @@ export default function ContactSalesPage() {
    * is not worth blocking on an optional association.
    */
   useEffect(() => {
-    if (!isAuthenticated || !oxyServices) return
-    let cancelled = false
-    oxyServices
-      .accounts.list()
+    if (!isAuthenticated || !oxyServices) return;
+    let cancelled = false;
+    oxyServices.accounts
+      .list()
       .then((nodes) => {
-        if (cancelled) return
+        if (cancelled) return;
         setAccounts(
           nodes.map((node) => ({
             id: node.accountId,
@@ -231,39 +233,39 @@ export default function ContactSalesPage() {
               getNormalizedUserHandle(node.account) ||
               node.accountId,
           })),
-        )
+        );
       })
-      .catch(() => setAccounts([]))
+      .catch(() => setAccounts([]));
     return () => {
-      cancelled = true
-    }
-  }, [isAuthenticated, oxyServices])
+      cancelled = true;
+    };
+  }, [isAuthenticated, oxyServices]);
 
   useEffect(() => {
     // No synchronous setState in the effect body: clearing the list when the
     // account changes is the CHANGE HANDLER's job (it resets `applicationId` in
     // the same breath), and rendering reads `form.accountId` anyway, so a stale
     // list cannot be shown while a new one loads.
-    if (!oxyServices || !form.accountId) return
-    let cancelled = false
-    oxyServices
-      .apps.list(form.accountId)
+    if (!oxyServices || !form.accountId) return;
+    let cancelled = false;
+    oxyServices.apps
+      .list(form.accountId)
       .then((apps) => {
-        if (cancelled) return
-        setApplications(apps.map((app) => ({ id: app._id, label: app.name })))
+        if (cancelled) return;
+        setApplications(apps.map((app) => ({ id: app._id, label: app.name })));
       })
       .catch(() => {
-        if (!cancelled) setApplications([])
-      })
+        if (!cancelled) setApplications([]);
+      });
     return () => {
-      cancelled = true
-    }
-  }, [oxyServices, form.accountId])
+      cancelled = true;
+    };
+  }, [oxyServices, form.accountId]);
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
-    setTouched((current) => (current[key as string] ? current : { ...current, [key]: true }))
-    setForm((current) => ({ ...current, [key]: value }))
-  }
+    setTouched((current) => (current[key as string] ? current : { ...current, [key]: true }));
+    setForm((current) => ({ ...current, [key]: value }));
+  };
 
   const toggleIn = (key: 'modalities' | 'privacyRequirements', value: string) =>
     setForm((current) => ({
@@ -271,11 +273,11 @@ export default function ContactSalesPage() {
       [key]: current[key].includes(value)
         ? current[key].filter((entry) => entry !== value)
         : [...current[key], value],
-    }))
+    }));
 
   async function onSubmit(event: FormEvent) {
-    event.preventDefault()
-    setFailure(undefined)
+    event.preventDefault();
+    setFailure(undefined);
 
     const payload = {
       ...form,
@@ -293,36 +295,36 @@ export default function ContactSalesPage() {
       message: form.message || undefined,
       accountId: form.accountId || undefined,
       applicationId: form.applicationId || undefined,
-    }
+    };
 
-    const parsed = salesInquirySchema.safeParse(payload)
+    const parsed = salesInquirySchema.safeParse(payload);
     if (!parsed.success) {
-      const next: Record<string, string> = {}
+      const next: Record<string, string> = {};
       for (const issue of parsed.error.issues) {
-        const field = String(issue.path[0] ?? '')
-        if (field && !next[field]) next[field] = issue.message
+        const field = String(issue.path[0] ?? '');
+        if (field && !next[field]) next[field] = issue.message;
       }
-      setErrors(next)
+      setErrors(next);
       // Move focus to the summary so a screen-reader user is told what happened
       // instead of being left where the submit button used to be.
-      requestAnimationFrame(() => summaryRef.current?.focus())
-      return
+      requestAnimationFrame(() => summaryRef.current?.focus());
+      return;
     }
 
-    setErrors({})
-    setSubmitting(true)
+    setErrors({});
+    setSubmitting(true);
     try {
       const response = await apiFetch<Receipt>('/sales-inquiries', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(parsed.data),
-      })
-      setReceipt(response)
+      });
+      setReceipt(response);
     } catch (error) {
-      setFailure(error instanceof Error ? error.message : 'Unknown error')
-      requestAnimationFrame(() => summaryRef.current?.focus())
+      setFailure(error instanceof Error ? error.message : 'Unknown error');
+      requestAnimationFrame(() => summaryRef.current?.focus());
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
   }
 
@@ -330,7 +332,7 @@ export default function ContactSalesPage() {
     title: t('contactSales.seoTitle'),
     description: t('contactSales.seoDescription'),
     canonicalPath: '/contact/sales',
-  }
+  };
 
   if (receipt) {
     return (
@@ -347,17 +349,17 @@ export default function ContactSalesPage() {
           </Button>
         </section>
       </PageShell>
-    )
+    );
   }
 
-  const errorEntries = Object.entries(errors)
-  const optionalName = (label: string) => `${label} (${t('contactSales.optional')})`
+  const errorEntries = Object.entries(errors);
+  const optionalName = (label: string) => `${label} (${t('contactSales.optional')})`;
   const optionalCaption = (label: string) => (
     <>
       {label}
       <span className="ms-1 text-muted-foreground">({t('contactSales.optional')})</span>
     </>
-  )
+  );
 
   return (
     <PageShell seo={seo} navbar={<Navbar />} mainClassName="flex-1">
@@ -439,7 +441,11 @@ export default function ContactSalesPage() {
                   autoComplete="name"
                 />
               </Field>
-              <Field nativeID={`${formId}-email`} label={t('contactSales.email')} error={errors.email}>
+              <Field
+                nativeID={`${formId}-email`}
+                label={t('contactSales.email')}
+                error={errors.email}
+              >
                 <TextFieldInput
                   label={t('contactSales.email')}
                   placeholder={null}
@@ -471,7 +477,10 @@ export default function ContactSalesPage() {
                   autoComplete="organization-title"
                 />
               </Field>
-              <Field nativeID={`${formId}-country`} label={optionalCaption(t('contactSales.country'))}>
+              <Field
+                nativeID={`${formId}-country`}
+                label={optionalCaption(t('contactSales.country'))}
+              >
                 <TextFieldInput
                   label={optionalName(t('contactSales.country'))}
                   placeholder={null}
@@ -521,12 +530,12 @@ export default function ContactSalesPage() {
                       // An application belongs to one account; keeping the old
                       // selection — or the old list — after switching would
                       // submit a pair the server is about to reject.
-                      setApplications([])
+                      setApplications([]);
                       setForm((current) => ({
                         ...current,
                         accountId: next,
                         applicationId: '',
-                      }))
+                      }));
                     }}
                     options={[
                       { value: '', label: t('contactSales.accountNone') },
@@ -535,7 +544,10 @@ export default function ContactSalesPage() {
                   />
                 </Field>
                 {form.accountId && applications.length > 0 && (
-                  <Field nativeID={`${formId}-applicationId`} label={optionalCaption('Application')}>
+                  <Field
+                    nativeID={`${formId}-applicationId`}
+                    label={optionalCaption('Application')}
+                  >
                     <OptionSelect
                       label="Application"
                       value={form.applicationId}
@@ -580,7 +592,10 @@ export default function ContactSalesPage() {
                   value={form.monthlyVolume}
                   onValueChange={(next) => update('monthlyVolume', next)}
                   options={withNone(
-                    MONTHLY_VOLUMES.map((value) => ({ value, label: t(VOLUME_LABEL_KEYS[value] ?? value) })),
+                    MONTHLY_VOLUMES.map((value) => ({
+                      value,
+                      label: t(VOLUME_LABEL_KEYS[value] ?? value),
+                    })),
                   )}
                   emptyIsPlaceholder
                 />
@@ -594,7 +609,10 @@ export default function ContactSalesPage() {
                   value={form.budget}
                   onValueChange={(next) => update('budget', next)}
                   options={withNone(
-                    BUDGET_BANDS.map((value) => ({ value, label: t(BUDGET_LABEL_KEYS[value] ?? value) })),
+                    BUDGET_BANDS.map((value) => ({
+                      value,
+                      label: t(BUDGET_LABEL_KEYS[value] ?? value),
+                    })),
                   )}
                   emptyIsPlaceholder
                 />
@@ -608,7 +626,10 @@ export default function ContactSalesPage() {
                   value={form.deploymentPreference}
                   onValueChange={(next) => update('deploymentPreference', next)}
                   options={withNone(
-                    DEPLOYMENT_PREFERENCES.map((value) => ({ value, label: t(DEPLOYMENT_LABEL_KEYS[value] ?? value) })),
+                    DEPLOYMENT_PREFERENCES.map((value) => ({
+                      value,
+                      label: t(DEPLOYMENT_LABEL_KEYS[value] ?? value),
+                    })),
                   )}
                   emptyIsPlaceholder
                 />
@@ -622,7 +643,10 @@ export default function ContactSalesPage() {
                   value={form.launchTimeline}
                   onValueChange={(next) => update('launchTimeline', next)}
                   options={withNone(
-                    LAUNCH_TIMELINES.map((value) => ({ value, label: t(TIMELINE_LABEL_KEYS[value] ?? value) })),
+                    LAUNCH_TIMELINES.map((value) => ({
+                      value,
+                      label: t(TIMELINE_LABEL_KEYS[value] ?? value),
+                    })),
                   )}
                   emptyIsPlaceholder
                 />
@@ -661,7 +685,10 @@ export default function ContactSalesPage() {
           {/* ── Anything else ──────────────────────────────────────── */}
           <fieldset className="flex flex-col gap-4">
             <legend className="text-xl text-foreground">{t('contactSales.sectionMessage')}</legend>
-            <Field nativeID={`${formId}-message`} label={optionalCaption(t('contactSales.message'))}>
+            <Field
+              nativeID={`${formId}-message`}
+              label={optionalCaption(t('contactSales.message'))}
+            >
               <Textarea
                 accessibilityLabel={optionalName(t('contactSales.message'))}
                 value={form.message}
@@ -677,7 +704,6 @@ export default function ContactSalesPage() {
               label={t('contactSales.marketingConsent')}
             />
           </fieldset>
-
 
           {/*
             The honeypot. `aria-hidden` plus `tabIndex={-1}` keeps it away from
@@ -712,12 +738,12 @@ export default function ContactSalesPage() {
         </form>
       </section>
     </PageShell>
-  )
+  );
 }
 
 /** The "—" row that leaves an optional select unanswered. */
 function withNone(options: SelectOption[]): SelectOption[] {
-  return [{ value: '', label: '—' }, ...options]
+  return [{ value: '', label: '—' }, ...options];
 }
 
 function CheckboxGroup({
@@ -726,10 +752,10 @@ function CheckboxGroup({
   selected,
   onToggle,
 }: {
-  legend: string
-  options: ReadonlyArray<{ value: string; label: string }>
-  selected: readonly string[]
-  onToggle: (value: string) => void
+  legend: string;
+  options: ReadonlyArray<{ value: string; label: string }>;
+  selected: readonly string[];
+  onToggle: (value: string) => void;
 }) {
   return (
     <Field label={legend} multiple>
@@ -744,5 +770,5 @@ function CheckboxGroup({
         ))}
       </div>
     </Field>
-  )
+  );
 }

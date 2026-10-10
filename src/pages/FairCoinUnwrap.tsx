@@ -1,9 +1,9 @@
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import UnwrapApp from '../components/faircoin/unwrap/UnwrapApp'
-import WagmiAppProvider from '../components/faircoin/WagmiAppProvider'
-import { isFairCoinHost } from '../lib/host'
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import UnwrapApp from '../components/faircoin/unwrap/UnwrapApp';
+import WagmiAppProvider from '../components/faircoin/WagmiAppProvider';
+import { isFairCoinHost } from '../lib/host';
 import {
   useFairCoinDropdowns,
   useFairCoinFooterBrand,
@@ -13,11 +13,11 @@ import {
   useFairCoinNavCtaButtons,
   useFairCoinNavbarBrand,
   useFairCoinSimpleNavLinks,
-} from '../lib/faircoin-chrome'
+} from '../lib/faircoin-chrome';
 
-const SEO_TITLE = 'Redeem WFAIR back to FairCoin'
+const SEO_TITLE = 'Redeem WFAIR back to FairCoin';
 const SEO_DESCRIPTION =
-  'Burn WFAIR on Base and receive native FAIR on the FairCoin chain. 1:1 redemption through the official FairCoin bridge.'
+  'Burn WFAIR on Base and receive native FAIR on the FairCoin chain. 1:1 redemption through the official FairCoin bridge.';
 
 /**
  * `/unwrap` (or `/faircoin/unwrap` on oxy.so) — wallet-driven WFAIR → FAIR
@@ -25,19 +25,19 @@ const SEO_DESCRIPTION =
  * the user's wallet and the WFAIR contract on Base mainnet.
  */
 export default function FairCoinUnwrapPage() {
-  const onFairCoinHost = isFairCoinHost()
-  const navbarBrand = useFairCoinNavbarBrand()
-  const dropdowns = useFairCoinDropdowns()
-  const simpleNavLinks = useFairCoinSimpleNavLinks()
-  const ctaButtons = useFairCoinNavCtaButtons()
-  const footerBrand = useFairCoinFooterBrand()
-  const footerColumns = useFairCoinFooterColumns()
-  const footerLegalLinks = useFairCoinFooterLegalLinks()
-  const footerCopyright = useFairCoinFooterCopyright()
+  const onFairCoinHost = isFairCoinHost();
+  const navbarBrand = useFairCoinNavbarBrand();
+  const dropdowns = useFairCoinDropdowns();
+  const simpleNavLinks = useFairCoinSimpleNavLinks();
+  const ctaButtons = useFairCoinNavCtaButtons();
+  const footerBrand = useFairCoinFooterBrand();
+  const footerColumns = useFairCoinFooterColumns();
+  const footerLegalLinks = useFairCoinFooterLegalLinks();
+  const footerCopyright = useFairCoinFooterCopyright();
 
   const rootClass = onFairCoinHost
     ? 'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
-    : 'faircoin-surface flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
+    : 'faircoin-surface flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background';
 
   return (
     <div className={rootClass}>
@@ -64,5 +64,5 @@ export default function FairCoinUnwrapPage() {
         copyright={footerCopyright}
       />
     </div>
-  )
+  );
 }

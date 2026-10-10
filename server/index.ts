@@ -1,31 +1,31 @@
-import { startWebsiteActivity } from './services/ecosystemActivity.js'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { and, eq, isNull, sql } from 'drizzle-orm'
-import { config } from './config.js'
+import { startWebsiteActivity } from './services/ecosystemActivity.js';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { and, eq, isNull, sql } from 'drizzle-orm';
+import { config } from './config.js';
 
-import { databaseUrl, db, sql as pgClient } from './db/postgres.js'
-import { migrateUnderLock } from './db/migrationLock.js'
-import { categories, navigationDropdowns, products } from './db/schema/index.js'
-import { startSyncInterval } from './services/githubSync.js'
-import { startFeaturePriorityInterval } from './services/featurePriority.js'
-import { startStatusSnapshotInterval } from './services/statusSnapshot.js'
-import { getPriorityTiers } from './constants/featurePriority.js'
-import { isBootstrapComplete, markBootstrapComplete } from './services/startupState.js'
-import { purgeExpiredInquiries } from './routes/sales.js'
-import { WEBSITE_MCP_CATALOG } from './mcp.js'
-import { oxyService } from './services/oxyService.js'
-import { createApp } from './app.js'
-import { startIdempotencyPurge } from './mcp/idempotency.js'
-import { startStorageCleanupSweep } from './services/media.js'
+import { databaseUrl, db, sql as pgClient } from './db/postgres.js';
+import { migrateUnderLock } from './db/migrationLock.js';
+import { categories, navigationDropdowns, products } from './db/schema/index.js';
+import { startSyncInterval } from './services/githubSync.js';
+import { startFeaturePriorityInterval } from './services/featurePriority.js';
+import { startStatusSnapshotInterval } from './services/statusSnapshot.js';
+import { getPriorityTiers } from './constants/featurePriority.js';
+import { isBootstrapComplete, markBootstrapComplete } from './services/startupState.js';
+import { purgeExpiredInquiries } from './routes/sales.js';
+import { WEBSITE_MCP_CATALOG } from './mcp.js';
+import { oxyService } from './services/oxyService.js';
+import { createApp } from './app.js';
+import { startIdempotencyPurge } from './mcp/idempotency.js';
+import { startStorageCleanupSweep } from './services/media.js';
 import {
   createMcpCatalogRegistration,
   disabledMcpCatalogRegistrationStatus,
   type McpCatalogRegistration,
-} from './services/mcpCatalogRegistration.js'
+} from './services/mcpCatalogRegistration.js';
 
 /** Migrations ship beside the server sources, so this resolves in dev and in the image alike. */
-const MIGRATIONS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'db', 'migrations')
+const MIGRATIONS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'db', 'migrations');
 
 /**
  * Only the deployed service registers: a local run would otherwise replace
@@ -34,14 +34,19 @@ const MIGRATIONS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '
  */
 const mcpCatalogRegistration: McpCatalogRegistration | null =
   process.env.NODE_ENV === 'production' && config.oxyServiceApiKey && config.oxyServiceApiSecret
-    ? createMcpCatalogRegistration({ catalog: WEBSITE_MCP_CATALOG, oxy: oxyService, oxyApiBase: config.oxyApiBase })
-    : null
+    ? createMcpCatalogRegistration({
+        catalog: WEBSITE_MCP_CATALOG,
+        oxy: oxyService,
+        oxyApiBase: config.oxyApiBase,
+      })
+    : null;
 
-const activity = startWebsiteActivity(isBootstrapComplete)
+const activity = startWebsiteActivity(isBootstrapComplete);
 const app = createApp({
   activityMiddleware: activity?.middleware,
-  catalogRegistrationStatus: () => mcpCatalogRegistration?.status() ?? disabledMcpCatalogRegistrationStatus(WEBSITE_MCP_CATALOG),
-})
+  catalogRegistrationStatus: () =>
+    mcpCatalogRegistration?.status() ?? disabledMcpCatalogRegistrationStatus(WEBSITE_MCP_CATALOG),
+});
 
 async function migrateEcosystemDropdown() {
   // Any dropdown that was historically called "Ecosystem" is now
@@ -50,10 +55,15 @@ async function migrateEcosystemDropdown() {
   const updated = await db
     .update(navigationDropdowns)
     .set({ kind: 'apps', updatedAt: new Date() })
-    .where(and(sql`lower(${navigationDropdowns.label}) = 'ecosystem'`, sql`${navigationDropdowns.kind} <> 'apps'`))
-    .returning({ id: navigationDropdowns._id })
+    .where(
+      and(
+        sql`lower(${navigationDropdowns.label}) = 'ecosystem'`,
+        sql`${navigationDropdowns.kind} <> 'apps'`,
+      ),
+    )
+    .returning({ id: navigationDropdowns._id });
   if (updated.length > 0) {
-    console.log(`[migration] Upgraded ${updated.length} ecosystem dropdown(s) to apps mode`)
+    console.log(`[migration] Upgraded ${updated.length} ecosystem dropdown(s) to apps mode`);
   }
 }
 
@@ -61,19 +71,22 @@ async function migrateProductCategoryRefs() {
   // Products used to store a free-text `section` slug. Link every legacy
   // product to the matching category row by slug so `product.category`
   // becomes the single source of truth.
-  const orphans = await db.select().from(products).where(isNull(products.category))
-  if (orphans.length === 0) return
-  const rows = await db.select({ id: categories._id, slug: categories.slug }).from(categories)
-  const idBySlug = new Map(rows.map((row) => [row.slug, row.id]))
-  let linked = 0
+  const orphans = await db.select().from(products).where(isNull(products.category));
+  if (orphans.length === 0) return;
+  const rows = await db.select({ id: categories._id, slug: categories.slug }).from(categories);
+  const idBySlug = new Map(rows.map((row) => [row.slug, row.id]));
+  let linked = 0;
   for (const product of orphans) {
-    const categoryId = product.section ? idBySlug.get(product.section) : undefined
-    if (!categoryId) continue
-    await db.update(products).set({ category: categoryId, updatedAt: new Date() }).where(eq(products._id, product._id))
-    linked++
+    const categoryId = product.section ? idBySlug.get(product.section) : undefined;
+    if (!categoryId) continue;
+    await db
+      .update(products)
+      .set({ category: categoryId, updatedAt: new Date() })
+      .where(eq(products._id, product._id));
+    linked++;
   }
   if (linked > 0) {
-    console.log(`[migration] Linked ${linked} product(s) to their category by legacy slug`)
+    console.log(`[migration] Linked ${linked} product(s) to their category by legacy slug`);
   }
 }
 
@@ -93,38 +106,43 @@ async function migrateProductCategoryRefs() {
  * recover when the database returns.
  */
 async function connectWithRetry(): Promise<void> {
-  const MAX_DELAY_MS = 30_000
-  let attempt = 0
+  const MAX_DELAY_MS = 30_000;
+  let attempt = 0;
 
   for (;;) {
     try {
-      await pgClient`select 1`
-      console.log('Connected to PostgreSQL')
+      await pgClient`select 1`;
+      console.log('Connected to PostgreSQL');
 
       // The schema comes first: a task that starts against an older schema
       // would serve 500s from every route that reads a new column. Under the
       // migration lock, so a task booting beside this one waits instead of
       // applying the same migrations concurrently (`db/migrationLock.ts`).
       // `/api/health` stays 503 until this returned.
-      const run = await migrateUnderLock({ connectionString: databaseUrl, migrationsFolder: MIGRATIONS_DIR })
-      console.log(`[db] migrations applied under the migration lock (backend pid ${run.backendPid}, waited ${run.waitedMs}ms)`)
+      const run = await migrateUnderLock({
+        connectionString: databaseUrl,
+        migrationsFolder: MIGRATIONS_DIR,
+      });
+      console.log(
+        `[db] migrations applied under the migration lock (backend pid ${run.backendPid}, waited ${run.waitedMs}ms)`,
+      );
 
-      await migrateEcosystemDropdown()
-      await migrateProductCategoryRefs()
+      await migrateEcosystemDropdown();
+      await migrateProductCategoryRefs();
 
-      startSyncInterval()
-      startFeaturePriorityInterval()
-      startStatusSnapshotInterval()
-      startInquiryRetentionSweep()
-      startStorageCleanupSweep()
-      startIdempotencyPurge()
-      markBootstrapComplete()
-      return
+      startSyncInterval();
+      startFeaturePriorityInterval();
+      startStatusSnapshotInterval();
+      startInquiryRetentionSweep();
+      startStorageCleanupSweep();
+      startIdempotencyPurge();
+      markBootstrapComplete();
+      return;
     } catch (err) {
-      attempt++
-      const delay = Math.min(1000 * 2 ** (attempt - 1), MAX_DELAY_MS)
-      console.error(`Database bootstrap failed (attempt ${attempt}), retrying in ${delay}ms:`, err)
-      await new Promise((resolve) => setTimeout(resolve, delay))
+      attempt++;
+      const delay = Math.min(1000 * 2 ** (attempt - 1), MAX_DELAY_MS);
+      console.error(`Database bootstrap failed (attempt ${attempt}), retrying in ${delay}ms:`, err);
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 }
@@ -138,14 +156,14 @@ async function connectWithRetry(): Promise<void> {
  * still sweeps, and the handler tolerates a database that is briefly away.
  */
 function startInquiryRetentionSweep(): void {
-  const DAY_MS = 24 * 60 * 60 * 1000
+  const DAY_MS = 24 * 60 * 60 * 1000;
   const sweep = () => {
     purgeExpiredInquiries().catch((error: unknown) => {
-      console.error('[sales] retention sweep failed:', error)
-    })
-  }
-  sweep()
-  setInterval(sweep, DAY_MS).unref()
+      console.error('[sales] retention sweep failed:', error);
+    });
+  };
+  sweep();
+  setInterval(sweep, DAY_MS).unref();
 }
 
 /**
@@ -174,27 +192,30 @@ function startInquiryRetentionSweep(): void {
  * immediately never takes traffic, and the one already running keeps serving
  * until someone fixes the value.
  */
-getPriorityTiers()
+getPriorityTiers();
 
 const server = app.listen(config.port, () => {
-  console.log(`Server listening on http://localhost:${config.port}`)
-  void connectWithRetry()
-  void mcpCatalogRegistration?.start()
-})
+  console.log(`Server listening on http://localhost:${config.port}`);
+  void connectWithRetry();
+  void mcpCatalogRegistration?.start();
+});
 
-
-let shuttingDown = false
+let shuttingDown = false;
 async function shutdown() {
-  if (shuttingDown) return
-  shuttingDown = true
-  const deadline = setTimeout(() => process.exit(1), 15_000)
-  deadline.unref()
-  mcpCatalogRegistration?.stop()
-  await new Promise<void>(resolve => server.close(() => resolve()))
-  await activity?.stop()
-  await pgClient.end({ timeout: 2 })
-  clearTimeout(deadline)
-  process.exit(0)
+  if (shuttingDown) return;
+  shuttingDown = true;
+  const deadline = setTimeout(() => process.exit(1), 15_000);
+  deadline.unref();
+  mcpCatalogRegistration?.stop();
+  await new Promise<void>((resolve) => server.close(() => resolve()));
+  await activity?.stop();
+  await pgClient.end({ timeout: 2 });
+  clearTimeout(deadline);
+  process.exit(0);
 }
-process.once('SIGTERM', () => { void shutdown() })
-process.once('SIGINT', () => { void shutdown() })
+process.once('SIGTERM', () => {
+  void shutdown();
+});
+process.once('SIGINT', () => {
+  void shutdown();
+});

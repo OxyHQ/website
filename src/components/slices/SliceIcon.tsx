@@ -1,10 +1,18 @@
-import type { CSSProperties } from 'react'
+import type { CSSProperties } from 'react';
 
 interface SliceIconProps {
   /** File name under `public/icons/`, without the extension. */
-  name: 'arrow-left' | 'arrow-right' | 'arrow-right-top-alt' | 'check' | 'chevron-down' | 'download' | 'arrow-top' | 'minus'
+  name:
+    | 'arrow-left'
+    | 'arrow-right'
+    | 'arrow-right-top-alt'
+    | 'check'
+    | 'chevron-down'
+    | 'download'
+    | 'arrow-top'
+    | 'minus';
   /** Sizing and colour — the glyph is painted with `currentColor`. */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -19,5 +27,5 @@ export default function SliceIcon({ name, className = 'size-4' }: SliceIconProps
       aria-label={name}
       style={{ '--image': `url("/icons/${name}.svg")` } as CSSProperties}
     />
-  )
+  );
 }

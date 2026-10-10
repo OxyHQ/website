@@ -1,27 +1,27 @@
-import { useState, useRef } from 'react'
-import { Button } from '@oxy.so/bloom/button'
-import { API_BASE, getAuthHeaders } from '../../../api/client'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
+import { useState, useRef } from 'react';
+import { Button } from '@oxy.so/bloom/button';
+import { API_BASE, getAuthHeaders } from '../../../api/client';
+import ConfirmDialog from '../ConfirmDialog';
+import { useConfirmAction } from '../useConfirmAction';
 
 interface ImportResult {
-  success: boolean
-  imported: Record<string, number>
+  success: boolean;
+  imported: Record<string, number>;
 }
 
 export default function BackupAdmin() {
-  const [exporting, setExporting] = useState(false)
-  const [importing, setImporting] = useState(false)
-  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [exporting, setExporting] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const restoreAction = useConfirmAction<File>({
     onConfirm: async (file) => {
-      setImporting(true)
-      setStatus(null)
+      setImporting(true);
+      setStatus(null);
       try {
-        const text = await file.text()
-        const parsed: unknown = JSON.parse(text)
+        const text = await file.text();
+        const parsed: unknown = JSON.parse(text);
 
         if (
           typeof parsed !== 'object' ||
@@ -29,80 +29,80 @@ export default function BackupAdmin() {
           !('collections' in parsed) ||
           !('version' in parsed)
         ) {
-          throw new Error('Invalid backup file: missing required fields (version, collections)')
+          throw new Error('Invalid backup file: missing required fields (version, collections)');
         }
 
-        const headers = await getAuthHeaders()
+        const headers = await getAuthHeaders();
         const res = await fetch(`${API_BASE}/backup`, {
           method: 'POST',
           headers: { ...headers, 'Content-Type': 'application/json' },
           body: text,
-        })
+        });
 
         if (!res.ok) {
-          const body = await res.json().catch(() => ({ error: `Import failed (${res.status})` }))
-          throw new Error(body.error ?? `Import failed (${res.status})`)
+          const body = await res.json().catch(() => ({ error: `Import failed (${res.status})` }));
+          throw new Error(body.error ?? `Import failed (${res.status})`);
         }
 
-        const result: ImportResult = await res.json()
-        const total = Object.values(result.imported).reduce((sum, n) => sum + n, 0)
+        const result: ImportResult = await res.json();
+        const total = Object.values(result.imported).reduce((sum, n) => sum + n, 0);
         setStatus({
           type: 'success',
           message: `Import complete: ${total} documents across ${Object.keys(result.imported).length} collections.`,
-        })
+        });
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Import failed'
-        setStatus({ type: 'error', message })
+        const message = err instanceof Error ? err.message : 'Import failed';
+        setStatus({ type: 'error', message });
       } finally {
-        setImporting(false)
+        setImporting(false);
       }
     },
-  })
+  });
 
   const handleExport = async () => {
-    setExporting(true)
-    setStatus(null)
+    setExporting(true);
+    setStatus(null);
     try {
-      const headers = await getAuthHeaders()
-      const res = await fetch(`${API_BASE}/backup`, { headers })
+      const headers = await getAuthHeaders();
+      const res = await fetch(`${API_BASE}/backup`, { headers });
       if (!res.ok) {
-        const body = await res.json().catch(() => ({ error: `Export failed (${res.status})` }))
-        throw new Error(body.error ?? `Export failed (${res.status})`)
+        const body = await res.json().catch(() => ({ error: `Export failed (${res.status})` }));
+        throw new Error(body.error ?? `Export failed (${res.status})`);
       }
 
-      const blob = await res.blob()
-      const date = new Date().toISOString().split('T')[0]
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `oxy-backup-${date}.json`
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      URL.revokeObjectURL(url)
+      const blob = await res.blob();
+      const date = new Date().toISOString().split('T')[0];
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `oxy-backup-${date}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
 
-      setStatus({ type: 'success', message: 'Backup exported successfully.' })
+      setStatus({ type: 'success', message: 'Backup exported successfully.' });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Export failed'
-      setStatus({ type: 'error', message })
+      const message = err instanceof Error ? err.message : 'Export failed';
+      setStatus({ type: 'error', message });
     } finally {
-      setExporting(false)
+      setExporting(false);
     }
-  }
+  };
 
   const handleImport = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     // Reset input so the same file can be re-selected
-    e.target.value = ''
+    e.target.value = '';
 
-    restoreAction.request(file)
-  }
+    restoreAction.request(file);
+  };
 
   return (
     <div>
@@ -127,10 +127,16 @@ export default function BackupAdmin() {
         <div className="rounded-xl border border-border p-4">
           <h3 className="text-sm font-medium text-foreground">Export</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Download a complete backup of all CMS collections (navigation, footer, pages, posts, pricing, settings, and more).
+            Download a complete backup of all CMS collections (navigation, footer, pages, posts,
+            pricing, settings, and more).
           </p>
           <div className="mt-4">
-            <Button appearance="solid" tone="accent" onPress={handleExport} disabled={exporting || importing}>
+            <Button
+              appearance="solid"
+              tone="accent"
+              onPress={handleExport}
+              disabled={exporting || importing}
+            >
               {exporting ? 'Exporting...' : 'Export Backup'}
             </Button>
           </div>
@@ -139,7 +145,8 @@ export default function BackupAdmin() {
         <div className="rounded-xl border border-border p-4">
           <h3 className="text-sm font-medium text-foreground">Import</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Restore from a previously exported backup file. This will replace all existing data in every collection included in the backup.
+            Restore from a previously exported backup file. This will replace all existing data in
+            every collection included in the backup.
           </p>
           <div className="mt-4">
             <input
@@ -149,7 +156,12 @@ export default function BackupAdmin() {
               onChange={handleFileSelected}
               className="hidden"
             />
-            <Button appearance="outline" tone="neutral" onPress={handleImport} disabled={exporting || importing}>
+            <Button
+              appearance="outline"
+              tone="neutral"
+              onPress={handleImport}
+              disabled={exporting || importing}
+            >
               {importing ? 'Importing...' : 'Import Backup'}
             </Button>
           </div>
@@ -173,5 +185,5 @@ export default function BackupAdmin() {
         onConfirm={restoreAction.confirm}
       />
     </div>
-  )
+  );
 }

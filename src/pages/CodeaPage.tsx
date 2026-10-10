@@ -1,5 +1,5 @@
-import PageShell from '../components/layout/PageShell'
-import CodeaContent from '../components/codea/CodeaPage'
+import PageShell from '../components/layout/PageShell';
+import CodeaContent from '../components/codea/CodeaPage';
 
 export default function CodeaPage() {
   return (
@@ -17,5 +17,5 @@ export default function CodeaPage() {
         <CodeaContent />
       </div>
     </PageShell>
-  )
+  );
 }

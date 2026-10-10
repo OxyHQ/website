@@ -1,59 +1,62 @@
-import { useState } from 'react'
-import { Link } from '../../lib/navigation'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { RiChat3Line } from '@oxy.so/bloom/icons/RiChat3Line'
-import { RiFileTextLine } from '@oxy.so/bloom/icons/RiFileTextLine'
-import { RiLockLine } from '@oxy.so/bloom/icons/RiLockLine'
-import { useUserActivity, useUserProfile, useNewsroomPosts } from '../../api/hooks'
+import { useState } from 'react';
+import { Link } from '../../lib/navigation';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import { RiChat3Line } from '@oxy.so/bloom/icons/RiChat3Line';
+import { RiFileTextLine } from '@oxy.so/bloom/icons/RiFileTextLine';
+import { RiLockLine } from '@oxy.so/bloom/icons/RiLockLine';
+import { useUserActivity, useUserProfile, useNewsroomPosts } from '../../api/hooks';
 
 interface ProfileActivityProps {
-  username: string
-  userId?: string
+  username: string;
+  userId?: string;
 }
 
-type TabType = 'comments' | 'posts' | 'likes'
+type TabType = 'comments' | 'posts' | 'likes';
 
 const TABS: Array<{ value: TabType; label: string }> = [
   { value: 'comments', label: 'Comments' },
   { value: 'posts', label: 'Articles' },
   { value: 'likes', label: 'Likes' },
-]
+];
 
 interface ActivityItemData {
-  _id?: string
-  body?: string
-  targetType?: string
-  targetId?: string
+  _id?: string;
+  body?: string;
+  targetType?: string;
+  targetId?: string;
 }
 
 function formatRelativeTime(dateString: string): string {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffSeconds = Math.floor(diffMs / 1000)
-  const diffMinutes = Math.floor(diffSeconds / 60)
-  const diffHours = Math.floor(diffMinutes / 60)
-  const diffDays = Math.floor(diffHours / 24)
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
 
-  if (diffDays > 30) return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  if (diffDays > 0) return `${diffDays}d`
-  if (diffHours > 0) return `${diffHours}h`
-  if (diffMinutes > 0) return `${diffMinutes}m`
-  return 'now'
+  if (diffDays > 30) return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  if (diffDays > 0) return `${diffDays}d`;
+  if (diffHours > 0) return `${diffHours}h`;
+  if (diffMinutes > 0) return `${diffMinutes}m`;
+  return 'now';
 }
 
 function CommentItem({ data, createdAt }: { data: ActivityItemData; createdAt: string }) {
-  const item = data
-  const preview = (item.body ?? '').slice(0, 200) + ((item.body?.length ?? 0) > 200 ? '...' : '')
+  const item = data;
+  const preview = (item.body ?? '').slice(0, 200) + ((item.body?.length ?? 0) > 200 ? '...' : '');
 
-  const href = item.targetType && item.targetId
-    ? `/${item.targetType === 'newsroom' ? 'newsroom' : 'changelog'}/${item.targetId}`
-    : undefined
+  const href =
+    item.targetType && item.targetId
+      ? `/${item.targetType === 'newsroom' ? 'newsroom' : 'changelog'}/${item.targetId}`
+      : undefined;
 
   const content = (
     <div className="border-b border-border px-1 py-4 transition-colors hover:bg-surface/50">
       <div className="flex items-start gap-3">
-        <span className="inline-flex mt-0.5 shrink-0 text-muted-foreground" aria-hidden="true"><RiChat3Line width={16} height={16} fill="currentColor" /></span>
+        <span className="inline-flex mt-0.5 shrink-0 text-muted-foreground" aria-hidden="true">
+          <RiChat3Line width={16} height={16} fill="currentColor" />
+        </span>
         <div className="min-w-0 flex-1">
           <p className="text-body-md leading-relaxed text-foreground">{preview || 'No content'}</p>
           <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
@@ -63,49 +66,76 @@ function CommentItem({ data, createdAt }: { data: ActivityItemData; createdAt: s
         </div>
       </div>
     </div>
-  )
+  );
 
-  if (href) return <Link to={href} className="block">{content}</Link>
-  return content
+  if (href)
+    return (
+      <Link to={href} className="block">
+        {content}
+      </Link>
+    );
+  return content;
 }
 
-function PostItem({ post }: { post: { slug: string; title: string; resume?: string; coverImage?: string; publishedAt: string } }) {
+function PostItem({
+  post,
+}: {
+  post: { slug: string; title: string; resume?: string; coverImage?: string; publishedAt: string };
+}) {
   return (
-    <Link to={`/newsroom/${post.slug}`} className="block border-b border-border px-1 py-4 transition-colors hover:bg-surface/50">
+    <Link
+      to={`/newsroom/${post.slug}`}
+      className="block border-b border-border px-1 py-4 transition-colors hover:bg-surface/50"
+    >
       <div className="flex items-start gap-3">
-        <span className="inline-flex mt-0.5 shrink-0 text-muted-foreground" aria-hidden="true"><RiFileTextLine width={16} height={16} fill="currentColor" /></span>
+        <span className="inline-flex mt-0.5 shrink-0 text-muted-foreground" aria-hidden="true">
+          <RiFileTextLine width={16} height={16} fill="currentColor" />
+        </span>
         <div className="min-w-0 flex-1">
           <p className="text-body-md font-medium text-foreground">{post.title}</p>
           {post.resume && (
             <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{post.resume}</p>
           )}
-          <p className="mt-1 text-xs text-muted-foreground">{formatRelativeTime(post.publishedAt)}</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {formatRelativeTime(post.publishedAt)}
+          </p>
         </div>
         {post.coverImage && (
-          <img src={post.coverImage} alt="" className="h-16 w-24 shrink-0 rounded-lg object-cover" />
+          <img
+            src={post.coverImage}
+            alt=""
+            className="h-16 w-24 shrink-0 rounded-lg object-cover"
+          />
         )}
       </div>
     </Link>
-  )
+  );
 }
 
 export default function ProfileActivity({ username, userId }: ProfileActivityProps) {
-  const [activeTab, setActiveTab] = useState<TabType>('comments')
-  const { data: profile } = useUserProfile(username)
-  const { data: activityData, isLoading: activityLoading } = useUserActivity(username, { type: activeTab === 'posts' ? undefined : activeTab })
-  const { data: postsData, isPending: postsLoading } = useNewsroomPosts({ author: userId, limit: 20 })
+  const [activeTab, setActiveTab] = useState<TabType>('comments');
+  const { data: profile } = useUserProfile(username);
+  const { data: activityData, isLoading: activityLoading } = useUserActivity(username, {
+    type: activeTab === 'posts' ? undefined : activeTab,
+  });
+  const { data: postsData, isPending: postsLoading } = useNewsroomPosts({
+    author: userId,
+    limit: 20,
+  });
 
   if (profile && profile.stats === null) {
     return (
       <div className="flex flex-col items-center gap-3 py-12 text-center">
-        <span className="inline-flex text-muted-foreground" aria-hidden="true"><RiLockLine width={32} height={32} fill="currentColor" /></span>
+        <span className="inline-flex text-muted-foreground" aria-hidden="true">
+          <RiLockLine width={32} height={32} fill="currentColor" />
+        </span>
         <p className="text-sm text-muted-foreground">This user&apos;s activity is private</p>
       </div>
-    )
+    );
   }
 
-  const isLoading = activeTab === 'posts' ? postsLoading : activityLoading
-  const posts = postsData?.posts ?? []
+  const isLoading = activeTab === 'posts' ? postsLoading : activityLoading;
+  const posts = postsData?.posts ?? [];
 
   return (
     <div>
@@ -166,11 +196,9 @@ export default function ProfileActivity({ username, userId }: ProfileActivityPro
             ))}
           </>
         ) : (
-          <p className="py-12 text-center text-sm text-muted-foreground">
-            No {activeTab} yet
-          </p>
+          <p className="py-12 text-center text-sm text-muted-foreground">No {activeTab} yet</p>
         )}
       </div>
     </div>
-  )
+  );
 }

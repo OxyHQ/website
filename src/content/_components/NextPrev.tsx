@@ -1,6 +1,6 @@
-import { Link } from '../../lib/navigation'
-import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { Link } from '../../lib/navigation';
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
 
 /* ──────────────────────────────────────────────
  * <NextPrev prev={…} next={…} />
@@ -16,17 +16,17 @@ import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
  * ──────────────────────────────────────────── */
 
 interface NavLinkEntry {
-  href: string
-  title: string
+  href: string;
+  title: string;
 }
 
 interface NextPrevProps {
-  prev?: NavLinkEntry | null
-  next?: NavLinkEntry | null
+  prev?: NavLinkEntry | null;
+  next?: NavLinkEntry | null;
 }
 
 export default function NextPrev({ prev, next }: NextPrevProps) {
-  if (!prev && !next) return null
+  if (!prev && !next) return null;
   return (
     <nav
       className="not-prose mt-12 grid gap-4 border-t border-border pt-8 sm:grid-cols-2"
@@ -61,5 +61,5 @@ export default function NextPrev({ prev, next }: NextPrevProps) {
         <div aria-hidden="true" />
       )}
     </nav>
-  )
+  );
 }

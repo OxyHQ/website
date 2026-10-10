@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
-import { ARTICLE_BLOCK } from './articleBlock'
+import type { ReactNode } from 'react';
+import { ARTICLE_BLOCK } from './articleBlock';
 
 /**
  * The two named blocks an article's MDX can call for, kept apart from the map
@@ -23,7 +23,7 @@ export function Takeaways({ children }: { children: ReactNode }) {
     >
       {children}
     </section>
-  )
+  );
 }
 
 /**
@@ -44,5 +44,5 @@ export function Footnotes({ children }: { children: ReactNode }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

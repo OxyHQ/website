@@ -1,9 +1,9 @@
 export interface BadgeDefinition {
-  name: string
-  description: string
-  icon: string
-  color: string
-  rarity: 'common' | 'uncommon' | 'rare' | 'legendary'
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  rarity: 'common' | 'uncommon' | 'rare' | 'legendary';
 }
 
 export const BADGE_DEFINITIONS: Record<string, BadgeDefinition> = {
@@ -49,6 +49,6 @@ export const BADGE_DEFINITIONS: Record<string, BadgeDefinition> = {
     color: '#000000',
     rarity: 'legendary',
   },
-}
+};
 
-export const BADGE_IDS = Object.keys(BADGE_DEFINITIONS)
+export const BADGE_IDS = Object.keys(BADGE_DEFINITIONS);

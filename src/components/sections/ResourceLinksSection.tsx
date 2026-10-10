@@ -1,19 +1,24 @@
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import FaqSection from './FaqSection'
-import { Link } from '../../lib/navigation'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import FaqSection from './FaqSection';
+import { Link } from '../../lib/navigation';
 
 interface ResourceGroup {
-  id?: string
-  title: string
-  links: readonly { href: string; label: string; external?: boolean }[]
+  id?: string;
+  title: string;
+  links: readonly { href: string; label: string; external?: boolean }[];
 }
 
 /** The FAQ layout with direct resource links and a section palette chosen by its caller. */
-export default function ResourceLinksSection({ id, title, groups, className = '' }: {
-  id?: string
-  title: string
-  groups: readonly ResourceGroup[]
-  className?: string
+export default function ResourceLinksSection({
+  id,
+  title,
+  groups,
+  className = '',
+}: {
+  id?: string;
+  title: string;
+  groups: readonly ResourceGroup[];
+  className?: string;
 }) {
   return (
     <FaqSection
@@ -34,7 +39,10 @@ export default function ResourceLinksSection({ id, title, groups, className = ''
                   className="group flex items-center justify-between gap-4 px-4 py-5 text-lg font-medium leading-snug text-primary-text transition-colors hover:bg-background/40 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-ring md:text-xl"
                 >
                   <span className="min-w-0">{link.label}</span>
-                  <span aria-hidden="true" className="shrink-0 transition-transform group-hover:translate-x-1">
+                  <span
+                    aria-hidden="true"
+                    className="shrink-0 transition-transform group-hover:translate-x-1"
+                  >
                     <RiArrowRightLine width={20} height={20} fill="currentColor" />
                   </span>
                 </Link>
@@ -44,5 +52,5 @@ export default function ResourceLinksSection({ id, title, groups, className = ''
         ),
       }))}
     />
-  )
+  );
 }

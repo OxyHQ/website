@@ -1,73 +1,169 @@
-import type { ComponentType } from 'react'
-import { CashIcon, EmergencyIcon, GiftIcon, GlobeIcon, HomeIcon, MusicIcon, RocketIcon } from './PeableIcons'
+import type { ComponentType } from 'react';
+import {
+  CashIcon,
+  EmergencyIcon,
+  GiftIcon,
+  GlobeIcon,
+  HomeIcon,
+  MusicIcon,
+  RocketIcon,
+} from './PeableIcons';
 
 /** One of the drifting savings cards in the "Industry-leading interest" scene. */
 export interface PayAccount {
-  label: string
-  balance: string
-  icon: ComponentType<{ width?: number | string; height?: number | string }>
-  iconSize: number
+  label: string;
+  balance: string;
+  icon: ComponentType<{ width?: number | string; height?: number | string }>;
+  iconSize: number;
   /** Resting position inside the 1120×536 stage, before the parallax offset. */
-  left: number
-  top: number
+  left: number;
+  top: number;
   /** 0 = furthest back (blurred, small), 1 = closest to the viewer. */
-  depth: number
+  depth: number;
 }
 
 export const PAY_ACCOUNTS: readonly PayAccount[] = [
-  { label: 'Japan Trip', balance: '$6,847.12', icon: GlobeIcon, iconSize: 16, left: 132, top: 96, depth: 1 },
-  { label: 'Savings', balance: '$8,763.45', icon: CashIcon, iconSize: 14, left: 118, top: 22, depth: 0.07 },
-  { label: 'Savings', balance: '$8,000.00', icon: CashIcon, iconSize: 14, left: 470, top: 34, depth: 0.14 },
-  { label: 'Recitals', balance: '$8,000.00', icon: MusicIcon, iconSize: 14, left: 604, top: 118, depth: 0.36 },
-  { label: 'New bike', balance: '$2,487.63', icon: RocketIcon, iconSize: 14, left: 236, top: 322, depth: 0.29 },
-  { label: 'New House', balance: '$22,905.71', icon: HomeIcon, iconSize: 14, left: 792, top: 62, depth: 0.96 },
-  { label: 'Holiday Gifts', balance: '$2,621.64', icon: GiftIcon, iconSize: 14, left: 690, top: 358, depth: 0.01 },
-  { label: 'Emergency', balance: '$7,248.21', icon: EmergencyIcon, iconSize: 14, left: 848, top: 306, depth: 0.99 },
-]
+  {
+    label: 'Japan Trip',
+    balance: '$6,847.12',
+    icon: GlobeIcon,
+    iconSize: 16,
+    left: 132,
+    top: 96,
+    depth: 1,
+  },
+  {
+    label: 'Savings',
+    balance: '$8,763.45',
+    icon: CashIcon,
+    iconSize: 14,
+    left: 118,
+    top: 22,
+    depth: 0.07,
+  },
+  {
+    label: 'Savings',
+    balance: '$8,000.00',
+    icon: CashIcon,
+    iconSize: 14,
+    left: 470,
+    top: 34,
+    depth: 0.14,
+  },
+  {
+    label: 'Recitals',
+    balance: '$8,000.00',
+    icon: MusicIcon,
+    iconSize: 14,
+    left: 604,
+    top: 118,
+    depth: 0.36,
+  },
+  {
+    label: 'New bike',
+    balance: '$2,487.63',
+    icon: RocketIcon,
+    iconSize: 14,
+    left: 236,
+    top: 322,
+    depth: 0.29,
+  },
+  {
+    label: 'New House',
+    balance: '$22,905.71',
+    icon: HomeIcon,
+    iconSize: 14,
+    left: 792,
+    top: 62,
+    depth: 0.96,
+  },
+  {
+    label: 'Holiday Gifts',
+    balance: '$2,621.64',
+    icon: GiftIcon,
+    iconSize: 14,
+    left: 690,
+    top: 358,
+    depth: 0.01,
+  },
+  {
+    label: 'Emergency',
+    balance: '$7,248.21',
+    icon: EmergencyIcon,
+    iconSize: 14,
+    left: 848,
+    top: 306,
+    depth: 0.99,
+  },
+];
 
 /** A row in the Activity scene. `tone` drives the amount colour. */
 export interface PayActivityRow {
-  merchant: string
-  amount: string
-  date: string
-  method: string
-  verified: boolean
-  incoming: boolean
-  glyph: 'home' | 'app' | 'incoming'
+  merchant: string;
+  amount: string;
+  date: string;
+  method: string;
+  verified: boolean;
+  incoming: boolean;
+  glyph: 'home' | 'app' | 'incoming';
 }
 
 export const PAY_ACTIVITY: readonly PayActivityRow[] = [
-  { merchant: 'July rent', amount: '$3,100.00', date: '17 Jul 2026', method: 'Transfer', verified: false, incoming: false, glyph: 'home' },
-  { merchant: 'Homiio deposit', amount: '$8.00', date: '18 Jul 2026', method: 'Peable', verified: true, incoming: false, glyph: 'app' },
-  { merchant: 'Invoice paid', amount: '$6,200.00', date: '16 Jul 2026', method: 'FairCoin', verified: true, incoming: true, glyph: 'incoming' },
-]
+  {
+    merchant: 'July rent',
+    amount: '$3,100.00',
+    date: '17 Jul 2026',
+    method: 'Transfer',
+    verified: false,
+    incoming: false,
+    glyph: 'home',
+  },
+  {
+    merchant: 'Homiio deposit',
+    amount: '$8.00',
+    date: '18 Jul 2026',
+    method: 'Peable',
+    verified: true,
+    incoming: false,
+    glyph: 'app',
+  },
+  {
+    merchant: 'Invoice paid',
+    amount: '$6,200.00',
+    date: '16 Jul 2026',
+    method: 'FairCoin',
+    verified: true,
+    incoming: true,
+    glyph: 'incoming',
+  },
+];
 
 /** A card in the "Send money instantly" toast stack. */
 export interface PayTransfer {
-  amount: string
-  recipient: string
-  age: string
+  amount: string;
+  recipient: string;
+  age: string;
 }
 
 export const PAY_TRANSFERS: readonly PayTransfer[] = [
   { amount: '$1,200.00', recipient: 'Alex', age: '3h' },
   { amount: '$160.00', recipient: 'Amanda', age: '4h' },
   { amount: '$26.52', recipient: 'Joel', age: '5h' },
-]
+];
 
 /** The numbered feature list. `scene` picks the mock rendered beside the copy. */
 export interface PayFeature {
-  index: string
-  title: string
-  body: string
-  scene: 'activity' | 'transfers' | 'card' | 'cashback' | 'security' | 'support'
+  index: string;
+  title: string;
+  body: string;
+  scene: 'activity' | 'transfers' | 'card' | 'cashback' | 'security' | 'support';
   /** Tailwind column classes — the list is a contents-grid at tablet-lg and up. */
-  mediaClassName: string
-  copyClassName: string
+  mediaClassName: string;
+  copyClassName: string;
   /** Media comes first on mobile only for the odd rows, matching the source layout. */
-  mediaOrder: string
-  copyOrder: string
-  padded: boolean
+  mediaOrder: string;
+  copyOrder: string;
+  padded: boolean;
 }
 
 export const PAY_FEATURES: readonly PayFeature[] = [
@@ -137,11 +233,11 @@ export const PAY_FEATURES: readonly PayFeature[] = [
     copyOrder: 'order-2 mobile:order-2',
     padded: true,
   },
-]
+];
 
 export interface PayFaq {
-  question: string
-  answer: string
+  question: string;
+  answer: string;
 }
 
 export const PAY_FAQS: readonly PayFaq[] = [
@@ -175,4 +271,4 @@ export const PAY_FAQS: readonly PayFaq[] = [
     answer:
       'FairCoin is self-custodied by design, and anything Peable stores about you is exportable. Leaving should cost you nothing beyond the time it takes to download it.',
   },
-]
+];

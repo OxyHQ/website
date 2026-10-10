@@ -1,5 +1,5 @@
-import type { NavDropdownCard } from '../../data/content'
-import { Link } from '../../lib/navigation'
+import type { NavDropdownCard } from '../../data/content';
+import { Link } from '../../lib/navigation';
 /* ─── Promo card ─── */
 
 /**
@@ -13,9 +13,9 @@ export function NavCard({
   className = '',
   loadImage = true,
 }: {
-  card: NavDropdownCard
-  className?: string
-  loadImage?: boolean
+  card: NavDropdownCard;
+  className?: string;
+  loadImage?: boolean;
 }) {
   const inner = (
     <>
@@ -37,19 +37,19 @@ export function NavCard({
         </span>
       </span>
     </>
-  )
-  const cardClass = `group flex h-fit flex-col gap-space-sm rounded-md p-space-sm outline-offset-2 transition-colors duration-150 hover:bg-foreground/5 focus-visible:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-ring active:bg-foreground/10 ${className}`
+  );
+  const cardClass = `group flex h-fit flex-col gap-space-sm rounded-md p-space-sm outline-offset-2 transition-colors duration-150 hover:bg-foreground/5 focus-visible:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-ring active:bg-foreground/10 ${className}`;
 
   if (card.href.startsWith('/')) {
     return (
       <Link to={card.href} className={cardClass}>
         {inner}
       </Link>
-    )
+    );
   }
   return (
     <a href={card.href} target="_blank" rel="noopener noreferrer" className={cardClass}>
       {inner}
     </a>
-  )
+  );
 }

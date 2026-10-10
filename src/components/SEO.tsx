@@ -1,26 +1,26 @@
-import { Helmet } from 'react-helmet-async'
-import { useLocaleContext, DEFAULT_LOCALE, type Locale } from '../lib/i18n'
-import { brandConfig, normalizeSeoTitle, resolveSeo } from '../lib/seo'
-import { useSeo } from '../api/hooks'
-import { buildLocalizedSeoUrl } from '../lib/seoUrl'
-import { hasLocalizedVariants } from '../lib/localizedRoute'
+import { Helmet } from 'react-helmet-async';
+import { useLocaleContext, DEFAULT_LOCALE, type Locale } from '../lib/i18n';
+import { brandConfig, normalizeSeoTitle, resolveSeo } from '../lib/seo';
+import { useSeo } from '../api/hooks';
+import { buildLocalizedSeoUrl } from '../lib/seoUrl';
+import { hasLocalizedVariants } from '../lib/localizedRoute';
 
 export interface SEOProps {
-  title: string
-  description: string
-  canonicalPath: string
-  ogImage?: string
-  ogType?: string
-  noIndex?: boolean
-  publishedTime?: string
-  modifiedTime?: string
-  author?: string
+  title: string;
+  description: string;
+  canonicalPath: string;
+  ogImage?: string;
+  ogType?: string;
+  noIndex?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
   /**
    * Absolute canonical URL, for a page whose content is published on another
    * site (an open role written in Mention). It replaces the path-derived
    * canonical and suppresses hreflang: the page speaks for no locale set.
    */
-  canonicalUrl?: string
+  canonicalUrl?: string;
 }
 
 /**
@@ -44,13 +44,13 @@ const OG_LOCALES: Record<Locale, string> = {
   bn: 'bn_BD',
   ru: 'ru_RU',
   id: 'id_ID',
-}
+};
 
 /** Build the canonical URL for a given path + locale on a brand origin. The
  *  default locale surface lives at the bare URL; non-default locales live under
  *  `/{locale}`. */
 function buildLocalizedUrl(origin: string, canonicalPath: string, locale: Locale): string {
-  return buildLocalizedSeoUrl(origin, canonicalPath, locale, DEFAULT_LOCALE)
+  return buildLocalizedSeoUrl(origin, canonicalPath, locale, DEFAULT_LOCALE);
 }
 
 /**
@@ -75,30 +75,31 @@ export default function SEO({
   author,
   canonicalUrl: externalCanonicalUrl,
 }: SEOProps) {
-  const { locale, locales } = useLocaleContext()
-  const host = typeof window === 'undefined' ? undefined : window.location.hostname
-  const { brand, origin, siteName, ogImage: defaultOgImage } = brandConfig(host)
-  const { data: seoData } = useSeo(canonicalPath, brand)
-  const cms = resolveSeo(seoData ?? null, canonicalPath, host)
+  const { locale, locales } = useLocaleContext();
+  const host = typeof window === 'undefined' ? undefined : window.location.hostname;
+  const { brand, origin, siteName, ogImage: defaultOgImage } = brandConfig(host);
+  const { data: seoData } = useSeo(canonicalPath, brand);
+  const cms = resolveSeo(seoData ?? null, canonicalPath, host);
 
   // A CMS entry for THIS route is editorial intent and wins. The brand-wide
   // `*` entry is only a floor: it fills in for a page that states nothing of
   // its own, and never overwrites the page's title, description or OG image.
-  const cmsRoute = cms?.matchedRoute ? cms : null
+  const cmsRoute = cms?.matchedRoute ? cms : null;
 
-  const metaTitle = cmsRoute?.title ?? title
-  const metaDescription = cmsRoute?.description ?? description
+  const metaTitle = cmsRoute?.title ?? title;
+  const metaDescription = cmsRoute?.description ?? description;
   // A page hands over a site-relative path (the same artwork its card shows);
   // og:image has to be absolute.
-  const pageImage = cmsRoute?.ogImage ?? ogImage ?? cms?.ogImage
+  const pageImage = cmsRoute?.ogImage ?? ogImage ?? cms?.ogImage;
   const image = pageImage
-    ? (pageImage.startsWith('/') ? `${origin}${pageImage}` : pageImage)
-    : defaultOgImage
+    ? pageImage.startsWith('/')
+      ? `${origin}${pageImage}`
+      : pageImage
+    : defaultOgImage;
 
-  const fullTitle = canonicalPath === '/'
-    ? metaTitle
-    : `${normalizeSeoTitle(metaTitle, siteName)} | ${siteName}`
-  const canonicalUrl = externalCanonicalUrl ?? buildLocalizedUrl(origin, canonicalPath, locale)
+  const fullTitle =
+    canonicalPath === '/' ? metaTitle : `${normalizeSeoTitle(metaTitle, siteName)} | ${siteName}`;
+  const canonicalUrl = externalCanonicalUrl ?? buildLocalizedUrl(origin, canonicalPath, locale);
   // Advertise only locales that actually have translations. `enabled` is an
   // editorial "show in the picker" toggle that defaults to true, so it says
   // nothing about whether `/<code>/…` would render anything but an English
@@ -115,10 +116,10 @@ export default function SEO({
   // set whose members serve the same English bytes tells Google the URLs are
   // equivalent translations when they are plain duplicates, and it answers by
   // picking its own canonical.
-  const localized = !externalCanonicalUrl && hasLocalizedVariants(canonicalPath)
+  const localized = !externalCanonicalUrl && hasLocalizedVariants(canonicalPath);
   const alternateCodes: readonly Locale[] = localized
     ? locales.filter((l) => l.translationReady).map((l) => l.code)
-    : []
+    : [];
   // hreflang is reciprocal: every page in the set must list the whole set,
   // itself included. The default locale is `translationReady: false` by
   // construction (it lives at the bare path and has nothing to translate), so
@@ -127,7 +128,7 @@ export default function SEO({
   // is not a substitute. An hreflang set missing a self-reference is invalid
   // and Google drops it whole.
   const hreflangCodes: readonly Locale[] =
-    alternateCodes.length > 0 ? [DEFAULT_LOCALE, ...alternateCodes] : []
+    alternateCodes.length > 0 ? [DEFAULT_LOCALE, ...alternateCodes] : [];
 
   return (
     <Helmet>
@@ -152,7 +153,11 @@ export default function SEO({
         />
       ))}
       {hreflangCodes.length > 0 && (
-        <link rel="alternate" hrefLang="x-default" href={buildLocalizedUrl(origin, canonicalPath, DEFAULT_LOCALE)} />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href={buildLocalizedUrl(origin, canonicalPath, DEFAULT_LOCALE)}
+        />
       )}
 
       {/* Open Graph */}
@@ -182,5 +187,5 @@ export default function SEO({
 
       {noIndex && <meta name="robots" content="noindex, nofollow" />}
     </Helmet>
-  )
+  );
 }

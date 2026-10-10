@@ -1,11 +1,18 @@
-import { Card, CardHeader, CardBody, CardFooter, CardTitle, CardDescription } from '@oxy.so/bloom/card'
-import { Button } from '@oxy.so/bloom/button'
-import type { BloomAppearance } from '@oxy.so/bloom/appearance'
-import type { PlaygroundValues } from './_playground'
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+} from '@oxy.so/bloom/card';
+import { Button } from '@oxy.so/bloom/button';
+import type { BloomAppearance } from '@oxy.so/bloom/appearance';
+import type { PlaygroundValues } from './_playground';
 
 export const meta = {
   description: 'Container surface with optional header, body, and footer slots.',
-}
+};
 
 export default function CardDemo() {
   return (
@@ -19,7 +26,9 @@ export default function CardDemo() {
           <p>Cards group related information into a single tap target.</p>
         </CardBody>
         <CardFooter>
-          <Button appearance="solid" tone="accent" size="sm">Action</Button>
+          <Button appearance="solid" tone="accent" size="sm">
+            Action
+          </Button>
         </CardFooter>
       </Card>
       <Card appearance="outline">
@@ -32,14 +41,14 @@ export default function CardDemo() {
         </CardBody>
       </Card>
     </div>
-  )
+  );
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const appearance = values.appearance as BloomAppearance
-  const title = typeof values.title === 'string' ? values.title : 'Card title'
-  const description = typeof values.description === 'string' ? values.description : ''
-  const body = typeof values.body === 'string' ? values.body : ''
+  const appearance = values.appearance as BloomAppearance;
+  const title = typeof values.title === 'string' ? values.title : 'Card title';
+  const description = typeof values.description === 'string' ? values.description : '';
+  const body = typeof values.body === 'string' ? values.body : '';
   return (
     <Card appearance={appearance} style={{ width: 320 }}>
       <CardHeader>
@@ -52,5 +61,5 @@ export function Playground({ values }: { values: PlaygroundValues }) {
         </CardBody>
       ) : null}
     </Card>
-  )
+  );
 }

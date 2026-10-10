@@ -1,14 +1,21 @@
-import { useMemo, useRef, useState } from 'react'
-import { Link } from '../../lib/navigation'
-import { useInView, useReducedMotion, useScroll, useTransform, motion, type MotionValue } from 'framer-motion'
-import { useJobs, useProducts } from '../../api/hooks'
-import { getStaticChangelog } from '../../content/changelog-loader'
-import RollingNumber from '../ui/RollingNumber'
-import Button from '../ui/Button'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import JobBoard, { type JobListing } from '../slices/JobBoard'
-import { AnimatedTitle } from '../ui/AnimatedTitle'
-import { careerJobPath, careerLocationLabel, careerTeam } from '../../lib/careers'
+import { useMemo, useRef, useState } from 'react';
+import { Link } from '../../lib/navigation';
+import {
+  useInView,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+  motion,
+  type MotionValue,
+} from 'framer-motion';
+import { useJobs, useProducts } from '../../api/hooks';
+import { getStaticChangelog } from '../../content/changelog-loader';
+import RollingNumber from '../ui/RollingNumber';
+import Button from '../ui/Button';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import JobBoard, { type JobListing } from '../slices/JobBoard';
+import { AnimatedTitle } from '../ui/AnimatedTitle';
+import { careerJobPath, careerLocationLabel, careerTeam } from '../../lib/careers';
 
 /* ──────────────────────────────────────────────
  * /company/careers
@@ -31,22 +38,25 @@ function Eyebrow({ children, className = '' }: { children: string; className?: s
     >
       <div className="shrink-0">{children}</div>
     </div>
-  )
+  );
 }
 
 /** Full-bleed band whose image drifts against the scroll. */
 function ImageBand({ src, alt, bleed = false }: { src: string; alt: string; bleed?: boolean }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const reduceMotion = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['0px', '-120px'])
+  const ref = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const y = useTransform(scrollYProgress, [0, 1], ['0px', '-120px']);
 
   // `bleed` drops the site frame so the photo runs the full width of the
   // window instead of stopping at the 110rem measure.
   return (
     <div className={bleed ? 'w-full' : 'mx-auto w-full max-w-(--layout-max-width)'}>
       <div ref={ref} className="relative overflow-hidden pt-[100vw] sm:pt-[35vw] xl:pt-[590px]">
-        <motion.div className="absolute left-0 top-0 size-full" style={reduceMotion ? undefined : { y }}>
+        <motion.div
+          className="absolute left-0 top-0 size-full"
+          style={reduceMotion ? undefined : { y }}
+        >
           <img
             src={src}
             alt={alt}
@@ -57,21 +67,21 @@ function ImageBand({ src, alt, bleed = false }: { src: string; alt: string; blee
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
 
 function StatsSection() {
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, amount: 0.3 })
-  const { data: jobs = [] } = useJobs()
-  const { data: products = [] } = useProducts({ surface: 'products' })
-  const { repos } = getStaticChangelog()
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.3 });
+  const { data: jobs = [] } = useJobs();
+  const { data: products = [] } = useProducts({ surface: 'products' });
+  const { repos } = getStaticChangelog();
 
   const stats = [
     { value: String(jobs.length), label: 'Open roles' },
     { value: String(products.length || 18), label: 'Apps you could work on' },
     { value: String(repos.length), label: 'Repositories in the open' },
-  ]
+  ];
 
   return (
     <div>
@@ -91,7 +101,7 @@ function StatsSection() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 const VALUES = [
@@ -116,13 +126,15 @@ const VALUES = [
     className: 'bg-foreground text-background',
     top: 'top-[calc(var(--site-header-height)+160px)]',
   },
-]
+];
 
 function ValuesSection() {
   return (
     <div>
       <div className="container py-10 md:py-20">
-        <AnimatedTitle as="h2" className="relative block pb-1 text-heading-responsive-md">Our values</AnimatedTitle>
+        <AnimatedTitle as="h2" className="relative block pb-1 text-heading-responsive-md">
+          Our values
+        </AnimatedTitle>
       </div>
       {VALUES.map((value, i) => (
         <div
@@ -147,7 +159,7 @@ function ValuesSection() {
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 const BELIEFS = [
@@ -215,18 +227,20 @@ const BELIEFS = [
       },
     ],
   },
-]
+];
 
 function BeliefsSection() {
-  const [active, setActive] = useState(0)
+  const [active, setActive] = useState(0);
 
   return (
     <div className="overflow-hidden bg-surface pb-20 text-foreground">
       <div className="container py-10 md:py-20">
-        <AnimatedTitle as="h2" className="mb-6 text-heading-responsive-md">Our beliefs</AnimatedTitle>
+        <AnimatedTitle as="h2" className="mb-6 text-heading-responsive-md">
+          Our beliefs
+        </AnimatedTitle>
         <p className="max-w-[60ch] text-balance text-muted-foreground">
-          Beliefs are the convictions behind the work: what we think is wrong with how software is built today, and what
-          has to be true of anything we put in its place.
+          Beliefs are the convictions behind the work: what we think is wrong with how software is
+          built today, and what has to be true of anything we put in its place.
         </p>
       </div>
       <div className="container">
@@ -246,7 +260,6 @@ function BeliefsSection() {
             </button>
           ))}
         </div>
-
       </div>
 
       {/* The track is clipped by the window, not by the frame: the slide on its
@@ -271,7 +284,9 @@ function BeliefsSection() {
                 </div>
                 <div className="h-px w-full bg-border md:absolute md:inset-y-12 md:left-1/2 md:h-auto md:w-px" />
                 <div className="md:py-10">
-                  <p className="mb-3 text-muted-foreground text-sm md:mb-5">What this means at Oxy</p>
+                  <p className="mb-3 text-muted-foreground text-sm md:mb-5">
+                    What this means at Oxy
+                  </p>
                   <div className="flex flex-col gap-[1.4em] text-muted-foreground">
                     {belief.points.map((point) => (
                       <p key={point.lead} className="text-balance">
@@ -290,7 +305,13 @@ function BeliefsSection() {
         <div className="flex items-center justify-center gap-8 pt-4">
           <div className="flex">
             {BELIEFS.map((belief, i) => (
-              <button key={belief.tab} type="button" className="p-1" onClick={() => setActive(i)} aria-label={belief.tab}>
+              <button
+                key={belief.tab}
+                type="button"
+                className="p-1"
+                onClick={() => setActive(i)}
+                aria-label={belief.tab}
+              >
                 <span
                   className={`block size-2 rounded-full ${i === active ? 'bg-foreground' : 'bg-border hover:bg-foreground'}`}
                 />
@@ -300,14 +321,16 @@ function BeliefsSection() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function HowWeWorkSection() {
   return (
     <div>
       <div className="container py-10 md:py-20">
-        <AnimatedTitle as="h2" className="relative block pb-1 text-heading-responsive-md">How we work</AnimatedTitle>
+        <AnimatedTitle as="h2" className="relative block pb-1 text-heading-responsive-md">
+          How we work
+        </AnimatedTitle>
       </div>
       <div className="container">
         <div className="mb-28 md:mb-30 md:grid md:h-[630px] md:grid-cols-3">
@@ -317,7 +340,8 @@ function HowWeWorkSection() {
               <div className="relative z-10">
                 <span className="block">Remote, with a base in Barcelona</span>
                 <p className="text-muted-foreground">
-                  The work happens wherever you are. Barcelona is where the company is registered and where we meet.
+                  The work happens wherever you are. Barcelona is where the company is registered
+                  and where we meet.
                 </p>
               </div>
             </div>
@@ -326,8 +350,8 @@ function HowWeWorkSection() {
               <div className="relative z-10">
                 <span className="block">Fair pay, rest, stability</span>
                 <p className="text-muted-foreground">
-                  Ethical work does not require poverty from the people doing it. Surplus funds reserves, fair
-                  compensation and better infrastructure before anything else.
+                  Ethical work does not require poverty from the people doing it. Surplus funds
+                  reserves, fair compensation and better infrastructure before anything else.
                 </p>
               </div>
             </div>
@@ -342,8 +366,8 @@ function HowWeWorkSection() {
               <div className="relative z-10 text-background">
                 <span className="block">The charter is the contract</span>
                 <p className="text-background/70">
-                  What Oxy will and will not do is written down, in public, before anyone joins. If a decision breaks it,
-                  you are entitled to say so and point at the clause.
+                  What Oxy will and will not do is written down, in public, before anyone joins. If
+                  a decision breaks it, you are entitled to say so and point at the clause.
                 </p>
               </div>
               <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
@@ -360,8 +384,8 @@ function HowWeWorkSection() {
               <div className="relative z-10">
                 <span className="block">Your work stays readable</span>
                 <p className="text-muted-foreground">
-                  Core code is open by default, so what you build here remains inspectable, citable and yours to point at
-                  long after you have moved on.
+                  Core code is open by default, so what you build here remains inspectable, citable
+                  and yours to point at long after you have moved on.
                 </p>
               </div>
             </div>
@@ -370,7 +394,8 @@ function HowWeWorkSection() {
               <div className="relative z-10">
                 <span className="block">Many ways in</span>
                 <p className="text-muted-foreground">
-                  Code, design, writing, translation, research, moderation, community. One mission, several doors.
+                  Code, design, writing, translation, research, moderation, community. One mission,
+                  several doors.
                 </p>
               </div>
             </div>
@@ -378,7 +403,7 @@ function HowWeWorkSection() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 /**
@@ -394,7 +419,7 @@ const PLACES: { name: string; image: string }[] = [
   { name: 'Athens', image: '/images/cities/athens.jpg' },
   { name: 'Rome', image: '/images/cities/rome.jpg' },
   { name: 'Paris', image: '/images/cities/paris.jpg' },
-]
+];
 
 function PlaceRow({ places, x }: { places: typeof PLACES; x: MotionValue<string> | undefined }) {
   // Listed twice so the row is always wider than the page and never ends
@@ -418,29 +443,37 @@ function PlaceRow({ places, x }: { places: typeof PLACES; x: MotionValue<string>
         </div>
       ))}
     </motion.div>
-  )
+  );
 }
 
 function PlacesSection() {
-  const ref = useRef<HTMLDivElement>(null)
-  const reduceMotion = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const ref = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   // The two rows travel opposite ways as the section crosses the viewport, so
   // the block reads as one moving surface rather than two static lines.
-  const firstRowX = useTransform(scrollYProgress, [0, 1], ['-4%', '-28%'])
-  const secondRowX = useTransform(scrollYProgress, [0, 1], ['-28%', '-2%'])
+  const firstRowX = useTransform(scrollYProgress, [0, 1], ['-4%', '-28%']);
+  const secondRowX = useTransform(scrollYProgress, [0, 1], ['-28%', '-2%']);
 
   return (
     <div className="bg-surface pb-20 text-foreground md:pb-32">
       <div className="container py-10 md:py-20">
-        <AnimatedTitle as="h2" className="relative block pb-1 text-heading-responsive-md">Where we are</AnimatedTitle>
+        <AnimatedTitle as="h2" className="relative block pb-1 text-heading-responsive-md">
+          Where we are
+        </AnimatedTitle>
       </div>
       <div ref={ref} className="flex w-full flex-col gap-2 overflow-hidden md:gap-4">
-        <PlaceRow places={PLACES.filter((_, i) => i % 2 === 0)} x={reduceMotion ? undefined : firstRowX} />
-        <PlaceRow places={PLACES.filter((_, i) => i % 2 === 1)} x={reduceMotion ? undefined : secondRowX} />
+        <PlaceRow
+          places={PLACES.filter((_, i) => i % 2 === 0)}
+          x={reduceMotion ? undefined : firstRowX}
+        />
+        <PlaceRow
+          places={PLACES.filter((_, i) => i % 2 === 1)}
+          x={reduceMotion ? undefined : secondRowX}
+        />
       </div>
     </div>
-  )
+  );
 }
 
 const SPOTLIGHTS = [
@@ -456,13 +489,15 @@ const SPOTLIGHTS = [
     title: 'The people building Oxy',
     body: 'A small team and a wider community of contributors, artists, moderators and researchers. Meet them.',
   },
-]
+];
 
 function SpotlightSection() {
   return (
     <div className="py-20">
       <div className="container">
-        <AnimatedTitle as="h2" className="mb-4 text-heading-responsive-md">Team spotlight</AnimatedTitle>
+        <AnimatedTitle as="h2" className="mb-4 text-heading-responsive-md">
+          Team spotlight
+        </AnimatedTitle>
         <p className="text-muted-foreground">Where the work happens, and who it happens with.</p>
         <div className="grid grid-rows-2 gap-8 pt-12 lg:grid-cols-2 lg:grid-rows-1">
           {SPOTLIGHTS.map((item) => (
@@ -482,16 +517,14 @@ function SpotlightSection() {
                   <h3>{item.title}</h3>
                   <p className="text-muted-foreground">{item.body}</p>
                 </div>
-                <Button variant="outline">
-                  Learn more
-                </Button>
+                <Button variant="outline">Learn more</Button>
               </div>
             </Link>
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 /**
@@ -499,25 +532,28 @@ function SpotlightSection() {
  * over rows grouped by team, each group's name pinned while its rows scroll.
  */
 function OpenPositionsSection() {
-  const { data: jobs, isPending } = useJobs()
+  const { data: jobs, isPending } = useJobs();
 
   const listings = useMemo<JobListing[]>(
     () =>
-      (jobs ?? [])
-        .map((job) => ({
-          title: job.title,
-          team: careerTeam(job),
-          location: careerLocationLabel(job) ?? '',
-          href: careerJobPath(job),
-        })),
+      (jobs ?? []).map((job) => ({
+        title: job.title,
+        team: careerTeam(job),
+        location: careerLocationLabel(job) ?? '',
+        href: careerJobPath(job),
+      })),
     [jobs],
-  )
+  );
 
   return (
     <div id="open-positions" className="scroll-mt-[var(--site-header-height)] py-20 md:py-28">
-      <JobBoard jobs={listings} isPending={isPending} emptyMessage="No open roles right now. Check back soon." />
+      <JobBoard
+        jobs={listings}
+        isPending={isPending}
+        emptyMessage="No open roles right now. Check back soon."
+      />
     </div>
-  )
+  );
 }
 
 export default function CareersContent() {
@@ -553,5 +589,5 @@ export default function CareersContent() {
       <SpotlightSection />
       <OpenPositionsSection />
     </>
-  )
+  );
 }

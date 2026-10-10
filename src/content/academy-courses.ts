@@ -13,23 +13,23 @@
  * registering the metadata here.
  * ──────────────────────────────────────────── */
 
-export type CourseLevel = 'beginner' | 'intermediate' | 'advanced'
+export type CourseLevel = 'beginner' | 'intermediate' | 'advanced';
 
 export interface CourseMeta {
-  slug: string
-  title: string
-  summary: string
-  level: CourseLevel
+  slug: string;
+  title: string;
+  summary: string;
+  level: CourseLevel;
   /** Human-readable total duration. */
-  duration?: string
+  duration?: string;
   /** Order in the catalog (asc). */
-  order: number
+  order: number;
   /** Featured courses surface on the academy landing first. */
-  featured: boolean
+  featured: boolean;
   /** Optional cover image (absolute URL or asset path). */
-  coverImage?: string
+  coverImage?: string;
   /** Free-form tags. */
-  tags: string[]
+  tags: string[];
 }
 
 export const ACADEMY_COURSES: CourseMeta[] = [
@@ -63,4 +63,4 @@ export const ACADEMY_COURSES: CourseMeta[] = [
     featured: false,
     tags: ['mention', 'publishing', 'fediverse'],
   },
-]
+];

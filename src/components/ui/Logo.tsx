@@ -1,5 +1,5 @@
 interface LogoProps {
-  className?: string
+  className?: string;
 }
 
 export default function Logo({ className = '' }: LogoProps) {
@@ -47,5 +47,5 @@ export default function Logo({ className = '' }: LogoProps) {
         />
       </g>
     </svg>
-  )
+  );
 }

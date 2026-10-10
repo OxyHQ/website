@@ -1,53 +1,53 @@
-import { config } from '../config.js'
-import { asc, eq, inArray } from 'drizzle-orm'
-import { db } from '../db/postgres.js'
-import { trackedRepos, votes as votesTable } from '../db/schema/index.js'
+import { config } from '../config.js';
+import { asc, eq, inArray } from 'drizzle-orm';
+import { db } from '../db/postgres.js';
+import { trackedRepos, votes as votesTable } from '../db/schema/index.js';
 
-type TrackedRepoRow = typeof trackedRepos.$inferSelect
-import { getPriorityTiers } from '../constants/featurePriority.js'
+type TrackedRepoRow = typeof trackedRepos.$inferSelect;
+import { getPriorityTiers } from '../constants/featurePriority.js';
 
 /** The one label that makes an issue a feature request. */
-export const FEATURE_LABEL = 'feature-request'
+export const FEATURE_LABEL = 'feature-request';
 
-const GITHUB_API_BASE = 'https://api.github.com'
+const GITHUB_API_BASE = 'https://api.github.com';
 /** GitHub rejects a search query longer than this many characters. */
-const SEARCH_QUERY_MAX_LENGTH = 256
-const SEARCH_PAGE_SIZE = 100
+const SEARCH_QUERY_MAX_LENGTH = 256;
+const SEARCH_PAGE_SIZE = 100;
 /** Pages per search query. 10 x 100 covers far more than the board will hold. */
-const SEARCH_MAX_PAGES = 10
-const CACHE_TTL_MS = 5 * 60 * 1000
+const SEARCH_MAX_PAGES = 10;
+const CACHE_TTL_MS = 5 * 60 * 1000;
 /** How long the cache is held past its TTL when GitHub rate limits us. */
-const CACHE_RATE_LIMIT_EXTENSION_MS = 5 * 60 * 1000
+const CACHE_RATE_LIMIT_EXTENSION_MS = 5 * 60 * 1000;
 
 export interface GitHubLabel {
-  name: string
-  color: string
+  name: string;
+  color: string;
 }
 
 export interface GitHubIssue {
-  id: number
-  number: number
-  title: string
-  body: string | null
-  html_url: string
-  state: string
-  labels: GitHubLabel[]
-  user: { login: string; avatar_url: string }
-  reactions: { '+1': number; total_count: number }
-  comments: number
-  created_at: string
-  updated_at: string
-  repository_url: string
+  id: number;
+  number: number;
+  title: string;
+  body: string | null;
+  html_url: string;
+  state: string;
+  labels: GitHubLabel[];
+  user: { login: string; avatar_url: string };
+  reactions: { '+1': number; total_count: number };
+  comments: number;
+  created_at: string;
+  updated_at: string;
+  repository_url: string;
 }
 
 /** An error carrying the HTTP status GitHub answered with. */
 export class GitHubApiError extends Error {
-  public readonly status: number
+  public readonly status: number;
 
   constructor(status: number, message: string) {
-    super(message)
-    this.name = 'GitHubApiError'
-    this.status = status
+    super(message);
+    this.name = 'GitHubApiError';
+    this.status = status;
   }
 }
 
@@ -70,78 +70,78 @@ export async function githubRequest<T>(
 ): Promise<T> {
   const token = options.publicRead
     ? undefined
-    : (options.write
-        ? config.featureBoard.githubToken
-        : config.featureBoard.githubToken || config.githubToken)
+    : options.write
+      ? config.featureBoard.githubToken
+      : config.featureBoard.githubToken || config.githubToken;
 
   if (options.write && !token) {
-    throw new GitHubApiError(503, 'FEATURE_BOARD_GITHUB_TOKEN is not configured')
+    throw new GitHubApiError(503, 'FEATURE_BOARD_GITHUB_TOKEN is not configured');
   }
 
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
     'User-Agent': 'Oxy-Website-FeatureBoard',
-  }
-  if (token) headers.Authorization = `Bearer ${token}`
-  if (options.body !== undefined) headers['Content-Type'] = 'application/json'
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (options.body !== undefined) headers['Content-Type'] = 'application/json';
 
   const response = await fetch(`${GITHUB_API_BASE}${path}`, {
     method: options.method ?? 'GET',
     headers,
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
-  })
+  });
 
   if (!response.ok) {
-    const text = await response.text()
-    throw new GitHubApiError(response.status, `GitHub ${response.status}: ${text.slice(0, 500)}`)
+    const text = await response.text();
+    throw new GitHubApiError(response.status, `GitHub ${response.status}: ${text.slice(0, 500)}`);
   }
 
-  return response.json() as Promise<T>
+  return response.json() as Promise<T>;
 }
 
 /** Canonical, case-insensitive key for a repo: `owner/repo`, lowercased. */
 export function repoKey(owner: string, repo: string): string {
-  return `${owner}/${repo}`.toLowerCase()
+  return `${owner}/${repo}`.toLowerCase();
 }
 
 /** The vote document key for one issue: `owner/repo#number`, as stored. */
 export function issueVoteKey(owner: string, repo: string, issueNumber: number | string): string {
-  return `${owner}/${repo}#${issueNumber}`
+  return `${owner}/${repo}#${issueNumber}`;
 }
 
 export interface FeatureRepo {
-  key: string
-  owner: string
-  repo: string
-  displayName: string
-  acceptsProposals: boolean
+  key: string;
+  owner: string;
+  repo: string;
+  displayName: string;
+  acceptsProposals: boolean;
 }
 
 interface RepoVisibilityCacheEntry {
-  public: boolean
-  expires: number
+  public: boolean;
+  expires: number;
 }
 
-const repoVisibilityCache = new Map<string, RepoVisibilityCacheEntry>()
+const repoVisibilityCache = new Map<string, RepoVisibilityCacheEntry>();
 
 async function isPublicRepo(repo: FeatureRepo): Promise<boolean> {
-  const cached = repoVisibilityCache.get(repo.key)
-  if (cached && cached.expires > Date.now()) return cached.public
+  const cached = repoVisibilityCache.get(repo.key);
+  if (cached && cached.expires > Date.now()) return cached.public;
 
-  let isPublic = false
+  let isPublic = false;
   try {
     const response = await githubRequest<{ private: boolean }>(
       `/repos/${repo.owner}/${repo.repo}`,
       { publicRead: true },
-    )
-    isPublic = !response.private
+    );
+    isPublic = !response.private;
   } catch (err) {
-    if (!(err instanceof GitHubApiError) || err.status !== 404) throw err
+    if (!(err instanceof GitHubApiError) || err.status !== 404) throw err;
   }
 
-  repoVisibilityCache.set(repo.key, { public: isPublic, expires: Date.now() + CACHE_TTL_MS })
-  return isPublic
+  repoVisibilityCache.set(repo.key, { public: isPublic, expires: Date.now() + CACHE_TTL_MS });
+  return isPublic;
 }
 
 function toFeatureRepo(doc: TrackedRepoRow): FeatureRepo {
@@ -151,7 +151,7 @@ function toFeatureRepo(doc: TrackedRepoRow): FeatureRepo {
     repo: doc.repo,
     displayName: doc.displayName,
     acceptsProposals: doc.acceptsProposals,
-  }
+  };
 }
 
 /**
@@ -166,20 +166,20 @@ export async function listFeatureRepos(): Promise<FeatureRepo[]> {
     .select()
     .from(trackedRepos)
     .where(eq(trackedRepos.featureBoard, true))
-    .orderBy(asc(trackedRepos.displayName), asc(trackedRepos._id))
-  const repos = docs.map(toFeatureRepo)
+    .orderBy(asc(trackedRepos.displayName), asc(trackedRepos._id));
+  const repos = docs.map(toFeatureRepo);
   // The board is a PUBLIC endpoint, so a tracked repo that has gone private
   // must drop off it. Asking GitHub WITHOUT a credential is what makes that
   // fail closed: a private repository answers 404 to an anonymous read, so a
   // visibility change needs no separate signal to take effect here.
-  const visibility = await Promise.all(repos.map(isPublicRepo))
-  return repos.filter((_repo, index) => visibility[index])
+  const visibility = await Promise.all(repos.map(isPublicRepo));
+  return repos.filter((_repo, index) => visibility[index]);
 }
 
 /** The tracked repo behind `owner/repo`, or null when it is not on the board. */
 export async function findFeatureRepo(owner: string, repo: string): Promise<FeatureRepo | null> {
-  const repos = await listFeatureRepos()
-  return repos.find((candidate) => candidate.key === repoKey(owner, repo)) ?? null
+  const repos = await listFeatureRepos();
+  return repos.find((candidate) => candidate.key === repoKey(owner, repo)) ?? null;
 }
 
 /**
@@ -191,40 +191,45 @@ export async function findFeatureRepo(owner: string, repo: string): Promise<Feat
  * five-operator limit that applies to explicit AND/OR/NOT.
  */
 export function buildSearchQueries(repos: FeatureRepo[]): string[] {
-  const base = `label:${FEATURE_LABEL} is:issue is:public`
-  const queries: string[] = []
-  let current = base
+  const base = `label:${FEATURE_LABEL} is:issue is:public`;
+  const queries: string[] = [];
+  let current = base;
 
   for (const repo of repos) {
-    const qualifier = ` repo:${repo.owner}/${repo.repo}`
+    const qualifier = ` repo:${repo.owner}/${repo.repo}`;
     if (current.length + qualifier.length > SEARCH_QUERY_MAX_LENGTH) {
       if (current === base) {
         // One repo whose name alone overflows the limit cannot be searched for.
         // Skipping it beats sending a query GitHub will reject outright.
-        console.warn(`[features] skipping ${repo.key}: repo qualifier exceeds the search query limit`)
-        continue
+        console.warn(
+          `[features] skipping ${repo.key}: repo qualifier exceeds the search query limit`,
+        );
+        continue;
       }
-      queries.push(current)
-      current = base
+      queries.push(current);
+      current = base;
     }
-    current += qualifier
+    current += qualifier;
   }
 
-  if (current !== base) queries.push(current)
-  return queries
+  if (current !== base) queries.push(current);
+  return queries;
 }
 
 interface IssueCache {
   /** Identifies the repo set the cached issues were fetched for. */
-  signature: string
-  issues: GitHubIssue[]
-  expires: number
+  signature: string;
+  issues: GitHubIssue[];
+  expires: number;
 }
 
-let issueCache: IssueCache | null = null
+let issueCache: IssueCache | null = null;
 
 function cacheSignature(repos: FeatureRepo[]): string {
-  return repos.map((repo) => repo.key).sort().join(',')
+  return repos
+    .map((repo) => repo.key)
+    .sort()
+    .join(',');
 }
 
 /**
@@ -236,16 +241,16 @@ function cacheSignature(repos: FeatureRepo[]): string {
  * exhausts the hourly budget for the whole board. Bounded and evicted oldest
  * first, since the key space is every issue number a visitor can type.
  */
-const DETAIL_CACHE_TTL_MS = 60 * 1000
-const DETAIL_CACHE_MAX_ENTRIES = 500
+const DETAIL_CACHE_TTL_MS = 60 * 1000;
+const DETAIL_CACHE_MAX_ENTRIES = 500;
 
 interface CacheEntry<T> {
-  value: T
-  expires: number
+  value: T;
+  expires: number;
 }
 
-const issueDetailCache = new Map<string, CacheEntry<GitHubIssue | null>>()
-const issueCommentsCache = new Map<string, CacheEntry<IssueComments>>()
+const issueDetailCache = new Map<string, CacheEntry<GitHubIssue | null>>();
+const issueCommentsCache = new Map<string, CacheEntry<IssueComments>>();
 
 /**
  * Read through a bounded TTL cache, with the same rate-limit treatment the
@@ -258,37 +263,37 @@ async function cachedGithubRead<T>(
   key: string,
   load: () => Promise<T>,
 ): Promise<T> {
-  const cached = store.get(key)
-  if (cached && cached.expires > Date.now()) return cached.value
+  const cached = store.get(key);
+  if (cached && cached.expires > Date.now()) return cached.value;
 
   try {
-    const value = await load()
+    const value = await load();
     if (store.size >= DETAIL_CACHE_MAX_ENTRIES) {
       // Map iterates in insertion order, so the first key is the oldest write.
-      const oldest = store.keys().next()
-      if (!oldest.done) store.delete(oldest.value)
+      const oldest = store.keys().next();
+      if (!oldest.done) store.delete(oldest.value);
     }
-    store.set(key, { value, expires: Date.now() + DETAIL_CACHE_TTL_MS })
-    return value
+    store.set(key, { value, expires: Date.now() + DETAIL_CACHE_TTL_MS });
+    return value;
   } catch (err) {
     if (cached && err instanceof GitHubApiError && (err.status === 429 || err.status === 403)) {
-      cached.expires = Date.now() + CACHE_RATE_LIMIT_EXTENSION_MS
-      return cached.value
+      cached.expires = Date.now() + CACHE_RATE_LIMIT_EXTENSION_MS;
+      return cached.value;
     }
-    throw err
+    throw err;
   }
 }
 
 /** Drop every cached GitHub read. Used by the admin cache-clear endpoint. */
 export function clearFeatureIssueCache(): void {
-  issueCache = null
-  issueDetailCache.clear()
-  issueCommentsCache.clear()
+  issueCache = null;
+  issueDetailCache.clear();
+  issueCommentsCache.clear();
 }
 
 interface SearchResponse {
-  total_count: number
-  items: GitHubIssue[]
+  total_count: number;
+  items: GitHubIssue[];
 }
 
 /**
@@ -299,18 +304,18 @@ interface SearchResponse {
  * show an issue from a repo that is no longer on it.
  */
 export async function fetchFeatureIssues(repos: FeatureRepo[]): Promise<GitHubIssue[]> {
-  const signature = cacheSignature(repos)
+  const signature = cacheSignature(repos);
   if (issueCache && issueCache.signature === signature && issueCache.expires > Date.now()) {
-    return issueCache.issues
+    return issueCache.issues;
   }
 
   if (repos.length === 0) {
-    issueCache = { signature, issues: [], expires: Date.now() + CACHE_TTL_MS }
-    return []
+    issueCache = { signature, issues: [], expires: Date.now() + CACHE_TTL_MS };
+    return [];
   }
 
-  const allowed = new Set(repos.map((repo) => repo.key))
-  const issues: GitHubIssue[] = []
+  const allowed = new Set(repos.map((repo) => repo.key));
+  const issues: GitHubIssue[] = [];
 
   for (const query of buildSearchQueries(repos)) {
     for (let page = 1; page <= SEARCH_MAX_PAGES; page++) {
@@ -320,44 +325,52 @@ export async function fetchFeatureIssues(repos: FeatureRepo[]): Promise<GitHubIs
         order: 'desc',
         per_page: String(SEARCH_PAGE_SIZE),
         page: String(page),
-      })
+      });
 
-      let data: SearchResponse
+      let data: SearchResponse;
       try {
         // This response is returned by a public endpoint, so deliberately do
         // not let a configured token expand the search into private repos.
-        data = await githubRequest<SearchResponse>(`/search/issues?${params}`, { publicRead: true })
+        data = await githubRequest<SearchResponse>(`/search/issues?${params}`, {
+          publicRead: true,
+        });
       } catch (err) {
         // A rate limit is the one failure where stale data beats no data: hold
         // what we already have for another window rather than emptying the
         // board for everyone until the limit resets.
-        if (err instanceof GitHubApiError && (err.status === 429 || err.status === 403) && issueCache) {
-          issueCache.expires = Date.now() + CACHE_RATE_LIMIT_EXTENSION_MS
-          return issueCache.issues
+        if (
+          err instanceof GitHubApiError &&
+          (err.status === 429 || err.status === 403) &&
+          issueCache
+        ) {
+          issueCache.expires = Date.now() + CACHE_RATE_LIMIT_EXTENSION_MS;
+          return issueCache.issues;
         }
-        throw err
+        throw err;
       }
 
-      issues.push(...data.items.filter((issue) => allowed.has(repoKeyFromApiUrl(issue.repository_url))))
+      issues.push(
+        ...data.items.filter((issue) => allowed.has(repoKeyFromApiUrl(issue.repository_url))),
+      );
 
-      if (data.items.length < SEARCH_PAGE_SIZE) break
+      if (data.items.length < SEARCH_PAGE_SIZE) break;
     }
   }
 
-  issueCache = { signature, issues, expires: Date.now() + CACHE_TTL_MS }
-  return issues
+  issueCache = { signature, issues, expires: Date.now() + CACHE_TTL_MS };
+  return issues;
 }
 
 /** `https://api.github.com/repos/oxyhq/mention` becomes `oxyhq/mention`. */
 function repoKeyFromApiUrl(repositoryUrl: string): string {
-  const parts = repositoryUrl.split('/')
-  return repoKey(parts[parts.length - 2] ?? '', parts[parts.length - 1] ?? '')
+  const parts = repositoryUrl.split('/');
+  return repoKey(parts[parts.length - 2] ?? '', parts[parts.length - 1] ?? '');
 }
 
 /** Owner and repo exactly as GitHub spells them, from the search result. */
 function repoFromApiUrl(repositoryUrl: string): { owner: string; repo: string } {
-  const parts = repositoryUrl.split('/')
-  return { owner: parts[parts.length - 2] ?? '', repo: parts[parts.length - 1] ?? '' }
+  const parts = repositoryUrl.split('/');
+  return { owner: parts[parts.length - 2] ?? '', repo: parts[parts.length - 1] ?? '' };
 }
 
 const STATUS_LABELS = new Map<string, string>([
@@ -374,48 +387,48 @@ const STATUS_LABELS = new Map<string, string>([
   ['declined', 'declined'],
   ['wontfix', 'declined'],
   ["won't fix", 'declined'],
-])
+]);
 
 /** Workflow status, read off the issue's labels. */
 export function deriveStatus(labels: GitHubLabel[]): string {
-  const order = ['completed', 'in_progress', 'planned', 'under_review', 'declined']
-  const found = new Set<string>()
+  const order = ['completed', 'in_progress', 'planned', 'under_review', 'declined'];
+  const found = new Set<string>();
   for (const label of labels) {
-    const status = STATUS_LABELS.get(label.name.toLowerCase())
-    if (status) found.add(status)
+    const status = STATUS_LABELS.get(label.name.toLowerCase());
+    if (status) found.add(status);
   }
-  return order.find((status) => found.has(status)) ?? 'open'
+  return order.find((status) => found.has(status)) ?? 'open';
 }
 
 /** The priority tier key currently on the issue, or null. */
 export function derivePriority(labels: GitHubLabel[]): string | null {
-  const tiers = getPriorityTiers()
-  const names = new Set(labels.map((label) => label.name.toLowerCase()))
-  return tiers.find((tier) => names.has(tier.label.toLowerCase()))?.key ?? null
+  const tiers = getPriorityTiers();
+  const names = new Set(labels.map((label) => label.name.toLowerCase()));
+  return tiers.find((tier) => names.has(tier.label.toLowerCase()))?.key ?? null;
 }
 
 export interface FeatureRequestDto {
-  id: number
-  number: number
-  title: string
-  description: string
-  htmlUrl: string
-  state: string
-  status: string
-  priority: string | null
-  labels: GitHubLabel[]
-  author: string
-  authorAvatar: string
-  githubReactions: number
-  localVotes: number
-  totalVotes: number
-  commentCount: number
-  owner: string
-  repoName: string
-  app: { key: string; owner: string; repo: string; displayName: string }
-  userVoted: boolean
-  createdAt: string
-  updatedAt: string
+  id: number;
+  number: number;
+  title: string;
+  description: string;
+  htmlUrl: string;
+  state: string;
+  status: string;
+  priority: string | null;
+  labels: GitHubLabel[];
+  author: string;
+  authorAvatar: string;
+  githubReactions: number;
+  localVotes: number;
+  totalVotes: number;
+  commentCount: number;
+  owner: string;
+  repoName: string;
+  app: { key: string; owner: string; repo: string; displayName: string };
+  userVoted: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
@@ -426,33 +439,34 @@ export interface FeatureRequestDto {
  * anonymous request.
  */
 export async function loadFeatureRequests(userId?: string): Promise<FeatureRequestDto[]> {
-  const repos = await listFeatureRepos()
-  const reposByKey = new Map(repos.map((repo) => [repo.key, repo]))
-  const issues = await fetchFeatureIssues(repos)
+  const repos = await listFeatureRepos();
+  const reposByKey = new Map(repos.map((repo) => [repo.key, repo]));
+  const issues = await fetchFeatureIssues(repos);
 
   const voteKeys = issues.map((issue) => {
-    const { owner, repo } = repoFromApiUrl(issue.repository_url)
-    return issueVoteKey(owner, repo, issue.number)
-  })
+    const { owner, repo } = repoFromApiUrl(issue.repository_url);
+    return issueVoteKey(owner, repo, issue.number);
+  });
 
-  const votes = voteKeys.length > 0
-    ? await db.select().from(votesTable).where(inArray(votesTable.featureRequestId, voteKeys))
-    : []
-  const voteCounts = new Map<string, number>()
-  const votedByUser = new Set<string>()
+  const votes =
+    voteKeys.length > 0
+      ? await db.select().from(votesTable).where(inArray(votesTable.featureRequestId, voteKeys))
+      : [];
+  const voteCounts = new Map<string, number>();
+  const votedByUser = new Set<string>();
   for (const vote of votes) {
-    voteCounts.set(vote.featureRequestId, (voteCounts.get(vote.featureRequestId) ?? 0) + 1)
-    if (userId && vote.userId === userId) votedByUser.add(vote.featureRequestId)
+    voteCounts.set(vote.featureRequestId, (voteCounts.get(vote.featureRequestId) ?? 0) + 1);
+    if (userId && vote.userId === userId) votedByUser.add(vote.featureRequestId);
   }
 
-  const items: FeatureRequestDto[] = []
+  const items: FeatureRequestDto[] = [];
   for (const issue of issues) {
-    const { owner, repo } = repoFromApiUrl(issue.repository_url)
-    const app = reposByKey.get(repoKey(owner, repo))
-    if (!app) continue
+    const { owner, repo } = repoFromApiUrl(issue.repository_url);
+    const app = reposByKey.get(repoKey(owner, repo));
+    if (!app) continue;
 
-    const key = issueVoteKey(owner, repo, issue.number)
-    const localVotes = voteCounts.get(key) ?? 0
+    const key = issueVoteKey(owner, repo, issue.number);
+    const localVotes = voteCounts.get(key) ?? 0;
 
     items.push({
       id: issue.id,
@@ -476,11 +490,11 @@ export async function loadFeatureRequests(userId?: string): Promise<FeatureReque
       userVoted: votedByUser.has(key),
       createdAt: issue.created_at,
       updatedAt: issue.updated_at,
-    })
+    });
   }
 
-  items.sort((a, b) => b.totalVotes - a.totalVotes)
-  return items
+  items.sort((a, b) => b.totalVotes - a.totalVotes);
+  return items;
 }
 
 /**
@@ -490,14 +504,43 @@ export async function loadFeatureRequests(userId?: string): Promise<FeatureReque
  * here).
  */
 const STOPWORDS = new Set([
-  'a', 'an', 'and', 'as', 'at', 'be', 'but', 'by', 'can', 'for', 'from', 'have',
-  'i', 'if', 'in', 'is', 'it', 'of', 'on', 'or', 'that', 'the', 'this', 'to',
-  'we', 'with', 'would', 'should', 'add', 'feature', 'request', 'support',
-])
+  'a',
+  'an',
+  'and',
+  'as',
+  'at',
+  'be',
+  'but',
+  'by',
+  'can',
+  'for',
+  'from',
+  'have',
+  'i',
+  'if',
+  'in',
+  'is',
+  'it',
+  'of',
+  'on',
+  'or',
+  'that',
+  'the',
+  'this',
+  'to',
+  'we',
+  'with',
+  'would',
+  'should',
+  'add',
+  'feature',
+  'request',
+  'support',
+]);
 
 /** Lowercase alphanumeric words, stop words dropped. */
 export function tokenize(text: string): string[] {
-  return (text.toLowerCase().match(/[a-z0-9]+/g) ?? []).filter((word) => !STOPWORDS.has(word))
+  return (text.toLowerCase().match(/[a-z0-9]+/g) ?? []).filter((word) => !STOPWORDS.has(word));
 }
 
 /**
@@ -517,21 +560,22 @@ export function tokenize(text: string): string[] {
  * the real board, where "zzzz quantum teleport" matched an unrelated proposal
  * through a lone "t".
  */
-const MIN_REVERSE_PREFIX = 4
+const MIN_REVERSE_PREFIX = 4;
 
 export function overlapScore(queryTokens: string[], candidate: string): number {
-  if (queryTokens.length === 0) return 0
-  const candidateTokens = tokenize(candidate)
-  if (candidateTokens.length === 0) return 0
+  if (queryTokens.length === 0) return 0;
+  const candidateTokens = tokenize(candidate);
+  if (candidateTokens.length === 0) return 0;
 
-  let matched = 0
+  let matched = 0;
   for (const token of queryTokens) {
-    const hit = candidateTokens.some((word) =>
-      word.startsWith(token) || (word.length >= MIN_REVERSE_PREFIX && token.startsWith(word)),
-    )
-    if (hit) matched++
+    const hit = candidateTokens.some(
+      (word) =>
+        word.startsWith(token) || (word.length >= MIN_REVERSE_PREFIX && token.startsWith(word)),
+    );
+    if (hit) matched++;
   }
-  return matched / queryTokens.length
+  return matched / queryTokens.length;
 }
 
 /**
@@ -539,9 +583,9 @@ export function overlapScore(queryTokens: string[], candidate: string): number {
  * corroboration worth a fraction of it.
  */
 export function scoreRequest(queryTokens: string[], request: FeatureRequestDto): number {
-  const title = overlapScore(queryTokens, request.title)
-  const body = overlapScore(queryTokens, request.description.slice(0, 600))
-  return title + body * 0.25
+  const title = overlapScore(queryTokens, request.title);
+  const body = overlapScore(queryTokens, request.description.slice(0, 600));
+  return title + body * 0.25;
 }
 
 /**
@@ -553,9 +597,12 @@ export function scoreRequest(queryTokens: string[], request: FeatureRequestDto):
  * shows feature requests, and an issue in a tracked repo that is not one is
  * simply not on the board.
  */
-export async function fetchFeatureIssue(repo: FeatureRepo, issueNumber: string): Promise<GitHubIssue | null> {
+export async function fetchFeatureIssue(
+  repo: FeatureRepo,
+  issueNumber: string,
+): Promise<GitHubIssue | null> {
   return cachedGithubRead(issueDetailCache, `${repo.key}#${issueNumber}`, async () => {
-    let issue: GitHubIssue
+    let issue: GitHubIssue;
     try {
       // The detail page is PUBLIC, so this read carries no credential: an issue
       // in a private repository must 404 here exactly as it would for a
@@ -564,35 +611,35 @@ export async function fetchFeatureIssue(repo: FeatureRepo, issueNumber: string):
       issue = await githubRequest<GitHubIssue>(
         `/repos/${repo.owner}/${repo.repo}/issues/${issueNumber}`,
         { publicRead: true },
-      )
+      );
     } catch (err) {
       // A miss is cached like any other answer, so a crawler walking issue
       // numbers cannot turn every 404 into a GitHub request.
-      if (err instanceof GitHubApiError && err.status === 404) return null
-      throw err
+      if (err instanceof GitHubApiError && err.status === 404) return null;
+      throw err;
     }
-    return issue.labels.some((label) => label.name.toLowerCase() === FEATURE_LABEL) ? issue : null
-  })
+    return issue.labels.some((label) => label.name.toLowerCase() === FEATURE_LABEL) ? issue : null;
+  });
 }
 
 export interface GitHubIssueComment {
-  id: number
-  body: string | null
-  html_url: string
-  created_at: string
-  updated_at: string
-  author_association: string
-  user: { login: string; avatar_url: string; html_url: string }
+  id: number;
+  body: string | null;
+  html_url: string;
+  created_at: string;
+  updated_at: string;
+  author_association: string;
+  user: { login: string; avatar_url: string; html_url: string };
 }
 
 export interface IssueComments {
-  comments: GitHubIssueComment[]
+  comments: GitHubIssueComment[];
   /** True when the thread runs past what one page holds. */
-  hasMore: boolean
+  hasMore: boolean;
 }
 
 /** Comments on an issue, capped at one page. */
-const COMMENTS_PAGE_SIZE = 100
+const COMMENTS_PAGE_SIZE = 100;
 
 /**
  * Read the comments on a feature request.
@@ -608,9 +655,9 @@ export async function fetchFeatureIssueComments(
   return cachedGithubRead(issueCommentsCache, `${repo.key}#${issueNumber}`, async () => {
     const comments = await githubRequest<GitHubIssueComment[]>(
       `/repos/${repo.owner}/${repo.repo}/issues/${issueNumber}/comments?per_page=${COMMENTS_PAGE_SIZE}`,
-    )
-    return { comments, hasMore: comments.length === COMMENTS_PAGE_SIZE }
-  })
+    );
+    return { comments, hasMore: comments.length === COMMENTS_PAGE_SIZE };
+  });
 }
 
 /** Create a `feature-request` issue in a tracked repo. */
@@ -620,7 +667,11 @@ export async function createFeatureIssue(
 ): Promise<{ number: number; htmlUrl: string }> {
   const created = await githubRequest<{ number: number; html_url: string }>(
     `/repos/${repo.owner}/${repo.repo}/issues`,
-    { method: 'POST', write: true, body: { title: issue.title, body: issue.body, labels: [FEATURE_LABEL] } },
-  )
-  return { number: created.number, htmlUrl: created.html_url }
+    {
+      method: 'POST',
+      write: true,
+      body: { title: issue.title, body: issue.body, labels: [FEATURE_LABEL] },
+    },
+  );
+  return { number: created.number, htmlUrl: created.html_url };
 }

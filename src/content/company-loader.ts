@@ -1,7 +1,7 @@
-import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
-import { z } from 'zod'
-import { CompanyFrontmatter, DEFAULT_LOCALE, parseLocaleFromPath } from './schemas'
-import type { MdxHeading } from '../../scripts/vite-mdx-headings'
+import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
+import { z } from 'zod';
+import { CompanyFrontmatter, DEFAULT_LOCALE, parseLocaleFromPath } from './schemas';
+import type { MdxHeading } from '../../scripts/vite-mdx-headings';
 
 /* ──────────────────────────────────────────────
  * company-loader.ts
@@ -22,12 +22,12 @@ import type { MdxHeading } from '../../scripts/vite-mdx-headings'
  * ──────────────────────────────────────────── */
 
 export interface CompanyEntry {
-  slug: string
-  locale: string
-  frontmatter: z.infer<typeof CompanyFrontmatter>
+  slug: string;
+  locale: string;
+  frontmatter: z.infer<typeof CompanyFrontmatter>;
   /** The document's own `##`–`####` headings, for a table of contents. */
-  headings: MdxHeading[]
-  Component: LazyExoticComponent<ComponentType<Record<string, unknown>>>
+  headings: MdxHeading[];
+  Component: LazyExoticComponent<ComponentType<Record<string, unknown>>>;
 }
 
 /* ─── Glob loaders ─── */
@@ -38,48 +38,45 @@ export interface CompanyEntry {
  * for the React component default export.
  */
 interface MdxModuleMeta {
-  frontmatter: Record<string, unknown>
+  frontmatter: Record<string, unknown>;
   /** Added by the `mdx-headings` Vite plugin. */
-  headings?: MdxHeading[]
-  default: ComponentType<Record<string, unknown>>
+  headings?: MdxHeading[];
+  default: ComponentType<Record<string, unknown>>;
 }
 
 const eagerModules = import.meta.glob<MdxModuleMeta>('./company/**/*.mdx', {
   eager: true,
-})
+});
 
 const componentModules = import.meta.glob<{ default: ComponentType<Record<string, unknown>> }>(
   './company/**/*.mdx',
-)
+);
 
 /* ─── Index build ─── */
 
 interface CompanyIndex {
-  bySlug: Map<string, Map<string, CompanyEntry>>
+  bySlug: Map<string, Map<string, CompanyEntry>>;
 }
 
 function buildIndex(): CompanyIndex {
-  const bySlug = new Map<string, Map<string, CompanyEntry>>()
+  const bySlug = new Map<string, Map<string, CompanyEntry>>();
 
   for (const [path, mod] of Object.entries(eagerModules)) {
-    const relative = path.replace(/^\.\/company\//, '')
-    const { slug, locale } = parseLocaleFromPath(relative)
+    const relative = path.replace(/^\.\/company\//, '');
+    const { slug, locale } = parseLocaleFromPath(relative);
 
-    const parsed = CompanyFrontmatter.safeParse(mod.frontmatter ?? {})
+    const parsed = CompanyFrontmatter.safeParse(mod.frontmatter ?? {});
     if (!parsed.success) {
-      console.error(
-        `[company-loader] invalid frontmatter for ${path}:`,
-        parsed.error.flatten(),
-      )
-      continue
+      console.error(`[company-loader] invalid frontmatter for ${path}:`, parsed.error.flatten());
+      continue;
     }
 
-    const componentLoader = componentModules[path]
+    const componentLoader = componentModules[path];
     if (!componentLoader) {
-      console.error(`[company-loader] no component loader for ${path}`)
-      continue
+      console.error(`[company-loader] no component loader for ${path}`);
+      continue;
     }
-    const Component = lazy(componentLoader)
+    const Component = lazy(componentLoader);
 
     const entry: CompanyEntry = {
       slug,
@@ -87,25 +84,25 @@ function buildIndex(): CompanyIndex {
       frontmatter: parsed.data,
       headings: mod.headings ?? [],
       Component,
-    }
-    let localeMap = bySlug.get(slug)
+    };
+    let localeMap = bySlug.get(slug);
     if (!localeMap) {
-      localeMap = new Map()
-      bySlug.set(slug, localeMap)
+      localeMap = new Map();
+      bySlug.set(slug, localeMap);
     }
-    localeMap.set(locale, entry)
+    localeMap.set(locale, entry);
   }
 
-  return { bySlug }
+  return { bySlug };
 }
 
-const index = buildIndex()
+const index = buildIndex();
 
 /* ─── Public API ─── */
 
 /** Load a single company page by slug + locale, with default-locale fallback. */
 export function loadCompanyPage(slug: string, locale = DEFAULT_LOCALE): CompanyEntry | null {
-  const localeMap = index.bySlug.get(slug)
-  if (!localeMap) return null
-  return localeMap.get(locale) ?? localeMap.get(DEFAULT_LOCALE) ?? null
+  const localeMap = index.bySlug.get(slug);
+  if (!localeMap) return null;
+  return localeMap.get(locale) ?? localeMap.get(DEFAULT_LOCALE) ?? null;
 }

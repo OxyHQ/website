@@ -1,9 +1,9 @@
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import type { PlaygroundValues } from './_playground'
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import type { PlaygroundValues } from './_playground';
 
 export const meta = {
   description: 'Animated placeholder primitives for loading states.',
-}
+};
 
 export default function SkeletonDemo() {
   return (
@@ -19,14 +19,14 @@ export default function SkeletonDemo() {
       <Skeleton.Pill size={14} style={{ width: '85%' }} />
       <Skeleton.Pill size={14} style={{ width: '60%' }} />
     </div>
-  )
+  );
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const lines = typeof values.lines === 'number' ? Math.max(1, Math.floor(values.lines)) : 3
-  const lineHeight = typeof values.lineHeight === 'number' ? values.lineHeight : 14
-  const avatar = values.avatar === true
-  const rows: number[] = Array.from({ length: lines }, (_, i) => i)
+  const lines = typeof values.lines === 'number' ? Math.max(1, Math.floor(values.lines)) : 3;
+  const lineHeight = typeof values.lineHeight === 'number' ? values.lineHeight : 14;
+  const avatar = values.avatar === true;
+  const rows: number[] = Array.from({ length: lines }, (_, i) => i);
   return (
     <div style={{ width: 320, display: 'flex', flexDirection: 'column', gap: 12 }}>
       {avatar ? (
@@ -42,5 +42,5 @@ export function Playground({ values }: { values: PlaygroundValues }) {
         <Skeleton.Pill key={i} size={lineHeight} style={{ width: `${100 - i * 10}%` }} />
       ))}
     </div>
-  )
+  );
 }

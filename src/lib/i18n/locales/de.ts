@@ -1,195 +1,313 @@
-import en, { type Translations } from './en'
+import en, { type Translations } from './en';
 
 const de: Translations = {
-  storeLive: {"loading": "Kollektion wird geladen…", "error": "Die Kollektion konnte nicht geladen werden.", "empty": "Es wurden noch keine Produkte veröffentlicht.", "retry": "Erneut versuchen", "announcement": "Entdecke die Kollektion. Kauf- und Lieferoptionen findest du auf Mercaria.", "view": "Auf Mercaria ansehen", "in_stock": "Auf Lager", "out_of_stock": "Nicht auf Lager", "sold": "Verkauft"},
+  storeLive: {
+    loading: 'Kollektion wird geladen…',
+    error: 'Die Kollektion konnte nicht geladen werden.',
+    empty: 'Es wurden noch keine Produkte veröffentlicht.',
+    retry: 'Erneut versuchen',
+    announcement: 'Entdecke die Kollektion. Kauf- und Lieferoptionen findest du auf Mercaria.',
+    view: 'Auf Mercaria ansehen',
+    in_stock: 'Auf Lager',
+    out_of_stock: 'Nicht auf Lager',
+    sold: 'Verkauft',
+  },
 
-  one: {"catalogueProposal": "Vorgeschlagene Paketzusammenstellung. Einige App-Abonnements und gemeinsame Vorteile sind noch in Entwicklung. Nur Angebote in der Abrechnungsübersicht deines Kontos können gebucht werden.", "credits": "Credits", "title": "Oxy One", "lead": "Entdecke mehr Funktionen und integrierte KI in deinen Lieblings-Apps, um kreativ zu sein, dich zu vernetzen und herauszustechen – alles mit Oxy One.", "unavailable": "Oxy One kann noch nicht gekauft werden. Leistungen und Limits erscheinen hier, sobald ein Plan eingerichtet ist.", "error": "Die Pläne konnten nicht geladen werden. Bitte versuche es später erneut.", "loading": "Pläne werden geladen …", "manage": "Konto verwalten", "status": "Kauf nicht verfügbar", "path": "Oxy One entdecken", "version": "Angebotsversion", "monthly": "pro Monat", "billingTerms": "Kein Testzeitraum. Nur monatlich; kein Jahresplan.", "taxInclusive": "Endpreis inklusive anwendbarer Steuern auf den Kauf.", "storageTitle": "Gemeinsamer Speicher", "accountTitle": "Dein Oxy-Konto", "aliaBody": "Nutze Alia im Alltag zum Nachdenken, Schreiben und Erledigen deiner Aufgaben.", "storageBody": "Speichere Dateien und Anhänge in einem gemeinsamen Speicher für unterstützte Oxy-Apps.", "accountBody": "Deine Vorteile sind mit deiner Oxy-Identität verknüpft und lassen sich an einem Ort einsehen und verwalten.", "freeBody": "Dein Einstieg bei Oxy.", "proBody": "Für die tägliche Arbeit mit Oxy.", "businessBody": "Für Organisationen, die mit Oxy arbeiten.", "creatorBody": "Für Menschen, die gestalten und teilen.", "billingPeriod": "Abrechnungszeitraum", "annualUnavailable": "Jährliche Abrechnung ist nicht verfügbar.", "monthlyOnly": "Nur monatlich", "annualSavings": "20 % sparen bei jährlicher Zahlung", "contactPricing": "Preis anfragen", "contactSales": "Vertrieb kontaktieren", "getStarted": "Jetzt starten", "heroTitle": "Mehr mit Oxy One", "explorePlans": "Tarife entdecken", "personal": "Privat", "personalPlansTitle": "Persönliche Pakete und Preise", "personalPlansDescription": "Oxy One bietet dir exklusive Funktionen zum Vernetzen und mehr KI-Nutzung zum Erstellen und Bearbeiten von Inhalten in Mention, Inbox, Mercaria und Homiio sowie Bild- und Videogenerierung mit Alia AI. Alles in einem Abonnement.", "businessPlansTitle": "Tarife und Preise für Unternehmen", "businessPlansDescription": "Oxy One vereint Tools und KI, mit denen du Kunden erreichst, Inhalte erstellst und dein Unternehmen voranbringst. Alles in einem Abonnement, abgestimmt auf deine Arbeitsweise.", "creatorPlansTitle": "Tarife und Preise für Creator", "creatorPlansDescription": "Oxy One bietet Creatorn professionelle Tools zur Profilgestaltung, Beitragsplanung und erweiterten Analyse, damit mehr Zeit für kreative Arbeit und weniger für Verwaltung bleibt.", "exploreMore": "Entdecke mehr mit Oxy", "exploreApps": "Entdecke die Apps", "exploreAlia": "Gestalte mit Alia", "exploreHelp": "Besuche das Hilfecenter", "exploreMention": "Veröffentliche mit Mention", "exploreAcademy": "Lerne mit Oxy Academy", "exploreInference": "Entdecke die Inferenzpreise", "exploreInfrastructure": "Dedizierte Infrastruktur", "baseMonthly": "Grundgebühr pro Monat", "perSeatMonthly": "pro Nutzer und Monat", "baseBilledAnnually": "Grundgebühr jährlich abgerechnet", "seatBilledAnnually": "pro Nutzer jährlich abgerechnet", "teamBillingNote": "Eine Grundgebühr pro Team, zuzüglich einer kostenpflichtigen Lizenz pro Mitglied.", "seats": "Nutzer", "addSeat": "Nutzer hinzufügen", "removeSeat": "Nutzer entfernen", "teamTotalMonthly": "Teamgesamtpreis pro Monat", "organizationSeats": "Mitglieder deiner Organisation", "chooseOrganization": "Wechsle zu einem Organisationskonto, um den Gesamtpreis für dein Team zu sehen.", "seatsUnavailable": "Die Mitglieder deiner Organisation konnten nicht geladen werden.", "retrySeats": "Erneut versuchen", "planMembership": "Mitgliedschaft", "individual": "Einzelperson", "family": "Familie", "monthlyCreditAmount": "{count} Credits / Monat", "freeUsage": "Kostenlose Nutzung jeder App", "familyMembers": "Bis zu {count} Personen", "familyPool": "Ein gemeinsames monatliches Credit-Kontingent für bis zu {count} Personen. Jeder behält sein eigenes privates Konto.", "familyTotalMonthly": "Familiengesamtpreis pro Monat", "businessAppIncluded": "Eine App deiner Wahl inklusive", "subscriptionNotIncluded": "{app}-Abonnement nicht enthalten", "storage": "Speicher", "totalStorage": "Gesamtspeicher", "storageSharing": "Gemeinsamer Speicher", "familyStorage": "Ein Speicherpool für bis zu 6 Personen in kompatiblen Apps", "teamStorage": "Ein Speicherpool für dein Team in kompatiblen Apps", "appStorage": "Ein Speicherpool für kompatible Apps", "storageBreakdown": "Speicheraufteilung", "storagePerSeat": "{amount} pro Mitglied"},
+  one: {
+    catalogueProposal:
+      'Vorgeschlagene Paketzusammenstellung. Einige App-Abonnements und gemeinsame Vorteile sind noch in Entwicklung. Nur Angebote in der Abrechnungsübersicht deines Kontos können gebucht werden.',
+    credits: 'Credits',
+    title: 'Oxy One',
+    lead: 'Entdecke mehr Funktionen und integrierte KI in deinen Lieblings-Apps, um kreativ zu sein, dich zu vernetzen und herauszustechen – alles mit Oxy One.',
+    unavailable:
+      'Oxy One kann noch nicht gekauft werden. Leistungen und Limits erscheinen hier, sobald ein Plan eingerichtet ist.',
+    error: 'Die Pläne konnten nicht geladen werden. Bitte versuche es später erneut.',
+    loading: 'Pläne werden geladen …',
+    manage: 'Konto verwalten',
+    status: 'Kauf nicht verfügbar',
+    path: 'Oxy One entdecken',
+    version: 'Angebotsversion',
+    monthly: 'pro Monat',
+    billingTerms: 'Kein Testzeitraum. Nur monatlich; kein Jahresplan.',
+    taxInclusive: 'Endpreis inklusive anwendbarer Steuern auf den Kauf.',
+    storageTitle: 'Gemeinsamer Speicher',
+    accountTitle: 'Dein Oxy-Konto',
+    aliaBody: 'Nutze Alia im Alltag zum Nachdenken, Schreiben und Erledigen deiner Aufgaben.',
+    storageBody:
+      'Speichere Dateien und Anhänge in einem gemeinsamen Speicher für unterstützte Oxy-Apps.',
+    accountBody:
+      'Deine Vorteile sind mit deiner Oxy-Identität verknüpft und lassen sich an einem Ort einsehen und verwalten.',
+    freeBody: 'Dein Einstieg bei Oxy.',
+    proBody: 'Für die tägliche Arbeit mit Oxy.',
+    businessBody: 'Für Organisationen, die mit Oxy arbeiten.',
+    creatorBody: 'Für Menschen, die gestalten und teilen.',
+    billingPeriod: 'Abrechnungszeitraum',
+    annualUnavailable: 'Jährliche Abrechnung ist nicht verfügbar.',
+    monthlyOnly: 'Nur monatlich',
+    annualSavings: '20 % sparen bei jährlicher Zahlung',
+    contactPricing: 'Preis anfragen',
+    contactSales: 'Vertrieb kontaktieren',
+    getStarted: 'Jetzt starten',
+    heroTitle: 'Mehr mit Oxy One',
+    explorePlans: 'Tarife entdecken',
+    personal: 'Privat',
+    personalPlansTitle: 'Persönliche Pakete und Preise',
+    personalPlansDescription:
+      'Oxy One bietet dir exklusive Funktionen zum Vernetzen und mehr KI-Nutzung zum Erstellen und Bearbeiten von Inhalten in Mention, Inbox, Mercaria und Homiio sowie Bild- und Videogenerierung mit Alia AI. Alles in einem Abonnement.',
+    businessPlansTitle: 'Tarife und Preise für Unternehmen',
+    businessPlansDescription:
+      'Oxy One vereint Tools und KI, mit denen du Kunden erreichst, Inhalte erstellst und dein Unternehmen voranbringst. Alles in einem Abonnement, abgestimmt auf deine Arbeitsweise.',
+    creatorPlansTitle: 'Tarife und Preise für Creator',
+    creatorPlansDescription:
+      'Oxy One bietet Creatorn professionelle Tools zur Profilgestaltung, Beitragsplanung und erweiterten Analyse, damit mehr Zeit für kreative Arbeit und weniger für Verwaltung bleibt.',
+    exploreMore: 'Entdecke mehr mit Oxy',
+    exploreApps: 'Entdecke die Apps',
+    exploreAlia: 'Gestalte mit Alia',
+    exploreHelp: 'Besuche das Hilfecenter',
+    exploreMention: 'Veröffentliche mit Mention',
+    exploreAcademy: 'Lerne mit Oxy Academy',
+    exploreInference: 'Entdecke die Inferenzpreise',
+    exploreInfrastructure: 'Dedizierte Infrastruktur',
+    baseMonthly: 'Grundgebühr pro Monat',
+    perSeatMonthly: 'pro Nutzer und Monat',
+    baseBilledAnnually: 'Grundgebühr jährlich abgerechnet',
+    seatBilledAnnually: 'pro Nutzer jährlich abgerechnet',
+    teamBillingNote:
+      'Eine Grundgebühr pro Team, zuzüglich einer kostenpflichtigen Lizenz pro Mitglied.',
+    seats: 'Nutzer',
+    addSeat: 'Nutzer hinzufügen',
+    removeSeat: 'Nutzer entfernen',
+    teamTotalMonthly: 'Teamgesamtpreis pro Monat',
+    organizationSeats: 'Mitglieder deiner Organisation',
+    chooseOrganization:
+      'Wechsle zu einem Organisationskonto, um den Gesamtpreis für dein Team zu sehen.',
+    seatsUnavailable: 'Die Mitglieder deiner Organisation konnten nicht geladen werden.',
+    retrySeats: 'Erneut versuchen',
+    planMembership: 'Mitgliedschaft',
+    individual: 'Einzelperson',
+    family: 'Familie',
+    monthlyCreditAmount: '{count} Credits / Monat',
+    freeUsage: 'Kostenlose Nutzung jeder App',
+    familyMembers: 'Bis zu {count} Personen',
+    familyPool:
+      'Ein gemeinsames monatliches Credit-Kontingent für bis zu {count} Personen. Jeder behält sein eigenes privates Konto.',
+    familyTotalMonthly: 'Familiengesamtpreis pro Monat',
+    businessAppIncluded: 'Eine App deiner Wahl inklusive',
+    subscriptionNotIncluded: '{app}-Abonnement nicht enthalten',
+    storage: 'Speicher',
+    totalStorage: 'Gesamtspeicher',
+    storageSharing: 'Gemeinsamer Speicher',
+    familyStorage: 'Ein Speicherpool für bis zu 6 Personen in kompatiblen Apps',
+    teamStorage: 'Ein Speicherpool für dein Team in kompatiblen Apps',
+    appStorage: 'Ein Speicherpool für kompatible Apps',
+    storageBreakdown: 'Speicheraufteilung',
+    storagePerSeat: '{amount} pro Mitglied',
+  },
 
   bloom: {
-    board: {"backlog": "Vorgemerkt", "todo": "Zu erledigen", "inProgress": "In Arbeit", "inReview": "In Prüfung", "done": "Erledigt"},
-    "seoTitle": "Bloom UI, ein React-Designsystem für jede Plattform",
-    "eyebrow": "Für jede Plattform",
-    "title": "React-Designsystem",
-    "for": "für",
-    "description": "Eine UI-Bibliothek für React, React Native und Expo. Entwickle mit echten Komponenten, Agentenoberflächen, interaktiven Diagrammen und gemeinsamen Themes.",
-    "componentsTitle": "Interaktive Komponenten. Bereit zum Einsatz.",
-    "componentsDescription": "Agentenoberflächen, Kalender, Formulare und Dashboard-Komponenten. Entdecke die echten Komponenten.",
-    "agentsTitle": "Erstelle deine Agentenoberfläche in Sekunden.",
-    "agentsDescription": "Beginne mit Gesprächen, Fortschritt und Eingabesteuerung. Verbinde deine eigenen Agenten.",
-    "loaderTitle": "Ein Ladezustand, den man gerne ansieht.",
-    "loaderDescription": "Ein Licht um das Eingabefeld. Wähle eine Bloom-Palette und probiere sie aus.",
-    "examplesTitle": "Eine Bibliothek. Viele Möglichkeiten.",
-    "examplesDescription": "Entdecke Bloom-Kompositionen vom Agentenchat bis zum Gesundheitsdashboard.",
-    "chartsTitle": "Diagramme, die deine Daten lesenswert machen.",
-    "chartsDescription": "Interaktive Diagramme, Hover-Zustände und Kennzahlen. Auf denselben Tokens.",
-    "installTitle": "Entwickle mit Bloom.",
-    "installDescription": "Installiere das Paket und folge der Anleitung für deine Plattform und ihre Abhängigkeiten.",
-    "githubTitle": "Offen entwickelt.",
-    "githubDescription": "Entdecke Quellcode, Releases und Diskussionen im Bloom-Repository.",
-    "faqTitle": "Häufige Fragen",
-    "faqDescription": "Installation, Plattformen, Themes und Lizenz. Alles für den Einstieg mit Bloom.",
-    "searchSummary": "{count} Suchen durchgeführt",
-    "qInstall": "Wie installiere ich Bloom?",
-    "aInstall": "Installiere @oxy.so/bloom mit Bun oder npm. Die Dokumentation erklärt Provider, Styles und erforderliche Peer-Abhängigkeiten.",
-    "qPlatforms": "Welche Plattformen unterstützt Bloom?",
-    "aPlatforms": "Bloom unterstützt React im Web, React Native und Expo mit plattformspezifischen Implementierungen.",
-    "qTheme": "Kann ich das Theme ändern?",
-    "aTheme": "Ja. Bloom bietet gemeinsame Tokens, Voreinstellungen sowie helle und dunkle Modi über seinen Theme-Provider.",
-    "qLicense": "Welche Lizenz nutzt Bloom?",
-    "aLicense": "Bloom nutzt Breathe License 1.0. Berechtigungen und Bedingungen stehen im Repository.",
-    "updatesTitle": "Bleib bei Bloom auf dem Laufenden.",
-    "updatesDescription": "Entdecke Versionshinweise und die aktuelle Komponentendokumentation.",
-    "closingTitle": "Entwickle Oberflächen mit Bloom.",
-    "closingDescription": "Agentenkomponenten, interaktive Diagramme und die UI darum. Eine Bibliothek für deine nächste Idee.",
-    "demo": "Interaktive Demo · nur lokal",
-    "demoPrompt": "Erstelle eine Oberfläche mit Bloom.",
-    "demoReply": "Dies ist eine lokale Demo. Verbinde deine eigenen Dienste in deiner Anwendung.",
-    "components": "Komponenten ansehen",
-    "install": "Bloom installieren",
-    "docs": "Dokumentation",
-    "playground": "Playground",
-    "interactive": "Interaktive Komponenten",
-    "chat": "Agentenchats",
-    "dashboard": "Dashboards",
-    "health": "Gesundheit",
-    "profile": "Profile",
-    "projects": "Projektboards",
-    "calendar": "Kalender",
-    "desktop": "Desktop",
-    "tablet": "Tablet",
-    "mobile": "Mobil",
-    "view": "Ansehen",
-    "thinking": "Denken",
-    "color": "Farbpalette",
-    "viewport": "Vorschaugröße",
-    "setup": "Einrichtungsanleitung",
-    "name": "Name",
-    "status": "Status",
-    "all": "Alle",
-    "filter": "Filtern",
-    "steps": "Schritte",
-    "duration": "Dauer",
-    "bedtime": "Schlafenszeit",
-    "interruptions": "Unterbrechungen",
-    "move": "Bewegung",
-    "exercise": "Training",
-    "running": "Laufen",
-    "birthDate": "Geburtsdatum",
-    "gender": "Geschlecht",
-    "female": "Weiblich",
-    "bloodType": "Blutgruppe",
-    "doctor": "Hausarzt",
-    "primaryButton": "Primäre Schaltfläche",
-    "secondaryButton": "Sekundäre Schaltfläche",
-    "lifetimeTokens": "Gesamte Tokens",
-    "peakTokens": "Token-Spitze",
-    "longestTask": "Längste Aufgabe",
-    "streak": "Beste Serie",
-    "usersWithAccess": "Benutzer mit Zugriff",
-    "addUser": "Benutzer hinzufügen",
-    "manage": "Verwalten",
-    "models": "Modelle",
-    "effort": "Aufwand",
-    "day": "Tag",
-    "week": "Woche",
-    "month": "Monat",
-    "year": "Jahr",
-    "readFiles": "Projektdateien lesen",
-    "lightTheme": "Helle Tokens konfigurieren",
-    "darkTheme": "Dunkle Tokens konfigurieren",
-    "verifyBuild": "Produktionsbuild prüfen",
-    "messages": "Nachrichten",
-    "files": "Dateien",
-    "tools": "Werkzeuge",
-    "cards": {
-      "attachments": {
-        "title": "Anhänge",
-        "description": "Dateien mit Upload-Fortschritt über der Eingabe."
-      },
-      "search": {
-        "title": "Websuche",
-        "description": "Suchen und Quellen während der Agent arbeitet."
-      },
-      "limits": {
-        "title": "Agentenlimits",
-        "description": "Kontextnutzung, Tokens und Tariflimits."
-      },
-      "table": {
-        "title": "Datentabelle",
-        "description": "Responsive Tabelle filtern, sortieren und blättern."
-      },
-      "widgets": {
-        "title": "Interaktive Widgets",
-        "description": "Gesundheitsdiagramme, Ringe und Warnungen."
-      },
-      "sidebar": {
-        "title": "Seitenleiste",
-        "description": "Navigation, Suche und Kontosteuerung."
-      },
-      "profile": {
-        "title": "Mitwirkendenprofil",
-        "description": "Beiträge, Tokenstatistiken und Serien."
-      },
-      "progress": {
-        "title": "Agentenfortschritt",
-        "description": "Fortschritt über mehrere Schritte und Abschluss."
-      },
-      "loader": {
-        "title": "Eingabe-Ladeeffekt",
-        "description": "Ein umlaufendes Licht während der Agent arbeitet."
-      },
-      "thinking": {
-        "title": "Agentenaktivität",
-        "description": "Anzeigen für Denken, Suchen und Schreiben."
-      },
-      "image": {
-        "title": "Bild-Ladeeffekt",
-        "description": "Animierter Countdown und Bildenthüllung."
-      },
-      "calendar": {
-        "title": "Kalender",
-        "description": "Monatskalender mit Datumsauswahl."
-      },
-      "auth": {
-        "title": "Anmeldung",
-        "description": "Anmeldeformulare und soziale Anbieter."
-      },
-      "meeting": {
-        "title": "Terminplanung",
-        "description": "Datum und Uhrzeit einer Besprechung wählen."
-      },
-      "earnings": {
-        "title": "Diagramme",
-        "description": "Interaktive Diagramme und Zeitraumsteuerung."
-      },
-      "upload": {
-        "title": "Datei-Upload",
-        "description": "Dateiauswahl, Validierung und Fortschritt."
-      }
+    board: {
+      backlog: 'Vorgemerkt',
+      todo: 'Zu erledigen',
+      inProgress: 'In Arbeit',
+      inReview: 'In Prüfung',
+      done: 'Erledigt',
     },
-    "agents": {
-      "design": "Design-Agent",
-      "review": "Prüfungsagent",
-      "research": "Rechercheagent",
-      "code": "Code-Agent"
+    seoTitle: 'Bloom UI, ein React-Designsystem für jede Plattform',
+    eyebrow: 'Für jede Plattform',
+    title: 'React-Designsystem',
+    for: 'für',
+    description:
+      'Eine UI-Bibliothek für React, React Native und Expo. Entwickle mit echten Komponenten, Agentenoberflächen, interaktiven Diagrammen und gemeinsamen Themes.',
+    componentsTitle: 'Interaktive Komponenten. Bereit zum Einsatz.',
+    componentsDescription:
+      'Agentenoberflächen, Kalender, Formulare und Dashboard-Komponenten. Entdecke die echten Komponenten.',
+    agentsTitle: 'Erstelle deine Agentenoberfläche in Sekunden.',
+    agentsDescription:
+      'Beginne mit Gesprächen, Fortschritt und Eingabesteuerung. Verbinde deine eigenen Agenten.',
+    loaderTitle: 'Ein Ladezustand, den man gerne ansieht.',
+    loaderDescription:
+      'Ein Licht um das Eingabefeld. Wähle eine Bloom-Palette und probiere sie aus.',
+    examplesTitle: 'Eine Bibliothek. Viele Möglichkeiten.',
+    examplesDescription:
+      'Entdecke Bloom-Kompositionen vom Agentenchat bis zum Gesundheitsdashboard.',
+    chartsTitle: 'Diagramme, die deine Daten lesenswert machen.',
+    chartsDescription:
+      'Interaktive Diagramme, Hover-Zustände und Kennzahlen. Auf denselben Tokens.',
+    installTitle: 'Entwickle mit Bloom.',
+    installDescription:
+      'Installiere das Paket und folge der Anleitung für deine Plattform und ihre Abhängigkeiten.',
+    githubTitle: 'Offen entwickelt.',
+    githubDescription: 'Entdecke Quellcode, Releases und Diskussionen im Bloom-Repository.',
+    faqTitle: 'Häufige Fragen',
+    faqDescription:
+      'Installation, Plattformen, Themes und Lizenz. Alles für den Einstieg mit Bloom.',
+    searchSummary: '{count} Suchen durchgeführt',
+    qInstall: 'Wie installiere ich Bloom?',
+    aInstall:
+      'Installiere @oxy.so/bloom mit Bun oder npm. Die Dokumentation erklärt Provider, Styles und erforderliche Peer-Abhängigkeiten.',
+    qPlatforms: 'Welche Plattformen unterstützt Bloom?',
+    aPlatforms:
+      'Bloom unterstützt React im Web, React Native und Expo mit plattformspezifischen Implementierungen.',
+    qTheme: 'Kann ich das Theme ändern?',
+    aTheme:
+      'Ja. Bloom bietet gemeinsame Tokens, Voreinstellungen sowie helle und dunkle Modi über seinen Theme-Provider.',
+    qLicense: 'Welche Lizenz nutzt Bloom?',
+    aLicense:
+      'Bloom nutzt Breathe License 1.0. Berechtigungen und Bedingungen stehen im Repository.',
+    updatesTitle: 'Bleib bei Bloom auf dem Laufenden.',
+    updatesDescription: 'Entdecke Versionshinweise und die aktuelle Komponentendokumentation.',
+    closingTitle: 'Entwickle Oberflächen mit Bloom.',
+    closingDescription:
+      'Agentenkomponenten, interaktive Diagramme und die UI darum. Eine Bibliothek für deine nächste Idee.',
+    demo: 'Interaktive Demo · nur lokal',
+    demoPrompt: 'Erstelle eine Oberfläche mit Bloom.',
+    demoReply: 'Dies ist eine lokale Demo. Verbinde deine eigenen Dienste in deiner Anwendung.',
+    components: 'Komponenten ansehen',
+    install: 'Bloom installieren',
+    docs: 'Dokumentation',
+    playground: 'Playground',
+    interactive: 'Interaktive Komponenten',
+    chat: 'Agentenchats',
+    dashboard: 'Dashboards',
+    health: 'Gesundheit',
+    profile: 'Profile',
+    projects: 'Projektboards',
+    calendar: 'Kalender',
+    desktop: 'Desktop',
+    tablet: 'Tablet',
+    mobile: 'Mobil',
+    view: 'Ansehen',
+    thinking: 'Denken',
+    color: 'Farbpalette',
+    viewport: 'Vorschaugröße',
+    setup: 'Einrichtungsanleitung',
+    name: 'Name',
+    status: 'Status',
+    all: 'Alle',
+    filter: 'Filtern',
+    steps: 'Schritte',
+    duration: 'Dauer',
+    bedtime: 'Schlafenszeit',
+    interruptions: 'Unterbrechungen',
+    move: 'Bewegung',
+    exercise: 'Training',
+    running: 'Laufen',
+    birthDate: 'Geburtsdatum',
+    gender: 'Geschlecht',
+    female: 'Weiblich',
+    bloodType: 'Blutgruppe',
+    doctor: 'Hausarzt',
+    primaryButton: 'Primäre Schaltfläche',
+    secondaryButton: 'Sekundäre Schaltfläche',
+    lifetimeTokens: 'Gesamte Tokens',
+    peakTokens: 'Token-Spitze',
+    longestTask: 'Längste Aufgabe',
+    streak: 'Beste Serie',
+    usersWithAccess: 'Benutzer mit Zugriff',
+    addUser: 'Benutzer hinzufügen',
+    manage: 'Verwalten',
+    models: 'Modelle',
+    effort: 'Aufwand',
+    day: 'Tag',
+    week: 'Woche',
+    month: 'Monat',
+    year: 'Jahr',
+    readFiles: 'Projektdateien lesen',
+    lightTheme: 'Helle Tokens konfigurieren',
+    darkTheme: 'Dunkle Tokens konfigurieren',
+    verifyBuild: 'Produktionsbuild prüfen',
+    messages: 'Nachrichten',
+    files: 'Dateien',
+    tools: 'Werkzeuge',
+    cards: {
+      attachments: {
+        title: 'Anhänge',
+        description: 'Dateien mit Upload-Fortschritt über der Eingabe.',
+      },
+      search: {
+        title: 'Websuche',
+        description: 'Suchen und Quellen während der Agent arbeitet.',
+      },
+      limits: {
+        title: 'Agentenlimits',
+        description: 'Kontextnutzung, Tokens und Tariflimits.',
+      },
+      table: {
+        title: 'Datentabelle',
+        description: 'Responsive Tabelle filtern, sortieren und blättern.',
+      },
+      widgets: {
+        title: 'Interaktive Widgets',
+        description: 'Gesundheitsdiagramme, Ringe und Warnungen.',
+      },
+      sidebar: {
+        title: 'Seitenleiste',
+        description: 'Navigation, Suche und Kontosteuerung.',
+      },
+      profile: {
+        title: 'Mitwirkendenprofil',
+        description: 'Beiträge, Tokenstatistiken und Serien.',
+      },
+      progress: {
+        title: 'Agentenfortschritt',
+        description: 'Fortschritt über mehrere Schritte und Abschluss.',
+      },
+      loader: {
+        title: 'Eingabe-Ladeeffekt',
+        description: 'Ein umlaufendes Licht während der Agent arbeitet.',
+      },
+      thinking: {
+        title: 'Agentenaktivität',
+        description: 'Anzeigen für Denken, Suchen und Schreiben.',
+      },
+      image: {
+        title: 'Bild-Ladeeffekt',
+        description: 'Animierter Countdown und Bildenthüllung.',
+      },
+      calendar: {
+        title: 'Kalender',
+        description: 'Monatskalender mit Datumsauswahl.',
+      },
+      auth: {
+        title: 'Anmeldung',
+        description: 'Anmeldeformulare und soziale Anbieter.',
+      },
+      meeting: {
+        title: 'Terminplanung',
+        description: 'Datum und Uhrzeit einer Besprechung wählen.',
+      },
+      earnings: {
+        title: 'Diagramme',
+        description: 'Interaktive Diagramme und Zeitraumsteuerung.',
+      },
+      upload: {
+        title: 'Datei-Upload',
+        description: 'Dateiauswahl, Validierung und Fortschritt.',
+      },
     },
-    "table": {
-      "results": "Gesamtergebnisse",
-      "customers": "Kunden",
-      "purchase": "Kauf",
-      "updated": "Zuletzt aktualisiert",
-      "price": "Preis",
-      "waiting": "Wartend",
-      "completed": "Abgeschlossen",
-      "processing": "In Bearbeitung",
-      "failed": "Lieferung fehlgeschlagen",
-      "delivered": "Geliefert",
-      "pending": "Ausstehend",
-      "prices": "Alle Preise",
-      "products": "Alle Produkte",
-      "regions": "Alle Regionen",
-      "search": "Suchen"
-    }
+    agents: {
+      design: 'Design-Agent',
+      review: 'Prüfungsagent',
+      research: 'Rechercheagent',
+      code: 'Code-Agent',
+    },
+    table: {
+      results: 'Gesamtergebnisse',
+      customers: 'Kunden',
+      purchase: 'Kauf',
+      updated: 'Zuletzt aktualisiert',
+      price: 'Preis',
+      waiting: 'Wartend',
+      completed: 'Abgeschlossen',
+      processing: 'In Bearbeitung',
+      failed: 'Lieferung fehlgeschlagen',
+      delivered: 'Geliefert',
+      pending: 'Ausstehend',
+      prices: 'Alle Preise',
+      products: 'Alle Produkte',
+      regions: 'Alle Regionen',
+      search: 'Suchen',
+    },
   },
 
   common: {
@@ -285,12 +403,16 @@ const de: Translations = {
   home: {
     ...en.home,
     commonsIosSoonTitle: 'Bald für iOS',
-    commonsIosSoonBody: 'Commons ist noch nicht im App Store. Bei Google Play ist die App bereits verfügbar, die iOS-Version folgt in Kürze.',
+    commonsIosSoonBody:
+      'Commons ist noch nicht im App Store. Bei Google Play ist die App bereits verfügbar, die iOS-Version folgt in Kürze.',
     appsFeaturesTitle: 'Apps, bei denen Menschen an erster Stelle stehen',
-    appsFeaturesDescription: 'Entdecke die Oxy-Apps, die zusammenspielen und dir im Alltag mehr Wahlfreiheit, Privatsphäre und Kontrolle geben.',
+    appsFeaturesDescription:
+      'Entdecke die Oxy-Apps, die zusammenspielen und dir im Alltag mehr Wahlfreiheit, Privatsphäre und Kontrolle geben.',
     valuePeopleTitle: 'Menschen machen den Unterschied.',
-    valuePeopleDescription: 'Technologie zählt am meisten, wenn sie Menschen mehr Selbstbestimmung, Verbindung und Raum gibt, gemeinsam zu wachsen.',
-    heroTitleDefault: 'Wir gestalten eine Zukunft, in der Technologie Menschen befähigt,\nverbunden, erfüllt und nachhaltig zu leben.',
+    valuePeopleDescription:
+      'Technologie zählt am meisten, wenn sie Menschen mehr Selbstbestimmung, Verbindung und Raum gibt, gemeinsam zu wachsen.',
+    heroTitleDefault:
+      'Wir gestalten eine Zukunft, in der Technologie Menschen befähigt,\nverbunden, erfüllt und nachhaltig zu leben.',
     allInOneHeadingLine1: 'Gebaut für alle,',
     allInOneHeadingLine2: 'nicht nur für dich.',
     allInOneBody:
@@ -298,7 +420,8 @@ const de: Translations = {
 
     // ── The falling-tag card (HomeTagPhysics) ──────────────
     tagsHeading: 'Alles hier gehört dir.',
-    tagsBody: 'Identität, Privatsphäre, Zahlungen, soziale Netzwerke, KI, Forschung – jeder Teil von Oxy ist Open Source und dafür gemacht, mit den anderen zusammenzuspielen. Stoß einen davon an.',
+    tagsBody:
+      'Identität, Privatsphäre, Zahlungen, soziale Netzwerke, KI, Forschung – jeder Teil von Oxy ist Open Source und dafür gemacht, mit den anderen zusammenzuspielen. Stoß einen davon an.',
     tagsRegionLabel: 'Die Bausteine des Oxy-Ökosystems',
     tagPrivacy: 'Privatsphäre',
     tagOpenSource: 'Open Source',
@@ -337,9 +460,10 @@ const de: Translations = {
   pricing: {
     seoTitle: 'Preise',
     seoDescription:
-      "Preise für Oxy. Die Oxy-Apps sind kostenlos und Open Source. Pläne fügen deinem Oxy-Konto monatliche Credits für die API-Nutzung hinzu: Starte mit 1.000 kostenlosen Credits.",
+      'Preise für Oxy. Die Oxy-Apps sind kostenlos und Open Source. Pläne fügen deinem Oxy-Konto monatliche Credits für die API-Nutzung hinzu: Starte mit 1.000 kostenlosen Credits.',
     heading: 'Preise, die mit dir wachsen.',
-    subheading: 'Der größte Teil von Oxy ist kostenlos und Open Source. Bezahlte Pläne ergänzen Hosting, Support und Teamfunktionen.',
+    subheading:
+      'Der größte Teil von Oxy ist kostenlos und Open Source. Bezahlte Pläne ergänzen Hosting, Support und Teamfunktionen.',
     annual: 'Jährlich',
     monthly: 'Monatlich',
     saveAnnual: 'Sparen mit dem Jahresplan',
@@ -362,13 +486,27 @@ const de: Translations = {
     chooseYourPlan: 'Wähle deinen Plan',
   },
   help: {
-    feedbackThanks: "Danke für dein Feedback.",
-    feedbackError: "Dein Feedback konnte nicht gespeichert werden. Bitte versuche es erneut.",
-    relatedArticles: "Ähnliche Artikel",
-    voiceUnavailable: "Spracheingabe ist nicht verfügbar. Bitte tippe deine Nachricht.",
-    "supportPrompt": "Stelle dem Oxy-Support eine Frage", "openingSupport": "Support wird geöffnet…", "supportUnavailable": "Der Support konnte nicht geöffnet werden. Deine Nachricht ist noch hier. Versuche es erneut.",
-    "welcome": "Willkommen im Oxy-Hilfebereich", "ecosystemHeading": "Hilfe rund um Oxy", "ecosystemDescription": "Hilfe zu deinen Oxy-Apps und Erlebnissen", "moreSupport": "Weitere Hilfe entdecken",
-    "greeting": "Hallo.", "topicsHeading": "Nach Thema suchen", "featuredHeading": "Ausgewählte Artikel", "allArticles": "Alle Artikel ansehen", "searchResults": "Suchergebnisse", "clearFilters": "Filter löschen", "noResults": "Keine Artikel gefunden. Versuche eine andere Suche oder lösche die Filter.", "readTime": "{count} Min. Lesezeit", seoTitle: 'Hilfecenter',
+    feedbackThanks: 'Danke für dein Feedback.',
+    feedbackError: 'Dein Feedback konnte nicht gespeichert werden. Bitte versuche es erneut.',
+    relatedArticles: 'Ähnliche Artikel',
+    voiceUnavailable: 'Spracheingabe ist nicht verfügbar. Bitte tippe deine Nachricht.',
+    supportPrompt: 'Stelle dem Oxy-Support eine Frage',
+    openingSupport: 'Support wird geöffnet…',
+    supportUnavailable:
+      'Der Support konnte nicht geöffnet werden. Deine Nachricht ist noch hier. Versuche es erneut.',
+    welcome: 'Willkommen im Oxy-Hilfebereich',
+    ecosystemHeading: 'Hilfe rund um Oxy',
+    ecosystemDescription: 'Hilfe zu deinen Oxy-Apps und Erlebnissen',
+    moreSupport: 'Weitere Hilfe entdecken',
+    greeting: 'Hallo.',
+    topicsHeading: 'Nach Thema suchen',
+    featuredHeading: 'Ausgewählte Artikel',
+    allArticles: 'Alle Artikel ansehen',
+    searchResults: 'Suchergebnisse',
+    clearFilters: 'Filter löschen',
+    noResults: 'Keine Artikel gefunden. Versuche eine andere Suche oder lösche die Filter.',
+    readTime: '{count} Min. Lesezeit',
+    seoTitle: 'Hilfecenter',
     seoDescription:
       'Hilfe zu Oxy. Finde Antworten auf häufige Fragen, Fehlerbehebungs-Anleitungen und kontaktiere unser Support-Team.',
     heading: 'Wie können wir dir helfen?',
@@ -377,7 +515,8 @@ const de: Translations = {
     categoriesHeading: 'Nach Kategorie durchsuchen',
     popularHeading: 'Beliebte Artikel',
     contactCta: 'Findest du nicht, was du brauchst?',
-    contactCtaDescription: 'Unser Support-Team ist für dich da — in der Regel Antwort innerhalb weniger Stunden.',
+    contactCtaDescription:
+      'Unser Support-Team ist für dich da — in der Regel Antwort innerhalb weniger Stunden.',
     contactCtaButton: 'Support kontaktieren',
     articleCountOne: '1 Artikel',
     articleCountOther: '{count} Artikel',
@@ -388,7 +527,8 @@ const de: Translations = {
   },
   academy: {
     title: 'Academy',
-    subtitle: 'Kurze, praxisnahe Kurse zu Oxy – von der ersten Anmeldung bis zum Bauen auf der Plattform.',
+    subtitle:
+      'Kurze, praxisnahe Kurse zu Oxy – von der ersten Anmeldung bis zum Bauen auf der Plattform.',
     navLabel: 'Academy-Kurse',
     searchLabel: 'Kurse und Lektionen durchsuchen',
     openMenu: 'Kurse',
@@ -401,7 +541,8 @@ const de: Translations = {
     trackFoundations: 'Grundlagen',
     trackFoundationsBlurb: 'Richte dein Konto ein und mach deine ersten Schritte auf Oxy.',
     trackIdentity: 'Identität & Sicherheit',
-    trackIdentityBlurb: 'Behalte deine Oxy ID im Griff – Schlüssel, Sitzungen und Kontowiederherstellung.',
+    trackIdentityBlurb:
+      'Behalte deine Oxy ID im Griff – Schlüssel, Sitzungen und Kontowiederherstellung.',
     trackSocial: 'Social & Veröffentlichen',
     trackSocialBlurb: 'Vergrößere deine Reichweite mit Mention und dem Fediverse.',
     trackDeveloper: 'Auf Oxy bauen',
@@ -425,7 +566,8 @@ const de: Translations = {
     resultsOne: '1 Ergebnis für „{query}“',
     resultsOther: '{count} Ergebnisse für „{query}“',
     noResultsTitle: 'Keine Treffer für „{query}“',
-    noResultsBody: 'Versuch es mit einem anderen Wort oder lösche die Suche, um alle Kurse zu sehen.',
+    noResultsBody:
+      'Versuch es mit einem anderen Wort oder lösche die Suche, um alle Kurse zu sehen.',
     clearSearch: 'Suche löschen',
     courseProgress: '{done} von {total} Lektionen abgeschlossen',
     statusCompleted: 'Abgeschlossen',
@@ -447,7 +589,8 @@ const de: Translations = {
     nextCourse: 'Nächster Kurs',
     courseOverview: 'Kursübersicht',
     courseCompleteTitle: 'Du hast {course} abgeschlossen',
-    courseCompleteBody: 'Gut gemacht! Wähle deinen nächsten Kurs oder öffne die Entwicklerdokumentation, um weiterzubauen.',
+    courseCompleteBody:
+      'Gut gemacht! Wähle deinen nächsten Kurs oder öffne die Entwicklerdokumentation, um weiterzubauen.',
     browseCourses: 'Kurse ansehen',
     developerDocs: 'Entwicklerdokumentation',
     notFoundCourse: 'Kurs nicht gefunden',
@@ -455,7 +598,8 @@ const de: Translations = {
     notFoundLesson: 'Lektion nicht gefunden',
     notFoundLessonBody: 'Diese Lektion gibt es nicht, oder sie wurde verschoben.',
     backToAcademy: 'Zurück zur Academy',
-    seoDescription: 'Kurze Kurse zu Oxy ID, zur Entwicklung auf der Plattform und zu ihrem Selbstbetrieb – von den ersten Schritten bis zu Mustern für den Produktivbetrieb.',
+    seoDescription:
+      'Kurze Kurse zu Oxy ID, zur Entwicklung auf der Plattform und zu ihrem Selbstbetrieb – von den ersten Schritten bis zu Mustern für den Produktivbetrieb.',
     seoCourseDescription: '{course}, ein Kurs der Oxy Academy.',
     seoLessonTitle: '{lesson}, {course}',
   },
@@ -508,7 +652,8 @@ const de: Translations = {
     seoTitle: 'Änderungsprotokoll',
     seoDescription: 'Jede ausgelieferte Änderung im Oxy-Ökosystem an einem Ort.',
     heading: 'Änderungsprotokoll',
-    subheading: 'Ein laufendes Protokoll neuer Funktionen, Verbesserungen und Fehlerbehebungen über alle Oxy-Produkte hinweg.',
+    subheading:
+      'Ein laufendes Protokoll neuer Funktionen, Verbesserungen und Fehlerbehebungen über alle Oxy-Produkte hinweg.',
     filterAll: 'Alle',
     filterFeature: 'Funktionen',
     filterImprovement: 'Verbesserungen',
@@ -553,10 +698,12 @@ const de: Translations = {
   },
   ai: {
     seoTitle: 'Oxy AI',
-    seoDescription: 'Eine Plattform für KI-Modelle, Inferenz und intelligente Produkte. Eine einheitliche API, ein öffentlicher Modellkatalog, verwaltetes und dediziertes Serving sowie die Produkte, die Oxy darauf baut.',
+    seoDescription:
+      'Eine Plattform für KI-Modelle, Inferenz und intelligente Produkte. Eine einheitliche API, ein öffentlicher Modellkatalog, verwaltetes und dediziertes Serving sowie die Produkte, die Oxy darauf baut.',
     heroEyebrow: 'Oxy AI',
     heroTitle: 'Eine Plattform für KI-Modelle, Inferenz und intelligente Produkte.',
-    heroSubtitle: 'Oxy Inference gibt dir eine API, einen Zugangsschlüssel und eine Rechnung für jedes Modell, das Oxy ausliefern darf. Alia und Codea sind das, was wir darauf gebaut haben.',
+    heroSubtitle:
+      'Oxy Inference gibt dir eine API, einen Zugangsschlüssel und eine Rechnung für jedes Modell, das Oxy ausliefern darf. Alia und Codea sind das, was wir darauf gebaut haben.',
     availability: {
       available: 'Verfügbar',
       beta: 'Beta',
@@ -583,7 +730,8 @@ const de: Translations = {
     },
     sections: {
       services: 'Woraus Oxy AI besteht',
-      servicesLead: 'Sechs Dinge mit sechs unterschiedlichen Aufgaben. Jedes sagt, was es ist, für wen es ist und in welchem Zustand es wirklich steckt.',
+      servicesLead:
+        'Sechs Dinge mit sechs unterschiedlichen Aufgaben. Jedes sagt, was es ist, für wen es ist und in welchem Zustand es wirklich steckt.',
       quickstart: 'Ruf sie auf',
       models: 'Modelle',
       routing: 'Routing und Kontrolle',
@@ -597,13 +745,16 @@ const de: Translations = {
     },
     quickstart: {
       heading: 'Eine Basis-URL, ein Zugangsschlüssel',
-      description: 'Die API ist OpenAI-kompatibel: Ein vorhandener Client zeigt mit zwei geänderten Zeilen darauf. Zugangsschlüssel werden in der Oxy Console ausgestellt und gelten für eine Anwendung.',
+      description:
+        'Die API ist OpenAI-kompatibel: Ein vorhandener Client zeigt mit zwei geänderten Zeilen darauf. Zugangsschlüssel werden in der Oxy Console ausgestellt und gelten für eine Anwendung.',
       tabsLabel: 'Codebeispiele',
       copy: 'Kopieren',
       copied: 'Kopiert',
-      modelPlaceholderNote: 'Die Modell-ID ist ein Platzhalter: Vor dem Katalog wird kein Modell veröffentlicht, und ein Snippet, das eines benennt, würde es erfinden.',
+      modelPlaceholderNote:
+        'Die Modell-ID ist ein Platzhalter: Vor dem Katalog wird kein Modell veröffentlicht, und ein Snippet, das eines benennt, würde es erfinden.',
       advancedHeading: 'Streaming, Tools und strukturierte Ausgabe',
-      advancedDescription: 'Das erste Snippet bleibt das Kürzeste, das funktioniert. Dies sind die nächsten drei Fragen.',
+      advancedDescription:
+        'Das erste Snippet bleibt das Kürzeste, das funktioniert. Dies sind die nächsten drei Fragen.',
     },
     routing: {
       lead: 'Was die Plattform zwischen deiner Anfrage und einem Modell tut — und wie viel davon du steuerst.',
@@ -615,11 +766,13 @@ const de: Translations = {
     },
     models: {
       seoTitle: 'KI-Modelle',
-      seoDescription: 'Der öffentliche Modellkatalog von Oxy AI: Herausgeber, Fähigkeiten, Serving-Regionen, Datenrichtlinie, Preise und Verfügbarkeit für jedes Modell, das Oxy ausliefern darf.',
+      seoDescription:
+        'Der öffentliche Modellkatalog von Oxy AI: Herausgeber, Fähigkeiten, Serving-Regionen, Datenrichtlinie, Preise und Verfügbarkeit für jedes Modell, das Oxy ausliefern darf.',
       heading: 'Modellkatalog',
       lead: 'Jedes Modell, das Oxy öffentlich ausliefern darf — mit Herausgeber, Fähigkeiten, Serving-Optionen, Richtlinie und Preis, die dafür gelten.',
       emptyTitle: 'Der öffentliche Katalog ist noch nicht veröffentlicht',
-      emptyBody: 'Oxy Inference ist in der Private Preview, und der Modellkatalog erscheint damit. Statt Modelle zu listen, die noch niemand aufrufen kann, bleibt diese Seite leer, bis der Katalog real ist.',
+      emptyBody:
+        'Oxy Inference ist in der Private Preview, und der Modellkatalog erscheint damit. Statt Modelle zu listen, die noch niemand aufrufen kann, bleibt diese Seite leer, bis der Katalog real ist.',
       emptySecondary: 'Über Oxy Inference lesen',
       priceVersion: 'Preisversion {version} · Katalog erzeugt am {date}',
       staleNotice: 'Dieser Stand ist über zwei Wochen alt; die Preise können sich geändert haben.',
@@ -653,7 +806,8 @@ const de: Translations = {
     },
     model: {
       notFoundTitle: 'Dieses Modell gibt es nicht',
-      notFoundBody: 'Dieses Modell steht nicht im öffentlichen Katalog. Vielleicht war es nie öffentlich, vielleicht wurde es zurückgezogen.',
+      notFoundBody:
+        'Dieses Modell steht nicht im öffentlichen Katalog. Vielleicht war es nie öffentlich, vielleicht wurde es zurückgezogen.',
       backToCatalogue: 'Zurück zum Katalog',
       canonicalId: 'Kanonische ID',
       description: 'Über',
@@ -694,18 +848,22 @@ const de: Translations = {
     },
     pricing: {
       seoTitle: 'Preise für Oxy Inference',
-      seoDescription: 'Was Oxy Inference kostet: Preise pro Modell und pro Einheit aus der Oxy-Preisquelle, mit der zugehörigen Preisversion und einem Rechner für eine monatliche Last.',
+      seoDescription:
+        'Was Oxy Inference kostet: Preise pro Modell und pro Einheit aus der Oxy-Preisquelle, mit der zugehörigen Preisversion und einem Rechner für eine monatliche Last.',
       heading: 'Inferenzpreise',
       lead: 'Abgerechnet pro Modell und pro Einheit. Die Preise stammen aus der Oxy-Preisquelle mit veröffentlichter Preisversion — diese Seite gibt nie einen eigenen Preis an.',
       aliaHandoffTitle: 'Suchst du die Alia-Tarife?',
-      aliaHandoffBody: 'Alia ist ein Produkt mit eigenem Abo, verkauft von Alia. Seine Tarife sind keine Inferenzpreise.',
+      aliaHandoffBody:
+        'Alia ist ein Produkt mit eigenem Abo, verkauft von Alia. Seine Tarife sind keine Inferenzpreise.',
       aliaHandoffCta: 'Alia-Tarife ansehen',
       ecosystemHandoffTitle: 'Suchst du die Tarife der Oxy-Apps?',
-      ecosystemHandoffBody: 'Die Tarife pro Platz für die Oxy-Apps werden getrennt von der Inferenz abgerechnet.',
+      ecosystemHandoffBody:
+        'Die Tarife pro Platz für die Oxy-Apps werden getrennt von der Inferenz abgerechnet.',
       ecosystemHandoffCta: 'Ökosystem-Preise ansehen',
       tableHeading: 'Preise pro Modell',
       estimatorHeading: 'Monatliche Rechnung schätzen',
-      estimatorLead: 'Eine Schätzung, exakt gerechnet und abgerundet. Sie autorisiert und berechnet nichts — Ausgaben werden in der Oxy Console konfiguriert.',
+      estimatorLead:
+        'Eine Schätzung, exakt gerechnet und abgerundet. Sie autorisiert und berechnet nichts — Ausgaben werden in der Oxy Console konfiguriert.',
       estimatorModel: 'Modell',
       estimatorRequests: 'Anfragen pro Monat',
       estimatorInput: 'Eingabe-Tokens pro Anfrage',
@@ -713,7 +871,8 @@ const de: Translations = {
       estimatorOutput: 'Ausgabe-Tokens pro Anfrage',
       estimatorReasoning: 'Reasoning-Tokens pro Anfrage',
       estimatorTotal: 'Geschätzte Monatskosten',
-      estimatorUnpriced: 'Kein veröffentlichter Preis für: {units}. Diese Einheiten bleiben außen vor, statt als kostenlos zu zählen.',
+      estimatorUnpriced:
+        'Kein veröffentlichter Preis für: {units}. Diese Einheiten bleiben außen vor, statt als kostenlos zu zählen.',
       estimatorEmpty: 'Wähle ein Modell, um eine Last zu schätzen.',
       unitInputToken: 'Eingabe',
       unitCachedInputToken: 'Gecachte Eingabe',
@@ -727,44 +886,55 @@ const de: Translations = {
       perMillion: 'pro 1 Mio. Tokens',
       perUnit: 'pro Einheit',
       termsHeading: 'Steuern, Guthaben und Rechnungen',
-      termsBody: 'Preise verstehen sich zuzüglich Steuern. Selbstbedienungsnutzung wird von einem Guthaben in der Oxy Console abgebucht; Rechnungskonditionen werden pro Organisation vereinbart.',
+      termsBody:
+        'Preise verstehen sich zuzüglich Steuern. Selbstbedienungsnutzung wird von einem Guthaben in der Oxy Console abgebucht; Rechnungskonditionen werden pro Organisation vereinbart.',
       pathsHeading: 'Welcher Weg deiner ist',
       pathSelfServe: 'Nutzungsbasiert, Selbstbedienung',
-      pathSelfServeBody: 'Guthaben aufladen und einen Zugangsschlüssel in der Oxy Console ausstellen.',
+      pathSelfServeBody:
+        'Guthaben aufladen und einen Zugangsschlüssel in der Oxy Console ausstellen.',
       pathDedicated: 'Dedizierte oder reservierte Kapazität',
       pathDedicatedBody: 'Wird pro Vereinbarung bepreist, weil es Kapazität und nicht Nutzung ist.',
       pathAlia: 'Alia-Produkttarife',
       pathAliaBody: 'Verkauft von Alia, auf Alia.',
       pathEcosystem: 'Tarife des Oxy-Ökosystems',
-      pathEcosystemBody: "Monatliche Credit-Pläne für dein Oxy-Konto.",
+      pathEcosystemBody: 'Monatliche Credit-Pläne für dein Oxy-Konto.',
     },
     inference: {
       seoTitle: 'Oxy Inference',
-      seoDescription: 'Eine OpenAI-kompatible API für jedes Modell, das Oxy ausliefern darf — mit Routing, festgepinnten Revisionen, Nutzungsbelegen und Zuordnung pro Anwendung.',
+      seoDescription:
+        'Eine OpenAI-kompatible API für jedes Modell, das Oxy ausliefern darf — mit Routing, festgepinnten Revisionen, Nutzungsbelegen und Zuordnung pro Anwendung.',
       heroEyebrow: 'Oxy Inference',
       heroTitle: 'Eine API für jedes Modell, das wir ausliefern dürfen.',
-      heroSubtitle: 'Richte einen OpenAI-kompatiblen Client auf eine Basis-URL, schicke eine Modell-ID aus dem Katalog und bekomme eine Antwort samt Beleg darüber, was sie ausgeliefert hat und was sie gekostet hat.',
+      heroSubtitle:
+        'Richte einen OpenAI-kompatiblen Client auf eine Basis-URL, schicke eine Modell-ID aus dem Katalog und bekomme eine Antwort samt Beleg darüber, was sie ausgeliefert hat und was sie gekostet hat.',
       startHeading: 'Konto, Anwendung, Zugangsschlüssel, Aufruf',
-      startLead: 'Vier Objekte, alle im Besitz der Oxy Console. Diese Website erklärt sie; sie erstellt sie nicht.',
+      startLead:
+        'Vier Objekte, alle im Besitz der Oxy Console. Diese Website erklärt sie; sie erstellt sie nicht.',
       capabilitiesHeading: 'Was die API kann',
-      capabilitiesLead: 'Jede Fähigkeit trägt ihren eigenen Zustand. „Unterstützt Vision“ und „wird Vision unterstützen“ sind verschiedene Antworten auf die Frage, mit der du gekommen bist.',
+      capabilitiesLead:
+        'Jede Fähigkeit trägt ihren eigenen Zustand. „Unterstützt Vision“ und „wird Vision unterstützen“ sind verschiedene Antworten auf die Frage, mit der du gekommen bist.',
       conceptsHeading: 'Das Vokabular',
-      conceptsLead: 'Sechs Unterscheidungen, die das Verhalten ändern, sobald sie verschwimmen. Ein Modell statt einer Revision festzupinnen oder ein Routing-Profil wie ein Modell zu behandeln, ändert, was du bekommst, ohne zu ändern, was du geschickt hast.',
+      conceptsLead:
+        'Sechs Unterscheidungen, die das Verhalten ändern, sobald sie verschwimmen. Ein Modell statt einer Revision festzupinnen oder ein Routing-Profil wie ein Modell zu behandeln, ändert, was du bekommst, ohne zu ändern, was du geschickt hast.',
       operationsHeading: 'Im Produktivbetrieb',
     },
     enterprise: {
       seoTitle: 'Oxy AI für Organisationen',
-      seoDescription: 'Geteilte, verwaltete und dedizierte Inferenz für Organisationen: private Endpunkte, reservierte Kapazität, Regions- und Anbieterrichtlinien, eigener Schlüssel, Rechnungsstellung und Prüfbarkeit.',
+      seoDescription:
+        'Geteilte, verwaltete und dedizierte Inferenz für Organisationen: private Endpunkte, reservierte Kapazität, Regions- und Anbieterrichtlinien, eigener Schlüssel, Rechnungsstellung und Prüfbarkeit.',
       heroEyebrow: 'Oxy AI',
       heroTitle: 'Inferenz, die euer Security-Review lesen kann.',
-      heroSubtitle: 'Geteiltes Routing, verwaltete Deployments oder ein privater Endpunkt — mit Anbieter, Region und Aufbewahrungsregel schriftlich statt angenommen.',
+      heroSubtitle:
+        'Geteiltes Routing, verwaltete Deployments oder ein privater Endpunkt — mit Anbieter, Region und Aufbewahrungsregel schriftlich statt angenommen.',
       capabilitiesHeading: 'Was möglich ist',
       evaluationHeading: 'Fangt mit einer Evaluierung an, nicht mit einem Vertrag',
-      evaluationBody: 'Eine abgegrenzte Evaluierung mit den Modellen, Regionen und Auflagen, die ihr wirklich braucht, kommt vor jeder Verpflichtung. Beschreibt die Last, und wir sagen euch, ob die Plattform sie heute bedienen kann.',
+      evaluationBody:
+        'Eine abgegrenzte Evaluierung mit den Modellen, Regionen und Auflagen, die ihr wirklich braucht, kommt vor jeder Verpflichtung. Beschreibt die Last, und wir sagen euch, ob die Plattform sie heute bedienen kann.',
     },
     trust: {
       seoTitle: 'Oxy AI — Daten und Richtlinien',
-      seoDescription: 'Was Oxy mit dem macht, was du schickst, was der Anbieter einer gerouteten Anfrage damit macht, und auf welches von beiden sich eine Aussage jeweils bezieht.',
+      seoDescription:
+        'Was Oxy mit dem macht, was du schickst, was der Anbieter einer gerouteten Anfrage damit macht, und auf welches von beiden sich eine Aussage jeweils bezieht.',
       heroEyebrow: 'Oxy AI',
       heroTitle: 'Daten, Richtlinien und was wo gilt.',
       scopeOxy: 'Oxys eigener Umgang',
@@ -772,7 +942,8 @@ const de: Translations = {
       scopeContract: 'Vertraglich vereinbart',
       reviewedBy: 'Verantwortlich: {owner} · zu prüfen bis {date}',
       documentsHeading: 'Die Dokumente',
-      documentsLead: 'Nur die, die es gibt. Ein Link auf eine nicht geschriebene Richtlinie ist schlechter als kein Link.',
+      documentsLead:
+        'Nur die, die es gibt. Ein Link auf eine nicht geschriebene Richtlinie ist schlechter als kein Link.',
     },
     aliaModels: {
       inDevelopment: 'In Entwicklung',
@@ -781,18 +952,22 @@ const de: Translations = {
   },
   enterprisePage: {
     seoTitle: 'Oxy für Organisationen',
-    seoDescription: 'Was Oxy an Organisationen verkauft — KI und Inferenz, Oxy ID, die Plattform und die SDKs — mit dem Zustand, in dem jedes davon wirklich ist.',
+    seoDescription:
+      'Was Oxy an Organisationen verkauft — KI und Inferenz, Oxy ID, die Plattform und die SDKs — mit dem Zustand, in dem jedes davon wirklich ist.',
     heroEyebrow: 'Enterprise',
     heroTitle: 'Oxy für Organisationen.',
     servicesHeading: 'Leistungen',
     contactHeading: 'Sprich mit jemandem, der die Antwort kennt',
-    contactBody: 'Nenn uns die Last, die Auflagen und den Zeitplan. Du bekommst eine konkrete Antwort statt einer Broschüre.',
+    contactBody:
+      'Nenn uns die Last, die Auflagen und den Zeitplan. Du bekommst eine konkrete Antwort statt einer Broschüre.',
   },
   contactSales: {
     seoTitle: 'Mit dem Oxy-Vertrieb sprechen',
-    seoDescription: 'Hol dir eine konkrete Antwort zu Oxy AI, verwalteter oder dedizierter Inferenz oder der Oxy-Plattform für deine Organisation.',
+    seoDescription:
+      'Hol dir eine konkrete Antwort zu Oxy AI, verwalteter oder dedizierter Inferenz oder der Oxy-Plattform für deine Organisation.',
     heroTitle: 'Mit dem Vertrieb sprechen',
-    heroSubtitle: 'Sag uns, was du baust und was dabei zutreffen muss. Antworten wird jemand, der das auch wirklich beantworten kann.',
+    heroSubtitle:
+      'Sag uns, was du baust und was dabei zutreffen muss. Antworten wird jemand, der das auch wirklich beantworten kann.',
     sectionAbout: 'Worum es geht',
     sectionYou: 'Über dich',
     sectionWorkload: 'Über die Last',
@@ -850,18 +1025,22 @@ const de: Translations = {
     message: 'Was wir sonst noch wissen sollten',
     marketingConsent: 'Ihr dürft mir auch gelegentlich Oxy-Produktneuigkeiten schicken.',
     accountSection: 'Dein Oxy-Konto',
-    accountHelp: 'Du bist angemeldet, deshalb sind Name und E-Mail vorausgefüllt. Hänge eine Oxy Account oder Application an, wenn es um eine bestimmte geht.',
+    accountHelp:
+      'Du bist angemeldet, deshalb sind Name und E-Mail vorausgefüllt. Hänge eine Oxy Account oder Application an, wenn es um eine bestimmte geht.',
     accountNone: 'Kein Konto anhängen',
     applicationNone: 'Keine Anwendung anhängen',
     optional: 'optional',
     submit: 'Anfrage senden',
     submitting: 'Wird gesendet…',
-    privacyNotice: 'Wir nutzen das, was du hier schickst, um dir zu antworten — und für nichts sonst. Es wird ein Jahr aufbewahrt, sofern kein Vertrag zustande kommt, und deine IP-Adresse speichern wir nicht. Schick keine API-Schlüssel, Zugangsdaten, Prompts oder regulierte Daten.',
+    privacyNotice:
+      'Wir nutzen das, was du hier schickst, um dir zu antworten — und für nichts sonst. Es wird ein Jahr aufbewahrt, sofern kein Vertrag zustande kommt, und deine IP-Adresse speichern wir nicht. Schick keine API-Schlüssel, Zugangsdaten, Prompts oder regulierte Daten.',
     successTitle: 'Anfrage angekommen',
-    successBody: 'Referenz {reference}. Jemand, der deine Frage beantworten kann, meldet sich an der angegebenen Adresse.',
+    successBody:
+      'Referenz {reference}. Jemand, der deine Frage beantworten kann, meldet sich an der angegebenen Adresse.',
     successBack: 'Zurück zu Oxy AI',
     errorTitle: 'Das ging nicht raus',
-    errorBody: 'Nichts von dem, was du getippt hast, ist verloren. Versuch es noch einmal oder schreib an {email}, dann machen wir dort weiter.',
+    errorBody:
+      'Nichts von dem, was du getippt hast, ist verloren. Versuch es noch einmal oder schreib an {email}, dann machen wir dort weiter.',
     retry: 'Erneut versuchen',
     requiredFieldsMissing: 'Prüfe die markierten Felder und versuch es erneut.',
     errorSummaryTitle: 'Mit diesem Formular stimmt etwas nicht',
@@ -870,7 +1049,8 @@ const de: Translations = {
     mentionDescription: 'Open-Source-Soziales-Netzwerk. Föderiert, werbefrei und ganz dir.',
     alloDescription: 'Ende-zu-Ende-verschlüsseltes Messaging mit Gruppenchats, Stimme und Medien.',
     inboxDescription: 'Alle deine Gespräche an einem Ort, über jedes Oxy-Produkt hinweg.',
-    aliaDescription: 'Dein privater KI-Assistent, intelligent, hilfreich und datenschutzfreundlich.',
+    aliaDescription:
+      'Dein privater KI-Assistent, intelligent, hilfreich und datenschutzfreundlich.',
     codeaDescription: 'Ein moderner, webbasierter Code-Editor mit KI-Unterstützung.',
     homiioDescription: 'Erschwingliches Wohnen, zugänglich durch offene Technologie.',
     faircoinDescription: 'Eine digitale Währung, gebaut für Nachhaltigkeit und fairen Austausch.',
@@ -883,11 +1063,46 @@ const de: Translations = {
   seo: {
     siteName: 'Oxy',
   },
-  dashboard: { ...en.dashboard, mapView: 'Kartenansicht', mapFlat: 'Flache Karte', mapGlobe: 'Globus',
-    traffic: {"identity": "Identität", "ai": "KI", "communication": "Nachrichten", "media": "Medien", "platform": "Plattform", "internal": "Intern", "external": "Extern", "inbound": "Eingehend", "outbound": "Ausgehend"}, totalUsers: 'Nutzer gesamt', infrastructureActivity: 'Live-Infrastrukturaktivität', waitingActivity: 'Warte auf anonyme Aktivität…', activeRegions: 'Aktive Regionen', networkOrigins: 'Live-Netzwerkursprünge', contentPerUser: 'Inhalt / Nutzer', itemsPerUser: 'Elemente / Nutzer', activeSessions: 'Aktive Sitzungen', developerApps: 'Entwickler-Apps', storedFiles: 'Gespeicherte Dateien', files: 'Dateien', messages: 'Nachrichten', notifications: 'Benachrichtigungen', transactions: 'Transaktionen', noneYet: 'Noch keine', aiModels: 'KI-Modelle', connections: 'Verbindungen', platformActivity: 'Plattformaktivität', metricDetail: '{metric} wird aus echten Daten berechnet und automatisch aktualisiert.' },
+  dashboard: {
+    ...en.dashboard,
+    mapView: 'Kartenansicht',
+    mapFlat: 'Flache Karte',
+    mapGlobe: 'Globus',
+    traffic: {
+      identity: 'Identität',
+      ai: 'KI',
+      communication: 'Nachrichten',
+      media: 'Medien',
+      platform: 'Plattform',
+      internal: 'Intern',
+      external: 'Extern',
+      inbound: 'Eingehend',
+      outbound: 'Ausgehend',
+    },
+    totalUsers: 'Nutzer gesamt',
+    infrastructureActivity: 'Live-Infrastrukturaktivität',
+    waitingActivity: 'Warte auf anonyme Aktivität…',
+    activeRegions: 'Aktive Regionen',
+    networkOrigins: 'Live-Netzwerkursprünge',
+    contentPerUser: 'Inhalt / Nutzer',
+    itemsPerUser: 'Elemente / Nutzer',
+    activeSessions: 'Aktive Sitzungen',
+    developerApps: 'Entwickler-Apps',
+    storedFiles: 'Gespeicherte Dateien',
+    files: 'Dateien',
+    messages: 'Nachrichten',
+    notifications: 'Benachrichtigungen',
+    transactions: 'Transaktionen',
+    noneYet: 'Noch keine',
+    aiModels: 'KI-Modelle',
+    connections: 'Verbindungen',
+    platformActivity: 'Plattformaktivität',
+    metricDetail: '{metric} wird aus echten Daten berechnet und automatisch aktualisiert.',
+  },
   errors: {
     notFoundTitle: '404 — Seite nicht gefunden',
-    notFoundDescription: 'Entschuldigung, wir konnten diese Seite nicht finden. Sie wurde möglicherweise verschoben oder entfernt.',
+    notFoundDescription:
+      'Entschuldigung, wir konnten diese Seite nicht finden. Sie wurde möglicherweise verschoben oder entfernt.',
     notFoundCta: 'Zurück zur Startseite',
   },
 
@@ -907,63 +1122,99 @@ const de: Translations = {
     versionDeprecated: 'veraltet',
   },
   pricingHub: {
-    "seoTitle": "Preise passend zu deiner Nutzung von Oxy",
-    "title": "Raum für mehr.",
-    "description": "Ein Abo für deine alltäglichen Apps. Credits für zusätzliche KI-Nutzung. Inferenz für deine Projekte. Finde die passende Option.",
-    "oneAudience": "Für Einzelpersonen, Familien und Teams",
-    "oneBody": "Mehr aus deinen Lieblings-Apps, gemeinsam in einem Abo.",
-    "oneDetail": "Vergleiche enthaltene App-Abos, Speicherplatz und KI-Nutzung der Tarife Personal, Creator und Business.",
-    "oneCta": "Oxy One entdecken",
-    "creditsTitle": "Credits",
-    "creditsAudience": "Für zusätzliche KI-Nutzung",
-    "creditsBody": "Lade nach, wenn du etwas mehr brauchst.",
-    "creditsDetail": "Credits decken unterstützte KI- und API-Nutzung ab. Prüfe verfügbare Käufe und Tarifrabatte vor dem Bezahlen in deinem Konto.",
-    "creditsCta": "Credits entdecken",
-    "inferenceTitle": "Inferenz",
-    "inferenceAudience": "Für Entwickler und Unternehmen",
-    "inferenceBody": "Mit Modellen entwickeln. Nach Nutzung zahlen.",
-    "inferenceDetail": "Vergleiche veröffentlichte Modellpreise, prüfe die Abrechnungseinheiten und schätze die Kosten deiner Workloads.",
-    "inferenceCta": "Inferenzpreise ansehen",
-    "freeTitle": "Starte kostenlos.",
-    "freeBody": "Dein Oxy-Konto und die kostenlosen Open-Source-Apps stehen allen offen. Abos bieten zusätzliche Werkzeuge und Kapazität. Oxy ist werbefrei und Verifizierung ist niemals käuflich.",
-    "faqTitle": "Etwas mehr Klarheit.",
-    "faqPlanQuestion": "Brauche ich Oxy One, um Oxy zu nutzen?",
-    "faqPlanAnswer": "Nein. Du kannst die kostenlosen Apps nutzen, einzelne Apps abonnieren oder das Oxy-One-Paket wählen. Vergleiche die enthaltenen Abos und Grenzen der einzelnen Tarife.",
-    "faqCreditsQuestion": "Sind Credits dasselbe wie ein Abo?",
-    "faqCreditsAnswer": "Ein Abo bietet die im Tarif genannten App-Vorteile und KI-Nutzung. Credits kaufst du separat für unterstützte zusätzliche Nutzung; sie schalten nicht alle Vorteile von Oxy One frei. Inferenzpreise hängen vom Modell und der geleisteten Arbeit ab.",
-    "faqBillingQuestion": "Wo verwalte ich meine Abrechnung?",
-    "faqBillingAnswer": "Verwalte Oxy One und persönliche Zahlungen in Oxy Accounts. Credits und Entwicklernutzung findest du in Oxy Console. Beim Bezahlen in deinem Konto siehst du die verfügbaren Angebote und Bedingungen."
-},
+    seoTitle: 'Preise passend zu deiner Nutzung von Oxy',
+    title: 'Raum für mehr.',
+    description:
+      'Ein Abo für deine alltäglichen Apps. Credits für zusätzliche KI-Nutzung. Inferenz für deine Projekte. Finde die passende Option.',
+    oneAudience: 'Für Einzelpersonen, Familien und Teams',
+    oneBody: 'Mehr aus deinen Lieblings-Apps, gemeinsam in einem Abo.',
+    oneDetail:
+      'Vergleiche enthaltene App-Abos, Speicherplatz und KI-Nutzung der Tarife Personal, Creator und Business.',
+    oneCta: 'Oxy One entdecken',
+    creditsTitle: 'Credits',
+    creditsAudience: 'Für zusätzliche KI-Nutzung',
+    creditsBody: 'Lade nach, wenn du etwas mehr brauchst.',
+    creditsDetail:
+      'Credits decken unterstützte KI- und API-Nutzung ab. Prüfe verfügbare Käufe und Tarifrabatte vor dem Bezahlen in deinem Konto.',
+    creditsCta: 'Credits entdecken',
+    inferenceTitle: 'Inferenz',
+    inferenceAudience: 'Für Entwickler und Unternehmen',
+    inferenceBody: 'Mit Modellen entwickeln. Nach Nutzung zahlen.',
+    inferenceDetail:
+      'Vergleiche veröffentlichte Modellpreise, prüfe die Abrechnungseinheiten und schätze die Kosten deiner Workloads.',
+    inferenceCta: 'Inferenzpreise ansehen',
+    freeTitle: 'Starte kostenlos.',
+    freeBody:
+      'Dein Oxy-Konto und die kostenlosen Open-Source-Apps stehen allen offen. Abos bieten zusätzliche Werkzeuge und Kapazität. Oxy ist werbefrei und Verifizierung ist niemals käuflich.',
+    faqTitle: 'Etwas mehr Klarheit.',
+    faqPlanQuestion: 'Brauche ich Oxy One, um Oxy zu nutzen?',
+    faqPlanAnswer:
+      'Nein. Du kannst die kostenlosen Apps nutzen, einzelne Apps abonnieren oder das Oxy-One-Paket wählen. Vergleiche die enthaltenen Abos und Grenzen der einzelnen Tarife.',
+    faqCreditsQuestion: 'Sind Credits dasselbe wie ein Abo?',
+    faqCreditsAnswer:
+      'Ein Abo bietet die im Tarif genannten App-Vorteile und KI-Nutzung. Credits kaufst du separat für unterstützte zusätzliche Nutzung; sie schalten nicht alle Vorteile von Oxy One frei. Inferenzpreise hängen vom Modell und der geleisteten Arbeit ab.',
+    faqBillingQuestion: 'Wo verwalte ich meine Abrechnung?',
+    faqBillingAnswer:
+      'Verwalte Oxy One und persönliche Zahlungen in Oxy Accounts. Credits und Entwicklernutzung findest du in Oxy Console. Beim Bezahlen in deinem Konto siehst du die verfügbaren Angebote und Bedingungen.',
+  },
 
-  store: {"title": "The Oxy Store", "announcement": "Vorschaukollektion · Kein Kauf möglich", "description": "Alltagsgegenstände von Oxy. Entdecke eine Vorschau auf Kleidung, Accessoires und Schreibtischzubehör.", "demo": "Vorschaukollektion. Produkte und Preise sind Beispiele; Käufe und Zahlungen sind nicht möglich.", "collections": "Kollektionen", "all": "Alle Produkte", "wear": "Kleidung", "carry": "Taschen", "desk": "Am Schreibtisch", "drink": "Trinkgefäße", "bag": "Warenkorb", "add": "Zum Demo-Warenkorb hinzufügen", "remove": "Entfernen", "empty": "Dein Warenkorb ist leer.", "total": "Demo-Gesamtsumme", "featured": "Weitere Highlights", "about": "Ein bisschen Oxy, abseits des Bildschirms. Vertraute Dinge zum Gestalten, Nachdenken und Innehalten.", "learn": "Über Oxy", "sample": "Vorschau", "pair": "2er-Set"},
+  store: {
+    title: 'The Oxy Store',
+    announcement: 'Vorschaukollektion · Kein Kauf möglich',
+    description:
+      'Alltagsgegenstände von Oxy. Entdecke eine Vorschau auf Kleidung, Accessoires und Schreibtischzubehör.',
+    demo: 'Vorschaukollektion. Produkte und Preise sind Beispiele; Käufe und Zahlungen sind nicht möglich.',
+    collections: 'Kollektionen',
+    all: 'Alle Produkte',
+    wear: 'Kleidung',
+    carry: 'Taschen',
+    desk: 'Am Schreibtisch',
+    drink: 'Trinkgefäße',
+    bag: 'Warenkorb',
+    add: 'Zum Demo-Warenkorb hinzufügen',
+    remove: 'Entfernen',
+    empty: 'Dein Warenkorb ist leer.',
+    total: 'Demo-Gesamtsumme',
+    featured: 'Weitere Highlights',
+    about:
+      'Ein bisschen Oxy, abseits des Bildschirms. Vertraute Dinge zum Gestalten, Nachdenken und Innehalten.',
+    learn: 'Über Oxy',
+    sample: 'Vorschau',
+    pair: '2er-Set',
+  },
 
-  storeFavorites: {"title": "Favoriten", "hint": "Auf diesem Gerät gespeichert.", "empty": "Du hast noch keine Objekte gespeichert.", "remove": "Aus Favoriten entfernen"},
+  storeFavorites: {
+    title: 'Favoriten',
+    hint: 'Auf diesem Gerät gespeichert.',
+    empty: 'Du hast noch keine Objekte gespeichert.',
+    remove: 'Aus Favoriten entfernen',
+  },
 
   storeProduct: {
-    "share": "Teilen",
-    "save": "Merken",
-    "saved": "Auf diesem Gerät gespeichert",
-    "details": "Details",
-    "shipping": "Versand und Rückgabe",
-    "shippingBody": "In dieser Vorschau werden keine Bestellungen aufgegeben. Versand und Rückgabe werden nicht angeboten.",
-    "format": "Format",
-    "single": "Einzelstück",
-    "price": "Preis",
-    "related": "Passt dazu",
-    "quantity": "Menge",
-    "increase": "Menge erhöhen",
-    "decrease": "Menge verringern",
-    "continue": "Weiter stöbern",
-    "zoom": "Bildansicht öffnen",
-    "zoomIn": "Vergrößern",
-    "zoomOut": "Verkleinern",
-    "previous": "Vorheriges Bild",
-    "next": "Nächstes Bild",
-    "gallery": "Produktbilder",
-    "viewImage": "Bild {number} ansehen",
-    "back": "Zurück zum Shop"
-},
+    share: 'Teilen',
+    save: 'Merken',
+    saved: 'Auf diesem Gerät gespeichert',
+    details: 'Details',
+    shipping: 'Versand und Rückgabe',
+    shippingBody:
+      'In dieser Vorschau werden keine Bestellungen aufgegeben. Versand und Rückgabe werden nicht angeboten.',
+    format: 'Format',
+    single: 'Einzelstück',
+    price: 'Preis',
+    related: 'Passt dazu',
+    quantity: 'Menge',
+    increase: 'Menge erhöhen',
+    decrease: 'Menge verringern',
+    continue: 'Weiter stöbern',
+    zoom: 'Bildansicht öffnen',
+    zoomIn: 'Vergrößern',
+    zoomOut: 'Verkleinern',
+    previous: 'Vorheriges Bild',
+    next: 'Nächstes Bild',
+    gallery: 'Produktbilder',
+    viewImage: 'Bild {number} ansehen',
+    back: 'Zurück zum Shop',
+  },
+};
 
-}
-
-export default de
+export default de;

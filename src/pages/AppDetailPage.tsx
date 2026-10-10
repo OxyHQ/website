@@ -1,6 +1,6 @@
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import AppDetailContent from '../components/apps/AppDetailContent'
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import AppDetailContent from '../components/apps/AppDetailContent';
 
 /**
  * No `PageShell` here: the SEO for this route depends on the app being shown,
@@ -15,5 +15,5 @@ export default function AppDetailPage() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }

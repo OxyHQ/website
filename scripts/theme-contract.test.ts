@@ -1,6 +1,6 @@
-import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { describe, expect, test } from 'bun:test';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   APP_COLOR_NAMES,
   APP_COLOR_PRESETS,
@@ -10,11 +10,11 @@ import {
   FREE_COLOR_NAMES,
   HANDLE_COLOR_NAMES,
   PREMIUM_COLOR_NAMES,
-} from '@oxy.so/bloom/color-presets'
-import { getPresetVars } from '@oxy.so/bloom/design-tokens'
-import { FAIRCOIN_PRESET, SITE_PRESET } from '../src/theme/brands'
-import { PUBLIC_COLOR_PRESET_GROUPS } from '../src/theme/preset-catalog'
-import { resolveLabPalette } from '../src/theme/color-lab-palette'
+} from '@oxy.so/bloom/color-presets';
+import { getPresetVars } from '@oxy.so/bloom/design-tokens';
+import { FAIRCOIN_PRESET, SITE_PRESET } from '../src/theme/brands';
+import { PUBLIC_COLOR_PRESET_GROUPS } from '../src/theme/preset-catalog';
+import { resolveLabPalette } from '../src/theme/color-lab-palette';
 
 const PREVIEW_ROLES = [
   '--background',
@@ -28,96 +28,101 @@ const PREVIEW_ROLES = [
   '--primary-subtle',
   '--secondary',
   '--tertiary',
-] as const
+] as const;
 
-type ProjectScripts = Record<string, string>
+type ProjectScripts = Record<string, string>;
 
-const BROWSER_INSTALL_COMMAND = 'bunx playwright install chromium'
-const CLOUDFLARE_BUILD_COMMAND = '- run: bun run build'
+const BROWSER_INSTALL_COMMAND = 'bunx playwright install chromium';
+const CLOUDFLARE_BUILD_COMMAND = '- run: bun run build';
 
-const hasHardcodedColor = (value: string): boolean =>
-  /#[0-9a-f]{3,8}\b|rgba?\(/i.test(value)
+const hasHardcodedColor = (value: string): boolean => /#[0-9a-f]{3,8}\b|rgba?\(/i.test(value);
 
 const hasProvisionedCloudflareBrowserGate = (
   scripts: ProjectScripts,
   workflow: string,
 ): boolean => {
-  const installOffset = workflow.indexOf(BROWSER_INSTALL_COMMAND)
-  const buildOffset = workflow.indexOf(CLOUDFLARE_BUILD_COMMAND)
-  const installCount = [...workflow.matchAll(new RegExp(BROWSER_INSTALL_COMMAND, 'g'))].length
+  const installOffset = workflow.indexOf(BROWSER_INSTALL_COMMAND);
+  const buildOffset = workflow.indexOf(CLOUDFLARE_BUILD_COMMAND);
+  const installCount = [...workflow.matchAll(new RegExp(BROWSER_INSTALL_COMMAND, 'g'))].length;
 
-  return scripts.postbuild.includes('bun run test:theme:browser')
-    && scripts['test:theme:browser'] === 'bun scripts/theme-prepaint.browser.test.ts'
-    && installCount === 1
-    && installOffset > -1
-    && buildOffset > -1
-    && installOffset < buildOffset
-}
+  return (
+    scripts.postbuild.includes('bun run test:theme:browser') &&
+    scripts['test:theme:browser'] === 'bun scripts/theme-prepaint.browser.test.ts' &&
+    installCount === 1 &&
+    installOffset > -1 &&
+    buildOffset > -1 &&
+    installOffset < buildOffset
+  );
+};
 
 describe('Bloom theme contract', () => {
   test('publishes every preset name exactly once', () => {
-    expect(COLOR_PRESET_REGISTRY).toHaveLength(64)
-    expect(COLOR_PRESET_REGISTRY.filter((recipe) => recipe.pairing === 'curated')).toHaveLength(47)
-    expect(COLOR_PRESET_REGISTRY.filter((recipe) => recipe.pairing === 'derived')).toHaveLength(17)
-    expect(new Set(APP_COLOR_NAMES).size).toBe(APP_COLOR_NAMES.length)
-    for (const name of APP_COLOR_NAMES) expect(APP_COLOR_PRESETS[name]?.name).toBe(name)
-  })
+    expect(COLOR_PRESET_REGISTRY).toHaveLength(64);
+    expect(COLOR_PRESET_REGISTRY.filter((recipe) => recipe.pairing === 'curated')).toHaveLength(47);
+    expect(COLOR_PRESET_REGISTRY.filter((recipe) => recipe.pairing === 'derived')).toHaveLength(17);
+    expect(new Set(APP_COLOR_NAMES).size).toBe(APP_COLOR_NAMES.length);
+    for (const name of APP_COLOR_NAMES) expect(APP_COLOR_PRESETS[name]?.name).toBe(name);
+  });
 
   test('groups the same recipes that the website picker renders', () => {
-    const groupedNames = COLOR_PRESET_FAMILY_REGISTRY.flatMap(
-      (family) => COLOR_PRESET_GROUPS[family.name].presets.map((preset) => preset.name),
-    )
-    expect(groupedNames).toEqual(expect.arrayContaining(APP_COLOR_NAMES))
-    expect(new Set(groupedNames)).toEqual(new Set(APP_COLOR_NAMES))
-    expect(APP_COLOR_PRESETS.cobalt.tertiaryHex).toBe('#ffd000')
-  })
+    const groupedNames = COLOR_PRESET_FAMILY_REGISTRY.flatMap((family) =>
+      COLOR_PRESET_GROUPS[family.name].presets.map((preset) => preset.name),
+    );
+    expect(groupedNames).toEqual(expect.arrayContaining(APP_COLOR_NAMES));
+    expect(new Set(groupedNames)).toEqual(new Set(APP_COLOR_NAMES));
+    expect(APP_COLOR_PRESETS.cobalt.tertiaryHex).toBe('#ffd000');
+  });
 
   test('offers only free recipes without inventing entitlement state', () => {
     const publicNames = PUBLIC_COLOR_PRESET_GROUPS.flatMap((group) =>
       group.presets.map((preset) => preset.name),
-    )
-    expect(new Set(publicNames)).toEqual(new Set(FREE_COLOR_NAMES))
+    );
+    expect(new Set(publicNames)).toEqual(new Set(FREE_COLOR_NAMES));
     for (const gated of [...HANDLE_COLOR_NAMES, ...PREMIUM_COLOR_NAMES]) {
-      expect(publicNames).not.toContain(gated)
+      expect(publicNames).not.toContain(gated);
     }
-  })
+  });
 
   test('generates prepaint selectors for exactly the public presets', () => {
-    const css = readFileSync(join(import.meta.dir, '..', 'src', 'styles', 'theme.generated.css'), 'utf8')
-    const generatedNames = [...css.matchAll(/:root\[data-color-preset='([^']+)'\]/g)]
-      .map((match) => match[1])
-    expect(new Set(generatedNames)).toEqual(new Set(FREE_COLOR_NAMES))
+    const css = readFileSync(
+      join(import.meta.dir, '..', 'src', 'styles', 'theme.generated.css'),
+      'utf8',
+    );
+    const generatedNames = [...css.matchAll(/:root\[data-color-preset='([^']+)'\]/g)].map(
+      (match) => match[1],
+    );
+    expect(new Set(generatedNames)).toEqual(new Set(FREE_COLOR_NAMES));
     for (const name of FREE_COLOR_NAMES) {
-      expect(css).toContain(`:root[data-color-preset='${name}']`)
-      expect(css).toContain(`:root[data-color-preset='${name}'].dark`)
+      expect(css).toContain(`:root[data-color-preset='${name}']`);
+      expect(css).toContain(`:root[data-color-preset='${name}'].dark`);
     }
     for (const gated of [...HANDLE_COLOR_NAMES, ...PREMIUM_COLOR_NAMES]) {
-      expect(generatedNames).not.toContain(gated)
+      expect(generatedNames).not.toContain(gated);
     }
-  })
+  });
 
   test('keeps the website brand presets in Bloom', () => {
-    expect(APP_COLOR_NAMES).toContain(SITE_PRESET)
-    expect(APP_COLOR_NAMES).toContain(FAIRCOIN_PRESET)
-  })
+    expect(APP_COLOR_NAMES).toContain(SITE_PRESET);
+    expect(APP_COLOR_NAMES).toContain(FAIRCOIN_PRESET);
+  });
 
   test('resolves the paired light and dark roles used by the settings previews', () => {
     for (const name of APP_COLOR_NAMES) {
-      const light = getPresetVars(name, 'light')
-      const dark = getPresetVars(name, 'dark')
+      const light = getPresetVars(name, 'light');
+      const dark = getPresetVars(name, 'dark');
 
       for (const role of PREVIEW_ROLES) {
-        expect(light[role], `${name} light ${role}`).toMatch(/^rgba?\(/)
-        expect(dark[role], `${name} dark ${role}`).toMatch(/^rgba?\(/)
+        expect(light[role], `${name} light ${role}`).toMatch(/^rgba?\(/);
+        expect(dark[role], `${name} dark ${role}`).toMatch(/^rgba?\(/);
       }
-      expect(light['--background'], `${name} light/dark background`).not.toBe(dark['--background'])
+      expect(light['--background'], `${name} light/dark background`).not.toBe(dark['--background']);
     }
-  }, 15_000)
+  }, 15_000);
 
   test('keeps the color lab role projection on Bloom resolved tokens', () => {
     for (const recipe of COLOR_PRESET_REGISTRY) {
       for (const mode of ['light', 'dark'] as const) {
-        const tokens = getPresetVars(recipe.name, mode)
+        const tokens = getPresetVars(recipe.name, mode);
         expect(resolveLabPalette(recipe.name, mode)).toEqual({
           canvas: tokens['--background'],
           shell: tokens['--surface'],
@@ -130,55 +135,67 @@ describe('Bloom theme contract', () => {
           action: tokens['--tertiary'],
           onAction: tokens['--tertiary-foreground'],
           actionSoft: tokens['--tertiary-subtle'],
-        })
+        });
       }
     }
-  }, 15_000)
+  }, 15_000);
 
   test('does not add a local palette to the color lab chrome', () => {
     const source = readFileSync(
       join(import.meta.dir, '..', 'src', 'components', 'docs', 'ColorSystemPlayground.tsx'),
       'utf8',
-    )
-    expect(hasHardcodedColor(source)).toBe(false)
-    expect(hasHardcodedColor("const localPalette = { shell: '#f1eee8' }")).toBe(true)
-  })
+    );
+    expect(hasHardcodedColor(source)).toBe(false);
+    expect(hasHardcodedColor("const localPalette = { shell: '#f1eee8' }")).toBe(true);
+  });
 
   test('keeps color lab media on versioned local assets', () => {
     const source = readFileSync(
       join(import.meta.dir, '..', 'src', 'components', 'docs', 'ColorSystemPlayground.tsx'),
       'utf8',
-    )
+    );
     const hardcodedOxyMedia = (value: string): boolean =>
-      /https?:\/\/(?:cloud\.)?oxy\.so\//i.test(value)
-    expect(hardcodedOxyMedia(source)).toBe(false)
-    expect(hardcodedOxyMedia("source={{ uri: 'https://cloud.oxy.so/file-id' }}")).toBe(true)
-    expect(source).toContain("from '../../assets/mention/")
-  })
+      /https?:\/\/(?:cloud\.)?oxy\.so\//i.test(value);
+    expect(hardcodedOxyMedia(source)).toBe(false);
+    expect(hardcodedOxyMedia("source={{ uri: 'https://cloud.oxy.so/file-id' }}")).toBe(true);
+    expect(source).toContain("from '../../assets/mention/");
+  });
 
   test('provisions Chromium before Cloudflare runs the browser-gated build', () => {
     const packageJson = JSON.parse(
       readFileSync(join(import.meta.dir, '..', 'package.json'), 'utf8'),
-    ) as { scripts: ProjectScripts }
+    ) as { scripts: ProjectScripts };
     const workflow = readFileSync(
       join(import.meta.dir, '..', '.github', 'workflows', 'deploy.yml'),
       'utf8',
-    )
+    );
 
-    expect(hasProvisionedCloudflareBrowserGate(packageJson.scripts, workflow)).toBe(true)
-    expect(hasProvisionedCloudflareBrowserGate(
-      packageJson.scripts,
-      workflow.replace(BROWSER_INSTALL_COMMAND, ''),
-    )).toBe(false)
-    expect(hasProvisionedCloudflareBrowserGate(
-      packageJson.scripts,
-      workflow
-        .replace(`        run: ${BROWSER_INSTALL_COMMAND}\n`, '')
-        .replace(CLOUDFLARE_BUILD_COMMAND, `${CLOUDFLARE_BUILD_COMMAND}\n\n      - run: ${BROWSER_INSTALL_COMMAND}`),
-    )).toBe(false)
-    expect(hasProvisionedCloudflareBrowserGate(
-      { ...packageJson.scripts, postbuild: packageJson.scripts.postbuild.replace('bun run test:theme:browser', '') },
-      workflow,
-    )).toBe(false)
-  })
-})
+    expect(hasProvisionedCloudflareBrowserGate(packageJson.scripts, workflow)).toBe(true);
+    expect(
+      hasProvisionedCloudflareBrowserGate(
+        packageJson.scripts,
+        workflow.replace(BROWSER_INSTALL_COMMAND, ''),
+      ),
+    ).toBe(false);
+    expect(
+      hasProvisionedCloudflareBrowserGate(
+        packageJson.scripts,
+        workflow
+          .replace(`        run: ${BROWSER_INSTALL_COMMAND}\n`, '')
+          .replace(
+            CLOUDFLARE_BUILD_COMMAND,
+            `${CLOUDFLARE_BUILD_COMMAND}\n\n      - run: ${BROWSER_INSTALL_COMMAND}`,
+          ),
+      ),
+    ).toBe(false);
+    expect(
+      hasProvisionedCloudflareBrowserGate(
+        {
+          ...packageJson.scripts,
+          postbuild: packageJson.scripts.postbuild.replace('bun run test:theme:browser', ''),
+        },
+        workflow,
+      ),
+    ).toBe(false);
+  });
+});

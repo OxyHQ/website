@@ -1,19 +1,19 @@
-import { useCallback, type ReactNode } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { RiHandHeartLine } from '@oxy.so/bloom/icons/RiHandHeartLine'
-import { RiMoneyDollarCircleLine } from '@oxy.so/bloom/icons/RiMoneyDollarCircleLine'
-import { RiShareLine } from '@oxy.so/bloom/icons/RiShareLine'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import Button from '../components/ui/Button'
-import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { FaqList } from '../components/sections/FaqSection'
-import { HorizontalLine, DashedVLines } from '../components/ui/GridDecoration'
-import { API_BASE } from '../api/client'
-import { useReferral, usePage, type PageSection } from '../api/hooks'
-import { sectionContent, sectionHeading, sectionSubheading } from '../lib/cmsSections'
-import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import { useCallback, type ReactNode } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { RiHandHeartLine } from '@oxy.so/bloom/icons/RiHandHeartLine';
+import { RiMoneyDollarCircleLine } from '@oxy.so/bloom/icons/RiMoneyDollarCircleLine';
+import { RiShareLine } from '@oxy.so/bloom/icons/RiShareLine';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import Button from '../components/ui/Button';
+import KeepUpToDateSection from '../components/sections/KeepUpToDateSection';
+import { FaqList } from '../components/sections/FaqSection';
+import { HorizontalLine, DashedVLines } from '../components/ui/GridDecoration';
+import { API_BASE } from '../api/client';
+import { useReferral, usePage, type PageSection } from '../api/hooks';
+import { sectionContent, sectionHeading, sectionSubheading } from '../lib/cmsSections';
+import { AnimatedTitle } from '../components/ui/AnimatedTitle';
 
 /* ──────────────────────────────────────────────────────────────────────────
  * /referrals — public referral landing
@@ -30,20 +30,22 @@ import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 // ── Fallback copy (used when the CMS `pages/referrals` doc is empty) ──
 
-const DEFAULT_HERO_BADGE = 'Earn with Oxy. Or just share what you love.'
-const DEFAULT_HERO_TITLE = 'Refer people to Oxy. Get paid, get perks, or just pass it on.'
-const DEFAULT_HERO_SUBTITLE = 'Three ways to share the Oxy ecosystem with the people around you — pick the one that fits. Every link is tracked, every referrer is credited, nothing is hidden.'
+const DEFAULT_HERO_BADGE = 'Earn with Oxy. Or just share what you love.';
+const DEFAULT_HERO_TITLE = 'Refer people to Oxy. Get paid, get perks, or just pass it on.';
+const DEFAULT_HERO_SUBTITLE =
+  'Three ways to share the Oxy ecosystem with the people around you — pick the one that fits. Every link is tracked, every referrer is credited, nothing is hidden.';
 
-const DEFAULT_PROGRAMS_HEADING = 'Three ways to refer'
-const DEFAULT_PROGRAMS_SUBHEADING = 'Every program runs on the same infrastructure — attribution windows, dashboards, and transparent reporting. The only thing that changes is how you get rewarded.'
+const DEFAULT_PROGRAMS_HEADING = 'Three ways to refer';
+const DEFAULT_PROGRAMS_SUBHEADING =
+  'Every program runs on the same infrastructure — attribution windows, dashboards, and transparent reporting. The only thing that changes is how you get rewarded.';
 
 interface ProgramCard {
-  key: 'paid' | 'ambassador' | 'user'
-  icon: ReactNode
-  title: string
-  description: string
-  cta: string
-  ctaHref: string
+  key: 'paid' | 'ambassador' | 'user';
+  icon: ReactNode;
+  title: string;
+  description: string;
+  cta: string;
+  ctaHref: string;
 }
 
 const DEFAULT_PROGRAMS: ProgramCard[] = [
@@ -51,7 +53,8 @@ const DEFAULT_PROGRAMS: ProgramCard[] = [
     key: 'paid',
     icon: <RiMoneyDollarCircleLine width={24} height={24} fill="currentColor" aria-hidden />,
     title: 'Paid affiliates',
-    description: 'Commission-based partners who earn a percentage of every signup and renewal they bring in. Built for creators, agencies, and professional reviewers.',
+    description:
+      'Commission-based partners who earn a percentage of every signup and renewal they bring in. Built for creators, agencies, and professional reviewers.',
     cta: 'Apply for the program',
     ctaHref: '/partners',
   },
@@ -59,7 +62,8 @@ const DEFAULT_PROGRAMS: ProgramCard[] = [
     key: 'ambassador',
     icon: <RiHandHeartLine width={24} height={24} fill="currentColor" aria-hidden />,
     title: 'Ambassadors',
-    description: 'Unpaid-but-tracked advocates who get perks, early access, and community recognition. For the people who would recommend Oxy anyway.',
+    description:
+      'Unpaid-but-tracked advocates who get perks, early access, and community recognition. For the people who would recommend Oxy anyway.',
     cta: 'Become an ambassador',
     ctaHref: '/partners',
   },
@@ -67,50 +71,59 @@ const DEFAULT_PROGRAMS: ProgramCard[] = [
     key: 'user',
     icon: <RiShareLine width={24} height={24} fill="currentColor" aria-hidden />,
     title: 'Just share',
-    description: 'Grab a personal share link in seconds. No application, no paperwork — just a way to send Oxy to a friend and get credit for the assist.',
+    description:
+      'Grab a personal share link in seconds. No application, no paperwork — just a way to send Oxy to a friend and get credit for the assist.',
     cta: 'Get a share link',
     ctaHref: '/referrals/dashboard',
   },
-]
+];
 
-const DEFAULT_STEPS_HEADING = 'How it works'
-const DEFAULT_STEPS_SUBHEADING = 'Same three steps for every program. The difference is what happens after someone signs up.'
+const DEFAULT_STEPS_HEADING = 'How it works';
+const DEFAULT_STEPS_SUBHEADING =
+  'Same three steps for every program. The difference is what happens after someone signs up.';
 
 const DEFAULT_STEPS: Array<{ title: string; description: string }> = [
   {
     title: 'Pick a program',
-    description: 'Apply as a paid affiliate, request an ambassador spot, or grab a personal share link from your dashboard.',
+    description:
+      'Apply as a paid affiliate, request an ambassador spot, or grab a personal share link from your dashboard.',
   },
   {
     title: 'Share your link',
-    description: 'We give you a short URL with your code baked in. Share it anywhere — socials, newsletter, a DM to your brother.',
+    description:
+      'We give you a short URL with your code baked in. Share it anywhere — socials, newsletter, a DM to your brother.',
   },
   {
     title: 'Track what happens',
-    description: 'Every visit, every signup, and (for paid affiliates) every payout shows up in your dashboard in real time.',
+    description:
+      'Every visit, every signup, and (for paid affiliates) every payout shows up in your dashboard in real time.',
   },
-]
+];
 
-const DEFAULT_FAQ_HEADING = 'Common questions'
+const DEFAULT_FAQ_HEADING = 'Common questions';
 
 const DEFAULT_FAQ: Array<{ question: string; answer: string }> = [
   {
     question: 'What commission do paid affiliates earn?',
-    answer: 'Commission rates are set per partner and range from 15% to 30% of first-year plan value, with bonuses on multi-year renewals. Final terms are agreed before your first link goes live.',
+    answer:
+      'Commission rates are set per partner and range from 15% to 30% of first-year plan value, with bonuses on multi-year renewals. Final terms are agreed before your first link goes live.',
   },
   {
     question: 'When do payouts happen?',
-    answer: 'Paid affiliates are paid monthly, on the 15th, for signups that cleared the 30-day refund window. Payouts run via Stripe, bank transfer, or the Oxy wallet — your choice.',
+    answer:
+      'Paid affiliates are paid monthly, on the 15th, for signups that cleared the 30-day refund window. Payouts run via Stripe, bank transfer, or the Oxy wallet — your choice.',
   },
   {
     question: 'How long is the attribution window?',
-    answer: 'Every referral link uses a 30-day cookie plus a server-side code binding. If someone signs up within 30 days of clicking your link — even on a different device where they were already logged in — you still get credit.',
+    answer:
+      'Every referral link uses a 30-day cookie plus a server-side code binding. If someone signs up within 30 days of clicking your link — even on a different device where they were already logged in — you still get credit.',
   },
   {
     question: 'Can I share without applying to a program?',
-    answer: 'Yes. Anyone with an Oxy account can generate a personal share link from their dashboard. You will not get a commission, but you will get recognition in the community and early access to new features.',
+    answer:
+      'Yes. Anyone with an Oxy account can generate a personal share link from their dashboard. You will not get a commission, but you will get recognition in the community and early access to new features.',
   },
-]
+];
 
 // ── CMS helpers ─────────────────────────────────────────────────────────────
 
@@ -121,22 +134,22 @@ const DEFAULT_FAQ: Array<{ question: string; answer: string }> = [
  * so an empty CMS entry still produces a complete page.
  */
 function resolvePrograms(sections: PageSection[]): ProgramCard[] {
-  const items = sections.find((s) => s.type === 'programs')?.items ?? []
-  if (items.length === 0) return DEFAULT_PROGRAMS
-  const overrides = new Map(items.map((i) => [i.key, i.value]))
-  const pick = (key: string, fallback: string): string => overrides.get(key) ?? fallback
+  const items = sections.find((s) => s.type === 'programs')?.items ?? [];
+  if (items.length === 0) return DEFAULT_PROGRAMS;
+  const overrides = new Map(items.map((i) => [i.key, i.value]));
+  const pick = (key: string, fallback: string): string => overrides.get(key) ?? fallback;
   return DEFAULT_PROGRAMS.map((card) => ({
     ...card,
     title: pick(`${card.key}.title`, card.title),
     description: pick(`${card.key}.desc`, card.description),
     cta: pick(`${card.key}.cta`, card.cta),
     ctaHref: pick(`${card.key}.href`, card.ctaHref),
-  }))
+  }));
 }
 
 // ── Layout primitives — match CompanyPage / TechnologiesPage helpers ────────────
 
-const DashedHLine = () => <HorizontalLine className="w-full text-border" dashed />
+const DashedHLine = () => <HorizontalLine className="w-full text-border" dashed />;
 
 // ── Click-tracking sentinel ────────────────────────────────────────────────
 //
@@ -144,38 +157,41 @@ const DashedHLine = () => <HorizontalLine className="w-full text-border" dashed 
 // ref runs exactly once when the sentinel mounts — no useEffect, no retries,
 // and the response is ignored so unknown/inactive codes are silently dropped.
 function ClickTracker({ code }: { code: string }) {
-  const track = useCallback((node: HTMLSpanElement | null) => {
-    if (!node || !code) return
-    const url = `${API_BASE}/referrals/${encodeURIComponent(code)}/click`
-    void fetch(url, { method: 'POST' }).catch(() => {
-      // Network hiccup on a vanity ping isn't worth surfacing to the user.
-    })
-  }, [code])
-  return <span ref={track} aria-hidden="true" className="hidden" />
+  const track = useCallback(
+    (node: HTMLSpanElement | null) => {
+      if (!node || !code) return;
+      const url = `${API_BASE}/referrals/${encodeURIComponent(code)}/click`;
+      void fetch(url, { method: 'POST' }).catch(() => {
+        // Network hiccup on a vanity ping isn't worth surfacing to the user.
+      });
+    },
+    [code],
+  );
+  return <span ref={track} aria-hidden="true" className="hidden" />;
 }
 
 // ── Page ───────────────────────────────────────────────────────────────────
 
 export default function ReferralsPage() {
-  const [searchParams] = useSearchParams()
-  const refCode = searchParams.get('ref') ?? ''
-  const { data: referral } = useReferral(refCode)
-  const { data: pageData } = usePage('referrals')
+  const [searchParams] = useSearchParams();
+  const refCode = searchParams.get('ref') ?? '';
+  const { data: referral } = useReferral(refCode);
+  const { data: pageData } = usePage('referrals');
 
-  const sections = pageData?.sections ?? []
-  const heroBadge = sectionContent(sections, 'hero', DEFAULT_HERO_BADGE)
-  const heroTitle = sectionHeading(sections, 'hero', DEFAULT_HERO_TITLE)
-  const heroSubtitle = sectionSubheading(sections, 'hero', DEFAULT_HERO_SUBTITLE)
-  const programsHeading = sectionHeading(sections, 'programs', DEFAULT_PROGRAMS_HEADING)
-  const programsSubheading = sectionSubheading(sections, 'programs', DEFAULT_PROGRAMS_SUBHEADING)
-  const programs = resolvePrograms(sections)
-  const stepsHeading = sectionHeading(sections, 'steps', DEFAULT_STEPS_HEADING)
-  const stepsSubheading = sectionSubheading(sections, 'steps', DEFAULT_STEPS_SUBHEADING)
-  const faqHeading = sectionHeading(sections, 'faq', DEFAULT_FAQ_HEADING)
+  const sections = pageData?.sections ?? [];
+  const heroBadge = sectionContent(sections, 'hero', DEFAULT_HERO_BADGE);
+  const heroTitle = sectionHeading(sections, 'hero', DEFAULT_HERO_TITLE);
+  const heroSubtitle = sectionSubheading(sections, 'hero', DEFAULT_HERO_SUBTITLE);
+  const programsHeading = sectionHeading(sections, 'programs', DEFAULT_PROGRAMS_HEADING);
+  const programsSubheading = sectionSubheading(sections, 'programs', DEFAULT_PROGRAMS_SUBHEADING);
+  const programs = resolvePrograms(sections);
+  const stepsHeading = sectionHeading(sections, 'steps', DEFAULT_STEPS_HEADING);
+  const stepsSubheading = sectionSubheading(sections, 'steps', DEFAULT_STEPS_SUBHEADING);
+  const faqHeading = sectionHeading(sections, 'faq', DEFAULT_FAQ_HEADING);
 
   // Only treat the code as valid when the server confirms it resolves AND is
   // active — unknown/paused codes simply render as a clean landing.
-  const hasValidCode = Boolean(referral && referral.status === 'active')
+  const hasValidCode = Boolean(referral && referral.status === 'active');
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -205,7 +221,10 @@ export default function ReferralsPage() {
                 <div className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground">
                   {heroBadge}
                 </div>
-                <AnimatedTitle as="h1" className="max-w-[18em] text-balance text-heading-responsive-lg">
+                <AnimatedTitle
+                  as="h1"
+                  className="max-w-[18em] text-balance text-heading-responsive-lg"
+                >
                   {heroTitle}
                 </AnimatedTitle>
                 <p className="mt-4 max-w-2xl text-balance text-lg text-muted-foreground lg:text-xl">
@@ -344,9 +363,19 @@ export default function ReferralsPage() {
         {/* ═══ Become a partner CTA ═══ */}
         <section className="container">
           <div className="relative isolate">
-            <svg width="100%" height="100%" aria-hidden="true" className="mask-t-to-50% absolute inset-0 text-muted">
+            <svg
+              width="100%"
+              height="100%"
+              aria-hidden="true"
+              className="mask-t-to-50% absolute inset-0 text-muted"
+            >
               <defs>
-                <pattern id="referrals-cta-dots" width="10" height="10" patternUnits="userSpaceOnUse">
+                <pattern
+                  id="referrals-cta-dots"
+                  width="10"
+                  height="10"
+                  patternUnits="userSpaceOnUse"
+                >
                   <rect x="5.5" y="5.5" width="1" height="1" fill="currentColor" />
                 </pattern>
               </defs>
@@ -358,11 +387,15 @@ export default function ReferralsPage() {
                 <p className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground">
                   Become a partner
                 </p>
-                <AnimatedTitle as="h2" className="max-w-[18em] text-balance text-heading-responsive-md">
+                <AnimatedTitle
+                  as="h2"
+                  className="max-w-[18em] text-balance text-heading-responsive-md"
+                >
                   Want a custom deal? Let&rsquo;s talk.
                 </AnimatedTitle>
                 <p className="mt-4 max-w-xl text-balance text-lg text-muted-foreground lg:text-xl">
-                  Bigger audience, a specific niche, or an idea we haven&rsquo;t thought of yet? Reach out and we&rsquo;ll set up the program that fits.
+                  Bigger audience, a specific niche, or an idea we haven&rsquo;t thought of yet?
+                  Reach out and we&rsquo;ll set up the program that fits.
                 </p>
                 <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
                   <Button variant="primary" responsive href="/partners">
@@ -382,5 +415,5 @@ export default function ReferralsPage() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }

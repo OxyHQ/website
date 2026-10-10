@@ -1,28 +1,28 @@
-import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
-import { motion } from 'framer-motion'
-import { useRef } from 'react'
-import type { ReactNode } from 'react'
-import { Link } from '../../lib/navigation'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import type SwiperType from 'swiper'
-import { useTranslation } from '../../lib/i18n'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine';
+import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import type { ReactNode } from 'react';
+import { Link } from '../../lib/navigation';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import type SwiperType from 'swiper';
+import { useTranslation } from '../../lib/i18n';
 
 export interface PhotoCard {
-  image?: string
-  visual?: ReactNode
-  title: string
-  description: string
-  link?: { label: string; href: string; external?: boolean }
+  image?: string;
+  visual?: ReactNode;
+  title: string;
+  description: string;
+  link?: { label: string; href: string; external?: boolean };
 }
 
 interface PhotoCardCarouselProps {
-  title: string
-  description?: string
-  cards: readonly PhotoCard[]
-  variant?: 'portrait' | 'square'
-  id?: string
+  title: string;
+  description?: string;
+  cards: readonly PhotoCard[];
+  variant?: 'portrait' | 'square';
+  id?: string;
 }
 
 const REVEAL = {
@@ -30,11 +30,17 @@ const REVEAL = {
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.2 },
   transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
-}
+};
 
-export default function PhotoCardCarousel({ title, description, cards, variant = 'portrait', id }: PhotoCardCarouselProps) {
-  const { t } = useTranslation()
-  const swiperRef = useRef<SwiperType | null>(null)
+export default function PhotoCardCarousel({
+  title,
+  description,
+  cards,
+  variant = 'portrait',
+  id,
+}: PhotoCardCarouselProps) {
+  const { t } = useTranslation();
+  const swiperRef = useRef<SwiperType | null>(null);
 
   return (
     <section id={id} className="container">
@@ -43,7 +49,11 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
           <div className="mb-8 flex items-end justify-between gap-6">
             <div className="max-w-[560px]">
               <h2 className="text-heading-responsive-lg">{title}</h2>
-              {description ? <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">{description}</p> : null}
+              {description ? (
+                <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+                  {description}
+                </p>
+              ) : null}
             </div>
             <div className="flex shrink-0 items-center gap-3">
               <button
@@ -66,7 +76,9 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
           </div>
 
           <Swiper
-            onSwiper={(swiper) => { swiperRef.current = swiper }}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+            }}
             slidesPerView={1.15}
             spaceBetween={24}
             grabCursor
@@ -80,7 +92,9 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
             {cards.map((card) => (
               <SwiperSlide key={card.title} style={{ height: 'auto' }}>
                 <article className="flex h-full flex-col">
-                  <div className={`${variant === 'square' ? 'aspect-square' : 'aspect-[4/5]'} overflow-hidden rounded-3xl`}>
+                  <div
+                    className={`${variant === 'square' ? 'aspect-square' : 'aspect-[4/5]'} overflow-hidden rounded-3xl`}
+                  >
                     {card.image ? (
                       <img
                         src={card.image}
@@ -110,7 +124,12 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
                           className="inline-flex items-center gap-1 text-sm text-primary transition-opacity hover:opacity-70"
                         >
                           {card.link.label}
-                          <RiArrowRightUpLine width={15} height={15} fill="currentColor" aria-hidden />
+                          <RiArrowRightUpLine
+                            width={15}
+                            height={15}
+                            fill="currentColor"
+                            aria-hidden
+                          />
                         </a>
                       ) : (
                         <Link
@@ -118,7 +137,12 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
                           className="inline-flex items-center gap-1 text-sm text-primary transition-opacity hover:opacity-70"
                         >
                           {card.link.label}
-                          <RiArrowRightUpLine width={15} height={15} fill="currentColor" aria-hidden />
+                          <RiArrowRightUpLine
+                            width={15}
+                            height={15}
+                            fill="currentColor"
+                            aria-hidden
+                          />
                         </Link>
                       )}
                     </div>
@@ -130,5 +154,5 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

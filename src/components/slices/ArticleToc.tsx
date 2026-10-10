@@ -1,27 +1,27 @@
-import { useEffect, useRef, useState } from 'react'
-import SliceIcon from './SliceIcon'
+import { useEffect, useRef, useState } from 'react';
+import SliceIcon from './SliceIcon';
 
 export interface TocEntry {
-  id: string
-  label: string
+  id: string;
+  label: string;
   /** 2 for a top-level section, 3+ for a subsection. */
-  level: number
+  level: number;
 }
 
 interface ArticleTocProps {
-  entries: TocEntry[]
+  entries: TocEntry[];
   /** Rendered as a "Download PDF" control above the list when present. */
-  pdfHref?: string
+  pdfHref?: string;
 }
 
 /** Groups each top-level entry with the subsections that follow it. */
 function toSections(entries: TocEntry[]): { entry: TocEntry; children: TocEntry[] }[] {
-  const sections: { entry: TocEntry; children: TocEntry[] }[] = []
+  const sections: { entry: TocEntry; children: TocEntry[] }[] = [];
   for (const entry of entries) {
-    if (entry.level <= 2 || sections.length === 0) sections.push({ entry, children: [] })
-    else sections[sections.length - 1].children.push(entry)
+    if (entry.level <= 2 || sections.length === 0) sections.push({ entry, children: [] });
+    else sections[sections.length - 1].children.push(entry);
   }
-  return sections
+  return sections;
 }
 
 /**
@@ -30,8 +30,8 @@ function toSections(entries: TocEntry[]): { entry: TocEntry; children: TocEntry[
  * unnumbered heading ("Summary") has no first column at all.
  */
 function splitNumber(label: string): { number?: string; text: string } {
-  const match = /^(\d+(?:\.\d+)*\.?)\s+(.*)$/.exec(label)
-  return match ? { number: match[1], text: match[2] } : { text: label }
+  const match = /^(\d+(?:\.\d+)*\.?)\s+(.*)$/.exec(label);
+  return match ? { number: match[1], text: match[2] } : { text: label };
 }
 
 function Row({
@@ -40,12 +40,12 @@ function Row({
   onNavigate,
   active,
 }: {
-  entry: TocEntry
-  spacing: string
-  onNavigate?: () => void
-  active?: boolean
+  entry: TocEntry;
+  spacing: string;
+  onNavigate?: () => void;
+  active?: boolean;
 }) {
-  const { number, text } = splitNumber(entry.label)
+  const { number, text } = splitNumber(entry.label);
   return (
     <a
       href={`#${entry.id}`}
@@ -53,14 +53,12 @@ function Row({
       aria-current={active ? 'location' : undefined}
       className={`flex-1 cursor-pointer ${spacing} transition duration-100 ${
         active ? 'text-primary' : 'text-muted-foreground hover:text-primary'
-      } ${
-        number ? 'grid grid-cols-[auto_1fr] gap-x-2' : ''
-      }`}
+      } ${number ? 'grid grid-cols-[auto_1fr] gap-x-2' : ''}`}
     >
       {number && <span className="shrink-0 tabular-nums">{number}</span>}
       <span>{text}</span>
     </a>
-  )
+  );
 }
 
 /**
@@ -72,125 +70,130 @@ function Row({
  * copied URL reopens at the same place.
  */
 export default function ArticleToc({ entries, pdfHref }: ArticleTocProps) {
-  const [openOnMobile, setOpenOnMobile] = useState(false)
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
-  const [activeId, setActiveId] = useState(entries[0]?.id)
-  const [colliding, setColliding] = useState(false)
-  const navRef = useRef<HTMLElement>(null)
-  const desktopRailRef = useRef<HTMLDivElement>(null)
-  const sections = toSections(entries)
+  const [openOnMobile, setOpenOnMobile] = useState(false);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [activeId, setActiveId] = useState(entries[0]?.id);
+  const [colliding, setColliding] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+  const desktopRailRef = useRef<HTMLDivElement>(null);
+  const sections = toSections(entries);
 
   useEffect(() => {
-    if (entries.length === 0) return
+    if (entries.length === 0) return;
 
-    let frame: number | undefined
+    let frame: number | undefined;
 
     const updateActiveEntry = () => {
-      frame = undefined
-      const headerHeight = Number.parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue('--header-height'),
-      ) || 0
-      const marker = headerHeight + 96
-      let currentId = entries[0].id
+      frame = undefined;
+      const headerHeight =
+        Number.parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue('--header-height'),
+        ) || 0;
+      const marker = headerHeight + 96;
+      let currentId = entries[0].id;
 
       for (const entry of entries) {
-        const heading = document.getElementById(entry.id)
-        if (!heading) continue
-        if (heading.getBoundingClientRect().top <= marker) currentId = entry.id
-        else break
+        const heading = document.getElementById(entry.id);
+        if (!heading) continue;
+        if (heading.getBoundingClientRect().top <= marker) currentId = entry.id;
+        else break;
       }
 
-      setActiveId((previous) => (previous === currentId ? previous : currentId))
-    }
+      setActiveId((previous) => (previous === currentId ? previous : currentId));
+    };
 
     const scheduleUpdate = () => {
-      if (frame === undefined) frame = window.requestAnimationFrame(updateActiveEntry)
-    }
+      if (frame === undefined) frame = window.requestAnimationFrame(updateActiveEntry);
+    };
 
-    updateActiveEntry()
-    window.addEventListener('scroll', scheduleUpdate, { passive: true })
-    window.addEventListener('resize', scheduleUpdate)
+    updateActiveEntry();
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
 
     return () => {
-      window.removeEventListener('scroll', scheduleUpdate)
-      window.removeEventListener('resize', scheduleUpdate)
-      if (frame !== undefined) window.cancelAnimationFrame(frame)
-    }
-  }, [entries])
+      window.removeEventListener('scroll', scheduleUpdate);
+      window.removeEventListener('resize', scheduleUpdate);
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
+    };
+  }, [entries]);
 
   useEffect(() => {
-    const nav = navRef.current
-    const rail = desktopRailRef.current
-    const articleBody = nav?.closest('[data-article-body]')
-    if (!nav || !rail || !articleBody) return
+    const nav = navRef.current;
+    const rail = desktopRailRef.current;
+    const articleBody = nav?.closest('[data-article-body]');
+    if (!nav || !rail || !articleBody) return;
 
-    let frame: number | undefined
-    let targets: HTMLElement[] = []
-    const desktop = window.matchMedia('(min-width: 64rem)')
+    let frame: number | undefined;
+    let targets: HTMLElement[] = [];
+    const desktop = window.matchMedia('(min-width: 64rem)');
 
     const updateCollision = () => {
-      frame = undefined
+      frame = undefined;
       if (!desktop.matches) {
-        setColliding(false)
-        return
+        setColliding(false);
+        return;
       }
 
-      const railRect = rail.getBoundingClientRect()
+      const railRect = rail.getBoundingClientRect();
       const next = targets.some((target) => {
-        const targetRect = target.getBoundingClientRect()
-        const verticalOverlap = targetRect.top < railRect.bottom && targetRect.bottom > railRect.top
-        const horizontalOverlap = targetRect.left < railRect.right && targetRect.right > railRect.left
-        return verticalOverlap && horizontalOverlap
-      })
-      setColliding((previous) => (previous === next ? previous : next))
-    }
+        const targetRect = target.getBoundingClientRect();
+        const verticalOverlap =
+          targetRect.top < railRect.bottom && targetRect.bottom > railRect.top;
+        const horizontalOverlap =
+          targetRect.left < railRect.right && targetRect.right > railRect.left;
+        return verticalOverlap && horizontalOverlap;
+      });
+      setColliding((previous) => (previous === next ? previous : next));
+    };
 
     const scheduleUpdate = () => {
-      if (frame === undefined) frame = window.requestAnimationFrame(updateCollision)
-    }
+      if (frame === undefined) frame = window.requestAnimationFrame(updateCollision);
+    };
 
-    const intersectionObserver = new IntersectionObserver(scheduleUpdate)
-    const resizeObserver = new ResizeObserver(scheduleUpdate)
-    const observedTargets = new Set<HTMLElement>()
+    const intersectionObserver = new IntersectionObserver(scheduleUpdate);
+    const resizeObserver = new ResizeObserver(scheduleUpdate);
+    const observedTargets = new Set<HTMLElement>();
     const syncTargets = () => {
-      const nextTargets = Array.from(articleBody.querySelectorAll<HTMLElement>('[data-toc-collision-target]'))
-      const nextSet = new Set(nextTargets)
+      const nextTargets = Array.from(
+        articleBody.querySelectorAll<HTMLElement>('[data-toc-collision-target]'),
+      );
+      const nextSet = new Set(nextTargets);
 
       observedTargets.forEach((target) => {
-        if (nextSet.has(target)) return
-        intersectionObserver.unobserve(target)
-        resizeObserver.unobserve(target)
-        observedTargets.delete(target)
-      })
+        if (nextSet.has(target)) return;
+        intersectionObserver.unobserve(target);
+        resizeObserver.unobserve(target);
+        observedTargets.delete(target);
+      });
       nextTargets.forEach((target) => {
-        if (observedTargets.has(target)) return
-        observedTargets.add(target)
-        intersectionObserver.observe(target)
-        resizeObserver.observe(target)
-      })
+        if (observedTargets.has(target)) return;
+        observedTargets.add(target);
+        intersectionObserver.observe(target);
+        resizeObserver.observe(target);
+      });
 
-      targets = nextTargets
-      scheduleUpdate()
-    }
-    const mutationObserver = new MutationObserver(syncTargets)
-    mutationObserver.observe(articleBody, { childList: true, subtree: true })
-    syncTargets()
-    resizeObserver.observe(rail)
-    desktop.addEventListener('change', scheduleUpdate)
-    window.addEventListener('scroll', scheduleUpdate, { passive: true })
-    window.addEventListener('resize', scheduleUpdate, { passive: true })
-    updateCollision()
+      targets = nextTargets;
+      scheduleUpdate();
+    };
+    const mutationObserver = new MutationObserver(syncTargets);
+    mutationObserver.observe(articleBody, { childList: true, subtree: true });
+    syncTargets();
+    resizeObserver.observe(rail);
+    desktop.addEventListener('change', scheduleUpdate);
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate, { passive: true });
+    updateCollision();
 
     return () => {
-      intersectionObserver.disconnect()
-      resizeObserver.disconnect()
-      mutationObserver.disconnect()
-      desktop.removeEventListener('change', scheduleUpdate)
-      window.removeEventListener('scroll', scheduleUpdate)
-      window.removeEventListener('resize', scheduleUpdate)
-      if (frame !== undefined) window.cancelAnimationFrame(frame)
-    }
-  }, [entries])
+      intersectionObserver.disconnect();
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      desktop.removeEventListener('change', scheduleUpdate);
+      window.removeEventListener('scroll', scheduleUpdate);
+      window.removeEventListener('resize', scheduleUpdate);
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
+    };
+  }, [entries]);
 
   const pdfLink = (className: string) =>
     pdfHref && (
@@ -203,7 +206,7 @@ export default function ArticleToc({ entries, pdfHref }: ArticleTocProps) {
         Download PDF
         <SliceIcon name="download" className="ms-1 size-4" />
       </a>
-    )
+    );
 
   return (
     <nav
@@ -234,7 +237,7 @@ export default function ArticleToc({ entries, pdfHref }: ArticleTocProps) {
           <div className="overflow-hidden">
             <div className="max-h-[calc(100dvh-var(--header-height)-3rem)] touch-pan-y overflow-y-auto pt-4 [scrollbar-width:none]">
               {entries.map((entry) => {
-                const { number, text } = splitNumber(entry.label)
+                const { number, text } = splitNumber(entry.label);
                 return (
                   <a
                     key={entry.id}
@@ -252,7 +255,7 @@ export default function ArticleToc({ entries, pdfHref }: ArticleTocProps) {
                     {number && <span className="shrink-0 tabular-nums">{number}</span>}
                     <span>{text}</span>
                   </a>
-                )
+                );
               })}
             </div>
           </div>
@@ -274,11 +277,17 @@ export default function ArticleToc({ entries, pdfHref }: ArticleTocProps) {
             <div className="flex items-center">
               {/* The list sits directly under the PDF control, so the first row
                   pads below only — its own top padding would double that gap. */}
-              <Row entry={entry} active={activeId === entry.id} spacing={index === 0 ? 'pb-2' : 'py-2'} />
+              <Row
+                entry={entry}
+                active={activeId === entry.id}
+                spacing={index === 0 ? 'pb-2' : 'py-2'}
+              />
               {children.length > 0 && (
                 <button
                   type="button"
-                  onClick={() => setExpanded((state) => ({ ...state, [entry.id]: !state[entry.id] }))}
+                  onClick={() =>
+                    setExpanded((state) => ({ ...state, [entry.id]: !state[entry.id] }))
+                  }
                   aria-expanded={Boolean(expanded[entry.id])}
                   aria-label={expanded[entry.id] ? 'Collapse section' : 'Expand section'}
                   className="-me-3 cursor-pointer p-3 text-muted-foreground transition-colors duration-100 hover:text-primary"
@@ -311,5 +320,5 @@ export default function ArticleToc({ entries, pdfHref }: ArticleTocProps) {
         ))}
       </div>
     </nav>
-  )
+  );
 }

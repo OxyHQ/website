@@ -44,16 +44,16 @@ const SPA_FALLBACK_PATTERNS: readonly RegExp[] = [
   // The FairCoin dApp needs a wallet to mean anything. On fairco.in these are
   // mounted at the apex, so both shapes have to resolve.
   /^(?:\/faircoin)?\/(?:buy|unwrap|redeem|bridge|wallet)$/,
-]
+];
 
 /** Locale prefixes are stripped before matching, so `/es/u/nate` resolves too. */
-const LOCALE_PREFIX = /^\/[a-z]{2}(?=\/)/
+const LOCALE_PREFIX = /^\/[a-z]{2}(?=\/)/;
 
 /** True when the SPA, not a document, is the right answer for `pathname`. */
 export function isSpaFallbackPath(pathname: string): boolean {
-  const trimmed = pathname.replace(/\/+$/, '') || '/'
-  const bare = trimmed.replace(LOCALE_PREFIX, '') || '/'
-  return SPA_FALLBACK_PATTERNS.some((p) => p.test(trimmed) || p.test(bare))
+  const trimmed = pathname.replace(/\/+$/, '') || '/';
+  const bare = trimmed.replace(LOCALE_PREFIX, '') || '/';
+  return SPA_FALLBACK_PATTERNS.some((p) => p.test(trimmed) || p.test(bare));
 }
 
-export { SPA_FALLBACK_PATTERNS }
+export { SPA_FALLBACK_PATTERNS };

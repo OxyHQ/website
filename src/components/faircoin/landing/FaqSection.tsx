@@ -1,9 +1,9 @@
-import { motion } from 'framer-motion'
-import { FaqList } from '../../sections/FaqSection'
+import { motion } from 'framer-motion';
+import { FaqList } from '../../sections/FaqSection';
 
 interface FaqItem {
-  question: string
-  answer: string
+  question: string;
+  answer: string;
 }
 
 const FAQS: readonly FaqItem[] = [
@@ -32,9 +32,9 @@ const FAQS: readonly FaqItem[] = [
     answer:
       'GitHub at FairCoinOfficial. Discussions happen on Discord and Twitter. The full source for the chain, wallets, explorer, seeder and bridge is open on GitHub.',
   },
-]
+];
 
-const FAQ_ROW_STYLE = { paddingLeft: 24, paddingRight: 24 }
+const FAQ_ROW_STYLE = { paddingLeft: 24, paddingRight: 24 };
 
 export default function FaqSection() {
   return (
@@ -78,5 +78,5 @@ export default function FaqSection() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

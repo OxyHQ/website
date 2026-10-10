@@ -1,9 +1,9 @@
-import { Divider } from '@oxy.so/bloom/divider'
-import type { PlaygroundValues } from './_playground'
+import { Divider } from '@oxy.so/bloom/divider';
+import type { PlaygroundValues } from './_playground';
 
 export const meta = {
   description: 'Thin horizontal or vertical rule used to separate content groups.',
-}
+};
 
 export default function DividerDemo() {
   return (
@@ -14,13 +14,13 @@ export default function DividerDemo() {
       <Divider thickness={2} />
       <div className="text-sm text-foreground">Below</div>
     </div>
-  )
+  );
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const thickness = typeof values.thickness === 'number' ? values.thickness : 1
-  const vertical = values.vertical === true
-  const spacing = typeof values.spacing === 'number' ? values.spacing : 8
+  const thickness = typeof values.thickness === 'number' ? values.thickness : 1;
+  const vertical = values.vertical === true;
+  const spacing = typeof values.spacing === 'number' ? values.spacing : 8;
   if (vertical) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', height: 80, gap: 8 }}>
@@ -28,7 +28,7 @@ export function Playground({ values }: { values: PlaygroundValues }) {
         <Divider vertical thickness={thickness} spacing={spacing} />
         <span style={{ color: 'var(--bloom-color-text, currentColor)' }}>Right</span>
       </div>
-    )
+    );
   }
   return (
     <div style={{ width: 280 }}>
@@ -36,5 +36,5 @@ export function Playground({ values }: { values: PlaygroundValues }) {
       <Divider thickness={thickness} spacing={spacing} />
       <div className="text-sm text-foreground">Below</div>
     </div>
-  )
+  );
 }

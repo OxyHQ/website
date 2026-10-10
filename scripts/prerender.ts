@@ -41,47 +41,53 @@
  * the client as before.
  */
 
-import { readFile, writeFile, mkdir, stat, readdir, rm } from 'node:fs/promises'
-import { existsSync } from 'node:fs'
-import path from 'node:path'
-import { build as viteBuild } from 'vite'
-import { fetchPrerender } from './prerender-fetch'
-import type { SyncedIndex } from './types.ts'
-import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './sitemap.ts'
-import { hasLocalizedVariants } from '../src/lib/localizedRoute'
-import { buildRedirectsFile } from './redirects.ts'
-import { LEGAL_DOCUMENTS, TRANSPARENCY_DOCUMENTS } from '../src/lib/transparency'
-import type { SeoData } from '../src/lib/seo'
-import type { SEOLocaleSeed } from '../src/entry-server'
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, interpolate, isRtlLocale, type Locale } from '../src/lib/i18n/types'
-import en from '../src/lib/i18n/locales/en'
-import { BLOOM_SEO } from '../src/content/bloom-landing'
-import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest'
-import { ACADEMY_COURSES } from '../src/content/academy-courses'
-import { bloomComponentRoutes } from './bloom-component-routes.ts'
-import { BUILD_SNAPSHOT } from '../src/lib/ai/snapshot'
-import { modelPath } from '../src/lib/ai/modelId'
-import { publisherName } from '../src/lib/ai/catalog'
-import { APP_CARD_IMAGES } from '../src/data/appCardImages'
-import { OXY_STORE_ID } from '../src/data/store-config'
-import { createMercariaClient } from '@mercaria.co/sdk'
-import { readMercariaCatalog } from '../src/lib/mercaria-store'
+import { readFile, writeFile, mkdir, stat, readdir, rm } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+import { build as viteBuild } from 'vite';
+import { fetchPrerender } from './prerender-fetch';
+import type { SyncedIndex } from './types.ts';
+import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './sitemap.ts';
+import { hasLocalizedVariants } from '../src/lib/localizedRoute';
+import { buildRedirectsFile } from './redirects.ts';
+import { LEGAL_DOCUMENTS, TRANSPARENCY_DOCUMENTS } from '../src/lib/transparency';
+import type { SeoData } from '../src/lib/seo';
+import type { SEOLocaleSeed } from '../src/entry-server';
+import {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  interpolate,
+  isRtlLocale,
+  type Locale,
+} from '../src/lib/i18n/types';
+import en from '../src/lib/i18n/locales/en';
+import { BLOOM_SEO } from '../src/content/bloom-landing';
+import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest';
+import { ACADEMY_COURSES } from '../src/content/academy-courses';
+import { bloomComponentRoutes } from './bloom-component-routes.ts';
+import { BUILD_SNAPSHOT } from '../src/lib/ai/snapshot';
+import { modelPath } from '../src/lib/ai/modelId';
+import { publisherName } from '../src/lib/ai/catalog';
+import { APP_CARD_IMAGES } from '../src/data/appCardImages';
+import { OXY_STORE_ID } from '../src/data/store-config';
+import { createMercariaClient } from '@mercaria.co/sdk';
+import { readMercariaCatalog } from '../src/lib/mercaria-store';
 
-const storeProducts = (await readMercariaCatalog(createMercariaClient(), OXY_STORE_ID)).products
-import { brandConfig } from '../src/lib/seo'
-import type { NewsroomPost, NewsroomPostSummary } from '../src/data/newsroom'
+const storeProducts = (await readMercariaCatalog(createMercariaClient(), OXY_STORE_ID)).products;
+import { brandConfig } from '../src/lib/seo';
+import type { NewsroomPost, NewsroomPostSummary } from '../src/data/newsroom';
 import {
   NEWSROOM_PRERENDER_MARKER,
   renderNewsroomBootstrapTemplate,
   renderNewsroomIndexBootstrapTemplate,
-} from './newsroom-prerender'
-import { buildNewsroomRss } from './newsroom-feed'
-import { resolveResponsiveImage } from '../src/lib/responsiveImage'
+} from './newsroom-prerender';
+import { buildNewsroomRss } from './newsroom-feed';
+import { resolveResponsiveImage } from '../src/lib/responsiveImage';
 import {
   buildNewsroomArticleStructuredData,
   buildNewsroomCollectionStructuredData,
   normalizeNewsroomSeoTitle,
-} from '../src/lib/newsroomSeo'
+} from '../src/lib/newsroomSeo';
 import {
   careerEmploymentLabel,
   careerJobMarkdown,
@@ -90,17 +96,17 @@ import {
   careerSeoDescription,
   careerTeam,
   type CareerJob,
-} from '../src/lib/careers'
+} from '../src/lib/careers';
 
 // React 19.2's development JSX runtime expects a development renderer
 // dispatcher. This script imports a production SSR bundle into Bun, so make
 // the runtime mode explicit before that dynamic import; mixing the development
 // JSX runtime with the production server renderer crashes on `getOwner()`.
-process.env.NODE_ENV = 'production'
+process.env.NODE_ENV = 'production';
 
 /** Course metadata by slug, so academy titles match what the SPA renders. */
-const COURSE_BY_SLUG = new Map(ACADEMY_COURSES.map((course) => [course.slug, course]))
-const courseTitle = (slug: string): string => COURSE_BY_SLUG.get(slug)?.title ?? prettifySlug(slug)
+const COURSE_BY_SLUG = new Map(ACADEMY_COURSES.map((course) => [course.slug, course]));
+const courseTitle = (slug: string): string => COURSE_BY_SLUG.get(slug)?.title ?? prettifySlug(slug);
 
 /**
  * The Academy's chrome strings, read from the English dictionary the SPA's
@@ -108,33 +114,33 @@ const courseTitle = (slug: string): string => COURSE_BY_SLUG.get(slug)?.title ??
  * is the one the SPA renders, and a copy edit to the dictionary cannot leave
  * the prerendered head behind.
  */
-const ACADEMY_EN = en.academy
+const ACADEMY_EN = en.academy;
 
-const WEBSITE_ROOT = path.resolve(import.meta.dir, '..')
-const DIST_DIR = path.join(WEBSITE_ROOT, 'dist')
-const SSR_DIR = path.join(WEBSITE_ROOT, 'dist-ssr')
-const SYNCED_INDEX = path.join(WEBSITE_ROOT, 'src', 'content', '_synced', 'index.json')
-const SYNCED_DIR = path.join(WEBSITE_ROOT, 'src', 'content', '_synced')
-const HELP_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'help')
-const ACADEMY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'academy')
-const COMPANY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'company')
+const WEBSITE_ROOT = path.resolve(import.meta.dir, '..');
+const DIST_DIR = path.join(WEBSITE_ROOT, 'dist');
+const SSR_DIR = path.join(WEBSITE_ROOT, 'dist-ssr');
+const SYNCED_INDEX = path.join(WEBSITE_ROOT, 'src', 'content', '_synced', 'index.json');
+const SYNCED_DIR = path.join(WEBSITE_ROOT, 'src', 'content', '_synced');
+const HELP_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'help');
+const ACADEMY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'academy');
+const COMPANY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'company');
 /**
  * Backend origin for the CMS-driven content baked into the prerendered HTML.
  * Reads the same `VITE_API_URL` the SPA does (`src/api/client.ts`) so a staging
  * build prerenders staging content instead of silently baking in production;
  * the fallbacks are the production values used when the var is unset.
  */
-const API_BASE = process.env.VITE_API_URL || 'https://website-api.oxy.so'
+const API_BASE = process.env.VITE_API_URL || 'https://website-api.oxy.so';
 // Prerender needs article Markdown and editorial SEO fields. The public list is
 // intentionally lightweight; `view=full` is the explicit build-time contract.
-const NEWSROOM_API = `${API_BASE}/api/newsroom?limit=500&view=full`
-const JOBS_API = `${API_BASE}/api/jobs`
-const PRODUCTS_API = `${API_BASE}/api/products?surface=products`
-const FEATURES_API = `${API_BASE}/api/features`
+const NEWSROOM_API = `${API_BASE}/api/newsroom?limit=500&view=full`;
+const JOBS_API = `${API_BASE}/api/jobs`;
+const PRODUCTS_API = `${API_BASE}/api/products?surface=products`;
+const FEATURES_API = `${API_BASE}/api/features`;
 /** The features list caps `limit` server-side; asking for more returns this many. */
-const FEATURE_PRERENDER_PAGE_SIZE = 50
-const SEO_API = `${API_BASE}/api/seo`
-const LOCALES_API = `${API_BASE}/api/locales`
+const FEATURE_PRERENDER_PAGE_SIZE = 50;
+const SEO_API = `${API_BASE}/api/seo`;
+const LOCALES_API = `${API_BASE}/api/locales`;
 
 /**
  * Cloudflare Pages hard-fails a deployment above 20,000 files. Every extra
@@ -142,35 +148,35 @@ const LOCALES_API = `${API_BASE}/api/locales`
  * couple of locales. We stop well short of it and fail loudly rather than let
  * a deploy get rejected (or worse, silently truncated) after a green build.
  */
-const CF_PAGES_FILE_LIMIT = 20_000
-const FILE_BUDGET = 18_000
+const CF_PAGES_FILE_LIMIT = 20_000;
+const FILE_BUDGET = 18_000;
 
 /** Canonical public origin, used to absolutise OG image URLs. */
-const SITE_URL = process.env.SITE_URL || 'https://oxy.so'
+const SITE_URL = process.env.SITE_URL || 'https://oxy.so';
 
 /** Per-route SEO contract. Mirrors `<SEO>`'s prop interface. */
 interface SEOProps {
-  title: string
-  description: string
-  canonicalPath: string
-  ogImage?: string
-  ogType?: string
-  publishedTime?: string
-  modifiedTime?: string
-  author?: string
-  noIndex?: boolean
+  title: string;
+  description: string;
+  canonicalPath: string;
+  ogImage?: string;
+  ogType?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  noIndex?: boolean;
   /** Absolute canonical for a page whose content is published on another site. */
-  canonicalUrl?: string
+  canonicalUrl?: string;
 }
 
 /** Renders a page's markdown with the app's own article components. */
-type RenderMarkdownFn = (markdown: string) => string
-type RenderStructuredDataFn = (data: Record<string, unknown>) => string
+type RenderMarkdownFn = (markdown: string) => string;
+type RenderStructuredDataFn = (data: Record<string, unknown>) => string;
 
 interface SsrRenderers {
-  renderSEO: RenderSEOFn
-  renderMarkdownBody: RenderMarkdownFn
-  renderStructuredData: RenderStructuredDataFn
+  renderSEO: RenderSEOFn;
+  renderMarkdownBody: RenderMarkdownFn;
+  renderStructuredData: RenderStructuredDataFn;
 }
 
 interface RenderSEOFn {
@@ -178,17 +184,17 @@ interface RenderSEOFn {
     input: SEOProps,
     seoData: SeoData | null,
     options?: { locale?: string; locales?: SEOLocaleSeed[] },
-  ): { head: string }
+  ): { head: string };
 }
 
 /* ── SSR bundle build ─────────────────────────────────────────────── */
 
 async function buildSsrBundle(): Promise<SsrRenderers> {
   if (existsSync(SSR_DIR)) {
-    await rm(SSR_DIR, { recursive: true })
+    await rm(SSR_DIR, { recursive: true });
   }
 
-  console.log('[prerender] building SSR bundle…')
+  console.log('[prerender] building SSR bundle…');
   await viteBuild({
     configFile: path.join(WEBSITE_ROOT, 'vite.config.ts'),
     logLevel: 'error',
@@ -201,11 +207,11 @@ async function buildSsrBundle(): Promise<SsrRenderers> {
         name: 'oxy-prerender-strip-image-optimizer',
         enforce: 'pre' as const,
         configResolved(resolved) {
-          const plugins = resolved.plugins as Array<{ name: string }>
+          const plugins = resolved.plugins as Array<{ name: string }>;
           // Splice in place — there's no immutable variant.
           for (let i = plugins.length - 1; i >= 0; i--) {
             if (plugins[i]?.name === 'vite-plugin-image-optimizer') {
-              plugins.splice(i, 1)
+              plugins.splice(i, 1);
             }
           }
         },
@@ -226,30 +232,26 @@ async function buildSsrBundle(): Promise<SsrRenderers> {
       // Bundle our internal packages so Vite resolves their submodule
       // re-exports correctly. External packages from Node's resolver
       // can't follow `@oxy.so/services/dist/.../OxyProvider`-style imports.
-      noExternal: [
-        '@oxy.so/services',
-        '@oxy.so/core',
-        'react-helmet-async',
-      ],
+      noExternal: ['@oxy.so/services', '@oxy.so/core', 'react-helmet-async'],
     },
-  })
+  });
 
-  const ssrEntry = path.join(SSR_DIR, 'entry-server.js')
-  const mod = (await import(`file://${ssrEntry}`)) as Partial<SsrRenderers>
+  const ssrEntry = path.join(SSR_DIR, 'entry-server.js');
+  const mod = (await import(`file://${ssrEntry}`)) as Partial<SsrRenderers>;
   if (typeof mod.renderSEO !== 'function') {
-    throw new Error('[prerender] SSR bundle did not export renderSEO()')
+    throw new Error('[prerender] SSR bundle did not export renderSEO()');
   }
   if (typeof mod.renderMarkdownBody !== 'function') {
-    throw new Error('[prerender] SSR bundle did not export renderMarkdownBody()')
+    throw new Error('[prerender] SSR bundle did not export renderMarkdownBody()');
   }
   if (typeof mod.renderStructuredData !== 'function') {
-    throw new Error('[prerender] SSR bundle did not export renderStructuredData()')
+    throw new Error('[prerender] SSR bundle did not export renderStructuredData()');
   }
   return {
     renderSEO: mod.renderSEO,
     renderMarkdownBody: mod.renderMarkdownBody,
     renderStructuredData: mod.renderStructuredData,
-  }
+  };
 }
 
 /* ── Static route SEO props ───────────────────────────────────────── */
@@ -274,14 +276,23 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'One identity you hold yourself, and a family of open apps built on it: social, messaging, housing, payments, AI and an operating system. No ads, no data sales.',
     canonicalPath: '/',
   },
-  '/pricing': { title: en.pricingHub.seoTitle, description: en.pricingHub.description, canonicalPath: '/pricing' },
+  '/pricing': {
+    title: en.pricingHub.seoTitle,
+    description: en.pricingHub.description,
+    canonicalPath: '/pricing',
+  },
   '/store': { title: en.store.title, description: en.store.description, canonicalPath: '/store' },
-  ...Object.fromEntries(storeProducts.map(product => [`/store/p/${encodeURIComponent(product.id)}`, {
-    title: product.units > 1 ? `${product.name} · ${en.store.pair}` : product.name,
-    description: en.store.description,
-    canonicalPath: `/store/p/${encodeURIComponent(product.id)}/`,
-    ogImage: product.image,
-  }])),
+  ...Object.fromEntries(
+    storeProducts.map((product) => [
+      `/store/p/${encodeURIComponent(product.id)}`,
+      {
+        title: product.units > 1 ? `${product.name} · ${en.store.pair}` : product.name,
+        description: en.store.description,
+        canonicalPath: `/store/p/${encodeURIComponent(product.id)}/`,
+        ogImage: product.image,
+      },
+    ]),
+  ),
   '/one': { title: en.pricing.seoTitle, description: en.one.lead, canonicalPath: '/one' },
   '/apps': {
     title: 'Apps',
@@ -322,7 +333,12 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     canonicalPath: '/homiio',
     ogImage: `${SITE_URL}${APP_CARD_IMAGES['/homiio']}`,
   },
-  '/brand': { title: 'Oxy brand guidelines', description: 'The Oxy identity: principles, Bloom colour recipes, typography, motion, voice, imagery and social communication.', canonicalPath: '/brand' },
+  '/brand': {
+    title: 'Oxy brand guidelines',
+    description:
+      'The Oxy identity: principles, Bloom colour recipes, typography, motion, voice, imagery and social communication.',
+    canonicalPath: '/brand',
+  },
   '/inbox': {
     title: 'Inbox, email with room to think',
     description:
@@ -408,12 +424,13 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   '/codea/extension': {
     title: 'Codea for VS Code',
     description:
-      'Bring Codea\'s open-source assistant into the editor you already use: reviews, refactors and completions, free to inspect and extend.',
+      "Bring Codea's open-source assistant into the editor you already use: reviews, refactors and completions, free to inspect and extend.",
     canonicalPath: '/codea/extension',
   },
   '/tnp': {
     title: 'TNP, The Name Project',
-    description: 'Register names on .ox, .app, .com and more. DNS-only, system-wide, and fully under your control.',
+    description:
+      'Register names on .ox, .app, .com and more. DNS-only, system-wide, and fully under your control.',
     canonicalPath: '/tnp',
   },
   '/tnp/install': {
@@ -436,7 +453,8 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/referrals': {
     title: 'Referrals',
-    description: 'Refer people to Oxy and earn rewards. Get a personal referral link from your dashboard.',
+    description:
+      'Refer people to Oxy and earn rewards. Get a personal referral link from your dashboard.',
     canonicalPath: '/referrals',
   },
   '/initiative': {
@@ -464,12 +482,16 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/transparency': {
     title: 'Transparency Center',
-    description: 'Our principles, policies and decisions, in one place. Read what we commit to and follow the work behind it.',
+    description:
+      'Our principles, policies and decisions, in one place. Read what we commit to and follow the work behind it.',
     canonicalPath: '/transparency',
   },
-  ...Object.fromEntries(TRANSPARENCY_DOCUMENTS.map(({ path, title, description }) => [
-    path, { title, description, canonicalPath: path },
-  ])),
+  ...Object.fromEntries(
+    TRANSPARENCY_DOCUMENTS.map(({ path, title, description }) => [
+      path,
+      { title, description, canonicalPath: path },
+    ]),
+  ),
   '/company/careers': {
     title: 'Careers',
     description:
@@ -484,7 +506,8 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/newsroom': {
     title: 'Newsroom',
-    description: 'Announcements, product updates and engineering posts from across the Oxy ecosystem.',
+    description:
+      'Announcements, product updates and engineering posts from across the Oxy ecosystem.',
     canonicalPath: '/newsroom',
   },
   '/academy': {
@@ -500,7 +523,8 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/changelog': {
     title: 'Changelog',
-    description: 'Every notable change across the Oxy ecosystem, including the ones that remove something.',
+    description:
+      'Every notable change across the Oxy ecosystem, including the ones that remove something.',
     canonicalPath: '/changelog',
   },
   '/developers': {
@@ -511,7 +535,8 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/developers/docs': {
     title: 'Documentation',
-    description: 'Guides, API references and SDK docs for the Oxy platform, from authentication to federation.',
+    description:
+      'Guides, API references and SDK docs for the Oxy platform, from authentication to federation.',
     canonicalPath: '/developers/docs',
   },
   '/developers/docs/api': {
@@ -522,13 +547,13 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/developers/docs/bloom/color-system': {
     title: 'Bloom color system playground',
-    description:
-      'Compare every Bloom color combination across light and dark Mention interfaces.',
+    description: 'Compare every Bloom color combination across light and dark Mention interfaces.',
     canonicalPath: '/developers/docs/bloom/color-system',
   },
   '/features': {
     title: 'Feature requests',
-    description: 'What people are asking for across the Oxy apps, what is planned and what already shipped.',
+    description:
+      'What people are asking for across the Oxy apps, what is planned and what already shipped.',
     canonicalPath: '/features',
   },
   '/transparency/legal': {
@@ -536,9 +561,12 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description: 'The policies and terms that shape your relationship with Oxy.',
     canonicalPath: '/transparency/legal',
   },
-  ...Object.fromEntries(LEGAL_DOCUMENTS.map(({ slug, title, description }) => [
-    `/transparency/legal/${slug}`, { title, description, canonicalPath: `/transparency/legal/${slug}` },
-  ])),
+  ...Object.fromEntries(
+    LEGAL_DOCUMENTS.map(({ slug, title, description }) => [
+      `/transparency/legal/${slug}`,
+      { title, description, canonicalPath: `/transparency/legal/${slug}` },
+    ]),
+  ),
   '/account-deletion': {
     title: 'Delete your Oxy account',
     description: 'How to delete an Oxy account and what happens to your data when you do.',
@@ -573,32 +601,38 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'A self-custodied wallet for everyday FairCoin use: send, receive and track balances across devices.',
     canonicalPath: '/faircoin/wallet',
   },
-}
+};
 
 /* ── Dynamic route resolvers ──────────────────────────────────────── */
 
 type NewsroomApiPost = Omit<NewsroomPost, 'coverImage' | 'ogImage'> & {
   /** The post's body, in markdown. The list endpoint already returns it. */
-  ogImage?: string | { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } } | null
-  coverImage?: string | { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } } | null
-}
+  ogImage?:
+    | string
+    | { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } }
+    | null;
+  coverImage?:
+    | string
+    | { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } }
+    | null;
+};
 
 interface NewsroomApiResponse {
-  posts: NewsroomApiPost[]
+  posts: NewsroomApiPost[];
 }
 
 async function fetchNewsroomPosts(): Promise<NewsroomApiPost[]> {
   try {
-    const res = await fetchPrerender(NEWSROOM_API)
+    const res = await fetchPrerender(NEWSROOM_API);
     if (!res.ok) {
-      console.warn(`[prerender] newsroom API returned ${res.status}`)
-      return []
+      console.warn(`[prerender] newsroom API returned ${res.status}`);
+      return [];
     }
-    const data = (await res.json()) as NewsroomApiResponse
-    return data.posts.filter((p) => (p.status ?? 'published') === 'published' && p.slug)
+    const data = (await res.json()) as NewsroomApiResponse;
+    return data.posts.filter((p) => (p.status ?? 'published') === 'published' && p.slug);
   } catch (err) {
-    console.warn('[prerender] newsroom fetch failed:', (err as Error).message)
-    return []
+    console.warn('[prerender] newsroom fetch failed:', (err as Error).message);
+    return [];
   }
 }
 
@@ -607,18 +641,18 @@ async function fetchNewsroomPosts(): Promise<NewsroomApiPost[]> {
  * `src/api/hooks.ts`.
  */
 interface FeatureApiEntry {
-  number: number
-  title: string
-  description: string
-  owner: string
-  repoName: string
-  createdAt: string
-  updatedAt: string
-  author: string
+  number: number;
+  title: string;
+  description: string;
+  owner: string;
+  repoName: string;
+  createdAt: string;
+  updatedAt: string;
+  author: string;
 }
 
 interface FeatureApiResponse {
-  items: FeatureApiEntry[]
+  items: FeatureApiEntry[];
 }
 
 /**
@@ -631,64 +665,66 @@ interface FeatureApiResponse {
  * generic shell in a crawler's preview until the next build.
  */
 async function fetchFeatureRequests(): Promise<FeatureApiEntry[]> {
-  const byUrl = new Map<string, FeatureApiEntry>()
+  const byUrl = new Map<string, FeatureApiEntry>();
 
   for (const query of ['sort=votes', 'sort=newest']) {
     try {
-      const res = await fetchPrerender(`${FEATURES_API}?${query}&limit=${FEATURE_PRERENDER_PAGE_SIZE}`)
+      const res = await fetchPrerender(
+        `${FEATURES_API}?${query}&limit=${FEATURE_PRERENDER_PAGE_SIZE}`,
+      );
       if (!res.ok) {
-        console.warn(`[prerender] features API returned ${res.status} for ${query}`)
-        continue
+        console.warn(`[prerender] features API returned ${res.status} for ${query}`);
+        continue;
       }
-      const data = (await res.json()) as FeatureApiResponse
+      const data = (await res.json()) as FeatureApiResponse;
       for (const item of data.items ?? []) {
         // Skip anything that cannot produce a title or a valid path rather than
         // interpolating `undefined` into a <title> or a URL.
-        if (!item.title || !item.owner || !item.repoName || !item.number) continue
-        byUrl.set(`/features/${item.owner}/${item.repoName}/${item.number}`, item)
+        if (!item.title || !item.owner || !item.repoName || !item.number) continue;
+        byUrl.set(`/features/${item.owner}/${item.repoName}/${item.number}`, item);
       }
     } catch (err) {
-      console.warn(`[prerender] features fetch failed (${query}):`, (err as Error).message)
+      console.warn(`[prerender] features fetch failed (${query}):`, (err as Error).message);
     }
   }
 
-  return Array.from(byUrl.values())
+  return Array.from(byUrl.values());
 }
 
 interface ProductApiEntry {
-  productId: string
-  name: string
-  tagline?: string
-  description?: string
-  category?: { label?: string } | string | null
+  productId: string;
+  name: string;
+  tagline?: string;
+  description?: string;
+  category?: { label?: string } | string | null;
 }
 
 async function fetchProducts(): Promise<ProductApiEntry[]> {
   try {
-    const res = await fetchPrerender(PRODUCTS_API)
-    if (!res.ok) return []
-    const products = (await res.json()) as ProductApiEntry[]
+    const res = await fetchPrerender(PRODUCTS_API);
+    if (!res.ok) return [];
+    const products = (await res.json()) as ProductApiEntry[];
     // Without an id there is no URL to emit, and without a name there is no
     // title — skip rather than interpolating `undefined` into either.
-    return products.filter((product) => product.productId && product.name)
+    return products.filter((product) => product.productId && product.name);
   } catch (err) {
-    console.warn('[prerender] products fetch failed:', (err as Error).message)
-    return []
+    console.warn('[prerender] products fetch failed:', (err as Error).message);
+    return [];
   }
 }
 
 /** The route returns a bare array of Oxy's active openings. */
 async function fetchJobs(): Promise<CareerJob[]> {
   try {
-    const res = await fetchPrerender(JOBS_API)
-    if (!res.ok) return []
-    const jobs = (await res.json()) as CareerJob[]
+    const res = await fetchPrerender(JOBS_API);
+    if (!res.ok) return [];
+    const jobs = (await res.json()) as CareerJob[];
     // Skip malformed entries rather than interpolating `undefined` into a
     // <title>; every field below is required to build the SEO props.
-    return jobs.filter((job) => job.id && job.title && job.canonicalUrl)
+    return jobs.filter((job) => job.id && job.title && job.canonicalUrl);
   } catch (err) {
-    console.warn('[prerender] jobs fetch failed:', (err as Error).message)
-    return []
+    console.warn('[prerender] jobs fetch failed:', (err as Error).message);
+    return [];
   }
 }
 
@@ -698,41 +734,47 @@ async function fetchJobs(): Promise<CareerJob[]> {
  * once. We use the default-locale variant for SEO meta — translated
  * variants share the same URL.
  */
-async function walkMdxEntries(rootDir: string): Promise<Array<{ slug: string; frontmatter: Record<string, unknown> }>> {
-  if (!existsSync(rootDir)) return []
-  const result: Array<{ slug: string; frontmatter: Record<string, unknown>; isDefaultLocale: boolean }> = []
+async function walkMdxEntries(
+  rootDir: string,
+): Promise<Array<{ slug: string; frontmatter: Record<string, unknown> }>> {
+  if (!existsSync(rootDir)) return [];
+  const result: Array<{
+    slug: string;
+    frontmatter: Record<string, unknown>;
+    isDefaultLocale: boolean;
+  }> = [];
 
   async function recurse(dir: string, prefix: string): Promise<void> {
-    const entries = await readdir(dir)
+    const entries = await readdir(dir);
     for (const entry of entries) {
-      const full = path.join(dir, entry)
-      const stats = await stat(full)
+      const full = path.join(dir, entry);
+      const stats = await stat(full);
       if (stats.isDirectory()) {
-        await recurse(full, prefix ? `${prefix}/${entry}` : entry)
+        await recurse(full, prefix ? `${prefix}/${entry}` : entry);
       } else if (entry.endsWith('.mdx')) {
-        const stripped = entry.replace(/\.mdx$/, '')
+        const stripped = entry.replace(/\.mdx$/, '');
         // Distinguish `welcome.mdx` (default) from `welcome.es.mdx`.
-        const localeMatch = stripped.match(/\.([a-z]{2,3})$/)
-        const isDefaultLocale = !localeMatch
-        const slugBase = localeMatch ? stripped.replace(/\.[a-z]{2,3}$/, '') : stripped
-        const slug = prefix ? `${prefix}/${slugBase}` : slugBase
-        const mdxRaw = await readFile(full, 'utf8')
-        const frontmatter = parseFrontmatter(mdxRaw)
-        result.push({ slug, frontmatter, isDefaultLocale })
+        const localeMatch = stripped.match(/\.([a-z]{2,3})$/);
+        const isDefaultLocale = !localeMatch;
+        const slugBase = localeMatch ? stripped.replace(/\.[a-z]{2,3}$/, '') : stripped;
+        const slug = prefix ? `${prefix}/${slugBase}` : slugBase;
+        const mdxRaw = await readFile(full, 'utf8');
+        const frontmatter = parseFrontmatter(mdxRaw);
+        result.push({ slug, frontmatter, isDefaultLocale });
       }
     }
   }
-  await recurse(rootDir, '')
+  await recurse(rootDir, '');
 
   // Prefer the default-locale entry per slug; only fall back to a
   // localized version when no default exists.
-  const bySlug = new Map<string, { slug: string; frontmatter: Record<string, unknown> }>()
+  const bySlug = new Map<string, { slug: string; frontmatter: Record<string, unknown> }>();
   for (const e of result) {
     if (e.isDefaultLocale || !bySlug.has(e.slug)) {
-      bySlug.set(e.slug, { slug: e.slug, frontmatter: e.frontmatter })
+      bySlug.set(e.slug, { slug: e.slug, frontmatter: e.frontmatter });
     }
   }
-  return Array.from(bySlug.values())
+  return Array.from(bySlug.values());
 }
 
 /**
@@ -743,38 +785,38 @@ async function walkMdxEntries(rootDir: string): Promise<Array<{ slug: string; fr
  */
 /** The document without its frontmatter block, which is metadata, not prose. */
 function stripFrontmatter(source: string): string {
-  const match = /^---\r?\n[\s\S]*?\r?\n---\r?\n?/.exec(source)
-  return match ? source.slice(match[0].length).trim() : source.trim()
+  const match = /^---\r?\n[\s\S]*?\r?\n---\r?\n?/.exec(source);
+  return match ? source.slice(match[0].length).trim() : source.trim();
 }
 
 function parseFrontmatter(source: string): Record<string, unknown> {
-  if (!source.startsWith('---')) return {}
-  const end = source.indexOf('\n---', 3)
-  if (end < 0) return {}
-  const block = source.slice(3, end).trim()
-  const out: Record<string, unknown> = {}
+  if (!source.startsWith('---')) return {};
+  const end = source.indexOf('\n---', 3);
+  if (end < 0) return {};
+  const block = source.slice(3, end).trim();
+  const out: Record<string, unknown> = {};
   for (const line of block.split('\n')) {
-    const idx = line.indexOf(':')
-    if (idx < 0) continue
-    const key = line.slice(0, idx).trim()
-    let value = line.slice(idx + 1).trim()
+    const idx = line.indexOf(':');
+    if (idx < 0) continue;
+    const key = line.slice(0, idx).trim();
+    let value = line.slice(idx + 1).trim();
     if (
       (value.startsWith('"') && value.endsWith('"')) ||
       (value.startsWith("'") && value.endsWith("'"))
     ) {
-      value = value.slice(1, -1)
+      value = value.slice(1, -1);
     }
-    out[key] = value
+    out[key] = value;
   }
-  return out
+  return out;
 }
 
 interface DocsPageMeta {
-  slug: string
-  title: string
-  description?: string
-  file: string
-  section?: 'guides' | 'api'
+  slug: string;
+  title: string;
+  description?: string;
+  file: string;
+  section?: 'guides' | 'api';
 }
 
 /**
@@ -788,17 +830,17 @@ interface DocsPageMeta {
  * `DocsPage` resolves the page meta at runtime.
  */
 async function enumerateDocsRoutes(): Promise<RouteEntry[]> {
-  if (!existsSync(SYNCED_INDEX)) return []
-  const raw = await readFile(SYNCED_INDEX, 'utf8')
-  const index = JSON.parse(raw) as SyncedIndex
-  const out = new Map<string, RouteEntry>()
+  if (!existsSync(SYNCED_INDEX)) return [];
+  const raw = await readFile(SYNCED_INDEX, 'utf8');
+  const index = JSON.parse(raw) as SyncedIndex;
+  const out = new Map<string, RouteEntry>();
 
   for (const pkg of index.packages) {
-    const versioned = pkg.versioned === true
+    const versioned = pkg.versioned === true;
     // Package landing URL — emit at least one entry per package.
     const landingUrl = versioned
       ? `/developers/docs/${pkg.shortName}/${pkg.latestVersion}`
-      : `/developers/docs/${pkg.shortName}`
+      : `/developers/docs/${pkg.shortName}`;
     out.set(landingUrl, {
       url: landingUrl,
       seo: {
@@ -807,7 +849,7 @@ async function enumerateDocsRoutes(): Promise<RouteEntry[]> {
           pkg.description ?? `Documentation for ${pkg.displayName}, part of the Oxy ecosystem.`,
         canonicalPath: landingUrl,
       },
-    })
+    });
 
     // The unversioned landing, for a versioned package, is a real route
     // (`developers/docs/:package`) that the SPA redirects to the latest
@@ -817,7 +859,7 @@ async function enumerateDocsRoutes(): Promise<RouteEntry[]> {
     // It canonicalises to the versioned landing, so the sitemap filter drops
     // it and it competes with nothing.
     if (versioned) {
-      const unversioned = `/developers/docs/${pkg.shortName}`
+      const unversioned = `/developers/docs/${pkg.shortName}`;
       out.set(unversioned, {
         url: unversioned,
         seo: {
@@ -826,35 +868,36 @@ async function enumerateDocsRoutes(): Promise<RouteEntry[]> {
             pkg.description ?? `Documentation for ${pkg.displayName}, part of the Oxy ecosystem.`,
           canonicalPath: landingUrl,
         },
-      })
+      });
     }
 
     for (const version of pkg.versions) {
       for (const page of version.pages as DocsPageMeta[]) {
         // Resolve the URL for this (package, version, slug) tuple.
-        let url: string
+        let url: string;
         if (versioned) {
           url = page.slug
             ? `/developers/docs/${pkg.shortName}/${version.version}/${page.slug}`
-            : `/developers/docs/${pkg.shortName}/${version.version}`
+            : `/developers/docs/${pkg.shortName}/${version.version}`;
         } else {
           url = page.slug
             ? `/developers/docs/${pkg.shortName}/${page.slug}`
-            : `/developers/docs/${pkg.shortName}`
+            : `/developers/docs/${pkg.shortName}`;
         }
 
         // The file on disk answers two questions at once: what the page's
         // description is, and what its prose says. It is read once for both.
-        let description = page.description ?? pkg.description ?? `Documentation for ${pkg.displayName}.`
-        let markdown: string | undefined
-        const mdxPath = page.file ? path.join(SYNCED_DIR, page.file) : null
+        let description =
+          page.description ?? pkg.description ?? `Documentation for ${pkg.displayName}.`;
+        let markdown: string | undefined;
+        const mdxPath = page.file ? path.join(SYNCED_DIR, page.file) : null;
         if (mdxPath && existsSync(mdxPath)) {
-          const source = await readFile(mdxPath, 'utf8')
-          const fm = parseFrontmatter(source)
+          const source = await readFile(mdxPath, 'utf8');
+          const fm = parseFrontmatter(source);
           if (typeof fm.description === 'string' && fm.description.length > 0) {
-            description = fm.description
+            description = fm.description;
           }
-          markdown = stripFrontmatter(source)
+          markdown = stripFrontmatter(source);
         }
 
         // Canonical points at the latest version — matches how DocsPage
@@ -864,7 +907,7 @@ async function enumerateDocsRoutes(): Promise<RouteEntry[]> {
           ? page.slug
             ? `/developers/docs/${pkg.shortName}/${pkg.latestVersion}/${page.slug}`
             : `/developers/docs/${pkg.shortName}/${pkg.latestVersion}`
-          : url
+          : url;
 
         out.set(url, {
           url,
@@ -874,12 +917,12 @@ async function enumerateDocsRoutes(): Promise<RouteEntry[]> {
             canonicalPath,
           },
           body: markdown ? { heading: page.title, meta: pkg.displayName, markdown } : undefined,
-        })
+        });
       }
     }
   }
 
-  return Array.from(out.values())
+  return Array.from(out.values());
 }
 
 /**
@@ -894,27 +937,30 @@ function companyMdxToPrerenderMarkdown(source: string): string {
     .replace(/<Article[A-Z][A-Za-z0-9]*\b[\s\S]*?\/>/g, '')
     .replace(/<\/?Takeaways>/g, '')
     .replace(/\n{3,}/g, '\n\n')
-    .trim()
+    .trim();
 }
 
 /** Long-form company documents whose source of truth is local MDX. */
 async function enumerateCompanyArticleRoutes(): Promise<RouteEntry[]> {
-  const routes: RouteEntry[] = []
+  const routes: RouteEntry[] = [];
 
   for (const { slug, path: url } of TRANSPARENCY_DOCUMENTS) {
-    const fallbackSeo = STATIC_ROUTE_SEO[url]
-    const file = path.join(COMPANY_DIR, `${slug}.mdx`)
-    if (!fallbackSeo || !existsSync(file)) continue
+    const fallbackSeo = STATIC_ROUTE_SEO[url];
+    const file = path.join(COMPANY_DIR, `${slug}.mdx`);
+    if (!fallbackSeo || !existsSync(file)) continue;
 
-    const source = await readFile(file, 'utf8')
-    const frontmatter = parseFrontmatter(source)
-    const title = typeof frontmatter.title === 'string' ? frontmatter.title : fallbackSeo.title
-    const description = typeof frontmatter.description === 'string'
-      ? frontmatter.description
-      : fallbackSeo.description
-    const date = typeof frontmatter.date === 'string' ? frontmatter.date : undefined
-    const readingTime = typeof frontmatter.readingTime === 'string' ? frontmatter.readingTime : undefined
-    const ogImage = typeof frontmatter.ogImage === 'string' ? frontmatter.ogImage : fallbackSeo.ogImage
+    const source = await readFile(file, 'utf8');
+    const frontmatter = parseFrontmatter(source);
+    const title = typeof frontmatter.title === 'string' ? frontmatter.title : fallbackSeo.title;
+    const description =
+      typeof frontmatter.description === 'string'
+        ? frontmatter.description
+        : fallbackSeo.description;
+    const date = typeof frontmatter.date === 'string' ? frontmatter.date : undefined;
+    const readingTime =
+      typeof frontmatter.readingTime === 'string' ? frontmatter.readingTime : undefined;
+    const ogImage =
+      typeof frontmatter.ogImage === 'string' ? frontmatter.ogImage : fallbackSeo.ogImage;
 
     routes.push({
       url,
@@ -925,29 +971,29 @@ async function enumerateCompanyArticleRoutes(): Promise<RouteEntry[]> {
         standfirst: description,
         markdown: companyMdxToPrerenderMarkdown(source),
       },
-    })
+    });
   }
 
-  return routes
+  return routes;
 }
 
 async function enumerateHelpRoutes(): Promise<Array<{ url: string; seo: SEOProps }>> {
-  const entries = await walkMdxEntries(HELP_DIR)
-  const helpOgRoot = path.join(WEBSITE_ROOT, 'public', 'images', 'help-og')
+  const entries = await walkMdxEntries(HELP_DIR);
+  const helpOgRoot = path.join(WEBSITE_ROOT, 'public', 'images', 'help-og');
   return entries.map(({ slug, frontmatter }) => {
-    const title = typeof frontmatter.title === 'string' ? frontmatter.title : slug
+    const title = typeof frontmatter.title === 'string' ? frontmatter.title : slug;
     const description =
       typeof frontmatter.description === 'string'
         ? frontmatter.description
-        : `Help article: ${title}.`
+        : `Help article: ${title}.`;
     // Help articles get auto-generated OG cards under public/images/help-og/.
     // Author-set `coverImage:` in frontmatter wins; otherwise we point at the
     // generated PNG iff the build step actually wrote one.
-    let ogImage: string | undefined
+    let ogImage: string | undefined;
     if (typeof frontmatter.coverImage === 'string' && frontmatter.coverImage.length > 0) {
-      ogImage = frontmatter.coverImage
+      ogImage = frontmatter.coverImage;
     } else if (existsSync(path.join(helpOgRoot, `${slug}.png`))) {
-      ogImage = `${SITE_URL}/images/help-og/${slug}.png`
+      ogImage = `${SITE_URL}/images/help-og/${slug}.png`;
     }
     return {
       url: `/help/${slug}`,
@@ -957,37 +1003,40 @@ async function enumerateHelpRoutes(): Promise<Array<{ url: string; seo: SEOProps
         canonicalPath: `/help/${slug}`,
         ogImage,
       },
-    }
-  })
+    };
+  });
 }
 
 async function enumerateAcademyRoutes(): Promise<Array<{ url: string; seo: SEOProps }>> {
-  const entries = await walkMdxEntries(ACADEMY_DIR)
-  const courses = new Set<string>()
-  const lessons: Array<{ url: string; seo: SEOProps }> = []
+  const entries = await walkMdxEntries(ACADEMY_DIR);
+  const courses = new Set<string>();
+  const lessons: Array<{ url: string; seo: SEOProps }> = [];
   for (const { slug, frontmatter } of entries) {
-    const slash = slug.indexOf('/')
-    if (slash < 0) continue
-    const course = slug.slice(0, slash)
-    courses.add(course)
-    const title = typeof frontmatter.title === 'string' ? frontmatter.title : slug
+    const slash = slug.indexOf('/');
+    if (slash < 0) continue;
+    const course = slug.slice(0, slash);
+    courses.add(course);
+    const title = typeof frontmatter.title === 'string' ? frontmatter.title : slug;
     const description =
       typeof frontmatter.description === 'string'
         ? frontmatter.description
-        : `Academy lesson: ${title}.`
+        : `Academy lesson: ${title}.`;
     lessons.push({
       url: `/academy/${slug}`,
       seo: {
         // Mirrors `LessonPage`'s `<SEO title>`; the course title comes from the
         // same `ACADEMY_COURSES` catalog the SPA reads.
-        title: interpolate(ACADEMY_EN.seoLessonTitle, { lesson: title, course: courseTitle(course) }),
+        title: interpolate(ACADEMY_EN.seoLessonTitle, {
+          lesson: title,
+          course: courseTitle(course),
+        }),
         description,
         canonicalPath: `/academy/${slug}`,
       },
-    })
+    });
   }
   const courseRoutes = Array.from(courses).map<{ url: string; seo: SEOProps }>((course) => {
-    const meta = COURSE_BY_SLUG.get(course)
+    const meta = COURSE_BY_SLUG.get(course);
     return {
       url: `/academy/${course}`,
       seo: {
@@ -995,40 +1044,46 @@ async function enumerateAcademyRoutes(): Promise<Array<{ url: string; seo: SEOPr
         title: meta?.title ?? prettifySlug(course),
         // `CourseDetailPage`'s fallback sentence, from the same dictionary key.
         description:
-          meta?.summary || interpolate(ACADEMY_EN.seoCourseDescription, { course: meta?.title ?? prettifySlug(course) }),
+          meta?.summary ||
+          interpolate(ACADEMY_EN.seoCourseDescription, {
+            course: meta?.title ?? prettifySlug(course),
+          }),
         canonicalPath: `/academy/${course}`,
       },
-    }
-  })
-  return [...courseRoutes, ...lessons]
+    };
+  });
+  return [...courseRoutes, ...lessons];
 }
 
 function prettifySlug(slug: string): string {
   return slug
     .split('-')
     .map((part) => (part ? part[0]?.toUpperCase() + part.slice(1) : ''))
-    .join(' ')
+    .join(' ');
 }
 
 function newsroomMediaUrl(field: unknown, preferThumbnail = false): string | undefined {
-  if (typeof field === 'string' && field.length > 0) return field
-  if (!field || typeof field !== 'object') return undefined
+  if (typeof field === 'string' && field.length > 0) return field;
+  if (!field || typeof field !== 'object') return undefined;
 
-  const media = field as { url?: unknown; thumbnails?: { sm?: unknown; md?: unknown; lg?: unknown } }
-  const thumbnails = [media.thumbnails?.lg, media.thumbnails?.md, media.thumbnails?.sm]
-  const candidates = preferThumbnail ? [...thumbnails, media.url] : [media.url, ...thumbnails]
+  const media = field as {
+    url?: unknown;
+    thumbnails?: { sm?: unknown; md?: unknown; lg?: unknown };
+  };
+  const thumbnails = [media.thumbnails?.lg, media.thumbnails?.md, media.thumbnails?.sm];
+  const candidates = preferThumbnail ? [...thumbnails, media.url] : [media.url, ...thumbnails];
   for (const candidate of candidates) {
-    if (typeof candidate === 'string' && candidate.length > 0) return candidate
+    if (typeof candidate === 'string' && candidate.length > 0) return candidate;
   }
-  return undefined
+  return undefined;
 }
 
 function newsroomImage(post: NewsroomApiPost): string | undefined {
-  return newsroomMediaUrl(post.ogImage) ?? newsroomMediaUrl(post.coverImage)
+  return newsroomMediaUrl(post.ogImage) ?? newsroomMediaUrl(post.coverImage);
 }
 
 function normalizeNewsroomPost(post: NewsroomApiPost): NewsroomPost {
-  const cover = resolveResponsiveImage(post.coverImage)
+  const cover = resolveResponsiveImage(post.coverImage);
   return {
     ...post,
     // The cover is an in-page visual, so use the generated 800px variant when
@@ -1037,11 +1092,11 @@ function normalizeNewsroomPost(post: NewsroomApiPost): NewsroomPost {
     coverImage: cover.src,
     coverImageSrcSet: cover.srcSet,
     ogImage: newsroomMediaUrl(post.ogImage),
-  }
+  };
 }
 
 function newsroomSummary(post: NewsroomApiPost): NewsroomPostSummary {
-  const normalized = normalizeNewsroomPost(post)
+  const normalized = normalizeNewsroomPost(post);
   return {
     _id: normalized._id,
     slug: normalized.slug,
@@ -1054,18 +1109,20 @@ function newsroomSummary(post: NewsroomApiPost): NewsroomPostSummary {
     featured: normalized.featured,
     themePreset: normalized.themePreset,
     publishedAt: normalized.publishedAt,
-  }
+  };
 }
 
 function orderedNewsroomSummaries(posts: NewsroomApiPost[]): NewsroomPostSummary[] {
   const sorted = posts
     .map(newsroomSummary)
-    .sort((left, right) => new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime())
-  const featuredIndex = sorted.findIndex((post) => post.featured)
-  if (featuredIndex <= 0) return sorted
-  const featured = sorted[featuredIndex]
-  if (!featured) return sorted
-  return [featured, ...sorted.slice(0, featuredIndex), ...sorted.slice(featuredIndex + 1)]
+    .sort(
+      (left, right) => new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime(),
+    );
+  const featuredIndex = sorted.findIndex((post) => post.featured);
+  if (featuredIndex <= 0) return sorted;
+  const featured = sorted[featuredIndex];
+  if (!featured) return sorted;
+  return [featured, ...sorted.slice(0, featuredIndex), ...sorted.slice(featuredIndex + 1)];
 }
 
 function newsroomDateline(post: NewsroomApiPost): string | undefined {
@@ -1075,16 +1132,16 @@ function newsroomDateline(post: NewsroomApiPost): string | undefined {
         day: 'numeric',
         year: 'numeric',
       })
-    : undefined
-  return [post.categories?.[0], published].filter(Boolean).join(' · ') || undefined
+    : undefined;
+  return [post.categories?.[0], published].filter(Boolean).join(' · ') || undefined;
 }
 
 function buildNewsroomRoutes(posts: NewsroomApiPost[]): RouteEntry[] {
-  const brand = brandConfig()
+  const brand = brandConfig();
 
   return posts.map((post) => {
-    const image = newsroomImage(post)
-    const normalizedPost = normalizeNewsroomPost(post)
+    const image = newsroomImage(post);
+    const normalizedPost = normalizeNewsroomPost(post);
     return {
       url: `/newsroom/${post.slug}`,
       body: post.content
@@ -1106,13 +1163,10 @@ function buildNewsroomRoutes(posts: NewsroomApiPost[]): RouteEntry[] {
         modifiedTime: post.updatedAt,
         author: post.authorUsername,
       },
-      structuredData: buildNewsroomArticleStructuredData(
-        normalizedPost,
-        brand,
-      ),
+      structuredData: buildNewsroomArticleStructuredData(normalizedPost, brand),
       prerenderKind: 'newsroom-post' as const,
-    }
-  })
+    };
+  });
 }
 
 function buildFeatureRoutes(features: FeatureApiEntry[]): Array<{ url: string; seo: SEOProps }> {
@@ -1129,12 +1183,15 @@ function buildFeatureRoutes(features: FeatureApiEntry[]): Array<{ url: string; s
       modifiedTime: feature.updatedAt,
       author: feature.author,
     },
-  }))
+  }));
 }
 
 function buildAppRoutes(products: ProductApiEntry[]): Array<{ url: string; seo: SEOProps }> {
   return products.map((product) => {
-    const category = typeof product.category === 'object' && product.category ? (product.category.label ?? '') : ''
+    const category =
+      typeof product.category === 'object' && product.category
+        ? (product.category.label ?? '')
+        : '';
     return {
       url: `/apps/${product.productId}`,
       seo: {
@@ -1147,8 +1204,8 @@ function buildAppRoutes(products: ProductApiEntry[]): Array<{ url: string; seo: 
           ? `${SITE_URL}${APP_CARD_IMAGES[`/apps/${product.productId}`]}`
           : undefined,
       },
-    }
-  })
+    };
+  });
 }
 
 /**
@@ -1158,8 +1215,8 @@ function buildAppRoutes(products: ProductApiEntry[]): Array<{ url: string; seo: 
  */
 function buildJobRoutes(jobs: CareerJob[]): RouteEntry[] {
   return jobs.map((job) => {
-    const url = careerJobPath(job)
-    const markdown = careerJobMarkdown(job)
+    const url = careerJobPath(job);
+    const markdown = careerJobMarkdown(job);
     return {
       url,
       seo: {
@@ -1173,12 +1230,14 @@ function buildJobRoutes(jobs: CareerJob[]): RouteEntry[] {
       body: markdown
         ? {
             heading: job.title,
-            meta: [careerLocationLabel(job), careerEmploymentLabel(job)].filter(Boolean).join(' · ') || undefined,
+            meta:
+              [careerLocationLabel(job), careerEmploymentLabel(job)].filter(Boolean).join(' · ') ||
+              undefined,
             markdown,
           }
         : undefined,
-    }
-  })
+    };
+  });
 }
 
 /* ── All routes ───────────────────────────────────────────────────── */
@@ -1199,42 +1258,45 @@ function buildJobRoutes(jobs: CareerJob[]): RouteEntry[] {
  * non-fatal outcome — it just means no locale-prefixed pages get emitted.
  */
 async function fetchTranslationReadyLocales(): Promise<{
-  locales: Locale[]
-  seed: SEOLocaleSeed[]
+  locales: Locale[];
+  seed: SEOLocaleSeed[];
   /**
    * False when the API did not answer. `locales` is `[]` either way, but the
    * two cases mean opposite things to `_redirects`: "no locale has pages" is a
    * reason to 301 `/es/…` onto the bare path, and "we could not find out" very
    * much is not. See `RedirectsOptions.localeReadinessKnown`.
    */
-  known: boolean
+  known: boolean;
 }> {
-  let entries: SEOLocaleSeed[]
+  let entries: SEOLocaleSeed[];
   try {
-    const res = await fetchPrerender(LOCALES_API)
+    const res = await fetchPrerender(LOCALES_API);
     if (!res.ok) {
-      console.warn(`[prerender] locales API returned ${res.status} — no locale-prefixed pages.`)
-      return { locales: [], seed: [], known: false }
+      console.warn(`[prerender] locales API returned ${res.status} — no locale-prefixed pages.`);
+      return { locales: [], seed: [], known: false };
     }
-    entries = (await res.json()) as SEOLocaleSeed[]
+    entries = (await res.json()) as SEOLocaleSeed[];
   } catch (err) {
-    console.warn('[prerender] locales fetch failed — no locale-prefixed pages:', (err as Error).message)
-    return { locales: [], seed: [], known: false }
+    console.warn(
+      '[prerender] locales fetch failed — no locale-prefixed pages:',
+      (err as Error).message,
+    );
+    return { locales: [], seed: [], known: false };
   }
 
-  const locales: Locale[] = []
+  const locales: Locale[] = [];
   for (const entry of entries) {
-    if (entry.translationReady !== true) continue
-    const code = entry.code as Locale
-    if (!SUPPORTED_LOCALES.includes(code)) continue
+    if (entry.translationReady !== true) continue;
+    const code = entry.code as Locale;
+    if (!SUPPORTED_LOCALES.includes(code)) continue;
     // The default locale is served ONLY at the bare path, so it never gets a
     // prefixed mirror. Keyed on the STATIC `DEFAULT_LOCALE` rather than the
     // CMS `isDefault`, matching `App.tsx` / `SEO.tsx` / `locale-context.tsx`:
     // the URL shape must not shift when someone flips a CMS toggle.
-    if (code === DEFAULT_LOCALE) continue
-    if (!locales.includes(code)) locales.push(code)
+    if (code === DEFAULT_LOCALE) continue;
+    if (!locales.includes(code)) locales.push(code);
   }
-  return { locales, seed: entries, known: true }
+  return { locales, seed: entries, known: true };
 }
 
 /**
@@ -1244,15 +1306,16 @@ async function fetchTranslationReadyLocales(): Promise<{
  * canonical, hreflang and x-default from it plus the active locale.
  */
 function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): RenderJob[] {
-  if (locales.length === 0) return base
-  const expanded: RenderJob[] = [...base]
+  if (locales.length === 0) return base;
+  const expanded: RenderJob[] = [...base];
   // A route is mirrored only where a mirror would say something new. Synced
   // developer docs have no translated source (`hasLocalizedVariants`), and a
   // superseded docs version already canonicalizes to the current one — a
   // `/es/…/0.6.8/…` document is then a duplicate of a duplicate.
   const mirrorable = base.filter(
-    (job) => hasLocalizedVariants(job.url) && job.seo.canonicalPath === job.url && !job.seo.canonicalUrl,
-  )
+    (job) =>
+      hasLocalizedVariants(job.url) && job.seo.canonicalPath === job.url && !job.seo.canonicalUrl,
+  );
   for (const locale of locales) {
     for (const job of mirrorable) {
       expanded.push({
@@ -1263,18 +1326,18 @@ function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): 
         seo: job.seo,
         locale,
         prerenderKind: job.prerenderKind,
-      })
+      });
     }
   }
-  return expanded
+  return expanded;
 }
 
 /** One document per public catalogue entry. Empty while the catalogue is unpublished. */
 function buildModelRoutes(): Array<{ url: string; seo: SEOProps }> {
-  const routes: Array<{ url: string; seo: SEOProps }> = []
+  const routes: Array<{ url: string; seo: SEOProps }> = [];
   for (const entry of BUILD_SNAPSHOT.entries) {
-    const url = modelPath(entry.id)
-    if (!url) continue
+    const url = modelPath(entry.id);
+    if (!url) continue;
     routes.push({
       url,
       seo: {
@@ -1282,48 +1345,49 @@ function buildModelRoutes(): Array<{ url: string; seo: SEOProps }> {
         description: entry.description.slice(0, 300),
         canonicalPath: url,
       },
-    })
+    });
   }
-  return routes
+  return routes;
 }
 
 async function enumerateAllRoutes(): Promise<RouteEntry[]> {
-  const result = new Map<string, RouteEntry>()
+  const result = new Map<string, RouteEntry>();
 
   for (const [url, seo] of Object.entries(STATIC_ROUTE_SEO)) {
-    result.set(url, { url, seo })
+    result.set(url, { url, seo });
   }
 
-  const [news, jobs, apps, features, helpRoutes, academyRoutes, companyRoutes, docsRoutes] = await Promise.all([
-    fetchNewsroomPosts(),
-    fetchJobs(),
-    fetchProducts(),
-    fetchFeatureRequests(),
-    enumerateHelpRoutes(),
-    enumerateAcademyRoutes(),
-    enumerateCompanyArticleRoutes(),
-    enumerateDocsRoutes(),
-  ])
+  const [news, jobs, apps, features, helpRoutes, academyRoutes, companyRoutes, docsRoutes] =
+    await Promise.all([
+      fetchNewsroomPosts(),
+      fetchJobs(),
+      fetchProducts(),
+      fetchFeatureRequests(),
+      enumerateHelpRoutes(),
+      enumerateAcademyRoutes(),
+      enumerateCompanyArticleRoutes(),
+      enumerateDocsRoutes(),
+    ]);
 
-  for (const entry of buildNewsroomRoutes(news)) result.set(entry.url, entry)
-  const newsroomIndex = result.get('/newsroom')
+  for (const entry of buildNewsroomRoutes(news)) result.set(entry.url, entry);
+  const newsroomIndex = result.get('/newsroom');
   if (newsroomIndex) {
-    const brand = brandConfig()
-    newsroomIndex.newsroomIndexPosts = orderedNewsroomSummaries(news).slice(0, 50)
+    const brand = brandConfig();
+    newsroomIndex.newsroomIndexPosts = orderedNewsroomSummaries(news).slice(0, 50);
     newsroomIndex.structuredData = buildNewsroomCollectionStructuredData(
       news.map(normalizeNewsroomPost),
       brand,
       newsroomIndex.seo.title,
       newsroomIndex.seo.description,
-    )
+    );
   }
-  for (const entry of buildJobRoutes(jobs)) result.set(entry.url, entry)
-  for (const { url, seo } of buildAppRoutes(apps)) result.set(url, { url, seo })
-  for (const { url, seo } of buildFeatureRoutes(features)) result.set(url, { url, seo })
-  for (const { url, seo } of helpRoutes) result.set(url, { url, seo })
-  for (const { url, seo } of academyRoutes) result.set(url, { url, seo })
-  for (const entry of companyRoutes) result.set(entry.url, entry)
-  for (const entry of docsRoutes) result.set(entry.url, entry)
+  for (const entry of buildJobRoutes(jobs)) result.set(entry.url, entry);
+  for (const { url, seo } of buildAppRoutes(apps)) result.set(url, { url, seo });
+  for (const { url, seo } of buildFeatureRoutes(features)) result.set(url, { url, seo });
+  for (const { url, seo } of helpRoutes) result.set(url, { url, seo });
+  for (const { url, seo } of academyRoutes) result.set(url, { url, seo });
+  for (const entry of companyRoutes) result.set(entry.url, entry);
+  for (const entry of docsRoutes) result.set(entry.url, entry);
 
   // The public model catalogue. Every customer-safe entry in the committed
   // snapshot gets a document, so a model page is in the HTML before any
@@ -1331,21 +1395,21 @@ async function enumerateAllRoutes(): Promise<RouteEntry[]> {
   // dropped by `toCustomerSafeCatalog` on the way in, so nothing filtered here
   // can reach this loop — which is the point: the filter lives at the schema
   // boundary, not in the emitter.
-  for (const { url, seo } of buildModelRoutes()) result.set(url, { url, seo })
+  for (const { url, seo } of buildModelRoutes()) result.set(url, { url, seo });
 
   // A SEVENTH source. Bloom's component hub and its per-surface pages come from
   // `bloomIndex` rather than from a hand-written list, so a surface added
   // upstream is prerendered the day it ships. `validate:bloom-catalog` fails if
   // one ever is not.
-  for (const { url, seo } of bloomComponentRoutes()) result.set(url, { url, seo })
+  for (const { url, seo } of bloomComponentRoutes()) result.set(url, { url, seo });
 
-  return Array.from(result.values())
+  return Array.from(result.values());
 }
 
 /* ── HTML emission ────────────────────────────────────────────────── */
 
 async function loadShellHtml(): Promise<string> {
-  return readFile(path.join(DIST_DIR, 'index.html'), 'utf8')
+  return readFile(path.join(DIST_DIR, 'index.html'), 'utf8');
 }
 
 /**
@@ -1364,12 +1428,12 @@ const STRIP_PATTERNS: ReadonlyArray<RegExp> = [
   /<meta\b[^>]*\sname=["']theme-color["'][^>]*>\s*/gi,
   /<meta\b[^>]*\sproperty=["']article:[^"']*["'][^>]*>\s*/gi,
   /<meta\b[^>]*\sname=["']robots["'][^>]*>\s*/gi,
-]
+];
 
 function stripExistingMeta(shell: string): string {
-  let out = shell
-  for (const pattern of STRIP_PATTERNS) out = out.replace(pattern, '')
-  return out
+  let out = shell;
+  for (const pattern of STRIP_PATTERNS) out = out.replace(pattern, '');
+  return out;
 }
 
 /**
@@ -1382,14 +1446,12 @@ function stripExistingMeta(shell: string): string {
  * screen readers read before hydration.
  */
 function applyHtmlLang(shell: string, locale: Locale): string {
-  const dir = isRtlLocale(locale) ? 'rtl' : 'ltr'
-  return shell.replace(
-    /<html\b[^>]*>/i,
-    (tag) =>
-      tag
-        .replace(/\slang=(["'])[^"']*\1/i, ` lang="${locale}"`)
-        .replace(/\sdir=(["'])[^"']*\1/i, ` dir="${dir}"`),
-  )
+  const dir = isRtlLocale(locale) ? 'rtl' : 'ltr';
+  return shell.replace(/<html\b[^>]*>/i, (tag) =>
+    tag
+      .replace(/\slang=(["'])[^"']*\1/i, ` lang="${locale}"`)
+      .replace(/\sdir=(["'])[^"']*\1/i, ` dir="${dir}"`),
+  );
 }
 
 const HTML_ESCAPES: Record<string, string> = {
@@ -1398,10 +1460,10 @@ const HTML_ESCAPES: Record<string, string> = {
   '>': '&gt;',
   '"': '&quot;',
   "'": '&#39;',
-}
+};
 
 function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (char) => HTML_ESCAPES[char] ?? char)
+  return value.replace(/[&<>"']/g, (char) => HTML_ESCAPES[char] ?? char);
 }
 
 /**
@@ -1422,22 +1484,22 @@ function escapeHtml(value: string): string {
  * every capped page is reported at the end of the build — a bound nothing
  * announces reads as full coverage to whoever looks next.
  */
-const MAX_PROSE_CHARS = 40_000
-const cappedRoutes: Array<{ url: string; chars: number }> = []
+const MAX_PROSE_CHARS = 40_000;
+const cappedRoutes: Array<{ url: string; chars: number }> = [];
 
 function capProse(markdown: string, url: string): string {
-  if (markdown.length <= MAX_PROSE_CHARS) return markdown
-  const head = markdown.slice(0, MAX_PROSE_CHARS)
-  const boundary = head.lastIndexOf('\n\n')
-  cappedRoutes.push({ url, chars: markdown.length })
-  return boundary > MAX_PROSE_CHARS / 2 ? head.slice(0, boundary) : head
+  if (markdown.length <= MAX_PROSE_CHARS) return markdown;
+  const head = markdown.slice(0, MAX_PROSE_CHARS);
+  const boundary = head.lastIndexOf('\n\n');
+  cappedRoutes.push({ url, chars: markdown.length });
+  return boundary > MAX_PROSE_CHARS / 2 ? head.slice(0, boundary) : head;
 }
 
 function injectRootTemplate(shell: string, template: string): string {
-  const root = '<div id="root"></div>'
-  const idx = shell.indexOf(root)
-  if (idx < 0) throw new Error('[prerender] shell missing an empty #root container')
-  return `${shell.slice(0, idx)}<div id="root">${template}</div>${shell.slice(idx + root.length)}`
+  const root = '<div id="root"></div>';
+  const idx = shell.indexOf(root);
+  if (idx < 0) throw new Error('[prerender] shell missing an empty #root container');
+  return `${shell.slice(0, idx)}<div id="root">${template}</div>${shell.slice(idx + root.length)}`;
 }
 
 const HOME_PRERENDER_VISUAL = [
@@ -1447,7 +1509,7 @@ const HOME_PRERENDER_VISUAL = [
   ' sizes="(max-width: 1023px) 100vw, 70vw" alt="" width="1600" height="1200"',
   ' loading="eager" decoding="async" fetchpriority="high">',
   '</div>',
-].join('')
+].join('');
 
 function injectBody(
   shell: string,
@@ -1457,22 +1519,20 @@ function injectBody(
 ): string {
   const newsroomCover = body.newsroomPost?.coverImage
     ? `<figure class="mt-10"><img src="${escapeHtml(body.newsroomPost.coverImage)}" alt="${escapeHtml(body.newsroomPost.imageAlt ?? '')}" width="1440" height="810" loading="eager" fetchpriority="high" decoding="async" class="aspect-video w-full rounded-radius-12 object-cover object-center"></figure>`
-    : ''
+    : '';
   const parts = [
     `<h1 class="text-heading-responsive-lg text-text">${escapeHtml(body.heading)}</h1>`,
     body.meta ? `<p class="mt-4 text-sm text-text-secondary">${escapeHtml(body.meta)}</p>` : '',
     body.standfirst ? `<p class="mt-6 text-lg text-text">${escapeHtml(body.standfirst)}</p>` : '',
     newsroomCover,
     `<div class="mt-10">${renderMarkdownBody(capProse(body.markdown, url))}</div>`,
-  ]
-  const article = `<article class="mx-auto w-full max-w-[46rem] px-4 py-16">${parts.join('')}</article>`
-  const bootstrap = body.newsroomPost
-    ? renderNewsroomBootstrapTemplate(body.newsroomPost)
-    : ''
-  const root = '<div id="root"></div>'
-  const idx = shell.indexOf(root)
-  if (idx < 0) throw new Error('[prerender] shell missing an empty #root container')
-  return `${shell.slice(0, idx)}<div id="root">${bootstrap}${article}</div>${shell.slice(idx + root.length)}`
+  ];
+  const article = `<article class="mx-auto w-full max-w-[46rem] px-4 py-16">${parts.join('')}</article>`;
+  const bootstrap = body.newsroomPost ? renderNewsroomBootstrapTemplate(body.newsroomPost) : '';
+  const root = '<div id="root"></div>';
+  const idx = shell.indexOf(root);
+  if (idx < 0) throw new Error('[prerender] shell missing an empty #root container');
+  return `${shell.slice(0, idx)}<div id="root">${bootstrap}${article}</div>${shell.slice(idx + root.length)}`;
 }
 
 /**
@@ -1482,52 +1542,57 @@ function injectBody(
  * that runs JavaScript.
  */
 function markStaticSeo(headHtml: string): string {
-  return headHtml.replace(/<(title|meta|link|script)\b/gi, '<$1 data-static-seo')
+  return headHtml.replace(/<(title|meta|link|script)\b/gi, '<$1 data-static-seo');
 }
 
 function injectHead(shell: string, headHtml: string): string {
-  const idx = shell.indexOf('</head>')
-  if (idx < 0) throw new Error('[prerender] shell missing </head>')
-  return `${shell.slice(0, idx)}    ${markStaticSeo(headHtml)}\n  ${shell.slice(idx)}`
+  const idx = shell.indexOf('</head>');
+  if (idx < 0) throw new Error('[prerender] shell missing </head>');
+  return `${shell.slice(0, idx)}    ${markStaticSeo(headHtml)}\n  ${shell.slice(idx)}`;
 }
 
 function assertSafeRoutePath(routePath: string): string {
   if (!routePath.startsWith('/')) {
-    throw new Error(`route path must be absolute: ${routePath}`)
+    throw new Error(`route path must be absolute: ${routePath}`);
   }
-  if (routePath.includes('\\') || routePath.includes('\0') || routePath.includes('?') || routePath.includes('#')) {
-    throw new Error(`route path contains unsupported characters: ${routePath}`)
+  if (
+    routePath.includes('\\') ||
+    routePath.includes('\0') ||
+    routePath.includes('?') ||
+    routePath.includes('#')
+  ) {
+    throw new Error(`route path contains unsupported characters: ${routePath}`);
   }
 
-  const normalized = path.posix.normalize(routePath)
+  const normalized = path.posix.normalize(routePath);
   if (normalized !== routePath.replace(/\/+$/, '') && !(routePath === '/' && normalized === '/')) {
-    throw new Error(`route path is not normalized: ${routePath}`)
+    throw new Error(`route path is not normalized: ${routePath}`);
   }
 
   for (const segment of normalized.split('/')) {
     if (segment === '..' || segment === '.') {
-      throw new Error(`route path contains traversal segment: ${routePath}`)
+      throw new Error(`route path contains traversal segment: ${routePath}`);
     }
   }
 
-  return normalized
+  return normalized;
 }
 
 function assertInsideDist(filePath: string): string {
-  const resolvedDist = path.resolve(DIST_DIR)
-  const resolvedFile = path.resolve(filePath)
-  const relative = path.relative(resolvedDist, resolvedFile)
+  const resolvedDist = path.resolve(DIST_DIR);
+  const resolvedFile = path.resolve(filePath);
+  const relative = path.relative(resolvedDist, resolvedFile);
   if (relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative))) {
-    return resolvedFile
+    return resolvedFile;
   }
-  throw new Error(`refusing to write outside dist: ${resolvedFile}`)
+  throw new Error(`refusing to write outside dist: ${resolvedFile}`);
 }
 
 function pathToFile(routePath: string): string {
-  const safeRoutePath = assertSafeRoutePath(routePath)
-  if (safeRoutePath === '/') return assertInsideDist(path.join(DIST_DIR, 'index.html'))
-  const clean = safeRoutePath.replace(/^\/+/, '').replace(/\/+$/, '')
-  return assertInsideDist(path.join(DIST_DIR, clean, 'index.html'))
+  const safeRoutePath = assertSafeRoutePath(routePath);
+  if (safeRoutePath === '/') return assertInsideDist(path.join(DIST_DIR, 'index.html'));
+  const clean = safeRoutePath.replace(/^\/+/, '').replace(/\/+$/, '');
+  return assertInsideDist(path.join(DIST_DIR, clean, 'index.html'));
 }
 
 /**
@@ -1540,42 +1605,42 @@ function pathToFile(routePath: string): string {
  */
 interface PageBody {
   /** The page's own H1. */
-  heading: string
+  heading: string;
   /** A dateline, a package name — whatever the page shows under its title. */
-  meta?: string
+  meta?: string;
   /** The standfirst, where the page has one. */
-  standfirst?: string
+  standfirst?: string;
   /** The page's body, in markdown. */
-  markdown: string
+  markdown: string;
   /** Full default-locale row used to seed the detail query before React mounts. */
-  newsroomPost?: NewsroomPost
+  newsroomPost?: NewsroomPost;
 }
 
 /** A route the build will write, with the prose it can serve if it has any. */
 interface RouteEntry {
-  url: string
-  seo: SEOProps
-  body?: PageBody
+  url: string;
+  seo: SEOProps;
+  body?: PageBody;
   /** Route-specific JSON-LD. The global Organization schema stays in the shell. */
-  structuredData?: Record<string, unknown>
+  structuredData?: Record<string, unknown>;
   /** Default-locale list data used before the client can fetch the CMS. */
-  newsroomIndexPosts?: NewsroomPostSummary[]
+  newsroomIndexPosts?: NewsroomPostSummary[];
   /** Stable marker read by the Pages middleware before considering an API fallback. */
-  prerenderKind?: 'newsroom-post'
+  prerenderKind?: 'newsroom-post';
 }
 
 interface RenderJob {
-  url: string
+  url: string;
   /** Always the bare-path SEO props; the locale prefix lives in `url`. */
-  seo: SEOProps
+  seo: SEOProps;
   /** Set only for locale-prefixed mirrors; absent means the default locale. */
-  locale?: Locale
+  locale?: Locale;
   /** Absent for routes with no markdown of their own. */
-  body?: PageBody
+  body?: PageBody;
   /** Omitted from untranslated locale mirrors along with their English prose. */
-  structuredData?: Record<string, unknown>
-  newsroomIndexPosts?: NewsroomPostSummary[]
-  prerenderKind?: 'newsroom-post'
+  structuredData?: Record<string, unknown>;
+  newsroomIndexPosts?: NewsroomPostSummary[];
+  prerenderKind?: 'newsroom-post';
 }
 
 /**
@@ -1585,15 +1650,15 @@ interface RenderJob {
  */
 async function fetchSeoData(routePath: string): Promise<SeoData | null> {
   try {
-    const url = new URL(SEO_API)
-    url.searchParams.set('brand', 'oxy')
-    url.searchParams.set('path', routePath)
-    const res = await fetchPrerender(url.toString())
-    if (!res.ok) return null
-    return (await res.json()) as SeoData
+    const url = new URL(SEO_API);
+    url.searchParams.set('brand', 'oxy');
+    url.searchParams.set('path', routePath);
+    const res = await fetchPrerender(url.toString());
+    if (!res.ok) return null;
+    return (await res.json()) as SeoData;
   } catch (err) {
-    console.warn('[prerender] SEO CMS fetch failed, using fallback meta:', (err as Error).message)
-    return null
+    console.warn('[prerender] SEO CMS fetch failed, using fallback meta:', (err as Error).message);
+    return null;
   }
 }
 
@@ -1606,46 +1671,49 @@ async function writeRoute(
   try {
     // CMS SEO is keyed on the bare canonical path — a locale mirror shares the
     // same entry rather than looking up a `/es/...` key that does not exist.
-    const seoData = await fetchSeoData(job.seo.canonicalPath)
-    const { head } = ssr.renderSEO(job.seo, seoData, { locale: job.locale, locales: localeSeed })
+    const seoData = await fetchSeoData(job.seo.canonicalPath);
+    const { head } = ssr.renderSEO(job.seo, seoData, { locale: job.locale, locales: localeSeed });
     if (!head) {
-      console.warn(`[prerender] empty head for ${job.url}`)
+      console.warn(`[prerender] empty head for ${job.url}`);
     }
-    const localized = job.locale ? applyHtmlLang(shell, job.locale) : shell
-    const withHomeVisual = job.seo.canonicalPath === '/'
-      ? injectRootTemplate(localized, HOME_PRERENDER_VISUAL)
-      : localized
+    const localized = job.locale ? applyHtmlLang(shell, job.locale) : shell;
+    const withHomeVisual =
+      job.seo.canonicalPath === '/'
+        ? injectRootTemplate(localized, HOME_PRERENDER_VISUAL)
+        : localized;
     const withIndexBootstrap = job.newsroomIndexPosts
-      ? injectRootTemplate(withHomeVisual, renderNewsroomIndexBootstrapTemplate(job.newsroomIndexPosts))
-      : withHomeVisual
+      ? injectRootTemplate(
+          withHomeVisual,
+          renderNewsroomIndexBootstrapTemplate(job.newsroomIndexPosts),
+        )
+      : withHomeVisual;
     const withBody = job.body
       ? injectBody(withIndexBootstrap, job.body, job.url, ssr.renderMarkdownBody)
-      : withIndexBootstrap
-    const stripped = stripExistingMeta(withBody)
-    const structuredData = job.structuredData
-      ? ssr.renderStructuredData(job.structuredData)
-      : ''
-    const prerenderMarker = job.prerenderKind === 'newsroom-post'
-      ? NEWSROOM_PRERENDER_MARKER
-      : ''
-    const newsroomFeed = job.seo.canonicalPath === '/newsroom' || job.seo.canonicalPath.startsWith('/newsroom/')
-      ? `<link rel="alternate" type="application/rss+xml" title="Oxy Newsroom" href="${SITE_URL}/newsroom.xml">`
-      : ''
-    const leadingImage = job.newsroomIndexPosts?.[0]
+      : withIndexBootstrap;
+    const stripped = stripExistingMeta(withBody);
+    const structuredData = job.structuredData ? ssr.renderStructuredData(job.structuredData) : '';
+    const prerenderMarker = job.prerenderKind === 'newsroom-post' ? NEWSROOM_PRERENDER_MARKER : '';
+    const newsroomFeed =
+      job.seo.canonicalPath === '/newsroom' || job.seo.canonicalPath.startsWith('/newsroom/')
+        ? `<link rel="alternate" type="application/rss+xml" title="Oxy Newsroom" href="${SITE_URL}/newsroom.xml">`
+        : '';
+    const leadingImage = job.newsroomIndexPosts?.[0];
     const newsroomImagePreload = leadingImage?.coverImage
       ? `<link rel="preload" as="image" href="${escapeHtml(leadingImage.coverImage)}" fetchpriority="high"${leadingImage.coverImageSrcSet ? ` imagesrcset="${escapeHtml(leadingImage.coverImageSrcSet)}" imagesizes="(min-width: 1024px) 75vw, 100vw"` : ''}>`
-      : ''
+      : '';
     const html = injectHead(
       stripped,
-      [head, structuredData, prerenderMarker, newsroomFeed, newsroomImagePreload].filter(Boolean).join('\n    '),
-    )
-    const outFile = pathToFile(job.url)
-    await mkdir(path.dirname(outFile), { recursive: true })
-    await writeFile(outFile, html, 'utf8')
-    return true
+      [head, structuredData, prerenderMarker, newsroomFeed, newsroomImagePreload]
+        .filter(Boolean)
+        .join('\n    '),
+    );
+    const outFile = pathToFile(job.url);
+    await mkdir(path.dirname(outFile), { recursive: true });
+    await writeFile(outFile, html, 'utf8');
+    return true;
   } catch (err) {
-    console.error(`[prerender] failed for ${job.url}:`, (err as Error).message)
-    return false
+    console.error(`[prerender] failed for ${job.url}:`, (err as Error).message);
+    return false;
   }
 }
 
@@ -1657,9 +1725,9 @@ async function writeRoute(
  * local build that CI, which always starts from a fresh `dist/`, would pass.
  */
 async function countNonRouteFiles(dir: string): Promise<number> {
-  if (!existsSync(dir)) return 0
-  const entries = await readdir(dir, { recursive: true, withFileTypes: true })
-  return entries.filter((entry) => entry.isFile() && entry.name !== 'index.html').length
+  if (!existsSync(dir)) return 0;
+  const entries = await readdir(dir, { recursive: true, withFileTypes: true });
+  return entries.filter((entry) => entry.isFile() && entry.name !== 'index.html').length;
 }
 
 /**
@@ -1701,29 +1769,31 @@ async function writeSitemap(
       lastmod: toW3CDate(route.seo.modifiedTime ?? route.seo.publishedTime),
       ...classifyRoute(route.url),
     }))
-    .sort((a, b) => b.priority - a.priority || a.path.localeCompare(b.path))
+    .sort((a, b) => b.priority - a.priority || a.path.localeCompare(b.path));
 
   const xml = buildSitemapXml(entries, {
     siteUrl: SITE_URL,
     defaultLocale: DEFAULT_LOCALE,
     localeCodes: locales,
-  })
-  await writeFile(path.join(DIST_DIR, 'sitemap.xml'), xml, 'utf8')
-  console.log(`[prerender] wrote sitemap.xml (${entries.length} urls, ${locales.length} alternate locales)`)
+  });
+  await writeFile(path.join(DIST_DIR, 'sitemap.xml'), xml, 'utf8');
+  console.log(
+    `[prerender] wrote sitemap.xml (${entries.length} urls, ${locales.length} alternate locales)`,
+  );
 }
 
 async function writeNewsroomFeed(routes: readonly RouteEntry[]): Promise<void> {
-  const newsroom = routes.find((route) => route.url === '/newsroom')
+  const newsroom = routes.find((route) => route.url === '/newsroom');
   const posts = routes
     .map((route) => route.body?.newsroomPost)
-    .filter((post): post is NewsroomPost => Boolean(post))
+    .filter((post): post is NewsroomPost => Boolean(post));
   const xml = buildNewsroomRss(posts, {
     siteUrl: SITE_URL,
     title: newsroom?.seo.title ?? 'Oxy Newsroom',
     description: newsroom?.seo.description ?? 'News and updates from Oxy.',
-  })
-  await writeFile(path.join(DIST_DIR, 'newsroom.xml'), xml, 'utf8')
-  console.log(`[prerender] wrote newsroom.xml (${posts.length} articles)`)
+  });
+  await writeFile(path.join(DIST_DIR, 'newsroom.xml'), xml, 'utf8');
+  console.log(`[prerender] wrote newsroom.xml (${posts.length} articles)`);
 }
 
 /**
@@ -1754,28 +1824,29 @@ async function writeNewsroomFeed(routes: readonly RouteEntry[]): Promise<void> {
  * `NotFoundPage` adds `noindex` at runtime.
  */
 async function writeFallbackDocuments(shell: string): Promise<void> {
-  const bare = stripExistingMeta(shell)
+  const bare = stripExistingMeta(shell);
 
   const appShell = injectHead(
     bare,
-    ['<title>Oxy</title>', '<meta name="description" content="Oxy, an open-source ecosystem of ethical technology.">'].join(
-      '\n    ',
-    ),
-  )
-  await writeFile(path.join(DIST_DIR, 'app-shell.html'), appShell, 'utf8')
+    [
+      '<title>Oxy</title>',
+      '<meta name="description" content="Oxy, an open-source ecosystem of ethical technology.">',
+    ].join('\n    '),
+  );
+  await writeFile(path.join(DIST_DIR, 'app-shell.html'), appShell, 'utf8');
 
   const notFoundHead = [
     '<title>Page not found | Oxy</title>',
     '<meta name="description" content="This page does not exist. Search the Oxy site or start from the home page.">',
-  ].join('\n    ')
+  ].join('\n    ');
   const notFoundBody =
     '<main class="prerender-prose"><h1>Page not found</h1>' +
     '<p>The page you asked for does not exist on oxy.so.</p>' +
-    `<p><a href="${SITE_URL}/">Go to the home page</a></p></main>`
-  const notFound = injectHead(injectRootTemplate(bare, notFoundBody), notFoundHead)
-  await writeFile(path.join(DIST_DIR, '404.html'), notFound, 'utf8')
+    `<p><a href="${SITE_URL}/">Go to the home page</a></p></main>`;
+  const notFound = injectHead(injectRootTemplate(bare, notFoundBody), notFoundHead);
+  await writeFile(path.join(DIST_DIR, '404.html'), notFound, 'utf8');
 
-  console.log('[prerender] wrote app-shell.html + 404.html')
+  console.log('[prerender] wrote app-shell.html + 404.html');
 }
 
 /** Emit `dist/_redirects` for the locales this build actually mirrored. */
@@ -1788,114 +1859,127 @@ async function writeRedirects(
     defaultLocale: DEFAULT_LOCALE,
     mirroredLocales,
     localeReadinessKnown,
-  })
-  await writeFile(path.join(DIST_DIR, '_redirects'), contents, 'utf8')
-  console.log(`[prerender] wrote _redirects (${contents.trim().split('\n').filter((l) => l && !l.startsWith('#')).length} rules)`)
+  });
+  await writeFile(path.join(DIST_DIR, '_redirects'), contents, 'utf8');
+  console.log(
+    `[prerender] wrote _redirects (${
+      contents
+        .trim()
+        .split('\n')
+        .filter((l) => l && !l.startsWith('#')).length
+    } rules)`,
+  );
 }
 
 async function writeLocaleManifest(locales: readonly Locale[]): Promise<void> {
-  const outFile = path.join(DIST_DIR, 'prerendered-locales.json')
-  const payload = { defaultLocale: DEFAULT_LOCALE, prerendered: locales }
-  await writeFile(outFile, `${JSON.stringify(payload, null, 2)}\n`, 'utf8')
+  const outFile = path.join(DIST_DIR, 'prerendered-locales.json');
+  const payload = { defaultLocale: DEFAULT_LOCALE, prerendered: locales };
+  await writeFile(outFile, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
 }
 
 /* ── Main ─────────────────────────────────────────────────────────── */
 
 async function main(): Promise<void> {
   if (!existsSync(DIST_DIR)) {
-    throw new Error(`[prerender] dist missing at ${DIST_DIR} — run vite build first`)
+    throw new Error(`[prerender] dist missing at ${DIST_DIR} — run vite build first`);
   }
 
-  const startTime = Date.now()
+  const startTime = Date.now();
 
   const [ssr, baseRoutes, shell, localeInfo] = await Promise.all([
-    buildSsrBundle().then(value => { console.log('[prerender] SSR bundle ready'); return value }),
-    enumerateAllRoutes().then(value => { console.log(`[prerender] enumerated ${value.length} routes`); return value }),
+    buildSsrBundle().then((value) => {
+      console.log('[prerender] SSR bundle ready');
+      return value;
+    }),
+    enumerateAllRoutes().then((value) => {
+      console.log(`[prerender] enumerated ${value.length} routes`);
+      return value;
+    }),
     loadShellHtml(),
-    fetchTranslationReadyLocales().then(value => { console.log(`[prerender] locale readiness ${value.known ? 'loaded' : 'unknown'}`); return value }),
-  ])
+    fetchTranslationReadyLocales().then((value) => {
+      console.log(`[prerender] locale readiness ${value.known ? 'loaded' : 'unknown'}`);
+      return value;
+    }),
+  ]);
 
-  const jobs = expandRoutesForLocales(baseRoutes, localeInfo.locales)
+  const jobs = expandRoutesForLocales(baseRoutes, localeInfo.locales);
 
   if (localeInfo.locales.length === 0) {
     console.log(
       '[prerender] no translation-ready locales — emitting default-locale routes only. ' +
         'This is expected until a locale crosses the server-side readiness threshold.',
-    )
+    );
   } else {
     console.log(
       `[prerender] translation-ready locales: ${localeInfo.locales.join(', ')} ` +
         `(+${jobs.length - baseRoutes.length} locale-prefixed routes)`,
-    )
+    );
   }
 
   // A locale mirrors the whole tree, so the Cloudflare ceiling is reached after
   // very few locales. Fail here rather than after a green build.
-  const assetFiles = await countNonRouteFiles(DIST_DIR)
-  const projected = assetFiles + jobs.length
+  const assetFiles = await countNonRouteFiles(DIST_DIR);
+  const projected = assetFiles + jobs.length;
   console.log(
     `[prerender] file budget: ${assetFiles} assets + ${jobs.length} routes ` +
       `= ~${projected} (budget ${FILE_BUDGET}, Cloudflare limit ${CF_PAGES_FILE_LIMIT})`,
-  )
+  );
   if (projected > FILE_BUDGET) {
     throw new Error(
       `[prerender] projected ~${projected} files exceeds the ${FILE_BUDGET} budget ` +
         `(Cloudflare Pages rejects deploys above ${CF_PAGES_FILE_LIMIT}). ` +
         `Reduce the number of prerendered locales (currently ${localeInfo.locales.length}).`,
-    )
+    );
   }
 
-  await writeLocaleManifest(localeInfo.locales)
-  await writeFallbackDocuments(shell)
-  await writeRedirects(localeInfo.locales, localeInfo.known)
-  await Promise.all([
-    writeSitemap(baseRoutes, localeInfo.locales),
-    writeNewsroomFeed(baseRoutes),
-  ])
+  await writeLocaleManifest(localeInfo.locales);
+  await writeFallbackDocuments(shell);
+  await writeRedirects(localeInfo.locales, localeInfo.known);
+  await Promise.all([writeSitemap(baseRoutes, localeInfo.locales), writeNewsroomFeed(baseRoutes)]);
 
-  console.log(`[prerender] rendering ${jobs.length} routes…`)
+  console.log(`[prerender] rendering ${jobs.length} routes…`);
 
-  const CONCURRENCY = Number(process.env.PRERENDER_CONCURRENCY ?? 16)
-  let cursor = 0
-  let succeeded = 0
-  let failed = 0
+  const CONCURRENCY = Number(process.env.PRERENDER_CONCURRENCY ?? 16);
+  let cursor = 0;
+  let succeeded = 0;
+  let failed = 0;
 
   async function worker(): Promise<void> {
     while (cursor < jobs.length) {
-      const idx = cursor++
-      const job = jobs[idx]
-      if (!job) continue
-      const ok = await writeRoute(ssr, shell, job, localeInfo.seed)
-      if (ok) succeeded++
-      else failed++
+      const idx = cursor++;
+      const job = jobs[idx];
+      if (!job) continue;
+      const ok = await writeRoute(ssr, shell, job, localeInfo.seed);
+      if (ok) succeeded++;
+      else failed++;
       if ((idx + 1) % 100 === 0 || idx + 1 === jobs.length) {
-        process.stdout.write(`\r[prerender] ${idx + 1}/${jobs.length}`)
+        process.stdout.write(`\r[prerender] ${idx + 1}/${jobs.length}`);
       }
     }
   }
 
-  await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()))
-  process.stdout.write('\n')
+  await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
+  process.stdout.write('\n');
 
   // Tidy the SSR bundle so it doesn't ship to Cloudflare.
-  await rm(SSR_DIR, { recursive: true, force: true })
+  await rm(SSR_DIR, { recursive: true, force: true });
 
-  const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
-  console.log(`[prerender] wrote ${succeeded} routes (${failed} failed) in ${elapsed}s`)
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+  console.log(`[prerender] wrote ${succeeded} routes (${failed} failed) in ${elapsed}s`);
   if (cappedRoutes.length > 0) {
-    const worst = cappedRoutes.reduce((a, b) => (b.chars > a.chars ? b : a))
+    const worst = cappedRoutes.reduce((a, b) => (b.chars > a.chars ? b : a));
     console.log(
       `[prerender] prose capped at ${MAX_PROSE_CHARS} chars on ${cappedRoutes.length} route(s); ` +
         `largest was ${worst.url} at ${worst.chars}`,
-    )
+    );
   }
 
   // Strict by default: a prerender failure means those routes ship with the
   // generic home-page title/OG meta, which is worse than a failed build.
   // Set PRERENDER_STRICT=0 to opt out (local experiments only).
   if (failed > 0 && process.env.PRERENDER_STRICT !== '0') {
-    process.exit(1)
+    process.exit(1);
   }
 }
 
-await main()
+await main();
