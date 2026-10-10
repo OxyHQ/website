@@ -59,7 +59,7 @@ bun run dev / build / server / sync-docs / sync-changelog
 
 `TrackedRepo` is the single source for which repos the site knows about, and one row drives two unrelated surfaces. **Never conflate the switches:** `active` gates the changelog release sync only; `featureBoard` gates /features AND is the owner allow-list (which is why the board spans two orgs with no org constant anywhere — adding an org is a row, never a code change); `acceptsProposals` additionally lets a signed-in visitor open an issue.
 
-- **A GitHub token env var must not be named `GITHUB_*`** — GitHub reserves that prefix for Actions secrets, so such a name can never be provisioned through the repo-secret → SSM sync. The board's write credential is `FEATURE_BOARD_GITHUB_TOKEN` for exactly that reason.
+- **The board's write credential is `FEATURE_BOARD_GITHUB_TOKEN`, never a `GITHUB_*` name** — that name is its SSM parameter (`/oxy/website-api/`) and task-definition key, and SSM is the only copy of a runtime secret (oxy-infra runbook 46); GitHub holds none.
 - **Priority labels are reconciled on a schedule with hysteresis, never per vote.** A label write is a permanent timeline event on someone's issue. Tiers carry `enterAt`/`exitAt` and the gap is what stops an issue on a boundary relabelling itself all day; the reconcile re-reads the issue's labels immediately before writing and writes nothing when they already match.
 
 ## Deploy

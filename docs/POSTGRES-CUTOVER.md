@@ -21,7 +21,9 @@ will hit the same four things.
    secrets, then added to the task definition in Terraform
    (`oxy-infra` `terraform-uswest2/app-services.tf`, applied targeted). The repo
    secret alone is not enough: `deploy-aws.yml` syncs it to SSM, but a running
-   task reads what its task definition declares.
+   task reads what its task definition declares. (Since 2026-10-10 the deploy
+   syncs nothing and GitHub holds no runtime secret: SSM is the only copy,
+   oxy-infra runbook 46.)
 3. **Copied** with the **Copy Mongo to Postgres** workflow — a one-off ECS task
    running `bun server/db/copyFromMongo.ts`, because neither database is
    reachable from a laptop or a GitHub runner. 64 media, 47 newsroom posts, 22
