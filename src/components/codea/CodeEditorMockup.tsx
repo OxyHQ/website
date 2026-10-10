@@ -104,6 +104,7 @@ export default function CodeEditorMockup() {
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
             <svg
+              aria-hidden="true"
               className="h-3 w-3"
               viewBox="0 0 16 16"
               fill="currentColor"

@@ -2,7 +2,14 @@
 // Purely visual, no interactivity.
 
 const ArrowUp = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="inline-block">
+  <svg
+    aria-hidden="true"
+    width="12"
+    height="12"
+    viewBox="0 0 12 12"
+    fill="none"
+    className="inline-block"
+  >
     <path
       d="M6 9.5V2.5M6 2.5L3 5.5M6 2.5L9 5.5"
       stroke="currentColor"
@@ -14,7 +21,14 @@ const ArrowUp = () => (
 );
 
 const ArrowDown = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="inline-block">
+  <svg
+    aria-hidden="true"
+    width="12"
+    height="12"
+    viewBox="0 0 12 12"
+    fill="none"
+    className="inline-block"
+  >
     <path
       d="M6 2.5V9.5M6 9.5L3 6.5M6 9.5L9 6.5"
       stroke="currentColor"

@@ -6,6 +6,7 @@ interface DotPatternProps {
 export default function DotPattern({ className = '', id = 'dot-pattern' }: DotPatternProps) {
   return (
     <svg
+      aria-hidden="true"
       width="100%"
       height="100%"
       className={`text-input absolute inset-0 ${className}`}

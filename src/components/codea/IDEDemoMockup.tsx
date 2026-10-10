@@ -30,7 +30,7 @@ export default function IDEDemoMockup() {
           </div>
           {/* Sidebar toggle icon */}
           <div className="flex h-7 w-7 items-center justify-center rounded-full text-foreground/80 hover:bg-foreground/5">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
               <path d="M5.47 3.2c-.36 0-.66.01-.91.03-.31.03-.53.07-.7.13a2.5 2.5 0 0 0-1.09.95c-.1.2-.16.45-.2.86-.03.42-.03.95-.03 1.71v2.13c0 .76 0 1.29.03 1.71.04.42.1.67.2.87a2.5 2.5 0 0 0 1.09.95c.17.07.39.1.7.13.25.02.55.03.91.03V3.2Zm1.06 9.6h3.2c.76 0 1.29 0 1.71-.03.41-.04.66-.1.86-.2a2.5 2.5 0 0 0 1.1-.95c.09-.2.16-.45.19-.87.03-.42.04-.95.04-1.7V6.93c0-.76-.01-1.29-.04-1.71-.03-.41-.1-.66-.19-.86a2.5 2.5 0 0 0-1.1-.95c-.2-.1-.45-.16-.86-.2-.42-.03-.95-.03-1.71-.03H6.53v9.6Z" />
             </svg>
           </div>
@@ -98,7 +98,13 @@ export default function IDEDemoMockup() {
           <div className="rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] p-4">
             <div className="mb-3 flex items-center gap-2 text-foreground/90">
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-success-subtle text-success-text">
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+                <svg
+                  aria-hidden="true"
+                  width="10"
+                  height="10"
+                  viewBox="0 0 10 10"
+                  fill="currentColor"
+                >
                   <circle cx="5" cy="5" r="4" />
                 </svg>
               </span>
@@ -134,6 +140,7 @@ export default function IDEDemoMockup() {
             <div className="overflow-hidden rounded-md border border-foreground/[0.06] bg-background text-xs">
               <div className="flex items-center gap-2 border-b border-foreground/[0.06] px-3 py-1.5 text-foreground/55">
                 <svg
+                  aria-hidden="true"
                   width="12"
                   height="12"
                   viewBox="0 0 12 12"
@@ -228,7 +235,14 @@ function StatusStep({ done, active, label }: { done?: boolean; active?: boolean;
   return (
     <div className="flex items-center gap-2 text-foreground/70">
       {done ? (
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-success-text">
+        <svg
+          aria-hidden="true"
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          className="text-success-text"
+        >
           <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.2" />
           <path
             d="M4.5 7 6.2 8.7 9.5 5.3"
@@ -327,7 +341,7 @@ function DiffPreview({ hunk }: { hunk: DiffHunk }) {
 
 function PencilIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
       <path d="M10.77 2.49a2.12 2.12 0 0 1 2.74.13 2.12 2.12 0 0 1 .13 2.74l-4.04 4.04a3.04 3.04 0 0 1-1.55.83l-1.46.21-1.45.2a.53.53 0 0 1-.55-.15.53.53 0 0 1-.15-.55l.21-1.45.05-.25a3.04 3.04 0 0 1 .86-1.56l4.04-4.04.15-.13Zm1.85.89a.93.93 0 0 0-1.18.07l-4.04 4.04c-.29.29-.49.65-.57 1.04l-.1.67 .75-.11.17-.03a1.83 1.83 0 0 0 .96-.57l4.04-4.04a.93.93 0 0 0 .06-1.18l-.06-.07-.03.18Z" />
     </svg>
   );
@@ -335,7 +349,7 @@ function PencilIcon() {
 
 function ClockIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
       <path d="M13.27 8a5.27 5.27 0 1 1-10.54 0 5.27 5.27 0 0 1 10.54 0Zm-5.8-3.2a.53.53 0 0 1 1.06 0v3.2c0 .11-.03.21-.09.3l-.07.08-1.6 1.6a.53.53 0 0 1-.75-.75l1.44-1.44V4.8ZM14.33 8a6.33 6.33 0 1 1-12.66 0 6.33 6.33 0 0 1 12.66 0Z" />
     </svg>
   );
@@ -343,7 +357,7 @@ function ClockIcon() {
 
 function CubeIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
       <path d="M9.79 18.51a1.64 1.64 0 0 1-.99-.33l-3.45-2.38a2.04 2.04 0 0 1-.87-1.62V6.53c0-.33.07-.62.22-.89.15-.27.37-.49.66-.66l5.72-3.52c.33-.2.68-.3 1.06-.29.38 0 .73.1 1.05.32l3.52 2.4c.26.19.46.41.6.67.14.25.21.53.21.84v7.89c0 .33-.08.65-.25.95-.17.3-.4.54-.69.71l-5.79 3.56Zm4.59-13.85-2.96-2.02a.36.36 0 0 0-.31-.1.36.36 0 0 0-.3.08l-5.31 3.27 3.27 2.22 5.61-3.45ZM8.14 9.33l-3.28-2.22v3.1l3.28 2.24V9.33Zm0 4.71-3.28-2.24v2.66c0 .1.02.19.06.28.04.08.1.15.19.21l3.03 2.07v-2.98Zm7-4.15V5.81l-5.62 3.45v3.09l5.62-3.46Zm-.28 4.9c.09-.06.16-.13.21-.2.05-.09.07-.19.07-.3V11.48l-5.62 3.46v3.13l5.34-3.29Z" />
     </svg>
   );
@@ -351,7 +365,7 @@ function CubeIcon() {
 
 function FolderIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
       <path d="M13.29 7.47H2.71v2.69c0 .54 0 .92.02 1.21.02.29.07.45.13.57l.05.1a1.5 1.5 0 0 0 .56.51l.1.04c.11.04.25.07.47.08.29.02.67.02 1.2.02h5.52c.54 0 .92 0 1.21-.02.28-.02.44-.07.56-.13l.1-.05a1.5 1.5 0 0 0 .51-.56l.04-.1c.04-.11.07-.25.09-.47.02-.29.02-.67.02-1.2V7.47ZM14.31 10.16c0 .52 0 .95-.03 1.29-.02.3-.07.58-.18.84l-.05.11a2.56 2.56 0 0 1-1.05.97l-.17.09c-.28.15-.6.21-.95.24-.34.03-.76.03-1.29.03H5.24c-.52 0-.95 0-1.29-.03-.3-.02-.58-.08-.83-.18l-.11-.05a2.56 2.56 0 0 1-1.05-1.01l-.09-.17c-.15-.28-.21-.59-.24-.95-.03-.34-.03-.76-.03-1.29V5.84c0-.52 0-.95.03-1.29.03-.35.09-.66.24-.94l.09-.17A2.56 2.56 0 0 1 3 2.51l.11-.05c.26-.11.53-.16.84-.18.34-.03.76-.03 1.29-.03h.56c.11 0 .19 0 .27.01l.2.02c.46.07.9.27 1.25.58l.19.19c.09.09.12.12.15.15l.09.07c.22.16.48.26.75.28l.21.01h1.85c.52 0 .95 0 1.29.03.35.03.66.09.94.24l.17.09c.38.23.69.56.88.96l.05.11c.11.26.16.53.18.84.03.34.03.76.03 1.29v3.02ZM2.71 6.45h10.59c0-.2-.01-.37-.02-.52-.02-.21-.04-.36-.08-.47l-.04-.1a1.5 1.5 0 0 0-.51-.56l-.1-.05c-.12-.06-.28-.1-.57-.13-.29-.02-.67-.02-1.2-.02H8.92l-.27-.01a2.04 2.04 0 0 1-1.3-.48l-.16-.13a3.7 3.7 0 0 0-.19-.19l-.15-.15a1.5 1.5 0 0 0-.73-.34l-.12-.01h-.88c-.54 0-.92 0-1.21.02-.21.02-.36.05-.47.08l-.1.04a1.5 1.5 0 0 0-.56.51l-.05.1c-.06.12-.1.28-.13.57-.02.29-.02.67-.02 1.2v.63Z" />
     </svg>
   );
@@ -359,7 +373,7 @@ function FolderIcon() {
 
 function TerminalIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
       <path d="M4.96 6.29a.53.53 0 0 1 .75 0l1.33 1.33a.53.53 0 0 1 0 .75L5.71 9.71a.53.53 0 0 1-.75-.75L5.91 8l-.96-.96a.53.53 0 0 1 0-.75Z" />
       <path d="M10.67 9.33a.53.53 0 0 0 0-1.06H8.67a.53.53 0 0 0 0 1.06h2Z" />
       <path
@@ -373,7 +387,7 @@ function TerminalIcon() {
 
 function PlusIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
       <path d="M8 3a.5.5 0 0 1 .5.5v4h4a.5.5 0 0 1 0 1h-4v4a.5.5 0 0 1-1 0v-4h-4a.5.5 0 0 1 0-1h4v-4A.5.5 0 0 1 8 3Z" />
     </svg>
   );
