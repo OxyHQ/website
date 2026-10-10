@@ -13,6 +13,12 @@ async function repositoryFile(path: string): Promise<string> {
   return readFile(new URL(path, WEBSITE_ROOT), 'utf8')
 }
 
+// Whitespace-collapsed source, so a contract holds however the formatter
+// wraps an object literal or a ternary.
+function flat(source: string): string {
+  return source.replace(/\s+/g, ' ')
+}
+
 describe('Kaana public brand contract', () => {
   test('ships the exact canonical source logo', async () => {
     const logo = await readFile(new URL('public/images/apps/kaana.svg', WEBSITE_ROOT))
@@ -30,12 +36,12 @@ describe('Kaana public brand contract', () => {
       repositoryFile('vite.config.ts'),
     ])
 
-    expect(seed).toContain("kaana: '/images/apps/kaana.svg'")
-    expect(content).toContain("href: 'https://kaana.ai', image: '/images/apps/kaana.svg', preserveImageColors: true")
-    expect(productHooks).toContain("kaana: '/images/apps/kaana.svg'")
-    expect(appCard).toContain("product.productId === 'kaana' ? 'object-contain' : 'object-cover'")
-    expect(articleProducts).toContain("product.productId === 'kaana' ? 'object-contain' : 'object-cover'")
-    expect(navbar).toContain("product.productId === 'kaana'")
+    expect(flat(seed)).toContain("kaana: '/images/apps/kaana.svg'")
+    expect(flat(content)).toContain("href: 'https://kaana.ai', image: '/images/apps/kaana.svg', preserveImageColors: true")
+    expect(flat(productHooks)).toContain("kaana: '/images/apps/kaana.svg'")
+    expect(flat(appCard)).toContain("product.productId === 'kaana' ? 'object-contain' : 'object-cover'")
+    expect(flat(articleProducts)).toContain("product.productId === 'kaana' ? 'object-contain' : 'object-cover'")
+    expect(flat(navbar)).toContain("product.productId === 'kaana'")
     const optimizerExclude = viteConfig.match(/exclude: \/(.+)\//)?.[1]
     expect(optimizerExclude).toBeDefined()
     if (!optimizerExclude) throw new Error('Image optimizer exclusion is missing')

@@ -236,7 +236,7 @@ function collapseSingleWrapper(nodes: SidebarNode[]): SidebarNode[] {
 // Co-located with the sidebar component because it shares the tree-building
 // helpers above. Fast refresh isn't relevant for this pure function — it has
 // no React state to preserve across edits.
-// eslint-disable-next-line react-refresh/only-export-components
+// biome-ignore lint/style/useComponentExportOnlyModules: pure function sharing the tree-building helpers above; fast refresh has no React state to preserve here
 export function buildSidebar(
   activePkg?: SyncedPackage,
   activeVersion?: SyncedVersion,

@@ -124,6 +124,7 @@ export function useAcademyProgress(courseSlug: string): UseAcademyProgressResult
   // local copies. We track the "have I migrated yet on this mount" so the
   // operation runs at most once per app load even if the auth state flips.
   const migrationStartedRef = useRef(false)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: setRemote and oxyServices are stable inside OxyProvider; re-running this effect would re-trigger the migration (see the comment at the dependency list)
   useEffect(() => {
     if (!isAuthenticated) {
       migrationStartedRef.current = false
@@ -179,7 +180,6 @@ export function useAcademyProgress(courseSlug: string): UseAcademyProgressResult
     // We intentionally omit setRemote and oxyServices from deps — those
     // are stable across re-renders inside OxyProvider and re-running this
     // effect on every render would re-trigger the migration.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated])
 
   // ── Source of truth selection ─────────────────────────────────────────
@@ -307,6 +307,7 @@ export function useAcademyAllProgress(): {
     }
   }, [])
   const localStamp = useSyncExternalStore(subscribe, localSnapshot, () => '')
+  // biome-ignore lint/correctness/useExhaustiveDependencies: localStamp drives invalidation (see the comment at the dependency list)
   const localAll = useMemo<Record<string, CourseProgress>>(() => {
     if (typeof window === 'undefined') return {}
     const entries = readAllLocalCourseProgress()
@@ -317,7 +318,6 @@ export function useAcademyAllProgress(): {
     return map
     // localStamp drives invalidation — the snapshot string is the dep we
     // actually want to react to.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStamp])
 
   // Always-call the namespace hook (Rules of Hooks); it gates itself on

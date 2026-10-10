@@ -1,8 +1,8 @@
 /**
  * `Link`, `NavLink` and `Navigate` that resolve to the canonical URL.
  *
- * Import these instead of the react-router originals — `no-restricted-imports`
- * in `eslint.config.js` enforces it, and `scripts/internal-links.test.ts` fails
+ * Import these instead of the react-router originals — Biome's
+ * `noRestrictedImports` in `biome.json` enforces it, and `scripts/internal-links.test.ts` fails
  * the build on a hand-written anchor that skips both. The normalisation itself,
  * and why it exists, lives in `./canonicalPath`.
  */

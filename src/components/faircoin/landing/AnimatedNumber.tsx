@@ -43,6 +43,7 @@ export default function AnimatedNumber({
   const toRef = useRef<number | null>(value)
   const rafRef = useRef<number | null>(null)
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `display` is intentionally omitted from deps — it would cancel the tween
   useEffect(() => {
     // Nothing to tween toward — the render below shows the placeholder
     // directly off `value`, so `display` is simply left at its last number.
@@ -70,7 +71,6 @@ export default function AnimatedNumber({
       if (rafRef.current !== null) window.cancelAnimationFrame(rafRef.current)
     }
     // We intentionally omit `display` from deps — it would cancel the tween.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, durationMs])
 
   if (value === null || display === null) {

@@ -6,7 +6,7 @@ import { locales as localesTable } from '../db/schema/index.js'
 declare global {
   // The Express namespace is the canonical augmentation point for
   // attaching request-scoped data; module syntax cannot extend it.
-  // eslint-disable-next-line @typescript-eslint/no-namespace
+  // biome-ignore lint/style/noNamespace: the Express namespace is the canonical augmentation point; module syntax cannot extend it
   namespace Express {
     interface Request {
       locale?: string

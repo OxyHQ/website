@@ -14,7 +14,7 @@ export type CommunityProfileCard = {
 }
 
 /** App cards reused by the homepage app showcase. */
-// eslint-disable-next-line react-refresh/only-export-components
+// biome-ignore lint/style/useComponentExportOnlyModules: app card data reused by the homepage app showcase, co-located with its component
 export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
   {
     type: 'profile',

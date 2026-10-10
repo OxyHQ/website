@@ -24,7 +24,6 @@ import Badge from './Badge'
 // single component-map object plus re-exports of the building-block
 // components. Fast refresh isn't meaningful here (the map itself is not
 // a component); the rule's heuristic just sees both shapes coexisting.
-// eslint-disable-next-line react-refresh/only-export-components
 export const mdxContentComponents = {
   h1: (props: ComponentPropsWithoutRef<'h1'>) => (
     <h1

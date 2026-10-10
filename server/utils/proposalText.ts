@@ -24,7 +24,7 @@ export const BODY_MAX_LENGTH = 4000
 export const BODY_MIN_LENGTH = 30
 
 /** Control characters are stripped everywhere; tab and newline survive in bodies. */
-// eslint-disable-next-line no-control-regex
+// biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are exactly what this pattern strips
 const CONTROL_CHARACTERS = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g
 
 /**

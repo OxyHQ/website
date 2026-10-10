@@ -16,7 +16,7 @@ function appPath(product: ProductRecord): string {
 }
 
 /** Category label when the record carries a populated category, else ''. */
-// eslint-disable-next-line react-refresh/only-export-components
+// biome-ignore lint/style/useComponentExportOnlyModules: pure helper co-located with the card component; fast refresh has no state to preserve here
 export function categoryLabel(product: ProductRecord): string {
   const category = product.category
   if (!category || typeof category === 'string') return ''
