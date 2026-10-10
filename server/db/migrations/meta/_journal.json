@@ -176,6 +176,13 @@
       "when": 1791519617027,
       "tag": "0024_help_feedback",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1791621820823,
+      "tag": "0025_moovo_navigation_alias",
+      "breakpoints": true
     }
   ]
 }
