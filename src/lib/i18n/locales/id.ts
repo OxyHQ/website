@@ -3,6 +3,19 @@ import en, { type Translations } from './en';
 /** Indonesian translations. English remains the structural source of truth. */
 const id: Translations = {
   ...en,
+  oxyosDownloads: {
+    title: 'Unduhan',
+    description: 'Unduh versi terbaru OxyOS',
+    tableLabel: 'Rilis OxyOS',
+    version: 'Versi',
+    architecture: 'Arsitektur',
+    download: 'Unduhan langsung',
+    status: 'Status',
+    iso: 'ISO',
+    current: 'Saat ini',
+    older: 'Lama',
+    empty: 'Tidak ada rilis yang ditemukan',
+  },
   storeLive: {
     loading: 'Memuat koleksi…',
     error: 'Koleksi tidak dapat dimuat.',

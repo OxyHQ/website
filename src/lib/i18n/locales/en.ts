@@ -17,6 +17,19 @@
  * ──────────────────────────────────────────── */
 
 const en = {
+  oxyosDownloads: {
+    title: 'Downloads',
+    description: 'Download the latest version of OxyOS',
+    tableLabel: 'OxyOS releases',
+    version: 'Version',
+    architecture: 'Architecture',
+    download: 'Direct Download',
+    status: 'Status',
+    iso: 'ISO',
+    current: 'Current',
+    older: 'Older',
+    empty: 'No releases found',
+  },
   storeLive: {
     loading: 'Loading the collection…',
     error: 'The collection could not be loaded.',

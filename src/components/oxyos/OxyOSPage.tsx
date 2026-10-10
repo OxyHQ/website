@@ -115,7 +115,7 @@ const hardwareCards = [
       'BIOS and UEFI boot',
       'Full GPU support (Intel, AMD, NVIDIA)',
     ],
-    download: { label: 'Download ISO', href: 'https://os.oxy.so/downloads/oxyos-1.0-amd64.iso' },
+    download: { label: 'Download ISO', href: '/os/downloads' },
   },
   {
     title: 'Minimum Requirements',
@@ -180,7 +180,7 @@ export default function OxyOSContent() {
             </p>
             <div className="flex justify-center gap-x-g1 items-center">
               <div className="hidden md:block">
-                <Button href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">Download ISO</Button>
+                <Button href="/os/downloads">Download ISO</Button>
               </div>
               <div className="block md:hidden">
                 <Button href="https://github.com/OxyHQ/OxyOS/releases">All Downloads</Button>
@@ -369,9 +369,7 @@ export default function OxyOSContent() {
                     </h3>
                   </div>
                   <div className="mt-v1">
-                    <Button href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
-                      Download ISO
-                    </Button>
+                    <Button href="/os/downloads">Download ISO</Button>
                   </div>
                 </div>
               </div>
@@ -496,7 +494,7 @@ export default function OxyOSContent() {
             <h2 className="type-xl sm:type-2xl text-balance mx-auto mb-v1">Try OxyOS now.</h2>
             <div className="flex justify-center gap-x-g1 items-center flex-wrap">
               <div className="hidden md:block">
-                <Button href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">Download ISO</Button>
+                <Button href="/os/downloads">Download ISO</Button>
               </div>
               <div className="block md:hidden">
                 <Button href="https://github.com/OxyHQ/OxyOS/releases">All Downloads</Button>

@@ -183,6 +183,13 @@
       "when": 1791621820823,
       "tag": "0025_moovo_navigation_alias",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1791654969948,
+      "tag": "0026_oxyos_product_href",
+      "breakpoints": true
     }
   ]
 }

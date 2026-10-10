@@ -1,6 +1,19 @@
 import en, { type Translations } from './en';
 
 const zh: Translations = {
+  oxyosDownloads: {
+    title: '下载',
+    description: '下载最新版本的 OxyOS',
+    tableLabel: 'OxyOS 版本',
+    version: '版本',
+    architecture: '架构',
+    download: '直接下载',
+    status: '状态',
+    iso: 'ISO',
+    current: '当前',
+    older: '旧版',
+    empty: '未找到任何版本',
+  },
   storeLive: {
     loading: '正在加载系列…',
     error: '无法加载系列。',

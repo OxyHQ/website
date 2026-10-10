@@ -1,6 +1,19 @@
 import en, { type Translations } from './en';
 
 const fr: Translations = {
+  oxyosDownloads: {
+    title: 'Téléchargements',
+    description: 'Téléchargez la dernière version d’OxyOS',
+    tableLabel: 'Versions d’OxyOS',
+    version: 'Version',
+    architecture: 'Architecture',
+    download: 'Téléchargement direct',
+    status: 'Statut',
+    iso: 'ISO',
+    current: 'Actuelle',
+    older: 'Ancienne',
+    empty: 'Aucune version trouvée',
+  },
   storeLive: {
     loading: 'Chargement de la collection…',
     error: 'Impossible de charger la collection.',

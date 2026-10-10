@@ -1,6 +1,19 @@
 import en, { type Translations } from './en';
 
 const ja: Translations = {
+  oxyosDownloads: {
+    title: 'ダウンロード',
+    description: 'OxyOS の最新バージョンをダウンロード',
+    tableLabel: 'OxyOS のリリース',
+    version: 'バージョン',
+    architecture: 'アーキテクチャ',
+    download: '直接ダウンロード',
+    status: 'ステータス',
+    iso: 'ISO',
+    current: '最新',
+    older: '旧版',
+    empty: 'リリースが見つかりません',
+  },
   storeLive: {
     loading: 'コレクションを読み込み中…',
     error: 'コレクションを読み込めませんでした。',

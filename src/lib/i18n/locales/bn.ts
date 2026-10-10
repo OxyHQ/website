@@ -3,6 +3,19 @@ import en, { type Translations } from './en';
 /** Bengali translations. English remains the structural source of truth. */
 const bn: Translations = {
   ...en,
+  oxyosDownloads: {
+    title: 'ডাউনলোড',
+    description: 'OxyOS-এর সর্বশেষ সংস্করণ ডাউনলোড করুন',
+    tableLabel: 'OxyOS রিলিজ',
+    version: 'সংস্করণ',
+    architecture: 'আর্কিটেকচার',
+    download: 'সরাসরি ডাউনলোড',
+    status: 'অবস্থা',
+    iso: 'ISO',
+    current: 'বর্তমান',
+    older: 'পুরোনো',
+    empty: 'কোনো রিলিজ পাওয়া যায়নি',
+  },
   storeLive: {
     loading: 'সংগ্রহ লোড হচ্ছে…',
     error: 'সংগ্রহ লোড করা যায়নি।',

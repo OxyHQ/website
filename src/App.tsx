@@ -61,6 +61,7 @@ const BlogPage = lazy(() => import('./pages/BlogPage'));
 const CodeaPage = lazy(() => import('./pages/CodeaPage'));
 const CodexExtensionPage = lazy(() => import('./pages/CodexExtensionPage'));
 const OxyOSPage = lazy(() => import('./pages/OxyOSPage'));
+const OxyOSDownloadsPage = lazy(() => import('./pages/OxyOSDownloadsPage'));
 const TNPPage = lazy(() => import('./pages/TNPPage'));
 const TNPInstallPage = lazy(() => import('./pages/TNPInstallPage'));
 const HomiioPage = lazy(() => import('./pages/HomiioPage'));
@@ -446,6 +447,7 @@ function PublicRoutes() {
         }
       />
       <Route path="os" element={<OxyOSPage />} />
+      <Route path="os/downloads" element={<OxyOSDownloadsPage />} />
       <Route path="tnp" element={<TNPPage />} />
       <Route path="tnp/install" element={<TNPInstallPage />} />
       <Route path="homiio" element={<HomiioPage />} />

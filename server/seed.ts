@@ -767,7 +767,7 @@ async function seed() {
       tagline: 'Operating system',
       description:
         'An operating system designed around privacy and user freedom. Your computer, your data — no telemetry, no tracking, no compromises.',
-      href: 'https://os.oxy.so',
+      href: 'https://oxy.so/os',
       landingUrl: '/os',
       external: false,
       cta: 'Explore Oxy OS',

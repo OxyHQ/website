@@ -179,13 +179,11 @@ interface SsrRenderers {
   renderStructuredData: RenderStructuredDataFn;
 }
 
-interface RenderSEOFn {
-  (
-    input: SEOProps,
-    seoData: SeoData | null,
-    options?: { locale?: string; locales?: SEOLocaleSeed[] },
-  ): { head: string };
-}
+type RenderSEOFn = (
+  input: SEOProps,
+  seoData: SeoData | null,
+  options?: { locale?: string; locales?: SEOLocaleSeed[] },
+) => { head: string };
 
 /* ── SSR bundle build ─────────────────────────────────────────────── */
 
@@ -400,6 +398,11 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'An operating system designed around privacy and user freedom. No telemetry, no tracking, built on battle-tested open source.',
     canonicalPath: '/os',
     ogImage: `${SITE_URL}${APP_CARD_IMAGES['/os']}`,
+  },
+  '/os/downloads': {
+    title: 'Download Oxy OS',
+    description: 'Download Oxy OS: every release, its architecture and where to get the ISO image.',
+    canonicalPath: '/os/downloads',
   },
   '/astro': {
     title: 'Astro Browser',
