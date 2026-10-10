@@ -1,7 +1,7 @@
 import { getBrowserTelemetryHeaders } from '@oxy.so/telemetry/browser';
 import type { OxyServices, LinkedHttpClient } from '@oxy.so/core';
 
-export const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api';
+export const API_BASE = `${import.meta.env.VITE_API_URL || ''}/api`;
 
 let oxyServices: OxyServices | null = null;
 
