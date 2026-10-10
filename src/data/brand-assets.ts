@@ -13,6 +13,7 @@ export const BRAND_MARKS: Readonly<Record<string, string>> = {
   inbox: '/images/apps/inbox.png',
   mention: '/images/apps/mention.png',
   mercaria: '/images/apps/mercaria.png',
+  moovo: '/images/apps/moovo.png',
   noted: '/images/apps/noted.png',
   schedio: '/images/apps/schedio.png',
   oxyos: '/images/apps/oxyos.png',

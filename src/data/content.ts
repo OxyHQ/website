@@ -234,7 +234,7 @@ export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: st
   { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/mercaria', image: BRAND_MARKS.mercaria, logoColor: '#ed4040', section: 'Commerce' },
   { title: 'Wholesale by Mercaria', description: 'Manage products, suppliers and wholesale sales', href: 'https://dashboard.mercaria.co', image: '/images/apps/wholesale.svg', preserveImageColors: true, section: 'Commerce' },
   { title: 'Homiio', description: 'Rental made easy', href: '/homiio', image: BRAND_MARKS.homiio, section: 'Housing' },
-  { title: 'Moovo', description: 'Mobility and urban transport', href: '/moovo', section: 'Mobility' },
+  { title: 'Moovo', description: 'Mobility and urban transport', href: 'https://moovo.now', image: BRAND_MARKS.moovo, section: 'Mobility' },
   { title: 'TNP', description: 'The network protocol', href: '/tnp', image: '/images/apps/tnp.png', logoColor: '#2f9e00', section: 'Infrastructure' },
 ];
 
