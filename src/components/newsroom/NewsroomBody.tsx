@@ -1,22 +1,22 @@
-import { useMemo } from 'react'
-import NewsroomHeroSection from './NewsroomHeroSection'
-import ArticleGridSection from './ArticleGridSection'
-import RecentNewsSection from './RecentNewsSection'
-import CarouselSection from './CarouselSection'
-import { useNewsroomPosts, usePage, type PageSection } from '../../api/hooks'
-import { sectionHeading, sectionSubheading } from '../../lib/cmsSections'
+import { useMemo } from 'react';
+import NewsroomHeroSection from './NewsroomHeroSection';
+import ArticleGridSection from './ArticleGridSection';
+import RecentNewsSection from './RecentNewsSection';
+import CarouselSection from './CarouselSection';
+import { useNewsroomPosts, usePage, type PageSection } from '../../api/hooks';
+import { sectionHeading, sectionSubheading } from '../../lib/cmsSections';
 
 /* ── Helpers to extract translated strings from the page CMS entry ── */
 
 interface NewsroomUI {
-  viewAll: string
-  filter: string
-  newest: string
-  oldest: string
-  loadMore: string
-  clearAll: string
-  noResults: string
-  clearFilters: string
+  viewAll: string;
+  filter: string;
+  newest: string;
+  oldest: string;
+  loadMore: string;
+  clearAll: string;
+  noResults: string;
+  clearFilters: string;
 }
 
 const DEFAULT_UI: NewsroomUI = {
@@ -28,12 +28,12 @@ const DEFAULT_UI: NewsroomUI = {
   clearAll: 'Clear all',
   noResults: 'No articles match your filters',
   clearFilters: 'Clear filters',
-}
+};
 
 function parseUI(sections: PageSection[]): NewsroomUI {
-  const uiSection = sections.find(s => s.type === 'ui')
-  if (!uiSection?.items?.length) return DEFAULT_UI
-  const map = new Map(uiSection.items.map(i => [i.key, i.value]))
+  const uiSection = sections.find((s) => s.type === 'ui');
+  if (!uiSection?.items?.length) return DEFAULT_UI;
+  const map = new Map(uiSection.items.map((i) => [i.key, i.value]));
   return {
     viewAll: map.get('viewAll') ?? DEFAULT_UI.viewAll,
     filter: map.get('filter') ?? DEFAULT_UI.filter,
@@ -43,16 +43,16 @@ function parseUI(sections: PageSection[]): NewsroomUI {
     clearAll: map.get('clearAll') ?? DEFAULT_UI.clearAll,
     noResults: map.get('noResults') ?? DEFAULT_UI.noResults,
     clearFilters: map.get('clearFilters') ?? DEFAULT_UI.clearFilters,
-  }
+  };
 }
 
 interface NewsroomBodyProps {
   /** Optional category scope. When set, every sub-section filters posts down to this category. */
-  category?: string
+  category?: string;
   /** Override the hero title (defaults to the `newsroom` CMS page's hero heading). */
-  heroTitle?: string
+  heroTitle?: string;
   /** Target href for the recent-news "View more" link. Defaults to /newsroom (or /company/news when `category === 'Company'`). */
-  recentNewsHref?: string
+  recentNewsHref?: string;
 }
 
 /* ──────────────────────────────────────────────────
@@ -70,28 +70,28 @@ interface NewsroomBodyProps {
  * ────────────────────────────────────────────── */
 export default function NewsroomBody({ category, heroTitle, recentNewsHref }: NewsroomBodyProps) {
   // Both pages reuse the `newsroom` CMS page for shared copy (UI strings, headings).
-  const { data: pageData } = usePage('newsroom')
+  const { data: pageData } = usePage('newsroom');
 
   // Themed carousels — only relevant on the unscoped /newsroom page.
-  const carouselsEnabled = !category
-  const { data: storiesData } = useNewsroomPosts({ category: 'Company', limit: 3 })
-  const { data: researchData } = useNewsroomPosts({ category: 'Research', limit: 3 })
-  const { data: businessData } = useNewsroomPosts({ category: 'Engineering', limit: 3 })
-  const stories = storiesData?.posts ?? []
-  const research = researchData?.posts ?? []
-  const business = businessData?.posts ?? []
+  const carouselsEnabled = !category;
+  const { data: storiesData } = useNewsroomPosts({ category: 'Company', limit: 3 });
+  const { data: researchData } = useNewsroomPosts({ category: 'Research', limit: 3 });
+  const { data: businessData } = useNewsroomPosts({ category: 'Engineering', limit: 3 });
+  const stories = storiesData?.posts ?? [];
+  const research = researchData?.posts ?? [];
+  const business = businessData?.posts ?? [];
 
   // Stable identity for `sections` so downstream memos (e.g. `ui`) don't
   // recompute on every render purely because the `?? []` fallback returns a
   // fresh array literal.
-  const sections = useMemo<PageSection[]>(() => pageData?.sections ?? [], [pageData?.sections])
-  const resolvedHeroTitle = heroTitle ?? sectionHeading(sections, 'hero', 'Newsroom')
-  const recentNewsTitle = sectionHeading(sections, 'recent-news', 'Recent news')
-  const recentNewsLinkText = sectionSubheading(sections, 'recent-news', 'View more')
-  const storiesTitle = sectionHeading(sections, 'stories', 'Stories')
-  const latestResearchTitle = sectionHeading(sections, 'latest-research', 'Latest research')
-  const oxyForBusinessTitle = sectionHeading(sections, 'oxy-for-business', 'Oxy for business')
-  const ui = useMemo(() => parseUI(sections), [sections])
+  const sections = useMemo<PageSection[]>(() => pageData?.sections ?? [], [pageData?.sections]);
+  const resolvedHeroTitle = heroTitle ?? sectionHeading(sections, 'hero', 'Newsroom');
+  const recentNewsTitle = sectionHeading(sections, 'recent-news', 'Recent news');
+  const recentNewsLinkText = sectionSubheading(sections, 'recent-news', 'View more');
+  const storiesTitle = sectionHeading(sections, 'stories', 'Stories');
+  const latestResearchTitle = sectionHeading(sections, 'latest-research', 'Latest research');
+  const oxyForBusinessTitle = sectionHeading(sections, 'oxy-for-business', 'Oxy for business');
+  const ui = useMemo(() => parseUI(sections), [sections]);
 
   return (
     <main className="flex flex-col gap-12 pb-20 md:gap-16 md:pb-28">
@@ -134,5 +134,5 @@ export default function NewsroomBody({ category, heroTitle, recentNewsHref }: Ne
         </>
       )}
     </main>
-  )
+  );
 }

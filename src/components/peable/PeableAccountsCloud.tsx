@@ -1,6 +1,6 @@
-import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import { PAY_ACCOUNTS } from './data'
+import { useRef } from 'react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { PAY_ACCOUNTS } from './data';
 
 /**
  * The savings-goal cards drifting behind the headline.
@@ -11,9 +11,9 @@ import { PAY_ACCOUNTS } from './data'
  * keeps the parallax internally consistent instead of hand-tuned per property.
  */
 function AccountCard({ index }: { index: number }) {
-  const account = PAY_ACCOUNTS[index]
-  const Icon = account.icon
-  const { depth } = account
+  const account = PAY_ACCOUNTS[index];
+  const Icon = account.icon;
+  const { depth } = account;
 
   return (
     <div
@@ -31,13 +31,13 @@ function AccountCard({ index }: { index: number }) {
         <span className="font-display text-account-balance">{account.balance}</span>
       </div>
     </div>
-  )
+  );
 }
 
 export default function PeableAccountsCloud() {
-  const ref = useRef<HTMLDivElement>(null)
-  const reduced = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
 
   return (
     <div
@@ -52,7 +52,12 @@ export default function PeableAccountsCloud() {
         style={{ height: 536, width: 1120, transform: 'translate(-50%, -50%) scale(0.825)' }}
       >
         {PAY_ACCOUNTS.map((account, index) => (
-          <CloudItem key={`${account.label}-${index}`} index={index} progress={scrollYProgress} reduced={Boolean(reduced)} />
+          <CloudItem
+            key={`${account.label}-${index}`}
+            index={index}
+            progress={scrollYProgress}
+            reduced={Boolean(reduced)}
+          />
         ))}
       </div>
 
@@ -60,14 +65,18 @@ export default function PeableAccountsCloud() {
         className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center"
         style={{ zIndex: 8000, transform: 'scale(1.21212)' }}
       >
-        <p className="font-display text-h3 text-fg-primary tablet-lg:text-display">One balance, many pots</p>
-        <p className="text-caption text-fg-secondary">Name them, move between them, close them whenever you want.</p>
+        <p className="font-display text-h3 text-fg-primary tablet-lg:text-display">
+          One balance, many pots
+        </p>
+        <p className="text-caption text-fg-secondary">
+          Name them, move between them, close them whenever you want.
+        </p>
       </div>
 
       <div className="absolute inset-x-0 top-0 z-[99999] h-[97px] bg-[linear-gradient(180deg,var(--pay-bg-secondary)_0%,transparent_100%)]" />
       <div className="absolute inset-x-0 bottom-0 z-[99999] h-[97px] bg-[linear-gradient(180deg,transparent_0%,var(--pay-bg-secondary)_100%)]" />
     </div>
-  )
+  );
 }
 
 function CloudItem({
@@ -75,16 +84,16 @@ function CloudItem({
   progress,
   reduced,
 }: {
-  index: number
-  progress: ReturnType<typeof useScroll>['scrollYProgress']
-  reduced: boolean
+  index: number;
+  progress: ReturnType<typeof useScroll>['scrollYProgress'];
+  reduced: boolean;
 }) {
-  const account = PAY_ACCOUNTS[index]
-  const { depth } = account
+  const account = PAY_ACCOUNTS[index];
+  const { depth } = account;
   /** Near cards sweep further and scale up; far cards stay small and still. */
-  const travel = 40 + depth * 150
-  const y = useTransform(progress, [0, 1], [travel, -travel])
-  const x = useTransform(progress, [0, 1], [travel * 0.25, -travel * 0.25])
+  const travel = 40 + depth * 150;
+  const y = useTransform(progress, [0, 1], [travel, -travel]);
+  const x = useTransform(progress, [0, 1], [travel * 0.25, -travel * 0.25]);
 
   return (
     <motion.div
@@ -100,5 +109,5 @@ function CloudItem({
     >
       <AccountCard index={index} />
     </motion.div>
-  )
+  );
 }

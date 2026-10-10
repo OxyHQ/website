@@ -1,15 +1,15 @@
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useAuth } from '@oxy.so/services/ui/client'
-import { getNormalizedUserHandle } from '@oxy.so/core'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import ProfileHeader from '../components/profile/ProfileHeader'
-import ProfileActivity from '../components/profile/ProfileActivity'
-import ProfileEditForm from '../components/profile/ProfileEditForm'
-import { useUserProfile } from '../api/hooks'
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useAuth } from '@oxy.so/services/ui/client';
+import { getNormalizedUserHandle } from '@oxy.so/core';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import ProfileHeader from '../components/profile/ProfileHeader';
+import ProfileActivity from '../components/profile/ProfileActivity';
+import ProfileEditForm from '../components/profile/ProfileEditForm';
+import { useUserProfile } from '../api/hooks';
 
 function ProfileSkeleton() {
   return (
@@ -60,33 +60,31 @@ function ProfileSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function ProfileNotFound({ username }: { username: string }) {
   return (
     <div className="flex flex-col items-center gap-3 py-20 text-center">
       <p className="text-4xl font-bold text-foreground">User not found</p>
-      <p className="text-sm text-muted-foreground">
-        No profile exists for @{username}
-      </p>
+      <p className="text-sm text-muted-foreground">No profile exists for @{username}</p>
     </div>
-  )
+  );
 }
 
 export default function UserProfilePage() {
-  const { username = '' } = useParams<{ username: string }>()
-  const { user: authUser } = useAuth()
-  const { data: profile, isLoading, isError } = useUserProfile(username)
-  const [isEditing, setIsEditing] = useState(false)
+  const { username = '' } = useParams<{ username: string }>();
+  const { user: authUser } = useAuth();
+  const { data: profile, isLoading, isError } = useUserProfile(username);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const isOwnProfile = Boolean(authUser?.username && authUser.username === profile?.user.username)
+  const isOwnProfile = Boolean(authUser?.username && authUser.username === profile?.user.username);
 
   // `name.displayName` is optional in the SDK shape the profiles route passes
   // through, so fall back to the normalized handle rather than an empty title.
   const displayName = profile
     ? profile.user.name.displayName?.trim() || getNormalizedUserHandle(profile.user) || username
-    : username
+    : username;
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -130,5 +128,5 @@ export default function UserProfilePage() {
 
       <Footer />
     </div>
-  )
+  );
 }

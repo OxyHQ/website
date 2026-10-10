@@ -1,5 +1,15 @@
-import { boolean, doublePrecision, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
-import { objectId, timestamps } from './columns.js'
+import {
+  boolean,
+  doublePrecision,
+  index,
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core';
+import { objectId, timestamps } from './columns.js';
 
 /* ──────────────────────────────────────────────
  * The editorial tables: what the CMS writes and the site reads.
@@ -18,13 +28,16 @@ export const categories = pgTable('categories', {
   scope: text().notNull().default('generic'),
   order: integer().notNull().default(0),
   ...timestamps,
-})
+});
 
 export const media = pgTable('media', {
   _id: objectId(),
   url: text().notNull(),
   /** `{ sm, md, lg }` — always present, empty strings when a size is missing. */
-  thumbnails: jsonb().$type<{ sm: string; md: string; lg: string }>().notNull().default({ sm: '', md: '', lg: '' }),
+  thumbnails: jsonb()
+    .$type<{ sm: string; md: string; lg: string }>()
+    .notNull()
+    .default({ sm: '', md: '', lg: '' }),
   filename: text().notNull(),
   key: text().notNull(),
   mimeType: text().notNull(),
@@ -36,7 +49,7 @@ export const media = pgTable('media', {
   folder: text().notNull().default('images'),
   uploadedBy: text().notNull().default(''),
   ...timestamps,
-})
+});
 
 export const products = pgTable(
   'products',
@@ -71,7 +84,7 @@ export const products = pgTable(
     index('products_show_on_status_idx').on(table.showOnStatus),
     index('products_show_in_nav_idx').on(table.showInNav),
   ],
-)
+);
 
 export const pages = pgTable('pages', {
   _id: objectId(),
@@ -82,7 +95,7 @@ export const pages = pgTable('pages', {
   sections: jsonb().$type<Record<string, unknown>[]>().notNull().default([]),
   promptPhrases: text().array().notNull().default([]),
   ...timestamps,
-})
+});
 
 export const newsroomPosts = pgTable(
   'newsroom_posts',
@@ -126,7 +139,7 @@ export const newsroomPosts = pgTable(
       table._id.asc(),
     ),
   ],
-)
+);
 
 export const courses = pgTable(
   'courses',
@@ -156,7 +169,7 @@ export const courses = pgTable(
     index('courses_status_idx').on(table.status),
     index('courses_featured_idx').on(table.featured),
   ],
-)
+);
 
 export const helpArticles = pgTable(
   'help_articles',
@@ -182,7 +195,7 @@ export const helpArticles = pgTable(
     index('help_articles_featured_idx').on(table.featured),
     index('help_articles_order_idx').on(table.order),
   ],
-)
+);
 
 export const resources = pgTable(
   'resources',
@@ -210,7 +223,7 @@ export const resources = pgTable(
     index('resources_status_idx').on(table.status),
     index('resources_featured_idx').on(table.featured),
   ],
-)
+);
 
 export const changelogEntries = pgTable('changelog_entries', {
   _id: objectId(),
@@ -228,7 +241,7 @@ export const changelogEntries = pgTable('changelog_entries', {
   htmlUrl: text(),
   tagName: text(),
   ...timestamps,
-})
+});
 
 export const teamMembers = pgTable('team_members', {
   _id: objectId(),
@@ -246,7 +259,7 @@ export const teamMembers = pgTable('team_members', {
     .notNull()
     .default({ linkedin: '', twitter: '', github: '', website: '' }),
   ...timestamps,
-})
+});
 
 export const testimonials = pgTable('testimonials', {
   _id: objectId(),
@@ -257,7 +270,7 @@ export const testimonials = pgTable('testimonials', {
   avatar: text(),
   order: integer().notNull().default(0),
   ...timestamps,
-})
+});
 
 export const pricingPlans = pgTable('pricing_plans', {
   _id: objectId(),
@@ -276,7 +289,7 @@ export const pricingPlans = pgTable('pricing_plans', {
   highlighted: boolean().notNull().default(false),
   order: integer().notNull().default(0),
   ...timestamps,
-})
+});
 
 export const seoEntries = pgTable(
   'seo_entries',
@@ -291,7 +304,7 @@ export const seoEntries = pgTable(
     ...timestamps,
   },
   (table) => [uniqueIndex('seo_entries_brand_path_idx').on(table.brand, table.path)],
-)
+);
 
 export const translations = pgTable(
   'translations',
@@ -304,8 +317,14 @@ export const translations = pgTable(
     fields: jsonb().$type<Record<string, unknown>>().notNull(),
     ...timestamps,
   },
-  (table) => [uniqueIndex('translations_locale_collection_doc_idx').on(table.locale, table.collectionName, table.documentId)],
-)
+  (table) => [
+    uniqueIndex('translations_locale_collection_doc_idx').on(
+      table.locale,
+      table.collectionName,
+      table.documentId,
+    ),
+  ],
+);
 
 export const locales = pgTable('locales', {
   _id: objectId(),
@@ -317,7 +336,7 @@ export const locales = pgTable('locales', {
   enabled: boolean().notNull().default(true),
   order: integer().notNull().default(0),
   ...timestamps,
-})
+});
 
 /**
  * Object-storage deletions still owed. A media row is removed in the same
@@ -343,4 +362,4 @@ export const storageCleanups = pgTable(
     uniqueIndex('storage_cleanups_key_idx').on(table.key),
     index('storage_cleanups_next_attempt_idx').on(table.nextAttemptAt),
   ],
-)
+);

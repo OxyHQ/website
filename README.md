@@ -70,7 +70,7 @@ bun run dev
 
 ```bash
 bun run build      # type check, bundle, index, prerender, pagefind, CSP headers
-bun run lint
+bun run lint       # Biome lint + format check (bun run lint:fix / bun run format to apply)
 bun run preview    # serve the built output
 bun run server     # Express only
 ```

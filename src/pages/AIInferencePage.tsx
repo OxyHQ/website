@@ -1,25 +1,21 @@
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import StructuredData from '../components/StructuredData'
-import Button from '../components/ui/Button'
-import AiSection from '../components/ai/platform/AiSection'
-import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge'
-import CodeSampleTabs from '../components/ai/platform/CodeSampleTabs'
-import RoutingDiagram from '../components/ai/platform/RoutingDiagram'
-import { useTranslation } from '../lib/i18n'
-import { ctaIntentFor } from '../lib/ai/availability'
-import {
-  OXY_INFERENCE_AVAILABILITY,
-  INFERENCE_API_BASE,
-  consoleLinks,
-} from '../data/ai/taxonomy'
-import { advancedSamples, quickstartSamples, CREDENTIAL_ENV_VAR } from '../data/ai/quickstart'
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import StructuredData from '../components/StructuredData';
+import Button from '../components/ui/Button';
+import AiSection from '../components/ai/platform/AiSection';
+import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge';
+import CodeSampleTabs from '../components/ai/platform/CodeSampleTabs';
+import RoutingDiagram from '../components/ai/platform/RoutingDiagram';
+import { useTranslation } from '../lib/i18n';
+import { ctaIntentFor } from '../lib/ai/availability';
+import { OXY_INFERENCE_AVAILABILITY, INFERENCE_API_BASE, consoleLinks } from '../data/ai/taxonomy';
+import { advancedSamples, quickstartSamples, CREDENTIAL_ENV_VAR } from '../data/ai/quickstart';
 import {
   gettingStartedSteps,
   inferenceCapabilities,
   inferenceConcepts,
   operationalTopics,
-} from '../data/ai/inference'
+} from '../data/ai/inference';
 
 /**
  * `/ai/inference` — the service page a technical evaluator reads before asking
@@ -33,13 +29,14 @@ import {
  * than implied.
  */
 export default function AIInferencePage() {
-  const { t } = useTranslation()
-  const intent = ctaIntentFor(OXY_INFERENCE_AVAILABILITY)
+  const { t } = useTranslation();
+  const intent = ctaIntentFor(OXY_INFERENCE_AVAILABILITY);
   const primaryHref =
     intent === 'start_building'
       ? consoleLinks.createApplication
-      : '/contact/sales?interest=oxy_inference'
-  const primaryLabel = intent === 'start_building' ? t('ai.cta.startBuilding') : t('ai.cta.requestAccess')
+      : '/contact/sales?interest=oxy_inference';
+  const primaryLabel =
+    intent === 'start_building' ? t('ai.cta.startBuilding') : t('ai.cta.requestAccess');
 
   return (
     <PageShell
@@ -202,5 +199,5 @@ export default function AIInferencePage() {
         </div>
       </AiSection>
     </PageShell>
-  )
+  );
 }

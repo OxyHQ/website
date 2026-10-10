@@ -2,4 +2,4 @@
 export const LANDING_FILM = {
   src: '/images/landing/commons-ambient.mp4',
   poster: '/images/landing/commons-ambient-poster.webp',
-} as const
+} as const;

@@ -15,33 +15,32 @@
  */
 
 /** Separator standing in for a slash inside the model half of an id. */
-const SLASH_TOKEN = '~'
+const SLASH_TOKEN = '~';
 
 export interface ParsedModelId {
-  publisher: string
-  model: string
+  publisher: string;
+  model: string;
 }
 
 /** Split a canonical `publisher/model` id. Returns undefined for a malformed id. */
 export function splitModelId(id: string): ParsedModelId | undefined {
-  const index = id.indexOf('/')
-  if (index <= 0 || index === id.length - 1) return undefined
-  return { publisher: id.slice(0, index), model: id.slice(index + 1) }
+  const index = id.indexOf('/');
+  if (index <= 0 || index === id.length - 1) return undefined;
+  return { publisher: id.slice(0, index), model: id.slice(index + 1) };
 }
 
 /** The site path for a catalogue entry, ready to hand to `<Link to>`. */
 export function modelPath(id: string): string | undefined {
-  const parts = splitModelId(id)
-  if (!parts) return undefined
-  return `/ai/models/${encodeModelSegment(parts.publisher)}/${encodeModelSegment(parts.model)}`
+  const parts = splitModelId(id);
+  if (!parts) return undefined;
+  return `/ai/models/${encodeModelSegment(parts.publisher)}/${encodeModelSegment(parts.model)}`;
 }
 
 /** Encode one id half into a single URL path segment. */
 export function encodeModelSegment(value: string): string {
-  return encodeURIComponent(value.replaceAll(SLASH_TOKEN, `${SLASH_TOKEN}${SLASH_TOKEN}`)).replaceAll(
-    '%2F',
-    SLASH_TOKEN,
-  )
+  return encodeURIComponent(
+    value.replaceAll(SLASH_TOKEN, `${SLASH_TOKEN}${SLASH_TOKEN}`),
+  ).replaceAll('%2F', SLASH_TOKEN);
 }
 
 /** Decode one URL path segment back into the id half it came from. */
@@ -49,37 +48,37 @@ export function decodeModelSegment(segment: string): string {
   // react-router hands over an already-decoded param, but a value read straight
   // out of `location.pathname` is not, so tolerate both: decoding twice is only
   // wrong if the id itself contains a literal `%`, which no catalogue id does.
-  const percentDecoded = segment.includes('%') ? safeDecode(segment) : segment
+  const percentDecoded = segment.includes('%') ? safeDecode(segment) : segment;
   // A linear scan rather than chained `replaceAll`: `~~` stands for a literal
   // `~` and a lone `~` for `/`, and expressing that with replacements needs a
   // third placeholder character which is itself unsafe the moment an id
   // contains it.
-  let out = ''
+  let out = '';
   for (let index = 0; index < percentDecoded.length; index += 1) {
-    const char = percentDecoded[index]
+    const char = percentDecoded[index];
     if (char !== SLASH_TOKEN) {
-      out += char
-      continue
+      out += char;
+      continue;
     }
     if (percentDecoded[index + 1] === SLASH_TOKEN) {
-      out += SLASH_TOKEN
-      index += 1
+      out += SLASH_TOKEN;
+      index += 1;
     } else {
-      out += '/'
+      out += '/';
     }
   }
-  return out
+  return out;
 }
 
 /** Rebuild the canonical id from the two route params. */
 export function modelIdFromParams(publisher: string, model: string): string {
-  return `${decodeModelSegment(publisher)}/${decodeModelSegment(model)}`
+  return `${decodeModelSegment(publisher)}/${decodeModelSegment(model)}`;
 }
 
 function safeDecode(value: string): string {
   try {
-    return decodeURIComponent(value)
+    return decodeURIComponent(value);
   } catch {
-    return value
+    return value;
   }
 }

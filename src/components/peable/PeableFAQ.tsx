@@ -1,5 +1,5 @@
-import FaqSection from '../sections/FaqSection'
-import { PAY_FAQS } from './data'
+import FaqSection from '../sections/FaqSection';
+import { PAY_FAQS } from './data';
 
 export default function PeableFAQ() {
   return (
@@ -21,5 +21,5 @@ export default function PeableFAQ() {
       }
       className="flex min-h-[100svh] items-center border-t border-border bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
     />
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
 /* ──────────────────────────────────────────────
  * SectionHeading
@@ -17,21 +17,21 @@ import type { ReactNode } from 'react'
  * markup inline instead — this primitive is for section heads, not hero.
  * ──────────────────────────────────────────── */
 
-type Align = 'left' | 'center'
-type Size = 'md' | 'lg'
+type Align = 'left' | 'center';
+type Size = 'md' | 'lg';
 
 const SIZE: Record<Size, string> = {
   md: 'text-heading-responsive-md',
   lg: 'text-heading-responsive-lg',
-}
+};
 
 interface SectionHeadingProps {
-  eyebrow?: string
-  title: ReactNode
-  description?: ReactNode
-  align?: Align
-  size?: Size
-  className?: string
+  eyebrow?: string;
+  title: ReactNode;
+  description?: ReactNode;
+  align?: Align;
+  size?: Size;
+  className?: string;
 }
 
 export default function SectionHeading({
@@ -43,10 +43,10 @@ export default function SectionHeading({
   className = '',
 }: SectionHeadingProps) {
   const alignClasses =
-    align === 'center' ? 'mx-auto items-center text-center' : 'items-start text-left'
+    align === 'center' ? 'mx-auto items-center text-center' : 'items-start text-left';
   const classes = ['flex max-w-3xl flex-col gap-4', alignClasses, className]
     .filter(Boolean)
-    .join(' ')
+    .join(' ');
 
   return (
     <div className={classes}>
@@ -55,14 +55,12 @@ export default function SectionHeading({
           {eyebrow}
         </p>
       ) : null}
-      <h2 className={`text-balance text-foreground ${SIZE[size]}`}>
-        {title}
-      </h2>
+      <h2 className={`text-balance text-foreground ${SIZE[size]}`}>{title}</h2>
       {description ? (
         <p className="text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
           {description}
         </p>
       ) : null}
     </div>
-  )
+  );
 }

@@ -1,5 +1,5 @@
-import PageShell from '../components/layout/PageShell'
-import TNPInstallContent from '../components/tnp/TNPInstallPage'
+import PageShell from '../components/layout/PageShell';
+import TNPInstallContent from '../components/tnp/TNPInstallPage';
 
 export default function TNPInstallPage() {
   return (
@@ -15,5 +15,5 @@ export default function TNPInstallPage() {
     >
       <TNPInstallContent />
     </PageShell>
-  )
+  );
 }

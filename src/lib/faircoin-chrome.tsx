@@ -1,10 +1,10 @@
-import { useMemo } from 'react'
-import Button from '../components/ui/Button'
-import { fc } from './faircoin-links'
-import { isFairCoinHost } from './host'
-import type { NavbarBrand } from '../components/layout/Navbar'
-import type { NavDropdown, NavItem } from '../data/content'
-import type { FooterBrand, FooterColumnConfig } from '../components/layout/Footer'
+import { useMemo } from 'react';
+import Button from '../components/ui/Button';
+import { fc } from './faircoin-links';
+import { isFairCoinHost } from './host';
+import type { NavbarBrand } from '../components/layout/Navbar';
+import type { NavDropdown, NavItem } from '../data/content';
+import type { FooterBrand, FooterColumnConfig } from '../components/layout/Footer';
 
 /**
  * FairCoin chrome configuration — the brand identity, primary navigation, and
@@ -24,14 +24,14 @@ import type { FooterBrand, FooterColumnConfig } from '../components/layout/Foote
  * hook bodies for a `useQuery` against `/api/faircoin/navigation`.
  */
 
-const FAIRCOIN_LOGO_URL = 'https://fairco.in/logo.jpg'
-const FAIRCOIN_NAME = 'FairCoin'
-const BRIDGE_SOURCE_URL = 'https://github.com/FairCoinOfficial/faircoin-bridge'
+const FAIRCOIN_LOGO_URL = 'https://fairco.in/logo.jpg';
+const FAIRCOIN_NAME = 'FairCoin';
+const BRIDGE_SOURCE_URL = 'https://github.com/FairCoinOfficial/faircoin-bridge';
 
 /* ───────────────────────── Brand / footer hooks ───────────────────────── */
 
 export function useFairCoinNavbarBrand(): NavbarBrand | undefined {
-  const onFairCoinHost = isFairCoinHost()
+  const onFairCoinHost = isFairCoinHost();
   return useMemo(
     () =>
       onFairCoinHost
@@ -54,11 +54,11 @@ export function useFairCoinNavbarBrand(): NavbarBrand | undefined {
           }
         : undefined,
     [onFairCoinHost],
-  )
+  );
 }
 
 export function useFairCoinFooterBrand(): FooterBrand | undefined {
-  const onFairCoinHost = isFairCoinHost()
+  const onFairCoinHost = isFairCoinHost();
   return useMemo(
     () =>
       onFairCoinHost
@@ -83,7 +83,7 @@ export function useFairCoinFooterBrand(): FooterBrand | undefined {
           }
         : undefined,
     [onFairCoinHost],
-  )
+  );
 }
 
 /**
@@ -98,9 +98,9 @@ export function useFairCoinFooterBrand(): FooterBrand | undefined {
  * `pool`, `swap`, `chart`, `github`, `package`, `chat`, `send`, `twitter`).
  */
 export function useFairCoinDropdowns(): readonly NavDropdown[] | undefined {
-  const onFairCoinHost = isFairCoinHost()
+  const onFairCoinHost = isFairCoinHost();
   return useMemo(() => {
-    if (!onFairCoinHost) return undefined
+    if (!onFairCoinHost) return undefined;
 
     const getFair: NavDropdown = {
       label: 'Get FAIR',
@@ -135,7 +135,7 @@ export function useFairCoinDropdowns(): readonly NavDropdown[] | undefined {
           ],
         },
       ],
-    }
+    };
 
     const network: NavDropdown = {
       label: 'Network',
@@ -199,7 +199,7 @@ export function useFairCoinDropdowns(): readonly NavDropdown[] | undefined {
           ],
         },
       ],
-    }
+    };
 
     const developers: NavDropdown = {
       label: 'Developers',
@@ -240,7 +240,7 @@ export function useFairCoinDropdowns(): readonly NavDropdown[] | undefined {
           ],
         },
       ],
-    }
+    };
 
     const community: NavDropdown = {
       label: 'Community',
@@ -269,10 +269,10 @@ export function useFairCoinDropdowns(): readonly NavDropdown[] | undefined {
           ],
         },
       ],
-    }
+    };
 
-    return [getFair, network, developers, community]
-  }, [onFairCoinHost])
+    return [getFair, network, developers, community];
+  }, [onFairCoinHost]);
 }
 
 /**
@@ -281,18 +281,18 @@ export function useFairCoinDropdowns(): readonly NavDropdown[] | undefined {
  * lives under dropdowns so the rail stays uncluttered.
  */
 export function useFairCoinSimpleNavLinks(): readonly NavItem[] | undefined {
-  const onFairCoinHost = isFairCoinHost()
-  const buyHref = useMemo(() => fc('/buy'), [])
+  const onFairCoinHost = isFairCoinHost();
+  const buyHref = useMemo(() => fc('/buy'), []);
   return useMemo(
     () => (onFairCoinHost ? [{ label: 'Buy', href: buyHref }] : undefined),
     [onFairCoinHost, buyHref],
-  )
+  );
 }
 
 export function useFairCoinNavCtaButtons(): React.ReactNode {
-  const onFairCoinHost = isFairCoinHost()
-  const buyHref = useMemo(() => fc('/buy'), [])
-  const walletHref = useMemo(() => fc('/wallet'), [])
+  const onFairCoinHost = isFairCoinHost();
+  const buyHref = useMemo(() => fc('/buy'), []);
+  const walletHref = useMemo(() => fc('/wallet'), []);
   return useMemo(
     () =>
       onFairCoinHost ? (
@@ -306,11 +306,11 @@ export function useFairCoinNavCtaButtons(): React.ReactNode {
         </>
       ) : undefined,
     [onFairCoinHost, buyHref, walletHref],
-  )
+  );
 }
 
 export function useFairCoinFooterColumns(): readonly FooterColumnConfig[] | undefined {
-  const onFairCoinHost = isFairCoinHost()
+  const onFairCoinHost = isFairCoinHost();
   return useMemo(
     () =>
       onFairCoinHost
@@ -355,7 +355,11 @@ export function useFairCoinFooterColumns(): readonly FooterColumnConfig[] | unde
             {
               title: 'Community',
               links: [
-                { label: 'Reddit', href: 'https://reddit.com/r/FairCoinOfficial', isExternal: true },
+                {
+                  label: 'Reddit',
+                  href: 'https://reddit.com/r/FairCoinOfficial',
+                  isExternal: true,
+                },
                 { label: 'Telegram', href: 'https://t.me/FairCoin_', isExternal: true },
                 { label: 'Twitter', href: 'https://twitter.com/FairCoin_', isExternal: true },
                 { label: 'GitHub', href: 'https://github.com/FairCoinOfficial', isExternal: true },
@@ -364,11 +368,11 @@ export function useFairCoinFooterColumns(): readonly FooterColumnConfig[] | unde
           ]
         : undefined,
     [onFairCoinHost],
-  )
+  );
 }
 
 export function useFairCoinFooterLegalLinks() {
-  const onFairCoinHost = isFairCoinHost()
+  const onFairCoinHost = isFairCoinHost();
   return useMemo(
     () =>
       onFairCoinHost
@@ -381,11 +385,11 @@ export function useFairCoinFooterLegalLinks() {
           ]
         : undefined,
     [onFairCoinHost],
-  )
+  );
 }
 
 export function useFairCoinFooterCopyright(): string | undefined {
   return isFairCoinHost()
     ? 'fairco.in — community-maintained. WFAIR is experimental. No investment advice.'
-    : undefined
+    : undefined;
 }

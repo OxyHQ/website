@@ -1,8 +1,8 @@
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import WalletLandingContent from '../components/faircoin/wallet/WalletLandingContent'
-import { isFairCoinHost } from '../lib/host'
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import WalletLandingContent from '../components/faircoin/wallet/WalletLandingContent';
+import { isFairCoinHost } from '../lib/host';
 import {
   useFairCoinDropdowns,
   useFairCoinFooterBrand,
@@ -12,11 +12,11 @@ import {
   useFairCoinNavCtaButtons,
   useFairCoinNavbarBrand,
   useFairCoinSimpleNavLinks,
-} from '../lib/faircoin-chrome'
+} from '../lib/faircoin-chrome';
 
-const SEO_TITLE = 'FAIRWallet, your FairCoin wallet'
+const SEO_TITLE = 'FAIRWallet, your FairCoin wallet';
 const SEO_DESCRIPTION =
-  'FAIRWallet is the official non-custodial wallet for FairCoin. Send, receive, stake and explore the FairCoin network from one app on Android, iOS, Windows, macOS and Linux.'
+  'FAIRWallet is the official non-custodial wallet for FairCoin. Send, receive, stake and explore the FairCoin network from one app on Android, iOS, Windows, macOS and Linux.';
 
 /**
  * `/wallet` (or `/faircoin/wallet` on oxy.so) — marketing landing for the
@@ -25,21 +25,21 @@ const SEO_DESCRIPTION =
  * screenshots, trust narrative and a final CTA.
  */
 export default function FairCoinWalletPage() {
-  const onFairCoinHost = isFairCoinHost()
-  const navbarBrand = useFairCoinNavbarBrand()
-  const dropdowns = useFairCoinDropdowns()
-  const simpleNavLinks = useFairCoinSimpleNavLinks()
-  const ctaButtons = useFairCoinNavCtaButtons()
-  const footerBrand = useFairCoinFooterBrand()
-  const footerColumns = useFairCoinFooterColumns()
-  const footerLegalLinks = useFairCoinFooterLegalLinks()
-  const footerCopyright = useFairCoinFooterCopyright()
+  const onFairCoinHost = isFairCoinHost();
+  const navbarBrand = useFairCoinNavbarBrand();
+  const dropdowns = useFairCoinDropdowns();
+  const simpleNavLinks = useFairCoinSimpleNavLinks();
+  const ctaButtons = useFairCoinNavCtaButtons();
+  const footerBrand = useFairCoinFooterBrand();
+  const footerColumns = useFairCoinFooterColumns();
+  const footerLegalLinks = useFairCoinFooterLegalLinks();
+  const footerCopyright = useFairCoinFooterCopyright();
 
   // Same dual-mount story as the other FairCoin pages — Bloom/CSS theme is
   // host-gated so /faircoin/wallet on oxy.so reads as an Oxy subpage.
   const rootClass = onFairCoinHost
     ? 'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
-    : 'faircoin-surface flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
+    : 'faircoin-surface flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background';
 
   return (
     <div className={rootClass}>
@@ -64,5 +64,5 @@ export default function FairCoinWalletPage() {
         copyright={footerCopyright}
       />
     </div>
-  )
+  );
 }

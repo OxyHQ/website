@@ -1,6 +1,6 @@
-import PageShell from '../components/layout/PageShell'
-import InboxPageContent from '../components/inbox/InboxPage'
-import { APP_CARD_IMAGES } from '../data/appCardImages'
+import PageShell from '../components/layout/PageShell';
+import InboxPageContent from '../components/inbox/InboxPage';
+import { APP_CARD_IMAGES } from '../data/appCardImages';
 
 export default function InboxPage() {
   return (
@@ -17,5 +17,5 @@ export default function InboxPage() {
     >
       <InboxPageContent />
     </PageShell>
-  )
+  );
 }

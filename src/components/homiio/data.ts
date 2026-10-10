@@ -1,23 +1,28 @@
-import teresaPamies from '../../assets/homiio/teresa-pamies.jpg'
-import torrentOlla from '../../assets/homiio/torrent-olla.jpg'
-import santAntoni from '../../assets/homiio/sant-antoni.jpg'
-import manso from '../../assets/homiio/manso.jpeg'
-import rogerLluria from '../../assets/homiio/roger-lluria.jpg'
-import gaudi from '../../assets/homiio/gaudi.jpg'
-import industria from '../../assets/homiio/industria.jpg'
-import sandra from '../../assets/homiio/sandra.jpg'
-import { useHomiioListings, type HomiioListing as ApiHomiioListing } from '../../api/hooks'
+import teresaPamies from '../../assets/homiio/teresa-pamies.jpg';
+import torrentOlla from '../../assets/homiio/torrent-olla.jpg';
+import santAntoni from '../../assets/homiio/sant-antoni.jpg';
+import manso from '../../assets/homiio/manso.jpeg';
+import rogerLluria from '../../assets/homiio/roger-lluria.jpg';
+import gaudi from '../../assets/homiio/gaudi.jpg';
+import industria from '../../assets/homiio/industria.jpg';
+import sandra from '../../assets/homiio/sandra.jpg';
+import { useHomiioListings, type HomiioListing as ApiHomiioListing } from '../../api/hooks';
 
 /**
  * Shown while the live listings load, and if Homiio's API is unreachable. Same
  * shape as the real ones so the card never has to know which it is holding.
  */
-export type HomiioListing = ApiHomiioListing
+export type HomiioListing = ApiHomiioListing;
 
-export const SANDRA_IMAGE = sandra
+export const SANDRA_IMAGE = sandra;
 
 /** A placeholder card: a local photo and a price, with the rest left empty. */
-function fallback(id: string, title: string, monthlyAmount: number, imageUrl: string): HomiioListing {
+function fallback(
+  id: string,
+  title: string,
+  monthlyAmount: number,
+  imageUrl: string,
+): HomiioListing {
   return {
     id,
     title,
@@ -28,7 +33,7 @@ function fallback(id: string, title: string, monthlyAmount: number, imageUrl: st
     squareFootage: null,
     imageUrl,
     href: 'https://homiio.com',
-  }
+  };
 }
 
 /** The deck the hero falls back to before the live listings arrive. */
@@ -40,11 +45,11 @@ const HOMIIO_LISTINGS: readonly HomiioListing[] = [
   fallback('roger-lluria', 'Room in Barcelona', 220, rogerLluria),
   fallback('gaudi', 'Penthouse in Barcelona', 600, gaudi),
   fallback('industria', 'Apartment in Barcelona', 550, industria),
-]
+];
 
 export interface HomiioFaq {
-  question: string
-  answer: string
+  question: string;
+  answer: string;
 }
 
 export const HOMIIO_FAQS: readonly HomiioFaq[] = [
@@ -63,7 +68,7 @@ export const HOMIIO_FAQS: readonly HomiioFaq[] = [
     answer:
       'Anyone with an Oxy account. Renters, room-seekers, and ethical landlords share one identity layer across the whole Oxy ecosystem, so your reputation and history travel with you.',
   },
-]
+];
 
 /**
  * The listings the landing renders: Homiio's live rentals once they arrive,
@@ -71,6 +76,6 @@ export const HOMIIO_FAQS: readonly HomiioFaq[] = [
  * always show the same set.
  */
 export function useHomiioDeck(): readonly HomiioListing[] {
-  const { data } = useHomiioListings()
-  return data && data.length > 0 ? data : HOMIIO_LISTINGS
+  const { data } = useHomiioListings();
+  return data && data.length > 0 ? data : HOMIIO_LISTINGS;
 }

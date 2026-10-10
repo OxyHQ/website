@@ -1,5 +1,5 @@
-import type { ReactElement, ReactNode } from 'react'
-import { Children, cloneElement, isValidElement } from 'react'
+import type { ReactElement, ReactNode } from 'react';
+import { Children, cloneElement, isValidElement } from 'react';
 
 /* ──────────────────────────────────────────────
  * <Steps> + <Step title="…">
@@ -18,10 +18,10 @@ import { Children, cloneElement, isValidElement } from 'react'
  * ──────────────────────────────────────────── */
 
 interface StepProps {
-  title?: string
+  title?: string;
   /** Injected by `<Steps>` — do not set manually. */
-  index?: number
-  children: ReactNode
+  index?: number;
+  children: ReactNode;
 }
 
 export function Step({ title, index, children }: StepProps) {
@@ -40,11 +40,11 @@ export function Step({ title, index, children }: StepProps) {
         {children}
       </div>
     </li>
-  )
+  );
 }
 
 interface StepsProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 // Auto-numbers `<Step>` children sequentially. Defined at module scope (a
@@ -53,20 +53,20 @@ interface StepsProps {
 // non-elements (e.g. whitespace text nodes wrapped by MDX) pass through
 // untouched and don't consume a number.
 function numberSteps(children: ReactNode): ReactNode {
-  let counter = 0
+  let counter = 0;
   return Children.map(children, (child) => {
-    if (!isValidElement(child)) return child
-    counter += 1
-    const childElement = child as ReactElement<StepProps>
-    return cloneElement(childElement, { index: counter })
-  })
+    if (!isValidElement(child)) return child;
+    counter += 1;
+    const childElement = child as ReactElement<StepProps>;
+    return cloneElement(childElement, { index: counter });
+  });
 }
 
 export default function Steps({ children }: StepsProps) {
-  const numbered = numberSteps(children)
+  const numbered = numberSteps(children);
   return (
     <ol className="not-prose my-6 ml-4 flex flex-col gap-6 border-l border-border pl-6">
       {numbered}
     </ol>
-  )
+  );
 }

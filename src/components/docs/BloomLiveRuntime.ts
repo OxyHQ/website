@@ -1,5 +1,5 @@
-import type { ComponentType } from 'react'
-import { SNIPPET_MODULES } from './BloomLiveScope.generated'
+import type { ComponentType } from 'react';
+import { SNIPPET_MODULES } from './BloomLiveScope.generated';
 
 /**
  * Compile and run a snippet the reader typed.
@@ -31,36 +31,36 @@ import { SNIPPET_MODULES } from './BloomLiveScope.generated'
 /** A compiled snippet, or why it did not compile. */
 export type BloomLiveResult =
   | { ok: true; Component: ComponentType }
-  | { ok: false; message: string }
+  | { ok: false; message: string };
 
 /**
  * Sucrase is 45.16 kB gzipped and only a reader who opens this page needs it,
  * so it is fetched on first compile and kept for the rest of the session. The
  * promise (not the module) is memoised so concurrent keystrokes share one fetch.
  */
-let transformPromise: Promise<typeof import('sucrase').transform> | null = null
+let transformPromise: Promise<typeof import('sucrase').transform> | null = null;
 
 function loadTransform(): Promise<typeof import('sucrase').transform> {
-  transformPromise ??= import('sucrase').then((sucrase) => sucrase.transform)
-  return transformPromise
+  transformPromise ??= import('sucrase').then((sucrase) => sucrase.transform);
+  return transformPromise;
 }
 
 function resolveModule(specifier: string): object {
-  const resolved = SNIPPET_MODULES[specifier]
-  if (resolved) return resolved
+  const resolved = SNIPPET_MODULES[specifier];
+  if (resolved) return resolved;
   throw new Error(
     `Cannot import "${specifier}". The playground resolves ${Object.keys(SNIPPET_MODULES).join(', ')}.`,
-  )
+  );
 }
 
 function messageFor(error: unknown): string {
-  return error instanceof Error ? error.message : String(error)
+  return error instanceof Error ? error.message : String(error);
 }
 
 export async function evaluateSnippet(source: string): Promise<BloomLiveResult> {
-  const exports: Record<string, unknown> = {}
+  const exports: Record<string, unknown> = {};
   try {
-    const transform = await loadTransform()
+    const transform = await loadTransform();
     const { code } = transform(source, {
       transforms: ['jsx', 'typescript', 'imports'],
       jsxRuntime: 'automatic',
@@ -68,30 +68,26 @@ export async function evaluateSnippet(source: string): Promise<BloomLiveResult> 
       // Sucrase prefixes its parse errors with this name, so it is what the
       // reader sees next to the line and column.
       filePath: 'Playground.tsx',
-    })
+    });
     // Both `module` and `exports` are passed because Sucrase's output writes
     // through `exports` while snippets pasted from elsewhere may assign
     // `module.exports` instead.
-    new Function('require', 'module', 'exports', code)(
-      resolveModule,
-      { exports },
-      exports,
-    )
+    new Function('require', 'module', 'exports', code)(resolveModule, { exports }, exports);
   } catch (error) {
     // One catch for both phases: a syntax error from Sucrase, an unresolvable
     // import, and anything the snippet's top level throws all read the same to
     // the reader — the snippet did not run, and here is why.
-    return { ok: false, message: messageFor(error) }
+    return { ok: false, message: messageFor(error) };
   }
 
   // A component is a function, or an object — `memo` and `forwardRef` both
   // return one. Anything else has nothing to render.
-  const exported = exports.default
+  const exported = exports.default;
   if (exported === null || (typeof exported !== 'function' && typeof exported !== 'object')) {
     return {
       ok: false,
       message: 'Nothing to render: the snippet must `export default` a component.',
-    }
+    };
   }
-  return { ok: true, Component: exported as ComponentType }
+  return { ok: true, Component: exported as ComponentType };
 }

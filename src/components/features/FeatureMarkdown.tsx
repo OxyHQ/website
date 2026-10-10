@@ -1,5 +1,5 @@
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 /**
  * Markdown written by whoever opened the issue or replied to it.
@@ -60,5 +60,5 @@ export default function FeatureMarkdown({ content }: { content: string }) {
         {content}
       </ReactMarkdown>
     </div>
-  )
+  );
 }

@@ -1,25 +1,25 @@
-import type { ReactNode } from 'react'
-import { useParams } from 'react-router-dom'
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import StructuredData from '../components/StructuredData'
-import Button from '../components/ui/Button'
-import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge'
-import CodeSampleTabs from '../components/ai/platform/CodeSampleTabs'
-import { CatalogFreshness } from '../components/ai/platform/CatalogNotice'
-import { useTranslation } from '../lib/i18n'
-import { useCatalog } from '../lib/ai/useCatalog'
-import { modelIdFromParams, modelPath } from '../lib/ai/modelId'
-import { displayPrice, isPerMillionUnit } from '../lib/ai/estimator'
-import { ctaIntentFor, isPurchasable } from '../lib/ai/availability'
-import { consoleLinks, INFERENCE_API_BASE } from '../data/ai/taxonomy'
+import type { ReactNode } from 'react';
+import { useParams } from 'react-router-dom';
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import StructuredData from '../components/StructuredData';
+import Button from '../components/ui/Button';
+import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge';
+import CodeSampleTabs from '../components/ai/platform/CodeSampleTabs';
+import { CatalogFreshness } from '../components/ai/platform/CatalogNotice';
+import { useTranslation } from '../lib/i18n';
+import { useCatalog } from '../lib/ai/useCatalog';
+import { modelIdFromParams, modelPath } from '../lib/ai/modelId';
+import { displayPrice, isPerMillionUnit } from '../lib/ai/estimator';
+import { ctaIntentFor, isPurchasable } from '../lib/ai/availability';
+import { consoleLinks, INFERENCE_API_BASE } from '../data/ai/taxonomy';
 import {
   deploymentsForEntry,
   findEntry,
   publisherName,
   type CatalogEntry,
   type PublicCatalog,
-} from '../lib/ai/catalog'
+} from '../lib/ai/catalog';
 
 /**
  * `/ai/models/:publisher/:model` — one catalogue entry in full.
@@ -30,18 +30,18 @@ import {
  * which is a different claim from "$0" and from an empty cell.
  */
 export default function AIModelDetailPage() {
-  const { t } = useTranslation()
-  const { catalog } = useCatalog()
-  const params = useParams<{ publisher: string; model: string }>()
-  const id = modelIdFromParams(params.publisher ?? '', params.model ?? '')
-  const entry = findEntry(catalog, id)
+  const { t } = useTranslation();
+  const { catalog } = useCatalog();
+  const params = useParams<{ publisher: string; model: string }>();
+  const id = modelIdFromParams(params.publisher ?? '', params.model ?? '');
+  const entry = findEntry(catalog, id);
 
-  if (!entry) return <NotInCatalogue id={id} />
+  if (!entry) return <NotInCatalogue id={id} />;
 
-  const deployments = deploymentsForEntry(catalog, entry)
-  const regions = [...new Set(deployments.map((deployment) => deployment.region))]
-  const intent = ctaIntentFor(entry.availability)
-  const publisher = publisherName(catalog, entry.publisherId)
+  const deployments = deploymentsForEntry(catalog, entry);
+  const regions = [...new Set(deployments.map((deployment) => deployment.region))];
+  const intent = ctaIntentFor(entry.availability);
+  const publisher = publisherName(catalog, entry.publisherId);
 
   return (
     <PageShell
@@ -63,7 +63,9 @@ export default function AIModelDetailPage() {
           </span>
           <AvailabilityBadge availability={entry.availability} />
         </div>
-        <h1 className="mt-4 text-heading-responsive-lg text-balance text-foreground">{entry.name}</h1>
+        <h1 className="mt-4 text-heading-responsive-lg text-balance text-foreground">
+          {entry.name}
+        </h1>
         <p className="mt-2 text-muted-foreground">{publisher}</p>
         <p className="mt-1 font-mono text-sm text-muted-foreground">
           <span className="sr-only">{t('ai.model.canonicalId')}: </span>
@@ -100,7 +102,9 @@ export default function AIModelDetailPage() {
             <Button href={consoleLinks.createCredential}>{t('ai.cta.startBuilding')}</Button>
           ) : (
             intent !== 'none' && (
-              <Button href={`/contact/sales?interest=oxy_inference&model=${encodeURIComponent(entry.id)}`}>
+              <Button
+                href={`/contact/sales?interest=oxy_inference&model=${encodeURIComponent(entry.id)}`}
+              >
                 {t('ai.cta.requestAccess')}
               </Button>
             )
@@ -199,7 +203,10 @@ export default function AIModelDetailPage() {
                   <tbody>
                     {deployments.map((deployment) => (
                       <tr key={deployment.id} className="border-b border-border/60">
-                        <th scope="row" className="py-2 pe-4 text-start font-normal text-foreground">
+                        <th
+                          scope="row"
+                          className="py-2 pe-4 text-start font-normal text-foreground"
+                        >
                           {catalog.providers.find((p) => p.id === deployment.providerId)?.name ??
                             deployment.providerId}
                         </th>
@@ -210,7 +217,9 @@ export default function AIModelDetailPage() {
                             ` · ${deployment.dataPolicy.retentionWindowDays}d`}
                         </td>
                         <td className="py-2 text-foreground">
-                          {t(`ai.model.training${trainingKey(deployment.dataPolicy.trainsOnContent)}`)}
+                          {t(
+                            `ai.model.training${trainingKey(deployment.dataPolicy.trainsOnContent)}`,
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -238,7 +247,9 @@ export default function AIModelDetailPage() {
                     key={`${price.unit}-${price.deploymentId ?? 'any'}`}
                     label={t(`ai.pricing.unit${pascal(price.unit)}`)}
                     value={`$${displayPrice(price)} ${
-                      isPerMillionUnit(price.unit) ? t('ai.pricing.perMillion') : t('ai.pricing.perUnit')
+                      isPerMillionUnit(price.unit)
+                        ? t('ai.pricing.perMillion')
+                        : t('ai.pricing.perUnit')
                     }`}
                   />
                 ))}
@@ -335,11 +346,11 @@ export default function AIModelDetailPage() {
         </aside>
       </div>
     </PageShell>
-  )
+  );
 }
 
 function NotInCatalogue({ id }: { id: string }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <PageShell
       seo={{
@@ -354,7 +365,9 @@ function NotInCatalogue({ id }: { id: string }) {
       mainClassName="flex-1"
     >
       <section className="container flex flex-col items-start gap-4 py-24">
-        <h1 className="text-heading-responsive-md text-foreground">{t('ai.model.notFoundTitle')}</h1>
+        <h1 className="text-heading-responsive-md text-foreground">
+          {t('ai.model.notFoundTitle')}
+        </h1>
         <p className="max-w-xl text-muted-foreground">{t('ai.model.notFoundBody')}</p>
         <p className="font-mono text-sm text-muted-foreground">{id}</p>
         <Button href="/ai/models" variant="outline">
@@ -362,7 +375,7 @@ function NotInCatalogue({ id }: { id: string }) {
         </Button>
       </section>
     </PageShell>
-  )
+  );
 }
 
 /**
@@ -373,7 +386,7 @@ function NotInCatalogue({ id }: { id: string }) {
  * the thing is free, and search engines read it as one.
  */
 function ModelStructuredData({ catalog, entry }: { catalog: PublicCatalog; entry: CatalogEntry }) {
-  const inputPrice = entry.prices.find((price) => price.unit === 'input_token')
+  const inputPrice = entry.prices.find((price) => price.unit === 'input_token');
   const offer =
     isPurchasable(entry.availability) && inputPrice
       ? {
@@ -385,7 +398,7 @@ function ModelStructuredData({ catalog, entry }: { catalog: PublicCatalog; entry
             availability: 'https://schema.org/InStock',
           },
         }
-      : {}
+      : {};
 
   return (
     <StructuredData
@@ -399,7 +412,7 @@ function ModelStructuredData({ catalog, entry }: { catalog: PublicCatalog; entry
         ...offer,
       }}
     />
-  )
+  );
 }
 
 function Block({ heading, children }: { heading: string; children: ReactNode }) {
@@ -408,7 +421,7 @@ function Block({ heading, children }: { heading: string; children: ReactNode }) 
       <h2 className="text-xl text-foreground">{heading}</h2>
       <div className="mt-3">{children}</div>
     </section>
-  )
+  );
 }
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -417,21 +430,21 @@ function Row({ label, value }: { label: string; value: string }) {
       <dt className="text-muted-foreground">{label}</dt>
       <dd className="text-end text-foreground">{value}</dd>
     </div>
-  )
+  );
 }
 
 function capitalise(value: string): string {
-  return value.charAt(0).toUpperCase() + value.slice(1)
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function pascal(value: string): string {
   return value
     .split('_')
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('')
+    .join('');
 }
 
 function trainingKey(value: string): string {
-  if (value === 'opt_out_available') return 'OptOut'
-  return capitalise(value)
+  if (value === 'opt_out_available') return 'OptOut';
+  return capitalise(value);
 }

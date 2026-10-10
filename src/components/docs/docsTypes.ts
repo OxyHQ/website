@@ -1,4 +1,4 @@
-import type { SyncedPackage, SyncedVersion } from '../../../scripts/types'
+import type { SyncedPackage, SyncedVersion } from '../../../scripts/types';
 
 /* ------------------------------ Constants ----------------------------- */
 
@@ -7,38 +7,38 @@ export const categoryLabels: Record<SyncedPackage['category'], string> = {
   sdk: 'SDK',
   app: 'Apps',
   service: 'Services',
-}
+};
 
 export const categoryOrder: Array<SyncedPackage['category']> = [
   'ui-library',
   'sdk',
   'app',
   'service',
-]
+];
 
 /* ------------------------------ Helpers ------------------------------- */
 
 export interface PackageRoute {
-  kind: 'page'
-  pkg: SyncedPackage
-  version: SyncedVersion
-  slug: string
+  kind: 'page';
+  pkg: SyncedPackage;
+  version: SyncedVersion;
+  slug: string;
 }
 
 /**
  * A leaf in the sidebar tree — a clickable link to a synced docs page.
  */
 export interface SidebarLeaf {
-  kind: 'leaf'
+  kind: 'leaf';
   /** Display label (page title). */
-  label: string
+  label: string;
   /** Full router href. */
-  href: string
+  href: string;
   /**
    * Full page slug. Used to compute the default-expanded set of branches
    * that lead to the active page.
    */
-  slug: string
+  slug: string;
 }
 
 /**
@@ -47,18 +47,18 @@ export interface SidebarLeaf {
  * button + child list.
  */
 export interface SidebarGroup {
-  kind: 'group'
+  kind: 'group';
   /** Human-readable label (title-cased segment, e.g. `Functions`). */
-  label: string
+  label: string;
   /**
    * Stable identifier composed of the package shortName plus the full path
    * from the package root (e.g. `bloom/api/functions`). Doubles as the React
    * key and the expand-state key for `useState<Set<string>>`.
    */
-  key: string
-  children: SidebarNode[]
+  key: string;
+  children: SidebarNode[];
   /** Total leaf descendants under this group (recursive). */
-  leafCount: number
+  leafCount: number;
   /**
    * Optional page that sits at the group's own slug (e.g. an `api` README
    * at `slug='api'` alongside `slug='api/functions/*'` pages). When set,
@@ -66,7 +66,7 @@ export interface SidebarGroup {
    * Tracked separately from `children` so common-prefix elimination can
    * discard the wrapper page cleanly without scanning for synthetic leaves.
    */
-  overview?: { label: string; href: string; slug: string }
+  overview?: { label: string; href: string; slug: string };
 }
 
 /**
@@ -75,40 +75,40 @@ export interface SidebarGroup {
  * children rendered indented below the row.
  */
 export interface SidebarPackage {
-  kind: 'package'
+  kind: 'package';
   /** Display label (package displayName, e.g. `@oxy.so/services`). */
-  label: string
+  label: string;
   /** Full router href to the package index page. */
-  href: string
+  href: string;
   /** Owning package shortName — used by `PackageLogo`. */
-  shortName: string
+  shortName: string;
   /** Stable identifier (the package shortName). */
-  key: string
+  key: string;
   /**
    * Sub-tree of the package's pages. Empty for collapsed (non-active)
    * packages. Non-empty for the active package — rendered as nested
    * children of the package row.
    */
-  children: SidebarNode[]
+  children: SidebarNode[];
   /** Total leaf descendants in `children` (recursive). */
-  leafCount: number
+  leafCount: number;
 }
 
-export type SidebarNode = SidebarPackage | SidebarGroup | SidebarLeaf
+export type SidebarNode = SidebarPackage | SidebarGroup | SidebarLeaf;
 
 export interface SidebarSection {
   /** Stable category id (for tracking expand/collapse independent of label). */
-  category: SyncedPackage['category']
-  title: string
+  category: SyncedPackage['category'];
+  title: string;
   /** Top-level package nodes in this section. */
-  nodes: SidebarPackage[]
+  nodes: SidebarPackage[];
 }
 
 export type DocsRouteParams = Record<string, string | undefined> & {
-  package?: string
-  version?: string
-  '*'?: string
-}
+  package?: string;
+  version?: string;
+  '*'?: string;
+};
 
 /**
  * Result of resolving a docs URL.
@@ -127,4 +127,4 @@ export type ResolveResult =
   | PackageRoute
   | { kind: 'empty'; pkg: SyncedPackage; version: SyncedVersion }
   | null
-  | 'redirect'
+  | 'redirect';

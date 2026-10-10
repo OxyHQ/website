@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import { Switch } from '@oxy.so/bloom/switch'
-import type { PlaygroundValues } from './_playground'
+import { useState } from 'react';
+import { Switch } from '@oxy.so/bloom/switch';
+import type { PlaygroundValues } from './_playground';
 
 export const meta = {
   description: 'Two-state toggle with default and compact sizes.',
-}
+};
 
 export default function SwitchDemo() {
-  const [wifi, setWifi] = useState(true)
-  const [bluetooth, setBluetooth] = useState(false)
+  const [wifi, setWifi] = useState(true);
+  const [bluetooth, setBluetooth] = useState(false);
   return (
     // The caption beside each switch is a SIBLING, which names it on neither
     // platform — `accessibilityLabel` is the only thing that does, so it is
@@ -37,18 +37,18 @@ export default function SwitchDemo() {
         />
       </label>
     </div>
-  )
+  );
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const initial = values.checked === true
-  const size = values.size === 'sm' ? 'sm' : 'md'
-  const disabled = values.disabled === true
-  const [on, setOn] = useState(initial)
-  const [lastInitial, setLastInitial] = useState(initial)
+  const initial = values.checked === true;
+  const size = values.size === 'sm' ? 'sm' : 'md';
+  const disabled = values.disabled === true;
+  const [on, setOn] = useState(initial);
+  const [lastInitial, setLastInitial] = useState(initial);
   if (initial !== lastInitial) {
-    setLastInitial(initial)
-    setOn(initial)
+    setLastInitial(initial);
+    setOn(initial);
   }
   return (
     <Switch
@@ -58,5 +58,5 @@ export function Playground({ values }: { values: PlaygroundValues }) {
       disabled={disabled}
       accessibilityLabel="Example switch"
     />
-  )
+  );
 }

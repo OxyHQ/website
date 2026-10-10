@@ -11,49 +11,49 @@
  * conventions — the store handles the lifecycle imperatively and React just
  * subscribes/unsubscribes through the standard hook contract.
  */
-import { useSyncExternalStore } from 'react'
+import { useSyncExternalStore } from 'react';
 
-const TICK_MS = 1_000
+const TICK_MS = 1_000;
 
-let snapshot = nowSeconds()
-const listeners = new Set<() => void>()
-let intervalId: ReturnType<typeof setInterval> | null = null
+let snapshot = nowSeconds();
+const listeners = new Set<() => void>();
+let intervalId: ReturnType<typeof setInterval> | null = null;
 
 function nowSeconds(): number {
-  return Math.floor(Date.now() / 1000)
+  return Math.floor(Date.now() / 1000);
 }
 
 function tick(): void {
-  const next = nowSeconds()
-  if (next === snapshot) return
-  snapshot = next
-  for (const listener of listeners) listener()
+  const next = nowSeconds();
+  if (next === snapshot) return;
+  snapshot = next;
+  for (const listener of listeners) listener();
 }
 
 function subscribe(listener: () => void): () => void {
-  listeners.add(listener)
+  listeners.add(listener);
   if (intervalId === null) {
-    intervalId = setInterval(tick, TICK_MS)
+    intervalId = setInterval(tick, TICK_MS);
   }
   return () => {
-    listeners.delete(listener)
+    listeners.delete(listener);
     if (listeners.size === 0 && intervalId !== null) {
-      clearInterval(intervalId)
-      intervalId = null
+      clearInterval(intervalId);
+      intervalId = null;
     }
-  }
+  };
 }
 
 function getSnapshot(): number {
-  return snapshot
+  return snapshot;
 }
 
 function getServerSnapshot(): number {
   // SSR/build-time renders never animate countdowns; pin to 0 so output is
   // deterministic. The first client render replaces this with the real clock.
-  return 0
+  return 0;
 }
 
 export function useWallClockSecond(): number {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

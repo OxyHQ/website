@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
 /* ──────────────────────────────────────────────
  * Card
@@ -15,27 +15,27 @@ import type { ReactNode } from 'react'
  * Pass `href` to render as an <a>; otherwise renders as <div>.
  * ──────────────────────────────────────────── */
 
-type Variant = 'default' | 'gradient' | 'outline' | 'ghost'
+type Variant = 'default' | 'gradient' | 'outline' | 'ghost';
 
-const BASE = 'block rounded-3xl p-8 lg:p-10'
+const BASE = 'block rounded-3xl p-8 lg:p-10';
 
 const VARIANT: Record<Variant, string> = {
   default: 'bg-surface',
   gradient: 'relative overflow-hidden',
   outline: 'border border-border bg-background',
   ghost: 'transition-colors hover:bg-surface',
-}
+};
 
-const INTERACTIVE = 'transition-transform duration-200 hover:-translate-y-0.5'
+const INTERACTIVE = 'transition-transform duration-200 hover:-translate-y-0.5';
 
 interface CardProps {
-  children: ReactNode
-  variant?: Variant
-  href?: string
-  target?: string
-  rel?: string
-  className?: string
-  id?: string
+  children: ReactNode;
+  variant?: Variant;
+  href?: string;
+  target?: string;
+  rel?: string;
+  className?: string;
+  id?: string;
 }
 
 export default function Card({
@@ -49,18 +49,18 @@ export default function Card({
 }: CardProps) {
   const classes = [BASE, VARIANT[variant], href ? INTERACTIVE : '', className]
     .filter(Boolean)
-    .join(' ')
+    .join(' ');
 
   if (href) {
     return (
       <a className={classes} href={href} target={target} rel={rel} id={id}>
         {children}
       </a>
-    )
+    );
   }
   return (
     <div className={classes} id={id}>
       {children}
     </div>
-  )
+  );
 }

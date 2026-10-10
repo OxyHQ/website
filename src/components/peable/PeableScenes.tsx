@@ -1,7 +1,7 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
-import { PAY_ACTIVITY, PAY_TRANSFERS, type PayActivityRow } from './data'
-import { RecipientTick, VerifiedBadge } from './PeableIcons'
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { PAY_ACTIVITY, PAY_TRANSFERS, type PayActivityRow } from './data';
+import { RecipientTick, VerifiedBadge } from './PeableIcons';
 
 /* ------------------------------------------------------------------ */
 /* Shared frame                                                        */
@@ -19,14 +19,18 @@ function Stage({
   scale,
 }: {
   /** width / height of the inner scene, e.g. 268 / 240. */
-  ratio: [number, number]
-  children: ReactNode
-  className?: string
-  scale?: number
+  ratio: [number, number];
+  children: ReactNode;
+  className?: string;
+  scale?: number;
 }) {
-  const [w, h] = ratio
+  const [w, h] = ratio;
   return (
-    <div className={`relative size-full max-h-full max-w-full ${className}`} aria-hidden="true" style={{ containerType: 'size' }}>
+    <div
+      className={`relative size-full max-h-full max-w-full ${className}`}
+      aria-hidden="true"
+      style={{ containerType: 'size' }}
+    >
       <div
         className="absolute inset-0 m-auto"
         style={{
@@ -40,12 +44,20 @@ function Stage({
         {children}
       </div>
     </div>
-  )
+  );
 }
 
 /** Amount text whose glyphs stagger in — the source animates each character. */
-function Amount({ value, className = '', style }: { value: string; className?: string; style?: CSSProperties }) {
-  const reduced = useReducedMotion()
+function Amount({
+  value,
+  className = '',
+  style,
+}: {
+  value: string;
+  className?: string;
+  style?: CSSProperties;
+}) {
+  const reduced = useReducedMotion();
   return (
     <span className={`whitespace-nowrap ${className}`} style={style}>
       {value.split('').map((char, i) => (
@@ -58,19 +70,19 @@ function Amount({ value, className = '', style }: { value: string; className?: s
         </span>
       ))}
     </span>
-  )
+  );
 }
 
 /** Steps a scene through `length` states on an interval. Pauses when reduced. */
 function useCycle(length: number, ms: number) {
-  const reduced = useReducedMotion()
-  const [index, setIndex] = useState(0)
+  const reduced = useReducedMotion();
+  const [index, setIndex] = useState(0);
   useEffect(() => {
-    if (reduced) return
-    const timer = setInterval(() => setIndex((i) => (i + 1) % length), ms)
-    return () => clearInterval(timer)
-  }, [length, ms, reduced])
-  return reduced ? 0 : index
+    if (reduced) return;
+    const timer = setInterval(() => setIndex((i) => (i + 1) % length), ms);
+    return () => clearInterval(timer);
+  }, [length, ms, reduced]);
+  return reduced ? 0 : index;
 }
 
 /* ------------------------------------------------------------------ */
@@ -123,14 +135,27 @@ function ActivityGlyph({ glyph }: { glyph: PayActivityRow['glyph'] }) {
           aria-hidden="true"
           style={{ width: '5.597cqw', height: '5.597cqw' }}
         >
-          <path d="M8 3v10m0 0 3.5-3.5M8 13l-3.5-3.5" stroke="var(--pay-fg-primary)" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M8 3v10m0 0 3.5-3.5M8 13l-3.5-3.5"
+            stroke="var(--pay-fg-primary)"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       )}
     </div>
-  )
+  );
 }
 
-function ActivityRow({ row, id, elevated }: { row: PayActivityRow; id: string; elevated: boolean }) {
+function ActivityRow({
+  row,
+  id,
+  elevated,
+}: {
+  row: PayActivityRow;
+  id: string;
+  elevated: boolean;
+}) {
   return (
     <div
       className="relative flex items-center"
@@ -147,24 +172,47 @@ function ActivityRow({ row, id, elevated }: { row: PayActivityRow; id: string; e
           <span className="flex items-center" style={{ gap: '0.7463cqw' }}>
             <span
               className="whitespace-nowrap text-fg-primary"
-              style={{ fontSize: '3.3582cqw', fontWeight: 500, letterSpacing: '0.0336cqw', lineHeight: 'normal' }}
+              style={{
+                fontSize: '3.3582cqw',
+                fontWeight: 500,
+                letterSpacing: '0.0336cqw',
+                lineHeight: 'normal',
+              }}
             >
               {row.merchant}
             </span>
             {row.verified && (
-              <VerifiedBadge id={id} className="block shrink-0" style={{ width: '4.1045cqw', height: '4.1045cqw', transform: 'translateY(-0.1866cqw)' }} />
+              <VerifiedBadge
+                id={id}
+                className="block shrink-0"
+                style={{
+                  width: '4.1045cqw',
+                  height: '4.1045cqw',
+                  transform: 'translateY(-0.1866cqw)',
+                }}
+              />
             )}
           </span>
           <Amount
             value={row.amount}
             className={row.incoming ? 'text-fg-success' : 'text-fg-primary'}
-            style={{ fontSize: '3.3582cqw', fontWeight: 500, letterSpacing: '0.0336cqw', lineHeight: 'normal' }}
+            style={{
+              fontSize: '3.3582cqw',
+              fontWeight: 500,
+              letterSpacing: '0.0336cqw',
+              lineHeight: 'normal',
+            }}
           />
         </div>
         <div className="flex w-full items-center" style={{ gap: '2.2388cqw' }}>
           <span
             className="whitespace-nowrap text-fg-secondary"
-            style={{ fontSize: '2.9851cqw', fontWeight: 500, letterSpacing: '0.0299cqw', lineHeight: 'normal' }}
+            style={{
+              fontSize: '2.9851cqw',
+              fontWeight: 500,
+              letterSpacing: '0.0299cqw',
+              lineHeight: 'normal',
+            }}
           >
             {row.date}
           </span>
@@ -183,17 +231,23 @@ function ActivityRow({ row, id, elevated }: { row: PayActivityRow; id: string; e
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export function ActivityScene() {
-  const active = useCycle(PAY_ACTIVITY.length, 3200)
+  const active = useCycle(PAY_ACTIVITY.length, 3200);
   return (
     <Stage ratio={[268, 240]}>
       <div className="absolute inset-0" style={{ scale: '1.1' }}>
         <span
           className="absolute whitespace-nowrap text-fg-secondary"
-          style={{ left: '16.4179cqw', top: '13.0597cqw', fontSize: '3.3582cqw', fontWeight: 500, letterSpacing: '0.0336cqw' }}
+          style={{
+            left: '16.4179cqw',
+            top: '13.0597cqw',
+            fontSize: '3.3582cqw',
+            fontWeight: 500,
+            letterSpacing: '0.0336cqw',
+          }}
         >
           Activity
         </span>
@@ -210,7 +264,7 @@ export function ActivityScene() {
         ))}
       </div>
     </Stage>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -219,7 +273,7 @@ export function ActivityScene() {
 
 /** Recipient avatar pair. Drawn rather than photographed — no asset needed. */
 function AvatarPair({ seed }: { seed: number }) {
-  const hues = [(seed * 67) % 360, (seed * 67 + 140) % 360]
+  const hues = [(seed * 67) % 360, (seed * 67 + 140) % 360];
   return (
     <div className="relative shrink-0" style={{ width: '9.7015cqw', height: '5.9701cqw' }}>
       {hues.map((hue, i) => (
@@ -236,19 +290,23 @@ function AvatarPair({ seed }: { seed: number }) {
         />
       ))}
     </div>
-  )
+  );
 }
 
 export function TransfersScene() {
-  const active = useCycle(PAY_TRANSFERS.length, 2600)
+  const active = useCycle(PAY_TRANSFERS.length, 2600);
   return (
     <Stage ratio={[268, 240]}>
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{ width: '100cqw', height: 'calc(100cqw * 104 / 268)', containerType: 'inline-size' }}
+        style={{
+          width: '100cqw',
+          height: 'calc(100cqw * 104 / 268)',
+          containerType: 'inline-size',
+        }}
       >
         {PAY_TRANSFERS.map((transfer, i) => {
-          const offset = (i - active + PAY_TRANSFERS.length) % PAY_TRANSFERS.length
+          const offset = (i - active + PAY_TRANSFERS.length) % PAY_TRANSFERS.length;
           return (
             <div
               key={transfer.recipient}
@@ -262,7 +320,10 @@ export function TransfersScene() {
                   scale: 1 - offset * 0.04,
                 }}
                 transition={{ duration: 0.55, ease: [0.4, 0, 0.2, 1] }}
-                style={{ transformOrigin: 'center center', boxShadow: offset === 0 ? 'var(--shadow-s)' : 'none' }}
+                style={{
+                  transformOrigin: 'center center',
+                  boxShadow: offset === 0 ? 'var(--shadow-s)' : 'none',
+                }}
               >
                 <div
                   className="relative flex flex-col items-start justify-center"
@@ -277,7 +338,11 @@ export function TransfersScene() {
                   <div className="flex w-full items-center justify-between">
                     <span
                       className="whitespace-nowrap font-display font-medium text-fg-primary"
-                      style={{ fontSize: '5.2239cqw', letterSpacing: '0.194cqw', lineHeight: '7.4627cqw' }}
+                      style={{
+                        fontSize: '5.2239cqw',
+                        letterSpacing: '0.194cqw',
+                        lineHeight: '7.4627cqw',
+                      }}
                     >
                       {transfer.amount}
                     </span>
@@ -285,32 +350,58 @@ export function TransfersScene() {
                   </div>
                   <div className="flex w-full items-center justify-between">
                     <div className="flex items-center" style={{ gap: '0.7463cqw' }}>
-                      <span className="whitespace-nowrap" style={{ fontSize: '3.3582cqw', letterSpacing: '0.0336cqw', lineHeight: 1, color: 'var(--pay-fg-secondary)' }}>
+                      <span
+                        className="whitespace-nowrap"
+                        style={{
+                          fontSize: '3.3582cqw',
+                          letterSpacing: '0.0336cqw',
+                          lineHeight: 1,
+                          color: 'var(--pay-fg-secondary)',
+                        }}
+                      >
                         sent to
                       </span>
                       <div className="flex items-center" style={{ gap: '0.3731cqw' }}>
-                        <span className="whitespace-nowrap font-medium text-fg-primary" style={{ fontSize: '3.3582cqw', letterSpacing: '0.0336cqw', lineHeight: 1 }}>
+                        <span
+                          className="whitespace-nowrap font-medium text-fg-primary"
+                          style={{
+                            fontSize: '3.3582cqw',
+                            letterSpacing: '0.0336cqw',
+                            lineHeight: 1,
+                          }}
+                        >
                           {transfer.recipient}
                         </span>
                         <RecipientTick style={{ width: '2.9851cqw', height: '2.9851cqw' }} />
                       </div>
                     </div>
-                    <span className="whitespace-nowrap" style={{ fontSize: '3.3582cqw', letterSpacing: '0.0336cqw', lineHeight: 1, color: 'var(--pay-fg-secondary)' }}>
+                    <span
+                      className="whitespace-nowrap"
+                      style={{
+                        fontSize: '3.3582cqw',
+                        letterSpacing: '0.0336cqw',
+                        lineHeight: 1,
+                        color: 'var(--pay-fg-secondary)',
+                      }}
+                    >
                       {transfer.age}
                     </span>
                   </div>
                 </div>
               </motion.div>
             </div>
-          )
+          );
         })}
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 z-[60]"
-          style={{ height: '9.7015cqw', background: 'linear-gradient(to top, var(--pay-bg-secondary) 0%, transparent 100%)' }}
+          style={{
+            height: '9.7015cqw',
+            background: 'linear-gradient(to top, var(--pay-bg-secondary) 0%, transparent 100%)',
+          }}
         />
       </div>
     </Stage>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -352,30 +443,47 @@ export function CardArt({ face }: { face: 'front' | 'back' }) {
               height: '15%',
               borderRadius: '10%',
               // A brushed-gold chip: the palette's amber, muted toward its ink and ground.
-              background: 'linear-gradient(135deg, color-mix(in srgb, var(--chart-7-active) 65%, var(--foreground)), color-mix(in srgb, var(--chart-7) 55%, var(--background)))',
+              background:
+                'linear-gradient(135deg, color-mix(in srgb, var(--chart-7-active) 65%, var(--foreground)), color-mix(in srgb, var(--chart-7) 55%, var(--background)))',
             }}
           />
-          <span className="absolute font-display text-foreground/85" style={{ left: '8%', bottom: '10%', fontSize: '6.5%', letterSpacing: '0.14em' }}>
+          <span
+            className="absolute font-display text-foreground/85"
+            style={{ left: '8%', bottom: '10%', fontSize: '6.5%', letterSpacing: '0.14em' }}
+          >
             PEABLE
           </span>
-
         </>
       ) : (
         <>
-          <div className="absolute inset-x-0 bg-background/80" style={{ top: '14%', height: '22%' }} />
-          <div className="absolute bg-foreground/85" style={{ left: '8%', right: '26%', top: '48%', height: '14%', borderRadius: '2%' }} />
-          <span className="absolute text-foreground/60" style={{ right: '8%', top: '49%', fontSize: '7%', letterSpacing: '0.2em' }}>
+          <div
+            className="absolute inset-x-0 bg-background/80"
+            style={{ top: '14%', height: '22%' }}
+          />
+          <div
+            className="absolute bg-foreground/85"
+            style={{ left: '8%', right: '26%', top: '48%', height: '14%', borderRadius: '2%' }}
+          />
+          <span
+            className="absolute text-foreground/60"
+            style={{ right: '8%', top: '49%', fontSize: '7%', letterSpacing: '0.2em' }}
+          >
             123
           </span>
         </>
       )}
     </div>
-  )
+  );
 }
 
 function CardNavIcon({ face }: { face: 'front' | 'back' }) {
   return (
-    <svg viewBox="0 0 16 16" fill="none" className="h-[2.9cqw] w-[2.9cqw] shrink-0" aria-hidden="true">
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      className="h-[2.9cqw] w-[2.9cqw] shrink-0"
+      aria-hidden="true"
+    >
       <path
         fill="currentColor"
         fillRule="evenodd"
@@ -391,23 +499,32 @@ function CardNavIcon({ face }: { face: 'front' | 'back' }) {
         />
       )}
     </svg>
-  )
+  );
 }
 
 export function CardScene() {
-  const face = useCycle(2, 3600) === 0 ? 'front' : 'back'
+  const face = useCycle(2, 3600) === 0 ? 'front' : 'back';
   return (
     <Stage ratio={[552, 240]}>
       <div className="pointer-events-none absolute inset-0" style={{ transform: 'scale(1.1)' }}>
         <div className="absolute top-1/2 left-[18.66%] z-10 flex -translate-y-1/2 flex-col gap-[1.45cqw]">
           {(['front', 'back'] as const).map((item) => (
-            <span key={item} className="flex items-center gap-[1.09cqw] text-fg-primary transition-opacity duration-500" style={{ opacity: face === item ? 1 : 0.3 }}>
+            <span
+              key={item}
+              className="flex items-center gap-[1.09cqw] text-fg-primary transition-opacity duration-500"
+              style={{ opacity: face === item ? 1 : 0.3 }}
+            >
               <CardNavIcon face={item} />
-              <span className="whitespace-nowrap font-medium text-[2.36cqw] leading-[2.9cqw] tracking-[0.04em] capitalize">{item}</span>
+              <span className="whitespace-nowrap font-medium text-[2.36cqw] leading-[2.9cqw] tracking-[0.04em] capitalize">
+                {item}
+              </span>
             </span>
           ))}
         </div>
-        <div className="absolute top-1/2 left-[60.87%] w-[41.3%] -translate-x-1/2 -translate-y-1/2" style={{ perspective: '1000px', perspectiveOrigin: '50% 15%' }}>
+        <div
+          className="absolute top-1/2 left-[60.87%] w-[41.3%] -translate-x-1/2 -translate-y-1/2"
+          style={{ perspective: '1000px', perspectiveOrigin: '50% 15%' }}
+        >
           <div className="relative w-full" style={{ aspectRatio: '1.5833333333333333' }}>
             <motion.div
               className="absolute inset-0"
@@ -415,10 +532,16 @@ export function CardScene() {
               animate={{ rotateY: face === 'front' ? 0 : 180 }}
               transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
             >
-              <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(0deg)' }}>
+              <div
+                className="absolute inset-0"
+                style={{ backfaceVisibility: 'hidden', transform: 'rotateY(0deg)' }}
+              >
                 <CardArt face="front" />
               </div>
-              <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
+              <div
+                className="absolute inset-0"
+                style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+              >
                 <CardArt face="back" />
               </div>
             </motion.div>
@@ -426,7 +549,7 @@ export function CardScene() {
         </div>
       </div>
     </Stage>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -434,25 +557,73 @@ export function CardScene() {
 /* ------------------------------------------------------------------ */
 
 export function CashbackScene() {
-  const reduced = useReducedMotion()
-  const tapped = useCycle(2, 2400) === 1
+  const reduced = useReducedMotion();
+  const tapped = useCycle(2, 2400) === 1;
   /** Reduced motion keeps the receipt on screen rather than blinking it. */
-  const paid = Boolean(reduced) || tapped
+  const paid = Boolean(reduced) || tapped;
 
   return (
-    <div className="relative size-full max-h-full max-w-full overflow-hidden" aria-hidden="true" style={{ containerType: 'size', background: 'var(--pay-bg-secondary)' }}>
+    <div
+      className="relative size-full max-h-full max-w-full overflow-hidden"
+      aria-hidden="true"
+      style={{ containerType: 'size', background: 'var(--pay-bg-secondary)' }}
+    >
       <div
         className="absolute bottom-0 left-1/2 -translate-x-1/2 overflow-hidden"
-        style={{ width: 'min(100cqw, calc(100cqh * 268 / 240))', height: 'min(100cqh, calc(100cqw * 240 / 268))', containerType: 'inline-size' }}
+        style={{
+          width: 'min(100cqw, calc(100cqh * 268 / 240))',
+          height: 'min(100cqh, calc(100cqw * 240 / 268))',
+          containerType: 'inline-size',
+        }}
       >
         <div className="absolute inset-0">
           {/* NFC field */}
-          <div className="absolute left-1/2 -translate-x-1/2" style={{ top: '14.3284cqw', width: '47.2836cqw', height: '29.5522cqw' }}>
-            <svg viewBox="0 0 144 90" fill="none" className="absolute inset-0 block size-full overflow-visible" aria-hidden="true">
-              <ellipse cx="72" cy="45.18" rx="31" ry="19" stroke="var(--pay-fg-primary)" strokeWidth="0.75" vectorEffect="non-scaling-stroke" className="pay-nfc-ripple" style={{ animationDelay: '0.5s' }} />
-              <ellipse cx="72" cy="45.18" rx="31" ry="19" stroke="var(--pay-fg-primary)" strokeWidth="0.75" vectorEffect="non-scaling-stroke" className="pay-nfc-ripple" style={{ animationDelay: '0.9s' }} />
-              <ellipse cx="72" cy="45.18" rx="31" ry="19" stroke="var(--pay-border-normal)" strokeWidth="1.25" vectorEffect="non-scaling-stroke" />
-              <g fill="var(--pay-fg-primary)" transform="translate(64.79 36)" className="pay-nfc-glyph">
+          <div
+            className="absolute left-1/2 -translate-x-1/2"
+            style={{ top: '14.3284cqw', width: '47.2836cqw', height: '29.5522cqw' }}
+          >
+            <svg
+              viewBox="0 0 144 90"
+              fill="none"
+              className="absolute inset-0 block size-full overflow-visible"
+              aria-hidden="true"
+            >
+              <ellipse
+                cx="72"
+                cy="45.18"
+                rx="31"
+                ry="19"
+                stroke="var(--pay-fg-primary)"
+                strokeWidth="0.75"
+                vectorEffect="non-scaling-stroke"
+                className="pay-nfc-ripple"
+                style={{ animationDelay: '0.5s' }}
+              />
+              <ellipse
+                cx="72"
+                cy="45.18"
+                rx="31"
+                ry="19"
+                stroke="var(--pay-fg-primary)"
+                strokeWidth="0.75"
+                vectorEffect="non-scaling-stroke"
+                className="pay-nfc-ripple"
+                style={{ animationDelay: '0.9s' }}
+              />
+              <ellipse
+                cx="72"
+                cy="45.18"
+                rx="31"
+                ry="19"
+                stroke="var(--pay-border-normal)"
+                strokeWidth="1.25"
+                vectorEffect="non-scaling-stroke"
+              />
+              <g
+                fill="var(--pay-fg-primary)"
+                transform="translate(64.79 36)"
+                className="pay-nfc-glyph"
+              >
                 <path d="M11.0352 18.2048C10.7439 18.1189 10.445 17.7714 10.3815 17.4389C10.3404 17.2222 10.3889 17.0728 10.699 16.4713C11.9543 14.043 12.4997 11.8089 12.4997 9.10032C12.4997 6.4814 12.0178 4.44158 10.8186 1.99827C10.5608 1.47525 10.3516 0.98584 10.3516 0.914856C10.3516 0.653336 10.5683 0.27601 10.8036 0.130308C11.1249 -0.0714327 11.6666 -0.0340728 11.9281 0.208762C12.029 0.302161 12.2868 0.728056 12.5035 1.15395C13.3628 2.83886 13.9492 4.68815 14.2407 6.61215C14.42 7.80392 14.4574 10.0604 14.3116 11.1513C14.0464 13.1613 13.5159 14.9582 12.6641 16.7142C12.1485 17.7751 11.8272 18.2122 11.5583 18.2122C11.506 18.2122 11.4163 18.2272 11.364 18.2422C11.3117 18.257 11.1623 18.2422 11.0352 18.2048Z" />
                 <path d="M7.54675 16.3744C7.09843 16.2436 6.77347 15.6907 6.90419 15.2797C6.93411 15.1788 7.14699 14.7193 7.37491 14.2561C8.33507 12.2948 8.73483 10.1952 8.54051 8.13293C8.37987 6.43679 8.07731 5.36831 7.31139 3.80669C6.79955 2.7569 6.77347 2.59625 7.07227 2.17035C7.35627 1.76687 8.06603 1.70336 8.43595 2.04333C8.69371 2.2787 9.49691 3.95613 9.80699 4.90506C10.8307 8.04325 10.6737 11.4168 9.36243 14.4989C8.68627 16.0792 8.21179 16.5686 7.54675 16.3744Z" />
                 <path d="M3.94099 14.5238C3.66453 14.4005 3.42543 14.1053 3.35819 13.8102C3.31709 13.6309 3.38807 13.4291 3.71684 12.7642C4.92728 10.3134 4.93849 7.956 3.75793 5.56124C3.23864 4.51144 3.22743 4.30222 3.66454 3.88753C3.88122 3.68206 3.97461 3.64844 4.27722 3.64844C4.78905 3.64844 5.0543 3.90621 5.51009 4.84393C6.21244 6.28601 6.50014 7.53754 6.49638 9.14024C6.49262 10.7878 6.22365 11.9198 5.47646 13.4403C5.04683 14.3108 4.83388 14.5424 4.40425 14.5985C4.27349 14.6097 4.06428 14.5798 3.94099 14.5238Z" />
@@ -462,23 +633,49 @@ export function CashbackScene() {
           </div>
 
           {/* Phone holding the card */}
-          <div className="absolute -translate-x-1/2" style={{ left: '49.6269cqw', top: '45.5224cqw', width: '78.3582cqw' }}>
+          <div
+            className="absolute -translate-x-1/2"
+            style={{ left: '49.6269cqw', top: '45.5224cqw', width: '78.3582cqw' }}
+          >
             <div className="relative" style={{ width: '100%', aspectRatio: '210 / 430' }}>
               {/* The handset is dark hardware in either theme: `.force-dark`. */}
               <div
                 className="force-dark absolute overflow-hidden bg-background"
-                style={{ inset: 0, borderRadius: '11.194cqw', border: '1.1cqw solid var(--popover)', boxShadow: 'var(--shadow-m)' }}
+                style={{
+                  inset: 0,
+                  borderRadius: '11.194cqw',
+                  border: '1.1cqw solid var(--popover)',
+                  boxShadow: 'var(--shadow-m)',
+                }}
               >
-                <div className="absolute overflow-hidden" style={{ top: '11.5cqw', left: '5.5cqw', width: '61.227cqw', height: '38.68cqw', borderRadius: '2.2388cqw' }}>
+                <div
+                  className="absolute overflow-hidden"
+                  style={{
+                    top: '11.5cqw',
+                    left: '5.5cqw',
+                    width: '61.227cqw',
+                    height: '38.68cqw',
+                    borderRadius: '2.2388cqw',
+                  }}
+                >
                   <div className="relative size-full">
                     <CardArt face="front" />
                   </div>
                 </div>
-                <div className="absolute inset-x-0 flex items-center justify-between" style={{ top: '4cqw', paddingInline: '5.9701cqw' }}>
-                  <span className="font-semibold text-foreground" style={{ fontSize: '2.8806cqw', lineHeight: 1 }}>
+                <div
+                  className="absolute inset-x-0 flex items-center justify-between"
+                  style={{ top: '4cqw', paddingInline: '5.9701cqw' }}
+                >
+                  <span
+                    className="font-semibold text-foreground"
+                    style={{ fontSize: '2.8806cqw', lineHeight: 1 }}
+                  >
                     4:20
                   </span>
-                  <span className="rounded-full bg-foreground/70" style={{ width: '7cqw', height: '1.6cqw' }} />
+                  <span
+                    className="rounded-full bg-foreground/70"
+                    style={{ width: '7cqw', height: '1.6cqw' }}
+                  />
                 </div>
               </div>
             </div>
@@ -512,7 +709,13 @@ export function CashbackScene() {
                   border: '0.1866cqw solid var(--pay-border-normal)',
                 }}
               >
-                <svg viewBox="175.2 61.04 11.6 13.92" fill="none" className="block" aria-hidden="true" style={{ width: '4.9739cqw', height: '5.9701cqw' }}>
+                <svg
+                  viewBox="175.2 61.04 11.6 13.92"
+                  fill="none"
+                  className="block"
+                  aria-hidden="true"
+                  style={{ width: '4.9739cqw', height: '5.9701cqw' }}
+                >
                   <path
                     fillRule="evenodd"
                     clipRule="evenodd"
@@ -523,14 +726,39 @@ export function CashbackScene() {
               </div>
               <div className="flex min-w-0 flex-1 flex-col" style={{ gap: '1.4925cqw' }}>
                 <div className="flex w-full items-center justify-between">
-                  <span className="whitespace-nowrap text-fg-primary" style={{ fontSize: '3.3582cqw', fontWeight: 500, letterSpacing: '0.0336cqw', lineHeight: 1 }}>
+                  <span
+                    className="whitespace-nowrap text-fg-primary"
+                    style={{
+                      fontSize: '3.3582cqw',
+                      fontWeight: 500,
+                      letterSpacing: '0.0336cqw',
+                      lineHeight: 1,
+                    }}
+                  >
                     Network fee
                   </span>
-                  <span className="whitespace-nowrap text-fg-secondary" style={{ fontSize: '3.3582cqw', fontWeight: 500, letterSpacing: '0.0336cqw', lineHeight: 1 }}>
+                  <span
+                    className="whitespace-nowrap text-fg-secondary"
+                    style={{
+                      fontSize: '3.3582cqw',
+                      fontWeight: 500,
+                      letterSpacing: '0.0336cqw',
+                      lineHeight: 1,
+                    }}
+                  >
                     $0.02
                   </span>
                 </div>
-                <span className="whitespace-nowrap" style={{ fontSize: '2.9851cqw', fontWeight: 500, letterSpacing: '0.0299cqw', lineHeight: 1, color: 'var(--pay-fg-secondary)' }}>
+                <span
+                  className="whitespace-nowrap"
+                  style={{
+                    fontSize: '2.9851cqw',
+                    fontWeight: 500,
+                    letterSpacing: '0.0299cqw',
+                    lineHeight: 1,
+                    color: 'var(--pay-fg-secondary)',
+                  }}
+                >
                   16 Jul 2026
                 </span>
               </div>
@@ -539,7 +767,7 @@ export function CashbackScene() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -547,9 +775,15 @@ export function CashbackScene() {
 /* ------------------------------------------------------------------ */
 
 export function SecurityScene() {
-  const verified = useCycle(2, 2600) === 1
+  const verified = useCycle(2, 2600) === 1;
   return (
-    <svg viewBox="92 78 84 84" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-full max-h-full max-w-full" aria-hidden="true">
+    <svg
+      viewBox="92 78 84 84"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="size-full max-h-full max-w-full"
+      aria-hidden="true"
+    >
       <path
         d="M104.49 107.58L104 106.75V99.9L104.02 98.92L104.17 97.96L104.38 97L104.7 96.08L105.1 95.19L105.6 94.35L106.18 93.56L106.83 92.83L107.56 92.18L108.35 91.6L109.19 91.11L110.08 90.71L111.01 90.39L111.96 90.17L112.93 90.01L120.75 90L121.62 90.54L122 91.48L121.7 92.45L120.86 93.02L113.63 93.1L112.6 93.19L111.6 93.43L110.65 93.82L109.77 94.36L108.99 95.03L108.32 95.82L107.79 96.71L107.41 97.66L107.18 98.67L107.1 99.7L107.09 105.9L107.01 106.92L106.4 107.73L105.42 107.99L104.49 107.58Z"
         fill="var(--pay-border-normal)"
@@ -566,7 +800,11 @@ export function SecurityScene() {
         d="M163.41 132.33L163.97 133.4L164.01 137.14L163.93 140.87L163.51 143.32L163.06 144.49L162.46 145.58L161.72 146.58L160.85 147.47L159.87 148.24L158.81 148.88L157.66 149.37L156.47 149.72L155.24 149.92L153.99 149.98L147.76 149.99L146.59 149.66L146 148.6L146.37 147.45L147.46 146.92L151.19 146.9L154.25 146.9L155.01 146.85L155.76 146.73L156.5 146.52L157.2 146.23L157.87 145.86L158.49 145.41L159.05 144.89L159.55 144.31L159.98 143.68L160.33 143L160.59 142.28L160.77 141.54L160.87 140.78L160.9 133.9L160.96 133.14L161.33 132.48L161.96 132.07L162.72 132.02L163.41 132.33Z"
         fill="var(--pay-border-normal)"
       />
-      <motion.g fill="var(--pay-fg-primary)" animate={{ opacity: verified ? 0 : 1 }} transition={{ duration: 0.4 }}>
+      <motion.g
+        fill="var(--pay-fg-primary)"
+        animate={{ opacity: verified ? 0 : 1 }}
+        transition={{ duration: 0.4 }}
+      >
         <g className="pay-face-bob">
           <path d="M120.305 114.79C120.305 114.106 120.305 113.425 120.305 112.74C120.305 112.158 120.503 111.666 120.983 111.321C121.853 110.7 123.053 111.216 123.266 112.296C123.275 112.344 123.287 112.392 123.287 112.44C123.287 114.019 123.323 115.6 123.269 117.178C123.242 117.988 122.54 118.552 121.784 118.543C121.034 118.534 120.38 117.937 120.335 117.13C120.29 116.353 120.326 115.57 120.326 114.79H120.308H120.305Z" />
           <path d="M145.051 114.781C145.051 114.031 145.033 113.277 145.057 112.527C145.078 111.834 145.594 111.225 146.227 111.087C147.133 110.892 148.009 111.573 148.033 112.563C148.066 114.055 148.063 115.549 148.033 117.043C148.015 117.913 147.316 118.555 146.509 118.543C145.708 118.528 145.072 117.856 145.051 116.977C145.036 116.245 145.048 115.513 145.048 114.781H145.054H145.051Z" />
@@ -586,7 +824,7 @@ export function SecurityScene() {
         transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
       />
     </svg>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -596,7 +834,10 @@ export function SecurityScene() {
 export function SupportScene() {
   return (
     <Stage ratio={[268, 240]} scale={1.1}>
-      <div className="absolute flex flex-col items-end" style={{ left: '8.9552cqw', top: '19.0299cqw', width: '82.0896cqw', gap: '1.4925cqw' }}>
+      <div
+        className="absolute flex flex-col items-end"
+        style={{ left: '8.9552cqw', top: '19.0299cqw', width: '82.0896cqw', gap: '1.4925cqw' }}
+      >
         <motion.div
           className="flex w-full justify-start"
           initial={{ opacity: 0, y: 8 }}
@@ -613,7 +854,15 @@ export function SupportScene() {
               padding: '2.9851cqw 4.4776cqw',
             }}
           >
-            <p className="m-0 whitespace-nowrap" style={{ fontSize: '4.4776cqw', lineHeight: '6.7164cqw', letterSpacing: '0.041cqw', color: 'var(--pay-fg-primary)' }}>
+            <p
+              className="m-0 whitespace-nowrap"
+              style={{
+                fontSize: '4.4776cqw',
+                lineHeight: '6.7164cqw',
+                letterSpacing: '0.041cqw',
+                color: 'var(--pay-fg-primary)',
+              }}
+            >
               Has my mailed check gone out yet?
             </p>
           </div>
@@ -626,15 +875,39 @@ export function SupportScene() {
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.5, delay: 0.15 }}
         >
-          <svg viewBox="0 0 12 12" fill="none" className="block shrink-0" style={{ width: '4.4776cqw', height: '4.4776cqw' }} aria-hidden="true">
-            <path d="M2.4 6.3 L4.7 8.6 L9.6 3.4" stroke="var(--pay-fg-tertiary)" strokeWidth="1.15" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            viewBox="0 0 12 12"
+            fill="none"
+            className="block shrink-0"
+            style={{ width: '4.4776cqw', height: '4.4776cqw' }}
+            aria-hidden="true"
+          >
+            <path
+              d="M2.4 6.3 L4.7 8.6 L9.6 3.4"
+              stroke="var(--pay-fg-tertiary)"
+              strokeWidth="1.15"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
-          <span className="whitespace-nowrap" style={{ fontSize: '3.7313cqw', lineHeight: 1, letterSpacing: '0.0336cqw', fontWeight: 500, color: 'var(--pay-fg-tertiary)' }}>
+          <span
+            className="whitespace-nowrap"
+            style={{
+              fontSize: '3.7313cqw',
+              lineHeight: 1,
+              letterSpacing: '0.0336cqw',
+              fontWeight: 500,
+              color: 'var(--pay-fg-tertiary)',
+            }}
+          >
             Read
           </span>
         </motion.div>
       </div>
-      <div className="absolute flex flex-col items-start" style={{ left: '8.9552cqw', top: '43.2836cqw', width: '82.0896cqw', gap: '2.2388cqw' }}>
+      <div
+        className="absolute flex flex-col items-start"
+        style={{ left: '8.9552cqw', top: '43.2836cqw', width: '82.0896cqw', gap: '2.2388cqw' }}
+      >
         <motion.div
           className="flex w-full justify-start"
           initial={{ opacity: 0, y: 8 }}
@@ -651,10 +924,26 @@ export function SupportScene() {
               height: '19.403cqw',
             }}
           >
-            <p className="m-0 whitespace-nowrap" style={{ fontSize: '4.4776cqw', lineHeight: '6.7164cqw', letterSpacing: '0.041cqw', color: 'var(--pay-fg-primary)' }}>
+            <p
+              className="m-0 whitespace-nowrap"
+              style={{
+                fontSize: '4.4776cqw',
+                lineHeight: '6.7164cqw',
+                letterSpacing: '0.041cqw',
+                color: 'var(--pay-fg-primary)',
+              }}
+            >
               Your check has shipped and should
             </p>
-            <p className="m-0 whitespace-nowrap" style={{ fontSize: '4.4776cqw', lineHeight: '6.7164cqw', letterSpacing: '0.041cqw', color: 'var(--pay-fg-primary)' }}>
+            <p
+              className="m-0 whitespace-nowrap"
+              style={{
+                fontSize: '4.4776cqw',
+                lineHeight: '6.7164cqw',
+                letterSpacing: '0.041cqw',
+                color: 'var(--pay-fg-primary)',
+              }}
+            >
               arrive in about 2 business days.
             </p>
           </div>
@@ -676,11 +965,20 @@ export function SupportScene() {
               border: '0.1866cqw solid var(--pay-border-normal)',
             }}
           />
-          <span className="whitespace-nowrap" style={{ fontSize: '3.7313cqw', lineHeight: 1, letterSpacing: '0.0336cqw', fontWeight: 500, color: 'var(--pay-fg-tertiary)' }}>
+          <span
+            className="whitespace-nowrap"
+            style={{
+              fontSize: '3.7313cqw',
+              lineHeight: 1,
+              letterSpacing: '0.0336cqw',
+              fontWeight: 500,
+              color: 'var(--pay-fg-tertiary)',
+            }}
+          >
             John
           </span>
         </motion.div>
       </div>
     </Stage>
-  )
+  );
 }

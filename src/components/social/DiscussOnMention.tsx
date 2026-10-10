@@ -1,15 +1,15 @@
-import { buildMentionComposeUrl } from '../../lib/mentionShare'
-import MentionIcon from './MentionIcon'
+import { buildMentionComposeUrl } from '../../lib/mentionShare';
+import MentionIcon from './MentionIcon';
 
 interface DiscussOnMentionProps {
   /** Pre-filled composer text (typically the article title). */
-  title: string
+  title: string;
   /** Canonical URL of the page being shared. */
-  url: string
+  url: string;
   /** Optional hashtags (no leading `#`). */
-  hashtags?: readonly string[]
+  hashtags?: readonly string[];
   /** Optional handle for `via @handle` attribution (no leading `@`). */
-  via?: string
+  via?: string;
 }
 
 /**
@@ -21,7 +21,7 @@ interface DiscussOnMentionProps {
  * Mention's intent contract (see `src/lib/mentionShare.ts`).
  */
 export default function DiscussOnMention({ title, url, hashtags, via }: DiscussOnMentionProps) {
-  const mentionUrl = buildMentionComposeUrl({ text: title, url, hashtags, via })
+  const mentionUrl = buildMentionComposeUrl({ text: title, url, hashtags, via });
 
   return (
     <a
@@ -33,5 +33,5 @@ export default function DiscussOnMention({ title, url, hashtags, via }: DiscussO
       <MentionIcon className="h-4 w-4" />
       Discuss on Mention
     </a>
-  )
+  );
 }

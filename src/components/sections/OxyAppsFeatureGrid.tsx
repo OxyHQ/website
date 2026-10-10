@@ -1,46 +1,57 @@
-import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { motion } from 'framer-motion'
-import { useRef } from 'react'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import type SwiperType from 'swiper'
-import { useTranslation } from '../../lib/i18n'
-import { APP_CARD_IMAGES } from '../../data/appCardImages'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import type SwiperType from 'swiper';
+import { useTranslation } from '../../lib/i18n';
+import { APP_CARD_IMAGES } from '../../data/appCardImages';
 import {
   APP_PROFILE_CARDS,
   CommunityProfileCardView,
   type CommunityProfileCard,
-} from './OxyAppProfileCard'
+} from './OxyAppProfileCard';
 
 const REVEAL = {
   initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.2 },
   transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
-}
+};
 
 interface OxyAppsFeatureGridProps {
-  title?: string
-  description?: string
-  unifiedTheme?: boolean
+  title?: string;
+  description?: string;
+  unifiedTheme?: boolean;
 }
 
-export default function OxyAppsFeatureGrid({ title, description, unifiedTheme = false }: OxyAppsFeatureGridProps = {}) {
-  const { t } = useTranslation()
-  const swiperRef = useRef<SwiperType | null>(null)
+export default function OxyAppsFeatureGrid({
+  title,
+  description,
+  unifiedTheme = false,
+}: OxyAppsFeatureGridProps = {}) {
+  const { t } = useTranslation();
+  const swiperRef = useRef<SwiperType | null>(null);
 
   const appCards = APP_PROFILE_CARDS.map((card) => {
-    const roleKey: Record<string, 'products.mentionDescription' | 'products.alloDescription' | 'products.faircoinDescription' | 'products.homiioDescription' | 'products.mercariaDescription'> = {
+    const roleKey: Record<
+      string,
+      | 'products.mentionDescription'
+      | 'products.alloDescription'
+      | 'products.faircoinDescription'
+      | 'products.homiioDescription'
+      | 'products.mercariaDescription'
+    > = {
       Mention: 'products.mentionDescription',
       Allo: 'products.alloDescription',
       FairCoin: 'products.faircoinDescription',
       Homiio: 'products.homiioDescription',
       Mercaria: 'products.mercariaDescription',
-    } as const
-    const role = t(roleKey[card.name])
+    } as const;
+    const role = t(roleKey[card.name]);
 
-    return { ...card, role }
-  })
+    return { ...card, role };
+  });
 
   const additionalCards: CommunityProfileCard[] = [
     {
@@ -89,11 +100,11 @@ export default function OxyAppsFeatureGrid({ title, description, unifiedTheme = 
       href: 'https://dashboard.mercaria.co',
       theme: 'mercaria-theme',
     },
-  ]
+  ];
 
-  const cards = [...appCards, ...additionalCards].map((card) => unifiedTheme
-    ? { ...card, theme: undefined, descriptionClassName: undefined }
-    : card)
+  const cards = [...appCards, ...additionalCards].map((card) =>
+    unifiedTheme ? { ...card, theme: undefined, descriptionClassName: undefined } : card,
+  );
 
   return (
     <section className="container">
@@ -127,14 +138,20 @@ export default function OxyAppsFeatureGrid({ title, description, unifiedTheme = 
           </div>
 
           <Swiper
-            onSwiper={(swiper) => { swiperRef.current = swiper }}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+            }}
             slidesPerView="auto"
             spaceBetween={16}
             grabCursor
             className="values-swiper"
           >
             {cards.map((card) => (
-              <SwiperSlide key={card.name} className="!w-[calc(100vw-40px)] sm:!w-96" style={{ height: 'auto' }}>
+              <SwiperSlide
+                key={card.name}
+                className="!w-[calc(100vw-40px)] sm:!w-96"
+                style={{ height: 'auto' }}
+              >
                 <CommunityProfileCardView card={card} />
               </SwiperSlide>
             ))}
@@ -142,5 +159,5 @@ export default function OxyAppsFeatureGrid({ title, description, unifiedTheme = 
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

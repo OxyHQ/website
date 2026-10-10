@@ -8,7 +8,12 @@
  * credentials or internal paths.
  * ──────────────────────────────────────────── */
 
-export type DomainErrorKind = 'invalid' | 'not_found' | 'conflict' | 'too_large' | 'precondition_failed'
+export type DomainErrorKind =
+  | 'invalid'
+  | 'not_found'
+  | 'conflict'
+  | 'too_large'
+  | 'precondition_failed';
 
 export class DomainError extends Error {
   constructor(
@@ -16,8 +21,8 @@ export class DomainError extends Error {
     message: string,
     readonly details?: Record<string, unknown>,
   ) {
-    super(message)
-    this.name = 'DomainError'
+    super(message);
+    this.name = 'DomainError';
   }
 }
 
@@ -27,4 +32,4 @@ export const DOMAIN_ERROR_HTTP_STATUS: Record<DomainErrorKind, number> = {
   conflict: 409,
   too_large: 413,
   precondition_failed: 412,
-}
+};

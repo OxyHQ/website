@@ -1,16 +1,23 @@
-import { useRef, useState } from 'react'
-import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import { useTheme } from '@oxy.so/bloom/theme'
-import Button from '../components/ui/Button'
-import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import RollingNumber from '../components/ui/RollingNumber'
-import { useJobs, useProducts } from '../api/hooks'
-import { getStaticChangelog } from '../content/changelog-loader'
-import { useTranslation } from '../lib/i18n'
-import ResourceLinksSection from '../components/sections/ResourceLinksSection'
+import { useRef, useState } from 'react';
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from 'framer-motion';
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import { useTheme } from '@oxy.so/bloom/theme';
+import Button from '../components/ui/Button';
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import RollingNumber from '../components/ui/RollingNumber';
+import { useJobs, useProducts } from '../api/hooks';
+import { getStaticChangelog } from '../content/changelog-loader';
+import { useTranslation } from '../lib/i18n';
+import ResourceLinksSection from '../components/sections/ResourceLinksSection';
 
 /* ──────────────────────────────────────────────
  * /company
@@ -24,7 +31,7 @@ import ResourceLinksSection from '../components/sections/ResourceLinksSection'
  * the site does not.
  * ──────────────────────────────────────────── */
 
-const IMG = '/images/landing'
+const IMG = '/images/landing';
 
 /* ── Hero ──────────────────────────────────── */
 
@@ -42,13 +49,18 @@ const HERO_APPS = [
   { name: 'Accounts', icon: '/images/apps/accounts.png', size: 70, y: -30, rotate: 10, z: 20 },
   { name: 'Auth', icon: '/images/apps/auth.svg', size: 130, y: -3, rotate: 7, z: 5 },
   { name: 'Clarity', icon: '/images/apps/clarity.png', size: 90, y: 5, rotate: -6, z: 4 },
-]
+];
 
 function HeroSection() {
   return (
     <section className="relative flex flex-col items-center justify-center overflow-hidden border-border border-b bg-surface pt-[var(--site-header-height)] pb-50 md:min-h-200 md:pt-0 md:pb-20">
       {/* The ruled backdrop, drawn rather than tiled so it always fills. */}
-      <svg className="absolute inset-0 z-0 text-border" width="100%" height="100%" aria-hidden="true">
+      <svg
+        className="absolute inset-0 z-0 text-border"
+        width="100%"
+        height="100%"
+        aria-hidden="true"
+      >
         <defs>
           <pattern id="company-hero-grid" width="80" height="80" patternUnits="userSpaceOnUse">
             <path d="M 80 0 L 0 0 0 80" fill="none" stroke="currentColor" strokeWidth="1" />
@@ -70,8 +82,8 @@ function HeroSection() {
             <br />a refusal.
           </h1>
           <p className="max-w-xl text-lg text-muted-foreground md:text-xl">
-            Oxy builds practical alternatives to systems that exploit people: one identity you own, no advertising, and
-            code anyone can read.
+            Oxy builds practical alternatives to systems that exploit people: one identity you own,
+            no advertising, and code anyone can read.
           </p>
         </div>
 
@@ -102,30 +114,37 @@ function HeroSection() {
               {app.name}
             </p>
             <article className="flex size-full items-center justify-center border border-border bg-primary-subtle shadow-xl transition-all group-hover/app:-translate-y-10 group-hover/app:scale-110">
-              <img className="block w-3/5" src={app.icon} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+              <img
+                className="block w-3/5"
+                src={app.icon}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+              />
             </article>
           </div>
         ))}
       </div>
     </section>
-  )
+  );
 }
 
 /* ── Mission ───────────────────────────────── */
 
 function MissionSection() {
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, amount: 0.2 })
-  const { data: products = [] } = useProducts({ surface: 'products' })
-  const { data: jobs = [] } = useJobs()
-  const { repos } = getStaticChangelog()
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.2 });
+  const { data: products = [] } = useProducts({ surface: 'products' });
+  const { data: jobs = [] } = useJobs();
+  const { repos } = getStaticChangelog();
 
   const stats = [
     { value: '0', label: 'Ads served, ever' },
     { value: String(products.length || 18), label: 'Apps, one account' },
     { value: String(repos.length), label: 'Repositories you can read' },
     { value: String(jobs.length), label: 'Open roles' },
-  ]
+  ];
 
   return (
     <section
@@ -133,13 +152,16 @@ function MissionSection() {
       className="relative scroll-mt-[var(--site-header-height)] bg-surface text-foreground"
     >
       <div className="container py-24 md:py-32">
-        <p className="font-mono text-muted-foreground text-xs uppercase tracking-wider">Our mission</p>
+        <p className="font-mono text-muted-foreground text-xs uppercase tracking-wider">
+          Our mission
+        </p>
         <h2 className="mt-8 max-w-[16ch] font-display text-[2.25rem]/[1.1] tracking-[-0.02em] md:text-[3.5rem]/[1.05] lg:text-[4.25rem]/[1.03]">
           Software you can inspect, leave and hold to account.
         </h2>
         <p className="mt-8 max-w-[56ch] text-lg text-muted-foreground md:text-xl">
-          Paid for without turning anyone into the product. That single constraint decides the architecture, the
-          pricing and which money is welcome, and it is written down in the charter so breaking it is visible.
+          Paid for without turning anyone into the product. That single constraint decides the
+          architecture, the pricing and which money is welcome, and it is written down in the
+          charter so breaking it is visible.
         </p>
       </div>
 
@@ -158,21 +180,23 @@ function MissionSection() {
             <span className="block font-display text-[2.5rem]/[1] tracking-[-0.03em] md:text-[4rem]/[1]">
               <RollingNumber value={stat.value} active={inView} />
             </span>
-            <span className="mt-3 block text-muted-foreground text-sm md:text-base">{stat.label}</span>
+            <span className="mt-3 block text-muted-foreground text-sm md:text-base">
+              {stat.label}
+            </span>
           </div>
         ))}
       </div>
     </section>
-  )
+  );
 }
 
 /* ── Full-bleed band ───────────────────────── */
 
 function ImageBandSection() {
-  const ref = useRef<HTMLDivElement>(null)
-  const reduceMotion = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['0px', '-120px'])
+  const ref = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const y = useTransform(scrollYProgress, [0, 1], ['0px', '-120px']);
 
   return (
     <section className="relative bg-surface">
@@ -180,7 +204,10 @@ function ImageBandSection() {
       <div className="w-full pb-8 md:pb-12">
         <div className="mx-auto w-full max-w-(--layout-max-width)">
           <div ref={ref} className="relative overflow-hidden pt-[100vw] sm:pt-[35vw] xl:pt-[590px]">
-            <motion.div className="absolute left-0 top-0 size-full" style={reduceMotion ? undefined : { y }}>
+            <motion.div
+              className="absolute left-0 top-0 size-full"
+              style={reduceMotion ? undefined : { y }}
+            >
               <img
                 src={`${IMG}/company-band.jpg`}
                 alt="Two friends talking by a lake"
@@ -196,7 +223,7 @@ function ImageBandSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ── History ───────────────────────────────── */
@@ -346,42 +373,45 @@ const HISTORY: { date: string; label: string; lead: string; body: string }[] = [
     lead: 'A twelve-year-old opens Facebook and refuses it,',
     body: 'and starts building a social network instead. DumDarac, written in PHP found across the web, rebuilt every time it broke. After the Kaana domain was lost the project became Oxy: a name taken from oxygen.',
   },
-]
+];
 
 /** Fractional year, so several milestones inside one year keep their order. */
 function timeOf(date: string): number {
-  const [year, month] = date.split('-').map(Number)
-  return year + (month - 1) / 12
+  const [year, month] = date.split('-').map(Number);
+  return year + (month - 1) / 12;
 }
 
 function HistorySection() {
-  const [{ active, direction }, setState] = useState({ active: 0, direction: 1 })
-  const stripRef = useRef<HTMLDivElement>(null)
-  const yearRefs = useRef(new Map<string, HTMLButtonElement>())
+  const [{ active, direction }, setState] = useState({ active: 0, direction: 1 });
+  const stripRef = useRef<HTMLDivElement>(null);
+  const yearRefs = useRef(new Map<string, HTMLButtonElement>());
 
-  const entries = HISTORY
-  const last = entries.length - 1
-  const min = timeOf(entries[last].date)
-  const span = timeOf(entries[0].date) - min
+  const entries = HISTORY;
+  const last = entries.length - 1;
+  const min = timeOf(entries[last].date);
+  const span = timeOf(entries[0].date) - min;
 
   // The strip shows each year once; picking one jumps to its first milestone.
-  const years = entries.map((entry, index) => ({ year: entry.date.slice(0, 4), index }))
-  const yearStrip = years.filter((item, i) => i === 0 || years[i - 1].year !== item.year)
-  const activeEntry = entries[active]
-  const activeYear = activeEntry.date.slice(0, 4)
+  const years = entries.map((entry, index) => ({ year: entry.date.slice(0, 4), index }));
+  const yearStrip = years.filter((item, i) => i === 0 || years[i - 1].year !== item.year);
+  const activeEntry = entries[active];
+  const activeYear = activeEntry.date.slice(0, 4);
 
   /** Move to a milestone and bring its year to the front of the strip. */
   const select = (index: number) => {
-    const next = Math.min(last, Math.max(0, index))
-    setState((current) => ({ active: next, direction: next > current.active ? 1 : -1 }))
-    const button = yearRefs.current.get(entries[next].date.slice(0, 4))
+    const next = Math.min(last, Math.max(0, index));
+    setState((current) => ({ active: next, direction: next > current.active ? 1 : -1 }));
+    const button = yearRefs.current.get(entries[next].date.slice(0, 4));
     if (button && stripRef.current) {
-      stripRef.current.scrollTo({ left: button.offsetLeft, behavior: 'smooth' })
+      stripRef.current.scrollTo({ left: button.offsetLeft, behavior: 'smooth' });
     }
-  }
+  };
 
   return (
-    <section id="history" className="relative scroll-mt-[var(--site-header-height)] bg-surface text-foreground">
+    <section
+      id="history"
+      className="relative scroll-mt-[var(--site-header-height)] bg-surface text-foreground"
+    >
       <div className="w-full">
         <div className="flex flex-col gap-0">
           <div className="container grid grid-cols-12 gap-2 py-20 sm:gap-4 md:gap-8">
@@ -402,12 +432,14 @@ function HistorySection() {
           >
             <div className="flex w-max pb-8 md:pb-12">
               {yearStrip.map((item, i) => {
-                const distance = Math.abs(i - yearStrip.findIndex((entry) => entry.year === activeYear))
+                const distance = Math.abs(
+                  i - yearStrip.findIndex((entry) => entry.year === activeYear),
+                );
                 return (
                   <button
                     key={item.year}
                     ref={(node) => {
-                      if (node) yearRefs.current.set(item.year, node)
+                      if (node) yearRefs.current.set(item.year, node);
                     }}
                     type="button"
                     onClick={() => select(item.index)}
@@ -423,7 +455,7 @@ function HistorySection() {
                   >
                     {item.year}
                   </button>
-                )
+                );
               })}
             </div>
           </div>
@@ -445,7 +477,9 @@ function HistorySection() {
                     >
                       <span
                         className={`block rounded-full transition-all duration-500 ${
-                          i === active ? 'size-3 bg-foreground' : 'size-2 bg-border group-hover:bg-foreground'
+                          i === active
+                            ? 'size-3 bg-foreground'
+                            : 'size-2 bg-border group-hover:bg-foreground'
                         }`}
                       />
                     </button>
@@ -465,32 +499,35 @@ function HistorySection() {
                       transition={{ duration: 0.4, ease: [0.65, 0, 0.35, 1] }}
                       className="flex w-full flex-col gap-4 text-muted-foreground md:max-w-xl"
                     >
-                      <p className="text-muted-foreground text-xs uppercase tracking-wider">{activeEntry.label}</p>
+                      <p className="text-muted-foreground text-xs uppercase tracking-wider">
+                        {activeEntry.label}
+                      </p>
                       <p className="w-full text-lg leading-relaxed">
-                        <span className="text-foreground">{activeEntry.lead}</span> {activeEntry.body}
+                        <span className="text-foreground">{activeEntry.lead}</span>{' '}
+                        {activeEntry.body}
                       </p>
                     </motion.div>
                   </AnimatePresence>
 
                   <div className="flex shrink-0 gap-2">
-                  <button
-                    type="button"
-                    aria-label="Previous milestone"
-                    onClick={() => select(active - 1)}
-                    disabled={active === 0}
-                    className="flex size-12 items-center justify-center rounded-full bg-foreground/10 transition-[opacity,background-color] duration-200 hover:bg-foreground/20 disabled:opacity-40"
-                  >
-                    <RiArrowLeftLine width={20} height={20} fill="currentColor" aria-hidden />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Next milestone"
-                    onClick={() => select(active + 1)}
-                    disabled={active === last}
-                    className="flex size-12 items-center justify-center rounded-full bg-foreground/10 transition-[opacity,background-color] duration-200 hover:bg-foreground/20 disabled:opacity-40"
-                  >
-                    <RiArrowRightLine width={20} height={20} fill="currentColor" aria-hidden />
-                  </button>
+                    <button
+                      type="button"
+                      aria-label="Previous milestone"
+                      onClick={() => select(active - 1)}
+                      disabled={active === 0}
+                      className="flex size-12 items-center justify-center rounded-full bg-foreground/10 transition-[opacity,background-color] duration-200 hover:bg-foreground/20 disabled:opacity-40"
+                    >
+                      <RiArrowLeftLine width={20} height={20} fill="currentColor" aria-hidden />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Next milestone"
+                      onClick={() => select(active + 1)}
+                      disabled={active === last}
+                      className="flex size-12 items-center justify-center rounded-full bg-foreground/10 transition-[opacity,background-color] duration-200 hover:bg-foreground/20 disabled:opacity-40"
+                    >
+                      <RiArrowRightLine width={20} height={20} fill="currentColor" aria-hidden />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -499,9 +536,8 @@ function HistorySection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
-
 
 /* ── Quote ─────────────────────────────────── */
 
@@ -539,7 +575,7 @@ function QuoteSection() {
         </div>
       </figure>
     </section>
-  )
+  );
 }
 
 /* ── More ──────────────────────────────────── */
@@ -553,15 +589,23 @@ const MORE_LINKS = [
   { href: '/company/team', label: 'The people building Oxy', kind: 'Team' },
   { href: '/initiative', label: 'The Oxy Initiative', kind: 'Community' },
   { href: '/newsroom', label: 'Newsroom', kind: 'Updates' },
-  { href: 'https://github.com/OxyHQ', label: 'Every repository on GitHub', kind: 'Open source', external: true },
-]
+  {
+    href: 'https://github.com/OxyHQ',
+    label: 'Every repository on GitHub',
+    kind: 'Open source',
+    external: true,
+  },
+];
 
 const MORE_GROUPS = [
   { title: 'Documents', links: MORE_LINKS.filter(({ kind }) => kind === 'Document') },
-  { title: 'People & community', links: MORE_LINKS.filter(({ kind }) => kind === 'Team' || kind === 'Community') },
+  {
+    title: 'People & community',
+    links: MORE_LINKS.filter(({ kind }) => kind === 'Team' || kind === 'Community'),
+  },
   { title: 'News & updates', links: MORE_LINKS.filter(({ kind }) => kind === 'Updates') },
   { title: 'Open source', links: MORE_LINKS.filter(({ kind }) => kind === 'Open source') },
-]
+];
 
 function MoreSection() {
   return (
@@ -571,7 +615,7 @@ function MoreSection() {
       title="Explore the principles, people and work"
       groups={MORE_GROUPS}
     />
-  )
+  );
 }
 
 /* ── Careers CTA ───────────────────────────── */
@@ -583,9 +627,12 @@ function CareersCtaSection() {
       <div className="flex min-h-85 items-end bg-primary p-4 text-primary-foreground md:min-h-95 md:p-10 md:pb-20">
         <div className="container relative flex h-auto w-full flex-col justify-between gap-4 md:flex-row md:items-end md:gap-12">
           <div className="relative z-2 flex max-w-2xl flex-col gap-4 md:gap-6">
-            <p className="font-mono text-xs uppercase tracking-wider">Ready to build the alternative?</p>
+            <p className="font-mono text-xs uppercase tracking-wider">
+              Ready to build the alternative?
+            </p>
             <p className="font-display text-[2rem]/[1.1] tracking-[-0.02em] md:text-[2.75rem]/[1.08]">
-              Explore the open roles, read the charter you would be working under, and see what is already running.
+              Explore the open roles, read the charter you would be working under, and see what is
+              already running.
             </p>
           </div>
 
@@ -614,16 +661,20 @@ function CareersCtaSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export default function CompanyPage() {
-  const { t } = useTranslation()
-  const { isDark } = useTheme()
+  const { t } = useTranslation();
+  const { isDark } = useTheme();
 
   return (
     <PageShell
-      seo={{ title: t('company.seoTitle'), description: t('company.seoDescription'), canonicalPath: '/company' }}
+      seo={{
+        title: t('company.seoTitle'),
+        description: t('company.seoDescription'),
+        canonicalPath: '/company',
+      }}
       className="company-theme bg-surface text-foreground"
       navbar={<Navbar transparent transparentOn={isDark ? 'dark' : 'light'} />}
     >
@@ -635,5 +686,5 @@ export default function CompanyPage() {
       <MoreSection />
       <CareersCtaSection />
     </PageShell>
-  )
+  );
 }

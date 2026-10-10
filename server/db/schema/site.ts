@@ -1,7 +1,16 @@
-import { sql } from 'drizzle-orm'
-import { boolean, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
-import { objectId, timestamps } from './columns.js'
-import { media, products } from './content.js'
+import { sql } from 'drizzle-orm';
+import {
+  boolean,
+  index,
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core';
+import { objectId, timestamps } from './columns.js';
+import { media, products } from './content.js';
 
 /* ──────────────────────────────────────────────
  * Site chrome, community records and operational tables.
@@ -15,7 +24,7 @@ export const siteSettings = pgTable('site_settings', {
   /** `{ text, href, visible }` */
   banner: jsonb().$type<{ text: string; href: string; visible: boolean } | null>(),
   ...timestamps,
-})
+});
 
 export const navigationDropdowns = pgTable('navigation_dropdowns', {
   _id: objectId(),
@@ -28,7 +37,7 @@ export const navigationDropdowns = pgTable('navigation_dropdowns', {
   sidePanel: jsonb().$type<Record<string, unknown> | null>(),
   order: integer().notNull().default(0),
   ...timestamps,
-})
+});
 
 export const footers = pgTable('footers', {
   _id: objectId(),
@@ -38,7 +47,7 @@ export const footers = pgTable('footers', {
   socialLinks: jsonb().$type<Record<string, unknown>[]>().notNull().default([]),
   copyright: text().notNull().default(''),
   ...timestamps,
-})
+});
 
 export const heroContents = pgTable('hero_contents', {
   _id: objectId(),
@@ -49,7 +58,7 @@ export const heroContents = pgTable('hero_contents', {
   backgroundPoster: jsonb().$type<unknown>(),
   /** `{ size, faces, rotateInterval?, rounded?, roundedLeft? }[]` */
   ...timestamps,
-})
+});
 
 export const trackedRepos = pgTable(
   'tracked_repos',
@@ -70,7 +79,7 @@ export const trackedRepos = pgTable(
     ...timestamps,
   },
   (table) => [uniqueIndex('tracked_repos_owner_repo_idx').on(table.owner, table.repo)],
-)
+);
 
 export const comments = pgTable('comments', {
   _id: objectId(),
@@ -85,7 +94,7 @@ export const comments = pgTable('comments', {
   status: text().notNull().default('visible'),
   editedAt: timestamp({ withTimezone: true }),
   ...timestamps,
-})
+});
 
 export const likes = pgTable(
   'likes',
@@ -98,8 +107,10 @@ export const likes = pgTable(
     username: text().notNull(),
     createdAt: timestamps.createdAt,
   },
-  (table) => [uniqueIndex('likes_target_user_idx').on(table.targetType, table.targetId, table.userId)],
-)
+  (table) => [
+    uniqueIndex('likes_target_user_idx').on(table.targetType, table.targetId, table.userId),
+  ],
+);
 
 export const votes = pgTable(
   'votes',
@@ -110,7 +121,7 @@ export const votes = pgTable(
     createdAt: timestamps.createdAt,
   },
   (table) => [uniqueIndex('votes_feature_user_idx').on(table.featureRequestId, table.userId)],
-)
+);
 
 export const featureProposals = pgTable('feature_proposals', {
   _id: objectId(),
@@ -122,7 +133,7 @@ export const featureProposals = pgTable('feature_proposals', {
   issueUrl: text().notNull(),
   title: text().notNull(),
   createdAt: timestamps.createdAt,
-})
+});
 
 export const userBadges = pgTable(
   'user_badges',
@@ -136,7 +147,7 @@ export const userBadges = pgTable(
     metadata: jsonb().$type<Record<string, unknown>>().notNull().default({}),
   },
   (table) => [uniqueIndex('user_badges_user_badge_idx').on(table.userId, table.badgeId)],
-)
+);
 
 export const userProfileExtras = pgTable('user_profile_extras', {
   _id: objectId(),
@@ -145,7 +156,7 @@ export const userProfileExtras = pgTable('user_profile_extras', {
   bio: text().notNull().default(''),
   showActivity: boolean().notNull().default(true),
   updatedAt: timestamps.updatedAt,
-})
+});
 
 export const referrals = pgTable('referrals', {
   _id: objectId(),
@@ -163,7 +174,7 @@ export const referrals = pgTable('referrals', {
   clicks: integer().notNull().default(0),
   signups: integer().notNull().default(0),
   ...timestamps,
-})
+});
 
 export const incidents = pgTable(
   'incidents',
@@ -191,7 +202,7 @@ export const incidents = pgTable(
     index('incidents_started_at_id_idx').on(table.startedAt.desc(), table._id.asc()),
     index('incidents_status_idx').on(table.status),
   ],
-)
+);
 
 export const serviceUptimeDaily = pgTable(
   'service_uptime_daily',
@@ -216,7 +227,7 @@ export const serviceUptimeDaily = pgTable(
     uniqueIndex('service_uptime_daily_product_date_idx').on(table.product, table.date),
     index('service_uptime_daily_date_idx').on(table.date),
   ],
-)
+);
 
 /**
  * Sales and private-evaluation requests submitted from `/contact/sales`.
@@ -282,7 +293,7 @@ export const salesInquiries = pgTable(
     ...timestamps,
   },
   (table) => [uniqueIndex('sales_inquiries_idempotency_idx').on(table.idempotencyKey)],
-)
+);
 
 /**
  * Idempotency records for MCP writes (issue #108, F07). One row per
@@ -309,7 +320,7 @@ export const mcpIdempotencyKeys = pgTable(
     uniqueIndex('mcp_idempotency_keys_scope_idx').on(table.accountId, table.tool, table.keyHash),
     index('mcp_idempotency_keys_expires_idx').on(table.expiresAt),
   ],
-)
+);
 
 /**
  * Per-account MCP usage, one row per account per minute (issue #108). A shared
@@ -324,5 +335,7 @@ export const mcpRateLimits = pgTable(
     windowStart: timestamp({ withTimezone: true }).notNull(),
     cost: integer().notNull().default(0),
   },
-  (table) => [uniqueIndex('mcp_rate_limits_account_window_idx').on(table.accountId, table.windowStart)],
-)
+  (table) => [
+    uniqueIndex('mcp_rate_limits_account_window_idx').on(table.accountId, table.windowStart),
+  ],
+);

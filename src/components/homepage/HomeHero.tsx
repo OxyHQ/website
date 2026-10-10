@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link } from '../../lib/navigation'
-import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useGSAP } from '@gsap/react'
-import { useHero, useNewsroomPosts, type HeroMediaRef } from '../../api/hooks'
-import { usePageChromeStore } from '../../stores/pageChromeStore'
-import { useTranslation } from '../../lib/i18n'
-import { AnimatedTitle } from '../ui/AnimatedTitle'
-import { LANDING_FILM } from '../../data/landingMedia'
+import { useEffect, useRef, useState } from 'react';
+import { Link } from '../../lib/navigation';
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+import { useHero, useNewsroomPosts, type HeroMediaRef } from '../../api/hooks';
+import { usePageChromeStore } from '../../stores/pageChromeStore';
+import { useTranslation } from '../../lib/i18n';
+import { AnimatedTitle } from '../ui/AnimatedTitle';
+import { LANDING_FILM } from '../../data/landingMedia';
 
 /* ──────────────────────────────────────────────
  * HomeHero
@@ -30,14 +30,14 @@ import { LANDING_FILM } from '../../data/landingMedia'
  * video taking whatever height is left over.
  * ──────────────────────────────────────────── */
 
-const IMG = '/images/landing'
-const IMG_HERO = '/images/hero'
+const IMG = '/images/landing';
+const IMG_HERO = '/images/hero';
 
-const DEFAULT_POSTER = `${IMG}/hero-bg.avif`
+const DEFAULT_POSTER = `${IMG}/hero-bg.avif`;
 /** The video's own first frame. The still below the panel is a different picture. */
-const PANEL_POSTER = LANDING_FILM.poster
+const PANEL_POSTER = LANDING_FILM.poster;
 /** Behind the newsroom cell, under a scrim. */
-const NEWS_CELL_BACKDROP = `${IMG}/4lffisf9oaY443RqgB8sCKLHJc.avif`
+const NEWS_CELL_BACKDROP = `${IMG}/4lffisf9oaY443RqgB8sCKLHJc.avif`;
 
 /**
  * The panel's copy, one line per element: each is centred on its own.
@@ -54,58 +54,59 @@ const NEWS_CELL_BACKDROP = `${IMG}/4lffisf9oaY443RqgB8sCKLHJc.avif`
  * a specific signal rather than as "everyone".
  */
 /** How the icons enter once the panel has begun to open. */
-const ICON_ANIMATION = { duration: 1, ease: 'power4.out' }
-const SCROLL_CTA_TOP_THRESHOLD = 32
-const SCROLL_CTA_SCROLL_DISTANCE = 80
+const ICON_ANIMATION = { duration: 1, ease: 'power4.out' };
+const SCROLL_CTA_TOP_THRESHOLD = 32;
+const SCROLL_CTA_SCROLL_DISTANCE = 80;
 
-gsap.registerPlugin(ScrollTrigger, useGSAP)
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 function heroMediaUrl(ref: HeroMediaRef | undefined): string {
-  if (!ref) return ''
-  if (typeof ref === 'string') return ref
-  return ref.thumbnails?.lg || ref.url || ''
+  if (!ref) return '';
+  if (typeof ref === 'string') return ref;
+  return ref.thumbnails?.lg || ref.url || '';
 }
 
 export default function HomeHero() {
-  const { t, locale } = useTranslation()
-  const { data: hero } = useHero()
-  const setHeroVisible = usePageChromeStore((s) => s.setHeroVisible)
-  const [heroInView, setHeroInView] = useState(false)
-  const [buildSectionInView, setBuildSectionInView] = useState(false)
-  const [loadPanelVideo, setLoadPanelVideo] = useState(false)
-  const { scrollY } = useScroll()
+  const { t, locale } = useTranslation();
+  const { data: hero } = useHero();
+  const setHeroVisible = usePageChromeStore((s) => s.setHeroVisible);
+  const [heroInView, setHeroInView] = useState(false);
+  const [buildSectionInView, setBuildSectionInView] = useState(false);
+  const [loadPanelVideo, setLoadPanelVideo] = useState(false);
+  const { scrollY } = useScroll();
   const scrollCtaY = useTransform(
     scrollY,
     [0, SCROLL_CTA_TOP_THRESHOLD],
     [0, SCROLL_CTA_SCROLL_DISTANCE],
-  )
+  );
 
-  const title = locale === 'en' ? (hero?.title || t('home.heroTitleDefault')) : t('home.heroTitleDefault')
+  const title =
+    locale === 'en' ? hero?.title || t('home.heroTitleDefault') : t('home.heroTitleDefault');
   const sentences = [
     t('home.heroPanelSentence1'),
     t('home.heroPanelSentence2'),
     t('home.heroPanelSentence3'),
-  ]
-  const panelSentenceSignature = sentences.join('|')
+  ];
+  const panelSentenceSignature = sentences.join('|');
   const panelIcons = [
     { src: `${IMG_HERO}/emoji-handshake.png`, alt: t('home.heroIconHandshake') },
     { src: `${IMG_HERO}/emoji-seedling.png`, alt: t('home.heroIconSeedling') },
     { src: `${IMG_HERO}/emoji-globe.png`, alt: t('home.heroIconGlobe') },
-  ]
-  const poster = heroMediaUrl(hero?.backgroundPoster) || DEFAULT_POSTER
-  const usesDefaultPoster = poster === DEFAULT_POSTER
+  ];
+  const poster = heroMediaUrl(hero?.backgroundPoster) || DEFAULT_POSTER;
+  const usesDefaultPoster = poster === DEFAULT_POSTER;
 
-  const sectionRef = useRef<HTMLElement>(null)
-  const stickyRef = useRef<HTMLDivElement>(null)
-  const titleRef = useRef<HTMLDivElement>(null)
-  const leftTopRef = useRef<HTMLDivElement>(null)
-  const leftBottomRef = useRef<HTMLDivElement>(null)
-  const rightTopRef = useRef<HTMLDivElement>(null)
-  const rightTopInnerRef = useRef<HTMLDivElement>(null)
-  const panelCopyRef = useRef<HTMLDivElement>(null)
-  const panelBackdropRef = useRef<HTMLDivElement>(null)
-  const arrowsRef = useRef<HTMLButtonElement>(null)
-  const newsRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const leftTopRef = useRef<HTMLDivElement>(null);
+  const leftBottomRef = useRef<HTMLDivElement>(null);
+  const rightTopRef = useRef<HTMLDivElement>(null);
+  const rightTopInnerRef = useRef<HTMLDivElement>(null);
+  const panelCopyRef = useRef<HTMLDivElement>(null);
+  const panelBackdropRef = useRef<HTMLDivElement>(null);
+  const arrowsRef = useRef<HTMLButtonElement>(null);
+  const newsRef = useRef<HTMLDivElement>(null);
 
   /*
    * The cue is also the control: it scrolls to where the pin lets go, which is
@@ -114,57 +115,68 @@ export default function HomeHero() {
    * motion, since the whole point of the trip is the animation.
    */
   const scrollToBuildForEveryone = () => {
-    const target = document.getElementById('build-for-everyone')
-    if (!target) return
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'end' })
-  }
+    const target = document.getElementById('build-for-everyone');
+    if (!target) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'end' });
+  };
 
   useEffect(() => {
-    const target = document.getElementById('build-for-everyone')
-    if (!target) return
+    const target = document.getElementById('build-for-everyone');
+    if (!target) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => setBuildSectionInView(entry.isIntersecting),
       { rootMargin: '0px 0px 144px 0px', threshold: 0.01 },
-    )
-    observer.observe(target)
+    );
+    observer.observe(target);
 
-    return () => observer.disconnect()
-  }, [])
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
-    if (loadPanelVideo) return
-    const desktop = window.matchMedia('(min-width: 1024px)')
+    if (loadPanelVideo) return;
+    const desktop = window.matchMedia('(min-width: 1024px)');
     const activate = () => {
-      if (desktop.matches) setLoadPanelVideo(true)
-    }
-    const events: Array<keyof WindowEventMap> = ['pointerdown', 'keydown', 'scroll', 'touchstart']
-    for (const event of events) window.addEventListener(event, activate, { once: true, passive: true })
+      if (desktop.matches) setLoadPanelVideo(true);
+    };
+    const events: Array<keyof WindowEventMap> = ['pointerdown', 'keydown', 'scroll', 'touchstart'];
+    for (const event of events)
+      window.addEventListener(event, activate, { once: true, passive: true });
     return () => {
-      for (const event of events) window.removeEventListener(event, activate)
-    }
-  }, [loadPanelVideo])
+      for (const event of events) window.removeEventListener(event, activate);
+    };
+  }, [loadPanelVideo]);
 
   useGSAP(
     () => {
-      const section = sectionRef.current
-      const sticky = stickyRef.current
-      const heading = titleRef.current
-      const leftTop = leftTopRef.current
-      const leftBottom = leftBottomRef.current
-      const rightTop = rightTopRef.current
-      const rightTopInner = rightTopInnerRef.current
-      const copy = panelCopyRef.current
-      const backdrop = panelBackdropRef.current
-      const arrows = arrowsRef.current
-      const news = newsRef.current
+      const section = sectionRef.current;
+      const sticky = stickyRef.current;
+      const heading = titleRef.current;
+      const leftTop = leftTopRef.current;
+      const leftBottom = leftBottomRef.current;
+      const rightTop = rightTopRef.current;
+      const rightTopInner = rightTopInnerRef.current;
+      const copy = panelCopyRef.current;
+      const backdrop = panelBackdropRef.current;
+      const arrows = arrowsRef.current;
+      const news = newsRef.current;
 
-      if (!section || !sticky || !heading || !leftTop || !leftBottom) return
-      if (!rightTop || !rightTopInner || !copy || !backdrop || !arrows || !news) return
+      if (!section || !sticky || !heading || !leftTop || !leftBottom) return;
+      if (!rightTop || !rightTopInner || !copy || !backdrop || !arrows || !news) return;
 
-      const animated = [heading, leftTop, leftBottom, rightTop, rightTopInner, copy, backdrop, arrows, news]
-      let timeline: gsap.core.Timeline | null = null
+      const animated = [
+        heading,
+        leftTop,
+        leftBottom,
+        rightTop,
+        rightTopInner,
+        copy,
+        backdrop,
+        arrows,
+        news,
+      ];
+      let timeline: gsap.core.Timeline | null = null;
 
       /*
        * Where the panel's copy has to end up. Measured, never assumed: the
@@ -173,9 +185,9 @@ export default function HomeHero() {
        * line's own offset is what centres it independently of the others.
        */
       const measure = () => {
-        const stickyBox = sticky.getBoundingClientRect()
-        const copyBox = copy.getBoundingClientRect()
-        const sentences = gsap.utils.toArray<HTMLElement>('[data-hero-sentence]', copy)
+        const stickyBox = sticky.getBoundingClientRect();
+        const copyBox = copy.getBoundingClientRect();
+        const sentences = gsap.utils.toArray<HTMLElement>('[data-hero-sentence]', copy);
 
         return {
           width: stickyBox.width,
@@ -184,27 +196,33 @@ export default function HomeHero() {
           y: -(stickyBox.height - Math.floor(copyBox.height)) * 0.5,
           sentences,
           sentenceX: sentences.map((sentence) => {
-            const box = sentence.getBoundingClientRect()
-            return (copyBox.width - (box.width + (box.left - copyBox.left) * 2)) * 0.5
+            const box = sentence.getBoundingClientRect();
+            return (copyBox.width - (box.width + (box.left - copyBox.left) * 2)) * 0.5;
           }),
-        }
-      }
+        };
+      };
 
       const build = () => {
-        timeline?.revert()
-        timeline?.kill()
+        timeline?.revert();
+        timeline?.kill();
         // Measuring under the previous timeline's transforms would compound
         // them into the new one.
-        gsap.set(animated, { clearProps: 'all' })
+        gsap.set(animated, { clearProps: 'all' });
 
-        const icons = gsap.utils.toArray<HTMLElement>('[data-hero-icon]', copy)
-        gsap.set(icons, { y: '100%' })
+        const icons = gsap.utils.toArray<HTMLElement>('[data-hero-icon]', copy);
+        gsap.set(icons, { y: '100%' });
 
-        const geometry = measure()
+        const geometry = measure();
 
         timeline = gsap.timeline({
-          scrollTrigger: { trigger: section, start: 'top', end: 'bottom', scrub: true, invalidateOnRefresh: true },
-        })
+          scrollTrigger: {
+            trigger: section,
+            start: 'top',
+            end: 'bottom',
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        });
 
         timeline
           // Pinning the measured width first: the column collapses to 0 beside
@@ -220,7 +238,11 @@ export default function HomeHero() {
             0,
           )
           .fromTo(backdrop, { opacity: 1 }, { opacity: 0, duration: 1 }, 0)
-          .to(geometry.sentences, { x: (index: number) => geometry.sentenceX[index], duration: 1 }, 0)
+          .to(
+            geometry.sentences,
+            { x: (index: number) => geometry.sentenceX[index], duration: 1 },
+            0,
+          )
           .fromTo(arrows, { y: '0%' }, { y: '-100%', duration: 1 }, 0)
           .fromTo(news, { y: '0%' }, { y: '100%', duration: 1 }, 0)
           // The second half, and the reason this reads as two moves rather than
@@ -228,22 +250,22 @@ export default function HomeHero() {
           .to(copy, { y: '0%', duration: 1 }, 1)
           .call(
             () => {
-              const goingDown = (timeline?.scrollTrigger?.direction ?? 1) > -1
+              const goingDown = (timeline?.scrollTrigger?.direction ?? 1) > -1;
               gsap.fromTo(
                 icons,
                 { y: goingDown ? '100%' : '0%' },
                 { y: goingDown ? '0%' : '100%', stagger: { amount: 0.1 }, ...ICON_ANIMATION },
-              )
+              );
             },
             [],
             0.25,
-          )
-      }
+          );
+      };
 
-      const media = gsap.matchMedia()
+      const media = gsap.matchMedia();
 
       media.add('(min-width: 1024px)', () => {
-        build()
+        build();
 
         /*
          * Both rebuild triggers exist for the same reason: every number above
@@ -251,48 +273,48 @@ export default function HomeHero() {
          * changes the sentence widths, which is the one that decides where each
          * line comes to rest.
          */
-        let frame = 0
+        let frame = 0;
         const rebuild = () => {
-          frame = 0
-          build()
-          ScrollTrigger.refresh()
-        }
+          frame = 0;
+          build();
+          ScrollTrigger.refresh();
+        };
         const onResize = () => {
-          if (frame === 0) frame = window.requestAnimationFrame(rebuild)
-        }
-        window.addEventListener('resize', onResize)
+          if (frame === 0) frame = window.requestAnimationFrame(rebuild);
+        };
+        window.addEventListener('resize', onResize);
 
-        let live = true
+        let live = true;
         document.fonts?.ready.then(() => {
-          if (live) rebuild()
-        })
+          if (live) rebuild();
+        });
 
         return () => {
-          live = false
-          window.removeEventListener('resize', onResize)
-          if (frame !== 0) window.cancelAnimationFrame(frame)
-          timeline?.revert()
-          timeline?.kill()
-          timeline = null
-        }
-      })
+          live = false;
+          window.removeEventListener('resize', onResize);
+          if (frame !== 0) window.cancelAnimationFrame(frame);
+          timeline?.revert();
+          timeline?.kill();
+          timeline = null;
+        };
+      });
 
-      return () => media.revert()
+      return () => media.revert();
     },
     { scope: sectionRef, dependencies: [locale, title, panelSentenceSignature] },
-  )
+  );
 
   return (
     <motion.section
       ref={sectionRef}
       className="block w-full bg-background max-lg:min-h-svh lg:min-h-[200dvh]"
       onViewportEnter={() => {
-        setHeroVisible(true)
-        setHeroInView(true)
+        setHeroVisible(true);
+        setHeroInView(true);
       }}
       onViewportLeave={() => {
-        setHeroVisible(false)
-        setHeroInView(false)
+        setHeroVisible(false);
+        setHeroInView(false);
       }}
       viewport={{ amount: 0 }}
     >
@@ -307,7 +329,12 @@ export default function HomeHero() {
               className="pointer-events-auto inline-flex cursor-pointer animate-[hero-scroll-cta_2.2s_cubic-bezier(0.22,1,0.36,1)_infinite] items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-[15px] font-medium text-black shadow-lg motion-reduce:animate-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
             >
               <span>{t('home.heroScrollCta')}</span>
-              <ScrollArrow delay={0} className="text-black" sizeClass="size-[18px]" animated={false} />
+              <ScrollArrow
+                delay={0}
+                className="text-black"
+                sizeClass="size-[18px]"
+                animated={false}
+              />
             </motion.button>
           </div>
         )}
@@ -317,126 +344,139 @@ export default function HomeHero() {
           ref={stickyRef}
           className="sticky top-0 flex h-auto overflow-hidden bg-background max-lg:min-h-svh max-lg:flex-col lg:min-h-dvh lg:flex-wrap"
         >
-        {/* Top band — 60dvh */}
-        <div className="flex w-full max-lg:flex-1 max-lg:pt-28 lg:h-[60dvh]">
-          <div ref={leftTopRef} className="w-full shrink-0 lg:w-[70%]">
-            <div className="flex size-full flex-col justify-end">
-              <div
-                ref={titleRef}
-                className="flex flex-col justify-end px-[var(--layout-gutter)] will-change-transform lg:px-0 lg:pb-10 lg:pe-0 lg:ps-[max(var(--layout-gutter),calc((100vw-var(--layout-max-width))/2+var(--layout-gutter)))]"
-              >
-                <AnimatedTitle
-                  as="h1"
-                  randomness={1}
-                  grow
-                  className="w-full max-w-[760px] text-balance font-display text-[clamp(2.25rem,3.6vw,4rem)] font-medium leading-[0.95] tracking-[-0.04em]"
+          {/* Top band — 60dvh */}
+          <div className="flex w-full max-lg:flex-1 max-lg:pt-28 lg:h-[60dvh]">
+            <div ref={leftTopRef} className="w-full shrink-0 lg:w-[70%]">
+              <div className="flex size-full flex-col justify-end">
+                <div
+                  ref={titleRef}
+                  className="flex flex-col justify-end px-[var(--layout-gutter)] will-change-transform lg:px-0 lg:pb-10 lg:pe-0 lg:ps-[max(var(--layout-gutter),calc((100vw-var(--layout-max-width))/2+var(--layout-gutter)))]"
                 >
-                  {title}
-                </AnimatedTitle>
-              </div>
+                  <AnimatedTitle
+                    as="h1"
+                    randomness={1}
+                    grow
+                    className="w-full max-w-[760px] text-balance font-display text-[clamp(2.25rem,3.6vw,4rem)] font-medium leading-[0.95] tracking-[-0.04em]"
+                  >
+                    {title}
+                  </AnimatedTitle>
+                </div>
 
-              {/*
+                {/*
                 The panel and the news column have nowhere to go on a phone, so
                 they read here instead — one step down in size, because on this
                 width they sit under the headline rather than beside it.
               */}
-              <div className="flex flex-col items-start gap-6 px-[var(--layout-gutter)] pb-8 pt-6 lg:hidden">
-                <div className="flex flex-col items-start text-body-lg text-muted-foreground">
-                  {sentences.map((sentence) => (
-                    <p key={sentence}>{sentence}</p>
-                  ))}
-                </div>
+                <div className="flex flex-col items-start gap-6 px-[var(--layout-gutter)] pb-8 pt-6 lg:hidden">
+                  <div className="flex flex-col items-start text-body-lg text-muted-foreground">
+                    {sentences.map((sentence) => (
+                      <p key={sentence}>{sentence}</p>
+                    ))}
+                  </div>
 
-                <div className="flex w-full flex-col gap-2">
-                  <p className="font-mono text-label-sm uppercase text-muted-foreground">{t('home.heroNewsroom')}</p>
-                  <FeaturedNews />
+                  <div className="flex w-full flex-col gap-2">
+                    <p className="font-mono text-label-sm uppercase text-muted-foreground">
+                      {t('home.heroNewsroom')}
+                    </p>
+                    <FeaturedNews />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div ref={rightTopRef} className="hidden w-full max-w-[30%] lg:block">
-            <div
-              ref={rightTopInnerRef}
-              className="relative z-[5] flex size-full items-end justify-start bg-background"
-            >
-              {/*
+            <div ref={rightTopRef} className="hidden w-full max-w-[30%] lg:block">
+              <div
+                ref={rightTopInnerRef}
+                className="relative z-[5] flex size-full items-end justify-start bg-background"
+              >
+                {/*
                 No width here on purpose. As a flex item holding `nowrap`
                 sentences it takes its max-content width, which is far wider
                 than the 30% column — and that ratio IS the scale the timeline
                 starts from.
               */}
-              <div
-                ref={panelCopyRef}
-                className="relative z-[5] flex origin-bottom-left flex-col items-start justify-end p-20 antialiased will-change-transform"
-              >
-                <div className="hidden w-full justify-center gap-4 lg:flex">
-                  {panelIcons.map((icon) => (
-                    <div key={icon.src} className="flex size-14 overflow-hidden">
-                      <img
-                        data-hero-icon
-                        src={icon.src}
-                        alt={icon.alt}
-                        width={160}
-                        height={160}
-                        loading="lazy"
-                        decoding="async"
-                        className="block size-full object-contain will-change-transform"
-                      />
-                    </div>
-                  ))}
+                <div
+                  ref={panelCopyRef}
+                  className="relative z-[5] flex origin-bottom-left flex-col items-start justify-end p-20 antialiased will-change-transform"
+                >
+                  <div className="hidden w-full justify-center gap-4 lg:flex">
+                    {panelIcons.map((icon) => (
+                      <div key={icon.src} className="flex size-14 overflow-hidden">
+                        <img
+                          data-hero-icon
+                          src={icon.src}
+                          alt={icon.alt}
+                          width={160}
+                          height={160}
+                          loading="lazy"
+                          decoding="async"
+                          className="block size-full object-contain will-change-transform"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-col items-start">
+                    {sentences.map((sentence) => (
+                      <p
+                        key={sentence}
+                        data-hero-sentence
+                        className="block whitespace-nowrap text-[clamp(2.625rem,4vw,4rem)] leading-[0.95] tracking-[-0.045em] will-change-transform"
+                      >
+                        {sentence}
+                      </p>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="flex flex-col items-start">
-                  {sentences.map((sentence) => (
-                    <p
-                      key={sentence}
-                      data-hero-sentence
-                      className="block whitespace-nowrap text-[clamp(2.625rem,4vw,4rem)] leading-[0.95] tracking-[-0.045em] will-change-transform"
-                    >
-                      {sentence}
-                    </p>
-                  ))}
-                </div>
-              </div>
-
-              {/*
+                {/*
                 The video sits UNDER the layer that fades out, so it is revealed
                 by the panel opening rather than by a tween of its own: one
                 fade, one thing to keep in step. The scrim over it is what keeps
                 the copy readable once it is showing.
 
               */}
-              <div className="pointer-events-none absolute inset-0 z-[3] overflow-hidden">
-                {loadPanelVideo ? (
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    aria-hidden="true"
-                    preload="none"
-                    poster={PANEL_POSTER}
-                    className="size-full object-cover"
-                  >
-                    <source src={LANDING_FILM.src} type="video/mp4" />
-                  </video>
-                ) : (
-                  <img src={PANEL_POSTER} alt="" aria-hidden="true" className="size-full object-cover" />
-                )}
-                <div className="absolute inset-0 bg-background/55" />
-              </div>
+                <div className="pointer-events-none absolute inset-0 z-[3] overflow-hidden">
+                  {loadPanelVideo ? (
+                    <video
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      aria-hidden="true"
+                      preload="none"
+                      poster={PANEL_POSTER}
+                      className="size-full object-cover"
+                    >
+                      <source src={LANDING_FILM.src} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <img
+                      src={PANEL_POSTER}
+                      alt=""
+                      aria-hidden="true"
+                      className="size-full object-cover"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-background/55" />
+                </div>
 
-              <div ref={panelBackdropRef} className="pointer-events-none absolute left-0 top-0 z-[4] size-full bg-surface" />
+                <div
+                  ref={panelBackdropRef}
+                  className="pointer-events-none absolute left-0 top-0 z-[4] size-full bg-surface"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Bottom band — 40dvh */}
-        <div className="flex w-full max-lg:h-[32svh] lg:h-[40dvh]">
-          <div ref={leftBottomRef} className="h-full w-full shrink-0 will-change-transform lg:w-[70%]">
-            <div className="relative flex size-full items-center justify-center">
-              {/*
+          {/* Bottom band — 40dvh */}
+          <div className="flex w-full max-lg:h-[32svh] lg:h-[40dvh]">
+            <div
+              ref={leftBottomRef}
+              className="h-full w-full shrink-0 will-change-transform lg:w-[70%]"
+            >
+              <div className="relative flex size-full items-center justify-center">
+                {/*
                 The still, not the video. The CMS still holds both, so this is
                 one element away from moving again.
 
@@ -445,73 +485,80 @@ export default function HomeHero() {
                 and a picture that ended at the cell's edge would take the floor
                 with it and leave the space below empty.
               */}
-              <img
-                src={poster}
-                srcSet={usesDefaultPoster
-                  ? `${IMG}/hero-bg-800.avif 800w, ${IMG}/hero-bg-1200.avif 1200w, ${DEFAULT_POSTER} 1600w`
-                  : undefined}
-                sizes={usesDefaultPoster ? '(max-width: 1023px) 100vw, 70vw' : undefined}
-                alt=""
-                aria-hidden="true"
-                className="absolute left-0 top-0 z-[2] h-full w-full object-cover lg:h-dvh"
-                width={1920}
-                height={1080}
-                fetchPriority="high"
-              />
+                <img
+                  src={poster}
+                  srcSet={
+                    usesDefaultPoster
+                      ? `${IMG}/hero-bg-800.avif 800w, ${IMG}/hero-bg-1200.avif 1200w, ${DEFAULT_POSTER} 1600w`
+                      : undefined
+                  }
+                  sizes={usesDefaultPoster ? '(max-width: 1023px) 100vw, 70vw' : undefined}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute left-0 top-0 z-[2] h-full w-full object-cover lg:h-dvh"
+                  width={1920}
+                  height={1080}
+                  fetchPriority="high"
+                />
+              </div>
             </div>
-          </div>
 
-          {/*
+            {/*
             Thirty per cent at rest, and it TAKES the width the column beside it
             gives up — a fixed `max-w-[30%]` would hold its size while that
             column collapsed and leave a growing strip of nothing along the
             band's right edge.
           */}
-          <div className="hidden w-[30%] grow lg:block">
-            <div className="relative z-[3] hidden size-full flex-col justify-between overflow-hidden lg:flex">
-              {/*
+            <div className="hidden w-[30%] grow lg:block">
+              <div className="relative z-[3] hidden size-full flex-col justify-between overflow-hidden lg:flex">
+                {/*
                 Fixed to the cell, not to the two blocks inside it: those slide
                 out on scroll and the picture has to stay where it is.
               */}
-              <img
-                src={NEWS_CELL_BACKDROP}
-                alt=""
-                aria-hidden="true"
-                className="absolute inset-0 -z-10 size-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-              {/* Heavier at the foot, where the card and the label sit. */}
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 -z-10 bg-gradient-to-b from-background/65 via-background/80 to-background/92"
-              />
+                <img
+                  src={NEWS_CELL_BACKDROP}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 -z-10 size-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+                {/* Heavier at the foot, where the card and the label sit. */}
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 -z-10 bg-gradient-to-b from-background/65 via-background/80 to-background/92"
+                />
 
-              <button
-                ref={arrowsRef}
-                type="button"
-                onClick={scrollToBuildForEveryone}
-                aria-label={t('home.heroScrollCta')}
-                className="hidden w-fit cursor-pointer flex-col gap-2 p-10 transition-opacity will-change-transform hover:opacity-70 lg:flex"
-              >
-                <ScrollArrow delay={0} />
-                <ScrollArrow delay={0.18} />
-                <ScrollArrow delay={0.36} />
-              </button>
+                <button
+                  ref={arrowsRef}
+                  type="button"
+                  onClick={scrollToBuildForEveryone}
+                  aria-label={t('home.heroScrollCta')}
+                  className="hidden w-fit cursor-pointer flex-col gap-2 p-10 transition-opacity will-change-transform hover:opacity-70 lg:flex"
+                >
+                  <ScrollArrow delay={0} />
+                  <ScrollArrow delay={0.18} />
+                  <ScrollArrow delay={0.36} />
+                </button>
 
-              <div className="flex w-full justify-end">
-                <div ref={newsRef} className="relative flex w-full flex-col gap-2 p-10 will-change-transform">
-                  <p className="font-mono text-label-sm uppercase text-muted-foreground">{t('home.heroNewsroom')}</p>
-                  <FeaturedNews />
+                <div className="flex w-full justify-end">
+                  <div
+                    ref={newsRef}
+                    className="relative flex w-full flex-col gap-2 p-10 will-change-transform"
+                  >
+                    <p className="font-mono text-label-sm uppercase text-muted-foreground">
+                      {t('home.heroNewsroom')}
+                    </p>
+                    <FeaturedNews />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        </div>
       </div>
     </motion.section>
-  )
+  );
 }
 
 function ScrollArrow({
@@ -520,10 +567,10 @@ function ScrollArrow({
   sizeClass = 'size-4',
   animated = true,
 }: {
-  delay: number
-  className?: string
-  sizeClass?: string
-  animated?: boolean
+  delay: number;
+  className?: string;
+  sizeClass?: string;
+  animated?: boolean;
 }) {
   return (
     <span
@@ -541,13 +588,13 @@ function ScrollArrow({
         <path d="M13.0013 22.9993H17.001L17.001 26.9995H13.0013V22.9993Z" fill="currentColor" />
       </svg>
     </span>
-  )
+  );
 }
 
 function FeaturedNews() {
-  const { data } = useNewsroomPosts({ limit: 1 })
-  const post = data?.posts?.[0]
-  if (!post) return null
+  const { data } = useNewsroomPosts({ limit: 1 });
+  const post = data?.posts?.[0];
+  if (!post) return null;
 
   return (
     <div className="flex w-full overflow-hidden bg-background">
@@ -571,5 +618,5 @@ function FeaturedNews() {
         <p className="line-clamp-2 w-full min-w-0 text-body-lg leading-tight">{post.title}</p>
       </Link>
     </div>
-  )
+  );
 }

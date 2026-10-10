@@ -8,42 +8,51 @@
  */
 
 export interface TestUniform {
-  value: { image?: { width?: number }; toArray?(): number[] }
+  value: { image?: { width?: number }; toArray?(): number[] };
 }
 
 export interface TestArcObject {
-  uuid: string
-  material: { uniforms: { dashTranslate: { value: number } } }
-  __dashAnimateStep?: number
+  uuid: string;
+  material: { uniforms: { dashTranslate: { value: number } } };
+  __dashAnimateStep?: number;
 }
 
 export interface TestSceneObject {
-  __globeObjType?: string
-  children: TestArcObject[]
-  material?: { uniforms?: Record<string, TestUniform | undefined> }
+  __globeObjType?: string;
+  children: TestArcObject[];
+  material?: { uniforms?: Record<string, TestUniform | undefined> };
 }
 
 export interface TestGlobe {
-  scene(): { traverse(visit: (object: TestSceneObject) => void): void }
-  controls(): { autoRotate: boolean; dispatchEvent(event: { type: string }): void }
-  pointOfView(view: { lat: number; lng: number; altitude: number }, ms: number): void
+  scene(): { traverse(visit: (object: TestSceneObject) => void): void };
+  controls(): { autoRotate: boolean; dispatchEvent(event: { type: string }): void };
+  pointOfView(view: { lat: number; lng: number; altitude: number }, ms: number): void;
 }
 
-export interface CameraFrame { t: number; lat: number; lng: number; altitude: number }
+export interface CameraFrame {
+  t: number;
+  lat: number;
+  lng: number;
+  altitude: number;
+}
 
-export interface ArcSnapshot { uuid: string; phase: number; moving: boolean }
+export interface ArcSnapshot {
+  uuid: string;
+  phase: number;
+  moving: boolean;
+}
 
 declare global {
   interface Window {
     /** Set by the patched component once three-globe is ready. */
-    __testGlobe?: TestGlobe
+    __testGlobe?: TestGlobe;
     /** The arcs the component last handed to three-globe. */
-    __testArcs: { id: string; color: string }[]
+    __testArcs: { id: string; color: string }[];
     /** Camera positions recorded by the patched camera loop. */
-    __cameraFrames: CameraFrame[]
+    __cameraFrames: CameraFrame[];
     /** The fixture's setter for the current activity batch. */
-    setCameraEvents: (events: Record<string, unknown>[]) => void
-    __pulseAnimations: (Animation | undefined)[]
-    __arcSnapshot: ArcSnapshot[]
+    setCameraEvents: (events: Record<string, unknown>[]) => void;
+    __pulseAnimations: (Animation | undefined)[];
+    __arcSnapshot: ArcSnapshot[];
   }
 }

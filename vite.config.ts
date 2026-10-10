@@ -1,32 +1,31 @@
-import path from 'node:path'
-import fs from 'node:fs'
-import { createRequire } from 'node:module'
-import { defineConfig, type Plugin } from 'vite'
-import react, { reactCompilerPreset } from '@vitejs/plugin-react'
-import babel from '@rolldown/plugin-babel'
-import tailwindcss from '@tailwindcss/vite'
-import svgr from 'vite-plugin-svgr'
-import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
-import mdx from '@mdx-js/rollup'
-import remarkGfm from 'remark-gfm'
-import remarkFrontmatter from 'remark-frontmatter'
-import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
-import rehypeSlug from 'rehype-slug'
-import mdxHeadings from './scripts/vite-mdx-headings'
-import bloomCharacterAssets from './scripts/vite-bloom-character-assets'
-import reactNativeWeb from 'vite-plugin-react-native-web'
-import { visualizer } from 'rollup-plugin-visualizer'
+import path from 'node:path';
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import { defineConfig, type Plugin } from 'vite';
+import react, { reactCompilerPreset } from '@vitejs/plugin-react';
+import babel from '@rolldown/plugin-babel';
+import tailwindcss from '@tailwindcss/vite';
+import svgr from 'vite-plugin-svgr';
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
+import mdx from '@mdx-js/rollup';
+import remarkGfm from 'remark-gfm';
+import remarkFrontmatter from 'remark-frontmatter';
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
+import rehypeSlug from 'rehype-slug';
+import mdxHeadings from './scripts/vite-mdx-headings';
+import bloomCharacterAssets from './scripts/vite-bloom-character-assets';
+import reactNativeWeb from 'vite-plugin-react-native-web';
+import { visualizer } from 'rollup-plugin-visualizer';
 
-const require = createRequire(import.meta.url)
-const emptyModule = path.resolve(import.meta.dirname, 'src/lib/empty-module.js')
+const require = createRequire(import.meta.url);
+const emptyModule = path.resolve(import.meta.dirname, 'src/lib/empty-module.js');
 
 // Bloom / services ship `'worklet'` directives but not the Babel-plugin
 // `__workletHash` metadata. Reanimated's `useHandler` (used by
 // `useAnimatedScrollHandler` in Bloom's BottomSheet) rejects plain functions
 // even on web, so we must run `react-native-reanimated/plugin` over those
 // packages.
-const oxySoWorkletPath =
-  /[/\\]node_modules[/\\]@oxy\.so[/\\](?:bloom|services)[/\\]/
+const oxySoWorkletPath = /[/\\]node_modules[/\\]@oxy\.so[/\\](?:bloom|services)[/\\]/;
 
 /**
  * Transform `@oxy.so/bloom` / `@oxy.so/services` with the Reanimated Babel
@@ -37,22 +36,22 @@ const oxySoWorkletPath =
 function oxySoReanimatedWorklets() {
   // Lazy-require so config evaluation doesn't pay the Babel cost until first
   // transform, and so CJS `react-native-reanimated/plugin` loads cleanly.
-  let babelTransform: typeof import('@babel/core').transformSync | undefined
-  let reanimatedPlugin: import('@babel/core').PluginTarget | undefined
+  let babelTransform: typeof import('@babel/core').transformSync | undefined;
+  let reanimatedPlugin: import('@babel/core').PluginTarget | undefined;
 
   return {
     name: 'oxy-so-reanimated-worklets',
     enforce: 'pre' as const,
     transform(code: string, id: string) {
-      const file = id.split('?', 1)[0]
-      if (!oxySoWorkletPath.test(file)) return null
-      if (!/\.[cm]?[jt]sx?$/.test(file)) return null
+      const file = id.split('?', 1)[0];
+      if (!oxySoWorkletPath.test(file)) return null;
+      if (!/\.[cm]?[jt]sx?$/.test(file)) return null;
 
       if (!babelTransform) {
-        babelTransform = require('@babel/core').transformSync
-        reanimatedPlugin = require('react-native-reanimated/plugin')
+        babelTransform = require('@babel/core').transformSync;
+        reanimatedPlugin = require('react-native-reanimated/plugin');
       }
-      if (!babelTransform || !reanimatedPlugin) return null
+      if (!babelTransform || !reanimatedPlugin) return null;
 
       const result = babelTransform(code, {
         filename: file,
@@ -68,11 +67,11 @@ function oxySoReanimatedWorklets() {
         // `substituteWebPlatformChecks` folds `isWeb()` / `shouldBeUseWeb()`
         // to `true` at transform time for the web target.
         plugins: [[reanimatedPlugin, { substituteWebPlatformChecks: true }]],
-      })
-      if (!result?.code) return null
-      return { code: result.code, map: result.map }
+      });
+      if (!result?.code) return null;
+      return { code: result.code, map: result.map };
     },
-  }
+  };
 }
 
 /**
@@ -81,15 +80,15 @@ function oxySoReanimatedWorklets() {
  * too. Leave those to Vite, which serves them as the file's text.
  */
 function mdxExceptRaw(options: Parameters<typeof mdx>[0]): Plugin {
-  const plugin = mdx(options)
+  const plugin = mdx(options);
   return {
     ...plugin,
     enforce: 'pre',
     transform(code, id) {
-      if (/[?&]raw\b/.test(id)) return null
-      return plugin.transform.call(this, code, id)
+      if (/[?&]raw\b/.test(id)) return null;
+      return plugin.transform.call(this, code, id);
     },
-  }
+  };
 }
 
 // https://vite.dev/config/
@@ -134,9 +133,9 @@ export default defineConfig(({ mode }) => ({
           id.endsWith('.js') &&
           !id.includes('\0')
         ) {
-          return { code: fs.readFileSync(id, 'utf-8'), moduleType: 'jsx' }
+          return { code: fs.readFileSync(id, 'utf-8'), moduleType: 'jsx' };
         }
-        return undefined
+        return undefined;
       },
     },
     // Workletize Bloom/services before other transforms see them.
@@ -155,11 +154,7 @@ export default defineConfig(({ mode }) => ({
       webp: { quality: 80, effort: 4 },
       avif: { quality: 65, effort: 4 },
       svg: {
-        plugins: [
-          'preset-default',
-          'sortAttrs',
-          'removeEmptyAttrs',
-        ],
+        plugins: ['preset-default', 'sortAttrs', 'removeEmptyAttrs'],
       },
       includePublic: true,
       logStats: true,
@@ -184,7 +179,18 @@ export default defineConfig(({ mode }) => ({
     // their native counterpart. Without this ordering Vite resolves the native
     // version and rolldown tries to statically parse those Flow files, producing
     // `[PARSE_ERROR] Flow is not supported`. Order mirrors Metro's default.
-    extensions: ['.web.js', '.web.ts', '.web.tsx', '.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
+    extensions: [
+      '.web.js',
+      '.web.ts',
+      '.web.tsx',
+      '.mjs',
+      '.js',
+      '.mts',
+      '.ts',
+      '.jsx',
+      '.tsx',
+      '.json',
+    ],
     tsconfigPaths: true,
     alias: [
       { find: /^react-native\/Libraries\/.*/, replacement: emptyModule },
@@ -257,7 +263,10 @@ export default defineConfig(({ mode }) => ({
     // entry graph pulls in, and that is what `bun run analyze` shows.
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
-      input: { main: path.resolve(import.meta.dirname, 'index.html'), bloomPreview: path.resolve(import.meta.dirname, 'bloom-preview.html') },
+      input: {
+        main: path.resolve(import.meta.dirname, 'index.html'),
+        bloomPreview: path.resolve(import.meta.dirname, 'bloom-preview.html'),
+      },
       output: {
         /**
          * Split the heavy vendors out of the entry graph.
@@ -274,33 +283,43 @@ export default defineConfig(({ mode }) => ({
          * mentions another one's name can't fall into the wrong bucket.
          */
         manualChunks(id: string) {
-          if (!id.includes('node_modules')) return undefined
+          if (!id.includes('node_modules')) return undefined;
           const inPkg = (...names: string[]) =>
-            names.some((name) => id.includes(`node_modules/${name}/`))
+            names.some((name) => id.includes(`node_modules/${name}/`));
 
           // Wallet stack — only ever needed on FairCoin routes. Keeping it in
           // one chunk means oxy.so never fetches any of it.
           if (inPkg('wagmi', '@wagmi', 'viem', '@walletconnect', '@coinbase', 'ox', 'abitype')) {
-            return 'vendor-wallet'
+            return 'vendor-wallet';
           }
           // 3D globe — one lazy component on /ai uses it.
-          if (inPkg('three', '@react-three')) return 'vendor-three'
+          if (inPkg('three', '@react-three')) return 'vendor-three';
           // The app shell: the Oxy SDK, Bloom, and the react-native-web stack
           // they are built on. One chunk because it is one unit in practice —
           // every route mounts OxyProvider + BloomThemeProvider, and rolldown
           // merges the rnw modules in here anyway since Bloom is their only
           // consumer. Confirmed with `bun run analyze`.
-          if (inPkg('@oxy.so', 'react-native-web', 'react-native-reanimated', 'react-native-gesture-handler', 'react-native-svg', '@expo/vector-icons', 'expo-modules-core')) {
-            return 'vendor-oxy'
+          if (
+            inPkg(
+              '@oxy.so',
+              'react-native-web',
+              'react-native-reanimated',
+              'react-native-gesture-handler',
+              'react-native-svg',
+              '@expo/vector-icons',
+              'expo-modules-core',
+            )
+          ) {
+            return 'vendor-oxy';
           }
-          if (inPkg('framer-motion', 'motion-dom', 'motion-utils')) return 'vendor-motion'
-          if (inPkg('swiper')) return 'vendor-carousel'
-          if (inPkg('@scalar')) return 'vendor-scalar'
+          if (inPkg('framer-motion', 'motion-dom', 'motion-utils')) return 'vendor-motion';
+          if (inPkg('swiper')) return 'vendor-carousel';
+          if (inPkg('@scalar')) return 'vendor-scalar';
           if (inPkg('react', 'react-dom', 'react-router', 'react-router-dom', 'scheduler')) {
-            return 'vendor-react'
+            return 'vendor-react';
           }
-          if (inPkg('@tanstack')) return 'vendor-query'
-          return undefined
+          if (inPkg('@tanstack')) return 'vendor-query';
+          return undefined;
         },
       },
     },
@@ -389,4 +408,4 @@ export default defineConfig(({ mode }) => ({
       '/api': 'http://localhost:4000',
     },
   },
-}))
+}));

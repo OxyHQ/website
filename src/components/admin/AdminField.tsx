@@ -1,5 +1,5 @@
-import { Textarea } from '@oxy.so/bloom/textarea'
-import { LabeledTextField } from './LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea';
+import { LabeledTextField } from './LabeledTextField';
 
 /** A labelled admin form field: a single-line text field, or a textarea when `textarea` is set. */
 export function AdminField({
@@ -11,16 +11,24 @@ export function AdminField({
   placeholder,
   mono,
 }: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  textarea?: boolean
-  rows?: number
-  placeholder?: string
-  mono?: boolean
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  textarea?: boolean;
+  rows?: number;
+  placeholder?: string;
+  mono?: boolean;
 }) {
   if (textarea) {
-    return <Textarea label={label} value={value} onValueChange={onChange} rows={rows} placeholder={placeholder} />
+    return (
+      <Textarea
+        label={label}
+        value={value}
+        onValueChange={onChange}
+        rows={rows}
+        placeholder={placeholder}
+      />
+    );
   }
   return (
     <LabeledTextField
@@ -30,5 +38,5 @@ export function AdminField({
       placeholder={placeholder}
       style={mono ? { fontFamily: 'monospace' } : undefined}
     />
-  )
+  );
 }

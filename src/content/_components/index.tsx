@@ -1,14 +1,14 @@
-import type { ComponentPropsWithoutRef } from 'react'
-import { Code as BloomCode } from '@oxy.so/bloom/code'
-import { cn } from '../../lib/utils'
-import Callout from './Callout'
-import Steps, { Step } from './Steps'
-import CodeBlock from './CodeBlock'
-import MdxCodeBlock from './MdxCodeBlock'
-import VideoEmbed from './VideoEmbed'
-import Image from './Image'
-import NextPrev from './NextPrev'
-import Badge from './Badge'
+import type { ComponentPropsWithoutRef } from 'react';
+import { Code as BloomCode } from '@oxy.so/bloom/code';
+import { cn } from '../../lib/utils';
+import Callout from './Callout';
+import Steps, { Step } from './Steps';
+import CodeBlock from './CodeBlock';
+import MdxCodeBlock from './MdxCodeBlock';
+import VideoEmbed from './VideoEmbed';
+import Image from './Image';
+import NextPrev from './NextPrev';
+import Badge from './Badge';
 
 /* ──────────────────────────────────────────────
  * MDX component map for content pages
@@ -24,7 +24,6 @@ import Badge from './Badge'
 // single component-map object plus re-exports of the building-block
 // components. Fast refresh isn't meaningful here (the map itself is not
 // a component); the rule's heuristic just sees both shapes coexisting.
-// eslint-disable-next-line react-refresh/only-export-components
 export const mdxContentComponents = {
   h1: (props: ComponentPropsWithoutRef<'h1'>) => (
     <h1
@@ -122,6 +121,6 @@ export const mdxContentComponents = {
   Image,
   NextPrev,
   Badge,
-}
+};
 
-export { Callout, Steps, Step, CodeBlock, VideoEmbed, Image, NextPrev, Badge }
+export { Callout, Steps, Step, CodeBlock, VideoEmbed, Image, NextPrev, Badge };

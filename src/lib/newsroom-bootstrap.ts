@@ -1,31 +1,31 @@
-import type { QueryClient } from '@tanstack/react-query'
-import type { NewsroomPost, NewsroomPostSummary } from '../data/newsroom'
-import { newsroomPostQueryKey, newsroomPostsQueryKey } from '../api/newsroomQuery'
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from './i18n'
+import type { QueryClient } from '@tanstack/react-query';
+import type { NewsroomPost, NewsroomPostSummary } from '../data/newsroom';
+import { newsroomPostQueryKey, newsroomPostsQueryKey } from '../api/newsroomQuery';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from './i18n';
 
-export const NEWSROOM_BOOTSTRAP_ID = 'newsroom-post-bootstrap'
-export const NEWSROOM_INDEX_BOOTSTRAP_ID = 'newsroom-index-bootstrap'
+export const NEWSROOM_BOOTSTRAP_ID = 'newsroom-post-bootstrap';
+export const NEWSROOM_INDEX_BOOTSTRAP_ID = 'newsroom-index-bootstrap';
 
 interface NewsroomBootstrapPayload {
-  locale: Locale
-  post: NewsroomPost
+  locale: Locale;
+  post: NewsroomPost;
 }
 
 export interface NewsroomIndexData {
-  posts: NewsroomPostSummary[]
-  total: number
-  page: number
-  pages: number
+  posts: NewsroomPostSummary[];
+  total: number;
+  page: number;
+  pages: number;
 }
 
 interface NewsroomIndexBootstrapPayload {
-  locale: Locale
-  data: NewsroomIndexData
+  locale: Locale;
+  data: NewsroomIndexData;
 }
 
 function isPayload(value: unknown): value is NewsroomBootstrapPayload {
-  if (!value || typeof value !== 'object') return false
-  const payload = value as Partial<NewsroomBootstrapPayload>
+  if (!value || typeof value !== 'object') return false;
+  const payload = value as Partial<NewsroomBootstrapPayload>;
   return (
     typeof payload.locale === 'string' &&
     SUPPORTED_LOCALES.includes(payload.locale as Locale) &&
@@ -33,12 +33,12 @@ function isPayload(value: unknown): value is NewsroomBootstrapPayload {
     typeof payload.post.slug === 'string' &&
     typeof payload.post.title === 'string' &&
     typeof payload.post.content === 'string'
-  )
+  );
 }
 
 function isSummary(value: unknown): value is NewsroomPostSummary {
-  if (!value || typeof value !== 'object') return false
-  const post = value as Partial<NewsroomPostSummary>
+  if (!value || typeof value !== 'object') return false;
+  const post = value as Partial<NewsroomPostSummary>;
   return (
     typeof post.slug === 'string' &&
     typeof post.title === 'string' &&
@@ -46,12 +46,12 @@ function isSummary(value: unknown): value is NewsroomPostSummary {
     Array.isArray(post.categories) &&
     typeof post.featured === 'boolean' &&
     typeof post.publishedAt === 'string'
-  )
+  );
 }
 
 function isIndexPayload(value: unknown): value is NewsroomIndexBootstrapPayload {
-  if (!value || typeof value !== 'object') return false
-  const payload = value as Partial<NewsroomIndexBootstrapPayload>
+  if (!value || typeof value !== 'object') return false;
+  const payload = value as Partial<NewsroomIndexBootstrapPayload>;
   return (
     typeof payload.locale === 'string' &&
     SUPPORTED_LOCALES.includes(payload.locale as Locale) &&
@@ -61,17 +61,17 @@ function isIndexPayload(value: unknown): value is NewsroomIndexBootstrapPayload 
     typeof payload.data.total === 'number' &&
     typeof payload.data.page === 'number' &&
     typeof payload.data.pages === 'number'
-  )
+  );
 }
 
 function readTemplatePayload(doc: Document, id: string): unknown {
-  const template = doc.getElementById(id)
-  if (!(template instanceof HTMLTemplateElement)) return null
+  const template = doc.getElementById(id);
+  if (!(template instanceof HTMLTemplateElement)) return null;
 
   try {
-    return JSON.parse(template.content.textContent ?? '') as unknown
+    return JSON.parse(template.content.textContent ?? '') as unknown;
   } catch {
-    return null
+    return null;
   }
 }
 
@@ -84,28 +84,28 @@ export function seedNewsroomBootstrap(
   client: QueryClient,
   doc: Document = document,
 ): NewsroomPost | null {
-  const indexPayload = readTemplatePayload(doc, NEWSROOM_INDEX_BOOTSTRAP_ID)
+  const indexPayload = readTemplatePayload(doc, NEWSROOM_INDEX_BOOTSTRAP_ID);
   if (isIndexPayload(indexPayload)) {
     client.setQueryData(
       newsroomPostsQueryKey({ limit: 50 }, indexPayload.locale),
       indexPayload.data,
       { updatedAt: Date.now() },
-    )
+    );
   }
 
-  const payload = readTemplatePayload(doc, NEWSROOM_BOOTSTRAP_ID)
+  const payload = readTemplatePayload(doc, NEWSROOM_BOOTSTRAP_ID);
   if (isPayload(payload)) {
     client.setQueryData(newsroomPostQueryKey(payload.post.slug, payload.locale), payload.post, {
       updatedAt: Date.now(),
-    })
-    return payload.post
+    });
+    return payload.post;
   }
 
-  return null
+  return null;
 }
 
 export function newsroomBootstrapPayload(post: NewsroomPost): NewsroomBootstrapPayload {
-  return { locale: DEFAULT_LOCALE, post }
+  return { locale: DEFAULT_LOCALE, post };
 }
 
 export function newsroomIndexBootstrapPayload(
@@ -119,5 +119,5 @@ export function newsroomIndexBootstrapPayload(
       page: 1,
       pages: posts.length > 0 ? 1 : 0,
     },
-  }
+  };
 }

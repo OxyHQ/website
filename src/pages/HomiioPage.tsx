@@ -1,7 +1,7 @@
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import HomiioContent from '../components/homiio/HomiioContent'
-import { APP_CARD_IMAGES } from '../data/appCardImages'
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import HomiioContent from '../components/homiio/HomiioContent';
+import { APP_CARD_IMAGES } from '../data/appCardImages';
 
 export default function HomiioPage() {
   return (
@@ -18,5 +18,5 @@ export default function HomiioPage() {
     >
       <HomiioContent />
     </PageShell>
-  )
+  );
 }

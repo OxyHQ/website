@@ -7,13 +7,13 @@
  * different answers to the question the reader came with, and a section-level
  * badge cannot tell them apart.
  */
-import type { Availability } from '../../lib/ai/availability'
+import type { Availability } from '../../lib/ai/availability';
 
 export interface SurfaceCapability {
-  key: string
-  title: string
-  description: string
-  availability: Availability
+  key: string;
+  title: string;
+  description: string;
+  availability: Availability;
 }
 
 /** Modalities and API features, each with the state the site can defend. */
@@ -73,11 +73,11 @@ export const inferenceCapabilities: SurfaceCapability[] = [
     description: 'Asynchronous batch submission for throughput-shaped workloads.',
     availability: 'coming_soon',
   },
-]
+];
 
 export interface ConceptEntry {
-  term: string
-  definition: string
+  term: string;
+  definition: string;
 }
 
 /**
@@ -118,35 +118,31 @@ export const inferenceConcepts: ConceptEntry[] = [
     definition:
       'What a response reports about itself: the request id, the model and deployment that served it, the units consumed and what they cost.',
   },
-]
+];
 
 export interface OperationalTopic {
-  title: string
-  body: string
+  title: string;
+  body: string;
 }
 
 export const operationalTopics: OperationalTopic[] = [
   {
     title: 'Errors, retries and rate limits',
-    body:
-      'Errors carry a stable code and the request id, so a retry is a decision rather than a guess. Rate limits are per credential and are reported on the response before they are enforced by it.',
+    body: 'Errors carry a stable code and the request id, so a retry is a decision rather than a guess. Rate limits are per credential and are reported on the response before they are enforced by it.',
   },
   {
     title: 'Scopes and credential environments',
-    body:
-      'A credential is scoped to an application and to what that application is allowed to do. Separate credentials for separate environments is the supported shape; sharing one across them is not.',
+    body: 'A credential is scoped to an application and to what that application is allowed to do. Separate credentials for separate environments is the supported shape; sharing one across them is not.',
   },
   {
     title: 'Same-model and cross-model fallback',
-    body:
-      'Falling back to another deployment of the same model preserves the answer. Falling back to a different model does not, so it happens only where an application has explicitly authorised it.',
+    body: 'Falling back to another deployment of the same model preserves the answer. Falling back to a different model does not, so it happens only where an application has explicitly authorised it.',
   },
   {
     title: 'Bring your own key',
-    body:
-      'Use an existing provider contract through the same API. The commercial relationship stays yours; the integration, the attribution and the limits stay in one place.',
+    body: 'Use an existing provider contract through the same API. The commercial relationship stays yours; the integration, the attribution and the limits stay in one place.',
   },
-]
+];
 
 /** The account → application → credential → call path, as the reader walks it. */
 export const gettingStartedSteps: ReadonlyArray<{ title: string; body: string }> = [
@@ -156,17 +152,14 @@ export const gettingStartedSteps: ReadonlyArray<{ title: string; body: string }>
   },
   {
     title: 'An Application',
-    body:
-      'One integration. Limits, routing constraints and usage are attributed per application, so two workloads do not share a blast radius.',
+    body: 'One integration. Limits, routing constraints and usage are attributed per application, so two workloads do not share a blast radius.',
   },
   {
     title: 'A credential',
-    body:
-      'The key the SDK sends. Issued in Oxy Console, scoped to the application, and revocable without touching the code.',
+    body: 'The key the SDK sends. Issued in Oxy Console, scoped to the application, and revocable without touching the code.',
   },
   {
     title: 'A call',
-    body:
-      'Point an OpenAI-compatible client at the Oxy base URL, send a catalogue model id, and read the usage receipt that comes back.',
+    body: 'Point an OpenAI-compatible client at the Oxy base URL, send a catalogue model id, and read the usage receipt that comes back.',
   },
-]
+];

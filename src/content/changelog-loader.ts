@@ -7,38 +7,38 @@
  * (which isn't deployed on Cloudflare Pages).
  */
 
-import indexJson from './_changelog/index.json'
+import indexJson from './_changelog/index.json';
 
 export interface StaticChangelogRepo {
-  owner: string
-  name: string
-  displayName: string
+  owner: string;
+  name: string;
+  displayName: string;
 }
 
 export interface StaticChangelogEntry {
-  _id: string
-  title: string
-  content: string
-  tags: string[]
-  date: string
-  items: string[]
-  media: null
-  githubReleaseId: number
-  repoOwner: string
-  repoName: string
-  repoDisplayName: string
-  htmlUrl: string
-  tagName: string
+  _id: string;
+  title: string;
+  content: string;
+  tags: string[];
+  date: string;
+  items: string[];
+  media: null;
+  githubReleaseId: number;
+  repoOwner: string;
+  repoName: string;
+  repoDisplayName: string;
+  htmlUrl: string;
+  tagName: string;
 }
 
 export interface StaticChangelogIndex {
-  generatedAt: string
-  repos: StaticChangelogRepo[]
-  entries: StaticChangelogEntry[]
+  generatedAt: string;
+  repos: StaticChangelogRepo[];
+  entries: StaticChangelogEntry[];
 }
 
-const data = indexJson as StaticChangelogIndex
+const data = indexJson as StaticChangelogIndex;
 
 export function getStaticChangelog(): StaticChangelogIndex {
-  return data
+  return data;
 }

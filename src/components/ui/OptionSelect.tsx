@@ -8,34 +8,34 @@ import {
   SelectTrigger,
   SelectValue,
   type SelectSize,
-} from '@oxy.so/bloom/select'
+} from '@oxy.so/bloom/select';
 
 export interface SelectOption {
-  value: string
-  label: string
-  disabled?: boolean
+  value: string;
+  label: string;
+  disabled?: boolean;
 }
 
 interface OptionSelectProps {
   /** The trigger's accessible name — the chosen value is not one. */
-  label: string
-  value: string
-  onValueChange: (value: string) => void
-  options: readonly SelectOption[]
+  label: string;
+  value: string;
+  onValueChange: (value: string) => void;
+  options: readonly SelectOption[];
   /** Shown while `value` matches no option. */
-  placeholder?: string
-  size?: SelectSize
-  disabled?: boolean
+  placeholder?: string;
+  size?: SelectSize;
+  disabled?: boolean;
   /** Layout classes for the wrapper around the trigger; Bloom paints the field itself. */
-  className?: string
+  className?: string;
   /** A fixed width for the dropdown list instead of Bloom's trigger-width floor. */
-  listWidth?: number
+  listWidth?: number;
   /**
    * The '' option means "nothing chosen" ("Select", "—") rather than a real
    * choice like "All apps": the trigger shows it in the placeholder colour.
    * It stays choosable, so an optional field can be cleared again.
    */
-  emptyIsPlaceholder?: boolean
+  emptyIsPlaceholder?: boolean;
 }
 
 /**
@@ -44,10 +44,10 @@ interface OptionSelectProps {
  * apps", "Any provider") is usually a real choice, so it travels through Bloom
  * under this key instead and comes back out as ''.
  */
-const EMPTY = '\u0000empty'
+const EMPTY = '\u0000empty';
 
-const toBloom = (value: string) => (value === '' ? EMPTY : value)
-const fromBloom = (value: string) => (value === EMPTY ? '' : value)
+const toBloom = (value: string) => (value === '' ? EMPTY : value);
+const fromBloom = (value: string) => (value === EMPTY ? '' : value);
 
 /**
  * Bloom's `Select` for the common case: a flat list of `{ value, label }`
@@ -69,12 +69,12 @@ export default function OptionSelect({
 }: OptionSelectProps) {
   // An empty value with no empty option is "nothing chosen", which Bloom
   // spells `undefined` — that is what brings its placeholder back.
-  const hasEmptyOption = options.some((option) => option.value === '')
-  const wrapEmpty = hasEmptyOption && !emptyIsPlaceholder
-  const resolved = value === '' && !hasEmptyOption ? undefined : wrapEmpty ? toBloom(value) : value
+  const hasEmptyOption = options.some((option) => option.value === '');
+  const wrapEmpty = hasEmptyOption && !emptyIsPlaceholder;
+  const resolved = value === '' && !hasEmptyOption ? undefined : wrapEmpty ? toBloom(value) : value;
   const items = wrapEmpty
     ? options.map((option) => ({ ...option, value: toBloom(option.value) }))
-    : options
+    : options;
 
   return (
     <div className={className}>
@@ -101,5 +101,5 @@ export default function OptionSelect({
         />
       </Select>
     </div>
-  )
+  );
 }

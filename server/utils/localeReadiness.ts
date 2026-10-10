@@ -1,7 +1,7 @@
-import { asc, count, eq, notInArray } from 'drizzle-orm'
-import { db } from '../db/postgres.js'
-import { locales as localesTable, translations } from '../db/schema/index.js'
-import { config } from '../config.js'
+import { asc, count, eq, notInArray } from 'drizzle-orm';
+import { db } from '../db/postgres.js';
+import { locales as localesTable, translations } from '../db/schema/index.js';
+import { config } from '../config.js';
 
 /**
  * Minimum Translation documents a locale needs before its `/<code>/…` URLs are
@@ -13,7 +13,7 @@ import { config } from '../config.js'
  * Prerendering every supported locale unconditionally would emit ~16,400 files
  * against Cloudflare Pages' 20,000-file limit, which is what this gates.
  */
-export const MIN_TRANSLATIONS_FOR_LOCALE_URLS = 5
+export const MIN_TRANSLATIONS_FOR_LOCALE_URLS = 5;
 
 /** Readiness facts attached to every locale the public API returns. */
 export interface LocaleReadiness {
@@ -22,13 +22,13 @@ export interface LocaleReadiness {
    * locale: default-locale copy lives in the source documents themselves, so
    * no Translation rows exist for it by design.
    */
-  translationCount: number
+  translationCount: number;
   /**
    * Whether this locale's prefixed URLs should be advertised and prerendered.
    * False for both default locales regardless of count — the default surface
    * lives at the bare path and has no `/<code>/` prefix.
    */
-  translationReady: boolean
+  translationReady: boolean;
 }
 
 /**
@@ -38,7 +38,7 @@ export interface LocaleReadiness {
  * mismatch between them can never produce a prefixed URL for a default locale.
  */
 function defaultCodes(cmsDefault: string | undefined): string[] {
-  return [...new Set([config.defaultLocale, ...(cmsDefault ? [cmsDefault] : [])])]
+  return [...new Set([config.defaultLocale, ...(cmsDefault ? [cmsDefault] : [])])];
 }
 
 /**
@@ -51,8 +51,8 @@ async function countTranslationsByLocale(excluded: string[]): Promise<Map<string
     .select({ locale: translations.locale, count: count() })
     .from(translations)
     .where(excluded.length > 0 ? notInArray(translations.locale, excluded) : undefined)
-    .groupBy(translations.locale)
-  return new Map(rows.map(row => [row.locale, Number(row.count)]))
+    .groupBy(translations.locale);
+  return new Map(rows.map((row) => [row.locale, Number(row.count)]));
 }
 
 /**
@@ -63,17 +63,21 @@ async function countTranslationsByLocale(excluded: string[]): Promise<Map<string
  * from this, so the two can never advertise different locale sets.
  */
 export async function getEnabledLocalesWithReadiness() {
-  const locales = await db.select().from(localesTable).where(eq(localesTable.enabled, true)).orderBy(asc(localesTable.order), asc(localesTable._id))
-  const excluded = defaultCodes(locales.find(l => l.isDefault)?.code)
-  const counts = await countTranslationsByLocale(excluded)
+  const locales = await db
+    .select()
+    .from(localesTable)
+    .where(eq(localesTable.enabled, true))
+    .orderBy(asc(localesTable.order), asc(localesTable._id));
+  const excluded = defaultCodes(locales.find((l) => l.isDefault)?.code);
+  const counts = await countTranslationsByLocale(excluded);
 
-  return locales.map(locale => {
-    const isDefault = excluded.includes(locale.code)
-    const translationCount = isDefault ? 0 : counts.get(locale.code) ?? 0
+  return locales.map((locale) => {
+    const isDefault = excluded.includes(locale.code);
+    const translationCount = isDefault ? 0 : (counts.get(locale.code) ?? 0);
     return {
       ...locale,
       translationCount,
       translationReady: !isDefault && translationCount >= MIN_TRANSLATIONS_FOR_LOCALE_URLS,
-    }
-  })
+    };
+  });
 }

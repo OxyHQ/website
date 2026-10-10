@@ -1,7 +1,7 @@
-import { CoinGlyph } from './icons'
-import { SANDRA_IMAGE } from './data'
+import { CoinGlyph } from './icons';
+import { SANDRA_IMAGE } from './data';
 
-const TAGS = ['Dog', 'Music', 'TV', 'Clean', 'Yoga'] as const
+const TAGS = ['Dog', 'Music', 'TV', 'Clean', 'Yoga'] as const;
 
 /**
  * Roommate-match profile card. A compatibility score sits over the portrait,
@@ -37,5 +37,5 @@ export default function HomiioMatchCard() {
         ))}
       </ul>
     </article>
-  )
+  );
 }

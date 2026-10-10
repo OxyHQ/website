@@ -1,4 +1,4 @@
-import { Link } from '../../lib/navigation'
+import { Link } from '../../lib/navigation';
 const links = [
   {
     href: '/developers/docs/bloom/components',
@@ -10,12 +10,15 @@ const links = [
     title: 'Color system playground',
     description: 'Compare every dynamic color recipe in light and dark.',
   },
-] as const
+] as const;
 
 /** Stable entry points from the versioned Bloom overview into live docs tools. */
 export function BloomOverviewLinks() {
   return (
-    <nav aria-label="Bloom interactive documentation" className="not-prose my-8 grid gap-3 sm:grid-cols-2">
+    <nav
+      aria-label="Bloom interactive documentation"
+      className="not-prose my-8 grid gap-3 sm:grid-cols-2"
+    >
       {links.map((link) => (
         <Link
           key={link.href}
@@ -27,5 +30,5 @@ export function BloomOverviewLinks() {
         </Link>
       ))}
     </nav>
-  )
+  );
 }

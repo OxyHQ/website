@@ -1,16 +1,16 @@
-import { Badge } from '@oxy.so/bloom/badge'
-import { Card } from '@oxy.so/bloom/card'
-import { Meter } from '@oxy.so/bloom/stat-bar'
-import { RiBookOpenLine } from '@oxy.so/bloom/icons/RiBookOpenLine'
-import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { Link } from '../../lib/navigation'
-import { useTranslation } from '../../lib/i18n'
-import type { CourseLevel } from '../../content/academy-courses'
-import type { CourseWithLessons } from '../../content/academy-loader'
-import type { CourseProgress } from './progressStorage'
-import { coursePath, isCourseAvailable, summarizeCourse } from './academyModel'
-import { lessonCountLabel } from './academyLabels'
+import { Badge } from '@oxy.so/bloom/badge';
+import { Card } from '@oxy.so/bloom/card';
+import { Meter } from '@oxy.so/bloom/stat-bar';
+import { RiBookOpenLine } from '@oxy.so/bloom/icons/RiBookOpenLine';
+import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { Link } from '../../lib/navigation';
+import { useTranslation } from '../../lib/i18n';
+import type { CourseLevel } from '../../content/academy-courses';
+import type { CourseWithLessons } from '../../content/academy-loader';
+import type { CourseProgress } from './progressStorage';
+import { coursePath, isCourseAvailable, summarizeCourse } from './academyModel';
+import { lessonCountLabel } from './academyLabels';
 
 /* ──────────────────────────────────────────────
  * Pieces the index and the course page share: the level badge, the meta row,
@@ -18,20 +18,26 @@ import { lessonCountLabel } from './academyLabels'
  * ──────────────────────────────────────────── */
 
 function LevelBadge({ level }: { level: CourseLevel }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const label =
     level === 'beginner'
       ? t('academy.levelBeginner')
       : level === 'intermediate'
         ? t('academy.levelIntermediate')
-        : t('academy.levelAdvanced')
-  return <Badge content={label} appearance="subtle" tone={level === 'beginner' ? 'success' : level === 'intermediate' ? 'info' : 'warning'} size="label-small" />
+        : t('academy.levelAdvanced');
+  return (
+    <Badge
+      content={label}
+      appearance="subtle"
+      tone={level === 'beginner' ? 'success' : level === 'intermediate' ? 'info' : 'warning'}
+      size="label-small"
+    />
+  );
 }
-
 
 /** Level, duration and lesson count, on one wrapping line. */
 export function CourseMeta({ course }: { course: CourseWithLessons }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-xs text-muted-foreground">
       <LevelBadge level={course.level} />
@@ -52,7 +58,7 @@ export function CourseMeta({ course }: { course: CourseWithLessons }) {
         </span>
       ) : null}
     </div>
-  )
+  );
 }
 
 /** A course's bar with its reading beside it: "2 of 3 lessons completed". */
@@ -62,28 +68,41 @@ export function CourseProgressBar({
   className = '',
   decorative = false,
 }: {
-  completed: number
-  total: number
-  className?: string
+  completed: number;
+  total: number;
+  className?: string;
   /** Inside a link that already says the progress in words. */
-  decorative?: boolean
+  decorative?: boolean;
 }) {
-  const { t } = useTranslation()
-  const reading = t('academy.courseProgress', { done: completed, total })
+  const { t } = useTranslation();
+  const reading = t('academy.courseProgress', { done: completed, total });
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <div className="min-w-0 flex-1">
         {decorative ? (
-          <Meter value={completed} max={Math.max(total, 1)} height={6} transitionMs={300} decorative />
+          <Meter
+            value={completed}
+            max={Math.max(total, 1)}
+            height={6}
+            transitionMs={300}
+            decorative
+          />
         ) : (
-          <Meter value={completed} max={Math.max(total, 1)} height={6} transitionMs={300} accessibilityLabel={t('academy.yourProgress')} valueText={reading} />
+          <Meter
+            value={completed}
+            max={Math.max(total, 1)}
+            height={6}
+            transitionMs={300}
+            accessibilityLabel={t('academy.yourProgress')}
+            valueText={reading}
+          />
         )}
       </div>
       <span className="shrink-0 text-xs tabular-nums text-muted-foreground" aria-hidden="true">
         {completed}/{total}
       </span>
     </div>
-  )
+  );
 }
 
 /**
@@ -96,37 +115,64 @@ export function CourseCard({
   progress,
   startHere = false,
 }: {
-  course: CourseWithLessons
-  progress: CourseProgress | undefined
-  startHere?: boolean
+  course: CourseWithLessons;
+  progress: CourseProgress | undefined;
+  startHere?: boolean;
 }) {
-  const { t } = useTranslation()
-  const available = isCourseAvailable(course)
-  const summary = summarizeCourse(course, progress)
+  const { t } = useTranslation();
+  const available = isCourseAvailable(course);
+  const summary = summarizeCourse(course, progress);
 
   const body = (
     <Card appearance="outline" radius="radius-16" style={{ height: '100%' }}>
       <div className="flex h-full flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-base font-semibold leading-snug text-foreground group-hover:text-primary">{course.title}</h3>
+          <h3 className="text-base font-semibold leading-snug text-foreground group-hover:text-primary">
+            {course.title}
+          </h3>
           {!available ? (
-            <Badge content={t('academy.comingSoon')} appearance="subtle" tone="neutral" size="label-small" />
+            <Badge
+              content={t('academy.comingSoon')}
+              appearance="subtle"
+              tone="neutral"
+              size="label-small"
+            />
           ) : summary.status === 'completed' ? (
-            <Badge content={t('academy.statusCompleted')} appearance="subtle" tone="success" size="label-small" />
+            <Badge
+              content={t('academy.statusCompleted')}
+              appearance="subtle"
+              tone="success"
+              size="label-small"
+            />
           ) : summary.status === 'in-progress' ? (
-            <Badge content={t('academy.statusInProgress')} appearance="subtle" tone="accent" size="label-small" />
+            <Badge
+              content={t('academy.statusInProgress')}
+              appearance="subtle"
+              tone="accent"
+              size="label-small"
+            />
           ) : startHere ? (
-            <Badge content={t('academy.startHere')} appearance="solid" tone="accent" size="label-small" />
+            <Badge
+              content={t('academy.startHere')}
+              appearance="solid"
+              tone="accent"
+              size="label-small"
+            />
           ) : null}
         </div>
-        <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{course.summary}</p>
+        <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+          {course.summary}
+        </p>
         <div className="mt-auto flex flex-col gap-3 pt-1">
           <CourseMeta course={course} />
           {available && summary.status === 'in-progress' ? (
             <CourseProgressBar completed={summary.completed} total={summary.total} decorative />
           ) : null}
           {available && startHere && summary.status === 'not-started' ? (
-            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary" aria-hidden="true">
+            <span
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary"
+              aria-hidden="true"
+            >
               {t('academy.startCourse')}
               <span className="inline-flex transition-transform duration-200 group-hover:translate-x-0.5">
                 <RiArrowRightLine width={16} height={16} fill="currentColor" />
@@ -136,14 +182,14 @@ export function CourseCard({
         </div>
       </div>
     </Card>
-  )
+  );
 
   if (!available) {
     return (
       <div className="h-full opacity-60" aria-disabled="true">
         {body}
       </div>
-    )
+    );
   }
   return (
     <Link
@@ -161,5 +207,5 @@ export function CourseCard({
         </span>
       )}
     </Link>
-  )
+  );
 }

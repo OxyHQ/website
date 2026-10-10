@@ -1,10 +1,10 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
 
 interface PageChromeState {
-  heroVisible: boolean
-  footerVisible: boolean
-  setHeroVisible: (visible: boolean) => void
-  setFooterVisible: (visible: boolean) => void
+  heroVisible: boolean;
+  footerVisible: boolean;
+  setHeroVisible: (visible: boolean) => void;
+  setFooterVisible: (visible: boolean) => void;
 }
 
 /**
@@ -18,4 +18,4 @@ export const usePageChromeStore = create<PageChromeState>((set) => ({
   footerVisible: false,
   setHeroVisible: (visible) => set({ heroVisible: visible }),
   setFooterVisible: (visible) => set({ footerVisible: visible }),
-}))
+}));

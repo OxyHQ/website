@@ -18,8 +18,8 @@ export const BRAND_MARKS: Readonly<Record<string, string>> = {
   schedio: '/images/apps/schedio.png',
   oxyos: '/images/apps/oxyos.png',
   tnp: '/images/apps/tnp.png',
-}
+};
 
 export function getBrandMark(id: string): string | undefined {
-  return BRAND_MARKS[id]
+  return BRAND_MARKS[id];
 }

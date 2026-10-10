@@ -1,16 +1,20 @@
-import { useMemo } from 'react'
-import { Checkbox } from '@oxy.so/bloom/checkbox'
-import { useTranslation } from '../../../lib/i18n'
-import OptionSelect from '../../ui/OptionSelect'
-import { AVAILABILITY_STATES } from '../../../lib/ai/availability'
-import type { PublicCatalog } from '../../../lib/ai/catalog'
-import { EMPTY_FILTERS, hasActiveFilters, type ModelFilterState } from '../../../lib/ai/modelFilters'
+import { useMemo } from 'react';
+import { Checkbox } from '@oxy.so/bloom/checkbox';
+import { useTranslation } from '../../../lib/i18n';
+import OptionSelect from '../../ui/OptionSelect';
+import { AVAILABILITY_STATES } from '../../../lib/ai/availability';
+import type { PublicCatalog } from '../../../lib/ai/catalog';
+import {
+  EMPTY_FILTERS,
+  hasActiveFilters,
+  type ModelFilterState,
+} from '../../../lib/ai/modelFilters';
 
 interface ModelFiltersProps {
-  catalog: PublicCatalog
-  value: ModelFilterState
-  onChange: (next: ModelFilterState) => void
-  resultCount: number
+  catalog: PublicCatalog;
+  value: ModelFilterState;
+  onChange: (next: ModelFilterState) => void;
+  resultCount: number;
 }
 
 /**
@@ -22,12 +26,12 @@ interface ModelFiltersProps {
  * search box, and the page's empty state carries the explanation.
  */
 export default function ModelFilters({ catalog, value, onChange, resultCount }: ModelFiltersProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const options = useMemo(() => {
-    const capabilities = new Set<string>()
+    const capabilities = new Set<string>();
     for (const entry of catalog.entries) {
-      for (const capability of entry.capabilities) capabilities.add(capability)
+      for (const capability of entry.capabilities) capabilities.add(capability);
     }
     return {
       publishers: catalog.publishers,
@@ -37,10 +41,10 @@ export default function ModelFilters({ catalog, value, onChange, resultCount }: 
       availabilities: AVAILABILITY_STATES.filter((state) =>
         catalog.entries.some((entry) => entry.availability === state),
       ),
-    }
-  }, [catalog])
+    };
+  }, [catalog]);
 
-  const update = (patch: Partial<ModelFilterState>) => onChange({ ...value, ...patch })
+  const update = (patch: Partial<ModelFilterState>) => onChange({ ...value, ...patch });
 
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4">
@@ -161,7 +165,7 @@ export default function ModelFilters({ catalog, value, onChange, resultCount }: 
         )}
       </div>
     </div>
-  )
+  );
 }
 
 function Select({
@@ -172,12 +176,12 @@ function Select({
   allLabel,
   includeAll = true,
 }: {
-  label: string
-  value: string
-  onChange: (next: string) => void
-  options: ReadonlyArray<{ value: string; label: string }>
-  allLabel?: string
-  includeAll?: boolean
+  label: string;
+  value: string;
+  onChange: (next: string) => void;
+  options: ReadonlyArray<{ value: string; label: string }>;
+  allLabel?: string;
+  includeAll?: boolean;
 }) {
   // The visible caption is a plain span: the trigger is not a labelable
   // element, so it takes the same words as its accessible name instead.
@@ -194,9 +198,9 @@ function Select({
         className="min-w-36"
       />
     </div>
-  )
+  );
 }
 
 function camel(value: string): string {
-  return value.replace(/_([a-z])/g, (_, char: string) => char.toUpperCase())
+  return value.replace(/_([a-z])/g, (_, char: string) => char.toUpperCase());
 }

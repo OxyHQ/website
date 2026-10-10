@@ -73,7 +73,7 @@ jobs:
             exit 0
           fi
           files=$(git diff --name-only "$base" HEAD)
-          server_paths='^(server/|src/content/mcp/|package\.json$|bun\.lock$|tsconfig\.server\.json$|eslint\.config\.js$|\.github/workflows/checks\.yml$)'
+          server_paths='^(server/|src/content/mcp/|package\.json$|bun\.lock$|tsconfig\.server\.json$|biome\.json$|\.github/workflows/checks\.yml$)'
           # Everything `bun run build` reads. The review build does not run on a
           # push: the deploy builds main itself.
           review_paths='^(src/|public/|scripts/|functions/|index\.html$|tsconfig[^/]*\.json$|docs\.config\.json$|docs-registry\.json$|package\.json$|bun\.lock$|vite\.config\.ts$|\.github/workflows/checks\.yml$)'
@@ -114,8 +114,8 @@ jobs:
       # `--frozen-lockfile` so the Bloom catalog below is checked against the
       # Bloom version the lockfile pins, not whatever resolves today.
       - run: bun install --frozen-lockfile
-      - name: Lint
-        run: bun run lint
+      - name: Lint and format (Biome)
+        run: bunx biome ci .
       - name: Typecheck every project (app, scripts, node, server)
         run: bunx tsc -b
 
@@ -172,7 +172,7 @@ jobs:
       - name: Typecheck the server
         run: bun run typecheck:server
       - name: Lint the server
-        run: bunx eslint server
+        run: bunx biome ci server
       - name: Server and MCP integration suite (real PostgreSQL)
         run: bun run test:server
 

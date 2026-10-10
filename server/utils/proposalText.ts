@@ -15,17 +15,17 @@
  */
 
 /** Longest accepted title, in characters, after trimming. */
-export const TITLE_MAX_LENGTH = 120
+export const TITLE_MAX_LENGTH = 120;
 /** Shortest accepted title. Rejects "fix it" style submissions. */
-export const TITLE_MIN_LENGTH = 8
+export const TITLE_MIN_LENGTH = 8;
 /** Longest accepted body, in characters, after sanitising. */
-export const BODY_MAX_LENGTH = 4000
+export const BODY_MAX_LENGTH = 4000;
 /** Shortest accepted body. */
-export const BODY_MIN_LENGTH = 30
+export const BODY_MIN_LENGTH = 30;
 
 /** Control characters are stripped everywhere; tab and newline survive in bodies. */
-// eslint-disable-next-line no-control-regex
-const CONTROL_CHARACTERS = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g
+// biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are exactly what this pattern strips
+const CONTROL_CHARACTERS = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g;
 
 /**
  * Clean a single-line field.
@@ -36,10 +36,7 @@ const CONTROL_CHARACTERS = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g
  * fakes structure it was not given.
  */
 export function sanitizeProposalTitle(raw: string): string {
-  return raw
-    .replace(CONTROL_CHARACTERS, '')
-    .replace(/\s+/g, ' ')
-    .trim()
+  return raw.replace(CONTROL_CHARACTERS, '').replace(/\s+/g, ' ').trim();
 }
 
 /**
@@ -56,9 +53,9 @@ export function sanitizeProposalBody(raw: string): string {
     .replace(/\r\n?/g, '\n')
     .replace(CONTROL_CHARACTERS, '')
     .replace(/\n{3,}/g, '\n\n')
-    .trim()
+    .trim();
 
-  return neutralizeAutolinks(normalized)
+  return neutralizeAutolinks(normalized);
 }
 
 /**
@@ -70,21 +67,21 @@ export function sanitizeProposalBody(raw: string): string {
  * fence would corrupt a pasted snippet.
  */
 function neutralizeAutolinks(text: string): string {
-  const segments = splitOnCode(text)
+  const segments = splitOnCode(text);
   return segments
     .map((segment) => {
-      if (segment.isCode) return segment.text
+      if (segment.isCode) return segment.text;
       return segment.text
         .replace(/!(\[[^\]\n]*\]\()/g, '$1')
         .replace(/(^|[^\w`/])@([A-Za-z\d](?:[A-Za-z\d]|-(?=[A-Za-z\d])){0,38})/g, '$1`@$2`')
-        .replace(/(^|[^\w`#])((?:[\w.-]+\/[\w.-]+)?#\d+)/g, '$1`$2`')
+        .replace(/(^|[^\w`#])((?:[\w.-]+\/[\w.-]+)?#\d+)/g, '$1`$2`');
     })
-    .join('')
+    .join('');
 }
 
 interface TextSegment {
-  text: string
-  isCode: boolean
+  text: string;
+  isCode: boolean;
 }
 
 /**
@@ -92,32 +89,32 @@ interface TextSegment {
  * fenced block (``` or ~~~) or an inline code span.
  */
 function splitOnCode(text: string): TextSegment[] {
-  const segments: TextSegment[] = []
-  const pattern = /(```[\s\S]*?(?:```|$)|~~~[\s\S]*?(?:~~~|$)|`[^`\n]*`)/g
-  let lastIndex = 0
+  const segments: TextSegment[] = [];
+  const pattern = /(```[\s\S]*?(?:```|$)|~~~[\s\S]*?(?:~~~|$)|`[^`\n]*`)/g;
+  let lastIndex = 0;
 
   for (const match of text.matchAll(pattern)) {
-    const start = match.index
+    const start = match.index;
     if (start > lastIndex) {
-      segments.push({ text: text.slice(lastIndex, start), isCode: false })
+      segments.push({ text: text.slice(lastIndex, start), isCode: false });
     }
-    segments.push({ text: match[0], isCode: true })
-    lastIndex = start + match[0].length
+    segments.push({ text: match[0], isCode: true });
+    lastIndex = start + match[0].length;
   }
 
   if (lastIndex < text.length) {
-    segments.push({ text: text.slice(lastIndex), isCode: false })
+    segments.push({ text: text.slice(lastIndex), isCode: false });
   }
-  return segments
+  return segments;
 }
 
 export interface ProposalAttribution {
   /** The proposer's Oxy handle. */
-  username: string
+  username: string;
   /** The proposer's Oxy user id, so a maintainer can trace an abusive account. */
-  userId: string
+  userId: string;
   /** Absolute URL of the board, e.g. https://oxy.so/features */
-  boardUrl: string
+  boardUrl: string;
 }
 
 /**
@@ -138,5 +135,5 @@ export function buildProposalIssueBody(body: string, attribution: ProposalAttrib
     `Proposed on the [Oxy feature board](${attribution.boardUrl}) by \`@${attribution.username}\` (Oxy user \`${attribution.userId}\`), and opened here by the website on their behalf.`,
     '',
     'Votes on the board are mirrored into a `priority:` label on this issue.',
-  ].join('\n')
+  ].join('\n');
 }

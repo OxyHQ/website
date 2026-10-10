@@ -1,9 +1,9 @@
-import { LEGAL_DOCUMENTS, TRANSPARENCY_DOCUMENTS } from './transparency'
-import type MiniSearch from 'minisearch'
-import { buildDocsHref, getIndex } from '../content/docs-loader'
-import { categoryLabels, categoryOrder } from '../components/docs/docsTypes'
-import { isIndexablePost, type NewsroomPost } from './newsroom-source'
-import type { SyncedIndex, SyncedPackage } from '../../scripts/types'
+import { LEGAL_DOCUMENTS, TRANSPARENCY_DOCUMENTS } from './transparency';
+import type MiniSearch from 'minisearch';
+import { buildDocsHref, getIndex } from '../content/docs-loader';
+import { categoryLabels, categoryOrder } from '../components/docs/docsTypes';
+import { isIndexablePost, type NewsroomPost } from './newsroom-source';
+import type { SyncedIndex, SyncedPackage } from '../../scripts/types';
 
 /**
  * Site-wide search engine, shared by the navbar search.
@@ -17,18 +17,18 @@ import type { SyncedIndex, SyncedPackage } from '../../scripts/types'
  */
 
 export interface SearchResult {
-  id: string
-  url: string
-  title: string
+  id: string;
+  url: string;
+  title: string;
   /** Group key — a docs category (`sdk`, `app`, …) or `pages` for the site. */
-  group: string
+  group: string;
   /** Shown under the title: the package name, or "Oxy" for marketing pages. */
-  subtitle: string
-  snippet?: string
+  subtitle: string;
+  snippet?: string;
   /** Optional presentation hint for richer result rows (apps, people, etc.). */
-  kind?: 'app' | 'user' | 'page' | 'doc'
-  icon?: string
-  avatar?: string
+  kind?: 'app' | 'user' | 'page' | 'doc';
+  icon?: string;
+  avatar?: string;
 }
 
 // Dedicated product landings win over the generic app detail route. Products
@@ -44,30 +44,36 @@ const APP_SEARCH_DESTINATIONS: Readonly<Record<string, string>> = {
   peable: '/peable',
   mercaria: '/mercaria',
   faircoin: '/faircoin',
-}
+};
 
 function appSearchDestination(productId: string): string {
-  return APP_SEARCH_DESTINATIONS[productId] ?? `/apps/${productId}`
+  return APP_SEARCH_DESTINATIONS[productId] ?? `/apps/${productId}`;
 }
 
 // Apps, pages, people and newsroom are kept separate from documentation. The
 // app group comes first so a product result reads like a launcher result.
-const GROUP_ORDER: string[] = ['apps', 'pages', 'users', 'blog', ...categoryOrder]
+const GROUP_ORDER: string[] = ['apps', 'pages', 'users', 'blog', ...categoryOrder];
 
-export const GROUP_LABELS: Record<string, string> = { apps: 'Apps', pages: 'Pages', users: 'People', blog: 'Newsroom', ...categoryLabels }
+export const GROUP_LABELS: Record<string, string> = {
+  apps: 'Apps',
+  pages: 'Pages',
+  users: 'People',
+  blog: 'Newsroom',
+  ...categoryLabels,
+};
 
 interface PagefindResult {
-  id: string
+  id: string;
   data: () => Promise<{
-    url: string
-    excerpt: string
-    meta: { title: string; route?: string }
-    filters: Record<string, string[]>
-  }>
+    url: string;
+    excerpt: string;
+    meta: { title: string; route?: string };
+    filters: Record<string, string[]>;
+  }>;
 }
 
 interface PagefindAPI {
-  search: (query: string) => Promise<{ results: PagefindResult[] }>
+  search: (query: string) => Promise<{ results: PagefindResult[] }>;
 }
 
 /* ----------------- MiniSearch (dev-mode fallback) ----------------- */
@@ -107,33 +113,40 @@ const SITE_PAGES: Array<{ url: string; title: string; group?: string }> = [
   { url: '/partners', title: 'Partners' },
   { url: '/referrals', title: 'Referrals' },
   { url: '/status', title: 'Status' },
-]
+];
 
 interface IndexDoc {
-  id: string
-  title: string
-  subtitle: string
-  group: string
-  url: string
-  body: string
+  id: string;
+  title: string;
+  subtitle: string;
+  group: string;
+  url: string;
+  body: string;
 }
 
 function buildSearchDocuments(index: SyncedIndex): IndexDoc[] {
-  const documents: IndexDoc[] = []
+  const documents: IndexDoc[] = [];
   for (const page of SITE_PAGES) {
-    documents.push({ id: page.url, title: page.title, subtitle: 'Oxy', group: page.group ?? 'pages', url: page.url, body: page.title })
+    documents.push({
+      id: page.url,
+      title: page.title,
+      subtitle: 'Oxy',
+      group: page.group ?? 'pages',
+      url: page.url,
+      body: page.title,
+    });
   }
   for (const pkg of index.packages) {
     for (const ver of pkg.versions) {
       // Only the latest (or working-tree) version is searchable — keeps the
       // index small and avoids old-version duplicates.
-      if (ver.version !== pkg.latestVersion) continue
+      if (ver.version !== pkg.latestVersion) continue;
       for (const page of ver.pages) {
         // The versioned URL is the canonical one (`DocsPage` canonicalises to
         // it), and the only one with a prerendered document. Surfacing the
         // no-version form sent every search click through a page that points
         // its canonical somewhere else.
-        const url = buildDocsHref(pkg, pkg.latestVersion, page.slug)
+        const url = buildDocsHref(pkg, pkg.latestVersion, page.slug);
         documents.push({
           id: url,
           title: page.title,
@@ -141,11 +154,11 @@ function buildSearchDocuments(index: SyncedIndex): IndexDoc[] {
           group: pkg.category,
           url,
           body: page.description ?? page.title,
-        })
+        });
       }
     }
   }
-  return documents
+  return documents;
 }
 
 /**
@@ -155,117 +168,139 @@ function buildSearchDocuments(index: SyncedIndex): IndexDoc[] {
  */
 async function fetchNewsroomDocuments(): Promise<IndexDoc[]> {
   try {
-    const res = await fetch('/api/newsroom?limit=500')
-    if (!res.ok) return []
-    const data = (await res.json()) as { posts?: NewsroomPost[] }
-    return (data.posts ?? [])
-      .filter(isIndexablePost)
-      .map((p) => ({
-        id: `/newsroom/${p.slug}`,
-        title: p.title,
-        subtitle: 'Newsroom',
-        group: 'blog',
-        url: `/newsroom/${p.slug}`,
-        body: p.description ?? p.resume ?? p.title,
-      }))
+    const res = await fetch('/api/newsroom?limit=500');
+    if (!res.ok) return [];
+    const data = (await res.json()) as { posts?: NewsroomPost[] };
+    return (data.posts ?? []).filter(isIndexablePost).map((p) => ({
+      id: `/newsroom/${p.slug}`,
+      title: p.title,
+      subtitle: 'Newsroom',
+      group: 'blog',
+      url: `/newsroom/${p.slug}`,
+      body: p.description ?? p.resume ?? p.title,
+    }));
   } catch {
-    return []
+    return [];
   }
 }
 
-let miniSearch: MiniSearch | null = null
+let miniSearch: MiniSearch | null = null;
 
 // MiniSearch (~18 KB gzip) only powers the dev fallback, so load it dynamically:
 // it stays out of the eager bundle that ships the navbar on every page.
 async function getMiniSearch(): Promise<MiniSearch> {
   if (!miniSearch) {
-    const { default: MiniSearch } = await import('minisearch')
+    const { default: MiniSearch } = await import('minisearch');
     const ms = new MiniSearch<IndexDoc>({
       fields: ['title', 'body', 'subtitle'],
       storeFields: ['title', 'subtitle', 'group', 'url', 'body'],
       searchOptions: { boost: { title: 3, subtitle: 1.5 }, fuzzy: 0.2, prefix: true },
-    })
-    ms.addAll(buildSearchDocuments(getIndex()))
-    ms.addAll(await fetchNewsroomDocuments())
-    miniSearch = ms
+    });
+    ms.addAll(buildSearchDocuments(getIndex()));
+    ms.addAll(await fetchNewsroomDocuments());
+    miniSearch = ms;
   }
-  return miniSearch
+  return miniSearch;
 }
 
 async function searchDev(query: string): Promise<SearchResult[]> {
-  const ms = await getMiniSearch()
-  return ms.search(query).slice(0, 20).map((m) => {
-    const s = m as unknown as { id: string; url: string; title: string; subtitle: string; group: string; body: string }
-    return {
-      id: s.id,
-      url: s.url,
-      title: s.title,
-      group: s.group,
-      subtitle: s.subtitle,
-      snippet: s.body,
-      kind: s.group === 'apps' ? 'app' : s.group === 'users' ? 'user' : s.group === 'pages' ? 'page' : 'doc',
-    }
-  })
+  const ms = await getMiniSearch();
+  return ms
+    .search(query)
+    .slice(0, 20)
+    .map((m) => {
+      const s = m as unknown as {
+        id: string;
+        url: string;
+        title: string;
+        subtitle: string;
+        group: string;
+        body: string;
+      };
+      return {
+        id: s.id,
+        url: s.url,
+        title: s.title,
+        group: s.group,
+        subtitle: s.subtitle,
+        snippet: s.body,
+        kind:
+          s.group === 'apps'
+            ? 'app'
+            : s.group === 'users'
+              ? 'user'
+              : s.group === 'pages'
+                ? 'page'
+                : 'doc',
+      };
+    });
 }
 
 /* --------------------- Pagefind (production) ---------------------- */
 
-let pagefindPromise: Promise<PagefindAPI | null> | null = null
+let pagefindPromise: Promise<PagefindAPI | null> | null = null;
 
 async function loadPagefind(): Promise<PagefindAPI | null> {
-  if (pagefindPromise) return pagefindPromise
+  if (pagefindPromise) return pagefindPromise;
   pagefindPromise = (async () => {
-    if (typeof window === 'undefined') return null
+    if (typeof window === 'undefined') return null;
     try {
-      const url = `${window.location.origin}/pagefind/pagefind.js`
-      return (await import(/* @vite-ignore */ url)) as PagefindAPI
+      const url = `${window.location.origin}/pagefind/pagefind.js`;
+      return (await import(/* @vite-ignore */ url)) as PagefindAPI;
     } catch {
-      return null
+      return null;
     }
-  })()
-  return pagefindPromise
+  })();
+  return pagefindPromise;
 }
 
 async function searchProd(query: string): Promise<SearchResult[] | null> {
-  const pagefind = await loadPagefind()
-  if (!pagefind) return null
-  const { results } = await pagefind.search(query)
-  const packages = getIndex().packages
-  const top = results.slice(0, 20)
+  const pagefind = await loadPagefind();
+  if (!pagefind) return null;
+  const { results } = await pagefind.search(query);
+  const packages = getIndex().packages;
+  const top = results.slice(0, 20);
   // Each `r.data()` is an independent fragment fetch — load them in parallel.
-  const datas = await Promise.all(top.map((r) => r.data()))
+  const datas = await Promise.all(top.map((r) => r.data()));
   return top.map((r, i) => {
-    const data = datas[i]
+    const data = datas[i];
     // Content stubs declare their real SPA route in pagefind metadata
     // (`route`); prerendered pages fall back to their own file URL.
-    const url = data.meta.route ?? (data.url.replace(/\.html$/, '').replace(/\/index$/, '') || '/')
-    const { group, subtitle } = classifyResult(url, packages)
-    return { id: r.id, url, title: data.meta.title ?? url, group, subtitle, snippet: data.excerpt }
-  })
+    const url = data.meta.route ?? (data.url.replace(/\.html$/, '').replace(/\/index$/, '') || '/');
+    const { group, subtitle } = classifyResult(url, packages);
+    return { id: r.id, url, title: data.meta.title ?? url, group, subtitle, snippet: data.excerpt };
+  });
 }
 
 /** Map a result URL to its display group + subtitle (docs package, blog, …). */
-function classifyResult(url: string, packages: SyncedPackage[]): { group: string; subtitle: string } {
-  const normalizedUrl = url.replace(/\/$/, '') || '/'
-  const docPkg = packages.find((p) => url.includes(`/developers/docs/${p.shortName}`))
-  if (docPkg) return { group: docPkg.category, subtitle: docPkg.displayName }
-  if (url.startsWith('/u/')) return { group: 'users', subtitle: 'Profile' }
-  if (url.startsWith('/newsroom')) return { group: 'blog', subtitle: 'Newsroom' }
-  if (normalizedUrl === '/apps' || normalizedUrl.startsWith('/apps/') || Object.values(APP_SEARCH_DESTINATIONS).includes(normalizedUrl)) {
-    return { group: 'apps', subtitle: 'Oxy app' }
+function classifyResult(
+  url: string,
+  packages: SyncedPackage[],
+): { group: string; subtitle: string } {
+  const normalizedUrl = url.replace(/\/$/, '') || '/';
+  const docPkg = packages.find((p) => url.includes(`/developers/docs/${p.shortName}`));
+  if (docPkg) return { group: docPkg.category, subtitle: docPkg.displayName };
+  if (url.startsWith('/u/')) return { group: 'users', subtitle: 'Profile' };
+  if (url.startsWith('/newsroom')) return { group: 'blog', subtitle: 'Newsroom' };
+  if (
+    normalizedUrl === '/apps' ||
+    normalizedUrl.startsWith('/apps/') ||
+    Object.values(APP_SEARCH_DESTINATIONS).includes(normalizedUrl)
+  ) {
+    return { group: 'apps', subtitle: 'Oxy app' };
   }
-  if (url.startsWith('/academy')) return { group: 'pages', subtitle: 'Academy' }
-  if (url.startsWith('/help')) return { group: 'pages', subtitle: 'Help' }
-  return { group: 'pages', subtitle: 'Oxy' }
+  if (url.startsWith('/academy')) return { group: 'pages', subtitle: 'Academy' };
+  if (url.startsWith('/help')) return { group: 'pages', subtitle: 'Help' };
+  return { group: 'pages', subtitle: 'Oxy' };
 }
 
 /* ----------------------------- API ------------------------------- */
 
 /** Search the whole site. Uses Pagefind in production, MiniSearch in dev. */
 export async function searchSite(query: string): Promise<SearchResult[]> {
-  if (!query.trim()) return []
-  const prod = await searchProd(query)
-  return prod !== null ? prod : searchDev(query)
+  if (!query.trim()) return [];
+  const prod = await searchProd(query);
+  return prod !== null ? prod : searchDev(query);
 }
 
 /**
@@ -276,18 +311,18 @@ export function groupResults(
   results: SearchResult[],
   priority: string[] = [],
 ): Array<{ group: string; items: SearchResult[] }> {
-  const groups = new Map<string, SearchResult[]>()
+  const groups = new Map<string, SearchResult[]>();
   for (const r of results) {
-    const list = groups.get(r.group) ?? []
-    list.push(r)
-    groups.set(r.group, list)
+    const list = groups.get(r.group) ?? [];
+    list.push(r);
+    groups.set(r.group, list);
   }
   const order = [
     ...priority,
     ...GROUP_ORDER.filter((g) => !priority.includes(g)),
     ...[...groups.keys()].filter((g) => !priority.includes(g) && !GROUP_ORDER.includes(g)),
-  ]
-  return order.filter((g) => groups.has(g)).map((g) => ({ group: g, items: groups.get(g) ?? [] }))
+  ];
+  return order.filter((g) => groups.has(g)).map((g) => ({ group: g, items: groups.get(g) ?? [] }));
 }
 
 /**
@@ -296,8 +331,8 @@ export function groupResults(
  * posts, and so on. Returns [] (no reordering) elsewhere.
  */
 export function searchContextGroups(pathname: string): string[] {
-  if (pathname.startsWith('/developers/docs')) return [...categoryOrder]
-  if (pathname.startsWith('/newsroom')) return ['blog']
-  if (pathname.startsWith('/help') || pathname.startsWith('/academy')) return ['pages']
-  return []
+  if (pathname.startsWith('/developers/docs')) return [...categoryOrder];
+  if (pathname.startsWith('/newsroom')) return ['blog'];
+  if (pathname.startsWith('/help') || pathname.startsWith('/academy')) return ['pages'];
+  return [];
 }

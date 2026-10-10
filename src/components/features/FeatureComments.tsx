@@ -1,16 +1,16 @@
-import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
-import FeatureMarkdown from './FeatureMarkdown'
-import { useFeatureComments } from '../../api/hooks'
-import { formatShortDate } from '../../lib/utils'
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine';
+import FeatureMarkdown from './FeatureMarkdown';
+import { useFeatureComments } from '../../api/hooks';
+import { formatShortDate } from '../../lib/utils';
 
 interface FeatureCommentsProps {
-  owner: string
-  repo: string
-  number: string
+  owner: string;
+  repo: string;
+  number: string;
   /** Comment count from the issue, used to skip the request when there are none. */
-  commentCount: number
+  commentCount: number;
   /** The issue on GitHub, where replying happens. */
-  threadUrl: string
+  threadUrl: string;
 }
 
 /**
@@ -20,10 +20,18 @@ interface FeatureCommentsProps {
  * unbounded public write on a thread real people are subscribed to, which is a
  * different problem from accepting a proposal and needs its own answer.
  */
-export default function FeatureComments({ owner, repo, number, commentCount, threadUrl }: FeatureCommentsProps) {
-  const { data, isPending, isError } = useFeatureComments(owner, repo, number, { enabled: commentCount > 0 })
+export default function FeatureComments({
+  owner,
+  repo,
+  number,
+  commentCount,
+  threadUrl,
+}: FeatureCommentsProps) {
+  const { data, isPending, isError } = useFeatureComments(owner, repo, number, {
+    enabled: commentCount > 0,
+  });
 
-  const comments = data?.comments ?? []
+  const comments = data?.comments ?? [];
 
   return (
     <section className="mt-12 border-t border-border pt-8">
@@ -61,7 +69,12 @@ export default function FeatureComments({ owner, repo, number, commentCount, thr
       <div className="mt-6 flex flex-col gap-6">
         {comments.map((comment) => (
           <article key={comment.id} className="flex gap-3">
-            <a href={comment.authorUrl} target="_blank" rel="noopener noreferrer" className="shrink-0">
+            <a
+              href={comment.authorUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0"
+            >
               <img
                 src={comment.authorAvatar}
                 alt=""
@@ -85,7 +98,9 @@ export default function FeatureComments({ owner, repo, number, commentCount, thr
                     Maintainer
                   </span>
                 )}
-                <span className="text-xs text-muted-foreground">{formatShortDate(comment.createdAt)}</span>
+                <span className="text-xs text-muted-foreground">
+                  {formatShortDate(comment.createdAt)}
+                </span>
               </div>
               <div className="mt-2">
                 <FeatureMarkdown content={comment.body} />
@@ -107,5 +122,5 @@ export default function FeatureComments({ owner, repo, number, commentCount, thr
         </a>
       )}
     </section>
-  )
+  );
 }

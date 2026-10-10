@@ -5,78 +5,72 @@ import {
   useState,
   type CSSProperties,
   type ReactNode,
-} from 'react'
-import { useReducedMotion } from 'framer-motion'
-import { Button, type ButtonProps } from '@oxy.so/bloom/button'
+} from 'react';
+import { useReducedMotion } from 'framer-motion';
+import { Button, type ButtonProps } from '@oxy.so/bloom/button';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@oxy.so/bloom/accordion'
-import {
-  AgentAvatar,
-  FOLD_CONFIG,
-  FOLD_PRESETS,
-} from '@oxy.so/bloom/agent-avatar'
+} from '@oxy.so/bloom/accordion';
+import { AgentAvatar, FOLD_CONFIG, FOLD_PRESETS } from '@oxy.so/bloom/agent-avatar';
 import {
   SegmentedControl,
   SegmentedControlItem,
   SegmentedControlItemText,
-} from '@oxy.so/bloom/segmented-control'
-import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs'
-import { Chip } from '@oxy.so/bloom/chip'
-import { RiComputerLine } from '@oxy.so/bloom/icons/RiComputerLine'
-import { RiTabletLine } from '@oxy.so/bloom/icons/RiTabletLine'
-import { RiSmartphoneLine } from '@oxy.so/bloom/icons/RiSmartphoneLine'
-import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
-import { RiChat3Line } from '@oxy.so/bloom/icons/RiChat3Line'
-import { RiHeartPulseLine } from '@oxy.so/bloom/icons/RiHeartPulseLine'
-import { RiUserLine } from '@oxy.so/bloom/icons/RiUserLine'
-import { RiBox3Line } from '@oxy.so/bloom/icons/RiBox3Line'
-import { BloomColorScope } from '@oxy.so/bloom/theme'
-import { LocaleProvider as BloomLocaleProvider } from '@oxy.so/bloom/locale'
-import { RiCodeSSlashLine } from '@oxy.so/bloom/icons/RiCodeSSlashLine'
-import { RiLayoutGridLine } from '@oxy.so/bloom/icons/RiLayoutGridLine'
-import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
-import PageShell from '../components/layout/PageShell'
-import ChartPreview from '../components/bloom/ChartPreview'
-import BloomPreview, {
-  type BloomDemoName,
-} from '../components/bloom/BloomPreview'
-import { Link } from '../lib/navigation'
-import { useTranslation } from '../lib/i18n'
-import { useCopyToClipboard } from '../lib/useCopyToClipboard'
-import { BLOOM_SEO } from '../content/bloom-landing'
-import '../styles/bloom-landing.css'
+} from '@oxy.so/bloom/segmented-control';
+import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs';
+import { Chip } from '@oxy.so/bloom/chip';
+import { RiComputerLine } from '@oxy.so/bloom/icons/RiComputerLine';
+import { RiTabletLine } from '@oxy.so/bloom/icons/RiTabletLine';
+import { RiSmartphoneLine } from '@oxy.so/bloom/icons/RiSmartphoneLine';
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine';
+import { RiChat3Line } from '@oxy.so/bloom/icons/RiChat3Line';
+import { RiHeartPulseLine } from '@oxy.so/bloom/icons/RiHeartPulseLine';
+import { RiUserLine } from '@oxy.so/bloom/icons/RiUserLine';
+import { RiBox3Line } from '@oxy.so/bloom/icons/RiBox3Line';
+import { BloomColorScope } from '@oxy.so/bloom/theme';
+import { LocaleProvider as BloomLocaleProvider } from '@oxy.so/bloom/locale';
+import { RiCodeSSlashLine } from '@oxy.so/bloom/icons/RiCodeSSlashLine';
+import { RiLayoutGridLine } from '@oxy.so/bloom/icons/RiLayoutGridLine';
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine';
+import PageShell from '../components/layout/PageShell';
+import ChartPreview from '../components/bloom/ChartPreview';
+import BloomPreview, { type BloomDemoName } from '../components/bloom/BloomPreview';
+import { Link } from '../lib/navigation';
+import { useTranslation } from '../lib/i18n';
+import { useCopyToClipboard } from '../lib/useCopyToClipboard';
+import { BLOOM_SEO } from '../content/bloom-landing';
+import '../styles/bloom-landing.css';
 
-const DOCS = '/developers/docs/bloom/components/'
-const CASES = ['chat', 'dashboard', 'health', 'projects', 'profile'] as const
+const DOCS = '/developers/docs/bloom/components/';
+const CASES = ['chat', 'dashboard', 'health', 'projects', 'profile'] as const;
 const DEVICE_ICONS = {
   desktop: RiComputerLine,
   tablet: RiTabletLine,
   mobile: RiSmartphoneLine,
-} as const
+} as const;
 const TEMPLATE_ICONS = {
   chat: RiChat3Line,
   dashboard: RiLayoutGridLine,
   health: RiHeartPulseLine,
   projects: RiLayoutGridLine,
   profile: RiUserLine,
-} as const
+} as const;
 const TEMPLATE_DOCS = {
   chat: 'ai-chat',
   dashboard: 'chart-cards',
   health: 'patient-info-card',
   projects: 'project-board',
   profile: 'ai-profile-card',
-} as const
+} as const;
 const COMPONENTS: {
-  name: BloomDemoName
-  title: string
-  subpath: string
-  previewClass: string
-  canvasClass?: string
+  name: BloomDemoName;
+  title: string;
+  subpath: string;
+  previewClass: string;
+  canvasClass?: string;
 }[] = [
   {
     name: 'attachments',
@@ -105,8 +99,7 @@ const COMPONENTS: {
     subpath: 'data-table',
     previewClass:
       'absolute top-[15px] right-4 left-4 h-[212px] overflow-hidden rounded-[6px] xl:right-auto xl:left-[15px] xl:h-[179px] xl:w-[275px]',
-    canvasClass:
-      'w-[790px] origin-top-left scale-[calc((100cqw-32px)/790px)] xl:scale-100',
+    canvasClass: 'w-[790px] origin-top-left scale-[calc((100cqw-32px)/790px)] xl:scale-100',
   },
   {
     name: 'widgets',
@@ -129,8 +122,7 @@ const COMPONENTS: {
     subpath: 'ai-profile-card',
     previewClass:
       'absolute top-[18px] right-0 left-4 flex h-[212px] justify-start overflow-hidden rounded-2xl py-1 pl-1.5 sm:right-4 sm:justify-center sm:p-2 xl:right-auto xl:left-[19px] xl:h-[179px] xl:w-[266px] xl:rounded-[10px] xl:p-0',
-    canvasClass:
-      'w-[680px] shrink-0 origin-top-left scale-[0.35] sm:origin-top',
+    canvasClass: 'w-[680px] shrink-0 origin-top-left scale-[0.35] sm:origin-top',
   },
   {
     name: 'progress',
@@ -170,10 +162,8 @@ const COMPONENTS: {
     name: 'auth',
     title: 'Auth card',
     subpath: 'auth-card',
-    previewClass:
-      'absolute inset-y-0 top-4 left-4 overflow-hidden right-0 sm:right-4',
-    canvasClass:
-      'w-[400px] origin-top-left scale-[min(calc((100cqw-32px)/400px),1)]',
+    previewClass: 'absolute inset-y-0 top-4 left-4 overflow-hidden right-0 sm:right-4',
+    canvasClass: 'w-[400px] origin-top-left scale-[min(calc((100cqw-32px)/400px),1)]',
   },
   {
     name: 'meeting',
@@ -186,8 +176,7 @@ const COMPONENTS: {
     name: 'earnings',
     title: 'Charts',
     subpath: 'chart-cards',
-    previewClass:
-      'absolute inset-x-0 top-3 h-[198px] overflow-hidden sm:top-[21px] sm:h-[165px]',
+    previewClass: 'absolute inset-x-0 top-3 h-[198px] overflow-hidden sm:top-[21px] sm:h-[165px]',
     canvasClass: 'w-[596px] origin-top-left scale-50',
   },
   {
@@ -196,7 +185,7 @@ const COMPONENTS: {
     subpath: 'file-upload',
     previewClass: 'absolute top-8 left-1/2 w-[265px] -translate-x-1/2 sm:top-6',
   },
-]
+];
 const CHARTS: { name: BloomDemoName; title: string }[] = [
   { name: 'funnel', title: 'Funnel chart' },
   { name: 'earnings', title: 'Earnings chart' },
@@ -208,33 +197,26 @@ const CHARTS: { name: BloomDemoName; title: string }[] = [
   { name: 'gauge', title: 'Speedometer' },
   { name: 'area', title: 'Area chart' },
   { name: 'combo', title: 'Combo chart' },
-]
+];
 
 const CHART_CAPTIONS: Partial<Record<BloomDemoName, string>> = {
-  funnel:
-    'Follow conversion through each stage, with totals and percentages below.',
-  earnings:
-    'Compare earnings across periods. Hover a bar to inspect its value.',
+  funnel: 'Follow conversion through each stage, with totals and percentages below.',
+  earnings: 'Compare earnings across periods. Hover a bar to inspect its value.',
   radar: 'Compare six dimensions on a filled radar with individual stat tiles.',
   comparison: 'Compare two series on the same axes with an interactive legend.',
-  sankey:
-    'Trace how time moves between activities and see each destination’s share.',
-  stages:
-    'Read the pipeline as horizontal bars, percentages and individual totals.',
-  radial:
-    'Explore concentric rings with labels and a stat tile for each category.',
+  sankey: 'Trace how time moves between activities and see each destination’s share.',
+  stages: 'Read the pipeline as horizontal bars, percentages and individual totals.',
+  radial: 'Explore concentric rings with labels and a stat tile for each category.',
   gauge: 'Compare device shares in a half-circle gauge with a central summary.',
   area: 'Explore stacked monthly series and their totals below the chart.',
   combo: 'Compare volume and conversion rate using two scales on one chart.',
-}
+};
 
 function ComponentPreview({ item }: { item: (typeof COMPONENTS)[number] }) {
   if (item.name === 'widgets' || item.name === 'earnings') {
     const names: BloomDemoName[] =
-      item.name === 'widgets'
-        ? ['activity', 'steps', 'sleep', 'days']
-        : ['earnings', 'revenue']
-    const width = item.name === 'widgets' ? 360 : 596
+      item.name === 'widgets' ? ['activity', 'steps', 'sleep', 'days'] : ['earnings', 'revenue'];
+    const width = item.name === 'widgets' ? 360 : 596;
     return (
       <div className={item.previewClass}>
         <div className="animate-landing-marquee flex w-max [animation-duration:24s]">
@@ -255,7 +237,7 @@ function ComponentPreview({ item }: { item: (typeof COMPONENTS)[number] }) {
           ))}
         </div>
       </div>
-    )
+    );
   }
   if (item.name === 'image') {
     return (
@@ -269,7 +251,7 @@ function ComponentPreview({ item }: { item: (typeof COMPONENTS)[number] }) {
           </div>
         ))}
       </div>
-    )
+    );
   }
   return (
     <div className={item.previewClass}>
@@ -295,7 +277,7 @@ function ComponentPreview({ item }: { item: (typeof COMPONENTS)[number] }) {
         <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-14 bg-linear-to-r from-transparent to-background-primary-default" />
       )}
     </div>
-  )
+  );
 }
 
 /** Bloom renders the action; the geometry is the reference's h-9 / rounded-2lg. */
@@ -310,9 +292,7 @@ function Action({
       {...props}
       leadingIcon={props.asChild ? undefined : Icon}
       children={
-        props.asChild &&
-        Icon &&
-        isValidElement<{ children?: ReactNode }>(children)
+        props.asChild && Icon && isValidElement<{ children?: ReactNode }>(children)
           ? cloneElement(
               children,
               {},
@@ -336,8 +316,8 @@ function Action({
         borderColor: 'var(--border)',
       }}
     />
-  )
-  return button
+  );
+  return button;
 }
 function Heading({
   title,
@@ -346,11 +326,11 @@ function Heading({
   children,
   badge = false,
 }: {
-  title: string
-  description: string
-  id?: string
-  badge?: boolean
-  children?: ReactNode
+  title: string;
+  description: string;
+  id?: string;
+  badge?: boolean;
+  children?: ReactNode;
 }) {
   return (
     <div className="flex w-full max-w-[635px] flex-col items-center text-center">
@@ -382,7 +362,7 @@ function Heading({
       </p>
       {children}
     </div>
-  )
+  );
 }
 function AgentMarks() {
   return (
@@ -409,27 +389,27 @@ function AgentMarks() {
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 export default function BloomPage() {
-  const { t, locale } = useTranslation()
-  const reduce = useReducedMotion()
-  const [currentCase, setCurrentCase] = useState(0)
-  const [example, setExample] = useState<(typeof CASES)[number]>('chat')
-  const [device, setDevice] = useState('desktop')
-  const [spread, setSpread] = useState(false)
-  const [faq, setFaq] = useState<string | string[] | undefined>()
-  const { copied, copy } = useCopyToClipboard()
+  const { t, locale } = useTranslation();
+  const reduce = useReducedMotion();
+  const [currentCase, setCurrentCase] = useState(0);
+  const [example, setExample] = useState<(typeof CASES)[number]>('chat');
+  const [device, setDevice] = useState('desktop');
+  const [spread, setSpread] = useState(false);
+  const [faq, setFaq] = useState<string | string[] | undefined>();
+  const { copied, copy } = useCopyToClipboard();
   useEffect(() => {
-    if (reduce) return
+    if (reduce) return;
     const timer = setInterval(() => {
       if (document.visibilityState === 'visible' && window.scrollY < 500)
-        setCurrentCase((v) => (v + 1) % CASES.length)
-    }, 3600)
-    return () => clearInterval(timer)
-  }, [reduce])
-  const text = (key: string) => t(`bloom.${key}`)
+        setCurrentCase((v) => (v + 1) % CASES.length);
+    }, 3600);
+    return () => clearInterval(timer);
+  }, [reduce]);
+  const text = (key: string) => t(`bloom.${key}`);
   return (
     <BloomLocaleProvider locale={locale}>
       <PageShell
@@ -514,10 +494,7 @@ export default function BloomPage() {
         </section>
 
         <div className="relative mt-4 sm:mt-8">
-          <section
-            className="w-full overflow-x-clip"
-            aria-label={text('interactive')}
-          >
+          <section className="w-full overflow-x-clip" aria-label={text('interactive')}>
             <div className="animate-landing-marquee flex w-max">
               {[0, 1].map((copy) => (
                 <div
@@ -526,30 +503,23 @@ export default function BloomPage() {
                   aria-hidden={copy === 1 || undefined}
                   inert={copy === 1 ? true : undefined}
                 >
-                  {(
-                    [
-                      'patient',
-                      'steps',
-                      'sleep',
-                      'days',
-                      'activity',
-                      'alerts',
-                    ] as const
-                  ).map((name, i) => (
-                    <div
-                      className="landing-reveal mr-[11px] h-[182px] w-[198px] shrink-0 overflow-hidden [contain:layout_style_paint] sm:mr-5 sm:h-[330px] sm:w-[360px]"
-                      style={
-                        {
-                          '--landing-reveal-delay': `${i * 0.1}s`,
-                        } as CSSProperties
-                      }
-                      key={name}
-                    >
-                      <div className="w-[360px] origin-top-left scale-[.55] sm:scale-100">
-                        <BloomPreview name={name} />
+                  {(['patient', 'steps', 'sleep', 'days', 'activity', 'alerts'] as const).map(
+                    (name, i) => (
+                      <div
+                        className="landing-reveal mr-[11px] h-[182px] w-[198px] shrink-0 overflow-hidden [contain:layout_style_paint] sm:mr-5 sm:h-[330px] sm:w-[360px]"
+                        style={
+                          {
+                            '--landing-reveal-delay': `${i * 0.1}s`,
+                          } as CSSProperties
+                        }
+                        key={name}
+                      >
+                        <div className="w-[360px] origin-top-left scale-[.55] sm:scale-100">
+                          <BloomPreview name={name} />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ),
+                  )}
                 </div>
               ))}
             </div>
@@ -564,10 +534,7 @@ export default function BloomPage() {
               className="absolute top-0 left-1/2 origin-top -translate-x-1/2 scale-50 [contain:layout] sm:scale-100"
               style={{ width: 1828, height: 944 }}
             >
-              <div
-                className="absolute flex w-[342px] flex-col gap-5"
-                style={{ left: -86, top: 0 }}
-              >
+              <div className="absolute flex w-[342px] flex-col gap-5" style={{ left: -86, top: 0 }}>
                 <div className="landing-reveal rounded-3xl bg-background-secondary-default p-2">
                   <BloomPreview name="calendar" />
                 </div>
@@ -578,10 +545,7 @@ export default function BloomPage() {
                   <BloomPreview name="upload" />
                 </div>
               </div>
-              <div
-                className="absolute flex w-[790px] flex-col gap-5"
-                style={{ left: 276, top: 0 }}
-              >
+              <div className="absolute flex w-[790px] flex-col gap-5" style={{ left: 276, top: 0 }}>
                 <div className="landing-reveal">
                   <BloomPreview name="table" />
                 </div>
@@ -589,10 +553,7 @@ export default function BloomPage() {
                   <BloomPreview name="profile" />
                 </div>
               </div>
-              <div
-                className="absolute flex items-start gap-5"
-                style={{ left: 1086, top: 0 }}
-              >
+              <div className="absolute flex items-start gap-5" style={{ left: 1086, top: 0 }}>
                 <div className="landing-reveal h-[732px] shrink-0">
                   <BloomPreview name="sidebar" />
                 </div>
@@ -657,13 +618,9 @@ export default function BloomPage() {
                   <div className="relative h-full w-full" inert>
                     <ComponentPreview item={item} />
                   </div>
-                  {![
-                    'attachments',
-                    'widgets',
-                    'thinking',
-                    'image',
-                    'earnings',
-                  ].includes(item.name) && (
+                  {!['attachments', 'widgets', 'thinking', 'image', 'earnings'].includes(
+                    item.name,
+                  ) && (
                     <div
                       className={`pointer-events-none absolute inset-x-0 bottom-0 z-20 h-11 bg-linear-to-b from-transparent to-background-primary-default transition-opacity ease-out duration-500 ${item.name === 'sidebar' ? '[transition-delay:0ms] [transition-duration:120ms] sm:group-hover/card:opacity-0 sm:group-hover/card:[transition-duration:400ms] sm:group-hover/card:[transition-delay:1400ms]' : ''}`}
                     />
@@ -754,9 +711,7 @@ export default function BloomPage() {
           >
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
               <Action asChild>
-                <Link to={`${DOCS}composer-loader/`}>
-                  {text('view')} ComposerLoader
-                </Link>
+                <Link to={`${DOCS}composer-loader/`}>{text('view')} ComposerLoader</Link>
               </Action>
             </div>
           </Heading>
@@ -790,19 +745,13 @@ export default function BloomPage() {
                 onValueChange={setDevice}
               >
                 {(['desktop', 'tablet', 'mobile'] as const).map((name) => {
-                  const Icon = DEVICE_ICONS[name]
+                  const Icon = DEVICE_ICONS[name];
                   return (
-                    <SegmentedControlItem
-                      key={name}
-                      value={name}
-                      style={{ gap: 6 }}
-                    >
+                    <SegmentedControlItem key={name} value={name} style={{ gap: 6 }}>
                       <Icon width={16} height={16} fill="currentColor" />
-                      <SegmentedControlItemText>
-                        {text(name)}
-                      </SegmentedControlItemText>
+                      <SegmentedControlItemText>{text(name)}</SegmentedControlItemText>
                     </SegmentedControlItem>
-                  )
+                  );
                 })}
               </SegmentedControl>
             </div>
@@ -827,9 +776,7 @@ export default function BloomPage() {
                 </Tabs>
               </div>
               <Action secondary asChild leadingIcon={RiExternalLinkLine}>
-                <Link to={`${DOCS}${TEMPLATE_DOCS[example]}/`}>
-                  {text('view')}
-                </Link>
+                <Link to={`${DOCS}${TEMPLATE_DOCS[example]}/`}>{text('view')}</Link>
               </Action>
             </div>
             <div className="flex aspect-[390/844] w-full justify-center sm:aspect-[768/900] lg:aspect-[1440/900]">
@@ -877,9 +824,7 @@ export default function BloomPage() {
                   }
                 />
                 <div className="relative flex flex-col gap-1 px-5 pt-3 pb-5">
-                  <h3 className="text-headline-medium text-text-primary">
-                    {item.title}
-                  </h3>
+                  <h3 className="text-headline-medium text-text-primary">{item.title}</h3>
                   <p className="text-headline-regular text-pretty text-text-secondary">
                     {CHART_CAPTIONS[item.name]}
                   </p>
@@ -917,11 +862,9 @@ export default function BloomPage() {
                   appearance="plain"
                   iconOnly
                   leadingIcon={RiFileCopyLine}
-                  accessibilityLabel={
-                    copied ? t('docs.copied') : t('common.copyCode')
-                  }
+                  accessibilityLabel={copied ? t('docs.copied') : t('common.copyCode')}
                   onPress={() => {
-                    void copy('bun add @oxy.so/bloom')
+                    void copy('bun add @oxy.so/bloom');
                   }}
                 />
               </div>
@@ -988,12 +931,7 @@ export default function BloomPage() {
             </p>
           </div>
           <div className="mt-[39px] flex w-full max-w-[760px] flex-col gap-[3px] rounded-[26px] bg-background-secondary-default p-[3px] dark:bg-background-primary-default">
-            <Accordion
-              type="single"
-              value={faq}
-              onValueChange={setFaq}
-              style={{ gap: 3 }}
-            >
+            <Accordion type="single" value={faq} onValueChange={setFaq} style={{ gap: 3 }}>
               {['Install', 'Platforms', 'Theme', 'License'].map((key) => (
                 <AccordionItem
                   value={key}
@@ -1062,23 +1000,17 @@ export default function BloomPage() {
             aria-hidden
             inert
           >
-            {(
-              [
-                'search',
-                'progress',
-                'limits',
-                'thinking',
-                'attachments',
-              ] as const
-            ).map((name, i) => (
-              <div
-                className="bloom-fan-card absolute bottom-0 left-1/2 -ml-[160px] h-[300px] w-[320px] rounded-[20px] border border-border-button-default bg-background-primary-default p-4 shadow-lg"
-                style={{ '--fan-index': i - 2 } as CSSProperties}
-                key={name}
-              >
-                <BloomPreview name={name} />
-              </div>
-            ))}
+            {(['search', 'progress', 'limits', 'thinking', 'attachments'] as const).map(
+              (name, i) => (
+                <div
+                  className="bloom-fan-card absolute bottom-0 left-1/2 -ml-[160px] h-[300px] w-[320px] rounded-[20px] border border-border-button-default bg-background-primary-default p-4 shadow-lg"
+                  style={{ '--fan-index': i - 2 } as CSSProperties}
+                  key={name}
+                >
+                  <BloomPreview name={name} />
+                </div>
+              ),
+            )}
           </div>
           <div className="-mt-2 flex w-full max-w-[635px] flex-col items-center text-center sm:-mt-4">
             <Button
@@ -1089,10 +1021,7 @@ export default function BloomPage() {
             >
               {spread ? t('common.close') : t('common.seeAll')}
             </Button>
-            <Heading
-              title={text('closingTitle')}
-              description={text('closingDescription')}
-            />
+            <Heading title={text('closingTitle')} description={text('closingDescription')} />
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
               <Action asChild>
                 <Link to={DOCS}>{text('components')}</Link>
@@ -1102,5 +1031,5 @@ export default function BloomPage() {
         </section>
       </PageShell>
     </BloomLocaleProvider>
-  )
+  );
 }

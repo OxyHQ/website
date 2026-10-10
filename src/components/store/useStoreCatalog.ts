@@ -1,6 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
-import { STORE_PRODUCTS } from '../../data/store'
-import { mercaria, mercariaStoreId, readMercariaCatalog, readMercariaCollection, readMercariaProduct } from '../../lib/mercaria-store'
+import { useQuery } from '@tanstack/react-query';
+import { STORE_PRODUCTS } from '../../data/store';
+import {
+  mercaria,
+  mercariaStoreId,
+  readMercariaCatalog,
+  readMercariaCollection,
+  readMercariaProduct,
+} from '../../lib/mercaria-store';
 
 export function useStoreCatalog() {
   const query = useQuery({
@@ -9,8 +15,12 @@ export function useStoreCatalog() {
     enabled: !!mercariaStoreId,
     staleTime: 30_000,
     retry: false,
-  })
-  return { ...query, products: mercariaStoreId ? query.data?.products ?? [] : STORE_PRODUCTS, live: !!mercariaStoreId }
+  });
+  return {
+    ...query,
+    products: mercariaStoreId ? (query.data?.products ?? []) : STORE_PRODUCTS,
+    live: !!mercariaStoreId,
+  };
 }
 
 export function useStoreProduct(id: string | undefined) {
@@ -20,17 +30,18 @@ export function useStoreProduct(id: string | undefined) {
     enabled: !!mercariaStoreId && !!id,
     staleTime: 30_000,
     retry: false,
-  })
+  });
 }
 
 export function useStoreCollection(id: string) {
-  const catalog = useStoreCatalog()
-  const collection = catalog.data?.collections.find(item => item.ref.id === id)
+  const catalog = useStoreCatalog();
+  const collection = catalog.data?.collections.find((item) => item.ref.id === id);
   return useQuery({
     queryKey: ['mercaria', 'store', mercariaStoreId, 'collection', id],
-    queryFn: ({ signal }) => readMercariaCollection(mercaria, mercariaStoreId!, collection!, signal),
+    queryFn: ({ signal }) =>
+      readMercariaCollection(mercaria, mercariaStoreId!, collection!, signal),
     enabled: !!mercariaStoreId && !!collection,
     staleTime: 30_000,
     retry: false,
-  })
+  });
 }

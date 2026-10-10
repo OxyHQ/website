@@ -1,5 +1,5 @@
-import type { HelpCategoryId } from '../../content/help-loader'
-import { getHelpProductLogo } from './getHelpProductLogo'
+import type { HelpCategoryId } from '../../content/help-loader';
+import { getHelpProductLogo } from './getHelpProductLogo';
 
 /* ──────────────────────────────────────────────
  * HelpProductBadge
@@ -12,34 +12,34 @@ import { getHelpProductLogo } from './getHelpProductLogo'
  * logo exists yet for a given product.
  * ──────────────────────────────────────────── */
 
-type BadgeSize = 'sm' | 'md' | 'lg'
+type BadgeSize = 'sm' | 'md' | 'lg';
 
 interface HelpProductBadgeProps {
-  category: HelpCategoryId
-  label: string
-  size?: BadgeSize
+  category: HelpCategoryId;
+  label: string;
+  size?: BadgeSize;
   /** Render only the logo (no text). */
-  iconOnly?: boolean
-  className?: string
+  iconOnly?: boolean;
+  className?: string;
 }
 
 const LOGO_SIZE: Record<BadgeSize, string> = {
   sm: 'size-4',
   md: 'size-5',
   lg: 'size-6',
-}
+};
 
 const FALLBACK_SIZE: Record<BadgeSize, string> = {
   sm: 'size-4 text-[9px]',
   md: 'size-5 text-[10px]',
   lg: 'size-6 text-[11px]',
-}
+};
 
 const LABEL_SIZE: Record<BadgeSize, string> = {
   sm: 'text-xs',
   md: 'text-[13px]',
   lg: 'text-sm',
-}
+};
 
 export default function HelpProductBadge({
   category,
@@ -48,11 +48,11 @@ export default function HelpProductBadge({
   iconOnly = false,
   className,
 }: HelpProductBadgeProps) {
-  const src = getHelpProductLogo(category)
-  const logoClass = LOGO_SIZE[size]
-  const labelClass = LABEL_SIZE[size]
-  const fallbackClass = FALLBACK_SIZE[size]
-  const letter = label.charAt(0).toUpperCase() || '?'
+  const src = getHelpProductLogo(category);
+  const logoClass = LOGO_SIZE[size];
+  const labelClass = LABEL_SIZE[size];
+  const fallbackClass = FALLBACK_SIZE[size];
+  const letter = label.charAt(0).toUpperCase() || '?';
 
   const logo = src ? (
     <img
@@ -70,14 +70,14 @@ export default function HelpProductBadge({
     >
       {letter}
     </span>
-  )
+  );
 
   if (iconOnly) {
     return (
       <span className={`inline-flex items-center ${className ?? ''}`} aria-label={label}>
         {logo}
       </span>
-    )
+    );
   }
 
   return (
@@ -85,5 +85,5 @@ export default function HelpProductBadge({
       {logo}
       <span className={`font-medium text-foreground ${labelClass}`}>{label}</span>
     </span>
-  )
+  );
 }

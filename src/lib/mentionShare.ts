@@ -12,17 +12,17 @@
  */
 
 /** Base intent URL — all share buttons point at this single endpoint. */
-const MENTION_COMPOSE_URL = 'https://mention.earth/compose'
+const MENTION_COMPOSE_URL = 'https://mention.earth/compose';
 
 export interface MentionShareParams {
   /** Pre-filled body text. */
-  text?: string
+  text?: string;
   /** URL appended to the body. http/https only — Mention rejects anything else. */
-  url?: string
+  url?: string;
   /** Hashtags (no leading `#` needed — Mention adds it). Empty entries dropped. */
-  hashtags?: readonly string[]
+  hashtags?: readonly string[];
   /** Handle for `via @handle` attribution. No leading `@` — Mention strips it. */
-  via?: string
+  via?: string;
 }
 
 /**
@@ -33,24 +33,24 @@ export interface MentionShareParams {
  * (`?text=` style noise never reaches the composer).
  */
 export function buildMentionComposeUrl(params: MentionShareParams): string {
-  const search = new URLSearchParams()
+  const search = new URLSearchParams();
 
-  const text = params.text?.trim()
-  if (text) search.set('text', text)
+  const text = params.text?.trim();
+  if (text) search.set('text', text);
 
-  const url = params.url?.trim()
-  if (url) search.set('url', url)
+  const url = params.url?.trim();
+  if (url) search.set('url', url);
 
   if (params.hashtags && params.hashtags.length > 0) {
     const tags = params.hashtags
       .map((tag) => tag.trim().replace(/^#+/, ''))
-      .filter((tag) => tag.length > 0)
-    if (tags.length > 0) search.set('hashtags', tags.join(','))
+      .filter((tag) => tag.length > 0);
+    if (tags.length > 0) search.set('hashtags', tags.join(','));
   }
 
-  const via = params.via?.trim().replace(/^@+/, '')
-  if (via) search.set('via', via)
+  const via = params.via?.trim().replace(/^@+/, '');
+  if (via) search.set('via', via);
 
-  const query = search.toString()
-  return query ? `${MENTION_COMPOSE_URL}?${query}` : MENTION_COMPOSE_URL
+  const query = search.toString();
+  return query ? `${MENTION_COMPOSE_URL}?${query}` : MENTION_COMPOSE_URL;
 }

@@ -22,18 +22,18 @@
  * TypeScript parse runs rather than a stand-in for it.
  */
 
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises'
-import { readFileSync, writeFileSync } from 'node:fs'
-import { tmpdir } from 'node:os'
-import { dirname, join } from 'node:path'
+import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
 
-import { buildBloomLiveScope, writeBloomLiveScope } from './generate-bloom-live-scope'
-import { validateBloomLiveScope } from './validate-bloom-live-scope'
+import { buildBloomLiveScope, writeBloomLiveScope } from './generate-bloom-live-scope';
+import { validateBloomLiveScope } from './validate-bloom-live-scope';
 
 /** Relaxed so a two-demo fixture does not fail for a reason unrelated to its case. */
-const FIXTURE_FLOORS = { demos: 1, specifiers: 1 }
+const FIXTURE_FLOORS = { demos: 1, specifiers: 1 };
 
-type Files = Record<string, string>
+type Files = Record<string, string>;
 
 const BUTTON_DEMO = `import { Button } from '@oxy.so/bloom/button'
 import type { ButtonSize } from '@oxy.so/bloom/button'
@@ -44,32 +44,32 @@ export default function ButtonDemo() {
   const size = 'medium' as ButtonSize
   return <Button size={size}>{n}</Button>
 }
-`
+`;
 
 const CARD_DEMO = `import { Card } from '@oxy.so/bloom/card'
 
 export default function CardDemo() {
   return <Card />
 }
-`
+`;
 
-const BASE: Files = { 'Button.tsx': BUTTON_DEMO, 'Card.tsx': CARD_DEMO }
+const BASE: Files = { 'Button.tsx': BUTTON_DEMO, 'Card.tsx': CARD_DEMO };
 
 async function writeFiles(root: string, files: Files): Promise<void> {
   for (const [path, contents] of Object.entries(files)) {
-    const full = join(root, path)
-    await mkdir(dirname(full), { recursive: true })
-    await writeFile(full, contents)
+    const full = join(root, path);
+    await mkdir(dirname(full), { recursive: true });
+    await writeFile(full, contents);
   }
 }
 
 function report(name: string, detail: string | null): number {
   if (detail === null) {
-    console.log(`ok   ${name}`)
-    return 0
+    console.log(`ok   ${name}`);
+    return 0;
   }
-  console.error(`FAIL ${name}: ${detail}`)
-  return 1
+  console.error(`FAIL ${name}: ${detail}`);
+  return 1;
 }
 
 /**
@@ -82,40 +82,40 @@ async function verdict(
   files: Files,
   mutate?: (dir: string, scopePath: string) => Promise<void> | void,
 ): Promise<{ failures: string[]; specifiers: string[] }> {
-  const dir = await mkdtemp(join(tmpdir(), 'bloom-live-scope-'))
+  const dir = await mkdtemp(join(tmpdir(), 'bloom-live-scope-'));
   try {
-    await writeFiles(dir, files)
-    const scopePath = join(dir, 'BloomLiveScope.generated.ts')
-    const options = { demosDir: dir, floors: FIXTURE_FLOORS, scopePath }
+    await writeFiles(dir, files);
+    const scopePath = join(dir, 'BloomLiveScope.generated.ts');
+    const options = { demosDir: dir, floors: FIXTURE_FLOORS, scopePath };
     try {
-      writeBloomLiveScope(buildBloomLiveScope(options), scopePath)
+      writeBloomLiveScope(buildBloomLiveScope(options), scopePath);
     } catch {
       // Swallowed on purpose. A fixture whose generate throws is a case about a
       // rule the gate carries through its own rebuild, so the verdict below has
       // to come from the GATE — reporting the setup's error here would make the
       // case pass while measuring something CI never runs.
     }
-    await mutate?.(dir, scopePath)
-    const result = validateBloomLiveScope(options)
-    return { failures: result.failures, specifiers: result.built?.specifiers ?? [] }
+    await mutate?.(dir, scopePath);
+    const result = validateBloomLiveScope(options);
+    return { failures: result.failures, specifiers: result.built?.specifiers ?? [] };
   } finally {
-    await rm(dir, { recursive: true, force: true })
+    await rm(dir, { recursive: true, force: true });
   }
 }
 
 const mentions = (failures: string[], text: string): boolean =>
-  failures.some((failure) => failure.includes(text))
+  failures.some((failure) => failure.includes(text));
 
-let failed = 0
+let failed = 0;
 
 // ---------------------------------------------------------- must PASS -----
 
 {
-  const { failures, specifiers } = await verdict(BASE)
+  const { failures, specifiers } = await verdict(BASE);
   failed += report(
     'a freshly generated scope is current',
     failures.length === 0 ? null : failures.join('\n'),
-  )
+  );
   // The positive control for every "must fail" case below: without this, a
   // gate that failed on everything would look like a working gate.
   failed += report(
@@ -125,13 +125,13 @@ let failed = 0
       specifiers.includes('react')
       ? null
       : `expected button, card and react; got ${specifiers.join(', ')}`,
-  )
+  );
   failed += report(
-    "the JSX runtime is in the scope though no demo names it",
+    'the JSX runtime is in the scope though no demo names it',
     specifiers.includes('react/jsx-runtime')
       ? null
       : 'react/jsx-runtime is missing — every snippet would fail to compile at once',
-  )
+  );
 }
 
 {
@@ -148,23 +148,23 @@ export default function TypedDemo(props: ComboboxProps) {
   return <Chip size={size} {...props} />
 }
 `,
-  })
+  });
   failed += report(
     'a type-only import stays out of the scope',
     !specifiers.includes('@oxy.so/bloom/combobox')
       ? null
       : 'combobox entered the scope from an `import type`',
-  )
+  );
   failed += report(
     'a value binding beside a `type` one still enters the scope',
     specifiers.includes('@oxy.so/bloom/chip')
       ? null
       : 'chip was dropped because the declaration also had a `type` specifier',
-  )
+  );
   failed += report(
     'a scope with type-only imports in the demos is still current',
     failures.length === 0 ? null : failures.join('\n'),
-  )
+  );
 }
 
 {
@@ -178,13 +178,13 @@ export default function SideEffectDemo() {
   return null
 }
 `,
-  })
+  });
   failed += report(
     'a side-effect import enters the scope',
     specifiers.includes('@oxy.so/bloom/fonts')
       ? null
       : 'a bare `import "..."` was dropped, so the snippet could not run it',
-  )
+  );
 }
 
 // ---------------------------------------------------------- must FAIL -----
@@ -204,24 +204,24 @@ export default function CardDemo() {
   return <Card><Combobox /></Card>
 }
 `,
-    )
-  })
+    );
+  });
   failed += report(
     'a demo importing a surface the scope lacks fails the gate',
     failures.length > 0 ? null : 'the gate passed while a demo imported a surface the scope lacked',
-  )
+  );
   failed += report(
     'and the failure names the surface',
     mentions(failures, 'combobox')
       ? null
       : `the failure did not name combobox: ${failures.join('\n')}`,
-  )
+  );
   failed += report(
     'and it says how to fix it',
     mentions(failures, 'generate:bloom-live-scope')
       ? null
       : 'the failure did not name the generator to run',
-  )
+  );
 }
 
 {
@@ -236,13 +236,13 @@ export default function CardDemo() {
       .replace(
         "  '@oxy.so/bloom/card': bloomCard,",
         "  '@oxy.so/bloom/card': bloomCard,\n  '@oxy.so/bloom/menubar': bloomMenubar,",
-      )
-    writeFileSync(scopePath, committed)
-  })
+      );
+    writeFileSync(scopePath, committed);
+  });
   failed += report(
     'a scope entry no demo imports fails the gate',
     failures.length > 0 ? null : 'the gate passed while the scope carried a module no demo imports',
-  )
+  );
 }
 
 {
@@ -254,17 +254,17 @@ export default function RelativeDemo() {
   return <div>{helper()}</div>
 }
 `,
-  })
+  });
   failed += report(
     'a relative value import fails the gate',
     failures.length > 0 ? null : 'the gate accepted an import no reader could write',
-  )
+  );
   failed += report(
     'and the failure names the file that has it',
     mentions(failures, 'Relative.tsx')
       ? null
       : `the failure did not name the demo: ${failures.join('\n')}`,
-  )
+  );
 }
 
 {
@@ -279,58 +279,58 @@ export default function CollideDemo() {
   return <A><B /></A>
 }
 `,
-  })
+  });
   failed += report(
     'two specifiers deriving one local name fail the gate',
     mentions(failures, 'bloomXY')
       ? null
       : `expected a collision on bloomXY, got: ${failures.join('\n') || '(the gate passed)'}`,
-  )
+  );
 }
 
 {
   // The vacuity floor, which is the only thing standing between "the walk
   // broke" and "there is less". Same two-demo fixture, real floors.
-  const dir = await mkdtemp(join(tmpdir(), 'bloom-live-scope-floor-'))
+  const dir = await mkdtemp(join(tmpdir(), 'bloom-live-scope-floor-'));
   try {
-    await writeFiles(dir, BASE)
-    const scopePath = join(dir, 'BloomLiveScope.generated.ts')
+    await writeFiles(dir, BASE);
+    const scopePath = join(dir, 'BloomLiveScope.generated.ts');
     // Generated with the relaxed floors first, so the committed file is CURRENT
     // and the floor is the only thing left that can fail. Without this the case
     // would pass on "the file does not exist" and would still pass with the
     // floors deleted.
-    writeBloomLiveScope(buildBloomLiveScope({ demosDir: dir, floors: FIXTURE_FLOORS }), scopePath)
-    const { failures } = validateBloomLiveScope({ demosDir: dir, scopePath })
+    writeBloomLiveScope(buildBloomLiveScope({ demosDir: dir, floors: FIXTURE_FLOORS }), scopePath);
+    const { failures } = validateBloomLiveScope({ demosDir: dir, scopePath });
     failed += report(
       'a demo directory that lost most of its files fails the floor',
       mentions(failures, 'expected at least')
         ? null
         : `expected a floor failure, got: ${failures.join('\n') || '(the gate passed)'}`,
-    )
+    );
   } finally {
-    await rm(dir, { recursive: true, force: true })
+    await rm(dir, { recursive: true, force: true });
   }
 }
 
 // ------------------------------------------------- the real repository -----
 
 {
-  const { failures, built } = validateBloomLiveScope()
+  const { failures, built } = validateBloomLiveScope();
   failed += report(
     "the repository's own committed scope is current",
     failures.length === 0 ? null : failures.join('\n'),
-  )
+  );
   failed += report(
     'the real scope carries the JSX runtime and more than one Bloom surface',
     (built?.specifiers ?? []).includes('react/jsx-runtime') &&
       (built?.specifiers ?? []).filter((s) => s.startsWith('@oxy.so/bloom/')).length > 1
       ? null
       : `the real scope looks empty: ${built?.specifiers.join(', ')}`,
-  )
+  );
 }
 
 if (failed > 0) {
-  console.error(`\n${failed} Bloom playground scope gate case(s) failed.`)
-  process.exit(1)
+  console.error(`\n${failed} Bloom playground scope gate case(s) failed.`);
+  process.exit(1);
 }
-console.log('\nAll Bloom playground scope gate cases passed.')
+console.log('\nAll Bloom playground scope gate cases passed.');

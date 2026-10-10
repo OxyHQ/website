@@ -1,25 +1,26 @@
-import { cloneElement, type CSSProperties, type ReactElement } from 'react'
-import { Button } from '@oxy.so/bloom/button'
+import { cloneElement, type CSSProperties, type ReactElement } from 'react';
+import { Button } from '@oxy.so/bloom/button';
 
 /**
  * What the bar is sitting on. `page` is the ordinary translucent header; the
  * other two are the transparent header over a hero, dark or light.
  */
-export type NavBarInk = 'page' | 'onDark' | 'onLight'
+export type NavBarInk = 'page' | 'onDark' | 'onLight';
 
 /**
  * How loud a control is at rest. `muted` is a trigger or an icon button: muted
  * ink on the page, full ink over a hero. `soft` is a flat link, which over a
  * hero stays a step quieter than the triggers beside it.
  */
-export type NavBarRest = 'muted' | 'soft'
+export type NavBarRest = 'muted' | 'soft';
 
-const wash = (percent: number) => `color-mix(in srgb, var(--color-foreground) ${percent}%, transparent)`
+const wash = (percent: number) =>
+  `color-mix(in srgb, var(--color-foreground) ${percent}%, transparent)`;
 
 function restInk(ink: NavBarInk, rest: NavBarRest): string {
-  if (ink === 'page') return 'var(--color-muted-foreground)'
-  if (rest === 'muted') return 'var(--color-foreground)'
-  return wash(ink === 'onDark' ? 80 : 70)
+  if (ink === 'page') return 'var(--color-muted-foreground)';
+  if (rest === 'muted') return 'var(--color-foreground)';
+  return wash(ink === 'onDark' ? 80 : 70);
 }
 
 /**
@@ -46,18 +47,18 @@ export function NavBarButton({
   size = 40,
   children,
 }: {
-  ink: NavBarInk
-  rest?: NavBarRest
+  ink: NavBarInk;
+  rest?: NavBarRest;
   /** The control's panel is showing: it keeps the hover wash and full ink. */
-  open?: boolean
+  open?: boolean;
   /** An icon button: a `size`-square circle. */
-  square?: boolean
+  square?: boolean;
   /** Height (and width, when `square`), in px. */
-  size?: number
-  children: ReactElement<{ style?: CSSProperties; className?: string }>
+  size?: number;
+  children: ReactElement<{ style?: CSSProperties; className?: string }>;
 }) {
-  const hover = wash(ink === 'onDark' ? 10 : 5)
-  const fg = open ? 'var(--color-foreground)' : restInk(ink, rest)
+  const hover = wash(ink === 'onDark' ? 10 : 5);
+  const fg = open ? 'var(--color-foreground)' : restInk(ink, rest);
   const vars: Record<`--${string}`, string | number> = {
     '--bloom-btn-gap': '6px',
     '--bloom-btn-fg': fg,
@@ -71,11 +72,13 @@ export function NavBarButton({
     '--bloom-btn-fg-disabled': fg,
     '--bloom-btn-bg-disabled': 'transparent',
     '--bloom-btn-disabled-opacity': 1,
-  }
+  };
   const style: CSSProperties = {
     ...vars,
     height: size,
-    ...(square ? { width: size, paddingLeft: 0, paddingRight: 0 } : { paddingLeft: 12, paddingRight: 12 }),
+    ...(square
+      ? { width: size, paddingLeft: 0, paddingRight: 0 }
+      : { paddingLeft: 12, paddingRight: 12 }),
     // The label keeps the site's `text-link-md` from its class: Bloom's inline
     // type ramp would otherwise outrank it.
     fontSize: undefined,
@@ -83,7 +86,7 @@ export function NavBarButton({
     fontWeight: undefined,
     letterSpacing: undefined,
     ...children.props.style,
-  }
+  };
   return (
     <Button
       asChild
@@ -95,5 +98,5 @@ export function NavBarButton({
     >
       {cloneElement(children, { style })}
     </Button>
-  )
+  );
 }

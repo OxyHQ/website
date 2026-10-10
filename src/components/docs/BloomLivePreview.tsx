@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
-import type { AppColorName } from '@oxy.so/bloom/color-presets'
-import type { PlaygroundValues } from '../../content/bloom-demos/_playground'
+import { useEffect, useRef, useState } from 'react';
+import type { AppColorName } from '@oxy.so/bloom/color-presets';
+import type { PlaygroundValues } from '../../content/bloom-demos/_playground';
 
 export interface BloomLivePreviewProps {
-  source?: string
-  demo?: string
-  values?: PlaygroundValues
-  preset?: AppColorName
-  mode?: 'light' | 'dark'
+  source?: string;
+  demo?: string;
+  values?: PlaygroundValues;
+  preset?: AppColorName;
+  mode?: 'light' | 'dark';
 }
 
 /** Opaque-origin iframe: snippets never execute in the signed-in site. */
@@ -18,8 +18,8 @@ export function BloomLivePreview({
   preset = 'oxy',
   mode = 'light',
 }: BloomLivePreviewProps) {
-  const frame = useRef<HTMLIFrameElement>(null)
-  const [ready, setReady] = useState(false)
+  const frame = useRef<HTMLIFrameElement>(null);
+  const [ready, setReady] = useState(false);
   useEffect(() => {
     const receive = (event: MessageEvent) => {
       if (
@@ -27,18 +27,18 @@ export function BloomLivePreview({
         event.origin === 'null' &&
         event.data?.type === 'bloom:ready'
       )
-        setReady(true)
-    }
-    window.addEventListener('message', receive)
-    return () => window.removeEventListener('message', receive)
-  }, [])
+        setReady(true);
+    };
+    window.addEventListener('message', receive);
+    return () => window.removeEventListener('message', receive);
+  }, []);
   useEffect(() => {
     if (ready)
       frame.current?.contentWindow?.postMessage(
         { type: 'bloom:render', source, demo, values, preset, mode },
         '*',
-      )
-  }, [ready, source, demo, values, preset, mode])
+      );
+  }, [ready, source, demo, values, preset, mode]);
   return (
     <div className="relative overflow-hidden rounded-2xl border border-border bg-background">
       {!ready && (
@@ -55,5 +55,5 @@ export function BloomLivePreview({
         className="block h-[480px] w-full border-0"
       />
     </div>
-  )
+  );
 }

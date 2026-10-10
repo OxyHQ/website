@@ -1,34 +1,37 @@
-import { Link } from '../../lib/navigation'
-import { Avatar } from '@oxy.so/bloom/avatar'
-import { getNormalizedUserHandle } from '@oxy.so/core'
-import { useUserById } from '../../api/hooks'
+import { Link } from '../../lib/navigation';
+import { Avatar } from '@oxy.so/bloom/avatar';
+import { getNormalizedUserHandle } from '@oxy.so/core';
+import { useUserById } from '../../api/hooks';
 
 interface ArticleAuthorsProps {
-  userIds: string[]
+  userIds: string[];
 }
 
 function AuthorChip({ userId }: { userId: string }) {
-  const { data: user } = useUserById(userId)
+  const { data: user } = useUserById(userId);
 
-  if (!user) return null
+  if (!user) return null;
 
   // `name.displayName` is optional in the SDK shape — fall back to the
   // normalized handle so a federated author never renders as an empty chip.
   const displayName =
-    user.name.displayName?.trim() || getNormalizedUserHandle(user) || user.username
+    user.name.displayName?.trim() || getNormalizedUserHandle(user) || user.username;
 
   return (
-    <Link to={`/u/${user.username}`} className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-80">
+    <Link
+      to={`/u/${user.username}`}
+      className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-80"
+    >
       <Avatar source={user.avatar} size={20} variant="thumb" placeholderColor={user.color} />
       <span className="text-sm font-medium text-foreground">{displayName}</span>
     </Link>
-  )
+  );
 }
 
 // Each AuthorChip fetches one user independently. A future POST /users/by-ids
 // batch route with a service token would consolidate N calls into one here.
 export default function ArticleAuthors({ userIds }: ArticleAuthorsProps) {
-  if (!userIds.length) return null
+  if (!userIds.length) return null;
 
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -36,5 +39,5 @@ export default function ArticleAuthors({ userIds }: ArticleAuthorsProps) {
         <AuthorChip key={id} userId={id} />
       ))}
     </div>
-  )
+  );
 }

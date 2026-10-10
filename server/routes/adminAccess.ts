@@ -1,8 +1,8 @@
-import { Router } from 'express'
-import { optionalAuth } from '../middleware/auth.js'
-import { isAdminUser } from '../utils/adminAccess.js'
+import { Router } from 'express';
+import { optionalAuth } from '../middleware/auth.js';
+import { isAdminUser } from '../utils/adminAccess.js';
 
-const router = Router()
+const router = Router();
 
 /**
  * Who am I, and am I an admin?
@@ -29,19 +29,19 @@ const router = Router()
  * route by `adminOnly`, which calls the same `isAdminUser()`.
  */
 router.get('/me', optionalAuth, (req, res) => {
-  const user = req.user
+  const user = req.user;
   // Never cache: the answer is per-session, and a shared cache hit would be a
   // cross-user identity leak.
-  res.set('Cache-Control', 'no-store')
+  res.set('Cache-Control', 'no-store');
   if (!user) {
-    return res.json({ authenticated: false, isAdmin: false, userId: null, username: null })
+    return res.json({ authenticated: false, isAdmin: false, userId: null, username: null });
   }
   res.json({
     authenticated: true,
     isAdmin: isAdminUser(user),
     userId: user.id ?? user._id ?? null,
     username: user.username ?? null,
-  })
-})
+  });
+});
 
-export default router
+export default router;

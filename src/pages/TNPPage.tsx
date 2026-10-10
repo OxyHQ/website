@@ -1,5 +1,5 @@
-import PageShell from '../components/layout/PageShell'
-import TNPContent from '../components/tnp/TNPPage'
+import PageShell from '../components/layout/PageShell';
+import TNPContent from '../components/tnp/TNPPage';
 
 export default function TNPPage() {
   return (
@@ -15,5 +15,5 @@ export default function TNPPage() {
     >
       <TNPContent />
     </PageShell>
-  )
+  );
 }

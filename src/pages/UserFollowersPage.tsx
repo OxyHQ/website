@@ -1,24 +1,25 @@
-import { useLocation, useParams } from 'react-router-dom'
-import { Link } from '../lib/navigation'
-import { useQuery } from '@tanstack/react-query'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { useOxy } from '@oxy.so/services/ui/client'
-import { getNormalizedUserHandle, type User } from '@oxy.so/core'
-import { Avatar } from '@oxy.so/bloom/avatar'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import { useUserProfile } from '../api/hooks'
+import { useLocation, useParams } from 'react-router-dom';
+import { Link } from '../lib/navigation';
+import { useQuery } from '@tanstack/react-query';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import { useOxy } from '@oxy.so/services/ui/client';
+import { getNormalizedUserHandle, type User } from '@oxy.so/core';
+import { Avatar } from '@oxy.so/bloom/avatar';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import { useUserProfile } from '../api/hooks';
 
-type TabType = 'followers' | 'following'
+type TabType = 'followers' | 'following';
 
 const TABS: Array<{ value: TabType; label: string }> = [
   { value: 'followers', label: 'Followers' },
   { value: 'following', label: 'Following' },
-]
+];
 
 function UserRow({ user }: { user: User }) {
-  const displayName = user.name.displayName?.trim() || getNormalizedUserHandle(user) || user.username
+  const displayName =
+    user.name.displayName?.trim() || getNormalizedUserHandle(user) || user.username;
   return (
     <Link
       to={`/u/${user.username}`}
@@ -26,18 +27,21 @@ function UserRow({ user }: { user: User }) {
     >
       <div className="flex items-start gap-3">
         <div className="shrink-0">
-          <Avatar source={user.avatar ?? undefined} size={48} variant="thumb" placeholderColor={user.color ?? undefined} />
+          <Avatar
+            source={user.avatar ?? undefined}
+            size={48}
+            variant="thumb"
+            placeholderColor={user.color ?? undefined}
+          />
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-body-md font-bold text-foreground">{displayName}</p>
           <p className="truncate text-body-md text-muted-foreground">@{user.username}</p>
-          {user.bio && (
-            <p className="mt-1 text-body-md text-foreground line-clamp-2">{user.bio}</p>
-          )}
+          {user.bio && <p className="mt-1 text-body-md text-foreground line-clamp-2">{user.bio}</p>}
         </div>
       </div>
     </Link>
-  )
+  );
 }
 
 function ListSkeleton() {
@@ -55,44 +59,44 @@ function ListSkeleton() {
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 export default function UserFollowersPage() {
-  const { username = '' } = useParams<{ username: string }>()
-  const { pathname } = useLocation()
+  const { username = '' } = useParams<{ username: string }>();
+  const { pathname } = useLocation();
   // The route is the single source of truth for the tab: `/u/:username/following`
   // vs `/u/:username/followers`. Deriving it here (instead of mirroring it into
   // local state) keeps the canonical URL and the highlighted tab in lockstep,
   // and re-derives correctly when navigating between the two routes.
-  const activeTab: TabType = pathname.endsWith('/following') ? 'following' : 'followers'
-  const { oxyServices } = useOxy()
-  const { data: profile } = useUserProfile(username)
-  const userId = profile?.user._id
-  const canViewFollowList = Boolean(userId && profile?.stats)
+  const activeTab: TabType = pathname.endsWith('/following') ? 'following' : 'followers';
+  const { oxyServices } = useOxy();
+  const { data: profile } = useUserProfile(username);
+  const userId = profile?.user._id;
+  const canViewFollowList = Boolean(userId && profile?.stats);
 
   const { data, isLoading } = useQuery({
     queryKey: ['user-follow-list', userId, activeTab],
     queryFn: async () => {
-      if (!userId || !canViewFollowList) return { users: [] as User[], total: 0 }
+      if (!userId || !canViewFollowList) return { users: [] as User[], total: 0 };
       if (activeTab === 'followers') {
-        const res = await oxyServices.follows.followers(userId, { limit: 50 })
-        return { users: res.followers, total: res.total }
+        const res = await oxyServices.follows.followers(userId, { limit: 50 });
+        return { users: res.followers, total: res.total };
       }
-      const res = await oxyServices.follows.following(userId, { limit: 50 })
-      return { users: res.following, total: res.total }
+      const res = await oxyServices.follows.following(userId, { limit: 50 });
+      return { users: res.following, total: res.total };
     },
     enabled: canViewFollowList,
     staleTime: 60_000,
-  })
+  });
 
   const displayName = profile
     ? profile.user.name.displayName?.trim() || getNormalizedUserHandle(profile.user) || username
-    : username
-  const isActivityPrivate = Boolean(profile && !profile.stats)
+    : username;
+  const isActivityPrivate = Boolean(profile && !profile.stats);
 
-  const tabLabel = activeTab === 'followers' ? 'Followers' : 'Following'
-  const users = data?.users ?? []
+  const tabLabel = activeTab === 'followers' ? 'Followers' : 'Following';
+  const users = data?.users ?? [];
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -132,7 +136,11 @@ export default function UserFollowersPage() {
                   to={`/u/${username}/${tab.value}`}
                   className="relative flex-1 py-3.5 text-center text-sm font-medium transition-colors hover:bg-surface/50"
                 >
-                  <span className={activeTab === tab.value ? 'text-foreground' : 'text-muted-foreground'}>
+                  <span
+                    className={
+                      activeTab === tab.value ? 'text-foreground' : 'text-muted-foreground'
+                    }
+                  >
                     {tab.label}
                   </span>
                   {activeTab === tab.value && (
@@ -156,9 +164,7 @@ export default function UserFollowersPage() {
                 ))}
               </div>
             ) : (
-              <p className="py-12 text-center text-sm text-muted-foreground">
-                No {activeTab} yet
-              </p>
+              <p className="py-12 text-center text-sm text-muted-foreground">No {activeTab} yet</p>
             )}
           </div>
         </div>
@@ -166,5 +172,5 @@ export default function UserFollowersPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

@@ -1,15 +1,15 @@
-import InfoCard, { type CardItem } from './InfoCard'
+import InfoCard, { type CardItem } from './InfoCard';
 
 interface CardGridProps {
-  cards: CardItem[]
+  cards: CardItem[];
   /** Optional section title above the grid. */
-  title?: string
+  title?: string;
   /** Optional line under the title. */
-  description?: string
-  columnsClassName?: string
-  cardHeightClassName?: string
+  description?: string;
+  columnsClassName?: string;
+  cardHeightClassName?: string;
   /** Outer spacing — pass `pt-3 lg:pt-6` to butt this grid against the block above. */
-  className?: string
+  className?: string;
 }
 
 /** A row of equal-height cards, the workhorse slice for feature and pathway lists. */
@@ -29,11 +29,13 @@ export default function CardGrid({
           {description && <p className="text-b1 mt-4 max-w-125 text-alt-gray-e1">{description}</p>}
         </div>
       )}
-      <div className={`grid grid-cols-1 gap-x-3 lg:gap-x-6 gap-y-3 lg:gap-y-6 auto-rows-fr ${columnsClassName}`}>
+      <div
+        className={`grid grid-cols-1 gap-x-3 lg:gap-x-6 gap-y-3 lg:gap-y-6 auto-rows-fr ${columnsClassName}`}
+      >
         {cards.map((card) => (
           <InfoCard key={card.title} card={card} heightClassName={cardHeightClassName} />
         ))}
       </div>
     </section>
-  )
+  );
 }

@@ -1,6 +1,6 @@
-import { useAuth } from '@oxy.so/services/ui/client'
-import FeatureCard from './FeatureCard'
-import { useToggleFeatureVote, type FeatureRequestData } from '../../api/hooks'
+import { useAuth } from '@oxy.so/services/ui/client';
+import FeatureCard from './FeatureCard';
+import { useToggleFeatureVote, type FeatureRequestData } from '../../api/hooks';
 
 /**
  * A proposal row wired to the vote mutation.
@@ -10,17 +10,23 @@ import { useToggleFeatureVote, type FeatureRequestData } from '../../api/hooks'
  * share the optimistic update and the rollback, and a vote cast in any of them
  * moves the count in the others.
  */
-export default function FeatureRow({ feature, hideApp }: { feature: FeatureRequestData; hideApp?: boolean }) {
-  const { isAuthenticated, signIn } = useAuth()
-  const toggleVote = useToggleFeatureVote(feature.owner, feature.repoName, feature.number)
+export default function FeatureRow({
+  feature,
+  hideApp,
+}: {
+  feature: FeatureRequestData;
+  hideApp?: boolean;
+}) {
+  const { isAuthenticated, signIn } = useAuth();
+  const toggleVote = useToggleFeatureVote(feature.owner, feature.repoName, feature.number);
 
   function handleVote() {
     if (!isAuthenticated) {
-      signIn()
-      return
+      signIn();
+      return;
     }
-    toggleVote.mutate()
+    toggleVote.mutate();
   }
 
-  return <FeatureCard feature={feature} onVote={handleVote} hideApp={hideApp} />
+  return <FeatureCard feature={feature} onVote={handleVote} hideApp={hideApp} />;
 }

@@ -1,14 +1,19 @@
-import { useMemo } from 'react'
-import { useParams } from 'react-router-dom'
-import { Link } from '../../lib/navigation'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { useProduct, useProducts, resolveProductCategoryId, type ProductRecord } from '../../api/hooks'
-import { getStaticChangelog } from '../../content/changelog-loader'
-import Button from '../ui/Button'
-import SEO from '../SEO'
-import { APP_CARD_IMAGES } from '../../data/appCardImages'
-import StructuredData from '../StructuredData'
-import AppCard, { AppIcon, categoryLabel } from './AppCard'
+import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import { Link } from '../../lib/navigation';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import {
+  useProduct,
+  useProducts,
+  resolveProductCategoryId,
+  type ProductRecord,
+} from '../../api/hooks';
+import { getStaticChangelog } from '../../content/changelog-loader';
+import Button from '../ui/Button';
+import SEO from '../SEO';
+import { APP_CARD_IMAGES } from '../../data/appCardImages';
+import StructuredData from '../StructuredData';
+import AppCard, { AppIcon, categoryLabel } from './AppCard';
 
 /* ──────────────────────────────────────────────
  * /apps/:name
@@ -26,24 +31,24 @@ const SCREENSHOTS: Record<string, string[]> = {
   mention: ['/images/screenshots/mention-app.png'],
   alia: ['/images/screenshots/alia-app.png'],
   inbox: ['/images/screenshots/inbox-app.png'],
-}
+};
 
 /**
  * The tracked repository for a product when its canonical name matches after
  * removing punctuation and casing differences.
  */
 function findRepo(product: ProductRecord): { owner: string; name: string } | null {
-  const letters = (value: string) => value.toLowerCase().replace(/[^a-z]/g, '')
-  const wanted = letters(product.productId)
+  const letters = (value: string) => value.toLowerCase().replace(/[^a-z]/g, '');
+  const wanted = letters(product.productId);
   const match = getStaticChangelog().repos.find(
     (repo) => letters(repo.name) === wanted || letters(repo.displayName) === wanted,
-  )
-  return match ? { owner: repoOwner(match.owner), name: match.name } : null
+  );
+  return match ? { owner: repoOwner(match.owner), name: match.name } : null;
 }
 
 /** Repos carry their owner; fall back to the org when one is missing. */
 function repoOwner(owner: string): string {
-  return owner || 'OxyHQ'
+  return owner || 'OxyHQ';
 }
 
 function MetaRow({ label, children }: { label: string; children: React.ReactNode }) {
@@ -52,22 +57,26 @@ function MetaRow({ label, children }: { label: string; children: React.ReactNode
       <dt className="mb-space-xs text-heading-sm sm:text-heading-xs">{label}</dt>
       <dd className="text-body-sm text-muted-foreground">{children}</dd>
     </div>
-  )
+  );
 }
 
 export default function AppDetailContent() {
-  const { name = '' } = useParams<{ name: string }>()
-  const { data: product, isPending, isError } = useProduct(name)
-  const { data: products = [] } = useProducts({ surface: 'products' })
+  const { name = '' } = useParams<{ name: string }>();
+  const { data: product, isPending, isError } = useProduct(name);
+  const { data: products = [] } = useProducts({ surface: 'products' });
 
   const related = useMemo(() => {
-    if (!product) return []
-    const categoryId = resolveProductCategoryId(product)
+    if (!product) return [];
+    const categoryId = resolveProductCategoryId(product);
     return products
       .filter((candidate) => candidate.productId !== product.productId)
-      .filter((candidate) => (categoryId ? resolveProductCategoryId(candidate) === categoryId : candidate.section === product.section))
-      .slice(0, 4)
-  }, [products, product])
+      .filter((candidate) =>
+        categoryId
+          ? resolveProductCategoryId(candidate) === categoryId
+          : candidate.section === product.section,
+      )
+      .slice(0, 4);
+  }, [products, product]);
 
   if (isPending) {
     return (
@@ -79,7 +88,7 @@ export default function AppDetailContent() {
           <Skeleton.Box width="80%" height={16} />
         </div>
       </div>
-    )
+    );
   }
 
   if (isError || !product) {
@@ -93,7 +102,9 @@ export default function AppDetailContent() {
         />
         <div className="container py-space-2xl lg:py-space-3xl">
           <h1 className="text-heading-3xl">App not found.</h1>
-          <p className="pt-6 text-muted-foreground">This app doesn&apos;t exist, or it has been renamed.</p>
+          <p className="pt-6 text-muted-foreground">
+            This app doesn&apos;t exist, or it has been renamed.
+          </p>
           <p className="pt-8">
             <Link to="/apps" className="underline underline-offset-4">
               Browse every app
@@ -101,15 +112,15 @@ export default function AppDetailContent() {
           </p>
         </div>
       </>
-    )
+    );
   }
 
-  const category = categoryLabel(product)
-  const repo = findRepo(product)
-  const shots = SCREENSHOTS[product.productId] ?? []
-  const landing = product.landingUrl && product.landingUrl.length > 0 ? product.landingUrl : null
-  const openHref = landing ?? product.href
-  const opensExternally = openHref.startsWith('http')
+  const category = categoryLabel(product);
+  const repo = findRepo(product);
+  const shots = SCREENSHOTS[product.productId] ?? [];
+  const landing = product.landingUrl && product.landingUrl.length > 0 ? product.landingUrl : null;
+  const openHref = landing ?? product.href;
+  const opensExternally = openHref.startsWith('http');
 
   return (
     <div className="container my-space-xl md:my-space-2xl lg:my-space-3xl">
@@ -209,19 +220,25 @@ export default function AppDetailContent() {
 
           <div className="mb-space-2xl flex flex-col gap-space-lg">
             <h2 className="text-pretty text-heading-lg">{product.tagline}</h2>
-            {product.description && <p className="text-body-md text-muted-foreground">{product.description}</p>}
+            {product.description && (
+              <p className="text-body-md text-muted-foreground">{product.description}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-6">
             <div className="grid grid-cols-4 gap-x-space-gutter border-border border-t pt-space-sm lg:gap-x-space-gutter-lg">
-              <p className="col-span-full text-heading-sm sm:col-span-1 sm:text-heading-xs">Works with</p>
+              <p className="col-span-full text-heading-sm sm:col-span-1 sm:text-heading-xs">
+                Works with
+              </p>
               <p className="col-span-full text-body-md text-muted-foreground sm:col-span-3">
-                Your Oxy account, on every other app in the ecosystem. One sign-in, one identity, and the same design
-                system underneath.
+                Your Oxy account, on every other app in the ecosystem. One sign-in, one identity,
+                and the same design system underneath.
               </p>
             </div>
             <div className="grid grid-cols-4 gap-x-space-gutter border-border border-t pt-space-sm lg:gap-x-space-gutter-lg">
-              <p className="col-span-full text-heading-sm sm:col-span-1 sm:text-heading-xs">Status</p>
+              <p className="col-span-full text-heading-sm sm:col-span-1 sm:text-heading-xs">
+                Status
+              </p>
               <p className="col-span-full text-body-md text-muted-foreground sm:col-span-3">
                 <Link to="/status" className="underline underline-offset-4">
                   Live health for every service
@@ -248,5 +265,5 @@ export default function AppDetailContent() {
         </div>
       </div>
     </div>
-  )
+  );
 }

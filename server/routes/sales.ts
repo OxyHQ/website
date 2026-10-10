@@ -1,14 +1,14 @@
-import { Router } from 'express'
-import { rateLimit } from 'express-rate-limit'
-import { OxyServices } from '@oxy.so/core'
-import { and, desc, eq, lt, sql } from 'drizzle-orm'
-import { db } from '../db/postgres.js'
-import { salesInquiries } from '../db/schema/index.js'
-import { isUniqueViolation } from '../db/pgErrors.js'
-import { validate } from '../utils/validate.js'
-import { optionalAuth, requireAuth } from '../middleware/auth.js'
-import { adminOnly } from '../middleware/adminOnly.js'
-import { config } from '../config.js'
+import { Router } from 'express';
+import { rateLimit } from 'express-rate-limit';
+import { OxyServices } from '@oxy.so/core';
+import { and, desc, eq, lt, sql } from 'drizzle-orm';
+import { db } from '../db/postgres.js';
+import { salesInquiries } from '../db/schema/index.js';
+import { isUniqueViolation } from '../db/pgErrors.js';
+import { validate } from '../utils/validate.js';
+import { optionalAuth, requireAuth } from '../middleware/auth.js';
+import { adminOnly } from '../middleware/adminOnly.js';
+import { config } from '../config.js';
 import {
   INQUIRY_RETENTION_DAYS,
   INQUIRY_STATUSES,
@@ -16,10 +16,10 @@ import {
   salesInquirySchema,
   type InquiryStatus,
   type SalesInquiryInput,
-} from '../contracts/salesInquiry.js'
-import { z } from 'zod'
+} from '../contracts/salesInquiry.js';
+import { z } from 'zod';
 
-const router = Router()
+const router = Router();
 
 /**
  * Burst guard in front of the public submission endpoint.
@@ -40,9 +40,9 @@ const submitLimiter = rateLimit({
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   handler: (_req, res) => {
-    res.status(429).json({ error: 'Too many requests. Wait a few minutes and try again.' })
+    res.status(429).json({ error: 'Too many requests. Wait a few minutes and try again.' });
   },
-})
+});
 
 /**
  * Verify that the signed-in caller can actually see the account and application
@@ -62,28 +62,28 @@ async function verifiedAccountRefs(
   accountId: string | undefined,
   applicationId: string | undefined,
 ): Promise<{ accountId?: string; applicationId?: string }> {
-  if (!bearerToken || !accountId) return {}
+  if (!bearerToken || !accountId) return {};
   try {
-    const asCaller = new OxyServices({ baseURL: config.oxyApiBase })
-    asCaller.session.setAccessToken(bearerToken)
-    const accounts = await asCaller.accounts.list()
-    if (!accounts.some((node) => node.accountId === accountId)) return {}
-    if (!applicationId) return { accountId }
-    const apps = await asCaller.apps.list(accountId)
+    const asCaller = new OxyServices({ baseURL: config.oxyApiBase });
+    asCaller.session.setAccessToken(bearerToken);
+    const accounts = await asCaller.accounts.list();
+    if (!accounts.some((node) => node.accountId === accountId)) return {};
+    if (!applicationId) return { accountId };
+    const apps = await asCaller.apps.list(accountId);
     return apps.some((app) => app._id === applicationId)
       ? { accountId, applicationId }
-      : { accountId }
+      : { accountId };
   } catch {
     // The control plane being unreachable must not fail the submission: the
     // inquiry is still worth having, just without the association.
-    return {}
+    return {};
   }
 }
 
 function bearerFrom(header: string | undefined): string | undefined {
-  if (!header) return undefined
-  const match = /^Bearer\s+(.+)$/i.exec(header.trim())
-  return match?.[1]
+  if (!header) return undefined;
+  const match = /^Bearer\s+(.+)$/i.exec(header.trim());
+  return match?.[1];
 }
 
 /**
@@ -94,22 +94,22 @@ function bearerFrom(header: string | undefined): string | undefined {
  * first is a form that loses them.
  */
 router.post('/', submitLimiter, optionalAuth, async (req, res) => {
-  const input: SalesInquiryInput = validate(salesInquirySchema, req.body)
+  const input: SalesInquiryInput = validate(salesInquirySchema, req.body);
 
   // The honeypot. A submission that filled the hidden field is answered 202 and
   // dropped: a 400 naming the field is a free lesson in how to pass next time.
   if (input.company_url && input.company_url.trim().length > 0) {
-    return res.status(202).json({ status: 'received' })
+    return res.status(202).json({ status: 'received' });
   }
 
   const refs = await verifiedAccountRefs(
     bearerFrom(req.headers.authorization),
     input.accountId,
     input.applicationId,
-  )
+  );
 
-  const deleteAfter = new Date(Date.now() + INQUIRY_RETENTION_DAYS * 86_400_000)
-  const idempotencyKey = idempotencyKeyFor(input)
+  const deleteAfter = new Date(Date.now() + INQUIRY_RETENTION_DAYS * 86_400_000);
+  const idempotencyKey = idempotencyKeyFor(input);
 
   try {
     const [row] = await db
@@ -139,19 +139,19 @@ router.post('/', submitLimiter, optionalAuth, async (req, res) => {
         idempotencyKey,
         deleteAfter,
       })
-      .returning({ id: salesInquiries._id, createdAt: salesInquiries.createdAt })
+      .returning({ id: salesInquiries._id, createdAt: salesInquiries.createdAt });
 
     notifySales(input, row?.id).catch((error: unknown) => {
       // A notification that failed to send is an operational problem, not a
       // reason to tell the submitter their message was lost — it is stored.
-      console.error('[sales] notification failed:', error)
-    })
+      console.error('[sales] notification failed:', error);
+    });
 
     return res.status(201).json({
       id: row?.id,
       status: 'new',
       submittedAt: row?.createdAt?.toISOString() ?? new Date().toISOString(),
-    })
+    });
   } catch (error) {
     if (isUniqueViolation(error)) {
       // The same person sent the same request twice. That is one inquiry, and
@@ -161,17 +161,17 @@ router.post('/', submitLimiter, optionalAuth, async (req, res) => {
         .select({ id: salesInquiries._id, createdAt: salesInquiries.createdAt })
         .from(salesInquiries)
         .where(eq(salesInquiries.idempotencyKey, idempotencyKey))
-        .limit(1)
+        .limit(1);
       return res.status(200).json({
         id: existing?.id,
         status: 'new',
         submittedAt: existing?.createdAt?.toISOString() ?? new Date().toISOString(),
         duplicate: true,
-      })
+      });
     }
-    throw error
+    throw error;
   }
-})
+});
 
 /**
  * Hand the inquiry to whoever answers it.
@@ -182,8 +182,8 @@ router.post('/', submitLimiter, optionalAuth, async (req, res) => {
  * the database is the notification and the admin view is where it is read.
  */
 async function notifySales(input: SalesInquiryInput, id: string | undefined): Promise<void> {
-  const url = process.env.SALES_INQUIRY_WEBHOOK_URL
-  if (!url) return
+  const url = process.env.SALES_INQUIRY_WEBHOOK_URL;
+  if (!url) return;
   await fetch(url, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
@@ -201,7 +201,7 @@ async function notifySales(input: SalesInquiryInput, id: string | undefined): Pr
       // view is where it is read, behind authentication.
       hasMessage: Boolean(input.message),
     }),
-  })
+  });
 }
 
 /* ── Admin surface ───────────────────────────────────────────────────── */
@@ -210,7 +210,7 @@ const listQuerySchema = z.object({
   status: z.enum(INQUIRY_STATUSES).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(25),
-})
+});
 
 /**
  * GET /  — the inquiry list, for staff.
@@ -220,33 +220,33 @@ const listQuerySchema = z.object({
  * once a row is rewritten; `_id` is unique and ascends with creation.
  */
 router.get('/', requireAuth, adminOnly, async (req, res) => {
-  const { status, page, limit } = validate(listQuerySchema, req.query)
-  const offset = (page - 1) * limit
+  const { status, page, limit } = validate(listQuerySchema, req.query);
+  const offset = (page - 1) * limit;
 
-  const where = status ? eq(salesInquiries.status, status) : undefined
+  const where = status ? eq(salesInquiries.status, status) : undefined;
   const rows = await db
     .select()
     .from(salesInquiries)
     .where(where)
     .orderBy(desc(salesInquiries.createdAt), desc(salesInquiries._id))
     .limit(limit)
-    .offset(offset)
+    .offset(offset);
 
   const [{ count }] = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(salesInquiries)
-    .where(where)
+    .where(where);
 
-  res.json({ inquiries: rows, total: count, page, limit })
-})
+  res.json({ inquiries: rows, total: count, page, limit });
+});
 
 /** Route params come off Express as `string | string[]`; validate, never cast. */
-const idParamsSchema = z.object({ id: z.string().min(1).max(64) })
+const idParamsSchema = z.object({ id: z.string().min(1).max(64) });
 
 const updateSchema = z.object({
   status: z.enum(INQUIRY_STATUSES).optional(),
   internalNote: z.string().max(4000).optional(),
-})
+});
 
 /**
  * PATCH /:id  — move an inquiry along, with attribution.
@@ -257,38 +257,38 @@ const updateSchema = z.object({
  * against it.
  */
 router.patch('/:id', requireAuth, adminOnly, async (req, res) => {
-  const { id } = validate(idParamsSchema, req.params)
-  const patch = validate(updateSchema, req.body)
-  const changes: Record<string, unknown> = { updatedAt: new Date() }
+  const { id } = validate(idParamsSchema, req.params);
+  const patch = validate(updateSchema, req.body);
+  const changes: Record<string, unknown> = { updatedAt: new Date() };
   if (patch.status) {
-    changes.status = patch.status satisfies InquiryStatus
-    changes.statusChangedBy = req.user?.id ?? null
-    changes.statusChangedAt = new Date()
+    changes.status = patch.status satisfies InquiryStatus;
+    changes.statusChangedBy = req.user?.id ?? null;
+    changes.statusChangedAt = new Date();
   }
-  if (patch.internalNote !== undefined) changes.internalNote = patch.internalNote
+  if (patch.internalNote !== undefined) changes.internalNote = patch.internalNote;
 
   const [row] = await db
     .update(salesInquiries)
     .set(changes)
     .where(eq(salesInquiries._id, id))
-    .returning()
+    .returning();
 
-  if (!row) return res.status(404).json({ error: 'Inquiry not found' })
-  res.json(row)
-})
+  if (!row) return res.status(404).json({ error: 'Inquiry not found' });
+  res.json(row);
+});
 
 /**
  * DELETE /:id  — honour a deletion request before the retention window closes.
  */
 router.delete('/:id', requireAuth, adminOnly, async (req, res) => {
-  const { id } = validate(idParamsSchema, req.params)
+  const { id } = validate(idParamsSchema, req.params);
   const [row] = await db
     .delete(salesInquiries)
     .where(eq(salesInquiries._id, id))
-    .returning({ id: salesInquiries._id })
-  if (!row) return res.status(404).json({ error: 'Inquiry not found' })
-  res.json({ deleted: row.id })
-})
+    .returning({ id: salesInquiries._id });
+  if (!row) return res.status(404).json({ error: 'Inquiry not found' });
+  res.json({ deleted: row.id });
+});
 
 /**
  * Delete inquiries past their retention date.
@@ -302,9 +302,9 @@ export async function purgeExpiredInquiries(): Promise<number> {
   const rows = await db
     .delete(salesInquiries)
     .where(and(lt(salesInquiries.deleteAfter, new Date()), sql`${salesInquiries.status} <> 'won'`))
-    .returning({ id: salesInquiries._id })
-  if (rows.length > 0) console.log(`[sales] purged ${rows.length} expired inquiries`)
-  return rows.length
+    .returning({ id: salesInquiries._id });
+  if (rows.length > 0) console.log(`[sales] purged ${rows.length} expired inquiries`);
+  return rows.length;
 }
 
-export default router
+export default router;

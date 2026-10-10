@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
-import { BrandScope } from '../../theme/BrandScope'
+import type { ReactNode } from 'react';
+import { BrandScope } from '../../theme/BrandScope';
 
 /* ──────────────────────────────────────────────
  * PageSection
@@ -17,9 +17,9 @@ import { BrandScope } from '../../theme/BrandScope'
  * edge-to-edge. The inner wrapper holds max-width and horizontal padding.
  * ──────────────────────────────────────────── */
 
-type Spacing = 'none' | 'sm' | 'md' | 'lg' | 'xl'
-type Tone = 'default' | 'surface' | 'muted' | 'inverse'
-type Width = 'narrow' | 'prose' | 'wide' | 'full'
+type Spacing = 'none' | 'sm' | 'md' | 'lg' | 'xl';
+type Tone = 'default' | 'surface' | 'muted' | 'inverse';
+type Width = 'narrow' | 'prose' | 'wide' | 'full';
 
 const SPACING: Record<Spacing, string> = {
   none: '',
@@ -27,14 +27,14 @@ const SPACING: Record<Spacing, string> = {
   md: 'py-20 md:py-24 lg:py-28',
   lg: 'py-24 md:py-32 lg:py-40',
   xl: 'py-32 md:py-40 lg:py-48',
-}
+};
 
 const TONE: Record<Tone, string> = {
   default: '',
   surface: 'bg-surface',
   muted: 'bg-muted/40',
   inverse: 'bg-foreground text-background',
-}
+};
 
 /*
  * `wide` is the default: it delegates width + horizontal padding to the
@@ -49,16 +49,16 @@ const WIDTH: Record<Width, string> = {
   narrow: 'mx-auto w-full max-w-3xl px-[var(--layout-gutter)]',
   wide: 'container',
   full: '',
-}
+};
 
 interface PageSectionProps {
-  children: ReactNode
-  spacing?: Spacing
-  tone?: Tone
-  width?: Width
-  className?: string
-  innerClassName?: string
-  id?: string
+  children: ReactNode;
+  spacing?: Spacing;
+  tone?: Tone;
+  width?: Width;
+  className?: string;
+  innerClassName?: string;
+  id?: string;
 }
 
 export default function PageSection({
@@ -70,14 +70,8 @@ export default function PageSection({
   innerClassName = '',
   id,
 }: PageSectionProps) {
-  const outerClasses = [TONE[tone], className].filter(Boolean).join(' ')
-  const innerClasses = [
-    WIDTH[width],
-    SPACING[spacing],
-    innerClassName,
-  ]
-    .filter(Boolean)
-    .join(' ')
+  const outerClasses = [TONE[tone], className].filter(Boolean).join(' ');
+  const innerClasses = [WIDTH[width], SPACING[spacing], innerClassName].filter(Boolean).join(' ');
 
   return (
     <BrandScope className={className}>
@@ -85,5 +79,5 @@ export default function PageSection({
         <div className={innerClasses}>{children}</div>
       </section>
     </BrandScope>
-  )
+  );
 }

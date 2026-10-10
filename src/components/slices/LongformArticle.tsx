@@ -1,29 +1,29 @@
-import type { ReactNode } from 'react'
-import ArticleListenControl from '../newsroom/article/ArticleListenControl'
-import ShareLinkButton from '../newsroom/article/ShareLinkButton'
-import ArticleToc, { type TocEntry } from './ArticleToc'
-import PillButton from './PillButton'
-import { ARTICLE_BLOCK } from './articleBlock'
+import type { ReactNode } from 'react';
+import ArticleListenControl from '../newsroom/article/ArticleListenControl';
+import ShareLinkButton from '../newsroom/article/ShareLinkButton';
+import ArticleToc, { type TocEntry } from './ArticleToc';
+import PillButton from './PillButton';
+import { ARTICLE_BLOCK } from './articleBlock';
 
 export interface LongformArticleProps {
-  title: string
-  eyebrow?: string
-  description?: string
+  title: string;
+  eyebrow?: string;
+  description?: string;
   /** Contents, in document order. Comes from the MDX module's own headings. */
-  entries: TocEntry[]
+  entries: TocEntry[];
   /** Shown above the title, separated by a dot: e.g. "March 25, 2026". */
-  date?: string
+  date?: string;
   /** e.g. "30 Minute Read". */
-  readingTime?: string
-  locale: string
-  shareUrl: string
-  pdfHref?: string
-  children: ReactNode
-  readingTools?: boolean
+  readingTime?: string;
+  locale: string;
+  shareUrl: string;
+  pdfHref?: string;
+  children: ReactNode;
+  readingTools?: boolean;
   /** Reserve room inside the hero when the global header overlays it. */
-  headerOverlay?: boolean
+  headerOverlay?: boolean;
   /** Closing band under the body. */
-  cta?: { title: string; label: string; href: string; external?: boolean }
+  cta?: { title: string; label: string; href: string; external?: boolean };
 }
 
 /**
@@ -65,23 +65,33 @@ export default function LongformArticle({
                 {readingTime && <span>{readingTime}</span>}
               </div>
             )}
-            <h1 className="mt-8 max-w-[24em] text-balance text-primary text-subheading-1">{title}</h1>
+            <h1 className="mt-8 max-w-[24em] text-balance text-primary text-subheading-1">
+              {title}
+            </h1>
             {description && (
-              <p className="mt-6 max-w-[46rem] text-balance text-foreground text-body-1">{description}</p>
+              <p className="mt-6 max-w-[46rem] text-balance text-foreground text-body-1">
+                {description}
+              </p>
             )}
           </div>
 
-          {readingTools ? <div className="col-span-full mt-16 mb-3 flex items-center justify-between gap-3 border-t border-border pt-3 lg:col-start-4 lg:col-span-6">
-            <ArticleListenControl
-              title={title}
-              resume={description ?? ''}
-              content=""
-              locale={locale}
-              contentRootId="company-article-body"
-              durationLabel={readingTime?.match(/\d+/)?.[0] ? `${readingTime.match(/\d+/)?.[0]}:00` : undefined}
-            />
-            <ShareLinkButton url={shareUrl} />
-          </div> : <div className="col-span-full h-16" />}
+          {readingTools ? (
+            <div className="col-span-full mt-16 mb-3 flex items-center justify-between gap-3 border-t border-border pt-3 lg:col-start-4 lg:col-span-6">
+              <ArticleListenControl
+                title={title}
+                resume={description ?? ''}
+                content=""
+                locale={locale}
+                contentRootId="company-article-body"
+                durationLabel={
+                  readingTime?.match(/\d+/)?.[0] ? `${readingTime.match(/\d+/)?.[0]}:00` : undefined
+                }
+              />
+              <ShareLinkButton url={shareUrl} />
+            </div>
+          ) : (
+            <div className="col-span-full h-16" />
+          )}
         </div>
       </section>
 
@@ -119,5 +129,5 @@ export default function LongformArticle({
         </div>
       </article>
     </div>
-  )
+  );
 }

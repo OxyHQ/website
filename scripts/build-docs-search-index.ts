@@ -42,7 +42,10 @@ function parseFrontMatter(source: string): { data: FrontMatter; body: string } {
     const colon = line.indexOf(':');
     if (colon < 0) continue;
     const key = line.slice(0, colon).trim();
-    const val = line.slice(colon + 1).trim().replace(/^['"]|['"]$/g, '');
+    const val = line
+      .slice(colon + 1)
+      .trim()
+      .replace(/^['"]|['"]$/g, '');
     if (key === 'title' || key === 'description') data[key] = val;
   }
   return { data, body };
@@ -179,9 +182,10 @@ async function* walkMdxFiles(root: string): AsyncGenerator<string> {
     // Skip locale variants — `welcome.es.mdx` matches; `welcome.mdx` does not.
     if (/\.[a-z]{2}\.mdx$/.test(entry.name)) continue;
     // Node 22 gives entries with `parentPath`; older give `path`.
-    const parent = (entry as { parentPath?: string; path?: string }).parentPath
-      ?? (entry as { parentPath?: string; path?: string }).path
-      ?? root;
+    const parent =
+      (entry as { parentPath?: string; path?: string }).parentPath ??
+      (entry as { parentPath?: string; path?: string }).path ??
+      root;
     const absolute = path.join(parent, entry.name);
     yield path.relative(root, absolute);
   }
@@ -262,13 +266,18 @@ async function indexNewsroom(): Promise<number> {
   try {
     const res = await fetch(NEWSROOM_API);
     if (!res.ok) {
-      console.warn(`[build-docs-search-index] newsroom API returned ${res.status} — skipping blog.`);
+      console.warn(
+        `[build-docs-search-index] newsroom API returned ${res.status} — skipping blog.`,
+      );
       return 0;
     }
     const data = (await res.json()) as { posts?: NewsroomPost[] };
     posts = (data.posts ?? []).filter(isIndexablePost);
   } catch (err) {
-    console.warn('[build-docs-search-index] newsroom fetch failed — skipping blog:', (err as Error).message);
+    console.warn(
+      '[build-docs-search-index] newsroom fetch failed — skipping blog:',
+      (err as Error).message,
+    );
     return 0;
   }
   let written = 0;
@@ -341,7 +350,9 @@ async function main(): Promise<void> {
   }
   // Newsroom (blog) — CMS content fetched at build time, not MDX on disk.
   const newsroomWritten = await indexNewsroom();
-  console.error(`[build-docs-search-index] wrote ${newsroomWritten} Newsroom posts to dist/newsroom-content/.`);
+  console.error(
+    `[build-docs-search-index] wrote ${newsroomWritten} Newsroom posts to dist/newsroom-content/.`,
+  );
   total += newsroomWritten;
   // Sanity check: walk what we just wrote.
   const written = await readdir(OUT_DIR, { recursive: true });

@@ -1,6 +1,6 @@
-import { Suspense, createElement } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
-import { bloomDemos, getBloomDemo } from '../content/bloom-demos/registry'
+import { Suspense, createElement } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { bloomDemos, getBloomDemo } from '../content/bloom-demos/registry';
 
 /**
  * One Bloom demo, alone on a chrome-free canvas, at
@@ -32,10 +32,10 @@ import { bloomDemos, getBloomDemo } from '../content/bloom-demos/registry'
  * the sitemap.
  */
 export default function BloomDemoIsolationPage() {
-  const { name } = useParams<{ name: string }>()
-  const [searchParams] = useSearchParams()
-  const mode: 'light' | 'dark' = searchParams.get('theme') === 'dark' ? 'dark' : 'light'
-  const demo = name ? getBloomDemo(name) : undefined
+  const { name } = useParams<{ name: string }>();
+  const [searchParams] = useSearchParams();
+  const mode: 'light' | 'dark' = searchParams.get('theme') === 'dark' ? 'dark' : 'light';
+  const demo = name ? getBloomDemo(name) : undefined;
 
   if (!name) {
     return (
@@ -46,7 +46,7 @@ export default function BloomDemoIsolationPage() {
           </li>
         ))}
       </ul>
-    )
+    );
   }
 
   return (
@@ -69,5 +69,5 @@ export default function BloomDemoIsolationPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,21 +1,21 @@
-import { type ReactNode } from 'react'
-import { FaqList } from '../sections/FaqSection'
-import UnderlineLink from './UnderlineLink'
+import { type ReactNode } from 'react';
+import { FaqList } from '../sections/FaqSection';
+import UnderlineLink from './UnderlineLink';
 
 export interface FaqItem {
-  question: string
-  answer: ReactNode
+  question: string;
+  answer: ReactNode;
 }
 
 interface FaqAccordionProps {
-  items: FaqItem[]
-  title?: string
-  footerLink?: { label: string; href: string; external?: boolean }
+  items: FaqItem[];
+  title?: string;
+  footerLink?: { label: string; href: string; external?: boolean };
 }
 
 /** Answer paragraph — the block's own rhythm, with the last one flush to the panel. */
 export function FaqParagraph({ children }: { children: ReactNode }) {
-  return <p className="mb-4 text-gray-a1 last-of-type:mb-0 text-b3">{children}</p>
+  return <p className="mb-4 text-gray-a1 last-of-type:mb-0 text-b3">{children}</p>;
 }
 
 /**
@@ -33,7 +33,7 @@ export function FaqQuestions({ items, idPrefix }: { items: readonly FaqItem[]; i
       questionClassName="font-display text-wrap text-gray-a1 max-w-[14em] md:max-w-[80%] lg:max-w-[70%] 2xl:max-w-[60%] text-b1"
       answerClassName="max-w-225 pb-6 w-full font-display text-gray-a1 text-b3"
     />
-  )
+  );
 }
 
 /** Expandable question list. Answers accept rich content, not just a string. */
@@ -50,5 +50,5 @@ export default function FaqAccordion({ items, title = 'FAQ', footerLink }: FaqAc
         </div>
       )}
     </section>
-  )
+  );
 }

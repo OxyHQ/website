@@ -1,10 +1,10 @@
-import { Link } from '../../../lib/navigation'
-import { motion } from 'framer-motion'
-import Button from '../../ui/Button'
-import { fc } from '../../../lib/faircoin-links'
+import { Link } from '../../../lib/navigation';
+import { motion } from 'framer-motion';
+import Button from '../../ui/Button';
+import { fc } from '../../../lib/faircoin-links';
 
-const FAIRCOIN_REPO_URL = 'https://github.com/FairCoinOfficial/FairCoin'
-const TELEGRAM_URL = 'https://t.me/FairCoin_'
+const FAIRCOIN_REPO_URL = 'https://github.com/FairCoinOfficial/FairCoin';
+const TELEGRAM_URL = 'https://t.me/FairCoin_';
 
 export default function CtaSection() {
   return (
@@ -29,8 +29,8 @@ export default function CtaSection() {
             </span>
           </h2>
           <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground sm:text-xl">
-            Run a masternode. Stake FAIR. File an issue. Translate the wallet.
-            Or just use FairCoin and tell someone about it.
+            Run a masternode. Stake FAIR. File an issue. Translate the wallet. Or just use FairCoin
+            and tell someone about it.
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
@@ -45,12 +45,7 @@ export default function CtaSection() {
             >
               Run a masternode
             </Button>
-            <Button
-              variant="ghost"
-              href={TELEGRAM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Button variant="ghost" href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">
               Join the community
             </Button>
           </div>
@@ -64,5 +59,5 @@ export default function CtaSection() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

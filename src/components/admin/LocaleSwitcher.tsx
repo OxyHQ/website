@@ -2,23 +2,28 @@ import {
   SegmentedControl,
   SegmentedControlItem,
   SegmentedControlItemText,
-} from '@oxy.so/bloom/segmented-control'
-import { useLocales } from '../../api/hooks'
+} from '@oxy.so/bloom/segmented-control';
+import { useLocales } from '../../api/hooks';
 
 export default function LocaleSwitcher({
   activeLocale,
   onLocaleChange,
 }: {
-  activeLocale: string
-  onLocaleChange: (code: string) => void
+  activeLocale: string;
+  onLocaleChange: (code: string) => void;
 }) {
-  const { data: locales } = useLocales()
+  const { data: locales } = useLocales();
 
-  if (!locales || locales.length <= 1) return null
+  if (!locales || locales.length <= 1) return null;
 
   return (
     <div className="mb-6 max-w-full overflow-x-auto">
-      <SegmentedControl label="Locale" type="tabs" value={activeLocale} onValueChange={onLocaleChange}>
+      <SegmentedControl
+        label="Locale"
+        type="tabs"
+        value={activeLocale}
+        onValueChange={onLocaleChange}
+      >
         {locales.map((locale) => (
           <SegmentedControlItem key={locale.code} value={locale.code}>
             <SegmentedControlItemText>
@@ -28,5 +33,5 @@ export default function LocaleSwitcher({
         ))}
       </SegmentedControl>
     </div>
-  )
+  );
 }

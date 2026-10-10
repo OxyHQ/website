@@ -15,12 +15,7 @@ export default function DotPattern({ className = '', id = 'dot-pattern' }: DotPa
       }}
     >
       <defs>
-        <pattern
-          id={id}
-          width="10"
-          height="10"
-          patternUnits="userSpaceOnUse"
-        >
+        <pattern id={id} width="10" height="10" patternUnits="userSpaceOnUse">
           <rect x="5.5" y="5.5" width="1" height="1" fill="currentColor" />
         </pattern>
       </defs>

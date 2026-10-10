@@ -27,87 +27,87 @@
  * validate:bloom-live-scope` runs both.
  */
 
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs';
 
 import {
   buildBloomLiveScope,
   SCOPE_PATH,
   type BuildOptions,
   type BuildResult,
-} from './generate-bloom-live-scope'
+} from './generate-bloom-live-scope';
 
 export interface ValidateOptions extends BuildOptions {
   /** The committed module to check. Defaults to the repository's. */
-  scopePath?: string
+  scopePath?: string;
 }
 
 export interface ValidateResult {
-  failures: string[]
+  failures: string[];
   /** The rebuilt scope, or `null` when the rebuild itself failed. */
-  built: BuildResult | null
+  built: BuildResult | null;
 }
 
-const REGENERATE = 'Run `bun run generate:bloom-live-scope` and commit the result.'
+const REGENERATE = 'Run `bun run generate:bloom-live-scope` and commit the result.';
 
 /** The first line at which two files disagree, or `null` if they do not. */
 function firstDifference(
   committed: string,
   rebuilt: string,
 ): { line: number; committed: string; rebuilt: string } | null {
-  const left = committed.split('\n')
-  const right = rebuilt.split('\n')
+  const left = committed.split('\n');
+  const right = rebuilt.split('\n');
   for (let index = 0; index < Math.max(left.length, right.length); index += 1) {
     if (left[index] !== right[index]) {
       return {
         line: index + 1,
         committed: left[index] ?? '(end of file)',
         rebuilt: right[index] ?? '(end of file)',
-      }
+      };
     }
   }
-  return null
+  return null;
 }
 
 export function validateBloomLiveScope(options: ValidateOptions = {}): ValidateResult {
-  const scopePath = options.scopePath ?? SCOPE_PATH
+  const scopePath = options.scopePath ?? SCOPE_PATH;
 
-  let built: BuildResult
+  let built: BuildResult;
   try {
-    built = buildBloomLiveScope(options)
+    built = buildBloomLiveScope(options);
   } catch (error) {
-    return { failures: [error instanceof Error ? error.message : String(error)], built: null }
+    return { failures: [error instanceof Error ? error.message : String(error)], built: null };
   }
 
   if (!existsSync(scopePath)) {
-    return { failures: [`${scopePath} does not exist.\n    ${REGENERATE}`], built }
+    return { failures: [`${scopePath} does not exist.\n    ${REGENERATE}`], built };
   }
 
-  const difference = firstDifference(readFileSync(scopePath, 'utf8'), built.scope)
-  if (!difference) return { failures: [], built }
+  const difference = firstDifference(readFileSync(scopePath, 'utf8'), built.scope);
+  if (!difference) return { failures: [], built };
 
   return {
     failures: [
-      `${scopePath} is stale — it does not match a rebuild from the demos.\n`
-      + `    First difference at line ${difference.line}:\n`
-      + `      committed: ${difference.committed.slice(0, 160)}\n`
-      + `      rebuilt:   ${difference.rebuilt.slice(0, 160)}\n`
-      + `    ${REGENERATE}`,
+      `${scopePath} is stale — it does not match a rebuild from the demos.\n` +
+        `    First difference at line ${difference.line}:\n` +
+        `      committed: ${difference.committed.slice(0, 160)}\n` +
+        `      rebuilt:   ${difference.rebuilt.slice(0, 160)}\n` +
+        `    ${REGENERATE}`,
     ],
     built,
-  }
+  };
 }
 
 if (import.meta.main) {
-  const { failures, built } = validateBloomLiveScope()
+  const { failures, built } = validateBloomLiveScope();
 
   if (failures.length > 0) {
-    console.error('Bloom playground scope check FAILED:\n')
-    for (const failure of failures) console.error(`  - ${failure}\n`)
-    process.exit(1)
+    console.error('Bloom playground scope check FAILED:\n');
+    for (const failure of failures) console.error(`  - ${failure}\n`);
+    process.exit(1);
   }
 
-  const { stats } = built as BuildResult
+  const { stats } = built as BuildResult;
   console.log(
     `Bloom playground scope check passed (${stats.specifiers} modules from ${stats.demos} demos).`,
-  )
+  );
 }

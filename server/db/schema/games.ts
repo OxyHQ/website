@@ -1,5 +1,5 @@
-import { boolean, index, integer, pgTable, text } from 'drizzle-orm/pg-core'
-import { objectId, timestamps } from './columns.js'
+import { boolean, index, integer, pgTable, text } from 'drizzle-orm/pg-core';
+import { objectId, timestamps } from './columns.js';
 
 /* ──────────────────────────────────────────────
  * The 404 page's memory game.
@@ -31,4 +31,4 @@ export const memoryGameRuns = pgTable(
   // Every read is "this user's runs, newest first", and `_id` ascends with
   // creation — so the index carries both the filter and the order.
   (table) => [index('memory_game_runs_user_idx').on(table.userId, table._id)],
-)
+);

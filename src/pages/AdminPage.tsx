@@ -1,40 +1,44 @@
-import { Routes, Route } from 'react-router-dom'
-import { Navigate } from '../lib/navigation'
-import { useAuth } from '@oxy.so/services/ui/client'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import AdminLayout from '../components/admin/AdminLayout'
-import SEO from '../components/SEO'
-import Button from '../components/ui/Button'
-import { useAdminAccess } from '../hooks/useAdminAccess'
-import SiteSettingsAdmin from '../components/admin/sections/SiteSettingsAdmin'
-import SeoAdmin from '../components/admin/sections/SeoAdmin'
-import HeroAdmin from '../components/admin/sections/HeroAdmin'
-import PagesAdmin from '../components/admin/sections/PagesAdmin'
-import ProductsAdmin from '../components/admin/sections/ProductsAdmin'
-import IncidentsAdmin from '../components/admin/sections/IncidentsAdmin'
-import CategoriesAdmin from '../components/admin/sections/CategoriesAdmin'
-import NewsroomAdmin from '../components/admin/sections/NewsroomAdmin'
-import CoursesAdmin from '../components/admin/sections/CoursesAdmin'
-import ResourcesAdmin from '../components/admin/sections/ResourcesAdmin'
-import HelpAdmin from '../components/admin/sections/HelpAdmin'
-import PricingAdmin from '../components/admin/sections/PricingAdmin'
-import TestimonialsAdmin from '../components/admin/sections/TestimonialsAdmin'
-import ChangelogAdmin from '../components/admin/sections/ChangelogAdmin'
-import TeamAdmin from '../components/admin/sections/TeamAdmin'
-import LocalesAdmin from '../components/admin/sections/LocalesAdmin'
-import BackupAdmin from '../components/admin/sections/BackupAdmin'
-import CommentsAdmin from '../components/admin/sections/CommentsAdmin'
-import FeaturesAdmin from '../components/admin/sections/FeaturesAdmin'
-import ReposAdmin from '../components/admin/sections/ReposAdmin'
-import BadgesAdmin from '../components/admin/sections/BadgesAdmin'
-import ReferralsAdmin from '../components/admin/sections/ReferralsAdmin'
-import MediaAdmin from '../components/admin/sections/MediaAdmin'
+import { Routes, Route } from 'react-router-dom';
+import { Navigate } from '../lib/navigation';
+import { useAuth } from '@oxy.so/services/ui/client';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import AdminLayout from '../components/admin/AdminLayout';
+import SEO from '../components/SEO';
+import Button from '../components/ui/Button';
+import { useAdminAccess } from '../hooks/useAdminAccess';
+import SiteSettingsAdmin from '../components/admin/sections/SiteSettingsAdmin';
+import SeoAdmin from '../components/admin/sections/SeoAdmin';
+import HeroAdmin from '../components/admin/sections/HeroAdmin';
+import PagesAdmin from '../components/admin/sections/PagesAdmin';
+import ProductsAdmin from '../components/admin/sections/ProductsAdmin';
+import IncidentsAdmin from '../components/admin/sections/IncidentsAdmin';
+import CategoriesAdmin from '../components/admin/sections/CategoriesAdmin';
+import NewsroomAdmin from '../components/admin/sections/NewsroomAdmin';
+import CoursesAdmin from '../components/admin/sections/CoursesAdmin';
+import ResourcesAdmin from '../components/admin/sections/ResourcesAdmin';
+import HelpAdmin from '../components/admin/sections/HelpAdmin';
+import PricingAdmin from '../components/admin/sections/PricingAdmin';
+import TestimonialsAdmin from '../components/admin/sections/TestimonialsAdmin';
+import ChangelogAdmin from '../components/admin/sections/ChangelogAdmin';
+import TeamAdmin from '../components/admin/sections/TeamAdmin';
+import LocalesAdmin from '../components/admin/sections/LocalesAdmin';
+import BackupAdmin from '../components/admin/sections/BackupAdmin';
+import CommentsAdmin from '../components/admin/sections/CommentsAdmin';
+import FeaturesAdmin from '../components/admin/sections/FeaturesAdmin';
+import ReposAdmin from '../components/admin/sections/ReposAdmin';
+import BadgesAdmin from '../components/admin/sections/BadgesAdmin';
+import ReferralsAdmin from '../components/admin/sections/ReferralsAdmin';
+import MediaAdmin from '../components/admin/sections/MediaAdmin';
 
 /** Shared chrome for the three non-admin outcomes below. */
-function AdminGateScreen({ overline, title, children }: {
-  overline: string
-  title: string
-  children?: React.ReactNode
+function AdminGateScreen({
+  overline,
+  title,
+  children,
+}: {
+  overline: string;
+  title: string;
+  children?: React.ReactNode;
 }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
@@ -45,12 +49,13 @@ function AdminGateScreen({ overline, title, children }: {
         {children}
       </div>
     </div>
-  )
+  );
 }
 
 export default function AdminPage() {
-  const { signIn } = useAuth()
-  const { isAdmin, isAuthenticated, userId, username, isPending, isError, refetch } = useAdminAccess()
+  const { signIn } = useAuth();
+  const { isAdmin, isAuthenticated, userId, username, isPending, isError, refetch } =
+    useAdminAccess();
 
   // Authorization is the server's answer, never a guess made here — see
   // `useAdminAccess`. Each outcome below is a distinct, recoverable state:
@@ -65,7 +70,7 @@ export default function AdminPage() {
         <Skeleton.Box width={220} height={12} borderRadius={4} />
         <span className="sr-only">Checking admin access…</span>
       </div>
-    )
+    );
   }
 
   if (isError) {
@@ -75,10 +80,12 @@ export default function AdminPage() {
           The website API didn't answer. Your session is fine — this is a connection problem.
         </p>
         <div className="mt-6 flex justify-center">
-          <Button variant="primary" onClick={() => void refetch()}>Try again</Button>
+          <Button variant="primary" onClick={() => void refetch()}>
+            Try again
+          </Button>
         </div>
       </AdminGateScreen>
-    )
+    );
   }
 
   if (!isAuthenticated) {
@@ -88,10 +95,12 @@ export default function AdminPage() {
           Administration requires an Oxy account with admin access.
         </p>
         <div className="mt-6 flex justify-center">
-          <Button variant="primary" onClick={() => signIn()}>Sign in</Button>
+          <Button variant="primary" onClick={() => signIn()}>
+            Sign in
+          </Button>
         </div>
       </AdminGateScreen>
-    )
+    );
   }
 
   if (!isAdmin) {
@@ -109,39 +118,202 @@ export default function AdminPage() {
           </p>
         )}
         <div className="mt-6 flex justify-center">
-          <Button variant="outline" href="/">Go to homepage</Button>
+          <Button variant="outline" href="/">
+            Go to homepage
+          </Button>
         </div>
       </AdminGateScreen>
-    )
+    );
   }
 
   return (
     <Routes>
       <Route index element={<Navigate to="settings" replace />} />
-      <Route path="settings" element={<AdminLayout><SiteSettingsAdmin /></AdminLayout>} />
-      <Route path="seo" element={<AdminLayout><SeoAdmin /></AdminLayout>} />
-      <Route path="hero" element={<AdminLayout><HeroAdmin /></AdminLayout>} />
-      <Route path="pages" element={<AdminLayout><PagesAdmin /></AdminLayout>} />
-      <Route path="products" element={<AdminLayout><ProductsAdmin /></AdminLayout>} />
-      <Route path="incidents" element={<AdminLayout><IncidentsAdmin /></AdminLayout>} />
-      <Route path="categories" element={<AdminLayout><CategoriesAdmin /></AdminLayout>} />
-      <Route path="newsroom" element={<AdminLayout><NewsroomAdmin /></AdminLayout>} />
-      <Route path="courses" element={<AdminLayout><CoursesAdmin /></AdminLayout>} />
-      <Route path="resources" element={<AdminLayout><ResourcesAdmin /></AdminLayout>} />
-      <Route path="help" element={<AdminLayout><HelpAdmin /></AdminLayout>} />
-      <Route path="pricing" element={<AdminLayout><PricingAdmin /></AdminLayout>} />
-      <Route path="testimonials" element={<AdminLayout><TestimonialsAdmin /></AdminLayout>} />
-      <Route path="changelog" element={<AdminLayout><ChangelogAdmin /></AdminLayout>} />
-      <Route path="team" element={<AdminLayout><TeamAdmin /></AdminLayout>} />
-      <Route path="locales" element={<AdminLayout><LocalesAdmin /></AdminLayout>} />
-      <Route path="backup" element={<AdminLayout><BackupAdmin /></AdminLayout>} />
-      <Route path="comments" element={<AdminLayout><CommentsAdmin /></AdminLayout>} />
-      <Route path="features" element={<AdminLayout><FeaturesAdmin /></AdminLayout>} />
-      <Route path="repos" element={<AdminLayout><ReposAdmin /></AdminLayout>} />
-      <Route path="badges" element={<AdminLayout><BadgesAdmin /></AdminLayout>} />
-      <Route path="referrals" element={<AdminLayout><ReferralsAdmin /></AdminLayout>} />
-      <Route path="media" element={<AdminLayout><MediaAdmin /></AdminLayout>} />
+      <Route
+        path="settings"
+        element={
+          <AdminLayout>
+            <SiteSettingsAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="seo"
+        element={
+          <AdminLayout>
+            <SeoAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="hero"
+        element={
+          <AdminLayout>
+            <HeroAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="pages"
+        element={
+          <AdminLayout>
+            <PagesAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="products"
+        element={
+          <AdminLayout>
+            <ProductsAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="incidents"
+        element={
+          <AdminLayout>
+            <IncidentsAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="categories"
+        element={
+          <AdminLayout>
+            <CategoriesAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="newsroom"
+        element={
+          <AdminLayout>
+            <NewsroomAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="courses"
+        element={
+          <AdminLayout>
+            <CoursesAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="resources"
+        element={
+          <AdminLayout>
+            <ResourcesAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="help"
+        element={
+          <AdminLayout>
+            <HelpAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="pricing"
+        element={
+          <AdminLayout>
+            <PricingAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="testimonials"
+        element={
+          <AdminLayout>
+            <TestimonialsAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="changelog"
+        element={
+          <AdminLayout>
+            <ChangelogAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="team"
+        element={
+          <AdminLayout>
+            <TeamAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="locales"
+        element={
+          <AdminLayout>
+            <LocalesAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="backup"
+        element={
+          <AdminLayout>
+            <BackupAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="comments"
+        element={
+          <AdminLayout>
+            <CommentsAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="features"
+        element={
+          <AdminLayout>
+            <FeaturesAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="repos"
+        element={
+          <AdminLayout>
+            <ReposAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="badges"
+        element={
+          <AdminLayout>
+            <BadgesAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="referrals"
+        element={
+          <AdminLayout>
+            <ReferralsAdmin />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="media"
+        element={
+          <AdminLayout>
+            <MediaAdmin />
+          </AdminLayout>
+        }
+      />
       <Route path="*" element={<Navigate to="settings" replace />} />
     </Routes>
-  )
+  );
 }

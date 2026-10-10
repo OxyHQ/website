@@ -1,126 +1,135 @@
-import { mkdirSync } from 'node:fs'
-import { join } from 'node:path'
-import { chromium, type Page } from 'playwright'
+import { mkdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { chromium, type Page } from 'playwright';
 
-const root = join(import.meta.dir, '..')
-const output = join(root, 'review-artifacts')
-mkdirSync(output, { recursive: true })
-const reservation = Bun.serve({ port: 0, fetch: () => new Response('reserved') })
-const port = reservation.port
-reservation.stop(true)
+const root = join(import.meta.dir, '..');
+const output = join(root, 'review-artifacts');
+mkdirSync(output, { recursive: true });
+const reservation = Bun.serve({ port: 0, fetch: () => new Response('reserved') });
+const port = reservation.port;
+reservation.stop(true);
 const preview = Bun.spawn(
   ['bunx', 'vite', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'],
   { cwd: root, stdout: 'ignore', stderr: 'ignore' },
-)
-const origin = `http://127.0.0.1:${port}`
+);
+const origin = `http://127.0.0.1:${port}`;
 function invariant(value: unknown, message: string): asserts value {
-  if (!value) throw new Error(message)
+  if (!value) throw new Error(message);
 }
-let ready = false
+let ready = false;
 for (let i = 0; i < 50; i++) {
   try {
     if ((await fetch(origin)).ok) {
-      ready = true
-      break
+      ready = true;
+      break;
     }
   } catch {
     /* waiting for preview */
   }
-  await Bun.sleep(100)
+  await Bun.sleep(100);
 }
-invariant(ready, 'Preview failed to start')
-const browser = await chromium.launch({ headless: true })
+invariant(ready, 'Preview failed to start');
+const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({
   viewport: { width: 1440, height: 1000 },
   reducedMotion: 'reduce',
-})
-const page = await context.newPage()
-const errors: string[] = []
-page.on('pageerror', (e) => errors.push(e.message))
+});
+const page = await context.newPage();
+const errors: string[] = [];
+page.on('pageerror', (e) => errors.push(e.message));
 async function capture(selector: string, name: string) {
-  const element = page.locator(selector)
-  await element.scrollIntoViewIfNeeded()
-  await element.screenshot({ path: join(output, name), animations: 'disabled' })
+  const element = page.locator(selector);
+  await element.scrollIntoViewIfNeeded();
+  await element.screenshot({ path: join(output, name), animations: 'disabled' });
 }
 async function assertFits(p: Page, path: string) {
   const overflow = await p.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-  )
-  invariant(overflow <= 1, `${path}: horizontal overflow ${overflow}px`)
+  );
+  invariant(overflow <= 1, `${path}: horizontal overflow ${overflow}px`);
 }
 try {
-  await page.goto(`${origin}/brand/`)
-  await page.getByRole('heading', { level: 1, name: 'Technology belongs to people.' }).waitFor()
-  await page.evaluate(() => document.fonts.ready)
-  await capture('.brand-cover', 'brand-cover-desktop.png')
-  await capture('.brand-identity-boards', 'brand-identity.png')
-  await capture('.brand-colour-composition', 'brand-colour.png')
-  await capture('#applications', 'brand-applications.png')
-  await page.getByRole('button', { name: 'Orange recipe', exact: true }).click()
+  await page.goto(`${origin}/brand/`);
+  await page.getByRole('heading', { level: 1, name: 'Technology belongs to people.' }).waitFor();
+  await page.evaluate(() => document.fonts.ready);
+  await capture('.brand-cover', 'brand-cover-desktop.png');
+  await capture('.brand-identity-boards', 'brand-identity.png');
+  await capture('.brand-colour-composition', 'brand-colour.png');
+  await capture('#applications', 'brand-applications.png');
+  await page.getByRole('button', { name: 'Orange recipe', exact: true }).click();
   await page
     .getByRole('radiogroup', { name: 'Colour studio appearance', exact: true })
     .getByRole('radio', { name: 'Dark', exact: true })
-    .click()
+    .click();
   invariant(
     (await page.getByTestId('brand-colour-composition').getAttribute('data-recipe')) === 'orange',
     'Recipe did not change',
-  )
+  );
   invariant(
     (await page.getByTestId('brand-colour-composition').getAttribute('data-mode')) === 'dark',
     'Appearance did not change',
-  )
+  );
   invariant(
-    (await page.getByRole('link', { name: 'Explore colour recipes', exact: true }).getAttribute('href')) ===
-      '/developers/docs/bloom/color-system/',
+    (await page
+      .getByRole('link', { name: 'Explore colour recipes', exact: true })
+      .getAttribute('href')) === '/developers/docs/bloom/color-system/',
     'Colour recipes link must target the current Bloom colour documentation',
-  )
-  await capture('.brand-colour-composition', 'brand-colour-dark.png')
-  await page.getByLabel('Try a headline', { exact: true }).fill('An open world.')
+  );
+  await capture('.brand-colour-composition', 'brand-colour-dark.png');
+  await page.getByLabel('Try a headline', { exact: true }).fill('An open world.');
   invariant(
     (await page.locator('.brand-type-specimen').innerText()) === 'An open world.',
     'Type specimen did not update',
-  )
-  await page.getByLabel('Type size', { exact: true }).press('End')
+  );
+  await page.getByLabel('Type size', { exact: true }).press('End');
   invariant(
     (await page.locator('.brand-type-specimen').evaluate((el) => getComputedStyle(el).fontSize)) ===
       '120px',
     'Type size control did not reach the selected size',
-  )
-  await page.getByRole('button', { name: 'Support', exact: true }).click()
+  );
+  await page.getByRole('button', { name: 'Support', exact: true }).click();
   await page
     .getByRole('heading', { name: 'Your message has not been sent.', exact: true })
-    .waitFor()
-  await page.getByRole('button', { name: 'What changes when I open this?' }).click()
+    .waitFor();
+  await page.getByRole('button', { name: 'What changes when I open this?' }).click();
   // Bloom's AccordionContent owns the panel's id, so the answer is found by its own class.
   invariant(
     await page
       .locator('.brand-disclosure-answer')
       .waitFor({ state: 'visible', timeout: 5000 })
-      .then(() => true, () => false),
+      .then(
+        () => true,
+        () => false,
+      ),
     'Motion disclosure did not open',
-  )
-  await capture('#voice', 'brand-voice.png')
-  await page.getByRole('link', { name: 'Explore colour recipes', exact: true }).click()
-  await page.waitForURL(`${origin}/developers/docs/bloom/color-system/`)
-  await page.getByRole('heading', { level: 1, name: 'Color system playground', exact: true }).waitFor()
-  invariant(new URL(page.url()).search === '', 'Colour documentation link unexpectedly carries playground state')
+  );
+  await capture('#voice', 'brand-voice.png');
+  await page.getByRole('link', { name: 'Explore colour recipes', exact: true }).click();
+  await page.waitForURL(`${origin}/developers/docs/bloom/color-system/`);
+  await page
+    .getByRole('heading', { level: 1, name: 'Color system playground', exact: true })
+    .waitFor();
+  invariant(
+    new URL(page.url()).search === '',
+    'Colour documentation link unexpectedly carries playground state',
+  );
   for (const width of [390, 768, 1440, 1920]) {
-    await page.setViewportSize({ width, height: 1000 })
-    await page.goto(`${origin}/brand/`)
-    await page.getByRole('heading', { level: 1 }).waitFor()
-    await assertFits(page, `brand ${width}`)
-    if (width === 390) await capture('.brand-cover', 'brand-cover-mobile.png')
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto(`${origin}/brand/`);
+    await page.getByRole('heading', { level: 1 }).waitFor();
+    await assertFits(page, `brand ${width}`);
+    if (width === 390) await capture('.brand-cover', 'brand-cover-mobile.png');
   }
-  invariant(errors.length === 0, `Brand errors: ${errors.join('; ')}`)
+  invariant(errors.length === 0, `Brand errors: ${errors.join('; ')}`);
   // Exercise the original moving Homiio wheel as well as its static fallback.
-  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
   for (const width of [390, 1440]) {
-    await page.setViewportSize({ width, height: 1000 })
-    await page.goto(`${origin}/homiio/`)
-    await page.getByRole('heading', { level: 1 }).waitFor()
-    await page.evaluate(() => document.fonts.ready)
-    await assertFits(page, `homiio ${width}`)
-    await page.screenshot({ path: join(output, `homiio-${width}.png`) })
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto(`${origin}/homiio/`);
+    await page.getByRole('heading', { level: 1 }).waitFor();
+    await page.evaluate(() => document.fonts.ready);
+    await assertFits(page, `homiio ${width}`);
+    await page.screenshot({ path: join(output, `homiio-${width}.png`) });
     for (const [index, heading] of [
       'Transparent listings',
       'Roommate harmony',
@@ -128,30 +137,30 @@ try {
     ].entries()) {
       await page
         .getByRole('heading', { name: heading, exact: true })
-        .evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }))
+        .evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
       await page.evaluate(
         () =>
           new Promise<void>((resolve) =>
             requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
           ),
-      )
-      await page.screenshot({ path: join(output, `homiio-scene-${index}-${width}.png`) })
+      );
+      await page.screenshot({ path: join(output, `homiio-scene-${index}-${width}.png`) });
     }
   }
-  await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto(`${origin}/homiio/`)
-  await page.getByRole('heading', { name: 'Transparent listings', exact: true }).waitFor()
-  invariant(errors.length === 0, `Page errors: ${errors.join('; ')}`)
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(`${origin}/homiio/`);
+  await page.getByRole('heading', { name: 'Transparent listings', exact: true }).waitFor();
+  invariant(errors.length === 0, `Page errors: ${errors.join('; ')}`);
   console.log(
     '[website-review] brand controls, four widths, Homiio motion/fallback and screenshots passed',
-  )
+  );
 } catch (error) {
   await page
     .screenshot({ path: join(output, 'failure.png'), fullPage: true })
-    .catch(() => undefined)
-  throw error
+    .catch(() => undefined);
+  throw error;
 } finally {
-  await browser.close()
-  preview.kill()
-  await preview.exited
+  await browser.close();
+  preview.kill();
+  await preview.exited;
 }

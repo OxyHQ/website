@@ -1,22 +1,28 @@
-import { useState } from 'react'
-import { useMediaItem, type MediaItem } from '../../api/hooks'
-import { Button } from '@oxy.so/bloom/button'
-import MediaPickerDialog from './MediaPickerDialog'
+import { useState } from 'react';
+import { useMediaItem, type MediaItem } from '../../api/hooks';
+import { Button } from '@oxy.so/bloom/button';
+import MediaPickerDialog from './MediaPickerDialog';
 
 interface MediaPickerProps {
-  value?: string  // Media document ID
-  onChange: (mediaId: string | undefined, media?: MediaItem) => void
-  folder?: string
-  accept?: string
-  label?: string
+  value?: string; // Media document ID
+  onChange: (mediaId: string | undefined, media?: MediaItem) => void;
+  folder?: string;
+  accept?: string;
+  label?: string;
 }
 
-export default function MediaPicker({ value, onChange, folder = 'images', accept, label }: MediaPickerProps) {
-  const [open, setOpen] = useState(false)
-  const { data: media } = useMediaItem(value || '')
+export default function MediaPicker({
+  value,
+  onChange,
+  folder = 'images',
+  accept,
+  label,
+}: MediaPickerProps) {
+  const [open, setOpen] = useState(false);
+  const { data: media } = useMediaItem(value || '');
 
-  const thumbUrl = media?.thumbnails?.md || media?.thumbnails?.lg || media?.url
-  const isImage = media?.mimeType?.startsWith('image/')
+  const thumbUrl = media?.thumbnails?.md || media?.thumbnails?.lg || media?.url;
+  const isImage = media?.mimeType?.startsWith('image/');
 
   return (
     <div>
@@ -26,7 +32,11 @@ export default function MediaPicker({ value, onChange, folder = 'images', accept
         <div className="flex items-start gap-4">
           <div className="relative size-24 shrink-0 overflow-hidden rounded-lg border border-border bg-surface">
             {isImage && thumbUrl ? (
-              <img src={thumbUrl} alt={media.alt || media.filename} className="size-full object-cover" />
+              <img
+                src={thumbUrl}
+                alt={media.alt || media.filename}
+                className="size-full object-cover"
+              />
             ) : (
               <div className="flex size-full items-center justify-center text-xs text-muted-foreground">
                 {media.mimeType?.split('/')[1]?.toUpperCase() || 'FILE'}
@@ -36,10 +46,20 @@ export default function MediaPicker({ value, onChange, folder = 'images', accept
           <div className="flex flex-col gap-2">
             <p className="text-sm text-muted-foreground truncate max-w-[200px]">{media.filename}</p>
             <div className="flex gap-2">
-              <Button appearance="outline" tone="neutral" onPress={() => setOpen(true)} style={{ paddingBlock: 6, paddingInline: 12 }}>
+              <Button
+                appearance="outline"
+                tone="neutral"
+                onPress={() => setOpen(true)}
+                style={{ paddingBlock: 6, paddingInline: 12 }}
+              >
                 <span style={{ fontSize: 13 }}>Change</span>
               </Button>
-              <Button appearance="outline" tone="neutral" onPress={() => onChange(undefined)} style={{ paddingBlock: 6, paddingInline: 12 }}>
+              <Button
+                appearance="outline"
+                tone="neutral"
+                onPress={() => onChange(undefined)}
+                style={{ paddingBlock: 6, paddingInline: 12 }}
+              >
                 <span style={{ fontSize: 13 }}>Remove</span>
               </Button>
             </div>
@@ -57,12 +77,15 @@ export default function MediaPicker({ value, onChange, folder = 'images', accept
 
       {open && (
         <MediaPickerDialog
-          onSelect={(media) => { onChange(media._id, media); setOpen(false) }}
+          onSelect={(media) => {
+            onChange(media._id, media);
+            setOpen(false);
+          }}
           onClose={() => setOpen(false)}
           folder={folder}
           accept={accept}
         />
       )}
     </div>
-  )
+  );
 }

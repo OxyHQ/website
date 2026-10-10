@@ -1,5 +1,5 @@
-import InitiativeContent from '../components/initiative/InitiativeContent'
-import PageShell from '../components/layout/PageShell'
+import InitiativeContent from '../components/initiative/InitiativeContent';
+import PageShell from '../components/layout/PageShell';
 
 export default function InitiativePage() {
   return (
@@ -15,5 +15,5 @@ export default function InitiativePage() {
     >
       <InitiativeContent />
     </PageShell>
-  )
+  );
 }

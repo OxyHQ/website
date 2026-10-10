@@ -1,5 +1,5 @@
-import { z } from 'zod'
-import { config } from '../config.js'
+import { z } from 'zod';
+import { config } from '../config.js';
 
 /**
  * Priority tiers for the feature board.
@@ -17,17 +17,17 @@ import { config } from '../config.js'
  */
 export interface PriorityTier {
   /** Stable identifier exposed in the API and used by the SPA. */
-  key: string
+  key: string;
   /** GitHub label name. Identical in every tracked repo, in every org. */
-  label: string
+  label: string;
   /** GitHub label colour, six hex digits, no leading `#`. */
-  color: string
+  color: string;
   /** GitHub label description. */
-  description: string
+  description: string;
   /** Combined votes at which an issue enters this tier. */
-  enterAt: number
+  enterAt: number;
   /** Combined votes below which an issue leaves this tier. */
-  exitAt: number
+  exitAt: number;
 }
 
 /**
@@ -60,7 +60,7 @@ const DEFAULT_PRIORITY_TIERS: PriorityTier[] = [
     enterAt: 50,
     exitAt: 38,
   },
-]
+];
 
 const tierSchema = z.object({
   key: z.string().min(1),
@@ -69,9 +69,9 @@ const tierSchema = z.object({
   description: z.string().min(1),
   enterAt: z.number().int().positive(),
   exitAt: z.number().int().nonnegative(),
-})
+});
 
-const tierListSchema = z.array(tierSchema).min(1)
+const tierListSchema = z.array(tierSchema).min(1);
 
 /**
  * A tier table is only usable if every tier can actually be entered and left.
@@ -79,24 +79,28 @@ const tierListSchema = z.array(tierSchema).min(1)
  * tiers overlap and an issue oscillates between them forever.
  */
 function assertUsable(tiers: PriorityTier[]): void {
-  let previousEnterAt = 0
+  let previousEnterAt = 0;
   for (const tier of tiers) {
     if (tier.exitAt >= tier.enterAt) {
-      throw new Error(`priority tier "${tier.key}": exitAt (${tier.exitAt}) must be below enterAt (${tier.enterAt})`)
+      throw new Error(
+        `priority tier "${tier.key}": exitAt (${tier.exitAt}) must be below enterAt (${tier.enterAt})`,
+      );
     }
     if (tier.enterAt <= previousEnterAt) {
-      throw new Error(`priority tier "${tier.key}": enterAt (${tier.enterAt}) must be above the previous tier's enterAt (${previousEnterAt})`)
+      throw new Error(
+        `priority tier "${tier.key}": enterAt (${tier.enterAt}) must be above the previous tier's enterAt (${previousEnterAt})`,
+      );
     }
-    previousEnterAt = tier.enterAt
+    previousEnterAt = tier.enterAt;
   }
 
-  const labels = new Set(tiers.map((tier) => tier.label.toLowerCase()))
+  const labels = new Set(tiers.map((tier) => tier.label.toLowerCase()));
   if (labels.size !== tiers.length) {
-    throw new Error('priority tiers must not share a label')
+    throw new Error('priority tiers must not share a label');
   }
-  const keys = new Set(tiers.map((tier) => tier.key.toLowerCase()))
+  const keys = new Set(tiers.map((tier) => tier.key.toLowerCase()));
   if (keys.size !== tiers.length) {
-    throw new Error('priority tiers must not share a key')
+    throw new Error('priority tiers must not share a key');
   }
 }
 
@@ -109,28 +113,30 @@ function assertUsable(tiers: PriorityTier[]): void {
  */
 function resolvePriorityTiers(raw: string): PriorityTier[] {
   if (!raw.trim()) {
-    assertUsable(DEFAULT_PRIORITY_TIERS)
-    return DEFAULT_PRIORITY_TIERS
+    assertUsable(DEFAULT_PRIORITY_TIERS);
+    return DEFAULT_PRIORITY_TIERS;
   }
 
-  let parsed: unknown
+  let parsed: unknown;
   try {
-    parsed = JSON.parse(raw)
+    parsed = JSON.parse(raw);
   } catch {
-    throw new Error('FEATURE_PRIORITY_TIERS is not valid JSON')
+    throw new Error('FEATURE_PRIORITY_TIERS is not valid JSON');
   }
 
-  const result = tierListSchema.safeParse(parsed)
+  const result = tierListSchema.safeParse(parsed);
   if (!result.success) {
-    throw new Error(`FEATURE_PRIORITY_TIERS is invalid: ${result.error.issues.map((issue) => `${issue.path.join('.')} ${issue.message}`).join('; ')}`)
+    throw new Error(
+      `FEATURE_PRIORITY_TIERS is invalid: ${result.error.issues.map((issue) => `${issue.path.join('.')} ${issue.message}`).join('; ')}`,
+    );
   }
 
-  const tiers = [...result.data].sort((a, b) => a.enterAt - b.enterAt)
-  assertUsable(tiers)
-  return tiers
+  const tiers = [...result.data].sort((a, b) => a.enterAt - b.enterAt);
+  assertUsable(tiers);
+  return tiers;
 }
 
-let cachedTiers: PriorityTier[] | null = null
+let cachedTiers: PriorityTier[] | null = null;
 
 /**
  * The tier table this process runs with.
@@ -140,6 +146,6 @@ let cachedTiers: PriorityTier[] | null = null
  * malformed `FEATURE_PRIORITY_TIERS` fails there rather than on a request.
  */
 export function getPriorityTiers(): PriorityTier[] {
-  if (!cachedTiers) cachedTiers = resolvePriorityTiers(config.featureBoard.priorityTiers)
-  return cachedTiers
+  if (!cachedTiers) cachedTiers = resolvePriorityTiers(config.featureBoard.priorityTiers);
+  return cachedTiers;
 }

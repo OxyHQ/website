@@ -1,27 +1,30 @@
-import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
-import indexJson from './_synced/index.json'
-import type { SyncedIndex, SyncedPackage, SyncedPage, SyncedVersion } from '../../scripts/types'
+import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
+import indexJson from './_synced/index.json';
+import type { SyncedIndex, SyncedPackage, SyncedPage, SyncedVersion } from '../../scripts/types';
 
-const index = indexJson as SyncedIndex
+const index = indexJson as SyncedIndex;
 
 // Vite glob: eager so package landing pages can show whatever exists, lazy so
 // big leaf pages don't bloat the initial chunk. We get both: an eager
 // metadata map (for sidebars) and a lazy module loader (for rendering).
 const lazyMdx = import.meta.glob<{ default: ComponentType<Record<string, unknown>> }>(
   './_synced/**/*.{mdx,md}',
-)
+);
 
 // Pre-bound `React.lazy` components, keyed by the MDX file's relative path
 // (matching the `file` field on `SyncedPage`). Building the lazy wrappers at
 // module init keeps component identities stable across renders — which is
 // what `react-hooks/static-components` (and React Compiler) expects.
-const lazyComponents = new Map<string, LazyExoticComponent<ComponentType<Record<string, unknown>>>>()
+const lazyComponents = new Map<
+  string,
+  LazyExoticComponent<ComponentType<Record<string, unknown>>>
+>();
 for (const key of Object.keys(lazyMdx)) {
-  const loader = lazyMdx[key]
-  if (!loader) continue
+  const loader = lazyMdx[key];
+  if (!loader) continue;
   // Strip the `./_synced/` prefix to match `SyncedPage.file`.
-  const file = key.replace(/^\.\/_synced\//, '')
-  lazyComponents.set(file, lazy(loader))
+  const file = key.replace(/^\.\/_synced\//, '');
+  lazyComponents.set(file, lazy(loader));
 }
 
 // The same files as raw text, for "Copy as Markdown". Lazy, so each source is
@@ -29,31 +32,31 @@ for (const key of Object.keys(lazyMdx)) {
 const rawMdx = import.meta.glob<string>('./_synced/**/*.{mdx,md}', {
   query: '?raw',
   import: 'default',
-})
-const rawSources = new Map<string, () => Promise<string>>()
+});
+const rawSources = new Map<string, () => Promise<string>>();
 for (const [key, loader] of Object.entries(rawMdx)) {
-  rawSources.set(key.replace(/^\.\/_synced\//, ''), loader)
+  rawSources.set(key.replace(/^\.\/_synced\//, ''), loader);
 }
 
 /** The page's source text, keyed like `SyncedPage.file`; undefined when there is none. */
 export function loadDocSource(file: string): Promise<string> | undefined {
-  return rawSources.get(file)?.()
+  return rawSources.get(file)?.();
 }
 
 export function getIndex(): SyncedIndex {
-  return index
+  return index;
 }
 
 export function getPackages(): SyncedPackage[] {
-  return index.packages
+  return index.packages;
 }
 
 export function getPackage(shortName: string): SyncedPackage | undefined {
-  return index.packages.find((p) => p.shortName === shortName)
+  return index.packages.find((p) => p.shortName === shortName);
 }
 
 export function getVersion(pkg: SyncedPackage, version: string): SyncedVersion | undefined {
-  return pkg.versions.find((v) => v.version === version)
+  return pkg.versions.find((v) => v.version === version);
 }
 
 /**
@@ -62,18 +65,15 @@ export function getVersion(pkg: SyncedPackage, version: string): SyncedVersion |
  * any versions at all — falls back to `latestVersion`, then `defaultVersion`,
  * then the first listed version. Callers can rely on this to never throw.
  */
-export function resolveVersion(
-  pkg: SyncedPackage,
-  requested?: string,
-): SyncedVersion | undefined {
+export function resolveVersion(pkg: SyncedPackage, requested?: string): SyncedVersion | undefined {
   if (requested) {
-    const match = getVersion(pkg, requested)
-    if (match) return match
+    const match = getVersion(pkg, requested);
+    if (match) return match;
   }
   const latest =
     getVersion(pkg, pkg.latestVersion) ??
-    (pkg.defaultVersion ? getVersion(pkg, pkg.defaultVersion) : undefined)
-  return latest ?? pkg.versions[0]
+    (pkg.defaultVersion ? getVersion(pkg, pkg.defaultVersion) : undefined);
+  return latest ?? pkg.versions[0];
 }
 
 /**
@@ -82,35 +82,31 @@ export function resolveVersion(
  * `'latest'` as `version` to render the canonical path with no version
  * segment (always points at the resolved latest version).
  */
-export function buildDocsHref(
-  pkg: SyncedPackage,
-  version: string | 'latest',
-  slug = '',
-): string {
-  const base = '/developers/docs'
-  const cleanSlug = slug.replace(/^\/+/, '').replace(/\/+$/, '')
+export function buildDocsHref(pkg: SyncedPackage, version: string | 'latest', slug = ''): string {
+  const base = '/developers/docs';
+  const cleanSlug = slug.replace(/^\/+/, '').replace(/\/+$/, '');
   if (!pkg.versioned || version === 'latest') {
-    return cleanSlug ? `${base}/${pkg.shortName}/${cleanSlug}` : `${base}/${pkg.shortName}`
+    return cleanSlug ? `${base}/${pkg.shortName}/${cleanSlug}` : `${base}/${pkg.shortName}`;
   }
   return cleanSlug
     ? `${base}/${pkg.shortName}/${version}/${cleanSlug}`
-    : `${base}/${pkg.shortName}/${version}`
+    : `${base}/${pkg.shortName}/${version}`;
 }
 
 export function getPage(version: SyncedVersion, slug: string): SyncedPage | undefined {
-  const normalized = slug.replace(/\/+$/, '')
-  return version.pages.find((p) => p.slug === normalized)
+  const normalized = slug.replace(/\/+$/, '');
+  return version.pages.find((p) => p.slug === normalized);
 }
 
 /** True when `version` is listed in the package's `deprecatedVersions`. */
 export function isVersionDeprecated(pkg: SyncedPackage, version: string): boolean {
-  return pkg.deprecatedVersions.includes(version)
+  return pkg.deprecatedVersions.includes(version);
 }
 
 /** True when `version` is older than `latestVersion` (string compare on the version slug). */
 export function isVersionOutdated(pkg: SyncedPackage, version: string): boolean {
-  if (!pkg.versioned) return false
-  return version !== pkg.latestVersion
+  if (!pkg.versioned) return false;
+  return version !== pkg.latestVersion;
 }
 
 /**
@@ -120,6 +116,6 @@ export function isVersionOutdated(pkg: SyncedPackage, version: string): boolean 
  * `react-hooks/static-components` rule (which forbids creating a component
  * inside render).
  */
-export type MdxLazyComponent = LazyExoticComponent<ComponentType<Record<string, unknown>>>
+export type MdxLazyComponent = LazyExoticComponent<ComponentType<Record<string, unknown>>>;
 
-export const mdxLazyComponents: ReadonlyMap<string, MdxLazyComponent> = lazyComponents
+export const mdxLazyComponents: ReadonlyMap<string, MdxLazyComponent> = lazyComponents;

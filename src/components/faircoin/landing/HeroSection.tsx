@@ -1,15 +1,15 @@
-import { motion } from 'framer-motion'
-import Button from '../../ui/Button'
-import { fc } from '../../../lib/faircoin-links'
-import { useUniswapPoolStats } from '../../../hooks/use-faircoin-network-stats'
-import PhoneMockup from './PhoneMockup'
+import { motion } from 'framer-motion';
+import Button from '../../ui/Button';
+import { fc } from '../../../lib/faircoin-links';
+import { useUniswapPoolStats } from '../../../hooks/use-faircoin-network-stats';
+import PhoneMockup from './PhoneMockup';
 
 const STATS = [
   { label: 'Since', value: '2014' },
   { label: 'Block time', value: '120s' },
   { label: 'Max supply', value: '33M' },
   { label: 'Algorithm', value: 'Quark' },
-] as const
+] as const;
 
 /**
  * Revolut/Wise-style hero. Two-column layout on desktop:
@@ -25,11 +25,11 @@ const STATS = [
  * the FairCoin design rules (icons OK in other sections, not here).
  */
 export default function HeroSection() {
-  const { data: poolStats } = useUniswapPoolStats()
+  const { data: poolStats } = useUniswapPoolStats();
   const wfairPriceLabel =
     poolStats?.wfairPriceUsdc && poolStats.wfairPriceUsdc > 0
       ? `WFAIR · $${poolStats.wfairPriceUsdc.toFixed(poolStats.wfairPriceUsdc < 1 ? 4 : 2)}`
-      : null
+      : null;
   return (
     <section className="relative isolate overflow-hidden">
       {/* Ambient gradient backdrop */}
@@ -75,9 +75,8 @@ export default function HeroSection() {
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
               className="mt-6 max-w-xl text-balance text-lg leading-relaxed text-muted-foreground sm:text-xl lg:mx-0"
             >
-              FairCoin is a community-run cryptocurrency. Hybrid proof-of-work
-              and proof-of-stake, hard-capped at 33 million coins. Maintained
-              by volunteers since 2014.
+              FairCoin is a community-run cryptocurrency. Hybrid proof-of-work and proof-of-stake,
+              hard-capped at 33 million coins. Maintained by volunteers since 2014.
             </motion.p>
 
             <motion.div
@@ -149,7 +148,7 @@ export default function HeroSection() {
         </motion.dl>
       </div>
     </section>
-  )
+  );
 }
 
 function FloatingChip({
@@ -158,10 +157,10 @@ function FloatingChip({
   delay,
   accent = false,
 }: {
-  label: string
-  className: string
-  delay: number
-  accent?: boolean
+  label: string;
+  className: string;
+  delay: number;
+  accent?: boolean;
 }) {
   return (
     <motion.span
@@ -179,7 +178,7 @@ function FloatingChip({
       <span className="h-1.5 w-1.5 rounded-full bg-primary" />
       {label}
     </motion.span>
-  )
+  );
 }
 
 function GridDecoration() {
@@ -191,14 +190,7 @@ function GridDecoration() {
       className="absolute inset-0 h-full w-full opacity-[0.05]"
     >
       <defs>
-        <pattern
-          id="grid-pattern"
-          x="0"
-          y="0"
-          width="48"
-          height="48"
-          patternUnits="userSpaceOnUse"
-        >
+        <pattern id="grid-pattern" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
           <path d="M48 0 L0 0 0 48" fill="none" stroke="currentColor" strokeWidth="0.5" />
         </pattern>
         <radialGradient id="grid-mask" cx="50%" cy="0%" r="60%">
@@ -209,12 +201,7 @@ function GridDecoration() {
           <rect width="100%" height="100%" fill="url(#grid-mask)" />
         </mask>
       </defs>
-      <rect
-        width="100%"
-        height="100%"
-        fill="url(#grid-pattern)"
-        mask="url(#grid-mask-applied)"
-      />
+      <rect width="100%" height="100%" fill="url(#grid-pattern)" mask="url(#grid-mask-applied)" />
     </svg>
-  )
+  );
 }

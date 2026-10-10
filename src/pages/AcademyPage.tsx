@@ -1,18 +1,18 @@
-import { useMemo, useState, type ComponentProps } from 'react'
-import { Card } from '@oxy.so/bloom/card'
-import { Badge } from '@oxy.so/bloom/badge'
-import { Item } from '@oxy.so/bloom/item'
-import { Search } from '@oxy.so/bloom/search'
-import { EmptyState } from '@oxy.so/bloom/empty-state'
-import { IconCircle } from '@oxy.so/bloom/icon-circle'
-import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
-import { RiArrowRightSLine } from '@oxy.so/bloom/icons/RiArrowRightSLine'
-import { Link } from '../lib/navigation'
-import Button from '../components/ui/Button'
-import AcademyShell from '../components/academy/AcademyShell'
-import { useStatusLabel, useTrackLabels } from '../components/academy/academyLabels'
-import { CourseCard, CourseProgressBar } from '../components/academy/CourseParts'
-import { LessonStatusMark } from '../components/academy/ProgressMarks'
+import { useMemo, useState, type ComponentProps } from 'react';
+import { Card } from '@oxy.so/bloom/card';
+import { Badge } from '@oxy.so/bloom/badge';
+import { Item } from '@oxy.so/bloom/item';
+import { Search } from '@oxy.so/bloom/search';
+import { EmptyState } from '@oxy.so/bloom/empty-state';
+import { IconCircle } from '@oxy.so/bloom/icon-circle';
+import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine';
+import { RiArrowRightSLine } from '@oxy.so/bloom/icons/RiArrowRightSLine';
+import { Link } from '../lib/navigation';
+import Button from '../components/ui/Button';
+import AcademyShell from '../components/academy/AcademyShell';
+import { useStatusLabel, useTrackLabels } from '../components/academy/academyLabels';
+import { CourseCard, CourseProgressBar } from '../components/academy/CourseParts';
+import { LessonStatusMark } from '../components/academy/ProgressMarks';
 import {
   academyTotals,
   groupByTrack,
@@ -21,11 +21,11 @@ import {
   pickResume,
   pickStarterCourse,
   searchAcademy,
-} from '../components/academy/academyModel'
-import { useAcademyAllProgress } from '../components/academy/useAcademyProgress'
-import { useCurrentLocale, useTranslation } from '../lib/i18n'
-import { loadCourses, type CourseWithLessons } from '../content/academy-loader'
-import type { CourseProgress } from '../components/academy/progressStorage'
+} from '../components/academy/academyModel';
+import { useAcademyAllProgress } from '../components/academy/useAcademyProgress';
+import { useCurrentLocale, useTranslation } from '../lib/i18n';
+import { loadCourses, type CourseWithLessons } from '../content/academy-loader';
+import type { CourseProgress } from '../components/academy/progressStorage';
 
 /* ──────────────────────────────────────────────
  * /academy/ — the catalog.
@@ -37,11 +37,17 @@ import type { CourseProgress } from '../components/academy/progressStorage'
  * ──────────────────────────────────────────── */
 
 /** Where a returning learner left off. A new learner gets no card: the catalog marks where to start. */
-function ContinueCard({ courses, progress }: { courses: CourseWithLessons[]; progress: Record<string, CourseProgress> }) {
-  const { t } = useTranslation()
-  const resume = pickResume(courses, progress)
-  if (!resume) return null
-  const { course, lesson, summary } = resume
+function ContinueCard({
+  courses,
+  progress,
+}: {
+  courses: CourseWithLessons[];
+  progress: Record<string, CourseProgress>;
+}) {
+  const { t } = useTranslation();
+  const resume = pickResume(courses, progress);
+  if (!resume) return null;
+  const { course, lesson, summary } = resume;
   // `subtle`, not `solid`: the card sits on the page's content panel, which
   // is already the `card` colour, so a solid card was the same fill with only
   // `shadow-s` for an edge — a dark smudge in dark mode. `subtle` is Bloom's
@@ -50,39 +56,77 @@ function ContinueCard({ courses, progress }: { courses: CourseWithLessons[]; pro
     <Card appearance="subtle" radius="radius-20">
       <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:p-6">
         <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-          <span className="text-xs font-semibold text-primary">{t('academy.continueLearning')}</span>
-          <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">{course.title}</h2>
-          <p className="text-sm text-muted-foreground">{t('academy.nextUp', { lesson: lesson.frontmatter.title })}</p>
-          <CourseProgressBar completed={summary.completed} total={summary.total} className="mt-2 max-w-sm" />
+          <span className="text-xs font-semibold text-primary">
+            {t('academy.continueLearning')}
+          </span>
+          <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+            {course.title}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {t('academy.nextUp', { lesson: lesson.frontmatter.title })}
+          </p>
+          <CourseProgressBar
+            completed={summary.completed}
+            total={summary.total}
+            className="mt-2 max-w-sm"
+          />
         </div>
-        <Button href={lessonPath(course.slug, lesson.lessonSlug)} variant="primary" className="shrink-0 self-start sm:self-center">
+        <Button
+          href={lessonPath(course.slug, lesson.lessonSlug)}
+          variant="primary"
+          className="shrink-0 self-start sm:self-center"
+        >
           {t('academy.continue')}
         </Button>
       </div>
     </Card>
-  )
+  );
 }
 
-function Catalog({ courses, progress }: { courses: CourseWithLessons[]; progress: Record<string, CourseProgress> }) {
-  const { t } = useTranslation()
+function Catalog({
+  courses,
+  progress,
+}: {
+  courses: CourseWithLessons[];
+  progress: Record<string, CourseProgress>;
+}) {
+  const { t } = useTranslation();
   // Only a learner with nothing started is pointed at a first course.
-  const starter = academyTotals(courses, progress).coursesStarted === 0 ? pickStarterCourse(courses) : null
-  const trackLabels = useTrackLabels()
+  const starter =
+    academyTotals(courses, progress).coursesStarted === 0 ? pickStarterCourse(courses) : null;
+  const trackLabels = useTrackLabels();
   return (
     <div className="flex flex-col gap-12">
       {groupByTrack(courses).map(({ track, courses: trackCourses }) => {
-        const { label, blurb } = trackLabels(track)
-        const soon = trackCourses.length === 0
+        const { label, blurb } = trackLabels(track);
+        const soon = trackCourses.length === 0;
         return (
-          <section key={track.key} aria-labelledby={`academy-track-${track.key}`} className={soon ? 'opacity-70' : undefined}>
+          <section
+            key={track.key}
+            aria-labelledby={`academy-track-${track.key}`}
+            className={soon ? 'opacity-70' : undefined}
+          >
             <div className="mb-5 flex items-center gap-4">
-              <IconCircle icon={track.Icon as ComponentProps<typeof IconCircle>['icon']} size="lg" />
+              <IconCircle
+                icon={track.Icon as ComponentProps<typeof IconCircle>['icon']}
+                size="lg"
+              />
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 id={`academy-track-${track.key}`} className="text-lg font-semibold tracking-tight text-foreground">
+                  <h2
+                    id={`academy-track-${track.key}`}
+                    className="text-lg font-semibold tracking-tight text-foreground"
+                  >
                     {label}
                   </h2>
-                  {soon ? <Badge content={t('academy.comingSoon')} appearance="subtle" tone="neutral" size="label-small" /> : null}
+                  {soon ? (
+                    <Badge
+                      content={t('academy.comingSoon')}
+                      appearance="subtle"
+                      tone="neutral"
+                      size="label-small"
+                    />
+                  ) : null}
                 </div>
                 <p className="text-sm text-muted-foreground">{blurb}</p>
               </div>
@@ -91,16 +135,20 @@ function Catalog({ courses, progress }: { courses: CourseWithLessons[]; progress
               <ul className="grid gap-3">
                 {trackCourses.map((course) => (
                   <li key={course.slug}>
-                    <CourseCard course={course} progress={progress[course.slug]} startHere={course.slug === starter?.slug} />
+                    <CourseCard
+                      course={course}
+                      progress={progress[course.slug]}
+                      startHere={course.slug === starter?.slug}
+                    />
                   </li>
                 ))}
               </ul>
             )}
           </section>
-        )
+        );
       })}
     </div>
-  )
+  );
 }
 
 function SearchResults({
@@ -109,18 +157,20 @@ function SearchResults({
   query,
   onClear,
 }: {
-  courses: CourseWithLessons[]
-  progress: Record<string, CourseProgress>
-  query: string
-  onClear: () => void
+  courses: CourseWithLessons[];
+  progress: Record<string, CourseProgress>;
+  query: string;
+  onClear: () => void;
 }) {
-  const { t } = useTranslation()
-  const statusLabel = useStatusLabel()
-  const hits = searchAcademy(courses, query)
-  const q = query.trim()
-  const matchedCourses = hits.map((hit) => hit.course)
-  const matchedLessons = hits.flatMap((hit) => hit.lessons.map((lesson) => ({ course: hit.course, lesson })))
-  const count = matchedCourses.length + matchedLessons.length
+  const { t } = useTranslation();
+  const statusLabel = useStatusLabel();
+  const hits = searchAcademy(courses, query);
+  const q = query.trim();
+  const matchedCourses = hits.map((hit) => hit.course);
+  const matchedLessons = hits.flatMap((hit) =>
+    hit.lessons.map((lesson) => ({ course: hit.course, lesson })),
+  );
+  const count = matchedCourses.length + matchedLessons.length;
 
   if (hits.length === 0) {
     return (
@@ -129,19 +179,21 @@ function SearchResults({
           {t('academy.noResultsTitle', { query: q })}
         </p>
         <EmptyState
-        icon={RiSearchLine}
-        title={t('academy.noResultsTitle', { query: q })}
-        description={t('academy.noResultsBody')}
-        action={{ label: t('academy.clearSearch'), onPress: onClear }}
+          icon={RiSearchLine}
+          title={t('academy.noResultsTitle', { query: q })}
+          description={t('academy.noResultsBody')}
+          action={{ label: t('academy.clearSearch'), onPress: onClear }}
         />
       </>
-    )
+    );
   }
 
   return (
     <div className="flex flex-col gap-10">
       <p className="text-sm text-muted-foreground" role="status">
-        {count === 1 ? t('academy.resultsOne', { query: q }) : t('academy.resultsOther', { count, query: q })}
+        {count === 1
+          ? t('academy.resultsOne', { query: q })
+          : t('academy.resultsOther', { count, query: q })}
       </p>
       <section aria-labelledby="academy-results-courses">
         <h2 id="academy-results-courses" className="mb-4 text-sm font-semibold text-foreground">
@@ -163,7 +215,7 @@ function SearchResults({
           <Card appearance="outline" radius="radius-16">
             <ul className="flex flex-col p-1.5">
               {matchedLessons.map(({ course, lesson }) => {
-                const status = lessonStatus(progress[course.slug], lesson.lessonSlug)
+                const status = lessonStatus(progress[course.slug], lesson.lessonSlug);
                 return (
                   <li key={`${course.slug}/${lesson.lessonSlug}`}>
                     <Link
@@ -183,23 +235,23 @@ function SearchResults({
                       <span className="sr-only">, {statusLabel(status)}</span>
                     </Link>
                   </li>
-                )
+                );
               })}
             </ul>
           </Card>
         </section>
       ) : null}
     </div>
-  )
+  );
 }
 
 export default function AcademyPage() {
-  const { t } = useTranslation()
-  const locale = useCurrentLocale()
-  const courses = useMemo(() => loadCourses(locale), [locale])
-  const { data: progress } = useAcademyAllProgress()
-  const [query, setQuery] = useState('')
-  const searching = query.trim().length > 0
+  const { t } = useTranslation();
+  const locale = useCurrentLocale();
+  const courses = useMemo(() => loadCourses(locale), [locale]);
+  const { data: progress } = useAcademyAllProgress();
+  const [query, setQuery] = useState('');
+  const searching = query.trim().length > 0;
 
   return (
     <AcademyShell
@@ -215,18 +267,30 @@ export default function AcademyPage() {
       context={t('academy.title')}
     >
       <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{t('academy.title')}</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          {t('academy.title')}
+        </h1>
         <p className="max-w-2xl text-base text-muted-foreground">{t('academy.subtitle')}</p>
       </header>
 
       {/* The rail — and its search — is a sheet below lg; the catalog's own filter stays on the page. */}
       <div className="mt-6 lg:hidden">
-        <Search value={query} onValueChange={setQuery} onClearText={() => setQuery('')} label={t('academy.searchLabel')} />
+        <Search
+          value={query}
+          onValueChange={setQuery}
+          onClearText={() => setQuery('')}
+          label={t('academy.searchLabel')}
+        />
       </div>
 
       <div className="mt-8">
         {searching ? (
-          <SearchResults courses={courses} progress={progress} query={query} onClear={() => setQuery('')} />
+          <SearchResults
+            courses={courses}
+            progress={progress}
+            query={query}
+            onClear={() => setQuery('')}
+          />
         ) : (
           <div className="flex flex-col gap-12">
             <ContinueCard courses={courses} progress={progress} />
@@ -235,5 +299,5 @@ export default function AcademyPage() {
         )}
       </div>
     </AcademyShell>
-  )
+  );
 }

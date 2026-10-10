@@ -1,16 +1,16 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 /**
  * Thrown by {@link validate} when an input fails a zod schema.
  * Carries the raw zod issues so the error handler can serialize them.
  */
 export class ValidationError extends Error {
-  public readonly issues: z.ZodIssue[]
+  public readonly issues: z.ZodIssue[];
 
   constructor(issues: z.ZodIssue[], message = 'Validation failed') {
-    super(message)
-    this.name = 'ValidationError'
-    this.issues = issues
+    super(message);
+    this.name = 'ValidationError';
+    this.issues = issues;
   }
 }
 
@@ -21,9 +21,9 @@ export class ValidationError extends Error {
  * in `server/index.ts` catches it and returns an HTTP 400.
  */
 export function validate<T extends z.ZodType>(schema: T, data: unknown): z.infer<T> {
-  const result = schema.safeParse(data)
+  const result = schema.safeParse(data);
   if (!result.success) {
-    throw new ValidationError(result.error.issues)
+    throw new ValidationError(result.error.issues);
   }
-  return result.data
+  return result.data;
 }

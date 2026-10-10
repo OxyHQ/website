@@ -11,40 +11,40 @@
  * (keep the snapshot on any failure, including a valid-but-empty response) is
  * the whole feature rather than an error branch.
  */
-import { useEffect, useState } from 'react'
-import { BUILD_SNAPSHOT, refreshCatalog } from './snapshot'
-import type { PublicCatalog } from './catalog'
+import { useEffect, useState } from 'react';
+import { BUILD_SNAPSHOT, refreshCatalog } from './snapshot';
+import type { PublicCatalog } from './catalog';
 
 export interface CatalogState {
-  catalog: PublicCatalog
+  catalog: PublicCatalog;
   /** True until the first refresh attempt settles. The snapshot is shown meanwhile. */
-  refreshing: boolean
+  refreshing: boolean;
   /** Set when the refresh did not replace the snapshot, for diagnostics. */
-  refreshError?: string
+  refreshError?: string;
 }
 
 export function useCatalog(): CatalogState {
   const [state, setState] = useState<CatalogState>({
     catalog: BUILD_SNAPSHOT,
     refreshing: true,
-  })
+  });
 
   useEffect(() => {
-    const controller = new AbortController()
-    let cancelled = false
+    const controller = new AbortController();
+    let cancelled = false;
     refreshCatalog(BUILD_SNAPSHOT, controller.signal).then((result) => {
-      if (cancelled) return
+      if (cancelled) return;
       setState({
         catalog: result.catalog,
         refreshing: false,
         refreshError: result.refreshed ? undefined : result.reason,
-      })
-    })
+      });
+    });
     return () => {
-      cancelled = true
-      controller.abort()
-    }
-  }, [])
+      cancelled = true;
+      controller.abort();
+    };
+  }, []);
 
-  return state
+  return state;
 }

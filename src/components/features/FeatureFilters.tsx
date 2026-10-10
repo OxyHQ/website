@@ -2,12 +2,12 @@ import {
   SegmentedControl,
   SegmentedControlItem,
   SegmentedControlItemText,
-} from '@oxy.so/bloom/segmented-control'
-import OptionSelect from '../ui/OptionSelect'
-import type { FeatureAppOption } from '../../api/hooks'
+} from '@oxy.so/bloom/segmented-control';
+import OptionSelect from '../ui/OptionSelect';
+import type { FeatureAppOption } from '../../api/hooks';
 
 /** A segmented control reads '' as "nothing selected", so "All" has a value of its own here. */
-const ALL_STATUSES = 'all'
+const ALL_STATUSES = 'all';
 
 const STATUS_OPTIONS = [
   { value: ALL_STATUSES, label: 'All' },
@@ -16,24 +16,24 @@ const STATUS_OPTIONS = [
   { value: 'in_progress', label: 'In Progress' },
   { value: 'completed', label: 'Completed' },
   { value: 'declined', label: 'Declined' },
-] as const
+] as const;
 
 const SORT_OPTIONS = [
   { value: 'votes', label: 'Most Voted' },
   { value: 'newest', label: 'Newest' },
   { value: 'oldest', label: 'Oldest' },
-] as const
+] as const;
 
 interface FeatureFiltersProps {
-  status: string
+  status: string;
   /** `owner/repo` of the selected app, or '' for every app. */
-  app: string
-  sort: string
+  app: string;
+  sort: string;
   /** Apps on the board, from the same source the server filters against. */
-  apps: FeatureAppOption[]
-  onChangeStatus: (value: string) => void
-  onChangeApp: (value: string) => void
-  onChangeSort: (value: string) => void
+  apps: FeatureAppOption[];
+  onChangeStatus: (value: string) => void;
+  onChangeApp: (value: string) => void;
+  onChangeSort: (value: string) => void;
 }
 
 export default function FeatureFilters({
@@ -84,5 +84,5 @@ export default function FeatureFilters({
         />
       </div>
     </div>
-  )
+  );
 }

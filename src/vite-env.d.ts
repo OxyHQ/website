@@ -2,22 +2,28 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_STORE_PREVIEW?: string
-  readonly VITE_OXY_CLIENT_ID?: string
-  readonly VITE_INTERCOM_APP_ID?: string
+  readonly VITE_STORE_PREVIEW?: string;
+  readonly VITE_OXY_CLIENT_ID?: string;
+  readonly VITE_INTERCOM_APP_ID?: string;
 }
 
-declare module 'swiper/css' { const content: string; export default content }
-declare module 'swiper/css/effect-cube' { const content: string; export default content }
+declare module 'swiper/css' {
+  const content: string;
+  export default content;
+}
+declare module 'swiper/css/effect-cube' {
+  const content: string;
+  export default content;
+}
 
 declare module '*.mdx' {
-  import type { ComponentType } from 'react'
-  const MDXComponent: ComponentType<Record<string, unknown>>
-  export default MDXComponent
+  import type { ComponentType } from 'react';
+  const MDXComponent: ComponentType<Record<string, unknown>>;
+  export default MDXComponent;
 }
 
 declare module '*.md' {
-  import type { ComponentType } from 'react'
-  const MDXComponent: ComponentType<Record<string, unknown>>
-  export default MDXComponent
+  import type { ComponentType } from 'react';
+  const MDXComponent: ComponentType<Record<string, unknown>>;
+  export default MDXComponent;
 }

@@ -1,17 +1,9 @@
 {
-  "deleteSlugs": [
-    "how-to-read-a-rental-listing-like-a-pro"
-  ],
+  "deleteSlugs": ["how-to-read-a-rental-listing-like-a-pro"],
   "tips": [
     {
       "slug": "senales-de-alerta-antes-de-pagar-nada",
-      "tags": [
-        "safety",
-        "deposit",
-        "scams",
-        "barcelona",
-        "agency"
-      ],
+      "tags": ["safety", "deposit", "scams", "barcelona", "agency"],
       "featured": true,
       "publishedAt": "2026-07-08T09:00:00.000Z",
       "coverUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&h=630&fit=crop",
@@ -41,12 +33,7 @@
     },
     {
       "slug": "que-debe-incluir-un-contrato-de-alquiler-justo",
-      "tags": [
-        "contract",
-        "legal",
-        "renting",
-        "barcelona"
-      ],
+      "tags": ["contract", "legal", "renting", "barcelona"],
       "featured": true,
       "publishedAt": "2026-07-05T11:00:00.000Z",
       "coverUrl": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&h=630&fit=crop",
@@ -76,12 +63,7 @@
     },
     {
       "slug": "checklist-para-visitar-un-piso-con-seguridad",
-      "tags": [
-        "viewing",
-        "safety",
-        "habitability",
-        "beginners"
-      ],
+      "tags": ["viewing", "safety", "habitability", "beginners"],
       "featured": false,
       "publishedAt": "2026-06-26T10:00:00.000Z",
       "coverUrl": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=630&fit=crop",
@@ -111,12 +93,7 @@
     },
     {
       "slug": "como-documentar-el-estado-del-piso-al-entrar",
-      "tags": [
-        "deposit",
-        "inventory",
-        "contract",
-        "safety"
-      ],
+      "tags": ["deposit", "inventory", "contract", "safety"],
       "featured": false,
       "publishedAt": "2026-06-19T09:30:00.000Z",
       "coverUrl": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&h=630&fit=crop",
@@ -146,12 +123,7 @@
     },
     {
       "slug": "que-hacer-si-no-te-devuelven-la-fianza",
-      "tags": [
-        "deposit",
-        "legal",
-        "eviction",
-        "barcelona"
-      ],
+      "tags": ["deposit", "legal", "eviction", "barcelona"],
       "featured": false,
       "publishedAt": "2026-06-10T14:00:00.000Z",
       "coverUrl": "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=1200&h=630&fit=crop",
@@ -181,12 +153,7 @@
     },
     {
       "slug": "clausulas-y-practicas-ilegales-en-el-alquiler",
-      "tags": [
-        "legal",
-        "contract",
-        "agency",
-        "barcelona"
-      ],
+      "tags": ["legal", "contract", "agency", "barcelona"],
       "featured": false,
       "publishedAt": "2026-06-03T08:00:00.000Z",
       "coverUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&h=630&fit=crop",
@@ -216,12 +183,7 @@
     },
     {
       "slug": "derechos-basicos-en-pisos-compartidos",
-      "tags": [
-        "roommates",
-        "contract",
-        "safety",
-        "beginners"
-      ],
+      "tags": ["roommates", "contract", "safety", "beginners"],
       "featured": false,
       "publishedAt": "2026-05-27T12:00:00.000Z",
       "coverUrl": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=630&fit=crop",
@@ -251,12 +213,7 @@
     },
     {
       "slug": "donde-pedir-ayuda-alquiler-barcelona",
-      "tags": [
-        "barcelona",
-        "legal",
-        "help",
-        "deposit"
-      ],
+      "tags": ["barcelona", "legal", "help", "deposit"],
       "featured": false,
       "publishedAt": "2026-05-20T10:00:00.000Z",
       "coverUrl": "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=1200&h=630&fit=crop",
@@ -286,12 +243,7 @@
     },
     {
       "slug": "como-evitar-estafas-de-alquiler-online",
-      "tags": [
-        "scams",
-        "safety",
-        "online",
-        "beginners"
-      ],
+      "tags": ["scams", "safety", "online", "beginners"],
       "featured": false,
       "publishedAt": "2026-05-10T16:00:00.000Z",
       "coverUrl": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&h=630&fit=crop",
@@ -321,12 +273,7 @@
     },
     {
       "slug": "por-que-importa-alquilar-en-plataformas-eticas",
-      "tags": [
-        "homiio",
-        "ethics",
-        "renting",
-        "beginners"
-      ],
+      "tags": ["homiio", "ethics", "renting", "beginners"],
       "featured": false,
       "publishedAt": "2026-04-28T11:00:00.000Z",
       "coverUrl": "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&h=630&fit=crop",

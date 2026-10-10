@@ -1,37 +1,37 @@
-import type { ReactNode } from 'react'
-import Navbar from './Navbar'
-import Footer from './Footer'
-import SEO, { type SEOProps } from '../SEO'
-import { BrandScope } from '../../theme/BrandScope'
+import type { ReactNode } from 'react';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import SEO, { type SEOProps } from '../SEO';
+import { BrandScope } from '../../theme/BrandScope';
 
 interface PageShellProps {
   /**
    * Per-page meta. Required, so a page can't ship without declaring its own
    * title/description/canonical — the CMS still overrides these at runtime.
    */
-  seo: SEOProps
+  seo: SEOProps;
   /**
    * Appended to the shell's layout classes on the page root. Carries the
    * page's background and theme classes (e.g. `bg-[#0a0a0b]`, or
    * `cursor-theme astro-theme bg-background`). Defaults to `bg-background`.
    */
-  className?: string
+  className?: string;
   /** Replaces the default `<Navbar />` — pass `<Navbar transparent />` for hero pages. */
-  navbar?: ReactNode
+  navbar?: ReactNode;
   /** Classes for the `<main>` element. Omitted entirely when not supplied. */
-  mainClassName?: string
+  mainClassName?: string;
   /**
    * Render the content frame as a div when the child owns the page's main
    * landmark, as the documentation shell does.
    */
-  mainAsDiv?: boolean
+  mainAsDiv?: boolean;
   /**
    * Drops the footer's top rule, for a page whose last section already ends on
    * a boundary of its own — a rule between two surfaces of the same colour
    * reads as leftover, not as structure.
    */
-  hideFooterDivider?: boolean
-  children: ReactNode
+  hideFooterDivider?: boolean;
+  children: ReactNode;
 }
 
 /**
@@ -63,5 +63,5 @@ export default function PageShell({
         <Footer hideTopDivider={hideFooterDivider} />
       </div>
     </BrandScope>
-  )
+  );
 }

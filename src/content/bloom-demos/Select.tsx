@@ -1,14 +1,23 @@
-import { useState } from 'react'
-import { Select, SelectTrigger, SelectValue, SelectIcon, SelectContent, SelectItem, SelectItemText, SelectItemIndicator } from '@oxy.so/bloom/select'
-import type { PlaygroundValues } from './_playground'
+import { useState } from 'react';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectIcon,
+  SelectContent,
+  SelectItem,
+  SelectItemText,
+  SelectItemIndicator,
+} from '@oxy.so/bloom/select';
+import type { PlaygroundValues } from './_playground';
 
 export const meta = {
   description: 'Dropdown picker backed by a controlled value and item list.',
-}
+};
 
 interface Item {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }
 
 const items: Item[] = [
@@ -16,10 +25,10 @@ const items: Item[] = [
   { value: 'medium', label: 'Medium priority' },
   { value: 'high', label: 'High priority' },
   { value: 'critical', label: 'Critical' },
-]
+];
 
 export default function SelectDemo() {
-  const [value, setValue] = useState('medium')
+  const [value, setValue] = useState('medium');
   return (
     <div className="w-full max-w-xs">
       <Select value={value} onValueChange={setValue}>
@@ -45,18 +54,18 @@ export default function SelectDemo() {
         />
       </Select>
     </div>
-  )
+  );
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const initial = typeof values.value === 'string' ? values.value : 'medium'
-  const label = typeof values.label === 'string' ? values.label : 'Priority'
-  const disabled = values.disabled === true
-  const [value, setValue] = useState(initial)
-  const [lastInitial, setLastInitial] = useState(initial)
+  const initial = typeof values.value === 'string' ? values.value : 'medium';
+  const label = typeof values.label === 'string' ? values.label : 'Priority';
+  const disabled = values.disabled === true;
+  const [value, setValue] = useState(initial);
+  const [lastInitial, setLastInitial] = useState(initial);
   if (initial !== lastInitial) {
-    setLastInitial(initial)
-    setValue(initial)
+    setLastInitial(initial);
+    setValue(initial);
   }
   return (
     <div style={{ width: 240 }}>
@@ -83,5 +92,5 @@ export function Playground({ values }: { values: PlaygroundValues }) {
         />
       </Select>
     </div>
-  )
+  );
 }

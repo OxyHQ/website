@@ -13,23 +13,16 @@
  * ──────────────────────────────────────────── */
 
 interface ImageProps {
-  src: string
-  alt: string
-  caption?: string
-  width?: number
-  height?: number
+  src: string;
+  alt: string;
+  caption?: string;
+  width?: number;
+  height?: number;
   /** Render at full container width (default true). */
-  fullWidth?: boolean
+  fullWidth?: boolean;
 }
 
-export default function Image({
-  src,
-  alt,
-  caption,
-  width,
-  height,
-  fullWidth = true,
-}: ImageProps) {
+export default function Image({ src, alt, caption, width, height, fullWidth = true }: ImageProps) {
   return (
     <figure className="not-prose my-6">
       <img
@@ -39,7 +32,9 @@ export default function Image({
         height={height}
         loading="lazy"
         decoding="async"
-        className={fullWidth ? 'w-full rounded-2xl border border-border' : 'rounded-2xl border border-border'}
+        className={
+          fullWidth ? 'w-full rounded-2xl border border-border' : 'rounded-2xl border border-border'
+        }
       />
       {caption ? (
         <figcaption className="mt-3 text-center text-sm text-muted-foreground">
@@ -47,5 +42,5 @@ export default function Image({
         </figcaption>
       ) : null}
     </figure>
-  )
+  );
 }

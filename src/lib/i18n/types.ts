@@ -25,27 +25,40 @@ export type Locale =
   | 'hi'
   | 'bn'
   | 'ru'
-  | 'id'
+  | 'id';
 
 export const SUPPORTED_LOCALES: readonly Locale[] = [
-  'en', 'es', 'fr', 'de', 'ja', 'ko', 'zh', 'pt', 'ar', 'ca', 'it',
-  'hi', 'bn', 'ru', 'id',
-] as const
+  'en',
+  'es',
+  'fr',
+  'de',
+  'ja',
+  'ko',
+  'zh',
+  'pt',
+  'ar',
+  'ca',
+  'it',
+  'hi',
+  'bn',
+  'ru',
+  'id',
+] as const;
 
-export const DEFAULT_LOCALE: Locale = 'en'
+export const DEFAULT_LOCALE: Locale = 'en';
 
 /** Locales rendered right-to-left. Used by `<html dir>` switching + layout audits. */
-export const RTL_LOCALES: readonly Locale[] = ['ar'] as const
+export const RTL_LOCALES: readonly Locale[] = ['ar'] as const;
 
 export function isRtlLocale(locale: Locale): boolean {
-  return RTL_LOCALES.includes(locale)
+  return RTL_LOCALES.includes(locale);
 }
 
 /** Display metadata shown in `<LocalePicker>` even when the CMS endpoint is unreachable. */
 export interface LocaleDisplayMeta {
-  code: Locale
-  name: string
-  nativeName: string
+  code: Locale;
+  name: string;
+  nativeName: string;
 }
 
 export const LOCALE_DISPLAY: readonly LocaleDisplayMeta[] = [
@@ -64,17 +77,17 @@ export const LOCALE_DISPLAY: readonly LocaleDisplayMeta[] = [
   { code: 'bn', name: 'Bengali', nativeName: 'বাংলা' },
   { code: 'ru', name: 'Russian', nativeName: 'Русский' },
   { code: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia' },
-] as const
+] as const;
 
 /** Recursive JSON-shaped value for a website locale dictionary. */
-export type LocaleNode = string | LocaleNode[] | { [key: string]: LocaleNode }
-export type LocaleDict = Record<string, LocaleNode>
+export type LocaleNode = string | LocaleNode[] | { [key: string]: LocaleNode };
+export type LocaleDict = Record<string, LocaleNode>;
 
 /** Variables substituted into translation strings as `{var}` (single-brace) tokens. */
-export type TranslationVars = Record<string, string | number>
+export type TranslationVars = Record<string, string | number>;
 
 /** The signature exposed by `useTranslation()`. */
-export type TranslateFn = (key: string, vars?: TranslationVars) => string
+export type TranslateFn = (key: string, vars?: TranslationVars) => string;
 
 /**
  * Replace `{var}` tokens with values from `vars`. Single-brace tokens. Lives
@@ -82,10 +95,10 @@ export type TranslateFn = (key: string, vars?: TranslationVars) => string
  * exactly as the SPA's `t()` does without importing the React provider.
  */
 export function interpolate(template: string, vars?: TranslationVars): string {
-  if (!vars) return template
-  let out = template
+  if (!vars) return template;
+  let out = template;
   for (const k of Object.keys(vars)) {
-    out = out.replaceAll(`{${k}}`, String(vars[k]))
+    out = out.replaceAll(`{${k}}`, String(vars[k]));
   }
-  return out
+  return out;
 }

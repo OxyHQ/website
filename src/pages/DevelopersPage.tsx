@@ -1,14 +1,14 @@
-import { Link } from '../lib/navigation'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import PageSection from '../components/layout/PageSection'
-import SectionHeading from '../components/layout/SectionHeading'
-import Card from '../components/layout/Card'
-import Button from '../components/ui/Button'
-import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
-import { buildDocsHref, getPackages } from '../content/docs-loader'
-import type { SyncedPackage } from '../../scripts/types'
+import { Link } from '../lib/navigation';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import PageSection from '../components/layout/PageSection';
+import SectionHeading from '../components/layout/SectionHeading';
+import Card from '../components/layout/Card';
+import Button from '../components/ui/Button';
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine';
+import { buildDocsHref, getPackages } from '../content/docs-loader';
+import type { SyncedPackage } from '../../scripts/types';
 import {
   heroEyebrow,
   heroTitle,
@@ -35,16 +35,16 @@ import {
   resources,
   ctaHeading,
   ctaDescription,
-} from '../data/developers'
-import { AnimatedTitle } from '../components/ui/AnimatedTitle'
-import { consoleLinks } from '../data/ai/taxonomy'
+} from '../data/developers';
+import { AnimatedTitle } from '../components/ui/AnimatedTitle';
+import { consoleLinks } from '../data/ai/taxonomy';
 
 /**
  * Canonical landing URL for a package card. Mirrors `pageHref` in
  * DocsIntroPage so both surfaces deep-link to the same package landing.
  */
 function pageHref(pkg: SyncedPackage): string {
-  return buildDocsHref(pkg, pkg.latestVersion, '')
+  return buildDocsHref(pkg, pkg.latestVersion, '');
 }
 
 /* ─── Hero ─── */
@@ -71,7 +71,7 @@ function DevelopersHero() {
         </div>
       </div>
     </PageSection>
-  )
+  );
 }
 
 /* ─── SDK grid grouped by category, driven by synced docs index ─── */
@@ -81,7 +81,7 @@ function SDKGrid({ packages }: { packages: SyncedPackage[] }) {
       ...cfg,
       items: packages.filter((p) => p.category === cfg.category),
     }))
-    .filter((s) => s.items.length > 0)
+    .filter((s) => s.items.length > 0);
 
   return (
     <PageSection spacing="md" tone="surface">
@@ -115,7 +115,8 @@ function SDKGrid({ packages }: { packages: SyncedPackage[] }) {
                     <p className="text-sm text-muted-foreground">{pkg.description}</p>
                   ) : null}
                   <div className="mt-auto flex items-center gap-1.5 pt-2 text-sm text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                    Read docs <RiArrowRightUpLine width={14} height={14} fill="currentColor" aria-hidden />
+                    Read docs{' '}
+                    <RiArrowRightUpLine width={14} height={14} fill="currentColor" aria-hidden />
                   </div>
                 </Link>
               ))}
@@ -124,7 +125,7 @@ function SDKGrid({ packages }: { packages: SyncedPackage[] }) {
         ))}
       </div>
     </PageSection>
-  )
+  );
 }
 
 /* ─── Quick start ─── */
@@ -159,7 +160,7 @@ function QuickStart() {
         </div>
       </div>
     </PageSection>
-  )
+  );
 }
 
 /* ─── Build with AI ─── */
@@ -180,7 +181,12 @@ function BuildWithAI() {
           >
             <h3 className="flex items-center gap-1.5 text-base text-foreground">
               {entry.title}
-              <span aria-hidden="true" className="inline-flex opacity-0 transition-opacity group-hover:opacity-100"><RiArrowRightUpLine width={14} height={14} fill="currentColor" /></span>
+              <span
+                aria-hidden="true"
+                className="inline-flex opacity-0 transition-opacity group-hover:opacity-100"
+              >
+                <RiArrowRightUpLine width={14} height={14} fill="currentColor" />
+              </span>
             </h3>
             <p className="mt-2 text-sm text-muted-foreground">{entry.description}</p>
           </Link>
@@ -203,7 +209,7 @@ function BuildWithAI() {
         </Button>
       </div>
     </PageSection>
-  )
+  );
 }
 
 /* ─── REST API promo ─── */
@@ -223,12 +229,13 @@ function APIPromo() {
             </pre>
           </div>
           <Button variant="primary" href={apiCta.href}>
-            {apiCta.label} <RiArrowRightUpLine width={14} height={14} fill="currentColor" aria-hidden />
+            {apiCta.label}{' '}
+            <RiArrowRightUpLine width={14} height={14} fill="currentColor" aria-hidden />
           </Button>
         </div>
       </div>
     </PageSection>
-  )
+  );
 }
 
 /* ─── Resources grid ─── */
@@ -238,7 +245,7 @@ function Resources() {
       <SectionHeading title={resourcesHeading} />
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {resources.map((item) => {
-          const external = Boolean(item.external)
+          const external = Boolean(item.external);
           return (
             <Card
               key={item.title}
@@ -250,15 +257,17 @@ function Resources() {
             >
               <div className="flex items-center justify-between">
                 <span className="text-base font-semibold text-foreground">{item.title}</span>
-                <span aria-hidden="true" className="inline-flex text-muted-foreground"><RiArrowRightUpLine width={14} height={14} fill="currentColor" /></span>
+                <span aria-hidden="true" className="inline-flex text-muted-foreground">
+                  <RiArrowRightUpLine width={14} height={14} fill="currentColor" />
+                </span>
               </div>
               <p className="text-sm text-muted-foreground">{item.description}</p>
             </Card>
-          )
+          );
         })}
       </div>
     </PageSection>
-  )
+  );
 }
 
 /* ─── Final CTA ─── */
@@ -280,11 +289,11 @@ function FinalCTA() {
         </div>
       </div>
     </PageSection>
-  )
+  );
 }
 
 export default function DevelopersPage() {
-  const packages = getPackages()
+  const packages = getPackages();
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background text-foreground">
@@ -305,5 +314,5 @@ export default function DevelopersPage() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }

@@ -1,13 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
-import { useAuth } from '@oxy.so/services/ui/client'
-import { apiFetch } from '../api/client'
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@oxy.so/services/ui/client';
+import { apiFetch } from '../api/client';
 
 /** Server's answer to "who am I, and am I an admin?" — see server/routes/adminAccess.ts. */
 export interface AdminAccess {
-  authenticated: boolean
-  isAdmin: boolean
-  userId: string | null
-  username: string | null
+  authenticated: boolean;
+  isAdmin: boolean;
+  userId: string | null;
+  username: string | null;
 }
 
 /**
@@ -25,7 +25,7 @@ export interface AdminAccess {
  * cached as final — which is exactly how `/admin` ended up stuck on a 404.
  */
 export function useAdminAccess() {
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   const query = useQuery({
     queryKey: ['admin-access', user?.id ?? null],
@@ -34,7 +34,7 @@ export function useAdminAccess() {
     // The session may still be settling; a transient failure shouldn't read as
     // "not an admin".
     retry: 2,
-  })
+  });
 
   return {
     /** True only once the server has confirmed it. Never optimistic. */
@@ -47,5 +47,5 @@ export function useAdminAccess() {
     isError: query.isError,
     error: query.error,
     refetch: query.refetch,
-  }
+  };
 }

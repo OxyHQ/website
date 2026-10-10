@@ -1,8 +1,8 @@
-import CommonsContent from '../components/commons/CommonsContent'
-import PageShell from '../components/layout/PageShell'
-import Navbar from '../components/layout/Navbar'
-import { APP_CARD_IMAGES } from '../data/appCardImages'
-import '../styles/commons.css'
+import CommonsContent from '../components/commons/CommonsContent';
+import PageShell from '../components/layout/PageShell';
+import Navbar from '../components/layout/Navbar';
+import { APP_CARD_IMAGES } from '../data/appCardImages';
+import '../styles/commons.css';
 
 export default function CommonsPage() {
   return (
@@ -21,5 +21,5 @@ export default function CommonsPage() {
     >
       <CommonsContent />
     </PageShell>
-  )
+  );
 }

@@ -1,12 +1,13 @@
-import PageShell from '../components/layout/PageShell'
-import ChangelogContent from '../components/changelog/ChangelogPage'
+import PageShell from '../components/layout/PageShell';
+import ChangelogContent from '../components/changelog/ChangelogPage';
 
 export default function ChangelogPage() {
   return (
     <PageShell
       seo={{
         title: 'Changelog',
-        description: 'Every notable change across the Oxy ecosystem, including the ones that remove something.',
+        description:
+          'Every notable change across the Oxy ecosystem, including the ones that remove something.',
         canonicalPath: '/changelog',
       }}
       // Deliberately no `mainClassName`: this page's `<main>` has never carried
@@ -15,5 +16,5 @@ export default function ChangelogPage() {
     >
       <ChangelogContent />
     </PageShell>
-  )
+  );
 }

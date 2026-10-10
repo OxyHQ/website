@@ -1,32 +1,32 @@
-import { useCallback, useSyncExternalStore } from 'react'
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
-import { apiFetch, errorStatus } from './client'
-import { useCurrentLocale } from '../lib/i18n'
+import { useCallback, useSyncExternalStore } from 'react';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
+import { apiFetch, errorStatus } from './client';
+import { useCurrentLocale } from '../lib/i18n';
 import {
   subscribeFairCoinStats,
   getFairCoinStatsSnapshot,
   getFairCoinStatsServerSnapshot,
   type FairCoinStats,
-} from './faircoinStore'
+} from './faircoinStore';
 import {
   subscribePlatformStats,
   getPlatformStatsSnapshot,
   getPlatformStatsServerSnapshot,
   type PlatformStats,
-} from './platformStatsStore'
+} from './platformStatsStore';
 import {
   subscribePlatformActivity,
   getPlatformActivitySnapshot,
   getPlatformActivityServerSnapshot,
   type PlatformActivityEvent,
-} from './platformActivityStore'
+} from './platformActivityStore';
 
-import { type Testimonial } from '../data/content'
-import { BRAND_MARKS } from '../data/brand-assets'
-import { type BillingPlan, type PricingPlan } from '../data/pricing'
-import { OXY_API } from '../lib/oxyApi'
-import { type NewsroomPost, type NewsroomPostSummary } from '../data/newsroom'
-import type { CareerJob } from '../lib/careers'
+import { type Testimonial } from '../data/content';
+import { BRAND_MARKS } from '../data/brand-assets';
+import { type BillingPlan, type PricingPlan } from '../data/pricing';
+import { OXY_API } from '../lib/oxyApi';
+import { type NewsroomPost, type NewsroomPostSummary } from '../data/newsroom';
+import type { CareerJob } from '../lib/careers';
 import {
   fetchNewsroomPost,
   type NewsroomListParams,
@@ -35,50 +35,49 @@ import {
   newsroomRequestSignal,
   prefetchNewsroomPost,
   shouldRetryNewsroomRequest,
-} from './newsroomQuery'
-import { preloadNewsroomPostRoute } from '../lib/route-preload'
-import { resolveResponsiveImage } from '../lib/responsiveImage'
+} from './newsroomQuery';
+import { preloadNewsroomPostRoute } from '../lib/route-preload';
+import { resolveResponsiveImage } from '../lib/responsiveImage';
 
 /**
  * Resolve a populated Media field to a URL string.
  * Handles: null → '', string → string, { url } object → url, { thumbnails } → best thumbnail.
  */
 function resolveMediaUrl(field: unknown, preferThumbnail?: 'sm' | 'md' | 'lg'): string {
-  if (!field) return ''
-  if (typeof field === 'string') return field
+  if (!field) return '';
+  if (typeof field === 'string') return field;
   if (typeof field === 'object' && field !== null) {
-    const media = field as { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } }
-    const thumbnail = preferThumbnail ? media.thumbnails?.[preferThumbnail] : undefined
-    if (thumbnail) return thumbnail
-    return media.url || ''
+    const media = field as { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } };
+    const thumbnail = preferThumbnail ? media.thumbnails?.[preferThumbnail] : undefined;
+    if (thumbnail) return thumbnail;
+    return media.url || '';
   }
-  return ''
+  return '';
 }
 
 /** Resolve all media fields on a newsroom post to URL strings */
 function normalizePostMedia<T extends NewsroomPostSummary>(post: T): T {
-  const cover = resolveResponsiveImage(post.coverImage)
+  const cover = resolveResponsiveImage(post.coverImage);
   return {
     ...post,
     coverImage: cover.src,
     coverImageSrcSet: cover.srcSet ?? post.coverImageSrcSet,
     ...('products' in post ? { products: post.products ?? [] } : {}),
     ...('ogImage' in post ? { ogImage: resolveMediaUrl(post.ogImage) } : {}),
-  } as T
+  } as T;
 }
 
 /** Resolve media field on a changelog entry */
 function normalizeEntryMedia<T extends { media?: unknown }>(entry: T): T {
-  return { ...entry, media: resolveMediaUrl(entry.media, 'lg') } as T
+  return { ...entry, media: resolveMediaUrl(entry.media, 'lg') } as T;
 }
-
 
 // ── Pages ──
 export interface PageSection {
-  type: string
-  heading?: string
-  subheading?: string
-  content?: string
+  type: string;
+  heading?: string;
+  subheading?: string;
+  content?: string;
   /**
    * Free-form item list persisted as Mixed on the server. `key`/`value` remain
    * as typed string fields for backward compatibility with sections that use
@@ -86,34 +85,35 @@ export interface PageSection {
    * store richer objects by writing additional fields — consumers read those
    * extra fields via the index signature and narrow them with type guards.
    */
-  items?: Array<{ key: string; value: string; [extra: string]: unknown }>
-  order: number
+  items?: Array<{ key: string; value: string; [extra: string]: unknown }>;
+  order: number;
 }
 
 export interface PageData {
-  _id: string
-  slug: string
-  title: string
-  description: string
-  sections: PageSection[]
-  promptPhrases: string[]
+  _id: string;
+  slug: string;
+  title: string;
+  description: string;
+  sections: PageSection[];
+  promptPhrases: string[];
 }
 
 export function usePage(slug: string) {
-  const locale = useCurrentLocale()
+  const locale = useCurrentLocale();
   return useQuery({
     queryKey: ['page', slug, locale],
     queryFn: () => apiFetch<PageData>(`/pages/${slug}`, { locale }),
     retry: false,
-  })
+  });
 }
 
 export function useUpdatePage(slug: string) {
-  const qc = useQueryClient()
+  const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<PageData>) => apiFetch(`/pages/${slug}`, { method: 'PUT', body: JSON.stringify(data) }),
+    mutationFn: (data: Partial<PageData>) =>
+      apiFetch(`/pages/${slug}`, { method: 'PUT', body: JSON.stringify(data) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['page', slug] }),
-  })
+  });
 }
 
 // ── Hero ──
@@ -123,134 +123,141 @@ export type HeroMediaRef =
   | string
   | null
   | {
-      _id?: string
-      url?: string
-      thumbnails?: { sm?: string; md?: string; lg?: string }
-    }
+      _id?: string;
+      url?: string;
+      thumbnails?: { sm?: string; md?: string; lg?: string };
+    };
 
 export interface HeroContent {
-  _id?: string
-  title: string
-  backgroundVideoWebm: HeroMediaRef
-  backgroundVideoMp4: HeroMediaRef
-  backgroundPoster: HeroMediaRef
+  _id?: string;
+  title: string;
+  backgroundVideoWebm: HeroMediaRef;
+  backgroundVideoMp4: HeroMediaRef;
+  backgroundPoster: HeroMediaRef;
 }
 
 export function useHero() {
-  const locale = useCurrentLocale()
+  const locale = useCurrentLocale();
   return useQuery({
     queryKey: ['hero', locale],
     queryFn: () => apiFetch<HeroContent>('/hero', { locale }),
     staleTime: 60_000,
     retry: 1,
     placeholderData: keepPreviousData,
-  })
+  });
 }
 
 // ── Categories ──
-export type CategoryScope = 'apps' | 'nav' | 'generic'
+export type CategoryScope = 'apps' | 'nav' | 'generic';
 
 export interface CategoryRecord {
-  _id?: string
-  slug: string
-  label: string
-  description?: string
-  scope: CategoryScope
-  order: number
+  _id?: string;
+  slug: string;
+  label: string;
+  description?: string;
+  scope: CategoryScope;
+  order: number;
 }
 
 export function useCategories(scope?: CategoryScope) {
-  const locale = useCurrentLocale()
-  const qs = scope ? `?scope=${scope}` : ''
+  const locale = useCurrentLocale();
+  const qs = scope ? `?scope=${scope}` : '';
   return useQuery<CategoryRecord[]>({
     queryKey: ['categories', scope ?? 'all', locale],
     queryFn: () => apiFetch<CategoryRecord[]>(`/categories${qs}`, { locale }),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
-  })
+  });
 }
 
 // ── Products ──
-export type ProductLifecycle = 'live' | 'in-development'
+export type ProductLifecycle = 'live' | 'in-development';
 
 export interface ProductLogoRef {
-  _id?: string
-  url?: string
-  thumbnails?: { sm?: string; md?: string; lg?: string }
+  _id?: string;
+  url?: string;
+  thumbnails?: { sm?: string; md?: string; lg?: string };
 }
 
 export interface ProductCategoryRef {
-  _id?: string
-  slug?: string
-  label?: string
-  order?: number
+  _id?: string;
+  slug?: string;
+  label?: string;
+  order?: number;
 }
 
 export interface ProductRecord {
-  _id?: string
-  productId: string
-  name: string
-  tagline: string
-  description: string
-  href: string
-  landingUrl?: string
-  healthUrl?: string
-  external: boolean
-  cta: string
-  brand: string
-  brandForeground?: string
-  mark: string
-  logo?: string | ProductLogoRef | null
-  category?: string | ProductCategoryRef | null
-  section: string
-  lifecycle: ProductLifecycle
-  showOnProducts: boolean
-  showOnStatus: boolean
-  showInNav: boolean
-  navOpensApp: boolean
-  order: number
+  _id?: string;
+  productId: string;
+  name: string;
+  tagline: string;
+  description: string;
+  href: string;
+  landingUrl?: string;
+  healthUrl?: string;
+  external: boolean;
+  cta: string;
+  brand: string;
+  brandForeground?: string;
+  mark: string;
+  logo?: string | ProductLogoRef | null;
+  category?: string | ProductCategoryRef | null;
+  section: string;
+  lifecycle: ProductLifecycle;
+  showOnProducts: boolean;
+  showOnStatus: boolean;
+  showInNav: boolean;
+  navOpensApp: boolean;
+  order: number;
 }
 
 export function resolveProductCategoryId(product: Pick<ProductRecord, 'category'>): string {
-  const cat = product.category
-  if (!cat) return ''
-  if (typeof cat === 'string') return cat
-  return cat._id ?? ''
+  const cat = product.category;
+  if (!cat) return '';
+  if (typeof cat === 'string') return cat;
+  return cat._id ?? '';
 }
 
 export interface UseProductsOptions {
-  surface?: 'products' | 'status' | 'nav'
-  lifecycle?: ProductLifecycle
-  section?: string
-  enabled?: boolean
+  surface?: 'products' | 'status' | 'nav';
+  lifecycle?: ProductLifecycle;
+  section?: string;
+  enabled?: boolean;
 }
 
 export function useProducts(options: UseProductsOptions = {}) {
-  const locale = useCurrentLocale()
-  const qs = new URLSearchParams()
-  if (options.surface) qs.set('surface', options.surface)
-  if (options.lifecycle) qs.set('lifecycle', options.lifecycle)
-  if (options.section) qs.set('section', options.section)
-  const query = qs.toString()
+  const locale = useCurrentLocale();
+  const qs = new URLSearchParams();
+  if (options.surface) qs.set('surface', options.surface);
+  if (options.lifecycle) qs.set('lifecycle', options.lifecycle);
+  if (options.section) qs.set('section', options.section);
+  const query = qs.toString();
   return useQuery<ProductRecord[]>({
-    queryKey: ['products', options.surface ?? 'all', options.lifecycle ?? 'any', options.section ?? 'any', locale],
+    queryKey: [
+      'products',
+      options.surface ?? 'all',
+      options.lifecycle ?? 'any',
+      options.section ?? 'any',
+      locale,
+    ],
     queryFn: () => apiFetch<ProductRecord[]>(`/products${query ? `?${query}` : ''}`, { locale }),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
     enabled: options.enabled ?? true,
-  })
+  });
 }
 
 /** One product by its `productId`, for the app detail page. */
 export function useProduct(productId: string) {
-  const locale = useCurrentLocale()
+  const locale = useCurrentLocale();
   return useQuery<ProductRecord>({
     queryKey: ['product', productId, locale],
-    queryFn: () => apiFetch<ProductRecord>(`/products/${encodeURIComponent(productId)}`, { locale }),
+    queryFn: () =>
+      apiFetch<ProductRecord>(`/products/${encodeURIComponent(productId)}`, { locale }),
     enabled: productId.length > 0,
     staleTime: 5 * 60_000,
     retry: false,
-  })
+  });
 }
 
 const LOCAL_PRODUCT_LOGOS: Readonly<Record<string, string>> = {
@@ -267,72 +274,72 @@ const LOCAL_PRODUCT_LOGOS: Readonly<Record<string, string>> = {
   'faircoin-wallet': '/images/apps/faircoin-wallet.svg',
   fairwallet: '/images/apps/faircoin-wallet.svg',
   kaana: '/images/apps/kaana.svg',
-}
+};
 
 export function resolveProductLogoUrl(product: ProductRecord): string {
-  if (LOCAL_PRODUCT_LOGOS[product.productId]) return LOCAL_PRODUCT_LOGOS[product.productId]
+  if (LOCAL_PRODUCT_LOGOS[product.productId]) return LOCAL_PRODUCT_LOGOS[product.productId];
 
-  const logo = product.logo
-  if (!logo) return ''
-  if (typeof logo === 'string') return logo
-  return logo.thumbnails?.md || logo.thumbnails?.lg || logo.url || ''
+  const logo = product.logo;
+  if (!logo) return '';
+  if (typeof logo === 'string') return logo;
+  return logo.thumbnails?.md || logo.thumbnails?.lg || logo.url || '';
 }
 
 // ── Service status ──
-export type ServiceStatusValue = 'operational' | 'degraded' | 'down' | 'unknown'
+export type ServiceStatusValue = 'operational' | 'degraded' | 'down' | 'unknown';
 
 export interface ServiceStatusEntry {
-  id: string
-  name: string
-  description: string
-  section: string
-  url: string
-  landingUrl: string | null
-  brand: string
-  brandForeground?: string
-  mark: string
-  logoUrl: string | null
-  status: ServiceStatusValue
-  latencyMs: number | null
-  httpStatus: number | null
-  lastChecked: string
+  id: string;
+  name: string;
+  description: string;
+  section: string;
+  url: string;
+  landingUrl: string | null;
+  brand: string;
+  brandForeground?: string;
+  mark: string;
+  logoUrl: string | null;
+  status: ServiceStatusValue;
+  latencyMs: number | null;
+  httpStatus: number | null;
+  lastChecked: string;
 }
 
 export interface ServiceStatusPayload {
-  generatedAt: string
-  overall: ServiceStatusValue
-  services: ServiceStatusEntry[]
+  generatedAt: string;
+  overall: ServiceStatusValue;
+  services: ServiceStatusEntry[];
 }
 
 export function useServiceStatus() {
-  const locale = useCurrentLocale()
+  const locale = useCurrentLocale();
   return useQuery<ServiceStatusPayload>({
     queryKey: ['status', locale],
     queryFn: () => apiFetch<ServiceStatusPayload>('/status', { locale }),
     staleTime: 30_000,
     refetchInterval: 60_000,
     retry: 1,
-  })
+  });
 }
 
 // ── Status history: daily uptime + incidents ──
-export type UptimeDayStatus = 'operational' | 'degraded' | 'down' | 'no-data'
+export type UptimeDayStatus = 'operational' | 'degraded' | 'down' | 'no-data';
 
 export interface UptimeDay {
-  date: string
-  status: UptimeDayStatus
-  uptimePct: number | null
+  date: string;
+  status: UptimeDayStatus;
+  uptimePct: number | null;
 }
 
 export interface ServiceUptime {
-  productId: string
-  name: string
-  days: UptimeDay[]
+  productId: string;
+  name: string;
+  days: UptimeDay[];
 }
 
 export interface ServiceUptimePayload {
-  days: number
-  services: ServiceUptime[]
+  days: number;
+  services: ServiceUptime[];
 }
 
 export function useServiceUptime(days = 90) {
@@ -340,38 +347,38 @@ export function useServiceUptime(days = 90) {
     queryKey: ['status-uptime', days],
     queryFn: () => apiFetch<ServiceUptimePayload>(`/status/uptime?days=${days}`),
     staleTime: 5 * 60_000,
-  })
+  });
 }
 
-export type IncidentSeverity = 'minor' | 'major' | 'critical'
-export type IncidentUpdateStatus = 'investigating' | 'identified' | 'monitoring' | 'resolved'
+export type IncidentSeverity = 'minor' | 'major' | 'critical';
+export type IncidentUpdateStatus = 'investigating' | 'identified' | 'monitoring' | 'resolved';
 
 export interface IncidentUpdateRecord {
-  _id: string
-  status: IncidentUpdateStatus
-  body: string
-  createdAt: string
+  _id: string;
+  status: IncidentUpdateStatus;
+  body: string;
+  createdAt: string;
 }
 
 export interface IncidentHistoryEntry {
-  _id: string
-  title: string
-  severity: IncidentSeverity
-  status: IncidentUpdateStatus
-  products: string[]
-  startedAt: string
-  resolvedAt: string | null
-  affectedServices: { _id: string; productId: string; name: string }[]
-  updates: IncidentUpdateRecord[]
+  _id: string;
+  title: string;
+  severity: IncidentSeverity;
+  status: IncidentUpdateStatus;
+  products: string[];
+  startedAt: string;
+  resolvedAt: string | null;
+  affectedServices: { _id: string; productId: string; name: string }[];
+  updates: IncidentUpdateRecord[];
 }
 
 export interface IncidentHistoryPayload {
-  page: number
-  pages: number
-  year: number
-  month: number
-  label: string
-  incidents: IncidentHistoryEntry[]
+  page: number;
+  pages: number;
+  year: number;
+  month: number;
+  label: string;
+  incidents: IncidentHistoryEntry[];
 }
 
 export function useIncidentHistory(page = 1) {
@@ -379,24 +386,26 @@ export function useIncidentHistory(page = 1) {
     queryKey: ['status-incidents', page],
     queryFn: () => apiFetch<IncidentHistoryPayload>(`/status/incidents?page=${page}`),
     staleTime: 5 * 60_000,
-  })
+  });
 }
 
 export function useIncidentsAdmin(page = 1) {
-  return useIncidentHistory(page)
+  return useIncidentHistory(page);
 }
 
 export function useUpdateHero() {
-  const qc = useQueryClient()
+  const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<{
-      title: string
-      backgroundVideoWebm: string | null
-      backgroundVideoMp4: string | null
-      backgroundPoster: string | null
-    }>) => apiFetch<HeroContent>('/hero', { method: 'PUT', body: JSON.stringify(data) }),
+    mutationFn: (
+      data: Partial<{
+        title: string;
+        backgroundVideoWebm: string | null;
+        backgroundVideoMp4: string | null;
+        backgroundPoster: string | null;
+      }>,
+    ) => apiFetch<HeroContent>('/hero', { method: 'PUT', body: JSON.stringify(data) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['hero'] }),
-  })
+  });
 }
 
 // ── Newsroom ──
@@ -404,320 +413,323 @@ export function useNewsroomPosts<TPost extends NewsroomPostSummary = NewsroomPos
   params?: NewsroomListParams,
   options?: { enabled?: boolean },
 ) {
-  const locale = useCurrentLocale()
-  const searchParams = new URLSearchParams()
-  if (params?.category) searchParams.set('category', params.category)
-  if (params?.tag) searchParams.set('tag', params.tag)
-  if (params?.featured) searchParams.set('featured', 'true')
-  if (params?.limit) searchParams.set('limit', String(params.limit))
-  if (params?.page) searchParams.set('page', String(params.page))
-  if (params?.author) searchParams.set('author', params.author)
-  if (params?.search) searchParams.set('search', params.search)
-  const qs = searchParams.toString()
+  const locale = useCurrentLocale();
+  const searchParams = new URLSearchParams();
+  if (params?.category) searchParams.set('category', params.category);
+  if (params?.tag) searchParams.set('tag', params.tag);
+  if (params?.featured) searchParams.set('featured', 'true');
+  if (params?.limit) searchParams.set('limit', String(params.limit));
+  if (params?.page) searchParams.set('page', String(params.page));
+  if (params?.author) searchParams.set('author', params.author);
+  if (params?.search) searchParams.set('search', params.search);
+  const qs = searchParams.toString();
 
   return useQuery({
     queryKey: newsroomPostsQueryKey(params, locale),
-    queryFn: ({ signal }) => apiFetch<{ posts: TPost[]; total: number; page: number; pages: number }>(
-      `/newsroom${qs ? `?${qs}` : ''}`,
-      { locale, signal: newsroomRequestSignal(signal) },
-    ),
+    queryFn: ({ signal }) =>
+      apiFetch<{ posts: TPost[]; total: number; page: number; pages: number }>(
+        `/newsroom${qs ? `?${qs}` : ''}`,
+        { locale, signal: newsroomRequestSignal(signal) },
+      ),
     select: (data) => ({ ...data, posts: data.posts.map(normalizePostMedia) }),
     placeholderData: keepPreviousData,
     enabled: options?.enabled ?? true,
     retry: shouldRetryNewsroomRequest,
-  })
+  });
 }
 
 export function useNewsroomPost(slug: string) {
-  const locale = useCurrentLocale()
+  const locale = useCurrentLocale();
   return useQuery({
     queryKey: newsroomPostQueryKey(slug, locale),
     queryFn: async ({ signal }) => {
       if (import.meta.env.DEV && slug === 'article-components-showcase-preview') {
         const { articleComponentsShowcasePost } = await import(
           '../content/newsroom-previews/article-components-showcase'
-        )
-        return articleComponentsShowcasePost
+        );
+        return articleComponentsShowcasePost;
       }
-      return fetchNewsroomPost(slug, locale, signal)
+      return fetchNewsroomPost(slug, locale, signal);
     },
     select: normalizePostMedia,
     enabled: !!slug,
     staleTime: 5 * 60_000,
     retry: shouldRetryNewsroomRequest,
-  })
+  });
 }
 
 /** Preload both the route code and full post when a card shows click intent. */
 export function usePrefetchNewsroomPost(slug: string) {
-  const locale = useCurrentLocale()
-  const client = useQueryClient()
+  const locale = useCurrentLocale();
+  const client = useQueryClient();
 
   return useCallback(async () => {
     await Promise.allSettled([
       preloadNewsroomPostRoute(),
       prefetchNewsroomPost(client, slug, locale),
-    ])
-  }, [client, locale, slug])
+    ]);
+  }, [client, locale, slug]);
 }
 
 export function useCreateNewsroomPost() {
-  const qc = useQueryClient()
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: NewsroomPost) =>
       apiFetch<NewsroomPost>('/newsroom', { method: 'POST', body: JSON.stringify(data) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['newsroom'] }),
-  })
+  });
 }
 
 // ── Academy: Courses ──
-export type CourseLevel = 'beginner' | 'intermediate' | 'advanced'
-export type CourseStatus = 'draft' | 'published'
+export type CourseLevel = 'beginner' | 'intermediate' | 'advanced';
+export type CourseStatus = 'draft' | 'published';
 
 export interface CourseCoverRef {
-  _id?: string
-  url?: string
-  thumbnails?: { sm?: string; md?: string; lg?: string }
+  _id?: string;
+  url?: string;
+  thumbnails?: { sm?: string; md?: string; lg?: string };
 }
 
 export interface CourseCategoryRef {
-  _id?: string
-  slug?: string
-  label?: string
-  description?: string
-  order?: number
+  _id?: string;
+  slug?: string;
+  label?: string;
+  description?: string;
+  order?: number;
 }
 
 export interface CourseLesson {
-  title: string
-  slug: string
-  content: string
-  order: number
-  videoUrl?: string
-  durationMinutes?: number
+  title: string;
+  slug: string;
+  content: string;
+  order: number;
+  videoUrl?: string;
+  durationMinutes?: number;
 }
 
 export interface CourseRecord {
-  _id?: string
-  slug: string
-  title: string
-  summary: string
-  description: string
-  coverImage?: string | CourseCoverRef | null
-  category?: string | CourseCategoryRef | null
-  level: CourseLevel
-  durationMinutes?: number
-  lessons: CourseLesson[]
-  tags: string[]
-  featured: boolean
-  status: CourseStatus
-  publishedAt: string
-  order: number
-  createdAt?: string
-  updatedAt?: string
+  _id?: string;
+  slug: string;
+  title: string;
+  summary: string;
+  description: string;
+  coverImage?: string | CourseCoverRef | null;
+  category?: string | CourseCategoryRef | null;
+  level: CourseLevel;
+  durationMinutes?: number;
+  lessons: CourseLesson[];
+  tags: string[];
+  featured: boolean;
+  status: CourseStatus;
+  publishedAt: string;
+  order: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface CoursesListResponse {
-  courses: CourseRecord[]
-  total: number
-  page: number
-  pages: number
+  courses: CourseRecord[];
+  total: number;
+  page: number;
+  pages: number;
 }
 
 function normalizeCourse(course: CourseRecord): CourseRecord {
   return {
     ...course,
     coverImage: resolveMediaUrl(course.coverImage, 'lg'),
-  }
+  };
 }
 
 export interface UseCoursesOptions {
-  category?: string
-  tag?: string
-  featured?: boolean
-  status?: CourseStatus
-  level?: CourseLevel
-  limit?: number
-  page?: number
+  category?: string;
+  tag?: string;
+  featured?: boolean;
+  status?: CourseStatus;
+  level?: CourseLevel;
+  limit?: number;
+  page?: number;
 }
 
 export function useCourses(options: UseCoursesOptions = {}) {
-  const locale = useCurrentLocale()
-  const qs = new URLSearchParams()
-  if (options.category) qs.set('category', options.category)
-  if (options.tag) qs.set('tag', options.tag)
-  if (options.featured) qs.set('featured', 'true')
-  if (options.status) qs.set('status', options.status)
-  if (options.level) qs.set('level', options.level)
-  if (options.limit) qs.set('limit', String(options.limit))
-  if (options.page) qs.set('page', String(options.page))
-  const query = qs.toString()
+  const locale = useCurrentLocale();
+  const qs = new URLSearchParams();
+  if (options.category) qs.set('category', options.category);
+  if (options.tag) qs.set('tag', options.tag);
+  if (options.featured) qs.set('featured', 'true');
+  if (options.status) qs.set('status', options.status);
+  if (options.level) qs.set('level', options.level);
+  if (options.limit) qs.set('limit', String(options.limit));
+  if (options.page) qs.set('page', String(options.page));
+  const query = qs.toString();
   return useQuery({
     queryKey: ['courses', options, locale],
     queryFn: () => apiFetch<CoursesListResponse>(`/courses${query ? `?${query}` : ''}`, { locale }),
     select: (data) => ({ ...data, courses: data.courses.map(normalizeCourse) }),
     placeholderData: keepPreviousData,
-  })
+  });
 }
 
 export function resolveCourseCategoryId(course: Pick<CourseRecord, 'category'>): string {
-  const cat = course.category
-  if (!cat) return ''
-  if (typeof cat === 'string') return cat
-  return cat._id ?? ''
+  const cat = course.category;
+  if (!cat) return '';
+  if (typeof cat === 'string') return cat;
+  return cat._id ?? '';
 }
 
 // ── Academy: Resources ──
-export type ResourceType = 'guide' | 'paper' | 'video' | 'tool' | 'template' | 'link'
-export type ResourceStatus = 'draft' | 'published'
+export type ResourceType = 'guide' | 'paper' | 'video' | 'tool' | 'template' | 'link';
+export type ResourceStatus = 'draft' | 'published';
 
 export interface ResourceRecord {
-  _id?: string
-  slug: string
-  title: string
-  summary: string
-  type: ResourceType
-  coverImage?: string | CourseCoverRef | null
-  category?: string | CourseCategoryRef | null
-  href: string
-  external: boolean
-  tags: string[]
-  featured: boolean
-  status: ResourceStatus
-  publishedAt: string
-  order: number
-  createdAt?: string
-  updatedAt?: string
+  _id?: string;
+  slug: string;
+  title: string;
+  summary: string;
+  type: ResourceType;
+  coverImage?: string | CourseCoverRef | null;
+  category?: string | CourseCategoryRef | null;
+  href: string;
+  external: boolean;
+  tags: string[];
+  featured: boolean;
+  status: ResourceStatus;
+  publishedAt: string;
+  order: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface ResourcesListResponse {
-  resources: ResourceRecord[]
-  total: number
-  page: number
-  pages: number
+  resources: ResourceRecord[];
+  total: number;
+  page: number;
+  pages: number;
 }
 
 function normalizeResource(resource: ResourceRecord): ResourceRecord {
   return {
     ...resource,
     coverImage: resolveMediaUrl(resource.coverImage, 'lg'),
-  }
+  };
 }
 
 export interface UseResourcesOptions {
-  category?: string
-  tag?: string
-  type?: ResourceType
-  featured?: boolean
-  status?: ResourceStatus
-  limit?: number
-  page?: number
+  category?: string;
+  tag?: string;
+  type?: ResourceType;
+  featured?: boolean;
+  status?: ResourceStatus;
+  limit?: number;
+  page?: number;
 }
 
 export function useResources(options: UseResourcesOptions = {}) {
-  const locale = useCurrentLocale()
-  const qs = new URLSearchParams()
-  if (options.category) qs.set('category', options.category)
-  if (options.tag) qs.set('tag', options.tag)
-  if (options.type) qs.set('type', options.type)
-  if (options.featured) qs.set('featured', 'true')
-  if (options.status) qs.set('status', options.status)
-  if (options.limit) qs.set('limit', String(options.limit))
-  if (options.page) qs.set('page', String(options.page))
-  const query = qs.toString()
+  const locale = useCurrentLocale();
+  const qs = new URLSearchParams();
+  if (options.category) qs.set('category', options.category);
+  if (options.tag) qs.set('tag', options.tag);
+  if (options.type) qs.set('type', options.type);
+  if (options.featured) qs.set('featured', 'true');
+  if (options.status) qs.set('status', options.status);
+  if (options.limit) qs.set('limit', String(options.limit));
+  if (options.page) qs.set('page', String(options.page));
+  const query = qs.toString();
   return useQuery({
     queryKey: ['resources', options, locale],
-    queryFn: () => apiFetch<ResourcesListResponse>(`/resources${query ? `?${query}` : ''}`, { locale }),
+    queryFn: () =>
+      apiFetch<ResourcesListResponse>(`/resources${query ? `?${query}` : ''}`, { locale }),
     select: (data) => ({ ...data, resources: data.resources.map(normalizeResource) }),
     placeholderData: keepPreviousData,
-  })
+  });
 }
 
 export function resolveResourceCategoryId(resource: Pick<ResourceRecord, 'category'>): string {
-  const cat = resource.category
-  if (!cat) return ''
-  if (typeof cat === 'string') return cat
-  return cat._id ?? ''
+  const cat = resource.category;
+  if (!cat) return '';
+  if (typeof cat === 'string') return cat;
+  return cat._id ?? '';
 }
 
 // ── Help Center: Articles ──
-export type HelpArticleStatus = 'draft' | 'published'
+export type HelpArticleStatus = 'draft' | 'published';
 
 export interface HelpArticleRecord {
-  _id?: string
-  slug: string
-  title: string
-  summary: string
-  content: string
-  category?: string | CourseCategoryRef | null
-  icon?: string
-  coverImage?: string | CourseCoverRef | null
-  tags: string[]
-  featured: boolean
-  status: HelpArticleStatus
-  publishedAt: string
-  order: number
-  createdAt?: string
-  updatedAt?: string
+  _id?: string;
+  slug: string;
+  title: string;
+  summary: string;
+  content: string;
+  category?: string | CourseCategoryRef | null;
+  icon?: string;
+  coverImage?: string | CourseCoverRef | null;
+  tags: string[];
+  featured: boolean;
+  status: HelpArticleStatus;
+  publishedAt: string;
+  order: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface HelpArticlesListResponse {
-  articles: HelpArticleRecord[]
-  total: number
-  page: number
-  pages: number
+  articles: HelpArticleRecord[];
+  total: number;
+  page: number;
+  pages: number;
 }
 
 function normalizeHelpArticle(article: HelpArticleRecord): HelpArticleRecord {
   return {
     ...article,
     coverImage: resolveMediaUrl(article.coverImage, 'lg'),
-  }
+  };
 }
 
 export interface UseHelpArticlesOptions {
-  category?: string
-  tag?: string
-  featured?: boolean
-  status?: HelpArticleStatus
-  limit?: number
-  page?: number
+  category?: string;
+  tag?: string;
+  featured?: boolean;
+  status?: HelpArticleStatus;
+  limit?: number;
+  page?: number;
 }
 
 export function useHelpArticles(options: UseHelpArticlesOptions = {}) {
-  const locale = useCurrentLocale()
-  const qs = new URLSearchParams()
-  if (options.category) qs.set('category', options.category)
-  if (options.tag) qs.set('tag', options.tag)
-  if (options.featured) qs.set('featured', 'true')
-  if (options.status) qs.set('status', options.status)
-  if (options.limit) qs.set('limit', String(options.limit))
-  if (options.page) qs.set('page', String(options.page))
-  const query = qs.toString()
+  const locale = useCurrentLocale();
+  const qs = new URLSearchParams();
+  if (options.category) qs.set('category', options.category);
+  if (options.tag) qs.set('tag', options.tag);
+  if (options.featured) qs.set('featured', 'true');
+  if (options.status) qs.set('status', options.status);
+  if (options.limit) qs.set('limit', String(options.limit));
+  if (options.page) qs.set('page', String(options.page));
+  const query = qs.toString();
   return useQuery({
     queryKey: ['help-articles', options, locale],
-    queryFn: () => apiFetch<HelpArticlesListResponse>(`/help${query ? `?${query}` : ''}`, { locale }),
+    queryFn: () =>
+      apiFetch<HelpArticlesListResponse>(`/help${query ? `?${query}` : ''}`, { locale }),
     select: (data) => ({ ...data, articles: data.articles.map(normalizeHelpArticle) }),
     placeholderData: keepPreviousData,
-  })
+  });
 }
 
 export function resolveHelpArticleCategoryId(article: Pick<HelpArticleRecord, 'category'>): string {
-  const cat = article.category
-  if (!cat) return ''
-  if (typeof cat === 'string') return cat
-  return cat._id ?? ''
+  const cat = article.category;
+  if (!cat) return '';
+  if (typeof cat === 'string') return cat;
+  return cat._id ?? '';
 }
 
 // ── Pricing ──
 export function usePricing() {
-  const locale = useCurrentLocale()
+  const locale = useCurrentLocale();
   return useQuery({
     queryKey: ['pricing', locale],
     queryFn: () => apiFetch<PricingPlan[]>('/pricing', { locale }),
     staleTime: 2 * 60_000,
     placeholderData: keepPreviousData,
-  })
+  });
 }
 
 /**
@@ -728,63 +740,63 @@ export function useBillingPlans() {
   return useQuery({
     queryKey: ['billingPlans'],
     queryFn: async () => {
-      const res = await fetch(`${OXY_API}/billing/plans`)
-      if (!res.ok) throw new Error(`billing/plans ${res.status}`)
-      const body = (await res.json()) as { plans?: BillingPlan[] }
-      return body.plans ?? []
+      const res = await fetch(`${OXY_API}/billing/plans`);
+      if (!res.ok) throw new Error(`billing/plans ${res.status}`);
+      const body = (await res.json()) as { plans?: BillingPlan[] };
+      return body.plans ?? [];
     },
     staleTime: 10 * 60_000,
-  })
+  });
 }
 
 // ── Testimonials ──
 export function useTestimonials() {
-  const locale = useCurrentLocale()
+  const locale = useCurrentLocale();
   return useQuery({
     queryKey: ['testimonials', locale],
     queryFn: () => apiFetch<Testimonial[]>('/testimonials', { locale }),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
-  })
+  });
 }
 
 // ── Changelog ──
 export interface ChangelogEntry {
-  _id?: string
-  title: string
-  content: string
-  tags: string[]
-  date: string
-  items?: string[]
-  media?: string
-  tagName?: string
-  repoOwner?: string
-  repoName?: string
-  repoDisplayName?: string
-  htmlUrl?: string
+  _id?: string;
+  title: string;
+  content: string;
+  tags: string[];
+  date: string;
+  items?: string[];
+  media?: string;
+  tagName?: string;
+  repoOwner?: string;
+  repoName?: string;
+  repoDisplayName?: string;
+  htmlUrl?: string;
 }
 
 interface ChangelogResponse {
-  entries: ChangelogEntry[]
-  total: number
-  page: number
-  pages: number
-  repos: Array<{ owner: string; repo: string; displayName: string }>
+  entries: ChangelogEntry[];
+  total: number;
+  page: number;
+  pages: number;
+  repos: Array<{ owner: string; repo: string; displayName: string }>;
 }
 
 export function useChangelog(params?: { repo?: string; page?: number; limit?: number }) {
-  const locale = useCurrentLocale()
-  const searchParams = new URLSearchParams()
-  if (params?.repo) searchParams.set('repo', params.repo)
-  if (params?.page) searchParams.set('page', String(params.page))
-  if (params?.limit) searchParams.set('limit', String(params.limit))
-  const qs = searchParams.toString()
+  const locale = useCurrentLocale();
+  const searchParams = new URLSearchParams();
+  if (params?.repo) searchParams.set('repo', params.repo);
+  if (params?.page) searchParams.set('page', String(params.page));
+  if (params?.limit) searchParams.set('limit', String(params.limit));
+  const qs = searchParams.toString();
 
   return useQuery({
     queryKey: ['changelog', params, locale],
     queryFn: () => apiFetch<ChangelogResponse>(`/changelog${qs ? `?${qs}` : ''}`, { locale }),
     select: (data) => ({ ...data, entries: data.entries.map(normalizeEntryMedia) }),
-  })
+  });
 }
 
 // ── Jobs ──
@@ -795,17 +807,17 @@ export function useJobs() {
     queryFn: () => apiFetch<CareerJob[]>('/jobs'),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
-  })
+  });
 }
 
 // ── Locales ──
 export interface Locale {
-  _id: string
-  code: string
-  name: string
-  nativeName: string
-  isDefault: boolean
-  enabled: boolean
+  _id: string;
+  code: string;
+  name: string;
+  nativeName: string;
+  isDefault: boolean;
+  enabled: boolean;
 }
 
 export function useLocales() {
@@ -814,52 +826,71 @@ export function useLocales() {
     queryFn: () => apiFetch<Locale[]>('/locales/all'),
     retry: 1,
     staleTime: 300_000,
-  })
+  });
 }
 
 // ── Team ──
 export function useTeamMembers() {
-  const locale = useCurrentLocale()
+  const locale = useCurrentLocale();
   return useQuery({
     queryKey: ['team', locale],
-    queryFn: () => apiFetch<{ _id: string; name: string; slug: string; role: string; department: string; bio: string; avatar: string; socials?: { linkedin?: string; twitter?: string; github?: string; website?: string } }[]>('/team', { locale }),
-    select: (data) => data.map(m => ({ ...m, avatar: resolveMediaUrl(m.avatar, 'md') })),
+    queryFn: () =>
+      apiFetch<
+        {
+          _id: string;
+          name: string;
+          slug: string;
+          role: string;
+          department: string;
+          bio: string;
+          avatar: string;
+          socials?: { linkedin?: string; twitter?: string; github?: string; website?: string };
+        }[]
+      >('/team', { locale }),
+    select: (data) => data.map((m) => ({ ...m, avatar: resolveMediaUrl(m.avatar, 'md') })),
     staleTime: 5 * 60_000,
-  })
+  });
 }
 
 // ── Media ──
 export interface MediaItem {
-  _id: string
-  url: string
-  thumbnails: { sm: string; md: string; lg: string }
-  filename: string
-  key: string
-  mimeType: string
-  size: number
-  width?: number
-  height?: number
-  alt: string
-  tags: string[]
-  folder: string
-  createdAt: string
+  _id: string;
+  url: string;
+  thumbnails: { sm: string; md: string; lg: string };
+  filename: string;
+  key: string;
+  mimeType: string;
+  size: number;
+  width?: number;
+  height?: number;
+  alt: string;
+  tags: string[];
+  folder: string;
+  createdAt: string;
 }
 
-export function useMedia(params?: { search?: string; type?: string; tag?: string; folder?: string; page?: number; limit?: number }) {
-  const searchParams = new URLSearchParams()
-  if (params?.search) searchParams.set('search', params.search)
-  if (params?.type) searchParams.set('type', params.type)
-  if (params?.tag) searchParams.set('tag', params.tag)
-  if (params?.folder) searchParams.set('folder', params.folder)
-  if (params?.page) searchParams.set('page', String(params.page))
-  if (params?.limit) searchParams.set('limit', String(params.limit))
-  const qs = searchParams.toString()
+export function useMedia(params?: {
+  search?: string;
+  type?: string;
+  tag?: string;
+  folder?: string;
+  page?: number;
+  limit?: number;
+}) {
+  const searchParams = new URLSearchParams();
+  if (params?.search) searchParams.set('search', params.search);
+  if (params?.type) searchParams.set('type', params.type);
+  if (params?.tag) searchParams.set('tag', params.tag);
+  if (params?.folder) searchParams.set('folder', params.folder);
+  if (params?.page) searchParams.set('page', String(params.page));
+  if (params?.limit) searchParams.set('limit', String(params.limit));
+  const qs = searchParams.toString();
   return useQuery<{ items: MediaItem[]; total: number; page: number; pages: number }>({
     queryKey: ['media', qs],
     queryFn: () => apiFetch(`/media?${qs}`),
     staleTime: 60_000,
     retry: false,
-  })
+  });
 }
 
 export function useMediaItem(id: string) {
@@ -868,7 +899,7 @@ export function useMediaItem(id: string) {
     queryFn: () => apiFetch(`/media/${id}`),
     enabled: !!id,
     retry: false,
-  })
+  });
 }
 
 export function useJob(id: string) {
@@ -878,43 +909,44 @@ export function useJob(id: string) {
     enabled: !!id,
     // A role that is not open answers 404 every time; only an outage is worth a retry.
     retry: (failures, error) => errorStatus(error) !== 404 && failures < 2,
-  })
+  });
 }
 
 // ── Site Settings ──
 export interface SiteSettings {
-  _id?: string
-  siteTitle: string
-  siteDescription: string
-  ogImage: string
-  banner: { text: string; href: string; visible: boolean }
+  _id?: string;
+  siteTitle: string;
+  siteDescription: string;
+  ogImage: string;
+  banner: { text: string; href: string; visible: boolean };
 }
 
 export function useSiteSettings() {
-  const locale = useCurrentLocale()
+  const locale = useCurrentLocale();
   return useQuery({
     queryKey: ['settings', locale],
     queryFn: () => apiFetch<SiteSettings>('/settings', { locale }),
     select: (data) => ({ ...data, ogImage: resolveMediaUrl(data.ogImage) }),
     staleTime: 2 * 60_000,
     placeholderData: keepPreviousData,
-  })
+  });
 }
 
 // ── SEO ──
 // The SEO table is CMS-managed and host-aware (oxy.so / fairco.in). Types live
 // in ../lib/seo (the shared resolver used by the client, prerender, and edge),
 // so the admin editor and the runtime resolver stay in lockstep.
-import type { SeoBrand, SeoMeta, SeoData } from '../lib/seo'
-export type { SeoBrand, SeoMeta, SeoData }
+import type { SeoBrand, SeoMeta, SeoData } from '../lib/seo';
+export type { SeoBrand, SeoMeta, SeoData };
 
 export function useSeo(path: string, brand: SeoBrand) {
   return useQuery<SeoData>({
     queryKey: ['seo', brand, path],
-    queryFn: () => apiFetch<SeoData>(`/seo?brand=${encodeURIComponent(brand)}&path=${encodeURIComponent(path)}`),
+    queryFn: () =>
+      apiFetch<SeoData>(`/seo?brand=${encodeURIComponent(brand)}&path=${encodeURIComponent(path)}`),
     staleTime: 2 * 60_000,
     placeholderData: keepPreviousData,
-  })
+  });
 }
 
 export function useAdminSeo() {
@@ -923,20 +955,20 @@ export function useAdminSeo() {
     queryFn: () => apiFetch<SeoData>('/seo/all'),
     staleTime: 2 * 60_000,
     placeholderData: keepPreviousData,
-  })
+  });
 }
 
 export function useUpsertSeo() {
-  const qc = useQueryClient()
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (entry: { brand: SeoBrand; path: string } & Partial<SeoMeta>) =>
       apiFetch('/seo', { method: 'PUT', body: JSON.stringify(entry) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['seo'] }),
-  })
+  });
 }
 
 export function useDeleteSeo() {
-  const qc = useQueryClient()
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ brand, path }: { brand: SeoBrand; path: string }) =>
       apiFetch<{ ok: boolean }>(
@@ -944,20 +976,20 @@ export function useDeleteSeo() {
         { method: 'DELETE' },
       ),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['seo'] }),
-  })
+  });
 }
 
 // ── Platform Stats (Dashboard) ──
 // Types are owned by ./platformStatsStore and re-exported here so existing
 // callers can keep importing from this module alongside the hook.
-export type { PlatformStats, PlatformActivityEvent }
+export type { PlatformStats, PlatformActivityEvent };
 
 export function usePlatformStats() {
   return useSyncExternalStore(
     subscribePlatformStats,
     getPlatformStatsSnapshot,
     getPlatformStatsServerSnapshot,
-  )
+  );
 }
 
 export function usePlatformActivity() {
@@ -965,17 +997,17 @@ export function usePlatformActivity() {
     subscribePlatformActivity,
     getPlatformActivitySnapshot,
     getPlatformActivityServerSnapshot,
-  )
+  );
 }
 
 // ── Infrastructure Status ──
 export interface InfraStatusNode {
-  region: string
-  label?: string
-  coordinates?: [number, number]
-  services?: string[]
-  status: 'online' | 'degraded' | 'offline' | 'unknown'
-  instances?: number
+  region: string;
+  label?: string;
+  coordinates?: [number, number];
+  services?: string[];
+  status: 'online' | 'degraded' | 'offline' | 'unknown';
+  instances?: number;
 }
 
 export function useInfraStatus() {
@@ -984,121 +1016,151 @@ export function useInfraStatus() {
     queryFn: () => apiFetch('/infra-status'),
     refetchInterval: 60_000,
     staleTime: 55_000,
-  })
+  });
 }
 
 // ── Comments ──
 export interface CommentData {
-  _id: string
-  targetType: string
-  targetId: string
-  parentId: string | null
-  userId: string
-  username: string
-  body: string
-  status: string
-  editedAt: string | null
-  createdAt: string
-  updatedAt: string
+  _id: string;
+  targetType: string;
+  targetId: string;
+  parentId: string | null;
+  userId: string;
+  username: string;
+  body: string;
+  status: string;
+  editedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export function useComments(targetType: string, targetId: string) {
   return useQuery({
     queryKey: ['comments', targetType, targetId],
-    queryFn: () => apiFetch<CommentData[]>(`/comments?targetType=${encodeURIComponent(targetType)}&targetId=${encodeURIComponent(targetId)}`),
+    queryFn: () =>
+      apiFetch<CommentData[]>(
+        `/comments?targetType=${encodeURIComponent(targetType)}&targetId=${encodeURIComponent(targetId)}`,
+      ),
     staleTime: 30_000,
     enabled: !!targetId,
-  })
+  });
 }
 
 export function useCreateComment() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (params: { targetType: string; targetId: string; body: string; parentId?: string }) =>
-      apiFetch<CommentData>('/comments', { method: 'POST', body: JSON.stringify(params) }),
+    mutationFn: (params: {
+      targetType: string;
+      targetId: string;
+      body: string;
+      parentId?: string;
+    }) => apiFetch<CommentData>('/comments', { method: 'POST', body: JSON.stringify(params) }),
     onSuccess: (_data, params) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] })
+      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] });
     },
-  })
+  });
 }
 
 export function useEditComment() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (params: { id: string; body: string; targetType: string; targetId: string }) =>
-      apiFetch<CommentData>(`/comments/${params.id}`, { method: 'PUT', body: JSON.stringify({ body: params.body }) }),
+      apiFetch<CommentData>(`/comments/${params.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ body: params.body }),
+      }),
     onSuccess: (_data, params) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] })
+      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] });
     },
-  })
+  });
 }
 
 export function useDeleteComment() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (params: { id: string; targetType: string; targetId: string }) =>
       apiFetch<{ success: boolean }>(`/comments/${params.id}`, { method: 'DELETE' }),
     onSuccess: (_data, params) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] })
+      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] });
     },
-  })
+  });
 }
 
 export function useModerateComment() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (params: { id: string; status: string; targetType: string; targetId: string }) =>
-      apiFetch<CommentData>(`/comments/${params.id}/moderate`, { method: 'PUT', body: JSON.stringify({ status: params.status }) }),
+      apiFetch<CommentData>(`/comments/${params.id}/moderate`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: params.status }),
+      }),
     onSuccess: (_data, params) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] })
+      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] });
     },
-  })
+  });
 }
 
 // ── Likes ──
 interface LikeData {
-  count: number
-  liked: boolean
+  count: number;
+  liked: boolean;
 }
 
 export function useLikes(targetType: string, targetId: string) {
   return useQuery({
     queryKey: ['likes', targetType, targetId],
-    queryFn: () => apiFetch<LikeData>(`/likes?targetType=${encodeURIComponent(targetType)}&targetId=${encodeURIComponent(targetId)}`),
+    queryFn: () =>
+      apiFetch<LikeData>(
+        `/likes?targetType=${encodeURIComponent(targetType)}&targetId=${encodeURIComponent(targetId)}`,
+      ),
     staleTime: 30_000,
     enabled: !!targetId,
-  })
+  });
 }
 
 // ── User Profiles ──
 export interface UserProfileData {
   user: {
-    _id: string
-    username: string
+    _id: string;
+    username: string;
     /**
      * `displayName` is OPTIONAL in the SDK (`@oxy.so/core`), and
      * `server/routes/profiles.ts` passes the SDK shape straight through, so a
      * federated actor can arrive without one. Render the normalized handle as
      * the fallback (`getNormalizedUserHandle`) instead of recomposing a name.
      */
-    name: { displayName?: string; first?: string; last?: string }
-    avatar?: string
-    color?: string
-    createdAt?: string
-  }
-  bio: string
-  showActivity: boolean
-  badges: Array<{ badgeId: string; awardedAt: string }>
-  stats: { comments: number; likes: number; votes: number; articles: number; followers: number; following: number } | null
+    name: { displayName?: string; first?: string; last?: string };
+    avatar?: string;
+    color?: string;
+    createdAt?: string;
+  };
+  bio: string;
+  showActivity: boolean;
+  badges: Array<{ badgeId: string; awardedAt: string }>;
+  stats: {
+    comments: number;
+    likes: number;
+    votes: number;
+    articles: number;
+    followers: number;
+    following: number;
+  } | null;
 }
 
 export function useUserById(userId: string) {
   return useQuery({
     queryKey: ['user-by-id', userId],
-    queryFn: () => apiFetch<{ _id: string; username: string; name: { displayName?: string; first?: string; last?: string }; avatar?: string; color?: string }>(`/profiles/id/${userId}`),
+    queryFn: () =>
+      apiFetch<{
+        _id: string;
+        username: string;
+        name: { displayName?: string; first?: string; last?: string };
+        avatar?: string;
+        color?: string;
+      }>(`/profiles/id/${userId}`),
     enabled: !!userId,
     staleTime: 5 * 60_000,
-  })
+  });
 }
 
 export function useUserProfile(username: string) {
@@ -1107,40 +1169,41 @@ export function useUserProfile(username: string) {
     queryFn: () => apiFetch<UserProfileData>(`/profiles/${username}`),
     enabled: !!username,
     staleTime: 5 * 60_000,
-  })
+  });
 }
 
 export function useUpdateMyProfile() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: { bio?: string; showActivity?: boolean }) =>
       apiFetch('/profiles/me', { method: 'PUT', body: JSON.stringify(data) }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] })
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
-  })
+  });
 }
 
 interface ActivityResponse {
-  items: Array<{ type: string; data: unknown; createdAt: string }>
-  total: number
+  items: Array<{ type: string; data: unknown; createdAt: string }>;
+  total: number;
 }
 
 export function useUserActivity(username: string, params?: { page?: number; type?: string }) {
-  const qs = new URLSearchParams()
-  if (params?.page) qs.set('page', String(params.page))
-  if (params?.type) qs.set('type', params.type)
-  const query = qs.toString()
+  const qs = new URLSearchParams();
+  if (params?.page) qs.set('page', String(params.page));
+  if (params?.type) qs.set('type', params.type);
+  const query = qs.toString();
   return useQuery({
     queryKey: ['profile-activity', username, params],
-    queryFn: () => apiFetch<ActivityResponse>(`/profiles/${username}/activity${query ? `?${query}` : ''}`),
+    queryFn: () =>
+      apiFetch<ActivityResponse>(`/profiles/${username}/activity${query ? `?${query}` : ''}`),
     enabled: !!username,
     staleTime: 5 * 60_000,
-  })
+  });
 }
 
 export function useToggleLike() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (params: { targetType: string; targetId: string }) =>
       apiFetch<LikeData>('/likes/toggle', {
@@ -1148,84 +1211,84 @@ export function useToggleLike() {
         body: JSON.stringify(params),
       }),
     onMutate: async (params) => {
-      const key = ['likes', params.targetType, params.targetId]
-      await queryClient.cancelQueries({ queryKey: key })
-      const previous = queryClient.getQueryData<LikeData>(key)
+      const key = ['likes', params.targetType, params.targetId];
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<LikeData>(key);
       if (previous) {
         queryClient.setQueryData<LikeData>(key, {
           count: previous.liked ? previous.count - 1 : previous.count + 1,
           liked: !previous.liked,
-        })
+        });
       }
-      return { previous, key }
+      return { previous, key };
     },
     onError: (_err, _params, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(context.key, context.previous)
+        queryClient.setQueryData(context.key, context.previous);
       }
     },
     onSettled: (_data, _err, params) => {
-      queryClient.invalidateQueries({ queryKey: ['likes', params.targetType, params.targetId] })
+      queryClient.invalidateQueries({ queryKey: ['likes', params.targetType, params.targetId] });
     },
-  })
+  });
 }
 
 // ── Feature Requests (GitHub-backed) ──
 
 /** The app a feature request belongs to: one tracked repo, in either org. */
 export interface FeatureAppData {
-  key: string
-  owner: string
-  repo: string
-  displayName: string
+  key: string;
+  owner: string;
+  repo: string;
+  displayName: string;
 }
 
 export interface FeatureRequestData {
-  id: number
-  number: number
-  title: string
-  description: string
-  htmlUrl: string
-  state: string
-  status: string
+  id: number;
+  number: number;
+  title: string;
+  description: string;
+  htmlUrl: string;
+  state: string;
+  status: string;
   /** Priority tier key set from the vote count, or null below the first tier. */
-  priority: string | null
-  labels: Array<{ name: string; color: string }>
-  author: string
-  authorAvatar: string
-  githubReactions: number
-  localVotes: number
-  totalVotes: number
-  commentCount: number
-  owner: string
-  repoName: string
-  app: FeatureAppData
-  userVoted: boolean
-  createdAt: string
-  updatedAt: string
+  priority: string | null;
+  labels: Array<{ name: string; color: string }>;
+  author: string;
+  authorAvatar: string;
+  githubReactions: number;
+  localVotes: number;
+  totalVotes: number;
+  commentCount: number;
+  owner: string;
+  repoName: string;
+  app: FeatureAppData;
+  userVoted: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface FeatureListResponse {
-  items: FeatureRequestData[]
-  total: number
-  page: number
-  pages: number
+  items: FeatureRequestData[];
+  total: number;
+  page: number;
+  pages: number;
   /**
    * Per-status totals over the whole filtered board, counted before paging, so
    * the roadmap's group counts stay right when its rows are capped.
    */
-  statusCounts: Record<string, number>
+  statusCounts: Record<string, number>;
 }
 
 export interface FeatureAppOption extends FeatureAppData {
-  acceptsProposals: boolean
+  acceptsProposals: boolean;
 }
 
 export interface FeatureAppsResponse {
-  apps: FeatureAppOption[]
-  priorities: Array<{ key: string; label: string }>
+  apps: FeatureAppOption[];
+  priorities: Array<{ key: string; label: string }>;
   /** Proposal length limits, served by the same validation that enforces them. */
-  limits: { titleMin: number; titleMax: number; bodyMin: number; bodyMax: number }
+  limits: { titleMin: number; titleMax: number; bodyMin: number; bodyMax: number };
 }
 
 /** The apps on the board: the filter's options and the proposal form's targets. */
@@ -1234,47 +1297,47 @@ export function useFeatureApps() {
     queryKey: ['feature-apps'],
     queryFn: () => apiFetch<FeatureAppsResponse>('/features/apps'),
     staleTime: 5 * 60_000,
-  })
+  });
 }
 
 export interface FeatureListParams {
-  status?: string
-  app?: string
-  sort?: string
-  page?: number
+  status?: string;
+  app?: string;
+  sort?: string;
+  page?: number;
   /** Free text, matched server-side over the issue set already in memory. */
-  q?: string
+  q?: string;
   /** `all` includes closed proposals, which is what the roadmap needs. */
-  state?: 'open' | 'closed' | 'all'
-  limit?: number
+  state?: 'open' | 'closed' | 'all';
+  limit?: number;
 }
 
 export function useFeatureRequests(params?: FeatureListParams, options?: { enabled?: boolean }) {
-  const qs = new URLSearchParams()
-  if (params?.status) qs.set('status', params.status)
-  if (params?.app) qs.set('app', params.app)
-  if (params?.sort) qs.set('sort', params.sort)
-  if (params?.page) qs.set('page', String(params.page))
-  if (params?.q) qs.set('q', params.q)
-  if (params?.state) qs.set('state', params.state)
-  if (params?.limit) qs.set('limit', String(params.limit))
-  const query = qs.toString()
+  const qs = new URLSearchParams();
+  if (params?.status) qs.set('status', params.status);
+  if (params?.app) qs.set('app', params.app);
+  if (params?.sort) qs.set('sort', params.sort);
+  if (params?.page) qs.set('page', String(params.page));
+  if (params?.q) qs.set('q', params.q);
+  if (params?.state) qs.set('state', params.state);
+  if (params?.limit) qs.set('limit', String(params.limit));
+  const query = qs.toString();
   return useQuery({
     queryKey: ['features', params],
     queryFn: () => apiFetch<FeatureListResponse>(`/features${query ? `?${query}` : ''}`),
     enabled: options?.enabled ?? true,
     staleTime: 60_000,
-  })
+  });
 }
 
 export interface FeatureSimilarResponse {
-  matches: FeatureRequestData[]
+  matches: FeatureRequestData[];
   /**
    * False when nothing was looked up: too few usable words, or the lookup
    * failed. It is the difference between "nothing matched" and "I did not
    * manage to check", and the form says which.
    */
-  searched: boolean
+  searched: boolean;
 }
 
 /**
@@ -1285,14 +1348,15 @@ export interface FeatureSimilarResponse {
  * duplicate worth surfacing is usually one already shipped or already declined.
  */
 export function useSimilarFeatures(title: string, options?: { enabled?: boolean }) {
-  const trimmed = title.trim()
+  const trimmed = title.trim();
   return useQuery({
     queryKey: ['feature-similar', trimmed],
-    queryFn: () => apiFetch<FeatureSimilarResponse>(`/features/similar?title=${encodeURIComponent(trimmed)}`),
+    queryFn: () =>
+      apiFetch<FeatureSimilarResponse>(`/features/similar?title=${encodeURIComponent(trimmed)}`),
     enabled: (options?.enabled ?? true) && trimmed.length >= 3,
     staleTime: 60_000,
     retry: false,
-  })
+  });
 }
 
 /** One feature request. `null` params keep the query idle. */
@@ -1305,47 +1369,53 @@ export function useFeatureRequest(owner: string, repo: string, number: string) {
     // A feature request that is not on the board is a 404 and stays one; there
     // is nothing for a retry to discover.
     retry: false,
-  })
+  });
 }
 
 export interface FeatureCommentData {
-  id: number
-  body: string
-  htmlUrl: string
-  author: string
-  authorAvatar: string
-  authorUrl: string
-  fromMaintainer: boolean
-  createdAt: string
-  updatedAt: string
+  id: number;
+  body: string;
+  htmlUrl: string;
+  author: string;
+  authorAvatar: string;
+  authorUrl: string;
+  fromMaintainer: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface FeatureCommentsResponse {
-  comments: FeatureCommentData[]
+  comments: FeatureCommentData[];
   /** The thread runs past the one page we mirror. */
-  hasMore: boolean
-  threadUrl: string
+  hasMore: boolean;
+  threadUrl: string;
 }
 
-export function useFeatureComments(owner: string, repo: string, number: string, options?: { enabled?: boolean }) {
+export function useFeatureComments(
+  owner: string,
+  repo: string,
+  number: string,
+  options?: { enabled?: boolean },
+) {
   return useQuery({
     queryKey: ['feature-comments', owner, repo, number],
-    queryFn: () => apiFetch<FeatureCommentsResponse>(`/features/${owner}/${repo}/${number}/comments`),
+    queryFn: () =>
+      apiFetch<FeatureCommentsResponse>(`/features/${owner}/${repo}/${number}/comments`),
     enabled: (options?.enabled ?? true) && Boolean(owner && repo && number),
     staleTime: 60_000,
     retry: false,
-  })
+  });
 }
 
 /** Flip one request's vote state, for the optimistic update below. */
 function toggleVoteLocally(item: FeatureRequestData): FeatureRequestData {
-  const delta = item.userVoted ? -1 : 1
+  const delta = item.userVoted ? -1 : 1;
   return {
     ...item,
     userVoted: !item.userVoted,
     localVotes: item.localVotes + delta,
     totalVotes: item.totalVotes + delta,
-  }
+  };
 }
 
 /**
@@ -1358,23 +1428,27 @@ function toggleVoteLocally(item: FeatureRequestData): FeatureRequestData {
  * is a worse answer than the order settling on the next fetch.
  */
 export function useToggleFeatureVote(owner: string, repo: string, number: number) {
-  const queryClient = useQueryClient()
-  const detailKey = ['feature', owner, repo, String(number)]
-  const listFilter = { queryKey: ['features'] }
+  const queryClient = useQueryClient();
+  const detailKey = ['feature', owner, repo, String(number)];
+  const listFilter = { queryKey: ['features'] };
 
   return useMutation({
-    mutationFn: () => apiFetch<{ localVotes: number; userVoted: boolean }>(`/features/${owner}/${repo}/${number}/vote`, { method: 'POST' }),
+    mutationFn: () =>
+      apiFetch<{ localVotes: number; userVoted: boolean }>(
+        `/features/${owner}/${repo}/${number}/vote`,
+        { method: 'POST' },
+      ),
     onMutate: async () => {
       await Promise.all([
         queryClient.cancelQueries({ queryKey: detailKey }),
         queryClient.cancelQueries(listFilter),
-      ])
+      ]);
 
-      const previousDetail = queryClient.getQueryData<FeatureRequestData>(detailKey)
-      const previousLists = queryClient.getQueriesData<FeatureListResponse>(listFilter)
+      const previousDetail = queryClient.getQueryData<FeatureRequestData>(detailKey);
+      const previousLists = queryClient.getQueriesData<FeatureListResponse>(listFilter);
 
       if (previousDetail) {
-        queryClient.setQueryData<FeatureRequestData>(detailKey, toggleVoteLocally(previousDetail))
+        queryClient.setQueryData<FeatureRequestData>(detailKey, toggleVoteLocally(previousDetail));
       }
       queryClient.setQueriesData<FeatureListResponse>(listFilter, (list) =>
         list
@@ -1387,29 +1461,29 @@ export function useToggleFeatureVote(owner: string, repo: string, number: number
               ),
             }
           : list,
-      )
+      );
 
-      return { previousDetail, previousLists }
+      return { previousDetail, previousLists };
     },
     onError: (_err, _vars, context) => {
       if (context?.previousDetail) {
-        queryClient.setQueryData(detailKey, context.previousDetail)
+        queryClient.setQueryData(detailKey, context.previousDetail);
       }
       for (const [key, value] of context?.previousLists ?? []) {
-        queryClient.setQueryData(key, value)
+        queryClient.setQueryData(key, value);
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries(listFilter)
-      queryClient.invalidateQueries({ queryKey: detailKey })
+      queryClient.invalidateQueries(listFilter);
+      queryClient.invalidateQueries({ queryKey: detailKey });
     },
-  })
+  });
 }
 
 export interface FeatureProposalResult {
-  issueNumber: number
-  issueUrl: string
-  app: { key: string; displayName: string }
+  issueNumber: number;
+  issueUrl: string;
+  app: { key: string; displayName: string };
 }
 
 /**
@@ -1420,7 +1494,7 @@ export interface FeatureProposalResult {
  * the issue rather than promising it is already on the board.
  */
 export function useProposeFeature() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: { app: string; title: string; body: string }) =>
       apiFetch<FeatureProposalResult>('/features/proposals', {
@@ -1428,52 +1502,52 @@ export function useProposeFeature() {
         body: JSON.stringify(input),
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['features'] })
+      queryClient.invalidateQueries({ queryKey: ['features'] });
     },
-  })
+  });
 }
 
 // ── FairCoin live stats ──
-export type { FairCoinStats }
+export type { FairCoinStats };
 
 export function useFairCoinStats(): FairCoinStats | null {
   return useSyncExternalStore(
     subscribeFairCoinStats,
     getFairCoinStatsSnapshot,
     getFairCoinStatsServerSnapshot,
-  )
+  );
 }
 
 // ── Referrals ──
-export type ReferralType = 'paid' | 'ambassador' | 'user'
-export type ReferralStatus = 'active' | 'paused' | 'revoked'
+export type ReferralType = 'paid' | 'ambassador' | 'user';
+export type ReferralStatus = 'active' | 'paused' | 'revoked';
 
 /** Admin-facing referral record. The `/api/referrals/:code` public endpoint returns
  *  a narrower subset (see PublicReferral) — never expose email/commission/notes/counts. */
 export interface ReferralRecord {
-  _id?: string
-  code: string
-  name: string
-  email?: string
-  type: ReferralType
-  status: ReferralStatus
-  oxyUserId?: string
-  commissionPercent?: number
-  customLandingUrl?: string
-  notes?: string
-  clicks: number
-  signups: number
-  createdAt?: string
-  updatedAt?: string
+  _id?: string;
+  code: string;
+  name: string;
+  email?: string;
+  type: ReferralType;
+  status: ReferralStatus;
+  oxyUserId?: string;
+  commissionPercent?: number;
+  customLandingUrl?: string;
+  notes?: string;
+  clicks: number;
+  signups: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /** Public-safe view returned by GET /api/referrals/:code. */
 export interface PublicReferral {
-  code: string
-  name: string
-  type: ReferralType
-  status: ReferralStatus
-  customLandingUrl: string | null
+  code: string;
+  name: string;
+  type: ReferralType;
+  status: ReferralStatus;
+  customLandingUrl: string | null;
 }
 
 /**
@@ -1482,19 +1556,19 @@ export interface PublicReferral {
  * see their stats. Email and admin notes are still hidden.
  */
 export interface ReferralDashboard extends PublicReferral {
-  clicks: number
-  signups: number
-  commissionPercent: number | null
-  oxyUserId: string | null
+  clicks: number;
+  signups: number;
+  commissionPercent: number | null;
+  oxyUserId: string | null;
 }
 
 export function useReferrals(type?: ReferralType) {
-  const qs = type ? `?type=${type}` : ''
+  const qs = type ? `?type=${type}` : '';
   return useQuery<ReferralRecord[]>({
     queryKey: ['referrals', type ?? 'all'],
     queryFn: () => apiFetch<ReferralRecord[]>(`/referrals${qs}`),
     staleTime: 60_000,
-  })
+  });
 }
 
 export function useReferral(code: string) {
@@ -1504,7 +1578,7 @@ export function useReferral(code: string) {
     enabled: !!code,
     retry: false,
     staleTime: 5 * 60_000,
-  })
+  });
 }
 
 export function useReferralDashboard(code: string) {
@@ -1515,20 +1589,20 @@ export function useReferralDashboard(code: string) {
     retry: false,
     staleTime: 30_000,
     refetchInterval: 60_000,
-  })
+  });
 }
 
 export function useCreateReferral() {
-  const qc = useQueryClient()
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: Partial<ReferralRecord>) =>
       apiFetch<ReferralRecord>('/referrals', { method: 'POST', body: JSON.stringify(data) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['referrals'] }),
-  })
+  });
 }
 
 export function useUpdateReferral() {
-  const qc = useQueryClient()
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ code, patch }: { code: string; patch: Partial<ReferralRecord> }) =>
       apiFetch<ReferralRecord>(`/referrals/${encodeURIComponent(code)}`, {
@@ -1536,32 +1610,32 @@ export function useUpdateReferral() {
         body: JSON.stringify(patch),
       }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['referrals'] }),
-  })
+  });
 }
 
 export function useDeleteReferral() {
-  const qc = useQueryClient()
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (code: string) =>
       apiFetch<{ ok: boolean }>(`/referrals/${encodeURIComponent(code)}`, { method: 'DELETE' }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['referrals'] }),
-  })
+  });
 }
 
 // ── Funding Progress ──
 export interface FundingProgress {
-  targetAmount: number
-  raisedAmount: number
-  currency: string
-  sustainable: boolean
+  targetAmount: number;
+  raisedAmount: number;
+  currency: string;
+  sustainable: boolean;
   breakdown: {
-    subscriptions: number
-    donations: number
-    partnerships: number
-    services: number
-  }
-  supporters: number
-  updatedAt: string
+    subscriptions: number;
+    donations: number;
+    partnerships: number;
+    services: number;
+  };
+  supporters: number;
+  updatedAt: string;
 }
 
 export function useFundingProgress() {
@@ -1570,7 +1644,7 @@ export function useFundingProgress() {
     queryFn: () => apiFetch<FundingProgress>('/funding-progress'),
     staleTime: 60_000,
     refetchInterval: 60_000,
-  })
+  });
 }
 
 // ── Homiio listings ──
@@ -1579,15 +1653,15 @@ export function useFundingProgress() {
  * (`server/routes/homiio.ts`) because `api.homiio.com` sends no CORS headers.
  */
 export interface HomiioListing {
-  id: string
-  title: string
-  city: string
-  monthlyAmount: number
-  currency: string
-  bedrooms: number | null
-  squareFootage: number | null
-  imageUrl: string
-  href: string
+  id: string;
+  title: string;
+  city: string;
+  monthlyAmount: number;
+  currency: string;
+  bedrooms: number | null;
+  squareFootage: number | null;
+  imageUrl: string;
+  href: string;
 }
 
 export function useHomiioListings() {
@@ -1596,7 +1670,7 @@ export function useHomiioListings() {
     queryFn: () => apiFetch<{ listings: HomiioListing[] }>('/homiio/listings'),
     select: (data) => data.listings,
     staleTime: 5 * 60_000,
-  })
+  });
 }
 
 // ── 404 memory game ──
@@ -1606,21 +1680,21 @@ export function useHomiioListings() {
  * server, which is the only side that can add up runs it has actually stored.
  */
 export interface MemoryGameStats {
-  runs: number
-  bestScore: number
-  bestLevel: number
-  totalPoints: number
-  accountLevel: number
-  pointsToNextLevel: number
+  runs: number;
+  bestScore: number;
+  bestLevel: number;
+  totalPoints: number;
+  accountLevel: number;
+  pointsToNextLevel: number;
 }
 
 export interface MemoryGameRun {
-  score: number
-  level: number
-  moves: number
-  pairsFound: number
-  clearedAll: boolean
-  durationMs: number
+  score: number;
+  level: number;
+  moves: number;
+  pairsFound: number;
+  clearedAll: boolean;
+  durationMs: number;
 }
 
 export function useMemoryGameStats(enabled: boolean) {
@@ -1629,11 +1703,11 @@ export function useMemoryGameStats(enabled: boolean) {
     queryFn: () => apiFetch<MemoryGameStats>('/games/memory/stats'),
     enabled,
     staleTime: 60_000,
-  })
+  });
 }
 
 export function useSaveMemoryGameRun() {
-  const qc = useQueryClient()
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (run: MemoryGameRun) =>
       apiFetch<{ stats: MemoryGameStats }>('/games/memory/runs', {
@@ -1641,5 +1715,5 @@ export function useSaveMemoryGameRun() {
         body: JSON.stringify(run),
       }),
     onSuccess: (data) => qc.setQueryData(['memory-game-stats'], data.stats),
-  })
+  });
 }

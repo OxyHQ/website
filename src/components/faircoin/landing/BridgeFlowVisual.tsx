@@ -1,7 +1,7 @@
-import { motion } from 'framer-motion'
-import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { motion } from 'framer-motion';
+import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine';
 
 /**
  * Visual flow diagram for the FAIR ↔ WFAIR bridge.
@@ -21,13 +21,7 @@ export default function BridgeFlowVisual() {
 
       <div className="relative grid grid-cols-1 gap-5 sm:grid-cols-[1fr_auto_1fr]">
         {/* Native FAIR coin */}
-        <CoinCard
-          symbol="F"
-          name="FAIR"
-          chain="FairCoin chain"
-          accent="primary"
-          delay={0.1}
-        />
+        <CoinCard symbol="F" name="FAIR" chain="FairCoin chain" accent="primary" delay={0.1} />
 
         {/* Arrow group (desktop = horizontal, mobile = vertical) */}
         <div className="flex items-center justify-center sm:flex-col sm:gap-2">
@@ -36,13 +30,7 @@ export default function BridgeFlowVisual() {
         </div>
 
         {/* Wrapped WFAIR coin */}
-        <CoinCard
-          symbol="W"
-          name="WFAIR"
-          chain="Base mainnet"
-          accent="blue"
-          delay={0.3}
-        />
+        <CoinCard symbol="W" name="WFAIR" chain="Base mainnet" accent="blue" delay={0.3} />
       </div>
 
       <motion.p
@@ -55,22 +43,22 @@ export default function BridgeFlowVisual() {
         1:1 redemption · Bridge custody secured by signed multi-party setup
       </motion.p>
     </div>
-  )
+  );
 }
 
 interface CoinCardProps {
-  symbol: string
-  name: string
-  chain: string
-  accent: 'primary' | 'blue'
-  delay: number
+  symbol: string;
+  name: string;
+  chain: string;
+  accent: 'primary' | 'blue';
+  delay: number;
 }
 
 function CoinCard({ symbol, name, chain, accent, delay }: CoinCardProps) {
   const accentBg =
     accent === 'primary'
       ? 'from-primary via-primary/90 to-primary/70'
-      : 'from-blue-500 via-blue-500/90 to-blue-500/70'
+      : 'from-blue-500 via-blue-500/90 to-blue-500/70';
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9, y: 12 }}
@@ -89,19 +77,25 @@ function CoinCard({ symbol, name, chain, accent, delay }: CoinCardProps) {
         <p className="text-xs uppercase tracking-wider text-muted-foreground">{chain}</p>
       </div>
     </motion.div>
-  )
+  );
 }
 
 function ArrowGroup({
   direction,
   mobileOnly = false,
 }: {
-  direction: 'horizontal' | 'vertical'
-  mobileOnly?: boolean
+  direction: 'horizontal' | 'vertical';
+  mobileOnly?: boolean;
 }) {
   if (direction === 'vertical') {
     return (
-      <div className={mobileOnly ? 'flex flex-col items-center gap-1.5 sm:hidden' : 'flex flex-col items-center gap-1.5'}>
+      <div
+        className={
+          mobileOnly
+            ? 'flex flex-col items-center gap-1.5 sm:hidden'
+            : 'flex flex-col items-center gap-1.5'
+        }
+      >
         <motion.span
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -115,7 +109,7 @@ function ArrowGroup({
           Bridge
         </span>
       </div>
-    )
+    );
   }
   return (
     <div className="hidden flex-col items-center gap-1.5 sm:flex">
@@ -144,5 +138,5 @@ function ArrowGroup({
         unwrap
       </span>
     </div>
-  )
+  );
 }

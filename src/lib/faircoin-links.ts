@@ -1,4 +1,4 @@
-import { isFairCoinHost } from './host'
+import { isFairCoinHost } from './host';
 
 /**
  * Resolve a FairCoin-surface path for the current host.
@@ -11,7 +11,7 @@ import { isFairCoinHost } from './host'
  * when the current host is oxy.so.
  */
 export function fc(path: string): string {
-  if (isFairCoinHost()) return path
-  if (path === '/' || path === '') return '/faircoin'
-  return `/faircoin${path.startsWith('/') ? path : `/${path}`}`
+  if (isFairCoinHost()) return path;
+  if (path === '/' || path === '') return '/faircoin';
+  return `/faircoin${path.startsWith('/') ? path : `/${path}`}`;
 }

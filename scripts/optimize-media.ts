@@ -28,71 +28,82 @@
  * dependency of this repo: a ~70 MB binary in `bun install` would be paid by
  * every CI run, for a script CI never invokes.
  */
-import { readFile, writeFile, stat } from 'node:fs/promises'
-import { existsSync } from 'node:fs'
-import path from 'node:path'
-import { spawnSync } from 'node:child_process'
-import sharp from 'sharp'
+import { readFile, writeFile, stat } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import sharp from 'sharp';
 
-const ROOT = path.resolve(import.meta.dir, '..')
+const ROOT = path.resolve(import.meta.dir, '..');
 
 /* ── ffmpeg ───────────────────────────────────────────────────────── */
 
 function resolveFfmpeg(): { ffmpeg: string; ffprobe: string } | null {
-  const fromEnv = process.env.FFMPEG_PATH
-  const candidates = fromEnv ? [fromEnv] : ['ffmpeg']
+  const fromEnv = process.env.FFMPEG_PATH;
+  const candidates = fromEnv ? [fromEnv] : ['ffmpeg'];
   for (const candidate of candidates) {
-    const probe = spawnSync(candidate, ['-version'], { encoding: 'utf8' })
+    const probe = spawnSync(candidate, ['-version'], { encoding: 'utf8' });
     if (probe.status === 0) {
       // Playwright ships a stripped ffmpeg (`--disable-everything`) with no
       // H.264 support. Encoding with it produces silent garbage, so reject it.
       if (!probe.stdout.includes('enable-gpl') && probe.stdout.includes('playwright-build')) {
-        console.warn(`[media] ${candidate} is Playwright's stripped ffmpeg (no H.264) — skipping video`)
-        return null
+        console.warn(
+          `[media] ${candidate} is Playwright's stripped ffmpeg (no H.264) — skipping video`,
+        );
+        return null;
       }
-      const ffprobe = candidate.replace(/ffmpeg([^/]*)$/, 'ffprobe$1')
-      return { ffmpeg: candidate, ffprobe }
+      const ffprobe = candidate.replace(/ffmpeg([^/]*)$/, 'ffprobe$1');
+      return { ffmpeg: candidate, ffprobe };
     }
   }
-  return null
+  return null;
 }
 
 function run(bin: string, args: string[]): void {
-  const result = spawnSync(bin, args, { encoding: 'utf8' })
+  const result = spawnSync(bin, args, { encoding: 'utf8' });
   if (result.status !== 0) {
-    throw new Error(`${path.basename(bin)} failed: ${result.stderr?.slice(-600) ?? result.error?.message}`)
+    throw new Error(
+      `${path.basename(bin)} failed: ${result.stderr?.slice(-600) ?? result.error?.message}`,
+    );
   }
 }
 
 interface VideoInfo {
-  codec: string
-  width: number
-  height: number
-  fps: number
-  durationSec: number
+  codec: string;
+  width: number;
+  height: number;
+  fps: number;
+  durationSec: number;
 }
 
 function probeVideo(ffprobe: string, file: string): VideoInfo | null {
   const result = spawnSync(
     ffprobe,
     [
-      '-v', 'error', '-select_streams', 'v:0',
-      '-show_entries', 'stream=codec_name,width,height,r_frame_rate',
-      '-show_entries', 'format=duration',
-      '-of', 'default=nw=1:nk=1', file,
+      '-v',
+      'error',
+      '-select_streams',
+      'v:0',
+      '-show_entries',
+      'stream=codec_name,width,height,r_frame_rate',
+      '-show_entries',
+      'format=duration',
+      '-of',
+      'default=nw=1:nk=1',
+      file,
     ],
     { encoding: 'utf8' },
-  )
-  if (result.status !== 0) return null
-  const [codec, width, height, rate, duration] = result.stdout.trim().split('\n')
-  const [num, den] = (rate ?? '0/1').split('/').map(Number)
+  );
+  if (result.status !== 0) return null;
+  const [codec, width, height, rate, duration] = result.stdout.trim().split('\n');
+  const [num, den] = (rate ?? '0/1').split('/').map(Number);
   return {
     codec,
     width: Number(width),
     height: Number(height),
     fps: den ? num / den : 0,
     durationSec: Number(duration) || 0,
-  }
+  };
 }
 
 /**
@@ -105,23 +116,23 @@ function probeVideo(ffprobe: string, file: string): VideoInfo | null {
  * used here lands around 0.03–0.08, so anything above this threshold is worth
  * a pass regardless of how right its other properties look.
  */
-const MAX_BITS_PER_PIXEL = 0.12
+const MAX_BITS_PER_PIXEL = 0.12;
 
 function bitsPerPixel(info: VideoInfo, fileBytes: number): number {
-  const pixelsPerSecond = info.width * info.height * info.fps
-  if (!pixelsPerSecond || !info.durationSec) return 0
-  return (fileBytes * 8) / info.durationSec / pixelsPerSecond
+  const pixelsPerSecond = info.width * info.height * info.fps;
+  if (!pixelsPerSecond || !info.durationSec) return 0;
+  return (fileBytes * 8) / info.durationSec / pixelsPerSecond;
 }
 
 /* ── Targets ──────────────────────────────────────────────────────── */
 
 interface VideoTarget {
-  file: string
+  file: string;
   /** Longest edge, in CSS pixels at 2× the largest rendered size. */
-  maxWidth: number
-  fps: number
+  maxWidth: number;
+  fps: number;
   /** x264 quality. 23 is visually transparent; these are decorative loops. */
-  crf: number
+  crf: number;
 }
 
 const VIDEOS: VideoTarget[] = [
@@ -137,17 +148,17 @@ const VIDEOS: VideoTarget[] = [
   { file: 'public/ai/morning-briefing-results.mp4', maxWidth: 1400, fps: 30, crf: 30 },
   { file: 'public/ai/todo.mp4', maxWidth: 1400, fps: 30, crf: 30 },
   { file: 'public/ai/todo-assign-ai.mp4', maxWidth: 1400, fps: 30, crf: 30 },
-]
+];
 
 /** Videos that also need a VP9 `.webm` sibling, because markup lists one. */
-const WEBM_SIBLINGS = new Set(['public/images/landing/hero-background.mp4'])
+const WEBM_SIBLINGS = new Set(['public/images/landing/hero-background.mp4']);
 
 interface ImageTarget {
-  file: string
-  maxWidth: number
+  file: string;
+  maxWidth: number;
   /** Re-encode to this format; omit to keep the current one. */
-  format?: 'webp' | 'avif' | 'jpeg' | 'png'
-  quality?: number
+  format?: 'webp' | 'avif' | 'jpeg' | 'png';
+  quality?: number;
 }
 
 /**
@@ -165,7 +176,7 @@ const BYTES_PER_PIXEL_CEILING: Record<'webp' | 'avif' | 'jpeg' | 'png', number> 
   webp: 0.25,
   avif: 0.15,
   png: 0.35,
-}
+};
 
 /**
  * Never re-encode a file already this small. Per-pixel budgets do not hold at
@@ -174,7 +185,7 @@ const BYTES_PER_PIXEL_CEILING: Record<'webp' | 'avif' | 'jpeg' | 'png', number> 
  * quality each time. A floor is safe where a ceiling is not: encoding only ever
  * shrinks a file, so anything under the floor stays under it.
  */
-const SKIP_BELOW_BYTES = 24_000
+const SKIP_BELOW_BYTES = 24_000;
 
 const IMAGES: ImageTarget[] = [
   // 5260×3507 for a full-width banner.
@@ -184,10 +195,20 @@ const IMAGES: ImageTarget[] = [
   // OG images are fetched by crawlers that do not all speak WebP; the spec size
   // is 1200×630 and anything larger is discarded on the other end anyway.
   { file: 'public/og-default.png', maxWidth: 1200, format: 'png' },
-  { file: 'public/images/landing/agents-features-bg.webp', maxWidth: 1600, format: 'webp', quality: 78 },
+  {
+    file: 'public/images/landing/agents-features-bg.webp',
+    maxWidth: 1600,
+    format: 'webp',
+    quality: 78,
+  },
   // The homepage hero poster — the LCP element on the busiest page.
   { file: 'public/images/landing/hero-bg.avif', maxWidth: 1600, format: 'avif', quality: 62 },
-  { file: 'public/images/landing/partnerships-banner.avif', maxWidth: 1600, format: 'avif', quality: 62 },
+  {
+    file: 'public/images/landing/partnerships-banner.avif',
+    maxWidth: 1600,
+    format: 'avif',
+    quality: 62,
+  },
   { file: 'public/images/astro/hero-bg.jpg', maxWidth: 1600, format: 'jpeg', quality: 78 },
   { file: 'public/images/landing/faircoin-store.png', maxWidth: 1400, format: 'png' },
   { file: 'public/images/faircoin/wallet-hero.jpg', maxWidth: 1920, format: 'jpeg', quality: 78 },
@@ -217,7 +238,7 @@ const IMAGES: ImageTarget[] = [
   // listing photo weighed 535 kB; the extension change is why the imports in
   // `src/components/{homiio,mention}/data.ts` reference `.jpg`.
   { file: 'src/assets/homiio/roger-lluria.jpg', maxWidth: 1200, format: 'jpeg', quality: 82 },
-]
+];
 
 /**
  * SVGs whose weight is embedded raster data. `maxRasterWidth` is the pixel size
@@ -225,171 +246,211 @@ const IMAGES: ImageTarget[] = [
  */
 const RASTER_SVGS: Array<{ file: string; maxRasterWidth: number }> = [
   { file: 'public/images/landing/agents-features-icons.svg', maxRasterWidth: 160 },
-]
+];
 
 /* ── Reporting ────────────────────────────────────────────────────── */
 
-let savedBytes = 0
-const kb = (bytes: number) => `${(bytes / 1024).toFixed(0)} kB`
+let savedBytes = 0;
+const kb = (bytes: number) => `${(bytes / 1024).toFixed(0)} kB`;
 
 async function sizeOf(file: string): Promise<number> {
-  return (await stat(file)).size
+  return (await stat(file)).size;
 }
 
 function report(label: string, before: number, after: number): void {
-  const delta = before - after
-  savedBytes += delta
-  const pct = before ? ((delta / before) * 100).toFixed(0) : '0'
-  console.log(`  ${label.padEnd(52)} ${kb(before).padStart(9)} → ${kb(after).padStart(9)}  (-${pct}%)`)
+  const delta = before - after;
+  savedBytes += delta;
+  const pct = before ? ((delta / before) * 100).toFixed(0) : '0';
+  console.log(
+    `  ${label.padEnd(52)} ${kb(before).padStart(9)} → ${kb(after).padStart(9)}  (-${pct}%)`,
+  );
 }
 
 /* ── Video ────────────────────────────────────────────────────────── */
 
-async function optimizeVideo(tools: { ffmpeg: string; ffprobe: string }, target: VideoTarget): Promise<void> {
-  const abs = path.join(ROOT, target.file)
-  if (!existsSync(abs)) return console.log(`  ${target.file}: missing, skipped`)
+async function optimizeVideo(
+  tools: { ffmpeg: string; ffprobe: string },
+  target: VideoTarget,
+): Promise<void> {
+  const abs = path.join(ROOT, target.file);
+  if (!existsSync(abs)) return console.log(`  ${target.file}: missing, skipped`);
 
-  const info = probeVideo(tools.ffprobe, abs)
-  if (!info) return console.log(`  ${target.file}: unreadable, skipped`)
+  const info = probeVideo(tools.ffprobe, abs);
+  if (!info) return console.log(`  ${target.file}: unreadable, skipped`);
 
-  const currentBytes = await sizeOf(abs)
-  const bpp = bitsPerPixel(info, currentBytes)
+  const currentBytes = await sizeOf(abs);
+  const bpp = bitsPerPixel(info, currentBytes);
   const alreadyDone =
     info.codec === 'h264' &&
     info.width <= target.maxWidth &&
     info.fps <= target.fps + 1 &&
     bpp > 0 &&
-    bpp <= MAX_BITS_PER_PIXEL
+    bpp <= MAX_BITS_PER_PIXEL;
   if (alreadyDone) {
-    console.log(`  ${target.file}: already h264 ${info.width}px @${info.fps.toFixed(0)}fps ${bpp.toFixed(3)}bpp, skipped`)
+    console.log(
+      `  ${target.file}: already h264 ${info.width}px @${info.fps.toFixed(0)}fps ${bpp.toFixed(3)}bpp, skipped`,
+    );
   } else {
-    const before = currentBytes
-    const tmp = `${abs}.tmp.mp4`
+    const before = currentBytes;
+    const tmp = `${abs}.tmp.mp4`;
     run(tools.ffmpeg, [
-      '-y', '-i', abs,
+      '-y',
+      '-i',
+      abs,
       // `-2` keeps the height even (H.264 requires it) while preserving aspect.
-      '-vf', `scale='min(${target.maxWidth},iw)':-2`,
-      '-r', String(target.fps),
+      '-vf',
+      `scale='min(${target.maxWidth},iw)':-2`,
+      '-r',
+      String(target.fps),
       '-an', // every one of these is a muted decorative loop
-      '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
-      '-crf', String(target.crf), '-preset', 'slow',
+      '-c:v',
+      'libx264',
+      '-profile:v',
+      'high',
+      '-pix_fmt',
+      'yuv420p',
+      '-crf',
+      String(target.crf),
+      '-preset',
+      'slow',
       // Lets the browser start playback before the whole file arrives.
-      '-movflags', '+faststart',
+      '-movflags',
+      '+faststart',
       tmp,
-    ])
-    const after = await sizeOf(tmp)
+    ]);
+    const after = await sizeOf(tmp);
     if (after >= before) {
-      console.log(`  ${target.file}: re-encode not smaller, kept original`)
-      await Bun.file(tmp).delete()
+      console.log(`  ${target.file}: re-encode not smaller, kept original`);
+      await Bun.file(tmp).delete();
     } else {
-      await writeFile(abs, await readFile(tmp))
-      await Bun.file(tmp).delete()
-      report(target.file, before, after)
+      await writeFile(abs, await readFile(tmp));
+      await Bun.file(tmp).delete();
+      report(target.file, before, after);
     }
   }
 
-  if (!WEBM_SIBLINGS.has(target.file)) return
-  const webm = abs.replace(/\.mp4$/, '.webm')
-  if (existsSync(webm)) return console.log(`  ${path.relative(ROOT, webm)}: present, skipped`)
+  if (!WEBM_SIBLINGS.has(target.file)) return;
+  const webm = abs.replace(/\.mp4$/, '.webm');
+  if (existsSync(webm)) return console.log(`  ${path.relative(ROOT, webm)}: present, skipped`);
   run(tools.ffmpeg, [
-    '-y', '-i', abs,
-    '-vf', `scale='min(${target.maxWidth},iw)':-2`,
-    '-r', String(target.fps), '-an',
-    '-c:v', 'libvpx-vp9', '-crf', '36', '-b:v', '0', '-row-mt', '1', '-deadline', 'good',
+    '-y',
+    '-i',
+    abs,
+    '-vf',
+    `scale='min(${target.maxWidth},iw)':-2`,
+    '-r',
+    String(target.fps),
+    '-an',
+    '-c:v',
+    'libvpx-vp9',
+    '-crf',
+    '36',
+    '-b:v',
+    '0',
+    '-row-mt',
+    '1',
+    '-deadline',
+    'good',
     webm,
-  ])
-  console.log(`  ${path.relative(ROOT, webm)}: created (${kb(await sizeOf(webm))})`)
+  ]);
+  console.log(`  ${path.relative(ROOT, webm)}: created (${kb(await sizeOf(webm))})`);
 }
 
 /* ── Images ───────────────────────────────────────────────────────── */
 
 async function optimizeImage(target: ImageTarget): Promise<void> {
-  const abs = path.join(ROOT, target.file)
-  if (!existsSync(abs)) return console.log(`  ${target.file}: missing, skipped`)
+  const abs = path.join(ROOT, target.file);
+  if (!existsSync(abs)) return console.log(`  ${target.file}: missing, skipped`);
 
-  const before = await sizeOf(abs)
-  const input = await readFile(abs)
-  const meta = await sharp(input).metadata()
-  const pixels = (meta.width ?? 0) * (meta.height ?? 0)
-  const bytesPerPixel = pixels ? before / pixels : Infinity
+  const before = await sizeOf(abs);
+  const input = await readFile(abs);
+  const meta = await sharp(input).metadata();
+  const pixels = (meta.width ?? 0) * (meta.height ?? 0);
+  const bytesPerPixel = pixels ? before / pixels : Infinity;
   const withinBudget =
-    bytesPerPixel <= BYTES_PER_PIXEL_CEILING[target.format ?? 'jpeg'] || before <= SKIP_BELOW_BYTES
+    bytesPerPixel <= BYTES_PER_PIXEL_CEILING[target.format ?? 'jpeg'] || before <= SKIP_BELOW_BYTES;
   if ((meta.width ?? 0) <= target.maxWidth && withinBudget) {
     return console.log(
       `  ${target.file}: already ${meta.width}px / ${bytesPerPixel.toFixed(3)} B/px, skipped`,
-    )
+    );
   }
 
-  let pipeline = sharp(input).resize({ width: target.maxWidth, withoutEnlargement: true })
+  let pipeline = sharp(input).resize({ width: target.maxWidth, withoutEnlargement: true });
   switch (target.format) {
     case 'jpeg':
-      pipeline = pipeline.jpeg({ quality: target.quality ?? 80, progressive: true, mozjpeg: true })
-      break
+      pipeline = pipeline.jpeg({ quality: target.quality ?? 80, progressive: true, mozjpeg: true });
+      break;
     case 'webp':
-      pipeline = pipeline.webp({ quality: target.quality ?? 80, effort: 6 })
-      break
+      pipeline = pipeline.webp({ quality: target.quality ?? 80, effort: 6 });
+      break;
     case 'avif':
-      pipeline = pipeline.avif({ quality: target.quality ?? 65, effort: 6 })
-      break
+      pipeline = pipeline.avif({ quality: target.quality ?? 65, effort: 6 });
+      break;
     case 'png':
       // Palette quantization is where the win is on screenshots and UI art.
-      pipeline = pipeline.png({ compressionLevel: 9, palette: true, quality: target.quality ?? 90 })
-      break
+      pipeline = pipeline.png({
+        compressionLevel: 9,
+        palette: true,
+        quality: target.quality ?? 90,
+      });
+      break;
   }
 
-  const output = await pipeline.toBuffer()
+  const output = await pipeline.toBuffer();
   if (output.length >= before) {
-    return console.log(`  ${target.file}: re-encode not smaller, kept original`)
+    return console.log(`  ${target.file}: re-encode not smaller, kept original`);
   }
-  await writeFile(abs, output)
-  report(target.file, before, output.length)
+  await writeFile(abs, output);
+  report(target.file, before, output.length);
 }
 
 /* ── SVGs carrying embedded rasters ───────────────────────────────── */
 
 async function optimizeRasterSvg(target: { file: string; maxRasterWidth: number }): Promise<void> {
-  const abs = path.join(ROOT, target.file)
-  if (!existsSync(abs)) return console.log(`  ${target.file}: missing, skipped`)
+  const abs = path.join(ROOT, target.file);
+  if (!existsSync(abs)) return console.log(`  ${target.file}: missing, skipped`);
 
-  const before = await sizeOf(abs)
-  const source = await readFile(abs, 'utf8')
+  const before = await sizeOf(abs);
+  const source = await readFile(abs, 'utf8');
 
-  const matches = [...source.matchAll(/data:image\/(png|jpeg|jpg);base64,([A-Za-z0-9+/=]+)/g)]
-  if (matches.length === 0) return console.log(`  ${target.file}: no embedded rasters, skipped`)
+  const matches = [...source.matchAll(/data:image\/(png|jpeg|jpg);base64,([A-Za-z0-9+/=]+)/g)];
+  if (matches.length === 0) return console.log(`  ${target.file}: no embedded rasters, skipped`);
 
-  let out = source
+  let out = source;
   for (const match of matches) {
-    const [full, , b64] = match
-    const buf = Buffer.from(b64, 'base64')
-    const meta = await sharp(buf).metadata()
-    if ((meta.width ?? 0) <= target.maxRasterWidth) continue
+    const [full, , b64] = match;
+    const buf = Buffer.from(b64, 'base64');
+    const meta = await sharp(buf).metadata();
+    if ((meta.width ?? 0) <= target.maxRasterWidth) continue;
     const resized = await sharp(buf)
       .resize({ width: target.maxRasterWidth, withoutEnlargement: true })
       .png({ compressionLevel: 9, palette: true })
-      .toBuffer()
-    out = out.replace(full, `data:image/png;base64,${resized.toString('base64')}`)
+      .toBuffer();
+    out = out.replace(full, `data:image/png;base64,${resized.toString('base64')}`);
   }
 
-  if (out === source) return console.log(`  ${target.file}: rasters already small, skipped`)
-  await writeFile(abs, out, 'utf8')
-  report(target.file, before, Buffer.byteLength(out))
+  if (out === source) return console.log(`  ${target.file}: rasters already small, skipped`);
+  await writeFile(abs, out, 'utf8');
+  report(target.file, before, Buffer.byteLength(out));
 }
 
 /* ── Main ─────────────────────────────────────────────────────────── */
 
-const tools = resolveFfmpeg()
+const tools = resolveFfmpeg();
 
-console.log('\nVideos')
+console.log('\nVideos');
 if (!tools) {
-  console.log('  ffmpeg not found — set FFMPEG_PATH or install ffmpeg. Skipping all video targets.')
+  console.log(
+    '  ffmpeg not found — set FFMPEG_PATH or install ffmpeg. Skipping all video targets.',
+  );
 } else {
-  for (const target of VIDEOS) await optimizeVideo(tools, target)
+  for (const target of VIDEOS) await optimizeVideo(tools, target);
 }
 
-console.log('\nImages')
-for (const target of IMAGES) await optimizeImage(target)
+console.log('\nImages');
+for (const target of IMAGES) await optimizeImage(target);
 
-console.log('\nSVGs with embedded rasters')
-for (const target of RASTER_SVGS) await optimizeRasterSvg(target)
+console.log('\nSVGs with embedded rasters');
+for (const target of RASTER_SVGS) await optimizeRasterSvg(target);
 
-console.log(`\nTotal saved: ${kb(savedBytes)}\n`)
+console.log(`\nTotal saved: ${kb(savedBytes)}\n`);

@@ -5,4 +5,4 @@ export const BLOOM_SEO = {
     'One UI library for React, React Native and Expo. Build with real components, agent interfaces, interactive charts and a shared theme system.',
   canonicalPath: '/bloom/',
   ogImage: 'https://oxy.so/images/nav-bloom-ui.webp',
-}
+};

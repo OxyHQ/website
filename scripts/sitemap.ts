@@ -17,24 +17,24 @@
  * the sitemap if and only if a document was written for it.
  */
 
-import { buildLocalizedSeoUrl } from '../src/lib/seoUrl'
-import { hasLocalizedVariants } from '../src/lib/localizedRoute'
+import { buildLocalizedSeoUrl } from '../src/lib/seoUrl';
+import { hasLocalizedVariants } from '../src/lib/localizedRoute';
 
 /** One canonical URL, as it will appear in the sitemap. */
 export interface SitemapEntry {
   /** Absolute path on the site, e.g. `/pricing`. Bare (no locale prefix). */
-  path: string
+  path: string;
   /** W3C date (`YYYY-MM-DD`). Omitted when the route has no known date. */
-  lastmod?: string
-  changefreq: string
-  priority: number
+  lastmod?: string;
+  changefreq: string;
+  priority: number;
 }
 
 export interface SitemapOptions {
-  siteUrl: string
-  defaultLocale: string
+  siteUrl: string;
+  defaultLocale: string;
   /** Translation-ready locales only — never advertise a locale with no pages. */
-  localeCodes: readonly string[]
+  localeCodes: readonly string[];
 }
 
 function escapeXml(value: string): string {
@@ -43,15 +43,15 @@ function escapeXml(value: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;')
+    .replace(/'/g, '&apos;');
 }
 
 /** W3C `YYYY-MM-DD`, or undefined for an unparseable input. */
 export function toW3CDate(value: string | Date | undefined): string | undefined {
-  if (!value) return undefined
-  const date = value instanceof Date ? value : new Date(value)
-  if (Number.isNaN(date.getTime())) return undefined
-  return date.toISOString().slice(0, 10)
+  if (!value) return undefined;
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return undefined;
+  return date.toISOString().slice(0, 10);
 }
 
 /**
@@ -61,7 +61,7 @@ export function toW3CDate(value: string | Date | undefined): string | undefined 
  * always agree.
  */
 function localizedUrl(path: string, locale: string, opts: SitemapOptions): string {
-  return buildLocalizedSeoUrl(opts.siteUrl, path, locale, opts.defaultLocale)
+  return buildLocalizedSeoUrl(opts.siteUrl, path, locale, opts.defaultLocale);
 }
 
 /**
@@ -70,29 +70,29 @@ function localizedUrl(path: string, locale: string, opts: SitemapOptions): strin
  * that keeps the file from multiplying by locale count.
  */
 function buildAlternates(path: string, opts: SitemapOptions): string {
-  if (opts.localeCodes.length === 0) return ''
+  if (opts.localeCodes.length === 0) return '';
   // No locale mirror is written for these, so an alternate here would point at
   // a URL that does not exist. `hasLocalizedVariants` is the same authority the
   // prerender and `<SEO>` read, so the three cannot disagree.
-  if (!hasLocalizedVariants(path)) return ''
-  const codes = [opts.defaultLocale, ...opts.localeCodes]
+  if (!hasLocalizedVariants(path)) return '';
+  const codes = [opts.defaultLocale, ...opts.localeCodes];
   const links = codes.map(
     (code) =>
       `\n    <xhtml:link rel="alternate" hreflang="${escapeXml(code)}" href="${escapeXml(localizedUrl(path, code, opts))}"/>`,
-  )
+  );
   links.push(
     `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(localizedUrl(path, opts.defaultLocale, opts))}"/>`,
-  )
-  return links.join('')
+  );
+  return links.join('');
 }
 
 function buildUrlNode(entry: SitemapEntry, opts: SitemapOptions): string {
-  const lastmod = entry.lastmod ? `\n    <lastmod>${entry.lastmod}</lastmod>` : ''
+  const lastmod = entry.lastmod ? `\n    <lastmod>${entry.lastmod}</lastmod>` : '';
   return `  <url>
     <loc>${escapeXml(localizedUrl(entry.path, opts.defaultLocale, opts))}</loc>${lastmod}${buildAlternates(entry.path, opts)}
     <changefreq>${entry.changefreq}</changefreq>
     <priority>${entry.priority.toFixed(1)}</priority>
-  </url>`
+  </url>`;
 }
 
 export function buildSitemapXml(entries: readonly SitemapEntry[], opts: SitemapOptions): string {
@@ -101,7 +101,7 @@ export function buildSitemapXml(entries: readonly SitemapEntry[], opts: SitemapO
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${entries.map((entry) => buildUrlNode(entry, opts)).join('\n')}
 </urlset>
-`
+`;
 }
 
 /**
@@ -138,17 +138,17 @@ const ROUTE_WEIGHTS: ReadonlyArray<{ prefix: string; changefreq: string; priorit
   { prefix: '/store', changefreq: 'monthly', priority: 0.8 },
   { prefix: '/one', changefreq: 'monthly', priority: 0.9 },
   { prefix: '/codea', changefreq: 'monthly', priority: 0.9 },
-]
+];
 
 export function classifyRoute(path: string): { changefreq: string; priority: number } {
-  if (path === '/') return { changefreq: 'weekly', priority: 1.0 }
+  if (path === '/') return { changefreq: 'weekly', priority: 1.0 };
   for (const weight of ROUTE_WEIGHTS) {
     if (path === weight.prefix || path.startsWith(weight.prefix)) {
-      return { changefreq: weight.changefreq, priority: weight.priority }
+      return { changefreq: weight.changefreq, priority: weight.priority };
     }
   }
   // Everything else is a top-level marketing page (/os, /partners, /help, …).
   // Depth is a good enough proxy for importance once the named cases are out.
-  const depth = path.split('/').filter(Boolean).length
-  return { changefreq: 'monthly', priority: depth <= 1 ? 0.8 : 0.6 }
+  const depth = path.split('/').filter(Boolean).length;
+  return { changefreq: 'monthly', priority: depth <= 1 ? 0.8 : 0.6 };
 }

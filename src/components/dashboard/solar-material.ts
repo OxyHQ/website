@@ -1,15 +1,16 @@
-import { ShaderMaterial, TextureLoader, Vector3 } from 'three'
-import { solarDirection } from '../../data/dashboard/solar-position'
+import { ShaderMaterial, TextureLoader, Vector3 } from 'three';
+import { solarDirection } from '../../data/dashboard/solar-position';
 
 /** Texture UVs map directly to Earth longitude/latitude, independently of camera rotation. */
 export function createSolarMaterial() {
-  const loader = new TextureLoader()
-  const day = loader.load('/images/dashboard/earth-day.jpg')
-  const night = loader.load('/images/dashboard/earth-night.jpg')
+  const loader = new TextureLoader();
+  const day = loader.load('/images/dashboard/earth-day.jpg');
+  const night = loader.load('/images/dashboard/earth-night.jpg');
   // Keep the same sRGB texture arithmetic as the native GLES wallpaper.
   const material = new ShaderMaterial({
     uniforms: {
-      dayImage: { value: day }, nightImage: { value: night },
+      dayImage: { value: day },
+      nightImage: { value: night },
       sun: { value: new Vector3(...solarDirection(Date.now())) },
     },
     vertexShader: `varying vec2 earthUv;
@@ -30,16 +31,20 @@ export function createSolarMaterial() {
         gl_FragColor = vec4(mix(night, lit, daylight), 1.0);
       }`,
     toneMapped: false,
-  })
-  let minute = Math.floor(Date.now() / 60_000)
+  });
+  let minute = Math.floor(Date.now() / 60_000);
   return {
     material,
     update(now: number) {
-      const next = Math.floor(now / 60_000)
-      if (minute === next) return
-      minute = next
-      material.uniforms.sun.value.set(...solarDirection(now))
+      const next = Math.floor(now / 60_000);
+      if (minute === next) return;
+      minute = next;
+      material.uniforms.sun.value.set(...solarDirection(now));
     },
-    dispose() { day.dispose(); night.dispose(); material.dispose() },
-  }
+    dispose() {
+      day.dispose();
+      night.dispose();
+      material.dispose();
+    },
+  };
 }

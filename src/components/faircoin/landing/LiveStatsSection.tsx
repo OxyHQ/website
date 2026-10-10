@@ -1,32 +1,35 @@
-import { useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { formatUnits } from 'viem'
-import { useReadContract } from 'wagmi'
-import { base } from 'wagmi/chains'
-import type { BloomIconComponent } from '@oxy.so/bloom/icons'
-import { RiPulseLine } from '@oxy.so/bloom/icons/RiPulseLine'
-import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
-import { RiBox3Line } from '@oxy.so/bloom/icons/RiBox3Line'
-import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
-import { RiCpuLine } from '@oxy.so/bloom/icons/RiCpuLine'
-import { RiDatabase2Line } from '@oxy.so/bloom/icons/RiDatabase2Line'
-import { RiMoneyDollarCircleLine } from '@oxy.so/bloom/icons/RiMoneyDollarCircleLine'
-import { RiDropLine } from '@oxy.so/bloom/icons/RiDropLine'
-import { RiHashtag } from '@oxy.so/bloom/icons/RiHashtag'
-import { RiStackLine } from '@oxy.so/bloom/icons/RiStackLine'
-import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
-import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine'
-import AnimatedNumber from './AnimatedNumber'
-import { useFaircoinNetworkStats, useUniswapPoolStats } from '../../../hooks/use-faircoin-network-stats'
-import { useBridgeReserves } from '../../../hooks/use-faircoin-bridge-stats'
-import { useWallClockSecond } from '../buy/useWallClockSecond'
-import { WFAIR_ABI, WFAIR_ADDRESS, WFAIR_DECIMALS } from '../../../lib/wfair-contract'
+import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import { formatUnits } from 'viem';
+import { useReadContract } from 'wagmi';
+import { base } from 'wagmi/chains';
+import type { BloomIconComponent } from '@oxy.so/bloom/icons';
+import { RiPulseLine } from '@oxy.so/bloom/icons/RiPulseLine';
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine';
+import { RiBox3Line } from '@oxy.so/bloom/icons/RiBox3Line';
+import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine';
+import { RiCpuLine } from '@oxy.so/bloom/icons/RiCpuLine';
+import { RiDatabase2Line } from '@oxy.so/bloom/icons/RiDatabase2Line';
+import { RiMoneyDollarCircleLine } from '@oxy.so/bloom/icons/RiMoneyDollarCircleLine';
+import { RiDropLine } from '@oxy.so/bloom/icons/RiDropLine';
+import { RiHashtag } from '@oxy.so/bloom/icons/RiHashtag';
+import { RiStackLine } from '@oxy.so/bloom/icons/RiStackLine';
+import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine';
+import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine';
+import AnimatedNumber from './AnimatedNumber';
+import {
+  useFaircoinNetworkStats,
+  useUniswapPoolStats,
+} from '../../../hooks/use-faircoin-network-stats';
+import { useBridgeReserves } from '../../../hooks/use-faircoin-bridge-stats';
+import { useWallClockSecond } from '../buy/useWallClockSecond';
+import { WFAIR_ABI, WFAIR_ADDRESS, WFAIR_DECIMALS } from '../../../lib/wfair-contract';
 
-const FAIR_EXPLORER_BASE = 'https://explorer.fairco.in'
-const BASESCAN_BASE = 'https://basescan.org'
+const FAIR_EXPLORER_BASE = 'https://explorer.fairco.in';
+const BASESCAN_BASE = 'https://basescan.org';
 const UNISWAP_POOL_EXPLORE_URL =
-  'https://app.uniswap.org/explore/tokens/base/0xf2853ceddf47a05fee0b4b24dff2925d59737fb3'
+  'https://app.uniswap.org/explore/tokens/base/0xf2853ceddf47a05fee0b4b24dff2925d59737fb3';
 
 /**
  * "Network at a glance" — three rails of live tiles powered by the FairCoin
@@ -38,59 +41,59 @@ const UNISWAP_POOL_EXPLORE_URL =
  * `AnimatedNumber` so updates feel alive rather than jarring.
  */
 export default function LiveStatsSection() {
-  const networkQuery = useFaircoinNetworkStats()
-  const poolQuery = useUniswapPoolStats()
-  const reservesQuery = useBridgeReserves()
+  const networkQuery = useFaircoinNetworkStats();
+  const poolQuery = useUniswapPoolStats();
+  const reservesQuery = useBridgeReserves();
   const supplyQuery = useReadContract({
     address: WFAIR_ADDRESS,
     abi: WFAIR_ABI,
     functionName: 'totalSupply',
     chainId: base.id,
     query: { refetchInterval: 30_000 },
-  })
+  });
 
-  const stats = networkQuery.data
-  const lastBlockTime = stats?.lastBlock.time
+  const stats = networkQuery.data;
+  const lastBlockTime = stats?.lastBlock.time;
   const explorerLastBlockHref = stats?.lastBlock.hash
     ? `${FAIR_EXPLORER_BASE}/block/${stats.lastBlock.hash}`
-    : `${FAIR_EXPLORER_BASE}/blocks`
+    : `${FAIR_EXPLORER_BASE}/blocks`;
 
   // Real-time "X seconds ago" for last block — derived from the wall-clock
   // tick so the label updates without a re-fetch.
-  const nowSeconds = useWallClockSecond()
+  const nowSeconds = useWallClockSecond();
   const lastBlockAgoLabel = useMemo(() => {
-    if (!lastBlockTime) return null
-    const ago = Math.max(0, nowSeconds - lastBlockTime)
-    return formatRelativeSeconds(ago)
-  }, [nowSeconds, lastBlockTime])
+    if (!lastBlockTime) return null;
+    const ago = Math.max(0, nowSeconds - lastBlockTime);
+    return formatRelativeSeconds(ago);
+  }, [nowSeconds, lastBlockTime]);
 
   const wfairSupplyOnBase = useMemo<number | null>(() => {
     if (typeof supplyQuery.data === 'bigint') {
-      return Number(formatUnits(supplyQuery.data, WFAIR_DECIMALS))
+      return Number(formatUnits(supplyQuery.data, WFAIR_DECIMALS));
     }
     if (reservesQuery.data) {
       try {
-        return Number(formatUnits(BigInt(reservesQuery.data.wfairSupplyWei), WFAIR_DECIMALS))
+        return Number(formatUnits(BigInt(reservesQuery.data.wfairSupplyWei), WFAIR_DECIMALS));
       } catch {
-        return null
+        return null;
       }
     }
-    return null
-  }, [supplyQuery.data, reservesQuery.data])
+    return null;
+  }, [supplyQuery.data, reservesQuery.data]);
 
   const fairCustody = useMemo<number | null>(() => {
-    if (!reservesQuery.data) return null
+    if (!reservesQuery.data) return null;
     try {
-      return Number(BigInt(reservesQuery.data.fairCustodySats)) / 1e8
+      return Number(BigInt(reservesQuery.data.fairCustodySats)) / 1e8;
     } catch {
-      return null
+      return null;
     }
-  }, [reservesQuery.data])
+  }, [reservesQuery.data]);
 
-  const peg = reservesQuery.data?.pegHealthy ?? null
+  const peg = reservesQuery.data?.pegHealthy ?? null;
   const reservesSnapshot = reservesQuery.data?.snapshotAt
     ? new Date(reservesQuery.data.snapshotAt)
-    : null
+    : null;
 
   return (
     <section className="relative isolate overflow-hidden">
@@ -130,9 +133,8 @@ export default function LiveStatsSection() {
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
             className="mt-3 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground"
           >
-            Live data straight from the FairCoin chain, the Base WFAIR contract
-            and the bridge custody snapshot. No CMS, no caching. What you see
-            is what is on-chain right now.
+            Live data straight from the FairCoin chain, the Base WFAIR contract and the bridge
+            custody snapshot. No CMS, no caching. What you see is what is on-chain right now.
           </motion.p>
         </div>
 
@@ -190,11 +192,7 @@ export default function LiveStatsSection() {
         </div>
 
         {/* WFAIR / Base rail */}
-        <RailHeader
-          title="WFAIR on Base"
-          hint="Source: on-chain via viem"
-          dotClass="bg-blue-500"
-        />
+        <RailHeader title="WFAIR on Base" hint="Source: on-chain via viem" dotClass="bg-blue-500" />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <StatTile
             icon={RiDatabase2Line}
@@ -226,11 +224,7 @@ export default function LiveStatsSection() {
         </div>
 
         {/* Bridge rail */}
-        <RailHeader
-          title="Bridge"
-          hint="Source: bridge.fairco.in"
-          dotClass="bg-emerald-500"
-        />
+        <RailHeader title="Bridge" hint="Source: bridge.fairco.in" dotClass="bg-emerald-500" />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <StatTile
             icon={RiShieldCheckLine}
@@ -256,20 +250,12 @@ export default function LiveStatsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 // ── Sub-components ───────────────────────────────────────────────────────
 
-function RailHeader({
-  title,
-  hint,
-  dotClass,
-}: {
-  title: string
-  hint: string
-  dotClass: string
-}) {
+function RailHeader({ title, hint, dotClass }: { title: string; hint: string; dotClass: string }) {
   return (
     <div className="mt-12 mb-4 flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -282,23 +268,23 @@ function RailHeader({
         {hint}
       </span>
     </div>
-  )
+  );
 }
 
 interface StatTileProps {
-  icon: BloomIconComponent
-  eyebrow: string
+  icon: BloomIconComponent;
+  eyebrow: string;
   /** Numeric value rendered via AnimatedNumber. */
-  value?: number | null
+  value?: number | null;
   /** Pre-formatted text rendered instead of a numeric value. */
-  valueLabel?: string | null
-  decimals?: number
-  prefix?: string
-  suffix?: string
+  valueLabel?: string | null;
+  decimals?: number;
+  prefix?: string;
+  suffix?: string;
   /** Pre-format the number entirely (e.g. for hashrate units). */
-  valueFormatter?: (n: number) => string
-  href?: string
-  isLoading?: boolean
+  valueFormatter?: (n: number) => string;
+  href?: string;
+  isLoading?: boolean;
 }
 
 function StatTile({
@@ -314,13 +300,13 @@ function StatTile({
   isLoading = false,
 }: StatTileProps) {
   // Subtle pulse highlight whenever the value changes, so users notice updates.
-  const valueKey = value ?? valueLabel ?? '—'
-  const [lastSig, setLastSig] = useState(valueKey)
-  const [pulse, setPulse] = useState(false)
+  const valueKey = value ?? valueLabel ?? '—';
+  const [lastSig, setLastSig] = useState(valueKey);
+  const [pulse, setPulse] = useState(false);
   if (lastSig !== valueKey && !isLoading && (value !== null || valueLabel !== null)) {
-    setLastSig(valueKey)
-    setPulse(true)
-    window.setTimeout(() => setPulse(false), 700)
+    setLastSig(valueKey);
+    setPulse(true);
+    window.setTimeout(() => setPulse(false), 700);
   }
 
   const inner = (
@@ -359,9 +345,7 @@ function StatTile({
               <span>
                 {valueFormatter(value)}
                 {suffix ? (
-                  <span className="ml-1.5 text-xs font-medium text-muted-foreground">
-                    {suffix}
-                  </span>
+                  <span className="ml-1.5 text-xs font-medium text-muted-foreground">{suffix}</span>
                 ) : null}
               </span>
             ) : (
@@ -384,22 +368,22 @@ function StatTile({
         </span>
       ) : null}
     </div>
-  )
+  );
 
   if (href) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer">
         {inner}
       </a>
-    )
+    );
   }
-  return inner
+  return inner;
 }
 
 interface PegHealthTileProps {
-  healthy: boolean | null
-  snapshotAt: Date | null
-  isLoading: boolean
+  healthy: boolean | null;
+  snapshotAt: Date | null;
+  isLoading: boolean;
 }
 
 function PegHealthTile({ healthy, snapshotAt, isLoading }: PegHealthTileProps) {
@@ -409,25 +393,25 @@ function PegHealthTile({ healthy, snapshotAt, isLoading }: PegHealthTileProps) {
       ? 'healthy'
       : healthy === false
         ? 'attention'
-        : 'unknown'
+        : 'unknown';
   const label =
     status === 'healthy'
       ? 'Fully backed'
       : status === 'attention'
         ? 'Attention'
-        : 'Awaiting snapshot'
+        : 'Awaiting snapshot';
   const dotClass =
     status === 'healthy'
       ? 'bg-success'
       : status === 'attention'
         ? 'bg-error'
-        : 'bg-muted-foreground/40'
+        : 'bg-muted-foreground/40';
   const valueColor =
     status === 'healthy'
       ? 'text-success-text'
       : status === 'attention'
         ? 'text-error-text'
-        : 'text-muted-foreground'
+        : 'text-muted-foreground';
 
   return (
     <div className="group relative flex items-center justify-between gap-4 overflow-hidden rounded-2xl border border-border bg-popover/60 p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-popover">
@@ -439,11 +423,15 @@ function PegHealthTile({ healthy, snapshotAt, isLoading }: PegHealthTileProps) {
           <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
             Peg health
           </span>
-          <span className={`font-mono text-xl font-semibold leading-tight sm:text-[22px] ${valueColor}`}>
+          <span
+            className={`font-mono text-xl font-semibold leading-tight sm:text-[22px] ${valueColor}`}
+          >
             <span className="inline-flex items-center gap-2">
               <span className="relative flex h-2 w-2">
                 {status === 'healthy' ? (
-                  <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dotClass}`} />
+                  <span
+                    className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dotClass}`}
+                  />
                 ) : null}
                 <span className={`relative inline-flex h-2 w-2 rounded-full ${dotClass}`} />
               </span>
@@ -464,7 +452,7 @@ function PegHealthTile({ healthy, snapshotAt, isLoading }: PegHealthTileProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function Shimmer({ width = '4rem' }: { width?: string }) {
@@ -472,29 +460,29 @@ function Shimmer({ width = '4rem' }: { width?: string }) {
     <span aria-hidden className="inline-block align-middle" style={{ width }}>
       <Skeleton.Box width="100%" height={24} borderRadius={6} />
     </span>
-  )
+  );
 }
 
 function formatRelativeSeconds(seconds: number): string {
-  if (seconds < 1) return 'just now'
-  if (seconds < 60) return `${Math.round(seconds)}s ago`
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
-  const days = Math.floor(hours / 24)
-  return `${days}d ago`
+  if (seconds < 1) return 'just now';
+  if (seconds < 60) return `${Math.round(seconds)}s ago`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
 }
 
 function formatHashrate(value: number): string {
-  if (value === 0) return '0 H/s'
-  const units = ['H/s', 'kH/s', 'MH/s', 'GH/s', 'TH/s', 'PH/s']
-  let v = value
-  let i = 0
+  if (value === 0) return '0 H/s';
+  const units = ['H/s', 'kH/s', 'MH/s', 'GH/s', 'TH/s', 'PH/s'];
+  let v = value;
+  let i = 0;
   while (v >= 1000 && i < units.length - 1) {
-    v /= 1000
-    i++
+    v /= 1000;
+    i++;
   }
-  const decimals = v >= 100 ? 0 : v >= 10 ? 1 : 2
-  return `${v.toFixed(decimals)} ${units[i]}`
+  const decimals = v >= 100 ? 0 : v >= 10 ? 1 : 2;
+  return `${v.toFixed(decimals)} ${units[i]}`;
 }

@@ -1,5 +1,5 @@
-import CareersContent from '../components/careers/CareersContent'
-import PageShell from '../components/layout/PageShell'
+import CareersContent from '../components/careers/CareersContent';
+import PageShell from '../components/layout/PageShell';
 
 export default function CareersPage() {
   return (
@@ -15,5 +15,5 @@ export default function CareersPage() {
     >
       <CareersContent />
     </PageShell>
-  )
+  );
 }

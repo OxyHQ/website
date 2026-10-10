@@ -1,31 +1,31 @@
-import type { QueryClient } from '@tanstack/react-query'
-import type { NewsroomPost } from '../data/newsroom'
-import type { Locale } from '../lib/i18n'
-import { apiFetch, errorStatus } from './client'
+import type { QueryClient } from '@tanstack/react-query';
+import type { NewsroomPost } from '../data/newsroom';
+import type { Locale } from '../lib/i18n';
+import { apiFetch, errorStatus } from './client';
 
-const NEWSROOM_REQUEST_TIMEOUT_MS = 8_000
+const NEWSROOM_REQUEST_TIMEOUT_MS = 8_000;
 
 export interface NewsroomListParams {
-  category?: string
-  tag?: string
-  featured?: boolean
-  limit?: number
-  page?: number
-  author?: string
-  search?: string
+  category?: string;
+  tag?: string;
+  featured?: boolean;
+  limit?: number;
+  page?: number;
+  author?: string;
+  search?: string;
 }
 
 export function newsroomPostsQueryKey(params: NewsroomListParams | undefined, locale: Locale) {
-  return ['newsroom', params, locale] as const
+  return ['newsroom', params, locale] as const;
 }
 
 export function newsroomPostQueryKey(slug: string, locale: Locale) {
-  return ['newsroom', slug, locale] as const
+  return ['newsroom', slug, locale] as const;
 }
 
 export function newsroomRequestSignal(parent: AbortSignal): AbortSignal {
-  const timeout = AbortSignal.timeout(NEWSROOM_REQUEST_TIMEOUT_MS)
-  return AbortSignal.any([parent, timeout])
+  const timeout = AbortSignal.timeout(NEWSROOM_REQUEST_TIMEOUT_MS);
+  return AbortSignal.any([parent, timeout]);
 }
 
 export async function fetchNewsroomPost(
@@ -36,21 +36,21 @@ export async function fetchNewsroomPost(
   if (import.meta.env.DEV && slug === 'article-components-showcase-preview') {
     const { articleComponentsShowcasePost } = await import(
       '../content/newsroom-previews/article-components-showcase'
-    )
-    return articleComponentsShowcasePost
+    );
+    return articleComponentsShowcasePost;
   }
 
   return apiFetch<NewsroomPost>(`/newsroom/${encodeURIComponent(slug)}`, {
     locale,
     signal: newsroomRequestSignal(signal),
-  })
+  });
 }
 
 /** Retry one transient failure; never retry a deterministic client response. */
 export function shouldRetryNewsroomRequest(failureCount: number, error: Error): boolean {
-  if (failureCount >= 1) return false
-  const status = errorStatus(error)
-  return status === undefined || status === 408 || status === 429 || status >= 500
+  if (failureCount >= 1) return false;
+  const status = errorStatus(error);
+  return status === undefined || status === 408 || status === 429 || status >= 500;
 }
 
 export function prefetchNewsroomPost(
@@ -63,5 +63,5 @@ export function prefetchNewsroomPost(
     queryFn: ({ signal }) => fetchNewsroomPost(slug, locale, signal),
     staleTime: 5 * 60_000,
     retry: shouldRetryNewsroomRequest,
-  })
+  });
 }

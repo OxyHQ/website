@@ -1,10 +1,10 @@
-import { isFairCoinHost } from '../../../lib/host'
-import WalletHeroSection from './WalletHeroSection'
-import WalletFeaturesSection from './WalletFeaturesSection'
-import WalletDownloadsSection from './WalletDownloadsSection'
-import WalletScreenshotsSection from './WalletScreenshotsSection'
-import WalletTrustSection from './WalletTrustSection'
-import WalletCtaSection from './WalletCtaSection'
+import { isFairCoinHost } from '../../../lib/host';
+import WalletHeroSection from './WalletHeroSection';
+import WalletFeaturesSection from './WalletFeaturesSection';
+import WalletDownloadsSection from './WalletDownloadsSection';
+import WalletScreenshotsSection from './WalletScreenshotsSection';
+import WalletTrustSection from './WalletTrustSection';
+import WalletCtaSection from './WalletCtaSection';
 
 /**
  * `/wallet` content tree — marketing page for the FAIRWallet app.
@@ -20,7 +20,7 @@ import WalletCtaSection from './WalletCtaSection'
 export default function WalletLandingContent() {
   const wrapperClass = isFairCoinHost()
     ? 'faircoin-surface faircoin-theme bg-background text-foreground'
-    : 'faircoin-surface bg-background text-foreground'
+    : 'faircoin-surface bg-background text-foreground';
   return (
     <div className={wrapperClass}>
       <WalletHeroSection />
@@ -30,5 +30,5 @@ export default function WalletLandingContent() {
       <WalletTrustSection />
       <WalletCtaSection />
     </div>
-  )
+  );
 }

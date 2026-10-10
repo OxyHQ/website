@@ -20,9 +20,9 @@ export function rewriteSiblingDocLinks(
   return source.replace(
     /(\]\()\/([A-Za-z0-9][A-Za-z0-9._/-]*?)(#[^)\s]*)?\)/g,
     (match, open: string, target: string, anchor: string | undefined) => {
-      const slug = target.replace(/\/+$/, '')
-      if (!slugs.has(slug)) return match
-      return `${open}${baseUrl}/${slug}${anchor ?? ''})`
+      const slug = target.replace(/\/+$/, '');
+      if (!slugs.has(slug)) return match;
+      return `${open}${baseUrl}/${slug}${anchor ?? ''})`;
     },
   );
 }
@@ -91,8 +91,8 @@ export function rewriteCrossPackageDocRootLinks(
   return source.replace(
     /(\]\()\/developers\/docs\/([a-z0-9-]+)\/(?:main|master)\/?(#[^)\s]*)?\)/g,
     (match, open: string, shortName: string, anchor: string | undefined) => {
-      const root = canonicalRoots.get(shortName)
-      return root === undefined ? match : `${open}${root}/${anchor ?? ''})`
+      const root = canonicalRoots.get(shortName);
+      return root === undefined ? match : `${open}${root}/${anchor ?? ''})`;
     },
-  )
+  );
 }

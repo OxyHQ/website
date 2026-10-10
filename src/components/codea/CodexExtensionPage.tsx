@@ -1,23 +1,55 @@
-import Button from '../ui/Button'
-import IDEDemoMockup from './IDEDemoMockup'
-import MissionControlMockup from './MissionControlMockup'
-import CodeEditorMockup from './CodeEditorMockup'
-import BackgroundTasksMockup from './BackgroundTasksMockup'
-import TeamDashboardMockup from './TeamDashboardMockup'
+import Button from '../ui/Button';
+import IDEDemoMockup from './IDEDemoMockup';
+import MissionControlMockup from './MissionControlMockup';
+import CodeEditorMockup from './CodeEditorMockup';
+import BackgroundTasksMockup from './BackgroundTasksMockup';
+import TeamDashboardMockup from './TeamDashboardMockup';
 
 const features = [
-  { title: 'Built to drive real engineering work', description: 'From routine pull requests to your hardest problems, Codea reliably completes tasks end to end, like building features, complex refactors, migrations, and more.' },
-  { title: 'Designed for multi-agent workflows', description: 'Run multiple agents in parallel, each in its own sandboxed environment. Review diffs, approve changes, and merge, all from one interface.' },
-  { title: 'Adapts to how your team builds', description: 'Codea reads your codebase conventions, respects your linting rules, and follows your architecture patterns automatically.' },
-  { title: 'Made for always-on background work', description: 'Kick off tasks and let them run. Codea works asynchronously and notifies you when results are ready to review.' },
-  { title: 'Raises the bar across your team', description: 'From junior devs to staff engineers, Codea helps everyone ship faster while maintaining quality and consistency.' },
-]
+  {
+    title: 'Built to drive real engineering work',
+    description:
+      'From routine pull requests to your hardest problems, Codea reliably completes tasks end to end, like building features, complex refactors, migrations, and more.',
+  },
+  {
+    title: 'Designed for multi-agent workflows',
+    description:
+      'Run multiple agents in parallel, each in its own sandboxed environment. Review diffs, approve changes, and merge, all from one interface.',
+  },
+  {
+    title: 'Adapts to how your team builds',
+    description:
+      'Codea reads your codebase conventions, respects your linting rules, and follows your architecture patterns automatically.',
+  },
+  {
+    title: 'Made for always-on background work',
+    description:
+      'Kick off tasks and let them run. Codea works asynchronously and notifies you when results are ready to review.',
+  },
+  {
+    title: 'Raises the bar across your team',
+    description:
+      'From junior devs to staff engineers, Codea helps everyone ship faster while maintaining quality and consistency.',
+  },
+];
 
 const platforms = [
-  { title: 'Start in the Codea app', description: 'Use the full-featured web interface to manage tasks, review diffs, and collaborate with your team in real time.' },
-  { title: 'Launch from CLI', description: 'Run Codea directly from your terminal. Kick off tasks, check progress, and merge results without leaving your workflow.' },
-  { title: 'Build with the API', description: 'Integrate Codea into your CI/CD pipeline, custom tooling, or internal platforms with our developer-friendly API.' },
-]
+  {
+    title: 'Start in the Codea app',
+    description:
+      'Use the full-featured web interface to manage tasks, review diffs, and collaborate with your team in real time.',
+  },
+  {
+    title: 'Launch from CLI',
+    description:
+      'Run Codea directly from your terminal. Kick off tasks, check progress, and merge results without leaving your workflow.',
+  },
+  {
+    title: 'Build with the API',
+    description:
+      'Integrate Codea into your CI/CD pipeline, custom tooling, or internal platforms with our developer-friendly API.',
+  },
+];
 
 export default function CodexExtensionContent() {
   return (
@@ -25,7 +57,15 @@ export default function CodexExtensionContent() {
       {/* ── 1. Hero Section ── */}
       <section className="bg-background relative overflow-hidden">
         {/* Gradient bg */}
-        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" style={{ maskImage: 'linear-gradient(to bottom, black 0px, black calc(100% - 420px), transparent calc(100% - 80px), transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 0px, black calc(100% - 420px), transparent calc(100% - 80px), transparent 100%)' }}>
+        <div
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+          style={{
+            maskImage:
+              'linear-gradient(to bottom, black 0px, black calc(100% - 420px), transparent calc(100% - 80px), transparent 100%)',
+            WebkitMaskImage:
+              'linear-gradient(to bottom, black 0px, black calc(100% - 420px), transparent calc(100% - 80px), transparent 100%)',
+          }}
+        >
           <div className="h-full w-full bg-gradient-to-b from-muted/30 to-background" />
         </div>
 
@@ -39,7 +79,8 @@ export default function CodexExtensionContent() {
             Codea
           </div>
           <p className="text-muted-foreground text-[clamp(1rem,0.9rem+0.3vw,1.125rem)] leading-relaxed mt-5 max-w-4xl text-balance md:mt-6">
-            Writes code, fixes bugs, and runs tests in parallel cloud sandboxes. Try with Free and Go, or enjoy 2x rate limits on all plans.
+            Writes code, fixes bugs, and runs tests in parallel cloud sandboxes. Try with Free and
+            Go, or enjoy 2x rate limits on all plans.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-9">
             <div className="flex flex-col gap-3">
@@ -67,12 +108,23 @@ export default function CodexExtensionContent() {
         </div>
         <div className="mt-16 flex w-full flex-col gap-28 text-start md:mt-20 md:gap-36">
           {features.map((f, i) => (
-            <div key={f.title} className="flex w-full flex-col items-center gap-14 md:flex-row md:items-end md:gap-8 lg:gap-20">
-              <div className={`flex w-full flex-col items-start md:flex-[0_0_28%] md:justify-end ${i % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
-                <div className="text-foreground text-[clamp(1.25rem,1rem+1vw,1.75rem)] font-semibold leading-snug tracking-[-0.01em] md:max-w-[340px]">{f.title}</div>
-                <div className="text-muted-foreground text-[clamp(1rem,0.9rem+0.3vw,1.125rem)] leading-relaxed mt-5 md:max-w-[350px]">{f.description}</div>
+            <div
+              key={f.title}
+              className="flex w-full flex-col items-center gap-14 md:flex-row md:items-end md:gap-8 lg:gap-20"
+            >
+              <div
+                className={`flex w-full flex-col items-start md:flex-[0_0_28%] md:justify-end ${i % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}
+              >
+                <div className="text-foreground text-[clamp(1.25rem,1rem+1vw,1.75rem)] font-semibold leading-snug tracking-[-0.01em] md:max-w-[340px]">
+                  {f.title}
+                </div>
+                <div className="text-muted-foreground text-[clamp(1rem,0.9rem+0.3vw,1.125rem)] leading-relaxed mt-5 md:max-w-[350px]">
+                  {f.description}
+                </div>
               </div>
-              <div className={`relative w-full md:max-w-none md:flex-[0_0_72%] lg:h-[520px] ${i % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
+              <div
+                className={`relative w-full md:max-w-none md:flex-[0_0_72%] lg:h-[520px] ${i % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}
+              >
                 <div className="h-full w-full rounded-lg overflow-hidden">
                   {i === 0 && <IDEDemoMockup />}
                   {i === 1 && <MissionControlMockup />}
@@ -95,14 +147,20 @@ export default function CodexExtensionContent() {
           Use Codea across multiple surfaces, all connected by your account.
         </div>
         <div className="mt-6 flex justify-center">
-          <a className="relative inline-flex items-center justify-center text-nowrap transition-colors h-10 rounded-full px-5 text-sm font-medium button-primary" href="/developers/docs/">
+          <a
+            className="relative inline-flex items-center justify-center text-nowrap transition-colors h-10 rounded-full px-5 text-sm font-medium button-primary"
+            href="/developers/docs/"
+          >
             Learn more in the developer docs
             <span className="relative top-[0.5px] ms-1">↗</span>
           </a>
         </div>
         <div className="mt-16 grid w-full grid-cols-1 gap-8 text-start md:mt-20 md:grid-cols-3">
           {platforms.map((p) => (
-            <div key={p.title} className="bg-muted/75 flex h-full flex-col overflow-hidden rounded-md p-4 shadow md:p-5">
+            <div
+              key={p.title}
+              className="bg-muted/75 flex h-full flex-col overflow-hidden rounded-md p-4 shadow md:p-5"
+            >
               <div className="relative -mx-2 -mt-2 w-auto overflow-hidden rounded-lg md:-mx-[10px] md:-mt-[10px] bg-muted aspect-video flex items-center justify-center text-muted-foreground text-xs">
                 {p.title}
               </div>
@@ -116,7 +174,14 @@ export default function CodexExtensionContent() {
       {/* ── 4. Final CTA ── */}
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 z-0">
-          <div className="h-full w-full overflow-hidden" style={{ maskImage: 'linear-gradient(to bottom, transparent 0px, black 144px, black 256px)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 144px, black 256px)' }}>
+          <div
+            className="h-full w-full overflow-hidden"
+            style={{
+              maskImage: 'linear-gradient(to bottom, transparent 0px, black 144px, black 256px)',
+              WebkitMaskImage:
+                'linear-gradient(to bottom, transparent 0px, black 144px, black 256px)',
+            }}
+          >
             <div className="h-full w-full bg-gradient-to-b from-muted/30 to-background" />
           </div>
         </div>
@@ -139,5 +204,5 @@ export default function CodexExtensionContent() {
         </div>
       </section>
     </>
-  )
+  );
 }

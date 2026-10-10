@@ -1,9 +1,9 @@
-import { motion } from 'framer-motion'
-import PhoneMockup from '../landing/PhoneMockup'
+import { motion } from 'framer-motion';
+import PhoneMockup from '../landing/PhoneMockup';
 
 interface ScreenLabel {
-  title: string
-  description: string
+  title: string;
+  description: string;
 }
 
 // Only the Home screen has a real mockup right now. The Send / Receive /
@@ -16,7 +16,7 @@ const SCREENS: readonly ScreenLabel[] = [
     description:
       'Hero image, balance in FAIR + USD, sync status pill, action buttons row, recent activity.',
   },
-]
+];
 
 /**
  * Screenshots gallery — currently shows a single Home-screen mockup. Other
@@ -24,7 +24,7 @@ const SCREENS: readonly ScreenLabel[] = [
  * sections but won't appear here until per-screen mockups are produced.
  */
 export default function WalletScreenshotsSection() {
-  if (SCREENS.length === 0) return null
+  if (SCREENS.length === 0) return null;
 
   return (
     <section className="relative isolate overflow-hidden">
@@ -85,5 +85,5 @@ export default function WalletScreenshotsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

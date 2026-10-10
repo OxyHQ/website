@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import {
   useResources,
   useCategories,
@@ -7,35 +7,38 @@ import {
   type ResourceRecord,
   type ResourceType,
   type ResourceStatus,
-} from '../../../api/hooks'
-import { apiFetch } from '../../../api/client'
-import { Button } from '@oxy.so/bloom/button'
-import { Switch } from '@oxy.so/bloom/switch'
-import { Badge } from '@oxy.so/bloom/badge'
-import { LabeledTextField } from '../LabeledTextField'
-import { Label } from '@oxy.so/bloom/label'
-import LocaleSwitcher from '../LocaleSwitcher'
-import { TranslationFields } from '../TranslationEditor'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
-import MediaPicker from '../MediaPicker'
-import OptionSelect from '../../ui/OptionSelect'
-import { AdminField } from '../AdminField'
+} from '../../../api/hooks';
+import { apiFetch } from '../../../api/client';
+import { Button } from '@oxy.so/bloom/button';
+import { Switch } from '@oxy.so/bloom/switch';
+import { Badge } from '@oxy.so/bloom/badge';
+import { LabeledTextField } from '../LabeledTextField';
+import { Label } from '@oxy.so/bloom/label';
+import LocaleSwitcher from '../LocaleSwitcher';
+import { TranslationFields } from '../TranslationEditor';
+import ConfirmDialog from '../ConfirmDialog';
+import { useConfirmAction } from '../useConfirmAction';
+import MediaPicker from '../MediaPicker';
+import OptionSelect from '../../ui/OptionSelect';
+import { AdminField } from '../AdminField';
 
-const RESOURCE_TYPES: ResourceType[] = ['guide', 'paper', 'video', 'tool', 'template', 'link']
+const RESOURCE_TYPES: ResourceType[] = ['guide', 'paper', 'video', 'tool', 'template', 'link'];
 
 function slugify(input: string): string {
-  return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 function mediaIdString(cover: unknown): string {
-  if (!cover) return ''
-  if (typeof cover === 'string') return cover
+  if (!cover) return '';
+  if (typeof cover === 'string') return cover;
   if (typeof cover === 'object' && cover !== null && '_id' in cover) {
-    const id = (cover as { _id?: unknown })._id
-    return typeof id === 'string' ? id : ''
+    const id = (cover as { _id?: unknown })._id;
+    return typeof id === 'string' ? id : '';
   }
-  return ''
+  return '';
 }
 
 function stripRefsForEditing(resource: ResourceRecord): ResourceRecord {
@@ -43,7 +46,7 @@ function stripRefsForEditing(resource: ResourceRecord): ResourceRecord {
     ...resource,
     coverImage: mediaIdString(resource.coverImage) || null,
     category: resolveResourceCategoryId(resource) || null,
-  }
+  };
 }
 
 function emptyResource(): ResourceRecord {
@@ -61,23 +64,23 @@ function emptyResource(): ResourceRecord {
     status: 'published',
     publishedAt: new Date().toISOString(),
     order: 0,
-  }
+  };
 }
 
 interface SavePayload {
-  slug: string
-  title: string
-  summary: string
-  type: ResourceType
-  coverImage: string | null
-  category: string | null
-  href: string
-  external: boolean
-  tags: string[]
-  featured: boolean
-  status: ResourceStatus
-  publishedAt: string
-  order: number
+  slug: string;
+  title: string;
+  summary: string;
+  type: ResourceType;
+  coverImage: string | null;
+  category: string | null;
+  href: string;
+  external: boolean;
+  tags: string[];
+  featured: boolean;
+  status: ResourceStatus;
+  publishedAt: string;
+  order: number;
 }
 
 function toPayload(resource: ResourceRecord): SavePayload {
@@ -95,62 +98,67 @@ function toPayload(resource: ResourceRecord): SavePayload {
     status: resource.status,
     publishedAt: resource.publishedAt,
     order: resource.order,
-  }
+  };
 }
 
 export default function ResourcesAdmin() {
-  const { data, refetch } = useResources({ limit: 50, status: 'published' })
-  const { data: draftData, refetch: refetchDrafts } = useResources({ limit: 50, status: 'draft' })
-  const { data: locales } = useLocales()
-  const { data: categoriesData } = useCategories('generic')
-  const categories = categoriesData ?? []
-  const [editing, setEditing] = useState<ResourceRecord | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [activeLocale, setActiveLocale] = useState('')
-  const [translating, setTranslating] = useState<ResourceRecord | null>(null)
+  const { data, refetch } = useResources({ limit: 50, status: 'published' });
+  const { data: draftData, refetch: refetchDrafts } = useResources({ limit: 50, status: 'draft' });
+  const { data: locales } = useLocales();
+  const { data: categoriesData } = useCategories('generic');
+  const categories = categoriesData ?? [];
+  const [editing, setEditing] = useState<ResourceRecord | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [activeLocale, setActiveLocale] = useState('');
+  const [translating, setTranslating] = useState<ResourceRecord | null>(null);
 
-  const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
-  const resources = [...(data?.resources ?? []), ...(draftData?.resources ?? [])]
-  const isDefault = !activeLocale || activeLocale === defaultLocale
+  const defaultLocale = locales?.find((l) => l.isDefault)?.code ?? 'en';
+  const resources = [...(data?.resources ?? []), ...(draftData?.resources ?? [])];
+  const isDefault = !activeLocale || activeLocale === defaultLocale;
 
   const refresh = async () => {
-    await Promise.all([refetch(), refetchDrafts()])
-  }
+    await Promise.all([refetch(), refetchDrafts()]);
+  };
 
   const save = async () => {
-    if (!editing) return
-    setError(null)
-    setSaving(true)
+    if (!editing) return;
+    setError(null);
+    setSaving(true);
     try {
-      const payload = toPayload(editing)
+      const payload = toPayload(editing);
       if (editing._id) {
-        await apiFetch(`/resources/${editing.slug}`, { method: 'PUT', body: JSON.stringify(payload) })
+        await apiFetch(`/resources/${editing.slug}`, {
+          method: 'PUT',
+          body: JSON.stringify(payload),
+        });
       } else {
-        await apiFetch('/resources', { method: 'POST', body: JSON.stringify(payload) })
+        await apiFetch('/resources', { method: 'POST', body: JSON.stringify(payload) });
       }
-      await refresh()
-      setEditing(null)
+      await refresh();
+      setEditing(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to save resource')
+      setError(e instanceof Error ? e.message : 'Failed to save resource');
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const deleteAction = useConfirmAction<ResourceRecord>({
     onConfirm: async (resource) => {
-      await apiFetch(`/resources/${resource.slug}`, { method: 'DELETE' })
-      await refresh()
+      await apiFetch(`/resources/${resource.slug}`, { method: 'DELETE' });
+      await refresh();
     },
-  })
+  });
 
   if (editing) {
-    const isNew = !editing._id
+    const isNew = !editing._id;
     return (
       <div>
         <div className="mb-4">
-          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>
+            &larr; Back to list
+          </Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {isNew ? 'New resource' : `Edit: ${editing.title}`}
@@ -161,11 +169,13 @@ export default function ResourcesAdmin() {
             <AdminField
               label="Title"
               value={editing.title}
-              onChange={(v) => setEditing({
-                ...editing,
-                title: v,
-                ...(isNew && !editing.slug ? { slug: slugify(v) } : {}),
-              })}
+              onChange={(v) =>
+                setEditing({
+                  ...editing,
+                  title: v,
+                  ...(isNew && !editing.slug ? { slug: slugify(v) } : {}),
+                })
+              }
             />
             <AdminField
               label="Slug"
@@ -188,7 +198,10 @@ export default function ResourcesAdmin() {
                 label="Type"
                 value={editing.type}
                 onValueChange={(value) => setEditing({ ...editing, type: value as ResourceType })}
-                options={RESOURCE_TYPES.map((t) => ({ value: t, label: t.charAt(0).toUpperCase() + t.slice(1) }))}
+                options={RESOURCE_TYPES.map((t) => ({
+                  value: t,
+                  label: t.charAt(0).toUpperCase() + t.slice(1),
+                }))}
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -214,7 +227,9 @@ export default function ResourcesAdmin() {
               placeholder="/academy/… or https://…"
               style={{ fontFamily: 'monospace' }}
             />
-            <p className="text-xs text-muted-foreground">Canonical destination: local path or external URL.</p>
+            <p className="text-xs text-muted-foreground">
+              Canonical destination: local path or external URL.
+            </p>
           </div>
 
           <MediaPicker
@@ -229,7 +244,15 @@ export default function ResourcesAdmin() {
             <AdminField
               label="Tags (comma-separated)"
               value={editing.tags.join(', ')}
-              onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t) => t.trim()).filter(Boolean) })}
+              onChange={(v) =>
+                setEditing({
+                  ...editing,
+                  tags: v
+                    .split(',')
+                    .map((t) => t.trim())
+                    .filter(Boolean),
+                })
+              }
             />
             <LabeledTextField
               label="Order"
@@ -241,17 +264,25 @@ export default function ResourcesAdmin() {
 
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
-              <Switch checked={editing.external} onCheckedChange={(val) => setEditing({ ...editing, external: val })} />
+              <Switch
+                checked={editing.external}
+                onCheckedChange={(val) => setEditing({ ...editing, external: val })}
+              />
               <Label>External link</Label>
             </div>
             <div className="flex items-center gap-2">
-              <Switch checked={editing.featured} onCheckedChange={(val) => setEditing({ ...editing, featured: val })} />
+              <Switch
+                checked={editing.featured}
+                onCheckedChange={(val) => setEditing({ ...editing, featured: val })}
+              />
               <Label>Featured</Label>
             </div>
             <div className="flex items-center gap-2">
               <Switch
                 checked={editing.status === 'published'}
-                onCheckedChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })}
+                onCheckedChange={(val) =>
+                  setEditing({ ...editing, status: val ? 'published' : 'draft' })
+                }
               />
               <Label>{editing.status === 'published' ? 'Published' : 'Draft'}</Label>
             </div>
@@ -263,18 +294,22 @@ export default function ResourcesAdmin() {
             <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving…' : isNew ? 'Publish' : 'Update'}
             </Button>
-            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>
+              Cancel
+            </Button>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (translating && !isDefault) {
     return (
       <div>
         <div className="mb-4">
-          <Button appearance="subtle" onPress={() => setTranslating(null)}>&larr; Back</Button>
+          <Button appearance="subtle" onPress={() => setTranslating(null)}>
+            &larr; Back
+          </Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">Translate: {translating.title}</h2>
         <div className="mt-4">
@@ -293,7 +328,7 @@ export default function ResourcesAdmin() {
           />
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -304,7 +339,9 @@ export default function ResourcesAdmin() {
           <p className="mt-1 text-sm text-muted-foreground">{resources.length} resources</p>
         </div>
         {isDefault && (
-          <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyResource())}>New resource</Button>
+          <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyResource())}>
+            New resource
+          </Button>
         )}
       </div>
 
@@ -314,9 +351,10 @@ export default function ResourcesAdmin() {
 
       <div className="mt-6 flex flex-col gap-2">
         {resources.map((resource) => {
-          const categoryLabel = typeof resource.category === 'object' && resource.category?.label
-            ? resource.category.label
-            : ''
+          const categoryLabel =
+            typeof resource.category === 'object' && resource.category?.label
+              ? resource.category.label
+              : '';
           return (
             <div
               key={resource._id ?? resource.slug}
@@ -324,7 +362,9 @@ export default function ResourcesAdmin() {
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-medium text-foreground">{resource.title}</span>
+                  <span className="truncate text-sm font-medium text-foreground">
+                    {resource.title}
+                  </span>
                   {resource.featured && <Badge tone="accent" content="Featured" />}
                   {resource.status === 'draft' && <Badge tone="warning" content="Draft" />}
                 </div>
@@ -337,15 +377,24 @@ export default function ResourcesAdmin() {
               <div className="flex items-center gap-2">
                 {isDefault ? (
                   <>
-                    <Button appearance="subtle" onPress={() => setEditing(stripRefsForEditing(resource))}>Edit</Button>
-                    <Button appearance="subtle" onPress={() => deleteAction.request(resource)}>Delete</Button>
+                    <Button
+                      appearance="subtle"
+                      onPress={() => setEditing(stripRefsForEditing(resource))}
+                    >
+                      Edit
+                    </Button>
+                    <Button appearance="subtle" onPress={() => deleteAction.request(resource)}>
+                      Delete
+                    </Button>
                   </>
                 ) : (
-                  <Button appearance="subtle" onPress={() => setTranslating(resource)}>Translate</Button>
+                  <Button appearance="subtle" onPress={() => setTranslating(resource)}>
+                    Translate
+                  </Button>
                 )}
               </div>
             </div>
-          )
+          );
         })}
         {resources.length === 0 && (
           <p className="py-8 text-center text-sm text-muted-foreground">No resources yet.</p>
@@ -354,7 +403,11 @@ export default function ResourcesAdmin() {
 
       <ConfirmDialog
         control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.title || deleteAction.target.slug}”?` : 'Delete resource?'}
+        title={
+          deleteAction.target
+            ? `Delete “${deleteAction.target.title || deleteAction.target.slug}”?`
+            : 'Delete resource?'
+        }
         description="This permanently removes the resource. This cannot be undone."
         confirmLabel="Delete"
         tone="danger"
@@ -363,5 +416,5 @@ export default function ResourcesAdmin() {
         onConfirm={deleteAction.confirm}
       />
     </div>
-  )
+  );
 }

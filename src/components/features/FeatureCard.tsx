@@ -1,17 +1,17 @@
-import { Link } from '../../lib/navigation'
-import { RiArrowUpSLine } from '@oxy.so/bloom/icons/RiArrowUpSLine'
-import { RiMessage2Line } from '@oxy.so/bloom/icons/RiMessage2Line'
-import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
-import FeatureStatusBadge from './FeatureStatusBadge'
-import FeaturePriorityBadge from './FeaturePriorityBadge'
-import type { FeatureRequestData } from '../../api/hooks'
-import { featureRequestDescription, featureRequestPath } from '../../lib/featureRequest'
+import { Link } from '../../lib/navigation';
+import { RiArrowUpSLine } from '@oxy.so/bloom/icons/RiArrowUpSLine';
+import { RiMessage2Line } from '@oxy.so/bloom/icons/RiMessage2Line';
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine';
+import FeatureStatusBadge from './FeatureStatusBadge';
+import FeaturePriorityBadge from './FeaturePriorityBadge';
+import type { FeatureRequestData } from '../../api/hooks';
+import { featureRequestDescription, featureRequestPath } from '../../lib/featureRequest';
 
 interface FeatureCardProps {
-  feature: FeatureRequestData
-  onVote: () => void
+  feature: FeatureRequestData;
+  onVote: () => void;
   /** Hide the app chip where the surrounding context already names the app. */
-  hideApp?: boolean
+  hideApp?: boolean;
 }
 
 /**
@@ -24,12 +24,12 @@ interface FeatureCardProps {
  * belongs to the list, the card belongs to a quotation.
  */
 export default function FeatureCard({ feature, onVote, hideApp = false }: FeatureCardProps) {
-  const detailPath = featureRequestPath(feature.owner, feature.repoName, feature.number)
+  const detailPath = featureRequestPath(feature.owner, feature.repoName, feature.number);
   // The same stripping the meta description uses. A raw slice of the body opens
   // most of these rows with "## Description", which is markup, not a summary.
   const descriptionPreview = feature.description
     ? featureRequestDescription(feature.description, '')
-    : ''
+    : '';
 
   return (
     <article className="flex gap-3 border-b border-border px-4 py-3 transition-colors hover:bg-surface/40">
@@ -47,7 +47,9 @@ export default function FeatureCard({ feature, onVote, hideApp = false }: Featur
         >
           <RiArrowUpSLine width={20} height={20} fill="currentColor" />
         </button>
-        <span className={`text-body-sm font-semibold ${feature.userVoted ? 'text-primary' : 'text-muted-foreground'}`}>
+        <span
+          className={`text-body-sm font-semibold ${feature.userVoted ? 'text-primary' : 'text-muted-foreground'}`}
+        >
           {feature.totalVotes}
         </span>
       </div>
@@ -76,15 +78,29 @@ export default function FeatureCard({ feature, onVote, hideApp = false }: Featur
               {feature.app.displayName}
             </span>
           )}
-          <Link to={detailPath} className="inline-flex items-center gap-1 transition-colors hover:text-foreground">
+          <Link
+            to={detailPath}
+            className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+          >
             <RiMessage2Line width={14} height={14} fill="currentColor" />
             {feature.commentCount}
           </Link>
           <span className="inline-flex items-center gap-1">
-            <img src={feature.authorAvatar} alt="" loading="lazy" className="h-4 w-4 rounded-full" />
+            <img
+              src={feature.authorAvatar}
+              alt=""
+              loading="lazy"
+              className="h-4 w-4 rounded-full"
+            />
             {feature.author}
           </span>
-          <span>{new Date(feature.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+          <span>
+            {new Date(feature.createdAt).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            })}
+          </span>
           <a
             href={feature.htmlUrl}
             target="_blank"
@@ -97,5 +113,5 @@ export default function FeatureCard({ feature, onVote, hideApp = false }: Featur
         </div>
       </div>
     </article>
-  )
+  );
 }

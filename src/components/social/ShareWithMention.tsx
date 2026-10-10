@@ -1,15 +1,15 @@
-import { buildMentionComposeUrl } from '../../lib/mentionShare'
-import MentionIcon from './MentionIcon'
+import { buildMentionComposeUrl } from '../../lib/mentionShare';
+import MentionIcon from './MentionIcon';
 
 interface ShareWithMentionProps {
   /** Pre-filled composer text (typically the page title). */
-  title: string
+  title: string;
   /** Canonical URL of the page being shared. */
-  url: string
+  url: string;
   /** Optional hashtags (no leading `#`). */
-  hashtags?: readonly string[]
+  hashtags?: readonly string[];
   /** Optional handle for `via @handle` attribution (no leading `@`). */
-  via?: string
+  via?: string;
 }
 
 /**
@@ -21,7 +21,7 @@ interface ShareWithMentionProps {
  * Mention's intent contract (see `src/lib/mentionShare.ts`).
  */
 export default function ShareWithMention({ title, url, hashtags, via }: ShareWithMentionProps) {
-  const mentionUrl = buildMentionComposeUrl({ text: title, url, hashtags, via })
+  const mentionUrl = buildMentionComposeUrl({ text: title, url, hashtags, via });
 
   return (
     <a
@@ -33,5 +33,5 @@ export default function ShareWithMention({ title, url, hashtags, via }: ShareWit
       <MentionIcon className="h-4 w-4" />
       Share with Mention
     </a>
-  )
+  );
 }

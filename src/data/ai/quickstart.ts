@@ -12,18 +12,18 @@
  * signup. The page's availability badge is what says that, from
  * `OXY_INFERENCE_AVAILABILITY`.
  */
-import { INFERENCE_API_BASE } from './taxonomy'
+import { INFERENCE_API_BASE } from './taxonomy';
 
 export interface CodeSample {
-  key: string
-  label: string
+  key: string;
+  label: string;
   /** Highlighter hint: JavaScript/TypeScript dialects are highlighted (Bloom `CodeLines`), anything else renders plain. */
-  language: string
-  code: string
+  language: string;
+  code: string;
 }
 
 /** The environment variable every sample reads its credential from. */
-export const CREDENTIAL_ENV_VAR = 'OXY_API_KEY'
+export const CREDENTIAL_ENV_VAR = 'OXY_API_KEY';
 
 export const quickstartSamples: CodeSample[] = [
   {
@@ -75,7 +75,7 @@ response = client.chat.completions.create(
 
 print(response.choices[0].message.content)`,
   },
-]
+];
 
 /** Secondary samples, so the first snippet stays the shortest thing that works. */
 export const advancedSamples: CodeSample[] = [
@@ -137,7 +137,7 @@ for await (const chunk of stream) {
   },
 })`,
   },
-]
+];
 
 /**
  * The model id placeholder the samples use.
@@ -146,4 +146,4 @@ for await (const chunk of stream) {
  * catalogue is, and a snippet naming one would be the site inventing a model.
  * Once the catalogue has entries, `/ai/models` hands over a real id to copy.
  */
-export const MODEL_ID_PLACEHOLDER = '<publisher>/<model>'
+export const MODEL_ID_PLACEHOLDER = '<publisher>/<model>';

@@ -1,16 +1,16 @@
-import { Link } from '../../lib/navigation'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import type { FeatureAppOption } from '../../api/hooks'
+import { Link } from '../../lib/navigation';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import type { FeatureAppOption } from '../../api/hooks';
 
 /** Cards in the band. Enough to suggest breadth, few enough to stay a band. */
-const MAX_SUGGESTIONS = 4
+const MAX_SUGGESTIONS = 4;
 /** Below this many apps the band says nothing worth a row of the feed. */
-const MIN_SUGGESTIONS = 2
+const MIN_SUGGESTIONS = 2;
 
 interface FeatureInterstitialProps {
-  apps: FeatureAppOption[]
+  apps: FeatureAppOption[];
   /** The app currently filtered to, which is not worth suggesting. */
-  activeApp: string
+  activeApp: string;
 }
 
 /**
@@ -24,8 +24,8 @@ interface FeatureInterstitialProps {
  * and nothing else on the page says so.
  */
 export default function FeatureInterstitial({ apps, activeApp }: FeatureInterstitialProps) {
-  const suggestions = apps.filter((app) => app.key !== activeApp).slice(0, MAX_SUGGESTIONS)
-  if (suggestions.length < MIN_SUGGESTIONS) return null
+  const suggestions = apps.filter((app) => app.key !== activeApp).slice(0, MAX_SUGGESTIONS);
+  if (suggestions.length < MIN_SUGGESTIONS) return null;
 
   return (
     <section className="border-b border-border px-4 py-4" aria-label="Other apps on the board">
@@ -44,13 +44,19 @@ export default function FeatureInterstitial({ apps, activeApp }: FeatureIntersti
             className="flex shrink-0 items-center justify-between gap-3 rounded-2xl border border-border px-3 py-3 transition-colors hover:bg-surface sm:shrink"
           >
             <span className="min-w-0">
-              <span className="block truncate text-sm font-medium text-foreground">{app.displayName}</span>
-              <span className="block truncate text-xs text-muted-foreground">{app.owner}/{app.repo}</span>
+              <span className="block truncate text-sm font-medium text-foreground">
+                {app.displayName}
+              </span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {app.owner}/{app.repo}
+              </span>
             </span>
-            <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
+            <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground">
+              <RiArrowRightLine width={16} height={16} fill="currentColor" />
+            </span>
           </Link>
         ))}
       </div>
     </section>
-  )
+  );
 }

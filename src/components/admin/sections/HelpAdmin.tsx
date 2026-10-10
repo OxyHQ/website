@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import {
   useHelpArticles,
   useCategories,
@@ -6,33 +6,36 @@ import {
   resolveHelpArticleCategoryId,
   type HelpArticleRecord,
   type HelpArticleStatus,
-} from '../../../api/hooks'
-import { apiFetch } from '../../../api/client'
-import { Button } from '@oxy.so/bloom/button'
-import { Switch } from '@oxy.so/bloom/switch'
-import { Badge } from '@oxy.so/bloom/badge'
-import { LabeledTextField } from '../LabeledTextField'
-import { Label } from '@oxy.so/bloom/label'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
-import LocaleSwitcher from '../LocaleSwitcher'
-import { TranslationFields } from '../TranslationEditor'
-import MediaPicker from '../MediaPicker'
-import OptionSelect from '../../ui/OptionSelect'
-import { AdminField } from '../AdminField'
+} from '../../../api/hooks';
+import { apiFetch } from '../../../api/client';
+import { Button } from '@oxy.so/bloom/button';
+import { Switch } from '@oxy.so/bloom/switch';
+import { Badge } from '@oxy.so/bloom/badge';
+import { LabeledTextField } from '../LabeledTextField';
+import { Label } from '@oxy.so/bloom/label';
+import ConfirmDialog from '../ConfirmDialog';
+import { useConfirmAction } from '../useConfirmAction';
+import LocaleSwitcher from '../LocaleSwitcher';
+import { TranslationFields } from '../TranslationEditor';
+import MediaPicker from '../MediaPicker';
+import OptionSelect from '../../ui/OptionSelect';
+import { AdminField } from '../AdminField';
 
 function slugify(input: string): string {
-  return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 function mediaIdString(cover: unknown): string {
-  if (!cover) return ''
-  if (typeof cover === 'string') return cover
+  if (!cover) return '';
+  if (typeof cover === 'string') return cover;
   if (typeof cover === 'object' && cover !== null && '_id' in cover) {
-    const id = (cover as { _id?: unknown })._id
-    return typeof id === 'string' ? id : ''
+    const id = (cover as { _id?: unknown })._id;
+    return typeof id === 'string' ? id : '';
   }
-  return ''
+  return '';
 }
 
 function stripRefsForEditing(article: HelpArticleRecord): HelpArticleRecord {
@@ -40,7 +43,7 @@ function stripRefsForEditing(article: HelpArticleRecord): HelpArticleRecord {
     ...article,
     coverImage: mediaIdString(article.coverImage) || null,
     category: resolveHelpArticleCategoryId(article) || null,
-  }
+  };
 }
 
 function emptyArticle(): HelpArticleRecord {
@@ -57,22 +60,22 @@ function emptyArticle(): HelpArticleRecord {
     status: 'published',
     publishedAt: new Date().toISOString(),
     order: 0,
-  }
+  };
 }
 
 interface SavePayload {
-  slug: string
-  title: string
-  summary: string
-  content: string
-  category: string | null
-  icon: string
-  coverImage: string | null
-  tags: string[]
-  featured: boolean
-  status: HelpArticleStatus
-  publishedAt: string
-  order: number
+  slug: string;
+  title: string;
+  summary: string;
+  content: string;
+  category: string | null;
+  icon: string;
+  coverImage: string | null;
+  tags: string[];
+  featured: boolean;
+  status: HelpArticleStatus;
+  publishedAt: string;
+  order: number;
 }
 
 function toPayload(article: HelpArticleRecord): SavePayload {
@@ -89,69 +92,74 @@ function toPayload(article: HelpArticleRecord): SavePayload {
     status: article.status,
     publishedAt: article.publishedAt,
     order: article.order,
-  }
+  };
 }
 
 function toDateInputValue(iso: string): string {
-  if (!iso) return ''
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return ''
-  return date.toISOString().slice(0, 10)
+  if (!iso) return '';
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toISOString().slice(0, 10);
 }
 
 export default function HelpAdmin() {
-  const { data, refetch } = useHelpArticles({ limit: 50, status: 'published' })
-  const { data: draftData, refetch: refetchDrafts } = useHelpArticles({ limit: 50, status: 'draft' })
-  const { data: locales } = useLocales()
-  const { data: categoriesData } = useCategories('generic')
-  const categories = categoriesData ?? []
-  const [editing, setEditing] = useState<HelpArticleRecord | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [activeLocale, setActiveLocale] = useState('')
-  const [translating, setTranslating] = useState<HelpArticleRecord | null>(null)
+  const { data, refetch } = useHelpArticles({ limit: 50, status: 'published' });
+  const { data: draftData, refetch: refetchDrafts } = useHelpArticles({
+    limit: 50,
+    status: 'draft',
+  });
+  const { data: locales } = useLocales();
+  const { data: categoriesData } = useCategories('generic');
+  const categories = categoriesData ?? [];
+  const [editing, setEditing] = useState<HelpArticleRecord | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [activeLocale, setActiveLocale] = useState('');
+  const [translating, setTranslating] = useState<HelpArticleRecord | null>(null);
 
-  const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
-  const articles = [...(data?.articles ?? []), ...(draftData?.articles ?? [])]
-  const isDefault = !activeLocale || activeLocale === defaultLocale
+  const defaultLocale = locales?.find((l) => l.isDefault)?.code ?? 'en';
+  const articles = [...(data?.articles ?? []), ...(draftData?.articles ?? [])];
+  const isDefault = !activeLocale || activeLocale === defaultLocale;
 
   const refresh = async () => {
-    await Promise.all([refetch(), refetchDrafts()])
-  }
+    await Promise.all([refetch(), refetchDrafts()]);
+  };
 
   const save = async () => {
-    if (!editing) return
-    setError(null)
-    setSaving(true)
+    if (!editing) return;
+    setError(null);
+    setSaving(true);
     try {
-      const payload = toPayload(editing)
+      const payload = toPayload(editing);
       if (editing._id) {
-        await apiFetch(`/help/${editing.slug}`, { method: 'PUT', body: JSON.stringify(payload) })
+        await apiFetch(`/help/${editing.slug}`, { method: 'PUT', body: JSON.stringify(payload) });
       } else {
-        await apiFetch('/help', { method: 'POST', body: JSON.stringify(payload) })
+        await apiFetch('/help', { method: 'POST', body: JSON.stringify(payload) });
       }
-      await refresh()
-      setEditing(null)
+      await refresh();
+      setEditing(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to save help article')
+      setError(e instanceof Error ? e.message : 'Failed to save help article');
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const deleteAction = useConfirmAction<HelpArticleRecord>({
     onConfirm: async (article) => {
-      await apiFetch(`/help/${article.slug}`, { method: 'DELETE' })
-      await refresh()
+      await apiFetch(`/help/${article.slug}`, { method: 'DELETE' });
+      await refresh();
     },
-  })
+  });
 
   if (editing) {
-    const isNew = !editing._id
+    const isNew = !editing._id;
     return (
       <div>
         <div className="mb-4">
-          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>
+            &larr; Back to list
+          </Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {isNew ? 'New help article' : `Edit: ${editing.title}`}
@@ -162,11 +170,13 @@ export default function HelpAdmin() {
             <AdminField
               label="Title"
               value={editing.title}
-              onChange={(v) => setEditing({
-                ...editing,
-                title: v,
-                ...(isNew && !editing.slug ? { slug: slugify(v) } : {}),
-              })}
+              onChange={(v) =>
+                setEditing({
+                  ...editing,
+                  title: v,
+                  ...(isNew && !editing.slug ? { slug: slugify(v) } : {}),
+                })
+              }
             />
             <div className="flex flex-col gap-1.5">
               <LabeledTextField
@@ -176,7 +186,11 @@ export default function HelpAdmin() {
                 disabled={!isNew}
                 style={{ fontFamily: 'monospace' }}
               />
-              {!isNew && <p className="text-xs text-muted-foreground">Slug cannot be changed after creation.</p>}
+              {!isNew && (
+                <p className="text-xs text-muted-foreground">
+                  Slug cannot be changed after creation.
+                </p>
+              )}
             </div>
           </div>
 
@@ -225,7 +239,10 @@ export default function HelpAdmin() {
                 onValueChange={(v) => setEditing({ ...editing, icon: v })}
                 placeholder="rocket"
               />
-              <p className="text-xs text-muted-foreground">Lucide icon name in kebab-case (e.g. <span className="font-mono">rocket</span>, <span className="font-mono">credit-card</span>).</p>
+              <p className="text-xs text-muted-foreground">
+                Lucide icon name in kebab-case (e.g. <span className="font-mono">rocket</span>,{' '}
+                <span className="font-mono">credit-card</span>).
+              </p>
             </div>
             <div className="flex flex-col gap-1.5">
               <LabeledTextField
@@ -240,7 +257,15 @@ export default function HelpAdmin() {
             <AdminField
               label="Tags (comma-separated)"
               value={editing.tags.join(', ')}
-              onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t) => t.trim()).filter(Boolean) })}
+              onChange={(v) =>
+                setEditing({
+                  ...editing,
+                  tags: v
+                    .split(',')
+                    .map((t) => t.trim())
+                    .filter(Boolean),
+                })
+              }
             />
             <div className="flex flex-col gap-1.5">
               <LabeledTextField
@@ -248,8 +273,8 @@ export default function HelpAdmin() {
                 placeholder="YYYY-MM-DD"
                 value={toDateInputValue(editing.publishedAt)}
                 onValueChange={(v) => {
-                  if (!v) return
-                  setEditing({ ...editing, publishedAt: new Date(v).toISOString() })
+                  if (!v) return;
+                  setEditing({ ...editing, publishedAt: new Date(v).toISOString() });
                 }}
               />
             </div>
@@ -257,13 +282,18 @@ export default function HelpAdmin() {
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Switch checked={editing.featured} onCheckedChange={(val) => setEditing({ ...editing, featured: val })} />
+              <Switch
+                checked={editing.featured}
+                onCheckedChange={(val) => setEditing({ ...editing, featured: val })}
+              />
               <Label>Featured</Label>
             </div>
             <div className="flex items-center gap-2">
               <Switch
                 checked={editing.status === 'published'}
-                onCheckedChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })}
+                onCheckedChange={(val) =>
+                  setEditing({ ...editing, status: val ? 'published' : 'draft' })
+                }
               />
               <Label>{editing.status === 'published' ? 'Published' : 'Draft'}</Label>
             </div>
@@ -275,18 +305,22 @@ export default function HelpAdmin() {
             <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving…' : isNew ? 'Publish' : 'Update'}
             </Button>
-            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>
+              Cancel
+            </Button>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (translating && !isDefault) {
     return (
       <div>
         <div className="mb-4">
-          <Button appearance="subtle" onPress={() => setTranslating(null)}>&larr; Back</Button>
+          <Button appearance="subtle" onPress={() => setTranslating(null)}>
+            &larr; Back
+          </Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">Translate: {translating.title}</h2>
         <div className="mt-4">
@@ -306,7 +340,7 @@ export default function HelpAdmin() {
           />
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -317,7 +351,9 @@ export default function HelpAdmin() {
           <p className="mt-1 text-sm text-muted-foreground">{articles.length} articles</p>
         </div>
         {isDefault && (
-          <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyArticle())}>New article</Button>
+          <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyArticle())}>
+            New article
+          </Button>
         )}
       </div>
 
@@ -327,9 +363,10 @@ export default function HelpAdmin() {
 
       <div className="mt-6 flex flex-col gap-2">
         {articles.map((article) => {
-          const categoryLabel = typeof article.category === 'object' && article.category?.label
-            ? article.category.label
-            : ''
+          const categoryLabel =
+            typeof article.category === 'object' && article.category?.label
+              ? article.category.label
+              : '';
           return (
             <div
               key={article._id ?? article.slug}
@@ -337,7 +374,9 @@ export default function HelpAdmin() {
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-medium text-foreground">{article.title}</span>
+                  <span className="truncate text-sm font-medium text-foreground">
+                    {article.title}
+                  </span>
                   {article.featured && <Badge tone="accent" content="Featured" />}
                   {article.status === 'draft' && <Badge tone="warning" content="Draft" />}
                 </div>
@@ -349,15 +388,24 @@ export default function HelpAdmin() {
               <div className="flex items-center gap-2">
                 {isDefault ? (
                   <>
-                    <Button appearance="subtle" onPress={() => setEditing(stripRefsForEditing(article))}>Edit</Button>
-                    <Button appearance="subtle" onPress={() => deleteAction.request(article)}>Delete</Button>
+                    <Button
+                      appearance="subtle"
+                      onPress={() => setEditing(stripRefsForEditing(article))}
+                    >
+                      Edit
+                    </Button>
+                    <Button appearance="subtle" onPress={() => deleteAction.request(article)}>
+                      Delete
+                    </Button>
                   </>
                 ) : (
-                  <Button appearance="subtle" onPress={() => setTranslating(article)}>Translate</Button>
+                  <Button appearance="subtle" onPress={() => setTranslating(article)}>
+                    Translate
+                  </Button>
                 )}
               </div>
             </div>
-          )
+          );
         })}
         {articles.length === 0 && (
           <p className="py-8 text-center text-sm text-muted-foreground">No help articles yet.</p>
@@ -366,7 +414,11 @@ export default function HelpAdmin() {
 
       <ConfirmDialog
         control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.title || deleteAction.target.slug}”?` : 'Delete help article?'}
+        title={
+          deleteAction.target
+            ? `Delete “${deleteAction.target.title || deleteAction.target.slug}”?`
+            : 'Delete help article?'
+        }
         description="This permanently removes the help article. This cannot be undone."
         confirmLabel="Delete"
         tone="danger"
@@ -375,5 +427,5 @@ export default function HelpAdmin() {
         onConfirm={deleteAction.confirm}
       />
     </div>
-  )
+  );
 }

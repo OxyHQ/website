@@ -1,17 +1,15 @@
-import { motion } from 'framer-motion'
-import Button from '../../ui/Button'
-import PhoneMockup from '../landing/PhoneMockup'
+import { motion } from 'framer-motion';
+import Button from '../../ui/Button';
+import PhoneMockup from '../landing/PhoneMockup';
 
-const ANDROID_RELEASES_URL =
-  'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest'
-const IOS_TESTFLIGHT_URL =
-  'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest'
+const ANDROID_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest';
+const IOS_TESTFLIGHT_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest';
 
 const HERO_FEATURES = [
   { label: 'Self-custody' },
   { label: 'No account' },
   { label: 'Open source' },
-] as const
+] as const;
 
 /**
  * `/wallet` hero — marketing intro for FAIRWallet.
@@ -60,8 +58,8 @@ export default function WalletHeroSection() {
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
               className="mt-6 max-w-xl text-balance text-lg leading-relaxed text-muted-foreground sm:text-xl lg:mx-0"
             >
-              Send, receive, stake and explore the FairCoin network from one
-              non-custodial app. Built by the community, free forever.
+              Send, receive, stake and explore the FairCoin network from one non-custodial app.
+              Built by the community, free forever.
             </motion.p>
 
             <motion.div
@@ -109,5 +107,5 @@ export default function WalletHeroSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -7,4 +7,4 @@
    them.
    ───────────────────────────────────────────── */
 
-export const researchCtaHref = '/initiative'
+export const researchCtaHref = '/initiative';

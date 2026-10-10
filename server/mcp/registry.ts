@@ -1,5 +1,5 @@
-import type { z } from 'zod'
-import type { ToolResult } from './results.js'
+import type { z } from 'zod';
+import type { ToolResult } from './results.js';
 
 /* ──────────────────────────────────────────────
  * How a tool is declared.
@@ -10,7 +10,7 @@ import type { ToolResult } from './results.js'
  * the boot fails if a tool lacks either.
  * ──────────────────────────────────────────── */
 
-export type ToolShape = Record<string, z.ZodType>
+export type ToolShape = Record<string, z.ZodType>;
 
 /**
  * Who is acting and on which request. `actorId` is the connection's active Oxy
@@ -19,10 +19,10 @@ export type ToolShape = Record<string, z.ZodType>
  * author stay separate and may name someone else.
  */
 export interface ToolContext {
-  actorId: string
-  scopes?: readonly string[]
-  signal?: AbortSignal
-  requestId?: string | number
+  actorId: string;
+  scopes?: readonly string[];
+  signal?: AbortSignal;
+  requestId?: string | number;
 }
 
 /**
@@ -32,26 +32,26 @@ export interface ToolContext {
  *   sent as `structuredContent: { items }`, since structured content must be an
  *   object.
  */
-export type ToolOutput = 'object' | 'items'
+export type ToolOutput = 'object' | 'items';
 
 export interface ToolOptions {
-  output?: ToolOutput
+  output?: ToolOutput;
   /** Validates the success payload (`structuredContent`) for admins and readers alike. */
-  outputSchema?: z.ZodObject
+  outputSchema?: z.ZodObject;
   /**
    * The tool takes a `locale` to read in. It is checked against the enabled
    * locales before either path runs, so an admin and a reader get the same
    * refusal for a locale the site does not serve.
    */
-  localized?: boolean
+  localized?: boolean;
 }
 
 export interface ToolDefinition {
-  name: string
-  description: string
-  shape: ToolShape
-  options: ToolOptions
-  handler: (args: Record<string, unknown>, context: ToolContext) => Promise<ToolResult>
+  name: string;
+  description: string;
+  shape: ToolShape;
+  options: ToolOptions;
+  handler: (args: Record<string, unknown>, context: ToolContext) => Promise<ToolResult>;
 }
 
 export interface ToolRegistrar {
@@ -61,5 +61,5 @@ export interface ToolRegistrar {
     shape: Shape,
     handler: (args: z.infer<z.ZodObject<Shape>>, context: ToolContext) => Promise<ToolResult>,
     options?: ToolOptions,
-  ): void
+  ): void;
 }

@@ -25,5 +25,7 @@ const missing = ['ACTIONS_CACHE_SERVICE_V2', 'ACTIONS_RESULTS_URL', 'ACTIONS_RUN
   (name) => !process.env[name],
 );
 if (missing.length > 0) {
-  console.log(`::warning::buildx gha cache disabled, not set for this action: ${missing.join(', ')}`);
+  console.log(
+    `::warning::buildx gha cache disabled, not set for this action: ${missing.join(', ')}`,
+  );
 }
