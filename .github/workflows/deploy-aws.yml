@@ -64,54 +64,11 @@ jobs:
           role-to-assume: arn:aws:iam::237343248947:role/oxy-github-deploy
           aws-region: ${{ env.AWS_REGION }}
 
-      # The secrets are enumerated one at a time, on purpose.
-      #
-      # This step used to expand the entire `secrets` context with
-      # `toJSON(secrets)`, and that is what held the deploys. A workflow that
-      # walks every repository secret into a shell loop is shaped exactly like
-      # an exfiltration payload, so GitHub creates the run with conclusion
-      # `action_required` and ZERO jobs until a human clicks "Approve and run"
-      # in the UI. The REST approve endpoint only serves fork pull requests, so
-      # it cannot be automated, and the approval is per run — every deploy needs
-      # a person. The comment on the ECS step below records the same gate biting
-      # this repo before.
-      #
-      # Enumerating is also least privilege. The old loop copied every secret
-      # visible to the repo, so the org-wide CI credentials (NPM_TOKEN,
-      # CLOUDFLARE_API_TOKEN, ADD_TO_PROJECT_TOKEN) ended up in this app's SSM
-      # namespace, and this repo could overwrite the /oxy/_shared/* parameters
-      # that other services read.
-      #
-      # The list is the secrets the website-api task definition actually
-      # consumes. Adding a new one means adding it here, or it never reaches SSM.
-      - name: Sync GitHub secrets -> SSM (GitHub is the source of truth)
-        env:
-          APP_DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          APP_FEATURE_BOARD_GITHUB_TOKEN: ${{ secrets.FEATURE_BOARD_GITHUB_TOKEN }}
-          APP_INTERCOM_MESSENGER_SECRET: ${{ secrets.INTERCOM_MESSENGER_SECRET }}
-        run: |
-          sync_secret() {
-            name="$1"; value="$2"; path="$3"
-            if [ -z "$value" ] || [ "$value" = "-" ]; then
-              echo "::warning::skip empty/placeholder secret $name; SSM unchanged"
-              return 0
-            fi
-            aws ssm put-parameter --name "$path" --value "$value" --type SecureString --overwrite >/dev/null
-            echo "synced -> $path"
-          }
-
-          sync_secret DATABASE_URL "$APP_DATABASE_URL" "/oxy/$APP/DATABASE_URL"
-          sync_secret FEATURE_BOARD_GITHUB_TOKEN "$APP_FEATURE_BOARD_GITHUB_TOKEN" "/oxy/$APP/FEATURE_BOARD_GITHUB_TOKEN"
-          sync_secret INTERCOM_MESSENGER_SECRET "$APP_INTERCOM_MESSENGER_SECRET" "/oxy/$APP/INTERCOM_MESSENGER_SECRET"
-
-          # Nothing here writes /oxy/_shared/*. Shared parameters are owned by
-          # oxy-infra, not by any app, and are rotated once, centrally (oxy-infra
-          # docs/runbooks/45-shared-ssm-parameters.md). When several app deploys
-          # each copied their own GitHub secret into /oxy/_shared/REDIS_URL, two
-          # held different values and every deploy flipped it between Redis
-          # clusters (incident 2026-09-27); the AWS keys had the same shape.
-          # Task definitions that read the shared parameters still do; only the
-          # write is gone.
+      # Runtime secrets live ONLY in SSM /oxy/website-api/* (SecureString) and
+      # the oxy-infra-owned /oxy/_shared/*; the task definition reads them at
+      # task start and this deploy writes none. Set or rotate one with
+      # `aws ssm put-parameter --overwrite` (oxy-infra runbook 46). Until
+      # 2026-10-10 a step here copied GitHub repo secrets into SSM.
 
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
