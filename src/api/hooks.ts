@@ -22,6 +22,7 @@ import {
 } from './platformActivityStore'
 
 import { type Testimonial } from '../data/content'
+import { BRAND_MARKS } from '../data/brand-assets'
 import { type BillingPlan, type PricingPlan } from '../data/pricing'
 import { OXY_API } from '../lib/oxyApi'
 import { type NewsroomPost, type NewsroomPostSummary } from '../data/newsroom'
@@ -253,6 +254,7 @@ export function useProduct(productId: string) {
 }
 
 const LOCAL_PRODUCT_LOGOS: Readonly<Record<string, string>> = {
+  noted: BRAND_MARKS.noted,
   faircoin: '/images/apps/faircoin.svg',
   'faircoin-wallet': '/images/apps/faircoin-wallet.svg',
   fairwallet: '/images/apps/faircoin-wallet.svg',

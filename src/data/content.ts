@@ -1,3 +1,5 @@
+import { BRAND_MARKS } from './brand-assets'
+
 export interface Testimonial {
   quote: string
   name: string
@@ -217,7 +219,7 @@ export const resourcesNavDropdown: NavDropdown = {
 export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: string }> = [
   { title: 'Mention', description: 'Decentralized social media', href: '/mention', image: '/images/apps/mention.png', logoColor: '#40c2ed', section: 'Social & Communication' },
   { title: 'Inbox by Oxy', description: 'A calmer way to handle email', href: '/inbox', image: '/images/apps/inbox.png', logoColor: '#bf40ed', section: 'Tools' },
-  { title: 'Noted', description: "Oxy's workspace for notes and ideas", href: 'https://noted.oxy.so', section: 'Tools' },
+  { title: 'Noted', description: "Oxy's workspace for notes and ideas", href: 'https://noted.oxy.so', image: BRAND_MARKS.noted, section: 'Tools' },
   { title: 'Nilo', description: 'Workspace for docs and databases', href: 'https://nilo.so', section: 'Tools' },
   { title: 'Alia', description: 'The Oxy assistant for people and teams', href: 'https://alia.onl/', image: '/images/apps/alia-dropdown.svg', logoColor: '#fab8ff', preserveImageColors: true, section: 'AI & Research' },
   { title: 'Clarity', description: 'AI-Powered search engine', href: '/clarity', image: '/images/apps/clarity.png', logoColor: '#664100', section: 'AI & Research' },
