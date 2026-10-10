@@ -1,6 +1,10 @@
-import { canAttestWorkloadIdentity, createEcosystemTraffic, type EcosystemTrafficOptions } from '@oxy.so/core/server'
+import {
+  canAttestWorkloadIdentity,
+  createEcosystemTraffic,
+  type EcosystemTrafficOptions,
+} from '@oxy.so/core/server';
 
-type Activity = ReturnType<typeof createEcosystemTraffic>
+type Activity = ReturnType<typeof createEcosystemTraffic>;
 
 /**
  * Whether this process can act as the Oxy application `website` AT ALL.
@@ -26,7 +30,7 @@ function canAuthenticateAsOxyService(environment: NodeJS.ProcessEnv): boolean {
   return (
     canAttestWorkloadIdentity() ||
     Boolean(environment.OXY_SERVICE_API_KEY?.trim() && environment.OXY_SERVICE_API_SECRET?.trim())
-  )
+  );
 }
 
 /** Configure before listen, once per process; activates on any usable identity, and a missing region still fails at boot. */
@@ -35,7 +39,7 @@ export function startWebsiteActivity(
   environment: NodeJS.ProcessEnv = process.env,
   create: (options: EcosystemTrafficOptions) => Activity = createEcosystemTraffic,
 ): Activity | undefined {
-  if (!canAuthenticateAsOxyService(environment)) return undefined
+  if (!canAuthenticateAsOxyService(environment)) return undefined;
   /**
    * Still a throw, and now it is only about the region.
    *
@@ -46,9 +50,14 @@ export function startWebsiteActivity(
    * is left is the one an attesting task can still get wrong.
    */
   if (!environment.AWS_REGION) {
-    throw new Error('Enabled ecosystem activity requires AWS_REGION')
+    throw new Error('Enabled ecosystem activity requires AWS_REGION');
   }
-  const activity = create({ service: 'website', region: environment.AWS_REGION, baseURL: environment.OXY_API_BASE, ready })
-  activity.installFetch()
-  return activity
+  const activity = create({
+    service: 'website',
+    region: environment.AWS_REGION,
+    baseURL: environment.OXY_API_BASE,
+    ready,
+  });
+  activity.installFetch();
+  return activity;
 }

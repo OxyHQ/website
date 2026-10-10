@@ -1,35 +1,35 @@
-import { useMemo } from 'react'
-import { Link } from '../../../lib/navigation'
-import { motion } from 'framer-motion'
-import { RiPulseLine } from '@oxy.so/bloom/icons/RiPulseLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
-import { RiCheckboxCircleLine } from '@oxy.so/bloom/icons/RiCheckboxCircleLine'
-import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
-import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
-import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
-import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
-import { fc } from '../../../lib/faircoin-links'
-import BridgeFlowVisual from '../landing/BridgeFlowVisual'
-import LiveBridgeSection from '../landing/LiveBridgeSection'
+import { useMemo } from 'react';
+import { Link } from '../../../lib/navigation';
+import { motion } from 'framer-motion';
+import { RiPulseLine } from '@oxy.so/bloom/icons/RiPulseLine';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine';
+import { RiCheckboxCircleLine } from '@oxy.so/bloom/icons/RiCheckboxCircleLine';
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine';
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine';
+import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine';
+import { useCopyToClipboard } from '../../../lib/useCopyToClipboard';
+import { fc } from '../../../lib/faircoin-links';
+import BridgeFlowVisual from '../landing/BridgeFlowVisual';
+import LiveBridgeSection from '../landing/LiveBridgeSection';
 
-const CONTRACT_ADDRESS = '0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3'
-const BASESCAN_URL = `https://basescan.org/address/${CONTRACT_ADDRESS}`
-const EXPLORER_BRIDGE_URL = 'https://explorer.fairco.in/bridge'
-const BRIDGE_SOURCE_URL = 'https://github.com/FairCoinOfficial/faircoin-bridge'
-const BRIDGE_SERVICE_URL = 'https://bridge.fairco.in'
-const BRIDGE_HEALTH_URL = `${BRIDGE_SERVICE_URL}/health`
-const BRIDGE_RESERVES_URL = `${BRIDGE_SERVICE_URL}/api/bridge/reserves`
-const UNISWAP_SWAP_URL = `https://app.uniswap.org/swap?outputCurrency=${CONTRACT_ADDRESS}&chain=base`
+const CONTRACT_ADDRESS = '0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3';
+const BASESCAN_URL = `https://basescan.org/address/${CONTRACT_ADDRESS}`;
+const EXPLORER_BRIDGE_URL = 'https://explorer.fairco.in/bridge';
+const BRIDGE_SOURCE_URL = 'https://github.com/FairCoinOfficial/faircoin-bridge';
+const BRIDGE_SERVICE_URL = 'https://bridge.fairco.in';
+const BRIDGE_HEALTH_URL = `${BRIDGE_SERVICE_URL}/health`;
+const BRIDGE_RESERVES_URL = `${BRIDGE_SERVICE_URL}/api/bridge/reserves`;
+const UNISWAP_SWAP_URL = `https://app.uniswap.org/swap?outputCurrency=${CONTRACT_ADDRESS}&chain=base`;
 
-type Method = 'GET' | 'POST'
+type Method = 'GET' | 'POST';
 
 interface ApiEndpoint {
-  method: Method
-  path: string
-  description: string
-  href?: string
-  exampleCurl?: string
+  method: Method;
+  path: string;
+  description: string;
+  href?: string;
+  exampleCurl?: string;
 }
 
 const API_ENDPOINTS: readonly ApiEndpoint[] = [
@@ -79,7 +79,7 @@ const API_ENDPOINTS: readonly ApiEndpoint[] = [
       'Poll the status of a redemption (WFAIR burn). Used by the Unwrap flow after the user signs the burn.',
     exampleCurl: `curl ${BRIDGE_SERVICE_URL}/api/bridge/withdrawal/status/<base-tx-hash>`,
   },
-]
+];
 
 /**
  * Polished bridge page content. Replaces the text-heavy reference page with:
@@ -97,7 +97,7 @@ export default function BridgeContent() {
       <ApiBrowser />
       <ReferenceLinks />
     </div>
-  )
+  );
 }
 
 function BridgeHero() {
@@ -137,9 +137,9 @@ function BridgeHero() {
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
             className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
           >
-            Wrap native FAIR into WFAIR on Base, or unwrap WFAIR back to native
-            FAIR. Open source, fully redeemable, fully verified. This is the
-            technical reference for integrators. If you just want FAIR, use{' '}
+            Wrap native FAIR into WFAIR on Base, or unwrap WFAIR back to native FAIR. Open source,
+            fully redeemable, fully verified. This is the technical reference for integrators. If
+            you just want FAIR, use{' '}
             <Link to={fc('/buy')} className="text-foreground underline-offset-4 hover:underline">
               Buy FairCoin
             </Link>
@@ -158,7 +158,10 @@ function BridgeHero() {
               className="group inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-[0_8px_24px_-8px] shadow-primary/40 transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
             >
               Trade WFAIR
-              <span aria-hidden="true" className="inline-flex transition-transform group-hover:translate-x-0.5">
+              <span
+                aria-hidden="true"
+                className="inline-flex transition-transform group-hover:translate-x-0.5"
+              >
                 <RiArrowRightLine width={16} height={16} fill="currentColor" />
               </span>
             </a>
@@ -181,7 +184,7 @@ function BridgeHero() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function BridgeFlowSection() {
@@ -230,7 +233,7 @@ function BridgeFlowSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function ApiBrowser() {
@@ -263,8 +266,7 @@ function ApiBrowser() {
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
             className="mt-5 text-pretty text-base text-muted-foreground"
           >
-            The bridge service exposes a small HTTP API. All endpoints are
-            served from{' '}
+            The bridge service exposes a small HTTP API. All endpoints are served from{' '}
             <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm">
               {BRIDGE_SERVICE_URL}
             </code>
@@ -279,7 +281,7 @@ function ApiBrowser() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function ApiCard({ endpoint, idx }: { endpoint: ApiEndpoint; idx: number }) {
@@ -318,25 +320,25 @@ function ApiCard({ endpoint, idx }: { endpoint: ApiEndpoint; idx: number }) {
         </div>
       ) : null}
     </motion.div>
-  )
+  );
 }
 
 function MethodChip({ method }: { method: Method }) {
   const tone =
     method === 'GET'
       ? 'border-success/30 bg-success-subtle text-success-text'
-      : 'border-info/30 bg-info-subtle text-info-text'
+      : 'border-info/30 bg-info-subtle text-info-text';
   return (
     <span
       className={`inline-flex h-6 items-center rounded-md border px-2 font-mono text-body-xs font-bold tracking-wider ${tone}`}
     >
       {method}
     </span>
-  )
+  );
 }
 
 function CurlBlock({ value }: { value: string }) {
-  const { copied, copy } = useCopyToClipboard()
+  const { copied, copy } = useCopyToClipboard();
   return (
     <div className="flex items-start justify-between gap-3 px-5 py-3">
       <pre className="flex-1 overflow-x-auto font-mono text-body-xs leading-relaxed text-foreground/80">
@@ -355,7 +357,7 @@ function CurlBlock({ value }: { value: string }) {
         )}
       </button>
     </div>
-  )
+  );
 }
 
 function ReferenceLinks() {
@@ -387,7 +389,7 @@ function ReferenceLinks() {
       },
     ],
     [],
-  )
+  );
   return (
     <section className="relative isolate">
       <div className="mx-auto w-full max-w-5xl px-[var(--layout-gutter)] pb-24 pt-12">
@@ -407,31 +409,38 @@ function ReferenceLinks() {
                 <p className="text-sm font-semibold text-foreground">{item.title}</p>
                 <p className="text-xs text-muted-foreground">{item.description}</p>
               </div>
-              <span aria-hidden="true" className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground">
+              <span
+                aria-hidden="true"
+                className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
+              >
                 <RiArrowRightUpLine width={16} height={16} fill="currentColor" />
               </span>
             </a>
           ))}
         </div>
         <p className="mt-10 text-center text-xs text-muted-foreground">
-          <Link
-            to={fc('/')}
-            className="underline-offset-4 hover:text-foreground hover:underline"
-          >
+          <Link to={fc('/')} className="underline-offset-4 hover:text-foreground hover:underline">
             ← Back to FairCoin
           </Link>
         </p>
       </div>
     </section>
-  )
+  );
 }
 
 // Bloom ships no GitHub glyph, so this one keeps its own path and takes the
 // same width / fill props as the Remix icons beside it.
-function GithubMark({ width = 20, fill = 'currentColor' }: { width?: number; height?: number; fill?: string }) {
+function GithubMark({
+  width = 20,
+  fill = 'currentColor',
+}: {
+  width?: number;
+  height?: number;
+  fill?: string;
+}) {
   return (
     <svg aria-hidden width={width} height={width} viewBox="0 0 24 24" fill={fill}>
       <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
     </svg>
-  )
+  );
 }

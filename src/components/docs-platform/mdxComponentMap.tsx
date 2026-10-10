@@ -1,11 +1,11 @@
-import type { ComponentPropsWithoutRef } from 'react'
-import { cn } from '../../lib/utils'
-import { BloomDemo } from './BloomDemo'
-import { Badge, Callout, Code, LiveExample, MdxPre } from './MdxComponents'
-import Steps, { Step } from '../../content/_components/Steps'
-import CodeBlock from '../../content/_components/CodeBlock'
-import { DocsInstall } from '../docs/DocsInstall'
-import { canonicalHref } from '../../lib/canonicalPath'
+import type { ComponentPropsWithoutRef } from 'react';
+import { cn } from '../../lib/utils';
+import { BloomDemo } from './BloomDemo';
+import { Badge, Callout, Code, LiveExample, MdxPre } from './MdxComponents';
+import Steps, { Step } from '../../content/_components/Steps';
+import CodeBlock from '../../content/_components/CodeBlock';
+import { DocsInstall } from '../docs/DocsInstall';
+import { canonicalHref } from '../../lib/canonicalPath';
 
 /**
  * Default tag map handed to `<MDXProvider components={mdxComponents}>` so
@@ -59,44 +59,29 @@ export const mdxComponents = {
   p: (props: ComponentPropsWithoutRef<'p'>) => (
     <p
       {...props}
-      className={cn(
-        'my-3 text-base leading-[24px] text-muted-foreground',
-        props.className,
-      )}
+      className={cn('my-3 text-base leading-[24px] text-muted-foreground', props.className)}
     />
   ),
   ul: (props: ComponentPropsWithoutRef<'ul'>) => (
     <ul
       {...props}
-      className={cn(
-        'my-3 list-disc pl-5 space-y-1 text-foreground',
-        props.className,
-      )}
+      className={cn('my-3 list-disc pl-5 space-y-1 text-foreground', props.className)}
     />
   ),
   ol: (props: ComponentPropsWithoutRef<'ol'>) => (
     <ol
       {...props}
-      className={cn(
-        'my-3 list-decimal pl-5 space-y-1 text-foreground',
-        props.className,
-      )}
+      className={cn('my-3 list-decimal pl-5 space-y-1 text-foreground', props.className)}
     />
   ),
   li: (props: ComponentPropsWithoutRef<'li'>) => (
-    <li
-      {...props}
-      className={cn('leading-6 [&>ul]:my-1 [&>ol]:my-1', props.className)}
-    />
+    <li {...props} className={cn('leading-6 [&>ul]:my-1 [&>ol]:my-1', props.className)} />
   ),
   a: (props: ComponentPropsWithoutRef<'a'>) => (
     <a
       {...props}
       href={canonicalHref(props.href)}
-      className={cn(
-        'font-medium text-primary underline-offset-4 hover:underline',
-        props.className,
-      )}
+      className={cn('font-medium text-primary underline-offset-4 hover:underline', props.className)}
     />
   ),
   blockquote: (props: ComponentPropsWithoutRef<'blockquote'>) => (
@@ -135,10 +120,7 @@ export const mdxComponents = {
   td: (props: ComponentPropsWithoutRef<'td'>) => (
     <td
       {...props}
-      className={cn(
-        'border-b border-border px-4 py-3 align-top text-foreground',
-        props.className,
-      )}
+      className={cn('border-b border-border px-4 py-3 align-top text-foreground', props.className)}
     />
   ),
   hr: (props: ComponentPropsWithoutRef<'hr'>) => (
@@ -153,4 +135,4 @@ export const mdxComponents = {
   Badge,
   LiveExample,
   BloomDemo,
-}
+};

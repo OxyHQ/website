@@ -1,12 +1,12 @@
-import type { NewsroomPost, NewsroomPostSummary } from '../src/data/newsroom'
+import type { NewsroomPost, NewsroomPostSummary } from '../src/data/newsroom';
 import {
   NEWSROOM_BOOTSTRAP_ID,
   NEWSROOM_INDEX_BOOTSTRAP_ID,
   newsroomBootstrapPayload,
   newsroomIndexBootstrapPayload,
-} from '../src/lib/newsroom-bootstrap'
+} from '../src/lib/newsroom-bootstrap';
 
-export const NEWSROOM_PRERENDER_MARKER = '<meta data-prerender-kind="newsroom-post">'
+export const NEWSROOM_PRERENDER_MARKER = '<meta data-prerender-kind="newsroom-post">';
 
 const HTML_TEXT_ESCAPES: Readonly<Record<string, string>> = {
   '&': '&amp;',
@@ -14,10 +14,10 @@ const HTML_TEXT_ESCAPES: Readonly<Record<string, string>> = {
   '>': '&gt;',
   '"': '&quot;',
   "'": '&#39;',
-}
+};
 
 function escapeHtmlText(value: string): string {
-  return value.replace(/[&<>"']/g, (character) => HTML_TEXT_ESCAPES[character] ?? character)
+  return value.replace(/[&<>"']/g, (character) => HTML_TEXT_ESCAPES[character] ?? character);
 }
 
 /**
@@ -27,11 +27,11 @@ function escapeHtmlText(value: string): string {
  * `seedNewsroomBootstrap` reads it in the browser.
  */
 export function renderNewsroomBootstrapTemplate(post: NewsroomPost): string {
-  const payload = JSON.stringify(newsroomBootstrapPayload(post))
-  return `<template id="${NEWSROOM_BOOTSTRAP_ID}">${escapeHtmlText(payload)}</template>`
+  const payload = JSON.stringify(newsroomBootstrapPayload(post));
+  return `<template id="${NEWSROOM_BOOTSTRAP_ID}">${escapeHtmlText(payload)}</template>`;
 }
 
 export function renderNewsroomIndexBootstrapTemplate(posts: NewsroomPostSummary[]): string {
-  const payload = JSON.stringify(newsroomIndexBootstrapPayload(posts))
-  return `<template id="${NEWSROOM_INDEX_BOOTSTRAP_ID}">${escapeHtmlText(payload)}</template>`
+  const payload = JSON.stringify(newsroomIndexBootstrapPayload(posts));
+  return `<template id="${NEWSROOM_INDEX_BOOTSTRAP_ID}">${escapeHtmlText(payload)}</template>`;
 }

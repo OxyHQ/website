@@ -1,6 +1,6 @@
-import { type CSSProperties } from 'react'
-import { getPresetVars } from '@oxy.so/bloom/design-tokens'
-import type { AppColorName } from '@oxy.so/bloom/color-presets'
+import { type CSSProperties } from 'react';
+import { getPresetVars } from '@oxy.so/bloom/design-tokens';
+import type { AppColorName } from '@oxy.so/bloom/color-presets';
 
 /**
  * Bloom's resolved variables for one recipe, as inline style. Kept out of the
@@ -9,11 +9,11 @@ import type { AppColorName } from '@oxy.so/bloom/color-presets'
  * preview.
  */
 export function recipeStyle(preset: AppColorName, mode: 'light' | 'dark'): CSSProperties {
-  const vars = getPresetVars(preset, mode)
+  const vars = getPresetVars(preset, mode);
   return {
     ...vars,
     ...Object.fromEntries(
       Object.entries(vars).map(([key, value]) => [`--color-${key.slice(2)}`, value]),
     ),
-  } as CSSProperties
+  } as CSSProperties;
 }

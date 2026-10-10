@@ -1,14 +1,14 @@
-import type { ComponentPropsWithoutRef } from 'react'
-import { Code as BloomCode } from '@oxy.so/bloom/code'
-import { cn } from '../../lib/utils'
-import Callout from './Callout'
-import Steps, { Step } from './Steps'
-import CodeBlock from './CodeBlock'
-import MdxCodeBlock from './MdxCodeBlock'
-import VideoEmbed from './VideoEmbed'
-import Image from './Image'
-import NextPrev from './NextPrev'
-import Badge from './Badge'
+import type { ComponentPropsWithoutRef } from 'react';
+import { Code as BloomCode } from '@oxy.so/bloom/code';
+import { cn } from '../../lib/utils';
+import Callout from './Callout';
+import Steps, { Step } from './Steps';
+import CodeBlock from './CodeBlock';
+import MdxCodeBlock from './MdxCodeBlock';
+import VideoEmbed from './VideoEmbed';
+import Image from './Image';
+import NextPrev from './NextPrev';
+import Badge from './Badge';
 
 /* ──────────────────────────────────────────────
  * MDX component map for content pages
@@ -121,6 +121,6 @@ export const mdxContentComponents = {
   Image,
   NextPrev,
   Badge,
-}
+};
 
-export { Callout, Steps, Step, CodeBlock, VideoEmbed, Image, NextPrev, Badge }
+export { Callout, Steps, Step, CodeBlock, VideoEmbed, Image, NextPrev, Badge };

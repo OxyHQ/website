@@ -1,22 +1,22 @@
-import { useMemo, useState } from 'react'
-import { Button } from '@oxy.so/bloom/button'
-import { ComposerPill, ComposerStatusBar } from '@oxy.so/bloom/composer-panel'
-import { ComposerLoader } from '@oxy.so/bloom/composer-loader'
-import { buildTheme, useTheme } from '@oxy.so/bloom/theme'
+import { useMemo, useState } from 'react';
+import { Button } from '@oxy.so/bloom/button';
+import { ComposerPill, ComposerStatusBar } from '@oxy.so/bloom/composer-panel';
+import { ComposerLoader } from '@oxy.so/bloom/composer-loader';
+import { buildTheme, useTheme } from '@oxy.so/bloom/theme';
 
-const recipes = ['blue', 'purple', 'pink', 'green', 'orange'] as const
+const recipes = ['blue', 'purple', 'pink', 'green', 'orange'] as const;
 
 /** A palette changes the light only, never the website's theme. */
 export default function LoaderDemo({
   active,
   controls = false,
 }: {
-  active: boolean
-  controls?: boolean
+  active: boolean;
+  controls?: boolean;
 }) {
-  const { mode } = useTheme()
-  const [recipe, setRecipe] = useState('iridescent')
-  const [value, setValue] = useState('')
+  const { mode } = useTheme();
+  const [recipe, setRecipe] = useState('iridescent');
+  const [value, setValue] = useState('');
   const palettes = useMemo(
     () =>
       recipes.map((name) => ({
@@ -24,7 +24,7 @@ export default function LoaderDemo({
         colors: buildTheme(name, mode).chartColors!,
       })),
     [mode],
-  )
+  );
   const colors = useMemo(() => {
     if (recipe === 'iridescent')
       return [
@@ -32,15 +32,15 @@ export default function LoaderDemo({
         palettes[2].colors[0].color,
         palettes[3].colors[0].color,
         palettes[0].colors[0].color,
-      ] as const
-    const theme = buildTheme(recipe as (typeof recipes)[number], mode)
+      ] as const;
+    const theme = buildTheme(recipe as (typeof recipes)[number], mode);
     return [
       theme.colors.primary,
       theme.colors.secondary,
       theme.colors.primary,
       theme.colors.tertiary,
-    ] as const
-  }, [recipe, mode, palettes])
+    ] as const;
+  }, [recipe, mode, palettes]);
   return (
     <div className="flex w-full flex-col items-center">
       {controls && (
@@ -102,5 +102,5 @@ export default function LoaderDemo({
         />
       )}
     </div>
-  )
+  );
 }

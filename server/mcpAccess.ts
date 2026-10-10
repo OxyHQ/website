@@ -17,61 +17,66 @@ export type McpToolAccess =
   /** Reads that expose no site data at all; the same handler for everyone. */
   | { kind: 'public' }
   /** Admins get the tool's own handler; everyone else gets this public route. */
-  | { kind: 'public-read'; publicPath: (input: Record<string, unknown>) => string }
+  | { kind: 'public-read'; publicPath: (input: Record<string, unknown>) => string };
 
 /** Raised when a non-admin asks for something only an admin could see. */
 export class PublicReadRefused extends Error {}
 
-const write = { kind: 'write' } as const
-const adminRead = { kind: 'admin-read' } as const
+const write = { kind: 'write' } as const;
+const adminRead = { kind: 'admin-read' } as const;
 
 function segment(value: unknown): string {
-  return encodeURIComponent(String(value))
+  return encodeURIComponent(String(value));
 }
 
 function withQuery(path: string, query: Record<string, unknown>): string {
-  const params = new URLSearchParams()
+  const params = new URLSearchParams();
   for (const [key, value] of Object.entries(query)) {
-    if (value !== undefined && value !== null && value !== '') params.set(key, String(value))
+    if (value !== undefined && value !== null && value !== '') params.set(key, String(value));
   }
-  const search = params.toString()
-  return search ? `${path}?${search}` : path
+  const search = params.toString();
+  return search ? `${path}?${search}` : path;
 }
 
 /** Public routes list published rows only; asking for drafts must not look like "there are none". */
 function refuseDrafts(input: Record<string, unknown>): void {
   if (input.status !== undefined && input.status !== 'published') {
-    throw new PublicReadRefused('Unpublished content is only visible to website admins.')
+    throw new PublicReadRefused('Unpublished content is only visible to website admins.');
   }
 }
 
 /** A filter the public route does not implement would otherwise be silently dropped, widening the result. */
 function refuseFilters(input: Record<string, unknown>, names: readonly string[]): void {
-  const used = names.filter((name) => input[name] !== undefined)
+  const used = names.filter((name) => input[name] !== undefined);
   if (used.length > 0) {
-    throw new PublicReadRefused(`Filtering by ${used.join(', ')} is only available to website admins.`)
+    throw new PublicReadRefused(
+      `Filtering by ${used.join(', ')} is only available to website admins.`,
+    );
   }
 }
 
 function publicRead(publicPath: (input: Record<string, unknown>) => string): McpToolAccess {
-  return { kind: 'public-read', publicPath }
+  return { kind: 'public-read', publicPath };
 }
 
 /** `featured: false` ("only posts that are not featured") has no public equivalent. */
 function refuseNotFeatured(input: Record<string, unknown>): void {
   if (input.featured === false) {
-    throw new PublicReadRefused('Filtering to entries that are not featured is only available to website admins.')
+    throw new PublicReadRefused(
+      'Filtering to entries that are not featured is only available to website admins.',
+    );
   }
 }
 
 /** Public lists hold active rows only; asking for inactive ones must not look like "there are none". */
 function refuseInactive(input: Record<string, unknown>): void {
   if (input.active === false) {
-    throw new PublicReadRefused('Inactive entries are only visible to website admins.')
+    throw new PublicReadRefused('Inactive entries are only visible to website admins.');
   }
 }
 
-const featuredQuery = (input: Record<string, unknown>) => (input.featured === true ? 'true' : undefined)
+const featuredQuery = (input: Record<string, unknown>) =>
+  input.featured === true ? 'true' : undefined;
 
 export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   describe_access: { kind: 'public' },
@@ -79,7 +84,9 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   debug_upload_test: write,
 
   list_pages: adminRead,
-  get_page: publicRead((input) => withQuery(`/pages/${segment(input.slug)}`, { locale: input.locale })),
+  get_page: publicRead((input) =>
+    withQuery(`/pages/${segment(input.slug)}`, { locale: input.locale }),
+  ),
   upsert_page: write,
 
   get_navigation: publicRead((input) => withQuery('/navigation', { locale: input.locale })),
@@ -88,8 +95,8 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   update_hero: write,
 
   list_posts: publicRead((input) => {
-    refuseDrafts(input)
-    refuseNotFeatured(input)
+    refuseDrafts(input);
+    refuseNotFeatured(input);
     return withQuery('/newsroom', {
       category: input.category,
       tag: input.tag,
@@ -101,17 +108,23 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
       locale: input.locale,
       limit: input.limit,
       page: input.page,
-    })
+    });
   }),
-  get_post: publicRead((input) => withQuery(`/newsroom/${segment(input.slug)}`, { locale: input.locale })),
-  get_post_with_media: publicRead((input) => withQuery(`/newsroom/${segment(input.slug)}`, { locale: input.locale })),
-  search_posts: publicRead((input) => withQuery('/newsroom', {
-    search: input.query,
-    view: input.view,
-    locale: input.locale,
-    limit: input.limit,
-    page: input.page,
-  })),
+  get_post: publicRead((input) =>
+    withQuery(`/newsroom/${segment(input.slug)}`, { locale: input.locale }),
+  ),
+  get_post_with_media: publicRead((input) =>
+    withQuery(`/newsroom/${segment(input.slug)}`, { locale: input.locale }),
+  ),
+  search_posts: publicRead((input) =>
+    withQuery('/newsroom', {
+      search: input.query,
+      view: input.view,
+      locale: input.locale,
+      limit: input.limit,
+      page: input.page,
+    }),
+  ),
   create_post: write,
   update_post: write,
   delete_post: write,
@@ -123,8 +136,13 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   replace_testimonials: write,
 
   list_changelog: publicRead((input) => {
-    refuseFilters(input, ['search'])
-    return withQuery('/changelog', { repo: input.repo, locale: input.locale, limit: input.limit, page: input.page })
+    refuseFilters(input, ['search']);
+    return withQuery('/changelog', {
+      repo: input.repo,
+      locale: input.locale,
+      limit: input.limit,
+      page: input.page,
+    });
   }),
   create_changelog_entry: write,
   update_changelog_entry: write,
@@ -138,10 +156,12 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   sync_all_repos: write,
 
   list_team_members: publicRead((input) => {
-    refuseInactive(input)
-    return withQuery('/team', { locale: input.locale })
+    refuseInactive(input);
+    return withQuery('/team', { locale: input.locale });
   }),
-  get_team_member: publicRead((input) => withQuery(`/team/${segment(input.slug)}`, { locale: input.locale })),
+  get_team_member: publicRead((input) =>
+    withQuery(`/team/${segment(input.slug)}`, { locale: input.locale }),
+  ),
   create_team_member: write,
   update_team_member: write,
   delete_team_member: write,
@@ -170,30 +190,36 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   upload_and_set_team_avatar: write,
   bulk_upload_post_covers: write,
 
-  list_categories: publicRead((input) => withQuery('/categories', { scope: input.scope, locale: input.locale })),
-  get_category: publicRead((input) => withQuery(`/categories/${segment(input.slug)}`, { locale: input.locale })),
+  list_categories: publicRead((input) =>
+    withQuery('/categories', { scope: input.scope, locale: input.locale }),
+  ),
+  get_category: publicRead((input) =>
+    withQuery(`/categories/${segment(input.slug)}`, { locale: input.locale }),
+  ),
   create_category: write,
   update_category: write,
   delete_category: write,
 
   list_products: publicRead((input) => {
-    refuseFilters(input, ['category'])
+    refuseFilters(input, ['category']);
     return withQuery('/products', {
       lifecycle: input.lifecycle,
       section: input.section,
       surface: input.surface,
       locale: input.locale,
-    })
+    });
   }),
-  get_product: publicRead((input) => withQuery(`/products/${segment(input.productId)}`, { locale: input.locale })),
+  get_product: publicRead((input) =>
+    withQuery(`/products/${segment(input.productId)}`, { locale: input.locale }),
+  ),
   create_product: write,
   update_product: write,
   delete_product: write,
 
   list_courses: publicRead((input) => {
-    refuseDrafts(input)
-    refuseNotFeatured(input)
-    refuseFilters(input, ['level'])
+    refuseDrafts(input);
+    refuseNotFeatured(input);
+    refuseFilters(input, ['level']);
     return withQuery('/courses', {
       category: input.category,
       tag: input.tag,
@@ -201,16 +227,18 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
       locale: input.locale,
       limit: input.limit,
       page: input.page,
-    })
+    });
   }),
-  get_course: publicRead((input) => withQuery(`/courses/${segment(input.slug)}`, { locale: input.locale })),
+  get_course: publicRead((input) =>
+    withQuery(`/courses/${segment(input.slug)}`, { locale: input.locale }),
+  ),
   create_course: write,
   update_course: write,
   delete_course: write,
 
   list_resources: publicRead((input) => {
-    refuseDrafts(input)
-    refuseNotFeatured(input)
+    refuseDrafts(input);
+    refuseNotFeatured(input);
     return withQuery('/resources', {
       category: input.category,
       tag: input.tag,
@@ -219,16 +247,18 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
       locale: input.locale,
       limit: input.limit,
       page: input.page,
-    })
+    });
   }),
-  get_resource: publicRead((input) => withQuery(`/resources/${segment(input.slug)}`, { locale: input.locale })),
+  get_resource: publicRead((input) =>
+    withQuery(`/resources/${segment(input.slug)}`, { locale: input.locale }),
+  ),
   create_resource: write,
   update_resource: write,
   delete_resource: write,
 
   list_help_articles: publicRead((input) => {
-    refuseDrafts(input)
-    refuseNotFeatured(input)
+    refuseDrafts(input);
+    refuseNotFeatured(input);
     return withQuery('/help', {
       category: input.category,
       tag: input.tag,
@@ -236,9 +266,11 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
       locale: input.locale,
       limit: input.limit,
       page: input.page,
-    })
+    });
   }),
-  get_help_article: publicRead((input) => withQuery(`/help/${segment(input.slug)}`, { locale: input.locale })),
+  get_help_article: publicRead((input) =>
+    withQuery(`/help/${segment(input.slug)}`, { locale: input.locale }),
+  ),
   create_help_article: write,
   update_help_article: write,
   delete_help_article: write,
@@ -248,7 +280,7 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   create_referral: write,
   update_referral: write,
   delete_referral: write,
-}
+};
 
 // ── Effects ────────────────────────────────────────────────────────────────
 
@@ -269,18 +301,31 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
  * MCP mark it destructive.
  */
 export interface McpToolEffects {
-  idempotency: 'none' | 'supported'
+  idempotency: 'none' | 'supported';
   /** A repeat of the identical call, without a key, creates or changes nothing more. */
-  repeatSafe: boolean
-  rollback: 'none' | 'manual'
+  repeatSafe: boolean;
+  rollback: 'none' | 'manual';
   /** For `rollback: 'manual'`: the tool that undoes this one. */
-  undo?: string
+  undo?: string;
 }
 
-const READ_EFFECTS: McpToolEffects = { idempotency: 'none', repeatSafe: true, rollback: 'none' }
-const naturallyIdempotent: McpToolEffects = { idempotency: 'supported', repeatSafe: true, rollback: 'none' }
-const irreversible: McpToolEffects = { idempotency: 'supported', repeatSafe: false, rollback: 'none' }
-const undoneBy = (undo: string): McpToolEffects => ({ idempotency: 'supported', repeatSafe: false, rollback: 'manual', undo })
+const READ_EFFECTS: McpToolEffects = { idempotency: 'none', repeatSafe: true, rollback: 'none' };
+const naturallyIdempotent: McpToolEffects = {
+  idempotency: 'supported',
+  repeatSafe: true,
+  rollback: 'none',
+};
+const irreversible: McpToolEffects = {
+  idempotency: 'supported',
+  repeatSafe: false,
+  rollback: 'none',
+};
+const undoneBy = (undo: string): McpToolEffects => ({
+  idempotency: 'supported',
+  repeatSafe: false,
+  rollback: 'manual',
+  undo,
+});
 
 export const MCP_WRITE_EFFECTS: Readonly<Record<string, McpToolEffects>> = {
   debug_upload_test: irreversible,
@@ -350,13 +395,13 @@ export const MCP_WRITE_EFFECTS: Readonly<Record<string, McpToolEffects>> = {
   create_referral: undoneBy('delete_referral'),
   update_referral: naturallyIdempotent,
   delete_referral: naturallyIdempotent,
-}
+};
 
 /** The effects a tool declares; a write without a declaration fails the boot. */
 export function effectsFor(toolName: string): McpToolEffects {
-  const access = MCP_TOOL_ACCESS[toolName]
-  if (access?.kind !== 'write') return READ_EFFECTS
-  const effects = MCP_WRITE_EFFECTS[toolName]
-  if (!effects) throw new Error(`MCP write tool ${toolName} declares no effects in mcpAccess.ts`)
-  return effects
+  const access = MCP_TOOL_ACCESS[toolName];
+  if (access?.kind !== 'write') return READ_EFFECTS;
+  const effects = MCP_WRITE_EFFECTS[toolName];
+  if (!effects) throw new Error(`MCP write tool ${toolName} declares no effects in mcpAccess.ts`);
+  return effects;
 }

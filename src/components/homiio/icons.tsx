@@ -1,5 +1,5 @@
 interface IconProps {
-  className?: string
+  className?: string;
 }
 
 /**
@@ -12,5 +12,5 @@ export function CoinGlyph({ className }: IconProps) {
       <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
       <path d="M7.5 10h9M7.5 14h9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
-  )
+  );
 }

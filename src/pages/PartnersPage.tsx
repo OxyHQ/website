@@ -1,13 +1,13 @@
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import PartnersHeroSection from '../components/sections/PartnersHeroSection'
-import PartnerProgramsGrid from '../components/partners/PartnerProgramsGrid'
-import PartnerPillarsSection from '../components/partners/PartnerPillarsSection'
-import BecomeAPartnerSection from '../components/partners/BecomeAPartnerSection'
-import PartnerFaqSection from '../components/partners/PartnerFaqSection'
-import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { BrandScope } from '../theme/BrandScope'
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import PartnersHeroSection from '../components/sections/PartnersHeroSection';
+import PartnerProgramsGrid from '../components/partners/PartnerProgramsGrid';
+import PartnerPillarsSection from '../components/partners/PartnerPillarsSection';
+import BecomeAPartnerSection from '../components/partners/BecomeAPartnerSection';
+import PartnerFaqSection from '../components/partners/PartnerFaqSection';
+import KeepUpToDateSection from '../components/sections/KeepUpToDateSection';
+import { BrandScope } from '../theme/BrandScope';
 
 export default function PartnersPage() {
   return (
@@ -30,5 +30,5 @@ export default function PartnersPage() {
         <Footer />
       </div>
     </BrandScope>
-  )
+  );
 }

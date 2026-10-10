@@ -1,8 +1,8 @@
-import type express from 'express'
-import { createCatalogMcpHttpService } from '@oxy.so/mcp'
-import { config } from './config.js'
-import { oxyService } from './services/oxyService.js'
-import { authorize, handlers, WEBSITE_MCP_CATALOG } from './mcp/catalog.js'
+import type express from 'express';
+import { createCatalogMcpHttpService } from '@oxy.so/mcp';
+import { config } from './config.js';
+import { oxyService } from './services/oxyService.js';
+import { authorize, handlers, WEBSITE_MCP_CATALOG } from './mcp/catalog.js';
 
 /* ──────────────────────────────────────────────
  * The website's MCP endpoint.
@@ -12,11 +12,11 @@ import { authorize, handlers, WEBSITE_MCP_CATALOG } from './mcp/catalog.js'
  * what is `server/mcpAccess.ts`. This file mounts the stateless transport.
  * ──────────────────────────────────────────── */
 
-export { invokeTool, WEBSITE_MCP_CATALOG, WEBSITE_MCP_TOOL_NAMES } from './mcp/catalog.js'
-export type { ToolContext } from './mcp/registry.js'
+export { invokeTool, WEBSITE_MCP_CATALOG, WEBSITE_MCP_TOOL_NAMES } from './mcp/catalog.js';
+export type { ToolContext } from './mcp/registry.js';
 
 /** Browser clients that may call the endpoint directly; server-side connectors send no Origin. */
-const CLAUDE_ORIGINS = ['https://claude.ai', 'https://www.claude.ai', 'https://api.anthropic.com']
+const CLAUDE_ORIGINS = ['https://claude.ai', 'https://www.claude.ai', 'https://api.anthropic.com'];
 
 /**
  * Sign-in is Oxy's MCP OAuth: every request carries a short-lived token Oxy
@@ -34,16 +34,19 @@ const service = createCatalogMcpHttpService({
   allowedOrigins: [...CLAUDE_ORIGINS, ...config.mcp.allowedOrigins],
   serverName: 'oxy-website',
   logger: { error: (message, error) => console.error(`[mcp] ${message}:`, error) },
-})
+});
 
 export function mountMcp(app: express.Express) {
   // Mounted before express.json(): the transport reads the raw body itself.
   app.all('/mcp', (req, res) => {
-    void service.handleMcp(req, res)
-  })
+    void service.handleMcp(req, res);
+  });
   // RFC 9728 places a path-bearing resource's metadata under its path; the bare
   // well-known path is served too for clients that look there first.
-  app.all([service.protectedResourceMetadataPath, '/.well-known/oauth-protected-resource'], (req, res) => {
-    service.handleProtectedResourceMetadata(req, res)
-  })
+  app.all(
+    [service.protectedResourceMetadataPath, '/.well-known/oauth-protected-resource'],
+    (req, res) => {
+      service.handleProtectedResourceMetadata(req, res);
+    },
+  );
 }

@@ -1,55 +1,64 @@
-import { useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { useMediaItem } from '../../../api/hooks'
-import { apiFetch } from '../../../api/client'
-import { Button } from '@oxy.so/bloom/button'
-import { Switch } from '@oxy.so/bloom/switch'
-import { Textarea } from '@oxy.so/bloom/textarea'
-import { LabeledTextField } from '../LabeledTextField'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
-import MediaPicker from '../MediaPicker'
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useMediaItem } from '../../../api/hooks';
+import { apiFetch } from '../../../api/client';
+import { Button } from '@oxy.so/bloom/button';
+import { Switch } from '@oxy.so/bloom/switch';
+import { Textarea } from '@oxy.so/bloom/textarea';
+import { LabeledTextField } from '../LabeledTextField';
+import ConfirmDialog from '../ConfirmDialog';
+import { useConfirmAction } from '../useConfirmAction';
+import MediaPicker from '../MediaPicker';
 
 /** Raw team member shape as returned by /api/team with avatar populated. */
 interface TeamMemberRaw {
-  _id?: string
-  name: string
-  slug: string
-  role: string
-  department: string
-  bio: string
-  avatar: string | { _id?: string; url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } } | null
-  order: number
-  active: boolean
+  _id?: string;
+  name: string;
+  slug: string;
+  role: string;
+  department: string;
+  bio: string;
+  avatar:
+    | string
+    | { _id?: string; url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } }
+    | null;
+  order: number;
+  active: boolean;
   socials: {
-    linkedin?: string
-    twitter?: string
-    github?: string
-    website?: string
-  }
+    linkedin?: string;
+    twitter?: string;
+    github?: string;
+    website?: string;
+  };
 }
 
 function mediaId(avatar: TeamMemberRaw['avatar']): string {
-  if (!avatar) return ''
-  if (typeof avatar === 'string') return avatar
+  if (!avatar) return '';
+  if (typeof avatar === 'string') return avatar;
   if (typeof avatar === 'object' && '_id' in avatar) {
-    const id = avatar._id
-    return typeof id === 'string' ? id : ''
+    const id = avatar._id;
+    return typeof id === 'string' ? id : '';
   }
-  return ''
+  return '';
 }
 
 function mediaUrl(avatar: TeamMemberRaw['avatar']): string {
-  if (!avatar) return ''
-  if (typeof avatar === 'string') return avatar.startsWith('http') || avatar.startsWith('/') ? avatar : ''
+  if (!avatar) return '';
+  if (typeof avatar === 'string')
+    return avatar.startsWith('http') || avatar.startsWith('/') ? avatar : '';
   if (typeof avatar === 'object') {
-    return avatar.thumbnails?.md || avatar.thumbnails?.sm || avatar.thumbnails?.lg || avatar.url || ''
+    return (
+      avatar.thumbnails?.md || avatar.thumbnails?.sm || avatar.thumbnails?.lg || avatar.url || ''
+    );
   }
-  return ''
+  return '';
 }
 
 function slugify(input: string): string {
-  return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 function emptyMember(): TeamMemberRaw {
@@ -63,30 +72,37 @@ function emptyMember(): TeamMemberRaw {
     order: 0,
     active: true,
     socials: { linkedin: '', twitter: '', github: '', website: '' },
-  }
+  };
 }
 
 /** Collapse populated avatar ref to a plain id string when starting to edit. */
 function stripRefsForEditing(member: TeamMemberRaw): TeamMemberRaw {
-  return { ...member, avatar: mediaId(member.avatar) || null }
+  return { ...member, avatar: mediaId(member.avatar) || null };
 }
 
 /** Renders an avatar chip — when `avatar` is a plain id string it looks up the Media doc. */
 function MemberAvatar({ member, size = 'md' }: { member: TeamMemberRaw; size?: 'sm' | 'md' }) {
   // When avatar is a plain id string (after stripRefsForEditing), pull the Media doc
   // so the preview renders the actual image.
-  const avatarIdOrObject = member.avatar
-  const needsLookup = typeof avatarIdOrObject === 'string' && avatarIdOrObject.length > 0 && !avatarIdOrObject.startsWith('http') && !avatarIdOrObject.startsWith('/')
-  const { data: lookedUp } = useMediaItem(needsLookup ? avatarIdOrObject : '')
-  const directUrl = mediaUrl(avatarIdOrObject)
-  const lookedUpUrl = lookedUp ? (lookedUp.thumbnails?.md || lookedUp.thumbnails?.sm || lookedUp.url || '') : ''
-  const url = directUrl || lookedUpUrl
-  const sizeClass = size === 'sm' ? 'size-10' : 'size-12'
-  const initials = member.name
-    .split(/\s+/)
-    .map((part) => part.charAt(0).toUpperCase())
-    .slice(0, 2)
-    .join('') || '?'
+  const avatarIdOrObject = member.avatar;
+  const needsLookup =
+    typeof avatarIdOrObject === 'string' &&
+    avatarIdOrObject.length > 0 &&
+    !avatarIdOrObject.startsWith('http') &&
+    !avatarIdOrObject.startsWith('/');
+  const { data: lookedUp } = useMediaItem(needsLookup ? avatarIdOrObject : '');
+  const directUrl = mediaUrl(avatarIdOrObject);
+  const lookedUpUrl = lookedUp
+    ? lookedUp.thumbnails?.md || lookedUp.thumbnails?.sm || lookedUp.url || ''
+    : '';
+  const url = directUrl || lookedUpUrl;
+  const sizeClass = size === 'sm' ? 'size-10' : 'size-12';
+  const initials =
+    member.name
+      .split(/\s+/)
+      .map((part) => part.charAt(0).toUpperCase())
+      .slice(0, 2)
+      .join('') || '?';
 
   return (
     <span
@@ -99,26 +115,28 @@ function MemberAvatar({ member, size = 'md' }: { member: TeamMemberRaw; size?: '
         initials
       )}
     </span>
-  )
+  );
 }
 
 function SocialIcons({ socials }: { socials: TeamMemberRaw['socials'] }) {
-  if (!socials) return null
+  if (!socials) return null;
   const entries: Array<{ key: keyof TeamMemberRaw['socials']; label: string }> = [
     { key: 'linkedin', label: 'in' },
     { key: 'twitter', label: 'tw' },
     { key: 'github', label: 'gh' },
     { key: 'website', label: 'www' },
-  ]
-  const present = entries.filter((e) => Boolean(socials[e.key]))
-  if (present.length === 0) return null
+  ];
+  const present = entries.filter((e) => Boolean(socials[e.key]));
+  if (present.length === 0) return null;
   return (
     <div className="hidden items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground md:flex">
       {present.map((e) => (
-        <span key={e.key} className="rounded border border-border px-1.5 py-0.5">{e.label}</span>
+        <span key={e.key} className="rounded border border-border px-1.5 py-0.5">
+          {e.label}
+        </span>
       ))}
     </div>
-  )
+  );
 }
 
 export default function TeamAdmin() {
@@ -129,42 +147,42 @@ export default function TeamAdmin() {
     queryKey: ['team', 'admin', 'raw'],
     queryFn: () => apiFetch<TeamMemberRaw[]>('/team'),
     staleTime: 30_000,
-  })
+  });
 
-  const members = useMemo(() => data ?? [], [data])
+  const members = useMemo(() => data ?? [], [data]);
 
   const grouped = useMemo(() => {
-    const map = new Map<string, TeamMemberRaw[]>()
+    const map = new Map<string, TeamMemberRaw[]>();
     for (const m of members) {
-      const key = m.department || 'Team'
-      const list = map.get(key) ?? []
-      list.push(m)
-      map.set(key, list)
+      const key = m.department || 'Team';
+      const list = map.get(key) ?? [];
+      list.push(m);
+      map.set(key, list);
     }
-    return [...map.entries()].sort(([a], [b]) => a.localeCompare(b))
-  }, [members])
+    return [...map.entries()].sort(([a], [b]) => a.localeCompare(b));
+  }, [members]);
 
-  const [editing, setEditing] = useState<TeamMemberRaw | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [editing, setEditing] = useState<TeamMemberRaw | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const deleteAction = useConfirmAction<TeamMemberRaw>({
     onConfirm: async (member) => {
-      if (!member._id) return
-      setError(null)
+      if (!member._id) return;
+      setError(null);
       try {
-        await apiFetch(`/team/${member._id}`, { method: 'DELETE' })
-        await refetch()
+        await apiFetch(`/team/${member._id}`, { method: 'DELETE' });
+        await refetch();
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to delete team member')
+        setError(err instanceof Error ? err.message : 'Failed to delete team member');
       }
     },
-  })
+  });
 
   const save = async () => {
-    if (!editing) return
-    setError(null)
-    setSaving(true)
+    if (!editing) return;
+    setError(null);
+    setSaving(true);
     try {
       const payload: Record<string, unknown> = {
         name: editing.name,
@@ -181,42 +199,44 @@ export default function TeamAdmin() {
           github: editing.socials?.github ?? '',
           website: editing.socials?.website ?? '',
         },
-      }
+      };
       // Drop empty optional string fields before sending.
-      if (!payload.department) delete payload.department
-      if (!payload.bio) delete payload.bio
-      if (!payload.avatar) delete payload.avatar
-      const socials = payload.socials as Record<string, string>
+      if (!payload.department) delete payload.department;
+      if (!payload.bio) delete payload.bio;
+      if (!payload.avatar) delete payload.avatar;
+      const socials = payload.socials as Record<string, string>;
       for (const key of Object.keys(socials)) {
-        if (!socials[key]) delete socials[key]
+        if (!socials[key]) delete socials[key];
       }
-      if (Object.keys(socials).length === 0) delete payload.socials
+      if (Object.keys(socials).length === 0) delete payload.socials;
 
       if (editing._id) {
-        await apiFetch(`/team/${editing._id}`, { method: 'PUT', body: JSON.stringify(payload) })
+        await apiFetch(`/team/${editing._id}`, { method: 'PUT', body: JSON.stringify(payload) });
       } else {
-        await apiFetch('/team', { method: 'POST', body: JSON.stringify(payload) })
+        await apiFetch('/team', { method: 'POST', body: JSON.stringify(payload) });
       }
-      await refetch()
-      setEditing(null)
+      await refetch();
+      setEditing(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save team member')
+      setError(err instanceof Error ? err.message : 'Failed to save team member');
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const requestDelete = (member: TeamMemberRaw) => {
-    if (!member._id) return
-    deleteAction.request(member)
-  }
+    if (!member._id) return;
+    deleteAction.request(member);
+  };
 
   if (editing) {
-    const isNew = !editing._id
+    const isNew = !editing._id;
     return (
       <div>
         <div className="mb-4">
-          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>
+            &larr; Back to list
+          </Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {isNew ? 'New team member' : `Edit: ${editing.name}`}
@@ -232,7 +252,7 @@ export default function TeamAdmin() {
                   ...editing,
                   name,
                   ...(isNew ? { slug: slugify(name) } : {}),
-                })
+                });
               }}
               placeholder="Ada Lovelace"
             />
@@ -244,7 +264,9 @@ export default function TeamAdmin() {
                 disabled={!isNew}
                 style={{ fontFamily: 'monospace' }}
               />
-              {!isNew && <p className="text-xs text-muted-foreground">Slug is locked after creation.</p>}
+              {!isNew && (
+                <p className="text-xs text-muted-foreground">Slug is locked after creation.</p>
+              )}
             </div>
           </div>
 
@@ -262,7 +284,9 @@ export default function TeamAdmin() {
                 onValueChange={(department) => setEditing({ ...editing, department })}
                 placeholder="Engineering"
               />
-              <p className="text-xs text-muted-foreground">Used to group members on the public /company/team page.</p>
+              <p className="text-xs text-muted-foreground">
+                Used to group members on the public /company/team page.
+              </p>
             </div>
           </div>
 
@@ -282,37 +306,49 @@ export default function TeamAdmin() {
               folder="team"
               accept="image/*"
             />
-            <p className="text-xs text-muted-foreground">Square portrait works best. Leave empty to show initials.</p>
+            <p className="text-xs text-muted-foreground">
+              Square portrait works best. Leave empty to show initials.
+            </p>
           </div>
 
           <div className="rounded-xl border border-border p-4">
-            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Socials</div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Socials
+            </div>
             <div className="mt-3 grid grid-cols-2 gap-3">
               <LabeledTextField
                 label="LinkedIn"
                 value={editing.socials?.linkedin ?? ''}
-                onValueChange={(v) => setEditing({ ...editing, socials: { ...editing.socials, linkedin: v } })}
+                onValueChange={(v) =>
+                  setEditing({ ...editing, socials: { ...editing.socials, linkedin: v } })
+                }
                 placeholder="https://linkedin.com/in/…"
                 style={{ fontFamily: 'monospace', fontSize: 12 }}
               />
               <LabeledTextField
                 label="Twitter / X"
                 value={editing.socials?.twitter ?? ''}
-                onValueChange={(v) => setEditing({ ...editing, socials: { ...editing.socials, twitter: v } })}
+                onValueChange={(v) =>
+                  setEditing({ ...editing, socials: { ...editing.socials, twitter: v } })
+                }
                 placeholder="https://x.com/…"
                 style={{ fontFamily: 'monospace', fontSize: 12 }}
               />
               <LabeledTextField
                 label="GitHub"
                 value={editing.socials?.github ?? ''}
-                onValueChange={(v) => setEditing({ ...editing, socials: { ...editing.socials, github: v } })}
+                onValueChange={(v) =>
+                  setEditing({ ...editing, socials: { ...editing.socials, github: v } })
+                }
                 placeholder="https://github.com/…"
                 style={{ fontFamily: 'monospace', fontSize: 12 }}
               />
               <LabeledTextField
                 label="Website"
                 value={editing.socials?.website ?? ''}
-                onValueChange={(v) => setEditing({ ...editing, socials: { ...editing.socials, website: v } })}
+                onValueChange={(v) =>
+                  setEditing({ ...editing, socials: { ...editing.socials, website: v } })
+                }
                 placeholder="https://…"
                 style={{ fontFamily: 'monospace', fontSize: 12 }}
               />
@@ -327,13 +363,20 @@ export default function TeamAdmin() {
                 value={String(editing.order)}
                 onValueChange={(v) => setEditing({ ...editing, order: Number(v) })}
               />
-              <p className="text-xs text-muted-foreground">Lower numbers appear first within a department.</p>
+              <p className="text-xs text-muted-foreground">
+                Lower numbers appear first within a department.
+              </p>
             </div>
             <div className="flex flex-col gap-1.5">
               <span className="text-sm font-medium text-foreground">Visibility</span>
               <div className="flex h-9 items-center gap-2">
-                <Switch checked={editing.active} onCheckedChange={(val) => setEditing({ ...editing, active: val })} />
-                <span className="text-sm text-muted-foreground">{editing.active ? 'Shown on /company/team' : 'Hidden'}</span>
+                <Switch
+                  checked={editing.active}
+                  onCheckedChange={(val) => setEditing({ ...editing, active: val })}
+                />
+                <span className="text-sm text-muted-foreground">
+                  {editing.active ? 'Shown on /company/team' : 'Hidden'}
+                </span>
               </div>
             </div>
           </div>
@@ -344,7 +387,9 @@ export default function TeamAdmin() {
             <div className="inline-flex items-center gap-3 rounded-2xl border border-border bg-background p-4">
               <MemberAvatar member={editing} />
               <div>
-                <div className="text-base font-medium text-foreground">{editing.name || 'Full name'}</div>
+                <div className="text-base font-medium text-foreground">
+                  {editing.name || 'Full name'}
+                </div>
                 <div className="text-sm text-muted-foreground">{editing.role || 'Role'}</div>
               </div>
             </div>
@@ -353,14 +398,21 @@ export default function TeamAdmin() {
           {error && <p className="text-sm text-error-text">{error}</p>}
 
           <div className="flex items-center gap-2">
-            <Button appearance="solid" tone="accent" onPress={save} disabled={saving || !editing.name || !editing.role}>
+            <Button
+              appearance="solid"
+              tone="accent"
+              onPress={save}
+              disabled={saving || !editing.name || !editing.role}
+            >
               {saving ? 'Saving…' : 'Save changes'}
             </Button>
-            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>
+              Cancel
+            </Button>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -369,10 +421,13 @@ export default function TeamAdmin() {
         <div>
           <h2 className="text-xl font-semibold text-foreground">Team</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            {members.length} {members.length === 1 ? 'member' : 'members'} · powers the public /company/team page.
+            {members.length} {members.length === 1 ? 'member' : 'members'} · powers the public
+            /company/team page.
           </p>
         </div>
-        <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyMember())}>Add member</Button>
+        <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyMember())}>
+          Add member
+        </Button>
       </div>
 
       {error && <p className="mt-4 text-sm text-error-text">{error}</p>}
@@ -382,16 +437,22 @@ export default function TeamAdmin() {
       ) : (
         grouped.map(([dept, deptMembers]) => (
           <section key={dept} className="mt-8">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{dept}</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {dept}
+            </h3>
             <div className="mt-3 divide-y divide-border rounded-2xl border border-border">
               {deptMembers.map((member) => (
                 <div key={member._id ?? member.slug} className="flex items-center gap-4 px-4 py-3">
                   <MemberAvatar member={member} size="sm" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="truncate text-sm font-medium text-foreground">{member.name}</span>
+                      <span className="truncate text-sm font-medium text-foreground">
+                        {member.name}
+                      </span>
                       {!member.active && (
-                        <span className="rounded border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">Hidden</span>
+                        <span className="rounded border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                          Hidden
+                        </span>
                       )}
                     </div>
                     <div className="truncate text-xs text-muted-foreground">
@@ -400,8 +461,15 @@ export default function TeamAdmin() {
                   </div>
                   <SocialIcons socials={member.socials} />
                   <div className="shrink-0">
-                    <Button appearance="subtle" onPress={() => setEditing(stripRefsForEditing(member))}>Edit</Button>
-                    <Button appearance="subtle" onPress={() => requestDelete(member)}>Delete</Button>
+                    <Button
+                      appearance="subtle"
+                      onPress={() => setEditing(stripRefsForEditing(member))}
+                    >
+                      Edit
+                    </Button>
+                    <Button appearance="subtle" onPress={() => requestDelete(member)}>
+                      Delete
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -421,5 +489,5 @@ export default function TeamAdmin() {
         onConfirm={deleteAction.confirm}
       />
     </div>
-  )
+  );
 }

@@ -19,19 +19,19 @@
  *
  * Run manually: `bun scripts/build-faircoin-og.ts`
  */
-import { readFile, writeFile, mkdir } from 'node:fs/promises'
-import { existsSync } from 'node:fs'
-import path from 'node:path'
-import { createElement, type ReactElement } from 'react'
-import satori from 'satori'
-import { Resvg } from '@resvg/resvg-js'
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+import { createElement, type ReactElement } from 'react';
+import satori from 'satori';
+import { Resvg } from '@resvg/resvg-js';
 
-const WEBSITE_ROOT = path.resolve(import.meta.dir, '..')
-const BUILD_FONTS_DIR = path.join(WEBSITE_ROOT, 'scripts', 'assets', 'fonts')
-const OUTPUT_PATH = path.join(WEBSITE_ROOT, 'public', 'og-faircoin.png')
+const WEBSITE_ROOT = path.resolve(import.meta.dir, '..');
+const BUILD_FONTS_DIR = path.join(WEBSITE_ROOT, 'scripts', 'assets', 'fonts');
+const OUTPUT_PATH = path.join(WEBSITE_ROOT, 'public', 'og-faircoin.png');
 
-const CARD_WIDTH = 1200
-const CARD_HEIGHT = 630
+const CARD_WIDTH = 1200;
+const CARD_HEIGHT = 630;
 
 /* ─── Brand palette ───
  *
@@ -44,35 +44,35 @@ const CARD_HEIGHT = 630
  */
 
 /** Bright FairCoin green — Bloom `faircoin` preset accent. */
-const ACCENT = '#9ffb50'
+const ACCENT = '#9ffb50';
 /** Near-black olive background (FairCoin dark `--background`). */
-const SURFACE = '#1c1f09'
+const SURFACE = '#1c1f09';
 /** Deepest FairCoin surface, used for the gradient floor + coin shadow. */
-const SURFACE_DEEP = '#0e1006'
+const SURFACE_DEEP = '#0e1006';
 
-const TITLE = 'FairCoin'
-const TAGLINE = 'community run cryptocurrency'
+const TITLE = 'FairCoin';
+const TAGLINE = 'community run cryptocurrency';
 /** Footer eyebrow. Plain words only — no separators. */
-const FOOTER_LEFT = 'fairco.in'
-const FOOTER_RIGHT = 'Free and open since 2014'
+const FOOTER_LEFT = 'fairco.in';
+const FOOTER_RIGHT = 'Free and open since 2014';
 
 interface BrandAssets {
   /** TTF bytes for the display face (Phudu Bold). */
-  titleFont: Buffer
+  titleFont: Buffer;
   /** TTF bytes for the body face (Phudu Regular). */
-  bodyFont: Buffer
+  bodyFont: Buffer;
   /** Data-URL for the FairCoin coin mark. */
-  coinDataUrl: string
+  coinDataUrl: string;
 }
 
 async function loadFontBytes(): Promise<{ title: Buffer; body: Buffer }> {
-  const bold = path.join(BUILD_FONTS_DIR, 'phudu', 'Phudu-Bold.ttf')
-  const regular = path.join(BUILD_FONTS_DIR, 'phudu', 'Phudu-Regular.ttf')
+  const bold = path.join(BUILD_FONTS_DIR, 'phudu', 'Phudu-Bold.ttf');
+  const regular = path.join(BUILD_FONTS_DIR, 'phudu', 'Phudu-Regular.ttf');
   if (!existsSync(bold) || !existsSync(regular)) {
-    throw new Error(`[faircoin-og] missing Phudu TrueType files in ${BUILD_FONTS_DIR}/phudu/`)
+    throw new Error(`[faircoin-og] missing Phudu TrueType files in ${BUILD_FONTS_DIR}/phudu/`);
   }
-  const [titleFont, bodyFont] = await Promise.all([readFile(bold), readFile(regular)])
-  return { title: titleFont, body: bodyFont }
+  const [titleFont, bodyFont] = await Promise.all([readFile(bold), readFile(regular)]);
+  return { title: titleFont, body: bodyFont };
 }
 
 /**
@@ -83,17 +83,17 @@ async function loadFontBytes(): Promise<{ title: Buffer; body: Buffer }> {
  * minted rather than flat. satori rasterises this as an `<img>`.
  */
 function buildCoinDataUrl(): string {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="${ACCENT}"/><path fill="${SURFACE}" d="M11 8h11v4.6h-6.4v3.5H21v4.6h-5.4V24H11z"/></svg>`
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="${ACCENT}"/><path fill="${SURFACE}" d="M11 8h11v4.6h-6.4v3.5H21v4.6h-5.4V24H11z"/></svg>`;
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
 }
 
 async function loadAssets(): Promise<BrandAssets> {
-  const { title, body } = await loadFontBytes()
+  const { title, body } = await loadFontBytes();
   return {
     titleFont: title,
     bodyFont: body,
     coinDataUrl: buildCoinDataUrl(),
-  }
+  };
 }
 
 /* ─── Card layout (React element tree, no JSX) ─── */
@@ -242,7 +242,7 @@ function buildCard(assets: BrandAssets): ReactElement {
         FOOTER_RIGHT,
       ),
     ),
-  )
+  );
 }
 
 /* ─── Render ─── */
@@ -255,26 +255,26 @@ async function renderCardPng(assets: BrandAssets): Promise<Buffer> {
       { name: 'Phudu', data: assets.titleFont, weight: 700, style: 'normal' },
       { name: 'Phudu', data: assets.bodyFont, weight: 400, style: 'normal' },
     ],
-  })
+  });
   // Resvg is deterministic given the same SVG and disabled system fonts (we
   // embed everything ourselves), keeping the committed PNG stable across runs.
   const resvg = new Resvg(svg, {
     font: { loadSystemFonts: false },
     fitTo: { mode: 'width', value: CARD_WIDTH },
-  })
-  return resvg.render().asPng()
+  });
+  return resvg.render().asPng();
 }
 
 async function main(): Promise<void> {
-  const assets = await loadAssets()
-  await mkdir(path.dirname(OUTPUT_PATH), { recursive: true })
-  const png = await renderCardPng(assets)
-  await writeFile(OUTPUT_PATH, png)
-  const relOut = path.relative(WEBSITE_ROOT, OUTPUT_PATH)
-  console.log(`[faircoin-og] ${relOut} (${png.byteLength} B, ${CARD_WIDTH}×${CARD_HEIGHT})`)
+  const assets = await loadAssets();
+  await mkdir(path.dirname(OUTPUT_PATH), { recursive: true });
+  const png = await renderCardPng(assets);
+  await writeFile(OUTPUT_PATH, png);
+  const relOut = path.relative(WEBSITE_ROOT, OUTPUT_PATH);
+  console.log(`[faircoin-og] ${relOut} (${png.byteLength} B, ${CARD_WIDTH}×${CARD_HEIGHT})`);
 }
 
-const t0 = performance.now()
-await main()
-const elapsedMs = Math.round(performance.now() - t0)
-console.log(`[faircoin-og] done in ${elapsedMs}ms`)
+const t0 = performance.now();
+await main();
+const elapsedMs = Math.round(performance.now() - t0);
+console.log(`[faircoin-og] done in ${elapsedMs}ms`);

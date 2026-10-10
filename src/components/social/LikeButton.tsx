@@ -1,27 +1,27 @@
-import { RiHeartFill } from '@oxy.so/bloom/icons/RiHeartFill'
-import { RiHeartLine } from '@oxy.so/bloom/icons/RiHeartLine'
-import { useAuth } from '@oxy.so/services/ui/client'
-import { useLikes, useToggleLike } from '../../api/hooks'
+import { RiHeartFill } from '@oxy.so/bloom/icons/RiHeartFill';
+import { RiHeartLine } from '@oxy.so/bloom/icons/RiHeartLine';
+import { useAuth } from '@oxy.so/services/ui/client';
+import { useLikes, useToggleLike } from '../../api/hooks';
 
 interface LikeButtonProps {
-  targetType: string
-  targetId: string
+  targetType: string;
+  targetId: string;
 }
 
 export default function LikeButton({ targetType, targetId }: LikeButtonProps) {
-  const { isAuthenticated, signIn } = useAuth()
-  const { data } = useLikes(targetType, targetId)
-  const toggleLike = useToggleLike()
+  const { isAuthenticated, signIn } = useAuth();
+  const { data } = useLikes(targetType, targetId);
+  const toggleLike = useToggleLike();
 
-  const count = data?.count ?? 0
-  const liked = data?.liked ?? false
+  const count = data?.count ?? 0;
+  const liked = data?.liked ?? false;
 
   function handleClick() {
     if (!isAuthenticated) {
-      signIn()
-      return
+      signIn();
+      return;
     }
-    toggleLike.mutate({ targetType, targetId })
+    toggleLike.mutate({ targetType, targetId });
   }
 
   return (
@@ -44,5 +44,5 @@ export default function LikeButton({ targetType, targetId }: LikeButtonProps) {
         {count > 0 ? count : 'Like'}
       </span>
     </button>
-  )
+  );
 }

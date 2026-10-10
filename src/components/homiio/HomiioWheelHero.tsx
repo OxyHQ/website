@@ -1,12 +1,12 @@
-import { useRef, type ReactNode } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from 'framer-motion'
-import { RiCheckFill } from '@oxy.so/bloom/icons/RiCheckFill'
-import { RiForbidLine } from '@oxy.so/bloom/icons/RiForbidLine'
-import HomiioPropertyCard from './HomiioPropertyCard'
-import HomiioMatchCard from './HomiioMatchCard'
-import HomiioFeatureCards from './HomiioFeatureCards'
-import { CoinGlyph } from './icons'
-import { useHomiioDeck, type HomiioListing } from './data'
+import { useRef, type ReactNode } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from 'framer-motion';
+import { RiCheckFill } from '@oxy.so/bloom/icons/RiCheckFill';
+import { RiForbidLine } from '@oxy.so/bloom/icons/RiForbidLine';
+import HomiioPropertyCard from './HomiioPropertyCard';
+import HomiioMatchCard from './HomiioMatchCard';
+import HomiioFeatureCards from './HomiioFeatureCards';
+import { CoinGlyph } from './icons';
+import { useHomiioDeck, type HomiioListing } from './data';
 
 /* ------------------------------------------------------------------ */
 /* Rotating wheel                                                      */
@@ -14,15 +14,15 @@ import { useHomiioDeck, type HomiioListing } from './data'
 
 function Wheel({ rotate, deck }: { rotate: MotionValue<number>; deck: readonly HomiioListing[] }) {
   // Three laps of the deck pack a dense, near-touching ring.
-  const cards = [...deck, ...deck, ...deck]
-  const n = cards.length
+  const cards = [...deck, ...deck, ...deck];
+  const n = cards.length;
   return (
     <motion.div
       style={{ rotate }}
       className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-0 w-0 [--wheel-r:clamp(190px,55vw,260px)] sm:[--wheel-r:clamp(280px,36svh,440px)]"
     >
       {cards.map((listing, i) => {
-        const angle = (360 / n) * i
+        const angle = (360 / n) * i;
         return (
           <div
             key={`${listing.id}-${i}`}
@@ -33,10 +33,10 @@ function Wheel({ rotate, deck }: { rotate: MotionValue<number>; deck: readonly H
           >
             <HomiioPropertyCard listing={listing} className="scale-[0.55] opacity-95 sm:scale-90" />
           </div>
-        )
+        );
       })}
     </motion.div>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -51,7 +51,7 @@ function Panel({ children, className = '' }: { children: ReactNode; className?: 
     >
       {children}
     </div>
-  )
+  );
 }
 
 /**
@@ -68,7 +68,7 @@ function StadiumPanel({ children, className = '' }: { children: ReactNode; class
     >
       {children}
     </div>
-  )
+  );
 }
 
 /** Tinted rounded inset that frames a card inside an ellipse scene. */
@@ -79,7 +79,7 @@ function GrayInset({ children, className = '' }: { children: ReactNode; classNam
     >
       {children}
     </div>
-  )
+  );
 }
 
 function SceneHeading({ children }: { children: ReactNode }) {
@@ -87,11 +87,13 @@ function SceneHeading({ children }: { children: ReactNode }) {
     <h2 className="font-display text-[clamp(1.35rem,2.6vw,2rem)] font-semibold uppercase leading-tight tracking-tight text-foreground">
       {children}
     </h2>
-  )
+  );
 }
 
 function SceneText({ children }: { children: ReactNode }) {
-  return <p className="mt-3 max-w-[15rem] text-base leading-snug text-muted-foreground">{children}</p>
+  return (
+    <p className="mt-3 max-w-[15rem] text-base leading-snug text-muted-foreground">{children}</p>
+  );
 }
 
 function TrustCard({ listing, ok }: { listing: HomiioListing; ok: boolean }) {
@@ -133,7 +135,7 @@ function TrustCard({ listing, ok }: { listing: HomiioListing; ok: boolean }) {
         </span>
       </div>
     </div>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -148,7 +150,7 @@ function HeroScene() {
       </span>
       Rental made easy
     </h1>
-  )
+  );
 }
 
 function TransparentScene({ deck }: { deck: readonly HomiioListing[] }) {
@@ -165,7 +167,7 @@ function TransparentScene({ deck }: { deck: readonly HomiioListing[] }) {
         <HomiioPropertyCard listing={deck[0]} />
       </GrayInset>
     </StadiumPanel>
-  )
+  );
 }
 
 function RoommateScene() {
@@ -182,7 +184,7 @@ function RoommateScene() {
         </SceneText>
       </div>
     </StadiumPanel>
-  )
+  );
 }
 
 function TrustScene({ deck }: { deck: readonly HomiioListing[] }) {
@@ -191,8 +193,8 @@ function TrustScene({ deck }: { deck: readonly HomiioListing[] }) {
       <div className="text-center sm:max-w-[230px] sm:text-left">
         <SceneHeading>Trusted Score system</SceneHeading>
         <SceneText>
-          Powered by Oxy reputation, Homiio highlights trustworthy users and properties, and
-          reveals unethical behavior.
+          Powered by Oxy reputation, Homiio highlights trustworthy users and properties, and reveals
+          unethical behavior.
         </SceneText>
       </div>
       <GrayInset className="!p-3 sm:!p-5">
@@ -203,7 +205,7 @@ function TrustScene({ deck }: { deck: readonly HomiioListing[] }) {
         </div>
       </GrayInset>
     </StadiumPanel>
-  )
+  );
 }
 
 function SindiScene() {
@@ -216,7 +218,7 @@ function SindiScene() {
         <HomiioFeatureCards />
       </Panel>
     </div>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -225,7 +227,7 @@ function SindiScene() {
 
 /** Sky to ground: the cobalt `--secondary` fading into the cream `--content-area`. */
 const GRADIENT =
-  'bg-[linear-gradient(180deg,var(--secondary)_0%,color-mix(in_oklab,var(--secondary)_80%,var(--card))_20%,color-mix(in_oklab,var(--secondary)_28%,var(--card))_36%,var(--content-area)_50%,var(--content-area)_100%)]'
+  'bg-[linear-gradient(180deg,var(--secondary)_0%,color-mix(in_oklab,var(--secondary)_80%,var(--card))_20%,color-mix(in_oklab,var(--secondary)_28%,var(--card))_36%,var(--content-area)_50%,var(--content-area)_100%)]';
 
 /** The feature panels, stacked with ~1rem between them (like the original). */
 function Panels({ deck }: { deck: readonly HomiioListing[] }) {
@@ -236,16 +238,16 @@ function Panels({ deck }: { deck: readonly HomiioListing[] }) {
       <TrustScene deck={deck} />
       <SindiScene />
     </div>
-  )
+  );
 }
 
 export default function HomiioWheelHero() {
-  const ref = useRef<HTMLDivElement>(null)
-  const reduce = useReducedMotion()
-  const deck = useHomiioDeck()
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const deck = useHomiioDeck();
 
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
-  const rotate = useTransform(scrollYProgress, [0, 1], [0, 105])
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 105]);
 
   if (reduce) {
     return (
@@ -255,7 +257,7 @@ export default function HomiioWheelHero() {
           <Panels deck={deck} />
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -275,5 +277,5 @@ export default function HomiioWheelHero() {
         <Panels deck={deck} />
       </div>
     </div>
-  )
+  );
 }

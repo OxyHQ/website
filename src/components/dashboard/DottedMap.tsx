@@ -1,14 +1,17 @@
-import { useCallback, useEffect, useMemo, memo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { geoEquirectangular } from "d3-geo";
-import { infrastructureNodes } from "../../data/dashboard/infra-nodes";
-import { activityRegionCoordinates, activityRegionLabel } from "../../data/dashboard/activity-regions";
-import { ACTIVITY_CATEGORIES } from "../../data/dashboard/activity-categories";
-import { activityRoute } from "../../data/dashboard/activity-routes";
-import { observeMapContrast } from "./map-contrast";
-import ActivityPulse from "./ActivityPulse";
-import { activityClock, activityMotion, activityFlows } from "../../data/dashboard/activity-motion";
-import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
+import { useCallback, useEffect, useMemo, memo, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { geoEquirectangular } from 'd3-geo';
+import { infrastructureNodes } from '../../data/dashboard/infra-nodes';
+import {
+  activityRegionCoordinates,
+  activityRegionLabel,
+} from '../../data/dashboard/activity-regions';
+import { ACTIVITY_CATEGORIES } from '../../data/dashboard/activity-categories';
+import { activityRoute } from '../../data/dashboard/activity-routes';
+import { observeMapContrast } from './map-contrast';
+import ActivityPulse from './ActivityPulse';
+import { activityClock, activityMotion, activityFlows } from '../../data/dashboard/activity-motion';
+import type { InfraStatusNode, PlatformActivityEvent } from '../../api/hooks';
 
 const STATUS_COLORS = {
   unknown: 'var(--muted-foreground)',
@@ -18,7 +21,13 @@ const STATUS_COLORS = {
 } as const;
 
 const InfraNodeMarker = memo(
-  ({ x, y, label, status, services }: {
+  ({
+    x,
+    y,
+    label,
+    status,
+    services,
+  }: {
     x: number;
     y: number;
     label: string;
@@ -38,7 +47,7 @@ const InfraNodeMarker = memo(
           stroke={color}
           strokeWidth={1}
           animate={{ scale: [1, 2, 1], opacity: [0.6, 0, 0.6] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
           style={{ transformOrigin: `${x}px ${y}px` }}
         />
         {/* The square mark, not `/favicon.svg`. Neither was distorted — the
@@ -71,33 +80,31 @@ const InfraNodeMarker = memo(
           fill="var(--muted-foreground)"
           fontSize={8}
           fontFamily="monospace"
-          style={{ textTransform: "uppercase", letterSpacing: "0.05em" }}
+          style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}
         >
           {label}
         </text>
       </g>
     );
-  }
+  },
 );
-InfraNodeMarker.displayName = "InfraNodeMarker";
+InfraNodeMarker.displayName = 'InfraNodeMarker';
 
-const ActivityFlash = memo(
-  ({ x, y, color }: { x: number; y: number; color: string }) => (
-    <motion.circle
-      cx={x}
-      cy={y}
-      r={4}
-      fill={color}
-      filter="url(#flash-glow)"
-      initial={{ scale: 0, opacity: 0.8 }}
-      animate={{ scale: 3, opacity: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 1.5, ease: "easeOut" }}
-      style={{ transformOrigin: `${x}px ${y}px` }}
-    />
-  )
-);
-ActivityFlash.displayName = "ActivityFlash";
+const ActivityFlash = memo(({ x, y, color }: { x: number; y: number; color: string }) => (
+  <motion.circle
+    cx={x}
+    cy={y}
+    r={4}
+    fill={color}
+    filter="url(#flash-glow)"
+    initial={{ scale: 0, opacity: 0.8 }}
+    animate={{ scale: 3, opacity: 0 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 1.5, ease: 'easeOut' }}
+    style={{ transformOrigin: `${x}px ${y}px` }}
+  />
+));
+ActivityFlash.displayName = 'ActivityFlash';
 
 interface DottedMapProps {
   width?: number;
@@ -114,19 +121,26 @@ export default function DottedMap({
 }: DottedMapProps) {
   const [viewport, setViewport] = useState({ x: 140, y: 42, width: 720, height: 476 });
   const viewportRef = useRef(viewport);
-  const dragRef = useRef<{ pointerX: number; pointerY: number; viewX: number; viewY: number } | null>(null);
+  const dragRef = useRef<{
+    pointerX: number;
+    pointerY: number;
+    viewX: number;
+    viewY: number;
+  } | null>(null);
   const returnTimerRef = useRef<number | null>(null);
   const focusFrameRef = useRef<number | null>(null);
   // Synced after the render, not during it: the automatic focus animation reads
   // the latest viewport from callbacks, and writing a ref while rendering is
   // what React Compiler cannot see.
-  useEffect(() => { viewportRef.current = viewport; }, [viewport]);
+  useEffect(() => {
+    viewportRef.current = viewport;
+  }, [viewport]);
   const projection = useMemo(
     () =>
       geoEquirectangular()
         .scale(height / Math.PI)
         .translate([width / 2, height / 2]),
-    [width, height]
+    [width, height],
   );
 
   // Project infra node positions
@@ -136,19 +150,21 @@ export default function DottedMap({
       for (const node of infraStatus) statusMap.set(node.region, node);
     }
 
-    return infrastructureNodes(infraStatus).map(node => {
-      const coords = projection(node.coordinates);
-      if (!coords) return null;
-      const status = statusMap.get(node.region);
-      return {
-        key: node.region,
-        x: coords[0],
-        y: coords[1],
-        label: node.label,
-        status: status?.status ?? 'unknown' as const,
-        services: node.services.length,
-      };
-    }).filter((n): n is NonNullable<typeof n> => n !== null);
+    return infrastructureNodes(infraStatus)
+      .map((node) => {
+        const coords = projection(node.coordinates);
+        if (!coords) return null;
+        const status = statusMap.get(node.region);
+        return {
+          key: node.region,
+          x: coords[0],
+          y: coords[1],
+          label: node.label,
+          status: status?.status ?? ('unknown' as const),
+          services: node.services.length,
+        };
+      })
+      .filter((n): n is NonNullable<typeof n> => n !== null);
   }, [projection, infraStatus]);
 
   // Project anonymous activity buckets at the infrastructure region that
@@ -157,31 +173,37 @@ export default function DottedMap({
     if (!activityEvents || activityEvents.length === 0) return [];
 
     const seenRegions = new Set<string>();
-    return activityEvents.map(event => {
-      const region = event.sourceRegion ?? event.region;
-      if (seenRegions.has(region)) return null;
-      seenRegions.add(region);
-      const coordinates = event.sourceRegion === region && event.sourceCoordinates
-        ? event.sourceCoordinates
-        : region.startsWith('edge-') ? activityRegionCoordinates(region) : infrastructureNodes(infraStatus).find(node => node.region === region)?.coordinates;
-      if (!coordinates) return null;
-      const coords = projection(coordinates);
-      if (!coords) return null;
-      return {
-        key: `flash-${region}-${event.emittedAt}`,
-        x: coords[0],
-        y: coords[1],
-        color: 'var(--color-primary)',
-        label: event.sourceLabel ?? activityRegionLabel(region),
-      };
-    }).filter((f): f is NonNullable<typeof f> => f !== null);
+    return activityEvents
+      .map((event) => {
+        const region = event.sourceRegion ?? event.region;
+        if (seenRegions.has(region)) return null;
+        seenRegions.add(region);
+        const coordinates =
+          event.sourceRegion === region && event.sourceCoordinates
+            ? event.sourceCoordinates
+            : region.startsWith('edge-')
+              ? activityRegionCoordinates(region)
+              : infrastructureNodes(infraStatus).find((node) => node.region === region)
+                  ?.coordinates;
+        if (!coordinates) return null;
+        const coords = projection(coordinates);
+        if (!coords) return null;
+        return {
+          key: `flash-${region}-${event.emittedAt}`,
+          x: coords[0],
+          y: coords[1],
+          color: 'var(--color-primary)',
+          label: event.sourceLabel ?? activityRegionLabel(region),
+        };
+      })
+      .filter((f): f is NonNullable<typeof f> => f !== null);
   }, [activityEvents, projection, infraStatus]);
 
   const projectedRoutes = useMemo(() => {
     if (!activityEvents || activityEvents.length === 0) return [];
 
     const now = activityClock(activityEvents);
-    return activityFlows(activityEvents).flatMap(event => {
+    return activityFlows(activityEvents).flatMap((event) => {
       const route = activityRoute(event, infrastructureNodes(infraStatus));
       if (!route) return [];
       const start = projection(route.source);
@@ -189,21 +211,25 @@ export default function DottedMap({
       if (!start || !end) return [];
       const curve = Math.min(80, Math.abs(end[0] - start[0]) * 0.18 + 24);
       const activity = activityMotion(event, route.key, now);
-      return [{
-        key: route.key,
-        path: route.local
-          ? `M ${start[0]} ${start[1]} c ${route.outbound ? 32 : -32} -36 ${route.outbound ? -32 : 32} -36 0 0`
-          : `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
-        color: ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
-        trackColor: route.internal ? 'var(--map-internal)' : ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
-        direction: route.outbound ? 'outbound' : 'inbound',
-        category: route.category,
-        internal: route.internal,
-        pulseDuration: activity.pulseDurationMs,
-        pulseLength: route.internal ? activity.pulseLength / 2 : activity.pulseLength,
-        pulseGap: activity.pulseGap + (route.internal ? activity.pulseLength / 2 : 0),
-        phase: activity.initialPhase,
-      }];
+      return [
+        {
+          key: route.key,
+          path: route.local
+            ? `M ${start[0]} ${start[1]} c ${route.outbound ? 32 : -32} -36 ${route.outbound ? -32 : 32} -36 0 0`
+            : `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
+          color: ACTIVITY_CATEGORIES.find((item) => item.id === route.category)!.color,
+          trackColor: route.internal
+            ? 'var(--map-internal)'
+            : ACTIVITY_CATEGORIES.find((item) => item.id === route.category)!.color,
+          direction: route.outbound ? 'outbound' : 'inbound',
+          category: route.category,
+          internal: route.internal,
+          pulseDuration: activity.pulseDurationMs,
+          pulseLength: route.internal ? activity.pulseLength / 2 : activity.pulseLength,
+          pulseGap: activity.pulseGap + (route.internal ? activity.pulseLength / 2 : 0),
+          phase: activity.initialPhase,
+        },
+      ];
     });
   }, [activityEvents, projection, infraStatus]);
 
@@ -219,14 +245,19 @@ export default function DottedMap({
     const requestsByOrigin = new Map<string, number>();
     for (const event of activityEvents ?? []) {
       if (event.sourceRegion) {
-        requestsByOrigin.set(event.sourceRegion, (requestsByOrigin.get(event.sourceRegion) ?? 0) + event.requests);
+        requestsByOrigin.set(
+          event.sourceRegion,
+          (requestsByOrigin.get(event.sourceRegion) ?? 0) + event.requests,
+        );
       }
     }
-    const busiestOrigin = [...requestsByOrigin.entries()]
-      .sort((left, right) => right[1] - left[1])[0]?.[0];
-    const busiestEvent = activityEvents?.find(event => event.sourceRegion === busiestOrigin);
-    const coordinates = busiestEvent?.sourceCoordinates
-      ?? (busiestOrigin ? activityRegionCoordinates(busiestOrigin) : undefined);
+    const busiestOrigin = [...requestsByOrigin.entries()].sort(
+      (left, right) => right[1] - left[1],
+    )[0]?.[0];
+    const busiestEvent = activityEvents?.find((event) => event.sourceRegion === busiestOrigin);
+    const coordinates =
+      busiestEvent?.sourceCoordinates ??
+      (busiestOrigin ? activityRegionCoordinates(busiestOrigin) : undefined);
     const focus = coordinates ? projection(coordinates) : null;
     if (!focus) return;
 
@@ -238,7 +269,7 @@ export default function DottedMap({
       if (dragRef.current) return;
       const progress = Math.min(1, (now - startedAt) / 900);
       const eased = 1 - Math.pow(1 - progress, 3);
-      setViewport(current => ({
+      setViewport((current) => ({
         ...current,
         x: start.x + (targetX - start.x) * eased,
         y: start.y + (targetY - start.y) * eased,
@@ -262,11 +293,17 @@ export default function DottedMap({
     }
   }, [cancelAutomaticFocus, focusBusiestOrigin]);
 
-  const rootRef = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return;
-    const stopContrast = observeMapContrast(node);
-    return () => { stopContrast(); cancelAutomaticFocus(); };
-  }, [cancelAutomaticFocus]);
+  const rootRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node) return;
+      const stopContrast = observeMapContrast(node);
+      return () => {
+        stopContrast();
+        cancelAutomaticFocus();
+      };
+    },
+    [cancelAutomaticFocus],
+  );
 
   return (
     <div ref={rootRef} className="relative h-full w-full">
@@ -288,9 +325,11 @@ export default function DottedMap({
           const drag = dragRef.current;
           if (!drag) return;
           const bounds = event.currentTarget.getBoundingClientRect();
-          const nextX = drag.viewX - (event.clientX - drag.pointerX) * viewport.width / bounds.width;
-          const nextY = drag.viewY - (event.clientY - drag.pointerY) * viewport.height / bounds.height;
-          setViewport(current => ({
+          const nextX =
+            drag.viewX - ((event.clientX - drag.pointerX) * viewport.width) / bounds.width;
+          const nextY =
+            drag.viewY - ((event.clientY - drag.pointerY) * viewport.height) / bounds.height;
+          setViewport((current) => ({
             ...current,
             x: Math.max(0, Math.min(width - current.width, nextX)),
             y: Math.max(0, Math.min(height - current.height, nextY)),
@@ -325,11 +364,30 @@ export default function DottedMap({
         />
 
         <g>
-          {projectedRoutes.map(route => (
-            <g key={route.key} data-traffic-direction={route.direction} data-traffic-scope={route.internal ? "internal" : "external"} data-traffic-type={route.category}>
-              <path d={route.path} fill="none" stroke={route.trackColor} strokeWidth={route.internal ? 2 : 0.8} strokeDasharray={route.internal ? "3 3" : undefined} opacity={route.internal ? 0.9 : 0.28} />
-              <ActivityPulse path={route.path} color={route.color} internal={route.internal} length={route.pulseLength} gap={route.pulseGap} duration={route.pulseDuration} phase={route.phase} />
-
+          {projectedRoutes.map((route) => (
+            <g
+              key={route.key}
+              data-traffic-direction={route.direction}
+              data-traffic-scope={route.internal ? 'internal' : 'external'}
+              data-traffic-type={route.category}
+            >
+              <path
+                d={route.path}
+                fill="none"
+                stroke={route.trackColor}
+                strokeWidth={route.internal ? 2 : 0.8}
+                strokeDasharray={route.internal ? '3 3' : undefined}
+                opacity={route.internal ? 0.9 : 0.28}
+              />
+              <ActivityPulse
+                path={route.path}
+                color={route.color}
+                internal={route.internal}
+                length={route.pulseLength}
+                gap={route.pulseGap}
+                duration={route.pulseDuration}
+                phase={route.phase}
+              />
             </g>
           ))}
         </g>
@@ -337,10 +395,19 @@ export default function DottedMap({
         {/* Activity flashes */}
         <g>
           <AnimatePresence>
-            {projectedFlashes.map(f => (
+            {projectedFlashes.map((f) => (
               <g key={f.key}>
                 <ActivityFlash x={f.x} y={f.y} color={f.color} />
-                <text x={f.x} y={f.y - 10} textAnchor="middle" fill="var(--foreground)" fontSize={9} fontWeight={600}>{f.label}</text>
+                <text
+                  x={f.x}
+                  y={f.y - 10}
+                  textAnchor="middle"
+                  fill="var(--foreground)"
+                  fontSize={9}
+                  fontWeight={600}
+                >
+                  {f.label}
+                </text>
               </g>
             ))}
           </AnimatePresence>
@@ -348,7 +415,7 @@ export default function DottedMap({
 
         {/* Infrastructure nodes (topmost) */}
         <g>
-          {projectedInfraNodes.map(node => (
+          {projectedInfraNodes.map((node) => (
             <InfraNodeMarker
               key={node.key}
               x={node.x}

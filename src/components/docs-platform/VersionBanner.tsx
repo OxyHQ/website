@@ -1,12 +1,12 @@
-import { Link } from '../../lib/navigation'
-import type { SyncedPackage } from '../../../scripts/types'
-import { buildDocsHref, isVersionDeprecated, isVersionOutdated } from '../../content/docs-loader'
+import { Link } from '../../lib/navigation';
+import type { SyncedPackage } from '../../../scripts/types';
+import { buildDocsHref, isVersionDeprecated, isVersionOutdated } from '../../content/docs-loader';
 
 interface VersionBannerProps {
-  pkg: SyncedPackage
-  currentVersion: string
+  pkg: SyncedPackage;
+  currentVersion: string;
   /** Slug within the current package — preserved when linking to the latest version. */
-  slug?: string
+  slug?: string;
 }
 
 /**
@@ -16,12 +16,12 @@ interface VersionBannerProps {
  * jump to the corresponding up-to-date page in one click.
  */
 export default function VersionBanner({ pkg, currentVersion, slug = '' }: VersionBannerProps) {
-  if (!pkg.versioned) return null
-  const deprecated = isVersionDeprecated(pkg, currentVersion)
-  const outdated = isVersionOutdated(pkg, currentVersion)
-  if (!deprecated && !outdated) return null
+  if (!pkg.versioned) return null;
+  const deprecated = isVersionDeprecated(pkg, currentVersion);
+  const outdated = isVersionOutdated(pkg, currentVersion);
+  if (!deprecated && !outdated) return null;
 
-  const latestHref = buildDocsHref(pkg, pkg.latestVersion, slug)
+  const latestHref = buildDocsHref(pkg, pkg.latestVersion, slug);
 
   if (deprecated) {
     return (
@@ -60,7 +60,7 @@ export default function VersionBanner({ pkg, currentVersion, slug = '' }: Versio
           View v{pkg.latestVersion}
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -86,8 +86,11 @@ export default function VersionBanner({ pkg, currentVersion, slug = '' }: Versio
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
         <p className="text-foreground">
-          You{"’"}re viewing <span className="font-semibold">{pkg.displayName} {currentVersion}</span>.
-          The latest version is <span className="font-semibold">{pkg.latestVersion}</span>.
+          You{'’'}re viewing{' '}
+          <span className="font-semibold">
+            {pkg.displayName} {currentVersion}
+          </span>
+          . The latest version is <span className="font-semibold">{pkg.latestVersion}</span>.
         </p>
       </div>
       <Link
@@ -97,5 +100,5 @@ export default function VersionBanner({ pkg, currentVersion, slug = '' }: Versio
         View v{pkg.latestVersion}
       </Link>
     </div>
-  )
+  );
 }

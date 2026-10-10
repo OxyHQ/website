@@ -1,12 +1,12 @@
-import type { ReactNode } from 'react'
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import Button from '../components/ui/Button'
-import { Link } from '../lib/navigation'
-import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge'
-import { useTranslation } from '../lib/i18n'
-import { ctaIntentFor } from '../lib/ai/availability'
-import { enterpriseHubIntro, enterpriseServices } from '../data/ai/enterprise'
+import type { ReactNode } from 'react';
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import Button from '../components/ui/Button';
+import { Link } from '../lib/navigation';
+import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge';
+import { useTranslation } from '../lib/i18n';
+import { ctaIntentFor } from '../lib/ai/availability';
+import { enterpriseHubIntro, enterpriseServices } from '../data/ai/enterprise';
 
 /**
  * `/enterprise` — the cross-Oxy B2B landing.
@@ -20,7 +20,7 @@ import { enterpriseHubIntro, enterpriseServices } from '../data/ai/enterprise'
  * says `Coming soon` rather than sitting beside the live ones as if it were.
  */
 export default function EnterprisePage() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <PageShell
@@ -66,14 +66,14 @@ export default function EnterprisePage() {
         </h2>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {enterpriseServices.map((service) => {
-            const intent = ctaIntentFor(service.availability)
+            const intent = ctaIntentFor(service.availability);
             // Same rule as the AI service cards: the form's option spelling is a
             // server contract, and a `coming_soon` service opens its own page
             // rather than a sales form about something nobody can buy.
             const href =
               intent === 'request_access' && service.salesInterest
                 ? `/contact/sales?interest=${service.salesInterest}`
-                : service.href
+                : service.href;
             return (
               <li key={service.key}>
                 <article className="relative flex h-full flex-col gap-3 rounded-2xl border border-border bg-card p-5 transition-colors hover:bg-accent/40">
@@ -95,7 +95,7 @@ export default function EnterprisePage() {
                   )}
                 </article>
               </li>
-            )
+            );
           })}
         </ul>
       </section>
@@ -114,7 +114,7 @@ export default function EnterprisePage() {
         </div>
       </section>
     </PageShell>
-  )
+  );
 }
 
 /**
@@ -128,25 +128,25 @@ function ServiceLink({
   external,
   children,
 }: {
-  href: string
-  external?: boolean
-  children: ReactNode
+  href: string;
+  external?: boolean;
+  children: ReactNode;
 }) {
-  const className = 'text-sm font-medium text-foreground underline-offset-4 hover:underline'
+  const className = 'text-sm font-medium text-foreground underline-offset-4 hover:underline';
   if (external || !href.startsWith('/')) {
     return (
       <a className={className} href={href} rel="noreferrer">
         {children}
       </a>
-    )
+    );
   }
   return (
     <Link className={className} to={href}>
       {children}
     </Link>
-  )
+  );
 }
 
 function camel(value: string): string {
-  return value.replace(/_([a-z])/g, (_, char: string) => char.toUpperCase())
+  return value.replace(/_([a-z])/g, (_, char: string) => char.toUpperCase());
 }

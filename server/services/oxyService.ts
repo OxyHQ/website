@@ -1,5 +1,5 @@
-import { OxyServer } from '@oxy.so/core/server'
-import { config } from '../config.js'
+import { OxyServer } from '@oxy.so/core/server';
+import { config } from '../config.js';
 
 /**
  * The website's Oxy service identity. Oxy answers MCP token introspection only
@@ -11,4 +11,4 @@ export const oxyService = new OxyServer({
   ...(config.oxyServiceApiKey && config.oxyServiceApiSecret
     ? { serviceAuth: { apiKey: config.oxyServiceApiKey, apiSecret: config.oxyServiceApiSecret } }
     : {}),
-})
+});

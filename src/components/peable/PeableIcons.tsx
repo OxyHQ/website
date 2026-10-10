@@ -1,27 +1,48 @@
 /** Glyphs used across the Pay landing. Each inherits `currentColor` so it picks
  * up whatever `text-*` class the surrounding scene sets. */
 
-type IconProps = { className?: string; width?: number | string; height?: number | string }
+type IconProps = { className?: string; width?: number | string; height?: number | string };
 
 export function TrendingIcon({ className }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" role="img" aria-hidden="true" className={className}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+      role="img"
+      aria-hidden="true"
+      className={className}
+    >
       <path d="M22 14h-2V9.53l-7.4 7.4-4-4-6.29 6.29-1.42-1.41L8.6 10.1l4 4L18.7 8H14V6h8z" />
     </svg>
-  )
+  );
 }
 
 export function CashbackIcon({ className }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" role="img" aria-hidden="true" className={className}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+      role="img"
+      aria-hidden="true"
+      className={className}
+    >
       <path d="M17 4q1.02-.01 1.72.04c.48.04.93.12 1.37.34.65.34 1.19.87 1.52 1.53.22.43.31.89.35 1.37Q22 7.98 22 9v5q.01 1.03-.04 1.72-.04.72-.35 1.37a3.5 3.5 0 0 1-1.52 1.53c-.44.22-.9.3-1.37.34q-.7.05-1.72.04h-1.6l1.3 1.3-1.42 1.4-3.7-3.7 3.7-3.7 1.41 1.4L15.4 17H17c.71 0 1.19 0 1.56-.03.35-.03.51-.08.62-.13q.42-.23.65-.66c.06-.1.1-.27.14-.62.03-.37.03-.84.03-1.56V9c0-.72 0-1.2-.03-1.56a2 2 0 0 0-.14-.62 1.5 1.5 0 0 0-.65-.66c-.1-.05-.27-.1-.62-.13A22 22 0 0 0 17 6H7c-.72 0-1.2 0-1.56.03s-.52.08-.62.13a1.5 1.5 0 0 0-.66.66c-.05.1-.1.26-.13.62S4 8.28 4 9v5c0 .72 0 1.2.03 1.56s.08.52.13.62q.22.43.66.66c.1.05.26.1.62.13S6.28 17 7 17h2v2H7q-1.03.01-1.73-.04a4 4 0 0 1-1.36-.34 3.5 3.5 0 0 1-1.53-1.53 4 4 0 0 1-.35-1.37Q2 15.02 2 14V9q0-1.03.03-1.72c.04-.48.13-.94.35-1.37A3.5 3.5 0 0 1 3.9 4.38c.43-.22.88-.3 1.36-.34Q5.97 3.99 7 4zm-7 8H6V9h4z" />
     </svg>
-  )
+  );
 }
 
 export function ShieldCheckIcon({ className }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" role="img" aria-hidden="true" className={className}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+      role="img"
+      aria-hidden="true"
+      className={className}
+    >
       <path d="M16.2 9.7 11 14.92l-3.2-3.2 1.4-1.42 1.8 1.8 3.8-3.8z" />
       <path
         fillRule="evenodd"
@@ -29,20 +50,36 @@ export function ShieldCheckIcon({ className }: IconProps) {
         clipRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 
 export function GlobeIcon({ width = 16, height = 16 }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" role="img" aria-hidden="true" width={width} height={height}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+      role="img"
+      aria-hidden="true"
+      width={width}
+      height={height}
+    >
       <path d="M20 12c0-1.58-.46-3.05-1.25-4.29l-2.26.87 1.68 2.35.24.34-.44 2.6 1.58.78q.44-1.25.45-2.65M9.15 10.62l.43 2.16.02.1v2.88l.24.12.75-3.34.8-1.07-2.23-.9zm1.67-6.53A8 8 0 0 0 6 6.72L8.04 7.9l.6-1.6.13-.36.35-.18L10.63 5zM4 12a8 8 0 0 0 14.65 4.44L15.75 15l.55-3.24-2.95-4.12 4.04-1.55a8 8 0 0 0-4.52-2.04l-.48 2.3-2.02 1.02-.5 1.34 4.69 1.87-2.12 2.82-1.2 5.42L7.6 17v-3.93l-.47-2.33-.06-.28.1-.27.15-.4-2.46-1.4A8 8 0 0 0 4 12m18 0a10 10 0 1 1-20 0 10 10 0 0 1 20 0" />
     </svg>
-  )
+  );
 }
 
 export function CashIcon({ width = 14, height = 14 }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" role="img" aria-hidden="true" width={width} height={height}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+      role="img"
+      aria-hidden="true"
+      width={width}
+      height={height}
+    >
       <path
         fillRule="evenodd"
         d="M12 8.6c1.78 0 2.9 1.72 2.9 3.4s-1.12 3.4-2.9 3.4-2.9-1.72-2.9-3.4 1.12-3.4 2.9-3.4m0 1.8c-.43 0-1.1.52-1.1 1.6s.67 1.6 1.1 1.6 1.1-.52 1.1-1.6-.67-1.6-1.1-1.6"
@@ -54,24 +91,40 @@ export function CashIcon({ width = 14, height = 14 }: IconProps) {
         clipRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 
 export function MusicIcon({ width = 14, height = 14 }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" role="img" aria-hidden="true" width={width} height={height}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+      role="img"
+      aria-hidden="true"
+      width={width}
+      height={height}
+    >
       <path
         fillRule="evenodd"
         d="M20 15.5c0 2.1-1.97 3.5-4 3.5s-4-1.4-4-3.5 1.97-3.5 4-3.5c.7 0 1.4.17 2 .47V4.6L10 7v11.5c0 2.1-1.97 3.5-4 3.5s-4-1.4-4-3.5S3.97 15 6 15c.7 0 1.4.17 2 .47V5.51l12-3.6zM6 17c-1.28 0-2 .83-2 1.5S4.72 20 6 20s2-.83 2-1.5S7.28 17 6 17m10-3c-1.28 0-2 .83-2 1.5s.71 1.5 2 1.5c1.28 0 2-.83 2-1.5s-.72-1.5-2-1.5"
         clipRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 
 export function RocketIcon({ width = 14, height = 14 }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" role="img" aria-hidden="true" width={width} height={height}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+      role="img"
+      aria-hidden="true"
+      width={width}
+      height={height}
+    >
       <path
         fillRule="evenodd"
         d="M21 5.61a10 10 0 0 1-3 7.14v4a4 4 0 0 1-1.17 2.84l-4.27 4.26-1.93-5.81-4.67-4.67-5.81-1.93 4.27-4.27A4 4 0 0 1 7.24 6h4.01a10 10 0 0 1 7.14-3H21zM12.65 17.8l.79 2.36 1.98-1.98a2 2 0 0 0 .58-1.41v-2.12zM18.4 5a8 8 0 0 0-5.82 2.52L7.9 12.48l3.63 3.63 4.97-4.67A8 8 0 0 0 19 5.6V5zM7.24 8a2 2 0 0 0-1.41.59l-1.98 1.97 2.36.79L9.36 8z"
@@ -79,45 +132,83 @@ export function RocketIcon({ width = 14, height = 14 }: IconProps) {
       />
       <path d="M5.47 16.24v.02l-.02.06a13 13 0 0 0-.21 1.1q-.12.67-.2 1.53a19 19 0 0 0 2.64-.4l.06-.02h.01l.5 1.94H8.2l-.07.03a15 15 0 0 1-1.22.24c-.78.13-1.84.26-2.92.26H3v-1a18 18 0 0 1 .52-4.21v-.03z" />
     </svg>
-  )
+  );
 }
 
 export function HomeIcon({ width = 14, height = 14 }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" role="img" aria-hidden="true" width={width} height={height}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+      role="img"
+      aria-hidden="true"
+      width={width}
+      height={height}
+    >
       <path d="M20 9.84c0-.5-.25-.97-.67-1.25l-6.5-4.33a1.5 1.5 0 0 0-1.66 0l-6.5 4.33A1.5 1.5 0 0 0 4 9.84v8.66c0 .83.67 1.5 1.5 1.5h3v-3.5a3.5 3.5 0 1 1 7 0V20h3c.83 0 1.5-.67 1.5-1.5zm2 8.66a3.5 3.5 0 0 1-3.5 3.5h-5v-5.5a1.5 1.5 0 0 0-3 0V22h-5A3.5 3.5 0 0 1 2 18.5V9.84a3.5 3.5 0 0 1 1.56-2.91l6.5-4.34a3.5 3.5 0 0 1 3.88 0l6.5 4.34A3.5 3.5 0 0 1 22 9.83z" />
     </svg>
-  )
+  );
 }
 
 export function GiftIcon({ width = 14, height = 14 }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 14" role="img" aria-hidden="true" width={width} height={height}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 14 14"
+      role="img"
+      aria-hidden="true"
+      width={width}
+      height={height}
+    >
       <path
         fillRule="evenodd"
         d="M8.45833 1.16675C9.58592 1.16675 10.5 2.08083 10.5 3.20841C10.5 3.52156 10.4295 3.81821 10.3035 4.08342H12.25V7.58342H11.6667V9.33342C11.6667 9.73216 11.6673 10.0664 11.645 10.3389C11.6222 10.6181 11.5723 10.8834 11.4439 11.1353C11.2482 11.5194 10.936 11.8316 10.5518 12.0273C10.3 12.1557 10.0347 12.2056 9.75545 12.2284C9.48301 12.2507 9.14875 12.2501 8.75 12.2501H5.25C4.85125 12.2501 4.51699 12.2507 4.24455 12.2284C3.96533 12.2056 3.70005 12.1557 3.44816 12.0273C3.06403 11.8316 2.75181 11.5194 2.55607 11.1353C2.42773 10.8834 2.3778 10.6181 2.35498 10.3389C2.33272 10.0664 2.33333 9.73216 2.33333 9.33342V7.58342H1.75V4.08342H3.69653C3.57054 3.81821 3.5 3.52156 3.5 3.20841C3.5 2.08083 4.41409 1.16675 5.54167 1.16675C6.11314 1.16675 6.62941 1.40189 7 1.78027C7.37059 1.40189 7.88686 1.16675 8.45833 1.16675ZM7.58333 11.0834H8.75C9.16798 11.0834 9.44641 11.0832 9.66032 11.0658C9.86714 11.0489 9.962 11.0188 10.0221 10.9883C10.1867 10.9044 10.321 10.7701 10.4049 10.6055C10.4354 10.5454 10.4654 10.4506 10.4823 10.2437C10.4998 10.0298 10.5 9.75139 10.5 9.33342V7.58342H7.58333V11.0834ZM3.5 9.33342C3.5 9.75139 3.50018 10.0298 3.51766 10.2437C3.53456 10.4506 3.56459 10.5454 3.59513 10.6055C3.67902 10.7701 3.8133 10.9044 3.97795 10.9883C4.038 11.0188 4.13286 11.0489 4.33968 11.0658C4.55359 11.0832 4.83202 11.0834 5.25 11.0834H6.41667V7.58342H3.5V9.33342ZM7.58333 6.41675H11.0833V5.25008H7.58333V6.41675ZM2.91667 6.41675H6.41667V5.25008H2.91667V6.41675ZM5.54167 2.33341C5.05842 2.33341 4.66667 2.72517 4.66667 3.20841C4.66667 3.69166 5.05842 4.08342 5.54167 4.08342H6.41667V3.20841C6.41667 2.72517 6.02492 2.33341 5.54167 2.33341ZM8.45833 2.33341C7.97508 2.33341 7.58333 2.72517 7.58333 3.20841V4.08342H8.45833C8.94158 4.08342 9.33333 3.69166 9.33333 3.20841C9.33333 2.72517 8.94158 2.33341 8.45833 2.33341Z"
         clipRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 
 export function EmergencyIcon({ width = 14, height = 14 }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 14" role="img" aria-hidden="true" width={width} height={height}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 14 14"
+      role="img"
+      aria-hidden="true"
+      width={width}
+      height={height}
+    >
       <path
         fillRule="evenodd"
         d="M7.0013 1.16675C8.40192 1.16675 9.68716 1.66047 10.6927 2.48324L11.0846 2.09188L11.9095 2.91675L11.5176 3.30811C12.3407 4.31375 12.8346 5.59918 12.8346 7.00008C12.8346 8.40083 12.3405 9.6859 11.5176 10.6915L11.9095 11.0834L11.0846 11.9083L10.6927 11.5164C9.68712 12.3393 8.40205 12.8334 7.0013 12.8334C5.6004 12.8334 4.31497 12.3394 3.30933 11.5164L2.91797 11.9083L2.0931 11.0834L2.48446 10.6915C1.66169 9.68594 1.16797 8.4007 1.16797 7.00008C1.16797 5.59931 1.66152 4.31371 2.48446 3.30811L2.0931 2.91675L2.91797 2.09188L3.30933 2.48324C4.31493 1.6603 5.60053 1.16675 7.0013 1.16675ZM8.71484 9.53849C8.2258 9.86927 7.63616 10.0626 7.0013 10.0626C6.36628 10.0626 5.77631 9.86943 5.28719 9.53849L4.14046 10.6852C4.93073 11.2996 5.92279 11.6667 7.0013 11.6667C8.07965 11.6667 9.07136 11.2994 9.86157 10.6852L8.71484 9.53849ZM3.31559 4.13924C2.70134 4.92946 2.33464 5.9217 2.33464 7.00008C2.33464 8.07831 2.7015 9.07019 3.31559 9.86035L4.46232 8.71362C4.13166 8.22463 3.9388 7.63482 3.9388 7.00008C3.9388 6.36517 4.13149 5.77504 4.46232 5.28597L3.31559 4.13924ZM9.53971 5.28597C9.87065 5.77509 10.0638 6.36506 10.0638 7.00008C10.0638 7.63494 9.87049 8.22458 9.53971 8.71362L10.6864 9.86035C11.3007 9.07014 11.668 8.07843 11.668 7.00008C11.668 5.92157 11.3008 4.92951 10.6864 4.13924L9.53971 5.28597ZM7.0013 5.10425C5.95426 5.10425 5.10547 5.95304 5.10547 7.00008C5.10547 8.04712 5.95426 8.89592 7.0013 8.89592C8.04834 8.89592 8.89714 8.04712 8.89714 7.00008C8.89714 5.95304 8.04834 5.10425 7.0013 5.10425ZM7.0013 2.33341C5.92292 2.33341 4.93068 2.70012 4.14046 3.31437L5.28719 4.4611C5.77626 4.13027 6.36639 3.93758 7.0013 3.93758C7.63604 3.93758 8.22585 4.13043 8.71484 4.4611L9.86157 3.31437C9.07141 2.70028 8.07953 2.33341 7.0013 2.33341Z"
         clipRule="evenodd"
       />
     </svg>
-  )
+  );
 }
 
 /** Verified badge used in the Activity rows. `id` scopes its gradient defs. */
-export function VerifiedBadge({ id, style, className }: { id: string; style?: React.CSSProperties; className?: string }) {
+export function VerifiedBadge({
+  id,
+  style,
+  className,
+}: {
+  id: string;
+  style?: React.CSSProperties;
+  className?: string;
+}) {
   return (
-    <svg viewBox="134.001 168.5 11 11" fill="none" className={className} aria-hidden="true" style={style}>
+    <svg
+      viewBox="134.001 168.5 11 11"
+      fill="none"
+      className={className}
+      aria-hidden="true"
+      style={style}
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -131,26 +222,46 @@ export function VerifiedBadge({ id, style, className }: { id: string; style?: Re
         fill={`url(#pay-badge-inner-${id})`}
       />
       <defs>
-        <linearGradient id={`pay-badge-outer-${id}`} x1="136.207" y1="169.748" x2="143.043" y2="179.254" gradientUnits="userSpaceOnUse">
+        <linearGradient
+          id={`pay-badge-outer-${id}`}
+          x1="136.207"
+          y1="169.748"
+          x2="143.043"
+          y2="179.254"
+          gradientUnits="userSpaceOnUse"
+        >
           <stop stopColor="#F4E72A" />
           <stop offset="0.539" stopColor="#CD8105" />
           <stop offset="0.68" stopColor="#CB7B00" />
           <stop offset="1" stopColor="#F4E72A" />
         </linearGradient>
-        <linearGradient id={`pay-badge-inner-${id}`} x1="136.68" y1="170.197" x2="142.183" y2="178.066" gradientUnits="userSpaceOnUse">
+        <linearGradient
+          id={`pay-badge-inner-${id}`}
+          x1="136.68"
+          y1="170.197"
+          x2="142.183"
+          y2="178.066"
+          gradientUnits="userSpaceOnUse"
+        >
           <stop stopColor="#F9E87F" />
           <stop offset="0.406" stopColor="#E2B719" />
           <stop offset="0.989" stopColor="#E2B719" />
         </linearGradient>
       </defs>
     </svg>
-  )
+  );
 }
 
 /** Small circular "verified recipient" tick used in the send-money toasts. */
 export function RecipientTick({ style }: { style?: React.CSSProperties }) {
   return (
-    <svg viewBox="0 0 6.29772 6.29772" fill="none" className="shrink-0" aria-hidden="true" style={style}>
+    <svg
+      viewBox="0 0 6.29772 6.29772"
+      fill="none"
+      className="shrink-0"
+      aria-hidden="true"
+      style={style}
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -158,7 +269,7 @@ export function RecipientTick({ style }: { style?: React.CSSProperties }) {
         fill="var(--pay-fg-brand)"
       />
     </svg>
-  )
+  );
 }
 
 /** The perforated dot field behind the two full-bleed feature panels. */
@@ -179,5 +290,5 @@ export function DotField({ align }: { align: 'top' | 'bottom' }) {
         <path d="m237.5 22.6 7.4-4.8-.6-.8-7.5 4.7zm-16.8 45.6 7.9-4.2-.6-.9-7.9 4.2zm-.1 15.1 8-3.8-.5-1-8 3.9zm16.4 0 8.2-3.7-.5-1-8.2 3.7zm98.9-.4 8.5-3-.4-1-8.5 3zM220.5 98.4l8.2-3.5-.5-1-8.2 3.6zm49.4-.2 8.4-3-.4-1-8.4 3zm49.4-.1 8.6-2.8-.4-1-8.5 2.8zm-82.5 15.4 8.5-3-.4-1-8.5 3zm49.5-.2 8.6-2.6-.4-1-8.6 2.6zm49.4-.1 8.7-2.4-.3-1-8.7 2.4zm16.5 0 8.7-2.3-.3-1-8.7 2.2zm-99 15.4 8.7-2.6-.4-1-8.6 2.6zm-16.5 15.1 8.7-2.3-.3-1-8.7 2.3zm82.4-.2 8.9-1.8-.3-1-8.8 1.8zm-99 15.4 8.8-2-.3-1-8.8 2zM6.2 175.3l7.7-4.5-.6-.8-7.7 4.5zM220 174l9-1.5-.3-1-8.9 1.5zm33 0 9-1.4-.3-1-8.9 1.3zm16.5 0 9-1.4-.2-1-9 1.3zm33-.1 9-1.2-.2-1-9 1.2zm16.5 0 9-1.2-.2-1-9 1.1zM236.4 189l9-1-.1-1.1-9 1zm16.6 0 9-1-.2-1-9 1zm49.5-.1 9-.9-.2-1-9 .9zM285.9 204l9-.5v-1l-9 .5zM38.3 219.3l9-.5v-1l-9 .5zm181.6-.1 9-.3v-1l-9 .2zm66 0 9-.3v-1l-9 .2zM21.7 234l9 .7.1-1-9-.7zm16.5 0 9 .6.1-1-9-.6zm247.7.2 9 .2v-1l-9-.2zm-16.6 30.2 9 1 .1-1-9-1zm33 0 9 1 .2-1-9-1zM22 278.2l8 4 .5-1-8-3.9zm32.9.5 8.3 3.1.5-1-8.4-3.1zm-16.3 14.7 7.8 4.3.5-1-7.7-4.2zm32.9.3 8.1 3.6.5-1-8.2-3.5zm280.4 1.2 8.9 1.4.2-1-9-1.5zm-16.5 15 8.8 1.8.3-1-8.9-1.8zM39 323.3l6.8 5.5.8-.8-6.9-5.5zm.2 15 6.4 6 .8-.8-6.4-6zm312.7 2 8.7 2.3.3-1-8.7-2.3zm16.5 0 8.7 2.2.3-1-8.7-2.2zm-329 13.1 6 6.3.8-.7-6-6.3zm345.6 2.1 8.6 2.4.3-1-8.6-2.4zm-345.5 13 5.6 6.6 1-.6-5.7-6.6zm16.3.2 6 6.3 1-.7-6.1-6.3zm312.7 2 8.5 2.7.4-1-8.6-2.8zM56 383.7l5.7 6.5.9-.7-5.7-6.5zm16.3.1 6.1 6.2.8-.7-6-6.2zm312.7 1.8 8.5 3 .4-1-8.5-3zM7.3 398.4l3.9 7.6 1-.5-3.9-7.5zm81.5.8 6.1 6.2.9-.7-6.1-6.2zM385 401l8.4 3.1.5-1-8.4-3zm-263.3 13.8 6.4 5.9.8-.7-6.4-6zm279.9 1.4 8.3 3.3.4-1-8.3-3.3zm-279.8 13.7 6.2 6.2.8-.7-6.2-6.2zm16.4.2 6.4 5.9.8-.8-6.4-5.9zm247 1.2 8.1 3.6.5-1-8.2-3.5zm16.4 0 8.2 3.6.5-1-8.2-3.5zm-394 12.9 3.2 7.8 1-.3-3.1-7.9zm394 2.4 8.2 3.7.5-1-8.2-3.7zm-32.9 15 7.9 4.1.6-.9-8-4zm-197.4 14.2 6.2 6.1.8-.7-6.1-6.1zm214 1 7.8 4.3.5-1-7.8-4.1zm16.4.1 8 4.1.5-.9-8-4z" />
       </g>
     </svg>
-  )
+  );
 }

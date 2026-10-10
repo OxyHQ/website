@@ -1,65 +1,74 @@
-import { createHash } from 'node:crypto'
-import { readFile } from 'node:fs/promises'
-import { describe, expect, test } from 'bun:test'
+import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+import { describe, expect, test } from 'bun:test';
 
-const CANONICAL_LOGO_SHA256 = '69fae83bc32a7df5a083616160ffc978a3256f30a918cb0e512567442b7a2be2'
-const WEBSITE_ROOT = new URL('../', import.meta.url)
+const CANONICAL_LOGO_SHA256 = '69fae83bc32a7df5a083616160ffc978a3256f30a918cb0e512567442b7a2be2';
+const WEBSITE_ROOT = new URL('../', import.meta.url);
 
 function sha256(contents: Uint8Array): string {
-  return createHash('sha256').update(contents).digest('hex')
+  return createHash('sha256').update(contents).digest('hex');
 }
 
 async function repositoryFile(path: string): Promise<string> {
-  return readFile(new URL(path, WEBSITE_ROOT), 'utf8')
+  return readFile(new URL(path, WEBSITE_ROOT), 'utf8');
 }
 
 // Whitespace-collapsed source, so a contract holds however the formatter
 // wraps an object literal or a ternary.
 function flat(source: string): string {
-  return source.replace(/\s+/g, ' ')
+  return source.replace(/\s+/g, ' ');
 }
 
 describe('Kaana public brand contract', () => {
   test('ships the exact canonical source logo', async () => {
-    const logo = await readFile(new URL('public/images/apps/kaana.svg', WEBSITE_ROOT))
-    expect(sha256(logo)).toBe(CANONICAL_LOGO_SHA256)
-  })
+    const logo = await readFile(new URL('public/images/apps/kaana.svg', WEBSITE_ROOT));
+    expect(sha256(logo)).toBe(CANONICAL_LOGO_SHA256);
+  });
 
   test('uses the source SVG without recoloring or optimization', async () => {
-    const [seed, content, productHooks, appCard, articleProducts, navbar, viteConfig] = await Promise.all([
-      repositoryFile('server/seed.ts'),
-      repositoryFile('src/data/content.ts'),
-      repositoryFile('src/api/hooks.ts'),
-      repositoryFile('src/components/apps/AppCard.tsx'),
-      repositoryFile('src/components/newsroom/article/ArticleProducts.tsx'),
-      repositoryFile('src/components/layout/Navbar.tsx'),
-      repositoryFile('vite.config.ts'),
-    ])
+    const [seed, content, productHooks, appCard, articleProducts, navbar, viteConfig] =
+      await Promise.all([
+        repositoryFile('server/seed.ts'),
+        repositoryFile('src/data/content.ts'),
+        repositoryFile('src/api/hooks.ts'),
+        repositoryFile('src/components/apps/AppCard.tsx'),
+        repositoryFile('src/components/newsroom/article/ArticleProducts.tsx'),
+        repositoryFile('src/components/layout/Navbar.tsx'),
+        repositoryFile('vite.config.ts'),
+      ]);
 
-    expect(flat(seed)).toContain("kaana: '/images/apps/kaana.svg'")
-    expect(flat(content)).toContain("href: 'https://kaana.ai', image: '/images/apps/kaana.svg', preserveImageColors: true")
-    expect(flat(productHooks)).toContain("kaana: '/images/apps/kaana.svg'")
-    expect(flat(appCard)).toContain("product.productId === 'kaana' ? 'object-contain' : 'object-cover'")
-    expect(flat(articleProducts)).toContain("product.productId === 'kaana' ? 'object-contain' : 'object-cover'")
-    expect(flat(navbar)).toContain("product.productId === 'kaana'")
-    const optimizerExclude = viteConfig.match(/exclude: \/(.+)\//)?.[1]
-    expect(optimizerExclude).toBeDefined()
-    if (!optimizerExclude) throw new Error('Image optimizer exclusion is missing')
-    const excludedImage = new RegExp(optimizerExclude)
-    expect(excludedImage.test('/images/apps/kaana.svg')).toBe(true)
-    expect(excludedImage.test('/images/apps/kaana.svg.png')).toBe(false)
-    expect(excludedImage.test('/images/apps/another.svg')).toBe(false)
-    expect(seed).not.toContain('kaana.png')
-    expect(content).not.toContain('kaana.png')
-  })
+    expect(flat(seed)).toContain("kaana: '/images/apps/kaana.svg'");
+    expect(flat(content)).toContain(
+      "href: 'https://kaana.ai', image: '/images/apps/kaana.svg', preserveImageColors: true",
+    );
+    expect(flat(productHooks)).toContain("kaana: '/images/apps/kaana.svg'");
+    expect(flat(appCard)).toContain(
+      "product.productId === 'kaana' ? 'object-contain' : 'object-cover'",
+    );
+    expect(flat(articleProducts)).toContain(
+      "product.productId === 'kaana' ? 'object-contain' : 'object-cover'",
+    );
+    expect(flat(navbar)).toContain("product.productId === 'kaana'");
+    const optimizerExclude = viteConfig.match(/exclude: \/(.+)\//)?.[1];
+    expect(optimizerExclude).toBeDefined();
+    if (!optimizerExclude) throw new Error('Image optimizer exclusion is missing');
+    const excludedImage = new RegExp(optimizerExclude);
+    expect(excludedImage.test('/images/apps/kaana.svg')).toBe(true);
+    expect(excludedImage.test('/images/apps/kaana.svg.png')).toBe(false);
+    expect(excludedImage.test('/images/apps/another.svg')).toBe(false);
+    expect(seed).not.toContain('kaana.png');
+    expect(content).not.toContain('kaana.png');
+  });
 
   test('rejects changed logo bytes', async () => {
-    const logo = new Uint8Array(await readFile(new URL('public/images/apps/kaana.svg', WEBSITE_ROOT)))
-    const mutated = logo.slice()
-    const midpoint = Math.floor(mutated.length / 2)
-    const original = mutated.at(midpoint)
-    if (original === undefined) throw new Error('the canonical Kaana logo is empty')
-    mutated[midpoint] = original ^ 1
-    expect(sha256(mutated)).not.toBe(CANONICAL_LOGO_SHA256)
-  })
-})
+    const logo = new Uint8Array(
+      await readFile(new URL('public/images/apps/kaana.svg', WEBSITE_ROOT)),
+    );
+    const mutated = logo.slice();
+    const midpoint = Math.floor(mutated.length / 2);
+    const original = mutated.at(midpoint);
+    if (original === undefined) throw new Error('the canonical Kaana logo is empty');
+    mutated[midpoint] = original ^ 1;
+    expect(sha256(mutated)).not.toBe(CANONICAL_LOGO_SHA256);
+  });
+});

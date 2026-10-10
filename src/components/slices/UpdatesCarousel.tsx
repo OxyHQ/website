@@ -1,23 +1,23 @@
-import { useRef, useState } from 'react'
-import { Link } from '../../lib/navigation'
-import SliceIcon from './SliceIcon'
+import { useRef, useState } from 'react';
+import { Link } from '../../lib/navigation';
+import SliceIcon from './SliceIcon';
 
 export interface UpdateItem {
-  title: string
-  href: string
-  image: string
-  imageAlt: string
+  title: string;
+  href: string;
+  image: string;
+  imageAlt: string;
 }
 
 interface UpdatesCarouselProps {
-  title: string
-  items: UpdateItem[]
+  title: string;
+  items: UpdateItem[];
   /** Cards shown in the mobile grid, which has no carousel to page through. */
-  mobileCount?: number
+  mobileCount?: number;
 }
 
 /** Gap between slides, in px — the arrows page by exactly one card plus this. */
-const SLIDE_GAP = 24
+const SLIDE_GAP = 24;
 
 function Card({ item, roundedClassName }: { item: UpdateItem; roundedClassName: string }) {
   return (
@@ -37,7 +37,7 @@ function Card({ item, roundedClassName }: { item: UpdateItem; roundedClassName: 
         <h3 className="text-b1 text-gray-a1 pt-4 transition-colors">{item.title}</h3>
       </article>
     </Link>
-  )
+  );
 }
 
 /**
@@ -47,29 +47,29 @@ function Card({ item, roundedClassName }: { item: UpdateItem; roundedClassName: 
  * all work without a slider runtime.
  */
 export default function UpdatesCarousel({ title, items, mobileCount = 4 }: UpdatesCarouselProps) {
-  const trackRef = useRef<HTMLDivElement>(null)
-  const [atStart, setAtStart] = useState(true)
-  const [atEnd, setAtEnd] = useState(false)
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
 
   const page = (direction: 1 | -1) => {
-    const track = trackRef.current
-    if (!track) return
-    const slide = track.firstElementChild
-    const step = slide instanceof HTMLElement ? slide.offsetWidth + SLIDE_GAP : track.clientWidth
-    track.scrollBy({ left: step * direction, behavior: 'smooth' })
-  }
+    const track = trackRef.current;
+    if (!track) return;
+    const slide = track.firstElementChild;
+    const step = slide instanceof HTMLElement ? slide.offsetWidth + SLIDE_GAP : track.clientWidth;
+    track.scrollBy({ left: step * direction, behavior: 'smooth' });
+  };
 
   const handleScroll = () => {
-    const track = trackRef.current
-    if (!track) return
-    setAtStart(track.scrollLeft <= 1)
-    setAtEnd(track.scrollLeft >= track.scrollWidth - track.clientWidth - 1)
-  }
+    const track = trackRef.current;
+    if (!track) return;
+    setAtStart(track.scrollLeft <= 1);
+    setAtEnd(track.scrollLeft >= track.scrollWidth - track.clientWidth - 1);
+  };
 
   const arrowClasses = (disabled: boolean) =>
     `px-6 py-2.5 h-8 items-center rounded-full inline-flex transition-all duration-100 ease-impulse ${
       disabled ? 'bg-gray-a9' : 'cursor-pointer bg-gray-a8 hover:bg-gray-a7'
-    }`
+    }`;
 
   return (
     <section className="text-gray-a1 layout-padding-top">
@@ -83,10 +83,22 @@ export default function UpdatesCarousel({ title, items, mobileCount = 4 }: Updat
             disabled={atStart}
             onClick={() => page(-1)}
           >
-            <SliceIcon name="arrow-left" className={`size-3 ${atStart ? 'text-alt-gray-e2' : 'text-gray-a1'}`} />
+            <SliceIcon
+              name="arrow-left"
+              className={`size-3 ${atStart ? 'text-alt-gray-e2' : 'text-gray-a1'}`}
+            />
           </button>
-          <button className={arrowClasses(atEnd)} type="button" aria-label="Next slide" disabled={atEnd} onClick={() => page(1)}>
-            <SliceIcon name="arrow-right" className={`size-3 ${atEnd ? 'text-alt-gray-e2' : 'text-gray-a1'}`} />
+          <button
+            className={arrowClasses(atEnd)}
+            type="button"
+            aria-label="Next slide"
+            disabled={atEnd}
+            onClick={() => page(1)}
+          >
+            <SliceIcon
+              name="arrow-right"
+              className={`size-3 ${atEnd ? 'text-alt-gray-e2' : 'text-gray-a1'}`}
+            />
           </button>
         </div>
       </div>
@@ -109,5 +121,5 @@ export default function UpdatesCarousel({ title, items, mobileCount = 4 }: Updat
         ))}
       </div>
     </section>
-  )
+  );
 }

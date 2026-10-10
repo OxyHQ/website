@@ -7,10 +7,10 @@
  * first — so returning a benign function is safe.
  */
 function codegenNativeComponent<T = unknown>(name: string): T {
-  void name
+  void name;
   // The shape consumers expect is a React component descriptor; an empty
   // function is fine because every callsite is dead on web.
-  return (() => null) as unknown as T
+  return (() => null) as unknown as T;
 }
 
-export default codegenNativeComponent
+export default codegenNativeComponent;

@@ -1,7 +1,7 @@
-import type { Request, Response, NextFunction } from 'express'
-import { eq } from 'drizzle-orm'
-import { db } from '../db/postgres.js'
-import { locales as localesTable } from '../db/schema/index.js'
+import type { Request, Response, NextFunction } from 'express';
+import { eq } from 'drizzle-orm';
+import { db } from '../db/postgres.js';
+import { locales as localesTable } from '../db/schema/index.js';
 
 declare global {
   // The Express namespace is the canonical augmentation point for
@@ -9,45 +9,45 @@ declare global {
   // biome-ignore lint/style/noNamespace: the Express namespace is the canonical augmentation point; module syntax cannot extend it
   namespace Express {
     interface Request {
-      locale?: string
-      isDefaultLocale?: boolean
+      locale?: string;
+      isDefaultLocale?: boolean;
     }
   }
 }
 
-let cachedDefault: string | null = null
-let cachedEnabled: Set<string> | null = null
-let cacheTime = 0
+let cachedDefault: string | null = null;
+let cachedEnabled: Set<string> | null = null;
+let cacheTime = 0;
 /**
  * Every task keeps its own copy, and a locale change only invalidates the copy
  * on the task that made it. This TTL is therefore how long ANOTHER task can
  * keep serving the previous default — short, because the query behind it reads
  * a handful of rows.
  */
-const CACHE_TTL = 10_000
+const CACHE_TTL = 10_000;
 
 async function getLocaleInfo() {
-  const now = Date.now()
+  const now = Date.now();
   if (cachedDefault && cachedEnabled && now - cacheTime < CACHE_TTL) {
-    return { defaultLocale: cachedDefault, enabledLocales: cachedEnabled }
+    return { defaultLocale: cachedDefault, enabledLocales: cachedEnabled };
   }
 
-  const locales = await db.select().from(localesTable).where(eq(localesTable.enabled, true))
-  const defaultLocale = locales.find(l => l.isDefault)?.code ?? 'en'
-  const enabledLocales = new Set(locales.map(l => l.code))
-  if (!enabledLocales.size) enabledLocales.add(defaultLocale)
+  const locales = await db.select().from(localesTable).where(eq(localesTable.enabled, true));
+  const defaultLocale = locales.find((l) => l.isDefault)?.code ?? 'en';
+  const enabledLocales = new Set(locales.map((l) => l.code));
+  if (!enabledLocales.size) enabledLocales.add(defaultLocale);
 
-  cachedDefault = defaultLocale
-  cachedEnabled = enabledLocales
-  cacheTime = now
-  return { defaultLocale, enabledLocales }
+  cachedDefault = defaultLocale;
+  cachedEnabled = enabledLocales;
+  cacheTime = now;
+  return { defaultLocale, enabledLocales };
 }
 
 /** Invalidate the cached locale list (call after locale CRUD operations). */
 export function invalidateLocaleCache() {
-  cachedDefault = null
-  cachedEnabled = null
-  cacheTime = 0
+  cachedDefault = null;
+  cachedEnabled = null;
+  cacheTime = 0;
 }
 
 /**
@@ -55,19 +55,21 @@ export function invalidateLocaleCache() {
  * `req.locale` and `req.isDefaultLocale` on the request.
  */
 export async function localeMiddleware(req: Request, _res: Response, next: NextFunction) {
-  const { defaultLocale, enabledLocales } = await getLocaleInfo()
-  const raw = req.query.locale
-  const requested = typeof raw === 'string' ? raw.toLowerCase() : undefined
+  const { defaultLocale, enabledLocales } = await getLocaleInfo();
+  const raw = req.query.locale;
+  const requested = typeof raw === 'string' ? raw.toLowerCase() : undefined;
   // Codes are stored as written ("pt-BR") and requested in any case: match
   // without case, then use the stored code, which is what translation rows carry.
-  const matched = requested ? [...enabledLocales].find((code) => code.toLowerCase() === requested) : undefined
+  const matched = requested
+    ? [...enabledLocales].find((code) => code.toLowerCase() === requested)
+    : undefined;
 
   if (matched) {
-    req.locale = matched
-    req.isDefaultLocale = matched === defaultLocale
+    req.locale = matched;
+    req.isDefaultLocale = matched === defaultLocale;
   } else {
-    req.locale = defaultLocale
-    req.isDefaultLocale = true
+    req.locale = defaultLocale;
+    req.isDefaultLocale = true;
   }
-  next()
+  next();
 }

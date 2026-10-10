@@ -1,5 +1,5 @@
-import { Link } from '../../lib/navigation'
-import { resolveProductLogoUrl, type ProductRecord } from '../../api/hooks'
+import { Link } from '../../lib/navigation';
+import { resolveProductLogoUrl, type ProductRecord } from '../../api/hooks';
 
 /* ──────────────────────────────────────────────
  * The row every apps surface is built from: icon, name, one meta line and the
@@ -12,19 +12,25 @@ import { resolveProductLogoUrl, type ProductRecord } from '../../api/hooks'
  * ──────────────────────────────────────────── */
 
 function appPath(product: ProductRecord): string {
-  return `/apps/${product.productId}`
+  return `/apps/${product.productId}`;
 }
 
 /** Category label when the record carries a populated category, else ''. */
 // biome-ignore lint/style/useComponentExportOnlyModules: pure helper co-located with the card component; fast refresh has no state to preserve here
 export function categoryLabel(product: ProductRecord): string {
-  const category = product.category
-  if (!category || typeof category === 'string') return ''
-  return category.label ?? ''
+  const category = product.category;
+  if (!category || typeof category === 'string') return '';
+  return category.label ?? '';
 }
 
-export function AppIcon({ product, className = '' }: { product: ProductRecord; className?: string }) {
-  const logo = resolveProductLogoUrl(product)
+export function AppIcon({
+  product,
+  className = '',
+}: {
+  product: ProductRecord;
+  className?: string;
+}) {
+  const logo = resolveProductLogoUrl(product);
   if (logo) {
     return (
       <img
@@ -35,7 +41,7 @@ export function AppIcon({ product, className = '' }: { product: ProductRecord; c
         loading="lazy"
         decoding="async"
       />
-    )
+    );
   }
   // Most records have no uploaded logo, so the brand mark stands in: an empty
   // hole where the icon goes reads as a broken image.
@@ -49,11 +55,17 @@ export function AppIcon({ product, className = '' }: { product: ProductRecord; c
     >
       {product.mark}
     </span>
-  )
+  );
 }
 
-export default function AppCard({ product, inverted = false }: { product: ProductRecord; inverted?: boolean }) {
-  const category = categoryLabel(product)
+export default function AppCard({
+  product,
+  inverted = false,
+}: {
+  product: ProductRecord;
+  inverted?: boolean;
+}) {
+  const category = categoryLabel(product);
 
   // Sizes and gaps are the template's own steps, not approximations of them:
   // a 52px icon (`app-icon-sm`), 12px from icon to text (`gap-space-md`), and 1px
@@ -97,11 +109,13 @@ export default function AppCard({ product, inverted = false }: { product: Produc
           {/* The template's description line runs to about sixty characters and
               wraps rather than clipping, so the tagline falls back to the
               longer description when a record has one. */}
-          <div className={`line-clamp-2 text-body-xs ${inverted ? 'text-background/70' : 'text-muted-foreground'}`}>
+          <div
+            className={`line-clamp-2 text-body-xs ${inverted ? 'text-background/70' : 'text-muted-foreground'}`}
+          >
             {product.tagline || product.description}
           </div>
         </div>
       </Link>
     </div>
-  )
+  );
 }

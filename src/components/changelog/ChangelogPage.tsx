@@ -1,13 +1,13 @@
-import { useState } from 'react'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import { Chip } from '@oxy.so/bloom/chip'
-import { Divider } from '@oxy.so/bloom/divider'
-import { Pagination } from '@oxy.so/bloom/pagination'
-import { getStaticChangelog, type StaticChangelogEntry } from '../../content/changelog-loader'
-import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Chip } from '@oxy.so/bloom/chip';
+import { Divider } from '@oxy.so/bloom/divider';
+import { Pagination } from '@oxy.so/bloom/pagination';
+import { getStaticChangelog, type StaticChangelogEntry } from '../../content/changelog-loader';
+import { AnimatedTitle } from '../ui/AnimatedTitle';
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 10;
 
 /**
  * A release body is written for GitHub, so its relative links point inside the
@@ -15,12 +15,15 @@ const PAGE_SIZE = 10
  * 404'd, so they are re-pointed at the repo on its default branch: `tree` for a
  * directory, `blob` for a file, which is how GitHub itself resolves them.
  */
-function resolveReleaseLink(href: string | undefined, entry: StaticChangelogEntry): string | undefined {
-  if (!href || /^([a-z]+:|#|\/\/)/i.test(href)) return href
-  if (!entry.repoOwner || !entry.repoName) return href
-  const path = href.replace(/^\.?\//, '')
-  const kind = path.endsWith('/') ? 'tree' : 'blob'
-  return `https://github.com/${entry.repoOwner}/${entry.repoName}/${kind}/HEAD/${path}`
+function resolveReleaseLink(
+  href: string | undefined,
+  entry: StaticChangelogEntry,
+): string | undefined {
+  if (!href || /^([a-z]+:|#|\/\/)/i.test(href)) return href;
+  if (!entry.repoOwner || !entry.repoName) return href;
+  const path = href.replace(/^\.?\//, '');
+  const kind = path.endsWith('/') ? 'tree' : 'blob';
+  return `https://github.com/${entry.repoOwner}/${entry.repoName}/${kind}/HEAD/${path}`;
 }
 
 /**
@@ -34,21 +37,24 @@ function resolveReleaseLink(href: string | undefined, entry: StaticChangelogEntr
  * of the note and stays.
  */
 function withoutLeadingTitle(content: string): string {
-  const lines = content.split('\n')
-  const first = lines.findIndex((line) => line.trim() !== '')
-  if (first === -1 || !/^#\s+/.test(lines[first])) return content
-  return lines.slice(first + 1).join('\n').replace(/^\s+/, '')
+  const lines = content.split('\n');
+  const first = lines.findIndex((line) => line.trim() !== '');
+  if (first === -1 || !/^#\s+/.test(lines[first])) return content;
+  return lines
+    .slice(first + 1)
+    .join('\n')
+    .replace(/^\s+/, '');
 }
 
 interface ChangelogMonth {
   /** Anchor id, e.g. `june-2026`. */
-  id: string
+  id: string;
   /** Full label for the aside, e.g. `June`. */
-  month: string
-  year: number
+  month: string;
+  year: number;
   /** Short label for the rail, e.g. `Jun 26`. */
-  rail: string
-  entries: StaticChangelogEntry[]
+  rail: string;
+  entries: StaticChangelogEntry[];
 }
 
 /**
@@ -60,46 +66,46 @@ interface ChangelogMonth {
  * link that goes nowhere.
  */
 function groupByMonth(entries: StaticChangelogEntry[]): ChangelogMonth[] {
-  const groups = new Map<string, ChangelogMonth>()
+  const groups = new Map<string, ChangelogMonth>();
   for (const entry of entries) {
-    const date = new Date(entry.date)
-    const month = date.toLocaleDateString('en-US', { month: 'long' })
-    const year = date.getFullYear()
-    const id = `${month.toLowerCase()}-${year}`
+    const date = new Date(entry.date);
+    const month = date.toLocaleDateString('en-US', { month: 'long' });
+    const year = date.getFullYear();
+    const id = `${month.toLowerCase()}-${year}`;
     const group = groups.get(id) ?? {
       id,
       month,
       year,
       rail: `${date.toLocaleDateString('en-US', { month: 'short' })} ${String(year).slice(2)}`,
       entries: [],
-    }
-    group.entries.push(entry)
-    groups.set(id, group)
+    };
+    group.entries.push(entry);
+    groups.set(id, group);
   }
-  return [...groups.values()]
+  return [...groups.values()];
 }
 
 export default function ChangelogContent() {
-  const { entries: allEntries, repos } = getStaticChangelog()
+  const { entries: allEntries, repos } = getStaticChangelog();
 
-  const [selectedRepo, setSelectedRepo] = useState<string | undefined>(undefined)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [selectedRepo, setSelectedRepo] = useState<string | undefined>(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // React Compiler memoizes these derived values automatically; manual
   // `useMemo` here trips the immutability rule because the compiler
   // can't prove that `allEntries` won't be mutated downstream.
   const filtered = selectedRepo
     ? allEntries.filter((e) => {
-        const [owner, name] = selectedRepo.split('/')
-        return e.repoOwner === owner && e.repoName === name
+        const [owner, name] = selectedRepo.split('/');
+        return e.repoOwner === owner && e.repoName === name;
       })
-    : allEntries
+    : allEntries;
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const safePage = Math.min(Math.max(1, currentPage), totalPages)
-  const entries = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
-  const months = groupByMonth(entries)
-  const years = [...new Set(months.map((m) => m.year))].sort((a, b) => b - a)
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(Math.max(1, currentPage), totalPages);
+  const entries = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const months = groupByMonth(entries);
+  const years = [...new Set(months.map((m) => m.year))].sort((a, b) => b - a);
 
   return (
     <>
@@ -112,15 +118,19 @@ export default function ChangelogContent() {
         */}
         <div className="relative">
           <div className="relative isolate">
-            <div className="absolute bottom-0 left-0 z-10 w-full h-[200px] bg-[linear-gradient(to_bottom,transparent,var(--color-border))]" aria-hidden="true" />
+            <div
+              className="absolute bottom-0 left-0 z-10 w-full h-[200px] bg-[linear-gradient(to_bottom,transparent,var(--color-border))]"
+              aria-hidden="true"
+            />
             {/* Dot pattern background */}
-            <svg
-              width="100%"
-              height="100%"
-              className="mask-t-to-50% absolute inset-0 text-muted"
-            >
+            <svg width="100%" height="100%" className="mask-t-to-50% absolute inset-0 text-muted">
               <defs>
-                <pattern id="changelog-hero-dots" width="10" height="10" patternUnits="userSpaceOnUse">
+                <pattern
+                  id="changelog-hero-dots"
+                  width="10"
+                  height="10"
+                  patternUnits="userSpaceOnUse"
+                >
                   <rect x="5.5" y="5.5" width="1" height="1" fill="currentColor" />
                 </pattern>
               </defs>
@@ -143,7 +153,8 @@ export default function ChangelogContent() {
 
                 <div className="flex flex-col justify-end gap-6 p-10 pb-30 max-lg:p-6 max-lg:pb-16 max-lg:pt-0 lg:w-[30%]">
                   <p className="text-balance text-lg text-foreground lg:text-xl">
-                    A rundown of the latest Oxy feature releases, product enhancements, design updates, and important bug fixes.
+                    A rundown of the latest Oxy feature releases, product enhancements, design
+                    updates, and important bug fixes.
                   </p>
                 </div>
               </div>
@@ -171,23 +182,29 @@ export default function ChangelogContent() {
                   variant="inverted"
                   role="radio"
                   selected={!selectedRepo}
-                  onPress={() => { setSelectedRepo(undefined); setCurrentPage(1) }}
+                  onPress={() => {
+                    setSelectedRepo(undefined);
+                    setCurrentPage(1);
+                  }}
                 >
                   All
                 </Chip>
                 {repos.map((r) => {
-                  const key = `${r.owner}/${r.name}`
+                  const key = `${r.owner}/${r.name}`;
                   return (
                     <Chip
                       key={key}
                       variant="inverted"
                       role="radio"
                       selected={selectedRepo === key}
-                      onPress={() => { setSelectedRepo(key); setCurrentPage(1) }}
+                      onPress={() => {
+                        setSelectedRepo(key);
+                        setCurrentPage(1);
+                      }}
                     >
                       {r.displayName}
                     </Chip>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -238,7 +255,10 @@ export default function ChangelogContent() {
                     <div className="ml-4 flex-1 pb-14 xl:ml-6">
                       <div className="flex flex-wrap items-center gap-3 pb-6">
                         <h2 className="text-title-sm text-foreground" id={entry._id}>
-                          {new Date(entry.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+                          {new Date(entry.date).toLocaleDateString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                          })}
                         </h2>
                         <span className="font-mono text-label-sm uppercase tracking-wider text-muted-foreground">
                           {group.year}
@@ -274,7 +294,11 @@ export default function ChangelogContent() {
                           remarkPlugins={[remarkGfm]}
                           components={{
                             a: ({ href, children }) => (
-                              <a href={resolveReleaseLink(href, entry)} target="_blank" rel="noopener noreferrer">
+                              <a
+                                href={resolveReleaseLink(href, entry)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
                                 {children}
                               </a>
                             ),
@@ -356,7 +380,7 @@ export default function ChangelogContent() {
         </div>
       )}
     </>
-  )
+  );
 }
 
 /** Map tag name strings to colors for entries */
@@ -372,6 +396,6 @@ function tagColor(tag: string): string {
     Docs: 'var(--muted-foreground)',
     Performance: 'var(--tertiary-text)',
     Security: 'var(--error-text)',
-  }
-  return colors[tag] || 'var(--muted-foreground)'
+  };
+  return colors[tag] || 'var(--muted-foreground)';
 }

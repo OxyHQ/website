@@ -1,4 +1,4 @@
-import type { PlaygroundProp } from './_playground'
+import type { PlaygroundProp } from './_playground';
 
 export const props: PlaygroundProp[] = [
   { name: 'children', kind: 'text', default: 'Chip' },
@@ -22,4 +22,4 @@ export const props: PlaygroundProp[] = [
   },
   { name: 'checked', kind: 'boolean', default: false },
   { name: 'disabled', kind: 'boolean', default: false },
-]
+];

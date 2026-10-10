@@ -1,17 +1,26 @@
-import { Link } from '../../lib/navigation'
-import { APP_CARD_IMAGES } from '../../data/appCardImages'
+import { Link } from '../../lib/navigation';
+import { APP_CARD_IMAGES } from '../../data/appCardImages';
 
 export type CommunityProfileCard = {
-  type: 'profile'
-  image: string
-  logo?: string
-  cornerIcon?: string
-  name: string
-  role: string
-  href: string
-  descriptionClassName?: string
-  theme?: 'mention-theme' | 'allo-theme' | 'faircoin-theme' | 'homiio-theme' | 'mercaria-theme' | 'inbox-theme' | 'astro-card-theme' | 'oxyos-card-theme' | 'alia-card-theme'
-}
+  type: 'profile';
+  image: string;
+  logo?: string;
+  cornerIcon?: string;
+  name: string;
+  role: string;
+  href: string;
+  descriptionClassName?: string;
+  theme?:
+    | 'mention-theme'
+    | 'allo-theme'
+    | 'faircoin-theme'
+    | 'homiio-theme'
+    | 'mercaria-theme'
+    | 'inbox-theme'
+    | 'astro-card-theme'
+    | 'oxyos-card-theme'
+    | 'alia-card-theme';
+};
 
 /** App cards reused by the homepage app showcase. */
 // biome-ignore lint/style/useComponentExportOnlyModules: app card data reused by the homepage app showcase, co-located with its component
@@ -69,14 +78,26 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
     descriptionClassName: 'text-accent-primary',
     theme: 'mercaria-theme',
   },
-]
+];
 
-export function CommunityProfileCardView({ card, className = '' }: { card: CommunityProfileCard; className?: string }) {
+export function CommunityProfileCardView({
+  card,
+  className = '',
+}: {
+  card: CommunityProfileCard;
+  className?: string;
+}) {
   const content = (
-    <article className={`${card.theme ?? ''} relative flex h-[360px] w-full shrink-0 flex-col overflow-hidden rounded-[32px] bg-[color-mix(in_srgb,var(--primary)_32%,var(--background))] p-8 md:h-[480px] md:w-96 ${className}`}>
+    <article
+      className={`${card.theme ?? ''} relative flex h-[360px] w-full shrink-0 flex-col overflow-hidden rounded-[32px] bg-[color-mix(in_srgb,var(--primary)_32%,var(--background))] p-8 md:h-[480px] md:w-96 ${className}`}
+    >
       <div className="relative z-20 flex flex-col gap-1">
         <p className="heading-3xl text-[32px] font-semibold text-primary-text">{card.name}</p>
-        <p className={`heading-xl text-sm font-medium ${card.descriptionClassName ?? 'text-secondary-text'}`}>{card.role}</p>
+        <p
+          className={`heading-xl text-sm font-medium ${card.descriptionClassName ?? 'text-secondary-text'}`}
+        >
+          {card.role}
+        </p>
       </div>
       <div className="relative -mx-8 -mb-8 min-h-0 flex-1">
         <img
@@ -101,17 +122,22 @@ export function CommunityProfileCardView({ card, className = '' }: { card: Commu
         />
       ) : null}
     </article>
-  )
+  );
 
-  const linkClassName = 'block h-full rounded-[32px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary'
+  const linkClassName =
+    'block h-full rounded-[32px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary';
 
   if (card.href.startsWith('http')) {
     return (
       <a href={card.href} target="_blank" rel="noopener noreferrer" className={linkClassName}>
         {content}
       </a>
-    )
+    );
   }
 
-  return <Link to={card.href} className={linkClassName}>{content}</Link>
+  return (
+    <Link to={card.href} className={linkClassName}>
+      {content}
+    </Link>
+  );
 }

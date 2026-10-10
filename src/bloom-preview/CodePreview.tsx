@@ -1,6 +1,6 @@
-import { useEffect, useState, type ComponentType } from 'react'
-import { ErrorBoundary } from '@oxy.so/bloom/error-boundary'
-import { evaluateSnippet } from '../components/docs/BloomLiveRuntime'
+import { useEffect, useState, type ComponentType } from 'react';
+import { ErrorBoundary } from '@oxy.so/bloom/error-boundary';
+import { evaluateSnippet } from '../components/docs/BloomLiveRuntime';
 
 /**
  * Runs the snippet and shows what it renders.
@@ -13,59 +13,59 @@ import { evaluateSnippet } from '../components/docs/BloomLiveRuntime'
  * boundary, and neither reaches the route.
  */
 
-const DEBOUNCE_MS = 300
+const DEBOUNCE_MS = 300;
 
 interface Preview {
-  Component: ComponentType
+  Component: ComponentType;
   /**
    * Bumped per successful compile, and used as the boundary's `key`: a
    * boundary that has caught an error does not un-catch it, so the fixed
    * snippet needs a new boundary rather than the old one's children.
    */
-  revision: number
+  revision: number;
 }
 
 /** The last compile that finished, and the text it ran on. */
 interface Outcome {
-  source: string
-  error: string | null
+  source: string;
+  error: string | null;
 }
 
 export interface BloomCodePreviewProps {
-  source: string
+  source: string;
 }
 
 export function BloomCodePreview({ source }: BloomCodePreviewProps) {
-  const [preview, setPreview] = useState<Preview | null>(null)
-  const [outcome, setOutcome] = useState<Outcome | null>(null)
+  const [preview, setPreview] = useState<Preview | null>(null);
+  const [outcome, setOutcome] = useState<Outcome | null>(null);
   // Derived, not stored: an edit that has not been compiled yet is exactly one
   // whose text differs from the text the last outcome came from.
-  const compiling = outcome?.source !== source
-  const error = outcome?.error ?? null
+  const compiling = outcome?.source !== source;
+  const error = outcome?.error ?? null;
 
   // Compiling is asynchronous work driven by state a keystroke changes, which
   // is what an effect is for. The debounce keeps the compiler off the keystroke
   // path, and the cancel flag is what stops a slow compile from overwriting the
   // result of a newer one.
   useEffect(() => {
-    let cancelled = false
+    let cancelled = false;
     const timer = setTimeout(() => {
       void evaluateSnippet(source).then((result) => {
-        if (cancelled) return
-        setOutcome({ source, error: result.ok ? null : result.message })
+        if (cancelled) return;
+        setOutcome({ source, error: result.ok ? null : result.message });
         if (result.ok) {
           setPreview((current) => ({
             Component: result.Component,
             revision: (current?.revision ?? 0) + 1,
-          }))
+          }));
         }
-      })
-    }, DEBOUNCE_MS)
+      });
+    }, DEBOUNCE_MS);
     return () => {
-      cancelled = true
-      clearTimeout(timer)
-    }
-  }, [source])
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [source]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -78,7 +78,9 @@ export function BloomCodePreview({ source }: BloomCodePreviewProps) {
           {preview ? (
             <ErrorBoundary
               key={preview.revision}
-              fallback={({ error: thrown }) => <PreviewMessage tone="error" text={thrown.message} />}
+              fallback={({ error: thrown }) => (
+                <PreviewMessage tone="error" text={thrown.message} />
+              )}
             >
               <preview.Component />
             </ErrorBoundary>
@@ -96,7 +98,7 @@ export function BloomCodePreview({ source }: BloomCodePreviewProps) {
         </div>
       ) : null}
     </div>
-  )
+  );
 }
 
 function PreviewMessage({ tone, text }: { tone: 'error' | 'muted'; text: string }) {
@@ -108,5 +110,5 @@ function PreviewMessage({ tone, text }: { tone: 'error' | 'muted'; text: string 
     >
       {text}
     </p>
-  )
+  );
 }

@@ -8,38 +8,38 @@
  * how to *resolve* it, plus the fixed brand identities keyed by host.
  */
 
-import { withDocumentTrailingSlash } from './seoUrl'
+import { withDocumentTrailingSlash } from './seoUrl';
 
-export type SeoBrand = 'oxy' | 'faircoin'
+export type SeoBrand = 'oxy' | 'faircoin';
 
 export interface SeoMeta {
-  title: string
-  description: string
+  title: string;
+  description: string;
   /** Root-relative or absolute. Empty falls back to the brand default. */
-  ogImage: string
+  ogImage: string;
 }
 
 export interface BrandSeo {
-  default: SeoMeta | null
-  routes: Record<string, SeoMeta>
+  default: SeoMeta | null;
+  routes: Record<string, SeoMeta>;
 }
 
 /** Shape of `GET /api/seo`. */
-export type SeoData = Record<SeoBrand, BrandSeo>
+export type SeoData = Record<SeoBrand, BrandSeo>;
 
 interface BrandIdentity {
-  origin: string
-  siteName: string
+  origin: string;
+  siteName: string;
   /** Used when the CMS has no `ogImage` for the route or brand default. */
-  fallbackOgImage: string
+  fallbackOgImage: string;
   /**
    * Bootstrap title/description used only when the CMS has no entry at all
    * (API unseeded or unreachable). The CMS is the real source of truth; this is
    * a thin safety net so a brand never ships empty or wrong meta. No CRM, no
    * em-dashes.
    */
-  fallbackTitle: string
-  fallbackDescription: string
+  fallbackTitle: string;
+  fallbackDescription: string;
 }
 
 const BRANDS: Record<SeoBrand, BrandIdentity> = {
@@ -59,9 +59,9 @@ const BRANDS: Record<SeoBrand, BrandIdentity> = {
     fallbackDescription:
       'FairCoin is a community run cryptocurrency. Decentralized, fair, free of speculation. Hybrid PoW and PoS, capped at 33M coins. Wallets, masternodes, explorer and an optional Base bridge.',
   },
-}
+};
 
-const FAIRCOIN_HOSTS: ReadonlySet<string> = new Set(['fairco.in', 'www.fairco.in'])
+const FAIRCOIN_HOSTS: ReadonlySet<string> = new Set(['fairco.in', 'www.fairco.in']);
 
 /**
  * Return the editorial part of a title before `<SEO>` adds the active brand.
@@ -69,47 +69,47 @@ const FAIRCOIN_HOSTS: ReadonlySet<string> = new Set(['fairco.in', 'www.fairco.in
  * and content-specific meta-title fields may already contain one.
  */
 export function normalizeSeoTitle(title: string, siteName: string): string {
-  const original = title.trim()
-  const suffix = ` | ${siteName}`
-  let normalized = original
+  const original = title.trim();
+  const suffix = ` | ${siteName}`;
+  let normalized = original;
 
   while (normalized.toLowerCase().endsWith(suffix.toLowerCase())) {
-    normalized = normalized.slice(0, -suffix.length).trimEnd()
+    normalized = normalized.slice(0, -suffix.length).trimEnd();
   }
 
-  return normalized || original
+  return normalized || original;
 }
 
 /** Which brand a hostname belongs to. Defaults to Oxy off-browser / unknown hosts. */
 export function brandForHost(host?: string | null): SeoBrand {
-  return host && FAIRCOIN_HOSTS.has(host.toLowerCase()) ? 'faircoin' : 'oxy'
+  return host && FAIRCOIN_HOSTS.has(host.toLowerCase()) ? 'faircoin' : 'oxy';
 }
 
 export interface ResolvedSeo {
-  title: string
-  description: string
-  canonical: string
-  ogImage: string
-  siteName: string
-  brand: SeoBrand
+  title: string;
+  description: string;
+  canonical: string;
+  ogImage: string;
+  siteName: string;
+  brand: SeoBrand;
   /**
    * True when the CMS had an entry for this exact route, false when the result
    * came from the brand-wide `*` entry. A wildcard entry is a floor for routes
    * that carry no meta of their own; it must not overwrite what a page states
    * about itself.
    */
-  matchedRoute: boolean
+  matchedRoute: boolean;
 }
 
 /** Trailing-slash-normalize a path (`/a/` → `/a`, `/` stays `/`). */
 function normalizePath(pathname: string): string {
-  if (pathname.length > 1 && pathname.endsWith('/')) return pathname.replace(/\/+$/, '')
-  return pathname || '/'
+  if (pathname.length > 1 && pathname.endsWith('/')) return pathname.replace(/\/+$/, '');
+  return pathname || '/';
 }
 
 function toAbsolute(origin: string, url: string): string {
-  if (!url) return ''
-  return /^https?:\/\//.test(url) ? url : origin + url
+  if (!url) return '';
+  return /^https?:\/\//.test(url) ? url : origin + url;
 }
 
 /**
@@ -117,14 +117,18 @@ function toAbsolute(origin: string, url: string): string {
  * when the CMS has no entry and no brand default for that route — the caller
  * (a dynamic page like a blog post or docs page) then supplies its own meta.
  */
-export function resolveSeo(data: SeoData | null, pathname: string, host?: string | null): ResolvedSeo | null {
-  const brand = brandForHost(host)
-  const identity = BRANDS[brand]
-  const table = data?.[brand]
-  const routeEntry = table?.routes[normalizePath(pathname)] ?? null
-  const entry = routeEntry ?? table?.default ?? null
-  if (!entry) return null
-  const ogImage = entry.ogImage || table?.default?.ogImage || identity.fallbackOgImage
+export function resolveSeo(
+  data: SeoData | null,
+  pathname: string,
+  host?: string | null,
+): ResolvedSeo | null {
+  const brand = brandForHost(host);
+  const identity = BRANDS[brand];
+  const table = data?.[brand];
+  const routeEntry = table?.routes[normalizePath(pathname)] ?? null;
+  const entry = routeEntry ?? table?.default ?? null;
+  if (!entry) return null;
+  const ogImage = entry.ogImage || table?.default?.ogImage || identity.fallbackOgImage;
   return {
     title: entry.title,
     description: entry.description,
@@ -133,25 +137,25 @@ export function resolveSeo(data: SeoData | null, pathname: string, host?: string
     siteName: identity.siteName,
     brand,
     matchedRoute: routeEntry !== null,
-  }
+  };
 }
 
 /** Brand identity + origin for a host, with no CMS lookup. */
 export function brandConfig(host?: string | null): {
-  brand: SeoBrand
-  origin: string
-  siteName: string
+  brand: SeoBrand;
+  origin: string;
+  siteName: string;
   /** Absolute URL of the brand's default OG image. */
-  ogImage: string
+  ogImage: string;
 } {
-  const brand = brandForHost(host)
-  const identity = BRANDS[brand]
+  const brand = brandForHost(host);
+  const identity = BRANDS[brand];
   return {
     brand,
     origin: identity.origin,
     siteName: identity.siteName,
     ogImage: identity.origin + identity.fallbackOgImage,
-  }
+  };
 }
 
 /**
@@ -160,11 +164,15 @@ export function brandConfig(host?: string | null): {
  * always emit *some* correct, host-appropriate meta even before the CMS is
  * seeded or if the API is unreachable.
  */
-export function resolveSeoOrDefault(data: SeoData | null, pathname: string, host?: string | null): ResolvedSeo {
-  const fromCms = resolveSeo(data, pathname, host)
-  if (fromCms) return fromCms
-  const brand = brandForHost(host)
-  const identity = BRANDS[brand]
+export function resolveSeoOrDefault(
+  data: SeoData | null,
+  pathname: string,
+  host?: string | null,
+): ResolvedSeo {
+  const fromCms = resolveSeo(data, pathname, host);
+  if (fromCms) return fromCms;
+  const brand = brandForHost(host);
+  const identity = BRANDS[brand];
   return {
     title: identity.fallbackTitle,
     description: identity.fallbackDescription,
@@ -173,5 +181,5 @@ export function resolveSeoOrDefault(data: SeoData | null, pathname: string, host
     siteName: identity.siteName,
     brand,
     matchedRoute: false,
-  }
+  };
 }

@@ -1,12 +1,12 @@
-import { Suspense, createElement, use, useState } from 'react'
-import { bloomReferenceSurfaces } from '../../content/bloom-reference-surfaces'
-import { DocsExample } from './DocsExample'
-import { DocsInstall } from './DocsInstall'
-import { bloomUsage } from './bloomUsage'
-import { defaultValues } from '../../content/bloom-demos/_playground'
-import { useParams } from 'react-router-dom'
-import { Link } from '../../lib/navigation'
-import { Button } from '@oxy.so/bloom/button'
+import { Suspense, createElement, use, useState } from 'react';
+import { bloomReferenceSurfaces } from '../../content/bloom-reference-surfaces';
+import { DocsExample } from './DocsExample';
+import { DocsInstall } from './DocsInstall';
+import { bloomUsage } from './bloomUsage';
+import { defaultValues } from '../../content/bloom-demos/_playground';
+import { useParams } from 'react-router-dom';
+import { Link } from '../../lib/navigation';
+import { Button } from '@oxy.so/bloom/button';
 import {
   Select,
   SelectContent,
@@ -16,36 +16,30 @@ import {
   SelectItemText,
   SelectTrigger,
   SelectValue,
-} from '@oxy.so/bloom/select'
-import { Switch } from '@oxy.so/bloom/switch'
-import { TextField, TextFieldInput } from '@oxy.so/bloom/text-field'
-import {
-  bloomIndex,
-  bloomVersion,
-} from '../../content/bloom-catalog.generated'
-import { loadBloomSurfaceProps } from '../../content/bloom-catalog-loader'
-import { knobFor, pascalPath } from '../../content/bloom-catalog'
+} from '@oxy.so/bloom/select';
+import { Switch } from '@oxy.so/bloom/switch';
+import { TextField, TextFieldInput } from '@oxy.so/bloom/text-field';
+import { bloomIndex, bloomVersion } from '../../content/bloom-catalog.generated';
+import { loadBloomSurfaceProps } from '../../content/bloom-catalog-loader';
+import { knobFor, pascalPath } from '../../content/bloom-catalog';
 import type {
   BloomKnob,
   BloomProp,
   BloomSurfaceEntry,
   BloomSurfaceProps,
-} from '../../content/bloom-catalog'
-import { getBloomDemo } from '../../content/bloom-demos/registry'
-import type {
-  PlaygroundValue,
-  PlaygroundValues,
-} from '../../content/bloom-demos/_playground'
-import CodeBlock from '../../content/_components/CodeBlock'
-import { getPackage } from '../../content/docs-loader'
-import PageShell from '../layout/PageShell'
-import { DocsShell } from './DocsShell'
-import { bloomCatalogSections } from './bloomCatalogSidebar'
-import CatalogPreview from '../bloom/CatalogPreview'
-import { catalogPreviews } from '../bloom/catalogPreviews'
+} from '../../content/bloom-catalog';
+import { getBloomDemo } from '../../content/bloom-demos/registry';
+import type { PlaygroundValue, PlaygroundValues } from '../../content/bloom-demos/_playground';
+import CodeBlock from '../../content/_components/CodeBlock';
+import { getPackage } from '../../content/docs-loader';
+import PageShell from '../layout/PageShell';
+import { DocsShell } from './DocsShell';
+import { bloomCatalogSections } from './bloomCatalogSidebar';
+import CatalogPreview from '../bloom/CatalogPreview';
+import { catalogPreviews } from '../bloom/catalogPreviews';
 
 /** Where the component index lives, and what every card on it links under. */
-const HUB_PATH = '/developers/docs/bloom/components'
+const HUB_PATH = '/developers/docs/bloom/components';
 
 /**
  * What these pages describe, stated on every one of them.
@@ -54,7 +48,7 @@ const HUB_PATH = '/developers/docs/bloom/components'
  * package by whole majors — so a page that named no version at all left the
  * reader unable to tell which of the two they were reading.
  */
-const EYEBROW = `Bloom ${bloomVersion}`
+const EYEBROW = `Bloom ${bloomVersion}`;
 
 /**
  * The package rail both pages sit in. Bloom's docs are versioned and these
@@ -62,10 +56,9 @@ const EYEBROW = `Bloom ${bloomVersion}`
  * their sidebar links to the installed catalog and shows no version chrome.
  */
 function bloomDocsShell() {
-  const pkg = getPackage('bloom')
-  return { pkg, sections: bloomCatalogSections }
+  const pkg = getPackage('bloom');
+  return { pkg, sections: bloomCatalogSections };
 }
-
 
 /**
  * One Bloom surface: what it exports, what it looks like, and every prop it
@@ -80,10 +73,10 @@ function bloomDocsShell() {
  * the demo, shared with the component gallery and Bloom landing.
  */
 export default function BloomComponentPage() {
-  const params = useParams()
-  const subpath = (params['*'] ?? '').replace(/^\/+|\/+$/g, '')
-  const entry = bloomIndex.find((surface) => surface.subpath === subpath)
-  const { pkg, sections } = bloomDocsShell()
+  const params = useParams();
+  const subpath = (params['*'] ?? '').replace(/^\/+|\/+$/g, '');
+  const entry = bloomIndex.find((surface) => surface.subpath === subpath);
+  const { pkg, sections } = bloomDocsShell();
 
   if (!entry) {
     return (
@@ -91,8 +84,7 @@ export default function BloomComponentPage() {
         className="docs-theme bg-background"
         seo={{
           title: 'Bloom component not found',
-          description:
-            'Browse the Bloom component index to find the published surface you need.',
+          description: 'Browse the Bloom component index to find the published surface you need.',
           canonicalPath: HUB_PATH,
         }}
         mainClassName="flex-1 bg-background text-muted-foreground"
@@ -107,15 +99,11 @@ export default function BloomComponentPage() {
           <div className="not-prose flex flex-col gap-3 rounded-2xl border border-border bg-surface p-6 text-sm text-muted-foreground">
             <p>
               Bloom publishes no export called{' '}
-              <code className="font-mono text-foreground">{subpath}</code>. Its{' '}
-              {bloomIndex.length} documented subpaths are named after what you
-              import from —{' '}
+              <code className="font-mono text-foreground">{subpath}</code>. Its {bloomIndex.length}{' '}
+              documented subpaths are named after what you import from —{' '}
               <code className="font-mono text-foreground">button</code>,{' '}
               <code className="font-mono text-foreground">text-field</code>,{' '}
-              <code className="font-mono text-foreground">
-                tabs/expo-router
-              </code>
-              .
+              <code className="font-mono text-foreground">tabs/expo-router</code>.
             </p>
             <p>
               <Link className="text-primary hover:underline" to={HUB_PATH}>
@@ -125,16 +113,15 @@ export default function BloomComponentPage() {
           </div>
         </DocsShell>
       </PageShell>
-    )
+    );
   }
 
-  const surfaceName = pascalPath(entry.subpath)
-  const preview = catalogPreviews[entry.subpath]
+  const surfaceName = pascalPath(entry.subpath);
+  const preview = catalogPreviews[entry.subpath];
   const description =
     preview?.description ??
-    entry.components.find((component) => component.name === surfaceName)
-      ?.description ??
-    getBloomDemo(surfaceName)?.description
+    entry.components.find((component) => component.name === surfaceName)?.description ??
+    getBloomDemo(surfaceName)?.description;
 
   return (
     <PageShell
@@ -142,8 +129,7 @@ export default function BloomComponentPage() {
       seo={{
         title: `${surfaceName} · Bloom components`,
         description:
-          description ??
-          `Explore ${surfaceName} exports, props and live examples in Bloom.`,
+          description ?? `Explore ${surfaceName} exports, props and live examples in Bloom.`,
         canonicalPath: `${HUB_PATH}/${entry.subpath}`,
       }}
       mainClassName="flex-1 bg-background text-muted-foreground"
@@ -171,12 +157,11 @@ export default function BloomComponentPage() {
             <Link className="oxy-link" to={HUB_PATH}>
               All components
             </Link>
-
           </nav>
         </div>
       </DocsShell>
     </PageShell>
-  )
+  );
 }
 
 /** An `id` a heading can be linked at, and the contents rail can list. */
@@ -184,7 +169,7 @@ function slugId(value: string): string {
   return value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
+    .replace(/(^-|-$)/g, '');
 }
 
 /**
@@ -192,28 +177,28 @@ function slugId(value: string): string {
  * render. `loadBloomSurfaceProps` returns a fresh promise per call, and a
  * fresh promise is a fresh suspension — the render would never settle.
  */
-const surfacePropsBySubpath = new Map<string, Promise<BloomSurfaceProps>>()
+const surfacePropsBySubpath = new Map<string, Promise<BloomSurfaceProps>>();
 
 function surfacePropsFor(subpath: string): Promise<BloomSurfaceProps> {
-  const cached = surfacePropsBySubpath.get(subpath)
-  if (cached) return cached
-  const pending = loadBloomSurfaceProps(subpath)
-  surfacePropsBySubpath.set(subpath, pending)
-  return pending
+  const cached = surfacePropsBySubpath.get(subpath);
+  if (cached) return cached;
+  const pending = loadBloomSurfaceProps(subpath);
+  surfacePropsBySubpath.set(subpath, pending);
+  return pending;
 }
 
 /** One props type, and the components on this surface that take it. */
 interface PropsGroup {
   /** Key into `propTypes` — a type name, or a component name used as a handle. */
-  key: string
+  key: string;
   /** The components that share it, in export order. */
-  names: string[]
+  names: string[];
   /**
    * True when the key is itself a component name on this surface. Bloom writes
    * those props inline, with no type name to take, so the key is a grouping
    * handle rather than a type a reader could look up.
    */
-  handle: boolean
+  handle: boolean;
 }
 
 /**
@@ -223,28 +208,26 @@ interface PropsGroup {
  * button components take one props list, not ten identical ones.
  */
 function groupByPropsType(surface: BloomSurfaceProps): {
-  groups: PropsGroup[]
-  withoutProps: string[]
+  groups: PropsGroup[];
+  withoutProps: string[];
 } {
-  const order: string[] = []
-  const namesByKey = new Map<string, string[]>()
-  const withoutProps: string[] = []
+  const order: string[] = [];
+  const namesByKey = new Map<string, string[]>();
+  const withoutProps: string[] = [];
   for (const component of surface.components) {
     if (!component.propsType) {
-      withoutProps.push(component.name)
-      continue
+      withoutProps.push(component.name);
+      continue;
     }
-    const names = namesByKey.get(component.propsType)
+    const names = namesByKey.get(component.propsType);
     if (names) {
-      names.push(component.name)
-      continue
+      names.push(component.name);
+      continue;
     }
-    namesByKey.set(component.propsType, [component.name])
-    order.push(component.propsType)
+    namesByKey.set(component.propsType, [component.name]);
+    order.push(component.propsType);
   }
-  const componentNames = new Set(
-    surface.components.map((component) => component.name),
-  )
+  const componentNames = new Set(surface.components.map((component) => component.name));
   return {
     groups: order.map((key) => ({
       key,
@@ -252,7 +235,7 @@ function groupByPropsType(surface: BloomSurfaceProps): {
       handle: componentNames.has(key),
     })),
     withoutProps,
-  }
+  };
 }
 
 /**
@@ -268,92 +251,73 @@ function usageSnippet(
   const attributes = props
     .filter((prop) => prop.name !== 'children')
     .flatMap((prop) => {
-      const value: PlaygroundValue | undefined = values[prop.name]
-      if (value === undefined) return []
-      if (typeof value === 'boolean') return value ? [prop.name] : []
-      if (typeof value === 'number') return [`${prop.name}={${value}}`]
+      const value: PlaygroundValue | undefined = values[prop.name];
+      if (value === undefined) return [];
+      if (typeof value === 'boolean') return value ? [prop.name] : [];
+      if (typeof value === 'number') return [`${prop.name}={${value}}`];
       return [
-        value.includes('"')
-          ? `${prop.name}={${JSON.stringify(value)}}`
-          : `${prop.name}="${value}"`,
-      ]
-    })
-  const importLine = `import { ${componentName} } from '${importPath}'`
-  const oneLine = `<${componentName}${attributes.map((attribute) => ` ${attribute}`).join('')} />`
+        value.includes('"') ? `${prop.name}={${JSON.stringify(value)}}` : `${prop.name}="${value}"`,
+      ];
+    });
+  const importLine = `import { ${componentName} } from '${importPath}'`;
+  const oneLine = `<${componentName}${attributes.map((attribute) => ` ${attribute}`).join('')} />`;
   const element =
     oneLine.length <= 72
       ? oneLine
-      : `<${componentName}\n${attributes.map((attribute) => `  ${attribute}`).join('\n')}\n/>`
-  const children = values.children
+      : `<${componentName}\n${attributes.map((attribute) => `  ${attribute}`).join('\n')}\n/>`;
+  const children = values.children;
   const withChildren =
     typeof children === 'string'
-      ? element.replace(
-          /\s*\/>$/,
-          `>{${JSON.stringify(children)}}</${componentName}>`,
-        )
-      : element
-  return `${importLine}\n\n${withChildren}`
+      ? element.replace(/\s*\/>$/, `>{${JSON.stringify(children)}}</${componentName}>`)
+      : element;
+  return `${importLine}\n\n${withChildren}`;
 }
 
 function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
-  const surface = use(surfacePropsFor(entry.subpath))
-  const surfaceName = pascalPath(entry.subpath)
-  const demo = getBloomDemo(surfaceName)
-  const [values, setValues] = useState<PlaygroundValues>(() =>
-    defaultValues(demo?.props ?? []),
-  )
-  const preview = catalogPreviews[entry.subpath]
+  const surface = use(surfacePropsFor(entry.subpath));
+  const surfaceName = pascalPath(entry.subpath);
+  const demo = getBloomDemo(surfaceName);
+  const [values, setValues] = useState<PlaygroundValues>(() => defaultValues(demo?.props ?? []));
+  const preview = catalogPreviews[entry.subpath];
   // The principal export is the one named after the surface; where Bloom names
   // none (`skeleton` exports `Pill`, `Circle`, …), the first export leads.
   const principal =
-    surface.components.find((component) => component.name === surfaceName) ??
-    surface.components[0]
+    surface.components.find((component) => component.name === surfaceName) ?? surface.components[0];
   const principalProps = principal?.propsType
     ? (surface.propTypes[principal.propsType]?.props ?? [])
-    : []
+    : [];
   const controls = (preview ? [] : principalProps)
-    .filter(
-      (prop) =>
-        demo?.Playground &&
-        demo.props?.some((control) => control.name === prop.name),
-    )
+    .filter((prop) => demo?.Playground && demo.props?.some((control) => control.name === prop.name))
     .flatMap((prop) => {
-      const knob = knobFor(prop)
-      return knob ? [{ prop, knob }] : []
-    })
+      const knob = knobFor(prop);
+      return knob ? [{ prop, knob }] : [];
+    });
   const code =
     bloomUsage[entry.subpath] ??
     (demo?.Playground && principal
       ? usageSnippet(entry.importPath, principal.name, principalProps, values)
       : demo?.source ||
         (principal
-          ? usageSnippet(
-              entry.importPath,
-              principal.name,
-              principalProps,
-              values,
-            )
-          : undefined))
-  const { groups, withoutProps } = groupByPropsType(surface)
+          ? usageSnippet(entry.importPath, principal.name, principalProps, values)
+          : undefined));
+  const { groups, withoutProps } = groupByPropsType(surface);
   const descriptions = new Map(
     entry.components.flatMap((component) =>
-      component.description
-        ? [[component.name, component.description] as const]
-        : [],
+      component.description ? [[component.name, component.description] as const] : [],
     ),
-  )
+  );
 
   const setValue = (name: string, value: PlaygroundValue | undefined) => {
     setValues((previous) => {
-      const next = { ...previous }
+      const next = { ...previous };
       if (value === undefined) {
-        delete next[name]
+        delete next[name];
       } else {
-        next[name] = value
+        next[name] = value;
       }
-      return next
-    })
-  }
+      return next;
+    });
+  };
 
   return (
     <>
@@ -361,29 +325,36 @@ function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
         <h2 id="preview" className="sr-only">
           Preview
         </h2>
-        {preview || demo ? <DocsExample title={preview?.title ?? surfaceName} code={code}>
-          {preview ? (
-            <CatalogPreview preview={preview} />
-          ) : demo ? (
-            <Suspense fallback={null}>
-              {demo.Playground
-                ? createElement(demo.Playground, { values })
-                : createElement(demo.Component)}
-            </Suspense>
-          ) : (
-            <p className="max-w-sm text-center text-sm text-muted-foreground">
-              Explore the exported components and their props below, or browse
-              the{' '}
-              <Link className="oxy-link" to={HUB_PATH}>
-                live component examples
-              </Link>
-              .
+        {preview || demo ? (
+          <DocsExample title={preview?.title ?? surfaceName} code={code}>
+            {preview ? (
+              <CatalogPreview preview={preview} />
+            ) : demo ? (
+              <Suspense fallback={null}>
+                {demo.Playground
+                  ? createElement(demo.Playground, { values })
+                  : createElement(demo.Component)}
+              </Suspense>
+            ) : (
+              <p className="max-w-sm text-center text-sm text-muted-foreground">
+                Explore the exported components and their props below, or browse the{' '}
+                <Link className="oxy-link" to={HUB_PATH}>
+                  live component examples
+                </Link>
+                .
+              </p>
+            )}
+          </DocsExample>
+        ) : (
+          <div className="space-y-3 border-b border-border pb-6 text-sm text-muted-foreground">
+            <p>
+              {bloomReferenceSurfaces[entry.subpath] ?? 'Integration reference for this module.'}
             </p>
-          )}
-        </DocsExample> : <div className="space-y-3 border-b border-border pb-6 text-sm text-muted-foreground">
-          <p>{bloomReferenceSurfaces[entry.subpath] ?? 'Integration reference for this module.'}</p>
-          <Link className="oxy-link" to={HUB_PATH}>Browse live component examples</Link>
-        </div>}
+            <Link className="oxy-link" to={HUB_PATH}>
+              Browse live component examples
+            </Link>
+          </div>
+        )}
         {principal && controls.length > 0 ? (
           <details className="rounded-2xl border border-border bg-surface p-4">
             <summary className="cursor-pointer text-sm font-medium text-foreground">
@@ -433,10 +404,7 @@ function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
         </h2>
         <p className="text-base leading-[24px] text-muted-foreground">
           Install Bloom in your project, then import the component from{' '}
-          <code className="font-mono text-sm text-foreground">
-            {entry.importPath}
-          </code>
-          .
+          <code className="font-mono text-sm text-foreground">{entry.importPath}</code>.
         </p>
         <DocsInstall packageName="@oxy.so/bloom" />
         <p className="text-sm text-muted-foreground">
@@ -457,8 +425,8 @@ function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
           </CodeBlock>
         ) : (
           <p className="text-sm text-muted-foreground">
-            This package exports utilities. See the exported types and functions
-            in the API reference.
+            This package exports utilities. See the exported types and functions in the API
+            reference.
           </p>
         )}
       </section>
@@ -468,9 +436,9 @@ function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
             Variants and sizes
           </h2>
           <p className="text-base leading-[24px] text-muted-foreground">
-            Use appearance to choose the treatment, tone for the action's
-            meaning, and size to fit the surrounding interface. Disabled buttons
-            keep their label while preventing interaction.
+            Use appearance to choose the treatment, tone for the action's meaning, and size to fit
+            the surrounding interface. Disabled buttons keep their label while preventing
+            interaction.
           </p>
           <DocsExample title="Button variants" code={demo.source}>
             <Suspense fallback={null}>{createElement(demo.Component)}</Suspense>
@@ -484,7 +452,7 @@ function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
             Props
           </h2>
           {groups.map((group) => {
-            const propType = surface.propTypes[group.key]
+            const propType = surface.propTypes[group.key];
             return (
               <div key={group.key} className="flex flex-col gap-3">
                 <h3
@@ -501,20 +469,18 @@ function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
                   </p>
                 )}
                 {group.names.map((name) => {
-                  const componentDescription = descriptions.get(name)
+                  const componentDescription = descriptions.get(name);
                   return componentDescription ? (
                     <p key={name} className="text-sm text-muted-foreground">
-                      <code className="font-mono text-foreground">{name}</code>{' '}
-                      — <PropDescription text={componentDescription} />
+                      <code className="font-mono text-foreground">{name}</code> —{' '}
+                      <PropDescription text={componentDescription} />
                     </p>
-                  ) : null
+                  ) : null;
                 })}
                 {propType && propType.props.length > 0 ? (
                   <PropsTable props={propType.props} />
                 ) : (
-                  <p className="text-sm text-muted-foreground">
-                    Declares no props of its own.
-                  </p>
+                  <p className="text-sm text-muted-foreground">Declares no props of its own.</p>
                 )}
                 {propType?.inheritsFrom ? (
                   <p className="text-sm text-muted-foreground">
@@ -531,7 +497,7 @@ function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
                   </p>
                 ) : null}
               </div>
-            )
+            );
           })}
           {withoutProps.length > 0 ? (
             <div className="flex flex-col gap-3">
@@ -545,17 +511,15 @@ function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
                 {withoutProps.join(', ')}
               </p>
               <p className="text-sm text-muted-foreground">
-                {withoutProps.length > 1
-                  ? 'These take no props'
-                  : 'Takes no props'}{' '}
-                — neither its own nor inherited.
+                {withoutProps.length > 1 ? 'These take no props' : 'Takes no props'} — neither its
+                own nor inherited.
               </p>
             </div>
           ) : null}
         </section>
       ) : null}
     </>
-  )
+  );
 }
 
 function PropControl({
@@ -564,10 +528,10 @@ function PropControl({
   value,
   onChange,
 }: {
-  prop: BloomProp
-  knob: BloomKnob
-  value: PlaygroundValue | undefined
-  onChange: (name: string, value: PlaygroundValue | undefined) => void
+  prop: BloomProp;
+  knob: BloomKnob;
+  value: PlaygroundValue | undefined;
+  onChange: (name: string, value: PlaygroundValue | undefined) => void;
 }) {
   if (knob.kind === 'boolean') {
     return (
@@ -575,13 +539,11 @@ function PropControl({
         <PropControlLabel prop={prop} />
         <Switch
           checked={value === true}
-          onCheckedChange={(next) =>
-            onChange(prop.name, next ? true : undefined)
-          }
+          onCheckedChange={(next) => onChange(prop.name, next ? true : undefined)}
           accessibilityLabel={prop.name}
         />
       </div>
-    )
+    );
   }
   if (knob.kind === 'select') {
     return (
@@ -612,9 +574,9 @@ function PropControl({
           />
         </Select>
       </div>
-    )
+    );
   }
-  const numeric = knob.kind === 'number'
+  const numeric = knob.kind === 'number';
   return (
     <div className="flex flex-col gap-1">
       <PropControlLabel prop={prop} />
@@ -626,20 +588,20 @@ function PropControl({
           placeholder="unset"
           onValueChange={(text) => {
             if (text === '') {
-              onChange(prop.name, undefined)
-              return
+              onChange(prop.name, undefined);
+              return;
             }
             if (!numeric) {
-              onChange(prop.name, text)
-              return
+              onChange(prop.name, text);
+              return;
             }
-            const parsed = Number(text)
-            onChange(prop.name, Number.isFinite(parsed) ? parsed : undefined)
+            const parsed = Number(text);
+            onChange(prop.name, Number.isFinite(parsed) ? parsed : undefined);
           }}
         />
       </TextField>
     </div>
-  )
+  );
 }
 
 function PropControlLabel({ prop }: { prop: BloomProp }) {
@@ -648,7 +610,7 @@ function PropControlLabel({ prop }: { prop: BloomProp }) {
       {prop.name}
       {prop.optional ? null : <span className="text-warning-text"> *</span>}
     </span>
-  )
+  );
 }
 
 function PropsTable({ props }: { props: readonly BloomProp[] }) {
@@ -664,16 +626,11 @@ function PropsTable({ props }: { props: readonly BloomProp[] }) {
         </thead>
         <tbody>
           {props.map((prop) => (
-            <tr
-              key={prop.name}
-              className="border-b border-border/60 last:border-b-0"
-            >
+            <tr key={prop.name} className="border-b border-border/60 last:border-b-0">
               {/* `w-px` + `nowrap`: the column hugs the longest prop name
                   rather than hyphenating `accessibilityLabel` over three lines. */}
               <td className="w-px whitespace-nowrap px-4 py-3 align-top">
-                <code className="font-mono text-[13px] text-foreground">
-                  {prop.name}
-                </code>
+                <code className="font-mono text-[13px] text-foreground">{prop.name}</code>
                 {prop.optional ? null : (
                   <span className="ml-2 rounded-full bg-warning-subtle px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-warning-text">
                     required
@@ -686,24 +643,20 @@ function PropsTable({ props }: { props: readonly BloomProp[] }) {
                 <PropType prop={prop} />
               </td>
               <td className="px-4 py-3 align-top text-muted-foreground">
-                {prop.description ? (
-                  <PropDescription text={prop.description} />
-                ) : (
-                  '—'
-                )}
+                {prop.description ? <PropDescription text={prop.description} /> : '—'}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-  )
+  );
 }
 
 function PropType({ prop }: { prop: BloomProp }) {
   // A prop declared as its own literal union already reads as its members, so
   // printing both the type and the chips would say it twice.
-  const declaredAsUnion = prop.type.trimStart().startsWith("'")
+  const declaredAsUnion = prop.type.trimStart().startsWith("'");
   return (
     <div className="flex flex-col gap-1.5">
       {prop.options && declaredAsUnion ? null : (
@@ -724,7 +677,7 @@ function PropType({ prop }: { prop: BloomProp }) {
         </div>
       ) : null}
     </div>
-  )
+  );
 }
 
 /**
@@ -747,5 +700,5 @@ function PropDescription({ text }: { text: string }) {
         ),
       )}
     </>
-  )
+  );
 }

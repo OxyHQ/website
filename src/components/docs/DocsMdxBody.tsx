@@ -1,10 +1,10 @@
-import { Suspense, createElement } from 'react'
-import { MDXProvider } from '@mdx-js/react'
-import { mdxLazyComponents } from '../../content/docs-loader'
-import { mdxComponents } from '../docs-platform/mdxComponentMap'
+import { Suspense, createElement } from 'react';
+import { MDXProvider } from '@mdx-js/react';
+import { mdxLazyComponents } from '../../content/docs-loader';
+import { mdxComponents } from '../docs-platform/mdxComponentMap';
 
 export function DocsMdxBody({ file }: { file: string }) {
-  const lazyComponent = mdxLazyComponents.get(file)
+  const lazyComponent = mdxLazyComponents.get(file);
 
   if (!lazyComponent) {
     return (
@@ -14,7 +14,7 @@ export function DocsMdxBody({ file }: { file: string }) {
           <code>bun scripts/sync-docs.ts</code> from the website root.
         </p>
       </div>
-    )
+    );
   }
   // `createElement` keeps the lazy component out of the JSX namespace, which
   // satisfies `react-hooks/static-components`. The components themselves are
@@ -23,14 +23,10 @@ export function DocsMdxBody({ file }: { file: string }) {
   return (
     <div className="docs-prose-body min-w-0 [&>h1:first-child]:hidden">
       <MDXProvider components={mdxComponents}>
-        <Suspense
-          fallback={
-            <div className="text-sm text-muted-foreground">Loading…</div>
-          }
-        >
+        <Suspense fallback={<div className="text-sm text-muted-foreground">Loading…</div>}>
           {createElement(lazyComponent)}
         </Suspense>
       </MDXProvider>
     </div>
-  )
+  );
 }

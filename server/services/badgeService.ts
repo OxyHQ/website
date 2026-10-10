@@ -1,11 +1,11 @@
-import { and, count, eq } from 'drizzle-orm'
-import { db } from '../db/postgres.js'
-import { comments, userBadges, votes } from '../db/schema/index.js'
-import { BADGE_DEFINITIONS } from '../data/badges.js'
+import { and, count, eq } from 'drizzle-orm';
+import { db } from '../db/postgres.js';
+import { comments, userBadges, votes } from '../db/schema/index.js';
+import { BADGE_DEFINITIONS } from '../data/badges.js';
 
 async function countRows(query: Promise<Array<{ value: number }>>): Promise<number> {
-  const [row] = await query
-  return Number(row?.value ?? 0)
+  const [row] = await query;
+  return Number(row?.value ?? 0);
 }
 
 /**
@@ -21,19 +21,19 @@ export async function checkAndAwardBadges(userId: string, username: string): Pro
         .where(and(eq(comments.userId, userId), eq(comments.status, 'visible'))),
     ),
     countRows(db.select({ value: count() }).from(votes).where(eq(votes.userId, userId))),
-  ])
+  ]);
 
-  const FIRST_COMMENT: keyof typeof BADGE_DEFINITIONS = 'first_comment'
-  const PROLIFIC_COMMENTER: keyof typeof BADGE_DEFINITIONS = 'prolific_commenter'
-  const TOP_VOTER: keyof typeof BADGE_DEFINITIONS = 'top_voter'
+  const FIRST_COMMENT: keyof typeof BADGE_DEFINITIONS = 'first_comment';
+  const PROLIFIC_COMMENTER: keyof typeof BADGE_DEFINITIONS = 'prolific_commenter';
+  const TOP_VOTER: keyof typeof BADGE_DEFINITIONS = 'top_voter';
 
-  const earned: string[] = []
-  if (commentCount >= 1) earned.push(FIRST_COMMENT)
-  if (commentCount >= 50) earned.push(PROLIFIC_COMMENTER)
-  if (voteCount >= 25) earned.push(TOP_VOTER)
+  const earned: string[] = [];
+  if (commentCount >= 1) earned.push(FIRST_COMMENT);
+  if (commentCount >= 50) earned.push(PROLIFIC_COMMENTER);
+  if (voteCount >= 25) earned.push(TOP_VOTER);
 
   await Promise.allSettled(
-    earned.map(badgeId =>
+    earned.map((badgeId) =>
       db
         .insert(userBadges)
         .values({ userId, username, badgeId, awardedAt: new Date(), awardedBy: null })
@@ -41,8 +41,8 @@ export async function checkAndAwardBadges(userId: string, username: string): Pro
         // would silently move the date every time the user comments again.
         .onConflictDoNothing({ target: [userBadges.userId, userBadges.badgeId] })
         .catch((err: unknown) => {
-          console.warn(`[badgeService] Failed to award ${badgeId} to ${userId}:`, err)
+          console.warn(`[badgeService] Failed to award ${badgeId} to ${userId}:`, err);
         }),
     ),
-  )
+  );
 }

@@ -1,25 +1,25 @@
-import { Suspense, lazy } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { loaderFor } from './docsApiSpec'
+import { Suspense, lazy } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { loaderFor } from './docsApiSpec';
 
 const ApiReferenceReact = lazy(() =>
   import('@scalar/api-reference-react').then((m) => ({ default: m.ApiReferenceReact })),
-)
+);
 
 export function DocsApiBody({ version }: { version: string }) {
   const specQuery = useQuery({
     queryKey: ['docs-api-spec', version],
     queryFn: async () => {
-      const loader = loaderFor(version)
-      if (!loader) throw new Error(`No OpenAPI document for version "${version}".`)
-      const mod = await loader()
-      return mod.default
+      const loader = loaderFor(version);
+      if (!loader) throw new Error(`No OpenAPI document for version "${version}".`);
+      const mod = await loader();
+      return mod.default;
     },
     staleTime: Infinity,
-  })
+  });
 
-  const spec = specQuery.data ?? null
-  const error = specQuery.error instanceof Error ? specQuery.error.message : null
+  const spec = specQuery.data ?? null;
+  const error = specQuery.error instanceof Error ? specQuery.error.message : null;
 
   if (error) {
     return (
@@ -31,10 +31,10 @@ export function DocsApiBody({ version }: { version: string }) {
         </p>
         <p className="mt-2 text-xs text-muted-foreground">Detail: {error}</p>
       </div>
-    )
+    );
   }
   if (!spec) {
-    return <div className="text-sm text-muted-foreground">Loading API reference…</div>
+    return <div className="text-sm text-muted-foreground">Loading API reference…</div>;
   }
   return (
     <div className="-mx-6 lg:-mx-12">
@@ -42,5 +42,5 @@ export function DocsApiBody({ version }: { version: string }) {
         <ApiReferenceReact configuration={{ content: spec }} />
       </Suspense>
     </div>
-  )
+  );
 }

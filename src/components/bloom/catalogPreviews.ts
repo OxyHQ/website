@@ -1,13 +1,13 @@
-import type { BloomDemoName } from './BloomPreview'
+import type { BloomDemoName } from './BloomPreview';
 
 export interface CatalogPreview {
-  name: BloomDemoName
-  title: string
-  description: string
-  width: number
-  height: number
+  name: BloomDemoName;
+  title: string;
+  description: string;
+  width: number;
+  height: number;
   /** Some reference thumbnails crop a full-size component instead of shrinking it. */
-  thumbnailScale?: number
+  thumbnailScale?: number;
 }
 
 // Reuse the landing's real Bloom compositions in the component documentation.
@@ -24,8 +24,7 @@ export const catalogPreviews: Record<string, CatalogPreview> = {
   'project-board': {
     name: 'project-board',
     title: 'Project board',
-    description:
-      'Move tickets between columns, create tasks and edit their details.',
+    description: 'Move tickets between columns, create tasks and edit their details.',
     width: 1100,
     height: 650,
   },
@@ -163,4 +162,4 @@ export const catalogPreviews: Record<string, CatalogPreview> = {
     width: 300,
     height: 60,
   },
-}
+};

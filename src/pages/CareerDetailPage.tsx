@@ -1,6 +1,6 @@
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import CareerDetailContent from '../components/careers/CareerDetailPage'
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import CareerDetailContent from '../components/careers/CareerDetailPage';
 
 export default function CareerDetailPage() {
   return (
@@ -11,5 +11,5 @@ export default function CareerDetailPage() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }

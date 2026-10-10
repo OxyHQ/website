@@ -1,21 +1,21 @@
-import { useCallback, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import Button from '../components/ui/Button'
-import ModelCard from '../components/ai/platform/ModelCard'
-import ModelFilters from '../components/ai/platform/ModelFilters'
+import { useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import Button from '../components/ui/Button';
+import ModelCard from '../components/ai/platform/ModelCard';
+import ModelFilters from '../components/ai/platform/ModelFilters';
 import {
   applyFilters,
   filtersFromSearchParams,
   filtersToSearchParams,
   type ModelFilterState,
-} from '../lib/ai/modelFilters'
-import { CatalogEmptyState, CatalogFreshness } from '../components/ai/platform/CatalogNotice'
-import { useTranslation } from '../lib/i18n'
-import { useCatalog } from '../lib/ai/useCatalog'
-import { entriesForListing } from '../lib/ai/catalog'
-import { isCatalogUnpublished } from '../lib/ai/snapshot'
+} from '../lib/ai/modelFilters';
+import { CatalogEmptyState, CatalogFreshness } from '../components/ai/platform/CatalogNotice';
+import { useTranslation } from '../lib/i18n';
+import { useCatalog } from '../lib/ai/useCatalog';
+import { entriesForListing } from '../lib/ai/catalog';
+import { isCatalogUnpublished } from '../lib/ai/snapshot';
 
 /**
  * `/ai/models` — the public catalogue.
@@ -31,26 +31,26 @@ import { isCatalogUnpublished } from '../lib/ai/snapshot'
  * TARGETS, and this only ever rewrites the query string of the current URL.
  */
 export default function AIModelsPage() {
-  const { t } = useTranslation()
-  const { catalog } = useCatalog()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const { t } = useTranslation();
+  const { catalog } = useCatalog();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const filters = useMemo(() => filtersFromSearchParams(searchParams), [searchParams])
+  const filters = useMemo(() => filtersFromSearchParams(searchParams), [searchParams]);
   const entries = useMemo(
     () => applyFilters(catalog, entriesForListing(catalog), filters),
     [catalog, filters],
-  )
+  );
 
   const onFiltersChange = useCallback(
     (next: ModelFilterState) => {
       // `replace` so twenty filter tweaks do not become twenty back-button
       // presses between the reader and the page they arrived from.
-      setSearchParams(filtersToSearchParams(next), { replace: true })
+      setSearchParams(filtersToSearchParams(next), { replace: true });
     },
     [setSearchParams],
-  )
+  );
 
-  const unpublished = isCatalogUnpublished(catalog)
+  const unpublished = isCatalogUnpublished(catalog);
 
   return (
     <PageShell
@@ -111,5 +111,5 @@ export default function AIModelsPage() {
         </div>
       </section>
     </PageShell>
-  )
+  );
 }

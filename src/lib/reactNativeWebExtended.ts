@@ -79,11 +79,11 @@ export {
   useColorScheme,
   useLocaleContext,
   useWindowDimensions,
-} from 'react-native-web'
+} from 'react-native-web';
 
 interface TurboModuleProxy {
-  get(name: string): unknown
-  getEnforcing(name: string): unknown
+  get(name: string): unknown;
+  getEnforcing(name: string): unknown;
 }
 
 const noopTurboModule = new Proxy(
@@ -91,7 +91,7 @@ const noopTurboModule = new Proxy(
   {
     get: () => undefined,
   },
-)
+);
 
 /**
  * Stand-in for `react-native/Libraries/TurboModule/TurboModuleRegistry`.
@@ -101,11 +101,11 @@ const noopTurboModule = new Proxy(
  */
 export const TurboModuleRegistry: TurboModuleProxy = {
   get(name: string): unknown {
-    void name
-    return noopTurboModule
+    void name;
+    return noopTurboModule;
   },
   getEnforcing(name: string): unknown {
-    void name
-    return noopTurboModule
+    void name;
+    return noopTurboModule;
   },
-}
+};

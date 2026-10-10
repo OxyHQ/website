@@ -1,82 +1,96 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import {
   useIncidentsAdmin,
   useProducts,
   type IncidentHistoryEntry,
   type IncidentSeverity,
   type IncidentUpdateStatus,
-} from '../../../api/hooks'
-import { apiFetch } from '../../../api/client'
-import { Button } from '@oxy.so/bloom/button'
-import { Checkbox } from '@oxy.so/bloom/checkbox'
-import { LabeledTextField } from '../LabeledTextField'
-import { Textarea } from '@oxy.so/bloom/textarea'
-import { Label } from '@oxy.so/bloom/label'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
-import OptionSelect from '../../ui/OptionSelect'
+} from '../../../api/hooks';
+import { apiFetch } from '../../../api/client';
+import { Button } from '@oxy.so/bloom/button';
+import { Checkbox } from '@oxy.so/bloom/checkbox';
+import { LabeledTextField } from '../LabeledTextField';
+import { Textarea } from '@oxy.so/bloom/textarea';
+import { Label } from '@oxy.so/bloom/label';
+import ConfirmDialog from '../ConfirmDialog';
+import { useConfirmAction } from '../useConfirmAction';
+import OptionSelect from '../../ui/OptionSelect';
 
-const SEVERITIES: IncidentSeverity[] = ['minor', 'major', 'critical']
-const UPDATE_STATUSES: IncidentUpdateStatus[] = ['investigating', 'identified', 'monitoring', 'resolved']
+const SEVERITIES: IncidentSeverity[] = ['minor', 'major', 'critical'];
+const UPDATE_STATUSES: IncidentUpdateStatus[] = [
+  'investigating',
+  'identified',
+  'monitoring',
+  'resolved',
+];
 
 interface EditingIncident {
-  _id?: string
-  title: string
-  severity: IncidentSeverity
-  products: string[]
+  _id?: string;
+  title: string;
+  severity: IncidentSeverity;
+  products: string[];
 }
 
 function emptyIncident(): EditingIncident {
-  return { title: '', severity: 'minor', products: [] }
+  return { title: '', severity: 'minor', products: [] };
 }
 
 function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString()
+  return new Date(iso).toLocaleString();
 }
 
 export default function IncidentsAdmin() {
-  const [page, setPage] = useState(1)
-  const { data, refetch } = useIncidentsAdmin(page)
-  const { data: productsData } = useProducts()
-  const products = productsData ?? []
+  const [page, setPage] = useState(1);
+  const { data, refetch } = useIncidentsAdmin(page);
+  const { data: productsData } = useProducts();
+  const products = productsData ?? [];
 
-  const [editing, setEditing] = useState<EditingIncident | null>(null)
-  const [history, setHistory] = useState<IncidentHistoryEntry['updates']>([])
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [editing, setEditing] = useState<EditingIncident | null>(null);
+  const [history, setHistory] = useState<IncidentHistoryEntry['updates']>([]);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [newUpdateStatus, setNewUpdateStatus] = useState<IncidentUpdateStatus>('investigating')
-  const [newUpdateBody, setNewUpdateBody] = useState('')
-  const [postingUpdate, setPostingUpdate] = useState(false)
+  const [newUpdateStatus, setNewUpdateStatus] = useState<IncidentUpdateStatus>('investigating');
+  const [newUpdateBody, setNewUpdateBody] = useState('');
+  const [postingUpdate, setPostingUpdate] = useState(false);
 
   const openForEdit = (incident: IncidentHistoryEntry) => {
-    setEditing({ _id: incident._id, title: incident.title, severity: incident.severity, products: incident.products })
-    setHistory(incident.updates)
-    setNewUpdateStatus(incident.status === 'resolved' ? 'investigating' : incident.status)
-    setNewUpdateBody('')
-    setError(null)
-  }
+    setEditing({
+      _id: incident._id,
+      title: incident.title,
+      severity: incident.severity,
+      products: incident.products,
+    });
+    setHistory(incident.updates);
+    setNewUpdateStatus(incident.status === 'resolved' ? 'investigating' : incident.status);
+    setNewUpdateBody('');
+    setError(null);
+  };
 
   const openForCreate = () => {
-    setEditing(emptyIncident())
-    setHistory([])
-    setNewUpdateStatus('investigating')
-    setNewUpdateBody('')
-    setError(null)
-  }
+    setEditing(emptyIncident());
+    setHistory([]);
+    setNewUpdateStatus('investigating');
+    setNewUpdateBody('');
+    setError(null);
+  };
 
   const save = async () => {
-    if (!editing) return
-    setError(null)
-    setSaving(true)
+    if (!editing) return;
+    setError(null);
+    setSaving(true);
     try {
       if (editing._id) {
         await apiFetch(`/status/incidents/${editing._id}`, {
           method: 'PUT',
-          body: JSON.stringify({ title: editing.title, severity: editing.severity, products: editing.products }),
-        })
+          body: JSON.stringify({
+            title: editing.title,
+            severity: editing.severity,
+            products: editing.products,
+          }),
+        });
       } else {
-        if (!newUpdateBody.trim()) throw new Error('The first update needs a message.')
+        if (!newUpdateBody.trim()) throw new Error('The first update needs a message.');
         await apiFetch('/status/incidents', {
           method: 'POST',
           body: JSON.stringify({
@@ -85,60 +99,64 @@ export default function IncidentsAdmin() {
             products: editing.products,
             update: { status: newUpdateStatus, body: newUpdateBody },
           }),
-        })
+        });
       }
-      await refetch()
-      setEditing(null)
+      await refetch();
+      setEditing(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save incident')
+      setError(err instanceof Error ? err.message : 'Failed to save incident');
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const postUpdate = async () => {
-    if (!editing?._id || !newUpdateBody.trim()) return
-    setPostingUpdate(true)
-    setError(null)
+    if (!editing?._id || !newUpdateBody.trim()) return;
+    setPostingUpdate(true);
+    setError(null);
     try {
       await apiFetch(`/status/incidents/${editing._id}/updates`, {
         method: 'POST',
         body: JSON.stringify({ status: newUpdateStatus, body: newUpdateBody }),
-      })
-      const fresh = await refetch()
-      const updated = fresh.data?.incidents.find((i) => i._id === editing._id)
-      if (updated) setHistory(updated.updates)
-      setNewUpdateBody('')
+      });
+      const fresh = await refetch();
+      const updated = fresh.data?.incidents.find((i) => i._id === editing._id);
+      if (updated) setHistory(updated.updates);
+      setNewUpdateBody('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to post update')
+      setError(err instanceof Error ? err.message : 'Failed to post update');
     } finally {
-      setPostingUpdate(false)
+      setPostingUpdate(false);
     }
-  }
+  };
 
   const deleteAction = useConfirmAction<IncidentHistoryEntry>({
     onConfirm: async (incident) => {
-      await apiFetch(`/status/incidents/${incident._id}`, { method: 'DELETE' })
-      await refetch()
+      await apiFetch(`/status/incidents/${incident._id}`, { method: 'DELETE' });
+      await refetch();
     },
-  })
+  });
 
   const toggleProduct = (id: string) => {
-    if (!editing) return
+    if (!editing) return;
     const next = editing.products.includes(id)
       ? editing.products.filter((p) => p !== id)
-      : [...editing.products, id]
-    setEditing({ ...editing, products: next })
-  }
+      : [...editing.products, id];
+    setEditing({ ...editing, products: next });
+  };
 
   if (editing) {
-    const isNew = !editing._id
+    const isNew = !editing._id;
     return (
       <div>
         <div className="mb-4">
-          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>
+            &larr; Back to list
+          </Button>
         </div>
-        <h2 className="text-xl font-semibold text-foreground">{isNew ? 'New incident' : `Edit: ${editing.title}`}</h2>
+        <h2 className="text-xl font-semibold text-foreground">
+          {isNew ? 'New incident' : `Edit: ${editing.title}`}
+        </h2>
 
         <div className="mt-6 flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
@@ -153,15 +171,21 @@ export default function IncidentsAdmin() {
               <OptionSelect
                 label="Severity"
                 value={editing.severity}
-                onValueChange={(value) => setEditing({ ...editing, severity: value as IncidentSeverity })}
+                onValueChange={(value) =>
+                  setEditing({ ...editing, severity: value as IncidentSeverity })
+                }
                 options={SEVERITIES.map((s) => ({ value: s, label: s }))}
               />
             </div>
           </div>
 
           <div className="rounded-xl border border-border p-4">
-            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Affected services</div>
-            <p className="mt-1 text-xs text-muted-foreground">Leave all unchecked for a site-wide notice.</p>
+            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Affected services
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Leave all unchecked for a site-wide notice.
+            </p>
             <div className="mt-3 grid grid-cols-3 gap-2">
               {products.map((product) => (
                 <Checkbox
@@ -176,18 +200,26 @@ export default function IncidentsAdmin() {
 
           {!isNew && (
             <div className="rounded-xl border border-border p-4">
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">History</div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                History
+              </div>
               <div className="mt-3 flex flex-col gap-3">
                 {[...history].reverse().map((update) => (
                   <div key={update._id} className="rounded-lg bg-surface/50 p-3">
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="font-medium capitalize text-foreground">{update.status}</span>
+                      <span className="font-medium capitalize text-foreground">
+                        {update.status}
+                      </span>
                       <span>{formatDateTime(update.createdAt)}</span>
                     </div>
-                    <p className="mt-1 whitespace-pre-wrap text-sm text-foreground">{update.body}</p>
+                    <p className="mt-1 whitespace-pre-wrap text-sm text-foreground">
+                      {update.body}
+                    </p>
                   </div>
                 ))}
-                {history.length === 0 && <p className="text-sm text-muted-foreground">No updates yet.</p>}
+                {history.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No updates yet.</p>
+                )}
               </div>
             </div>
           )}
@@ -214,7 +246,12 @@ export default function IncidentsAdmin() {
               />
               {!isNew && (
                 <div>
-                  <Button appearance="outline" tone="neutral" onPress={postUpdate} disabled={postingUpdate || !newUpdateBody.trim()}>
+                  <Button
+                    appearance="outline"
+                    tone="neutral"
+                    onPress={postUpdate}
+                    disabled={postingUpdate || !newUpdateBody.trim()}
+                  >
                     {postingUpdate ? 'Posting…' : 'Post update'}
                   </Button>
                 </div>
@@ -228,11 +265,13 @@ export default function IncidentsAdmin() {
             <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving…' : isNew ? 'Create incident' : 'Save changes'}
             </Button>
-            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>
+              Cancel
+            </Button>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -240,15 +279,27 @@ export default function IncidentsAdmin() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold text-foreground">Incidents</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Powers the /status page banner and the /history timeline.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Powers the /status page banner and the /history timeline.
+          </p>
         </div>
-        <Button appearance="solid" tone="accent" onPress={openForCreate}>New incident</Button>
+        <Button appearance="solid" tone="accent" onPress={openForCreate}>
+          New incident
+        </Button>
       </div>
 
       <div className="mt-6 flex items-center justify-between">
-        <Button appearance="subtle" onPress={() => setPage((p) => p + 1)}>&larr; Older</Button>
+        <Button appearance="subtle" onPress={() => setPage((p) => p + 1)}>
+          &larr; Older
+        </Button>
         <span className="text-sm font-medium text-foreground">{data?.label ?? '…'}</span>
-        <Button appearance="subtle" disabled={page <= 1} onPress={() => setPage((p) => Math.max(1, p - 1))}>Newer &rarr;</Button>
+        <Button
+          appearance="subtle"
+          disabled={page <= 1}
+          onPress={() => setPage((p) => Math.max(1, p - 1))}
+        >
+          Newer &rarr;
+        </Button>
       </div>
 
       {data && data.incidents.length === 0 ? (
@@ -260,14 +311,21 @@ export default function IncidentsAdmin() {
               <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-medium text-foreground">{incident.title}</div>
                 <div className="truncate text-xs text-muted-foreground">
-                  <span className="capitalize">{incident.severity}</span> · <span className="capitalize">{incident.status}</span> ·{' '}
-                  {incident.affectedServices.length > 0 ? incident.affectedServices.map((s) => s.name).join(', ') : 'Site-wide'} ·{' '}
-                  {formatDateTime(incident.startedAt)}
+                  <span className="capitalize">{incident.severity}</span> ·{' '}
+                  <span className="capitalize">{incident.status}</span> ·{' '}
+                  {incident.affectedServices.length > 0
+                    ? incident.affectedServices.map((s) => s.name).join(', ')
+                    : 'Site-wide'}{' '}
+                  · {formatDateTime(incident.startedAt)}
                 </div>
               </div>
               <div className="shrink-0">
-                <Button appearance="subtle" onPress={() => openForEdit(incident)}>Edit</Button>
-                <Button appearance="subtle" onPress={() => deleteAction.request(incident)}>Delete</Button>
+                <Button appearance="subtle" onPress={() => openForEdit(incident)}>
+                  Edit
+                </Button>
+                <Button appearance="subtle" onPress={() => deleteAction.request(incident)}>
+                  Delete
+                </Button>
               </div>
             </div>
           ))}
@@ -285,5 +343,5 @@ export default function IncidentsAdmin() {
         onConfirm={deleteAction.confirm}
       />
     </div>
-  )
+  );
 }

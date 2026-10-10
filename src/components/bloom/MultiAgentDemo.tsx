@@ -1,10 +1,7 @@
-import { useState } from 'react'
-import {
-  MultiAgentChat,
-  type MultiAgentChatWorkspace,
-} from '@oxy.so/bloom/multi-agent-chat'
-import { FOLD_CONFIG } from '@oxy.so/bloom/agent-avatar'
-import { useMediaQuery } from '../../hooks/useMediaQuery'
+import { useState } from 'react';
+import { MultiAgentChat, type MultiAgentChatWorkspace } from '@oxy.so/bloom/multi-agent-chat';
+import { FOLD_CONFIG } from '@oxy.so/bloom/agent-avatar';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 const agents: MultiAgentChatWorkspace['agents'] = [
   {
@@ -56,7 +53,7 @@ const agents: MultiAgentChatWorkspace['agents'] = [
     description: 'Turn ideas into next steps.',
     avatar: { ...FOLD_CONFIG, foldShape: 'diamond', hue: 215, saturation: 70 },
   },
-]
+];
 const initialWorkspace: MultiAgentChatWorkspace = {
   agents,
   chats: [
@@ -74,11 +71,11 @@ const initialWorkspace: MultiAgentChatWorkspace = {
     })),
   ],
   activeId: 'team',
-}
+};
 
 export function MultiAgentDemo() {
-  const desktop = useMediaQuery('(min-width: 1100px)')
-  const [workspace, setWorkspace] = useState(initialWorkspace)
+  const desktop = useMediaQuery('(min-width: 1100px)');
+  const [workspace, setWorkspace] = useState(initialWorkspace);
   return (
     <MultiAgentChat
       // Bloom's editor choice is initial-only. Remount its layout at the
@@ -95,5 +92,5 @@ export function MultiAgentDemo() {
         overflow: 'hidden',
       }}
     />
-  )
+  );
 }

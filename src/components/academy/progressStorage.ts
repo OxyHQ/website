@@ -17,30 +17,30 @@
  * `useSyncExternalStore` works during build-time prerender.
  * ──────────────────────────────────────────── */
 
-export type LessonStatus = 'not-started' | 'in-progress' | 'completed'
+export type LessonStatus = 'not-started' | 'in-progress' | 'completed';
 
 export interface LessonProgress {
-  status: LessonStatus
+  status: LessonStatus;
   /** ISO 8601 timestamp the lesson was marked completed. */
-  completedAt?: string
+  completedAt?: string;
   /** Optional resume position for future video/audio integrations. */
-  positionMs?: number
+  positionMs?: number;
 }
 
 /** `lessonSlug -> LessonProgress` for a single course. */
-export type CourseProgress = Record<string, LessonProgress>
+export type CourseProgress = Record<string, LessonProgress>;
 
 /** localStorage key prefix used for the per-course progress maps. */
-export const LOCAL_STORAGE_PREFIX = 'oxy:academy:progress:'
+export const LOCAL_STORAGE_PREFIX = 'oxy:academy:progress:';
 
 /** Subscribers notified on any `oxy:academy:progress:*` write or removal. */
-type Listener = () => void
-const listeners = new Set<Listener>()
+type Listener = () => void;
+const listeners = new Set<Listener>();
 
 function notify(): void {
   for (const listener of listeners) {
     try {
-      listener()
+      listener();
     } catch {
       // A buggy listener must not poison the others.
     }
@@ -50,38 +50,38 @@ function notify(): void {
 /** Subscribe to academy-progress writes. Returns an unsubscribe function. */
 export function subscribeProgress(listener: Listener): () => void {
   if (typeof window === 'undefined') {
-    return () => undefined
+    return () => undefined;
   }
-  listeners.add(listener)
+  listeners.add(listener);
   const onStorage = (event: StorageEvent) => {
     if (event.key === null || event.key.startsWith(LOCAL_STORAGE_PREFIX)) {
-      listener()
+      listener();
     }
-  }
-  window.addEventListener('storage', onStorage)
+  };
+  window.addEventListener('storage', onStorage);
   return () => {
-    listeners.delete(listener)
-    window.removeEventListener('storage', onStorage)
-  }
+    listeners.delete(listener);
+    window.removeEventListener('storage', onStorage);
+  };
 }
 
 function isLessonProgress(value: unknown): value is LessonProgress {
-  if (!value || typeof value !== 'object') return false
-  const candidate = value as Partial<LessonProgress>
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Partial<LessonProgress>;
   if (
     candidate.status !== 'not-started' &&
     candidate.status !== 'in-progress' &&
     candidate.status !== 'completed'
   ) {
-    return false
+    return false;
   }
   if (candidate.completedAt !== undefined && typeof candidate.completedAt !== 'string') {
-    return false
+    return false;
   }
   if (candidate.positionMs !== undefined && typeof candidate.positionMs !== 'number') {
-    return false
+    return false;
   }
-  return true
+  return true;
 }
 
 /**
@@ -89,25 +89,22 @@ function isLessonProgress(value: unknown): value is LessonProgress {
  * tampered or stale entry from poisoning the UI.
  */
 export function sanitizeCourseProgress(value: unknown): CourseProgress {
-  if (!value || typeof value !== 'object') return {}
-  const out: CourseProgress = {}
+  if (!value || typeof value !== 'object') return {};
+  const out: CourseProgress = {};
   for (const [lessonSlug, lessonValue] of Object.entries(value as Record<string, unknown>)) {
     if (typeof lessonSlug === 'string' && isLessonProgress(lessonValue)) {
-      out[lessonSlug] = lessonValue
+      out[lessonSlug] = lessonValue;
     }
   }
-  return out
+  return out;
 }
 
 /** Persist course progress to localStorage. No-op outside the browser. */
 export function writeLocalCourseProgress(courseSlug: string, progress: CourseProgress): void {
-  if (typeof window === 'undefined') return
+  if (typeof window === 'undefined') return;
   try {
-    window.localStorage.setItem(
-      `${LOCAL_STORAGE_PREFIX}${courseSlug}`,
-      JSON.stringify(progress),
-    )
-    notify()
+    window.localStorage.setItem(`${LOCAL_STORAGE_PREFIX}${courseSlug}`, JSON.stringify(progress));
+    notify();
   } catch {
     // Quota errors / disabled storage — best-effort, the in-memory cache
     // through React Query / useSyncExternalStore still keeps the session
@@ -117,20 +114,20 @@ export function writeLocalCourseProgress(courseSlug: string, progress: CoursePro
 
 /** Drop every academy-progress key. Used on sign-in migration. */
 export function clearAllLocalAcademyProgress(): void {
-  if (typeof window === 'undefined') return
+  if (typeof window === 'undefined') return;
   try {
-    const removable: string[] = []
+    const removable: string[] = [];
     for (let i = 0; i < window.localStorage.length; i += 1) {
-      const key = window.localStorage.key(i)
+      const key = window.localStorage.key(i);
       if (key && key.startsWith(LOCAL_STORAGE_PREFIX)) {
-        removable.push(key)
+        removable.push(key);
       }
     }
     for (const key of removable) {
-      window.localStorage.removeItem(key)
+      window.localStorage.removeItem(key);
     }
     if (removable.length > 0) {
-      notify()
+      notify();
     }
   } catch {
     // ignore
@@ -139,23 +136,23 @@ export function clearAllLocalAcademyProgress(): void {
 
 /** Enumerate the `(courseSlug, progress)` pairs currently in localStorage. */
 export function readAllLocalCourseProgress(): Array<{
-  courseSlug: string
-  progress: CourseProgress
+  courseSlug: string;
+  progress: CourseProgress;
 }> {
-  if (typeof window === 'undefined') return []
-  const entries: Array<{ courseSlug: string; progress: CourseProgress }> = []
+  if (typeof window === 'undefined') return [];
+  const entries: Array<{ courseSlug: string; progress: CourseProgress }> = [];
   try {
     for (let i = 0; i < window.localStorage.length; i += 1) {
-      const key = window.localStorage.key(i)
+      const key = window.localStorage.key(i);
       if (key && key.startsWith(LOCAL_STORAGE_PREFIX)) {
-        const courseSlug = key.slice(LOCAL_STORAGE_PREFIX.length)
-        const raw = window.localStorage.getItem(key)
+        const courseSlug = key.slice(LOCAL_STORAGE_PREFIX.length);
+        const raw = window.localStorage.getItem(key);
         if (raw) {
           try {
             entries.push({
               courseSlug,
               progress: sanitizeCourseProgress(JSON.parse(raw)),
-            })
+            });
           } catch {
             // Skip malformed entries.
           }
@@ -165,7 +162,7 @@ export function readAllLocalCourseProgress(): Array<{
   } catch {
     // ignore
   }
-  return entries
+  return entries;
 }
 
 /**
@@ -173,32 +170,29 @@ export function readAllLocalCourseProgress(): Array<{
  * per lesson. Used during sign-in migration when both the local and remote
  * states may have entries — we want the user's most recent action to win.
  */
-export function mergeCourseProgress(
-  a: CourseProgress,
-  b: CourseProgress,
-): CourseProgress {
-  const out: CourseProgress = { ...a }
+export function mergeCourseProgress(a: CourseProgress, b: CourseProgress): CourseProgress {
+  const out: CourseProgress = { ...a };
   for (const [lessonSlug, bEntry] of Object.entries(b)) {
-    const aEntry = out[lessonSlug]
+    const aEntry = out[lessonSlug];
     if (!aEntry) {
-      out[lessonSlug] = bEntry
-      continue
+      out[lessonSlug] = bEntry;
+      continue;
     }
     // Prefer "completed" over "in-progress"/"not-started", then by recency.
-    const aIsCompleted = aEntry.status === 'completed'
-    const bIsCompleted = bEntry.status === 'completed'
+    const aIsCompleted = aEntry.status === 'completed';
+    const bIsCompleted = bEntry.status === 'completed';
     if (bIsCompleted && !aIsCompleted) {
-      out[lessonSlug] = bEntry
-      continue
+      out[lessonSlug] = bEntry;
+      continue;
     }
     if (aIsCompleted && !bIsCompleted) {
       // Keep a — already the better signal.
-      continue
+      continue;
     }
     // Both completed (or both not), tie-break by completedAt recency.
-    const aTime = aEntry.completedAt ? Date.parse(aEntry.completedAt) : 0
-    const bTime = bEntry.completedAt ? Date.parse(bEntry.completedAt) : 0
-    out[lessonSlug] = bTime > aTime ? bEntry : aEntry
+    const aTime = aEntry.completedAt ? Date.parse(aEntry.completedAt) : 0;
+    const bTime = bEntry.completedAt ? Date.parse(bEntry.completedAt) : 0;
+    out[lessonSlug] = bTime > aTime ? bEntry : aEntry;
   }
-  return out
+  return out;
 }

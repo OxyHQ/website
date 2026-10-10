@@ -13,7 +13,7 @@
  * offset on the connecting path — `.ai-routing-flow` in `src/index.css`, which
  * is where its `prefers-reduced-motion` opt-out lives too.
  */
-import { useId } from 'react'
+import { useId } from 'react';
 
 const STAGES: ReadonlyArray<{ key: string; label: string; caption: string }> = [
   { key: 'request', label: 'Request', caption: 'Your application' },
@@ -22,10 +22,10 @@ const STAGES: ReadonlyArray<{ key: string; label: string; caption: string }> = [
   { key: 'deployment', label: 'Deployment', caption: 'Provider and region' },
   { key: 'stream', label: 'Stream', caption: 'Tokens back' },
   { key: 'receipt', label: 'Receipt', caption: 'Usage and cost' },
-]
+];
 
 export default function RoutingDiagram({ className = '' }: { className?: string }) {
-  const gradientId = useId()
+  const gradientId = useId();
 
   return (
     <div className={className}>
@@ -57,10 +57,16 @@ export default function RoutingDiagram({ className = '' }: { className?: string 
         />
 
         {STAGES.map((stage, index) => {
-          const x = 40 + index * ((920 - 40) / (STAGES.length - 1))
+          const x = 40 + index * ((920 - 40) / (STAGES.length - 1));
           return (
             <g key={stage.key}>
-              <circle cx={x} cy="70" r="9" fill="var(--color-background)" stroke="var(--color-border)" />
+              <circle
+                cx={x}
+                cy="70"
+                r="9"
+                fill="var(--color-background)"
+                stroke="var(--color-border)"
+              />
               <circle cx={x} cy="70" r="3.5" fill="var(--color-primary)" />
               <text
                 x={x}
@@ -81,9 +87,9 @@ export default function RoutingDiagram({ className = '' }: { className?: string 
                 {stage.caption}
               </text>
             </g>
-          )
+          );
         })}
       </svg>
     </div>
-  )
+  );
 }

@@ -1,15 +1,12 @@
-import Navbar from '../components/layout/Navbar'
-import PageShell from '../components/layout/PageShell'
-import StructuredData from '../components/StructuredData'
-import Button from '../components/ui/Button'
-import AiSection from '../components/ai/platform/AiSection'
-import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge'
-import { useTranslation } from '../lib/i18n'
-import {
-  enterpriseInferenceCapabilities,
-  enterpriseUndefinedTerms,
-} from '../data/ai/enterprise'
-import { infrastructureTiers } from '../data/ai/landing'
+import Navbar from '../components/layout/Navbar';
+import PageShell from '../components/layout/PageShell';
+import StructuredData from '../components/StructuredData';
+import Button from '../components/ui/Button';
+import AiSection from '../components/ai/platform/AiSection';
+import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge';
+import { useTranslation } from '../lib/i18n';
+import { enterpriseInferenceCapabilities, enterpriseUndefinedTerms } from '../data/ai/enterprise';
+import { infrastructureTiers } from '../data/ai/landing';
 
 /**
  * `/ai/enterprise` — shared, managed and dedicated inference for organizations.
@@ -21,7 +18,7 @@ import { infrastructureTiers } from '../data/ai/landing'
  * page forgot.
  */
 export default function AIEnterprisePage() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <PageShell
@@ -124,5 +121,5 @@ export default function AIEnterprisePage() {
         </div>
       </AiSection>
     </PageShell>
-  )
+  );
 }

@@ -7,9 +7,9 @@
  * (decimals/symbol/balanceOf) for showing the user's balance, and `bridgeBurn`
  * for the redemption call itself.
  */
-import type { Abi } from 'viem'
+import type { Abi } from 'viem';
 
-export const WFAIR_ADDRESS = '0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3' as const
+export const WFAIR_ADDRESS = '0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3' as const;
 
 export const WFAIR_ABI = [
   {
@@ -67,10 +67,10 @@ export const WFAIR_ABI = [
     ],
     anonymous: false,
   },
-] as const satisfies Abi
+] as const satisfies Abi;
 
 /** WFAIR uses 18 decimals (matches the contract literal). */
-export const WFAIR_DECIMALS = 18 as const
+export const WFAIR_DECIMALS = 18 as const;
 
 /** Bridge contract enforces 26–35 byte faircoin address payloads. */
-export const FAIRCOIN_ADDRESS_BYTES = { min: 26, max: 35 } as const
+export const FAIRCOIN_ADDRESS_BYTES = { min: 26, max: 35 } as const;

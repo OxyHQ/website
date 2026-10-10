@@ -1,27 +1,27 @@
-import { useState, type FormEvent } from 'react'
-import { Checkbox } from '@oxy.so/bloom/checkbox'
-import { Field } from '@oxy.so/bloom/field'
-import { TextFieldInput } from '@oxy.so/bloom/text-field'
-import { Textarea } from '@oxy.so/bloom/textarea'
-import { Dialog, type DialogControlProps } from '@oxy.so/bloom/dialog'
-import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
-import Button from '../ui/Button'
-import OptionSelect from '../ui/OptionSelect'
+import { useState, type FormEvent } from 'react';
+import { Checkbox } from '@oxy.so/bloom/checkbox';
+import { Field } from '@oxy.so/bloom/field';
+import { TextFieldInput } from '@oxy.so/bloom/text-field';
+import { Textarea } from '@oxy.so/bloom/textarea';
+import { Dialog, type DialogControlProps } from '@oxy.so/bloom/dialog';
+import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine';
+import Button from '../ui/Button';
+import OptionSelect from '../ui/OptionSelect';
 
 interface StartupProgramDialogProps {
-  control: DialogControlProps
+  control: DialogControlProps;
 }
 
 interface StartupApplication {
-  fullName: string
-  email: string
-  companyName: string
-  companyWebsite: string
-  role: string
-  teamSize: string
-  fundingStage: string
-  useCase: string
-  caseStudy: boolean
+  fullName: string;
+  email: string;
+  companyName: string;
+  companyWebsite: string;
+  role: string;
+  teamSize: string;
+  fundingStage: string;
+  useCase: string;
+  caseStudy: boolean;
 }
 
 const INITIAL_APPLICATION: StartupApplication = {
@@ -34,7 +34,7 @@ const INITIAL_APPLICATION: StartupApplication = {
   fundingStage: '',
   useCase: '',
   caseStudy: false,
-}
+};
 
 function StartupSelect({
   label,
@@ -42,10 +42,10 @@ function StartupSelect({
   onChange,
   options,
 }: {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  options: readonly { value: string; label: string }[]
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: readonly { value: string; label: string }[];
 }) {
   return (
     <Field label={label}>
@@ -57,11 +57,11 @@ function StartupSelect({
         emptyIsPlaceholder
       />
     </Field>
-  )
+  );
 }
 
 function encodeMailto(application: StartupApplication) {
-  const subject = `Oxy Startup Program application — ${application.companyName.trim()}`
+  const subject = `Oxy Startup Program application — ${application.companyName.trim()}`;
   const body = [
     `Full name: ${application.fullName.trim()}`,
     `Work email: ${application.email.trim()}`,
@@ -75,35 +75,35 @@ function encodeMailto(application: StartupApplication) {
     application.useCase.trim(),
     '',
     `Open to a case study: ${application.caseStudy ? 'Yes' : 'No'}`,
-  ].join('\n')
+  ].join('\n');
 
-  return `mailto:partners@oxy.so?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+  return `mailto:partners@oxy.so?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 export default function StartupProgramDialog({ control }: StartupProgramDialogProps) {
-  const [application, setApplication] = useState<StartupApplication>(INITIAL_APPLICATION)
+  const [application, setApplication] = useState<StartupApplication>(INITIAL_APPLICATION);
 
   const requiredFieldsReady =
     application.fullName.trim().length > 0 &&
     application.email.trim().length > 0 &&
     application.companyName.trim().length > 0 &&
     application.companyWebsite.trim().length > 0 &&
-    application.useCase.trim().length > 0
+    application.useCase.trim().length > 0;
 
   function updateField<K extends keyof StartupApplication>(field: K, value: StartupApplication[K]) {
-    setApplication((current) => ({ ...current, [field]: value }))
+    setApplication((current) => ({ ...current, [field]: value }));
   }
 
   function resetApplication() {
-    setApplication(INITIAL_APPLICATION)
+    setApplication(INITIAL_APPLICATION);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    if (!requiredFieldsReady) return
+    event.preventDefault();
+    if (!requiredFieldsReady) return;
 
-    window.location.href = encodeMailto(application)
-    control.close()
+    window.location.href = encodeMailto(application);
+    control.close();
   }
 
   return (
@@ -121,7 +121,8 @@ export default function StartupProgramDialog({ control }: StartupProgramDialogPr
             Apply to the Startup Program
           </h2>
           <p className="text-sm text-muted-foreground">
-            Tell us what you&rsquo;re building and how Oxy could help. We&rsquo;ll review your application and get in touch.
+            Tell us what you&rsquo;re building and how Oxy could help. We&rsquo;ll review your
+            application and get in touch.
           </p>
         </div>
 
@@ -236,5 +237,5 @@ export default function StartupProgramDialog({ control }: StartupProgramDialogPr
         </button>
       </div>
     </Dialog>
-  )
+  );
 }

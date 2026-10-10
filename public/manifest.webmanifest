@@ -2,9 +2,7 @@
   "name": "Oxy",
   "short_name": "Oxy",
   "description": "Open-source ecosystem of AI agents and apps.",
-  "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
-  ],
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }],
   "theme_color": "#0a0a0b",
   "background_color": "#0a0a0b",
   "display": "standalone",

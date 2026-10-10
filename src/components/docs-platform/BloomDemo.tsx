@@ -1,11 +1,11 @@
-import { Suspense, createElement } from 'react'
-import { ErrorBoundary } from '@oxy.so/bloom/error-boundary'
-import { DocsExample } from '../docs/DocsExample'
-import { getBloomDemo } from '../../content/bloom-demos/registry'
+import { Suspense, createElement } from 'react';
+import { ErrorBoundary } from '@oxy.so/bloom/error-boundary';
+import { DocsExample } from '../docs/DocsExample';
+import { getBloomDemo } from '../../content/bloom-demos/registry';
 
 interface BloomDemoProps {
   /** Capitalized component name, e.g. "Button". Must match a demo file. */
-  name: string
+  name: string;
 }
 
 /**
@@ -20,16 +20,16 @@ interface BloomDemoProps {
  * in-sync copy of the snippet next to the component.
  */
 export function BloomDemo({ name }: BloomDemoProps) {
-  const demo = getBloomDemo(name)
+  const demo = getBloomDemo(name);
   if (!demo) {
     return (
       <div className="not-prose my-6 rounded-2xl border border-warning/30 bg-warning-subtle p-4 text-sm text-foreground">
         Demo <code className="font-mono">{name}</code> not found. Add{' '}
         <code className="font-mono">src/content/bloom-demos/{name}.tsx</code>.
       </div>
-    )
+    );
   }
-  const Component = demo.Component
+  const Component = demo.Component;
   return (
     <section className="not-prose my-6">
       <DocsExample title={name} code={demo.source}>
@@ -48,25 +48,18 @@ export function BloomDemo({ name }: BloomDemoProps) {
                 This example failed to render.
               </p>
               <p className="mt-1 text-xs text-foreground">
-                A fault in the <code className="font-mono">{name}</code>{' '}
-                example, not necessarily in the component itself — the reference
-                below is unaffected.
+                A fault in the <code className="font-mono">{name}</code> example, not necessarily in
+                the component itself — the reference below is unaffected.
               </p>
-              <p className="mt-2 font-mono text-xs text-warning-text">
-                {error.message}
-              </p>
+              <p className="mt-2 font-mono text-xs text-warning-text">{error.message}</p>
             </div>
           )}
         >
-          <Suspense
-            fallback={
-              <div className="text-sm text-muted-foreground">Loading demo…</div>
-            }
-          >
+          <Suspense fallback={<div className="text-sm text-muted-foreground">Loading demo…</div>}>
             {createElement(Component)}
           </Suspense>
         </ErrorBoundary>
       </DocsExample>
     </section>
-  )
+  );
 }

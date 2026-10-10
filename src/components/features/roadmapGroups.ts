@@ -15,13 +15,13 @@
  * most useful thing on the page for whoever was about to file it again.
  */
 export interface RoadmapGroup {
-  status: string
-  label: string
-  description: string
+  status: string;
+  label: string;
+  description: string;
   /** Tailwind classes for the group's colour dot. */
-  dotClass: string
+  dotClass: string;
   /** Starts collapsed. */
-  foldedByDefault: boolean
+  foldedByDefault: boolean;
 }
 
 export const ROADMAP_GROUPS: readonly RoadmapGroup[] = [
@@ -67,7 +67,7 @@ export const ROADMAP_GROUPS: readonly RoadmapGroup[] = [
     dotClass: 'bg-error',
     foldedByDefault: true,
   },
-]
+];
 
 /**
  * The org's engineering board.
@@ -77,4 +77,4 @@ export const ROADMAP_GROUPS: readonly RoadmapGroup[] = [
  * merged in, because merging two sets with different membership rules produces
  * a view that answers neither question.
  */
-export const ORG_ROADMAP_PROJECT_URL = 'https://github.com/orgs/OxyHQ/projects/14'
+export const ORG_ROADMAP_PROJECT_URL = 'https://github.com/orgs/OxyHQ/projects/14';

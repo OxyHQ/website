@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo } from 'react';
 
 /**
  * The code surface: a real `<textarea>` with a coloured copy of its own text
@@ -23,11 +23,11 @@ import { useMemo } from 'react'
  * waiting for the first long line.
  */
 const BOX =
-  'block w-full px-4 py-3 font-mono text-[13px] leading-[1.6] whitespace-pre-wrap break-words'
+  'block w-full px-4 py-3 font-mono text-[13px] leading-[1.6] whitespace-pre-wrap break-words';
 
 interface Token {
-  text: string
-  className: string
+  text: string;
+  className: string;
 }
 
 /**
@@ -52,7 +52,7 @@ const TOKEN_PATTERN = new RegExp(
     .map((part) => part.source)
     .join('|'),
   'g',
-)
+);
 
 /**
  * Colours are Bloom's. `chart-*` is the only multi-hue family its tokens
@@ -66,36 +66,36 @@ const TOKEN_CLASSNAMES = [
   'text-primary', // JSX tag
   'text-chart-1', // component or type reference
   'text-chart-4', // number
-]
+];
 
 function tokenize(source: string): Token[] {
-  const tokens: Token[] = []
-  let plainFrom = 0
+  const tokens: Token[] = [];
+  let plainFrom = 0;
   for (const match of source.matchAll(TOKEN_PATTERN)) {
     // `match` has the full match at 0 and one group per alternative; exactly
     // one of them is set, and its position is the token's class. No alternative
     // can match an empty string, so truthiness identifies it.
-    const group = match.findIndex((value, index) => index > 0 && Boolean(value)) - 1
-    if (group < 0) continue
+    const group = match.findIndex((value, index) => index > 0 && Boolean(value)) - 1;
+    if (group < 0) continue;
     if (match.index > plainFrom) {
-      tokens.push({ text: source.slice(plainFrom, match.index), className: '' })
+      tokens.push({ text: source.slice(plainFrom, match.index), className: '' });
     }
-    tokens.push({ text: match[0], className: TOKEN_CLASSNAMES[group] ?? '' })
-    plainFrom = match.index + match[0].length
+    tokens.push({ text: match[0], className: TOKEN_CLASSNAMES[group] ?? '' });
+    plainFrom = match.index + match[0].length;
   }
-  tokens.push({ text: source.slice(plainFrom), className: '' })
-  return tokens
+  tokens.push({ text: source.slice(plainFrom), className: '' });
+  return tokens;
 }
 
 export interface BloomLiveEditorProps {
-  value: string
-  onChange: (value: string) => void
+  value: string;
+  onChange: (value: string) => void;
   /** Labels the textarea for assistive technology. */
-  label: string
+  label: string;
 }
 
 export function BloomLiveEditor({ value, onChange, label }: BloomLiveEditorProps) {
-  const tokens = useMemo(() => tokenize(value), [value])
+  const tokens = useMemo(() => tokenize(value), [value]);
 
   return (
     <div className="relative isolate overflow-hidden rounded-2xl border border-border bg-background">
@@ -122,5 +122,5 @@ export function BloomLiveEditor({ value, onChange, label }: BloomLiveEditorProps
         className={`${BOX} absolute inset-0 resize-none border-0 bg-transparent text-transparent caret-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring`}
       />
     </div>
-  )
+  );
 }

@@ -1,59 +1,59 @@
-import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { useAuth } from '@oxy.so/services/ui/client'
-import { Button } from '@oxy.so/bloom/button'
-import { Pagination } from '@oxy.so/bloom/pagination'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { RiAddLine } from '@oxy.so/bloom/icons/RiAddLine'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import FeatureRow from '../components/features/FeatureRow'
-import FeatureFilters from '../components/features/FeatureFilters'
-import FeatureSearch from '../components/features/FeatureSearch'
-import FeatureInterstitial from '../components/features/FeatureInterstitial'
-import ProposeFeatureDialog from '../components/features/ProposeFeatureDialog'
-import RoadmapView from '../components/features/RoadmapView'
-import BoardShell from '../components/features/shell/BoardShell'
-import { PanelHeader, PanelTabs, type PanelTab } from '../components/features/shell/PanelBars'
-import BoardRail from '../components/features/BoardRail'
-import { RAIL_QUERY } from '../components/features/shell/boardChrome'
-import { useMediaQuery } from '../hooks/useMediaQuery'
-import { useFeatureApps, useFeatureRequests } from '../api/hooks'
+import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useAuth } from '@oxy.so/services/ui/client';
+import { Button } from '@oxy.so/bloom/button';
+import { Pagination } from '@oxy.so/bloom/pagination';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import { RiAddLine } from '@oxy.so/bloom/icons/RiAddLine';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import FeatureRow from '../components/features/FeatureRow';
+import FeatureFilters from '../components/features/FeatureFilters';
+import FeatureSearch from '../components/features/FeatureSearch';
+import FeatureInterstitial from '../components/features/FeatureInterstitial';
+import ProposeFeatureDialog from '../components/features/ProposeFeatureDialog';
+import RoadmapView from '../components/features/RoadmapView';
+import BoardShell from '../components/features/shell/BoardShell';
+import { PanelHeader, PanelTabs, type PanelTab } from '../components/features/shell/PanelBars';
+import BoardRail from '../components/features/BoardRail';
+import { RAIL_QUERY } from '../components/features/shell/boardChrome';
+import { useMediaQuery } from '../hooks/useMediaQuery';
+import { useFeatureApps, useFeatureRequests } from '../api/hooks';
 
 const TABS: readonly PanelTab[] = [
   { key: 'board', label: 'Board' },
   { key: 'roadmap', label: 'Roadmap' },
-]
+];
 
 /** Proposals the roadmap pulls in one go. Matches the API's page ceiling. */
-const ROADMAP_PAGE_SIZE = 100
+const ROADMAP_PAGE_SIZE = 100;
 
 /** Rows before the recommendation band. Late enough that the feed reads first. */
-const INTERSTITIAL_AFTER_ROW = 5
+const INTERSTITIAL_AFTER_ROW = 5;
 
 export default function FeatureBoardPage() {
-  const [status, setStatus] = useState('')
-  const [sort, setSort] = useState('votes')
-  const [page, setPage] = useState(1)
-  const [proposeOpen, setProposeOpen] = useState(false)
-  const { isAuthenticated, signIn } = useAuth()
-  const showRail = useMediaQuery(RAIL_QUERY)
+  const [status, setStatus] = useState('');
+  const [sort, setSort] = useState('votes');
+  const [page, setPage] = useState(1);
+  const [proposeOpen, setProposeOpen] = useState(false);
+  const { isAuthenticated, signIn } = useAuth();
+  const showRail = useMediaQuery(RAIL_QUERY);
 
   // The app filter, the tab and the search term live in the URL: a filtered
   // board, the roadmap and a search are all things worth linking to, and it
   // gives the app chip on a proposal's own page somewhere to point.
-  const [searchParams, setSearchParams] = useSearchParams()
-  const app = searchParams.get('app') ?? ''
-  const query = searchParams.get('q') ?? ''
-  const view = searchParams.get('view') === 'roadmap' ? 'roadmap' : 'board'
+  const [searchParams, setSearchParams] = useSearchParams();
+  const app = searchParams.get('app') ?? '';
+  const query = searchParams.get('q') ?? '';
+  const view = searchParams.get('view') === 'roadmap' ? 'roadmap' : 'board';
 
   function setParam(key: string, value: string) {
-    const next = new URLSearchParams(searchParams)
-    if (value) next.set(key, value)
-    else next.delete(key)
-    setSearchParams(next, { replace: true })
-    setPage(1)
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set(key, value);
+    else next.delete(key);
+    setSearchParams(next, { replace: true });
+    setPage(1);
   }
 
   const board = useFeatureRequests({
@@ -62,7 +62,7 @@ export default function FeatureBoardPage() {
     sort,
     page,
     q: query || undefined,
-  })
+  });
 
   // One extra read, shared by the roadmap tab and the rail's summary, and
   // skipped when neither is on screen. `state: 'all'` is the point of it: a
@@ -70,30 +70,30 @@ export default function FeatureBoardPage() {
   const roadmap = useFeatureRequests(
     { app: app || undefined, state: 'all', sort: 'votes', limit: ROADMAP_PAGE_SIZE },
     { enabled: view === 'roadmap' || showRail },
-  )
+  );
 
-  const { data: appsData } = useFeatureApps()
-  const apps = appsData?.apps ?? []
-  const canPropose = apps.some((option) => option.acceptsProposals)
+  const { data: appsData } = useFeatureApps();
+  const apps = appsData?.apps ?? [];
+  const canPropose = apps.some((option) => option.acceptsProposals);
 
-  const features = board.data?.items ?? []
-  const totalPages = board.data?.pages ?? 1
+  const features = board.data?.items ?? [];
+  const totalPages = board.data?.pages ?? 1;
 
   // Signing in is what a visitor needs first; the form is no use without an
   // account, since the proposal is attributed to it on GitHub.
   function handleProposeClick() {
     if (!isAuthenticated) {
-      signIn()
-      return
+      signIn();
+      return;
     }
-    setProposeOpen(true)
+    setProposeOpen(true);
   }
 
   const proposeButton = canPropose ? (
     <Button appearance="solid" tone="action" leadingIcon={RiAddLine} onPress={handleProposeClick}>
       Propose
     </Button>
-  ) : undefined
+  ) : undefined;
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -109,11 +109,22 @@ export default function FeatureBoardPage() {
           header={
             <PanelHeader
               title="Feature board"
-              subtitle={view === 'roadmap' ? 'What is planned and what shipped' : 'Vote on what Oxy builds next'}
+              subtitle={
+                view === 'roadmap'
+                  ? 'What is planned and what shipped'
+                  : 'Vote on what Oxy builds next'
+              }
               action={proposeButton}
             />
           }
-          tabs={<PanelTabs label="Feature board" tabs={TABS} active={view} onSelect={(key) => setParam('view', key === 'board' ? '' : key)} />}
+          tabs={
+            <PanelTabs
+              label="Feature board"
+              tabs={TABS}
+              active={view}
+              onSelect={(key) => setParam('view', key === 'board' ? '' : key)}
+            />
+          }
           rail={
             <BoardRail
               query={query}
@@ -144,9 +155,15 @@ export default function FeatureBoardPage() {
                   app={app}
                   sort={sort}
                   apps={apps}
-                  onChangeStatus={(value) => { setStatus(value); setPage(1) }}
+                  onChangeStatus={(value) => {
+                    setStatus(value);
+                    setPage(1);
+                  }}
                   onChangeApp={(value) => setParam('app', value)}
-                  onChangeSort={(value) => { setSort(value); setPage(1) }}
+                  onChangeSort={(value) => {
+                    setSort(value);
+                    setPage(1);
+                  }}
                 />
               </div>
 
@@ -226,5 +243,5 @@ export default function FeatureBoardPage() {
           rail's breakpoint it is the only one left, and it comes back. */}
       {!showRail && <Footer />}
     </div>
-  )
+  );
 }

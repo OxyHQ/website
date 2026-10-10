@@ -1,15 +1,15 @@
-import HeroSection from './landing/HeroSection'
-import TrustSignalsStrip from './landing/TrustSignalsStrip'
-import LiveStatsSection from './landing/LiveStatsSection'
-import NetworkSpecSection from './landing/NetworkSpecSection'
-import WalletsSection from './landing/WalletsSection'
-import NetworkSection from './landing/NetworkSection'
-import LiveBridgeSection from './landing/LiveBridgeSection'
-import CommunitySection from './landing/CommunitySection'
-import FaqSection from './landing/FaqSection'
-import CtaSection from './landing/CtaSection'
-import WagmiAppProvider from './WagmiAppProvider'
-import { isFairCoinHost } from '../../lib/host'
+import HeroSection from './landing/HeroSection';
+import TrustSignalsStrip from './landing/TrustSignalsStrip';
+import LiveStatsSection from './landing/LiveStatsSection';
+import NetworkSpecSection from './landing/NetworkSpecSection';
+import WalletsSection from './landing/WalletsSection';
+import NetworkSection from './landing/NetworkSection';
+import LiveBridgeSection from './landing/LiveBridgeSection';
+import CommunitySection from './landing/CommunitySection';
+import FaqSection from './landing/FaqSection';
+import CtaSection from './landing/CtaSection';
+import WagmiAppProvider from './WagmiAppProvider';
+import { isFairCoinHost } from '../../lib/host';
 
 /**
  * Polished FairCoin landing page content.
@@ -42,7 +42,7 @@ export default function FairCoinLandingContent() {
   // active Oxy theme.
   const wrapperClass = isFairCoinHost()
     ? 'faircoin-surface faircoin-theme bg-background text-foreground'
-    : 'faircoin-surface bg-background text-foreground'
+    : 'faircoin-surface bg-background text-foreground';
   return (
     <div className={wrapperClass}>
       <WagmiAppProvider>
@@ -58,5 +58,5 @@ export default function FairCoinLandingContent() {
         <CtaSection />
       </WagmiAppProvider>
     </div>
-  )
+  );
 }

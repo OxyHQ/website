@@ -1,7 +1,11 @@
-import { Link } from '../../../lib/navigation'
-import { useTranslation } from '../../../lib/i18n'
-import { isCatalogUnpublished, snapshotAgeInDays, STALE_SNAPSHOT_DAYS } from '../../../lib/ai/snapshot'
-import type { PublicCatalog } from '../../../lib/ai/catalog'
+import { Link } from '../../../lib/navigation';
+import { useTranslation } from '../../../lib/i18n';
+import {
+  isCatalogUnpublished,
+  snapshotAgeInDays,
+  STALE_SNAPSHOT_DAYS,
+} from '../../../lib/ai/snapshot';
+import type { PublicCatalog } from '../../../lib/ai/catalog';
 
 /**
  * What the catalogue surfaces say when there is nothing to list, or when what
@@ -15,7 +19,7 @@ import type { PublicCatalog } from '../../../lib/ai/catalog'
  * prices.
  */
 export function CatalogEmptyState({ className = '' }: { className?: string }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <div
       className={`rounded-2xl border border-border bg-card p-8 text-center ${className}`}
@@ -40,7 +44,7 @@ export function CatalogEmptyState({ className = '' }: { className?: string }) {
         </Link>
       </div>
     </div>
-  )
+  );
 }
 
 /**
@@ -51,10 +55,10 @@ export function CatalogEmptyState({ className = '' }: { className?: string }) {
  * reflex for the day it matters.
  */
 export function CatalogFreshness({ catalog }: { catalog: PublicCatalog }) {
-  const { t } = useTranslation()
-  if (isCatalogUnpublished(catalog)) return null
-  const age = snapshotAgeInDays(catalog)
-  const stamp = formatDate(catalog.generatedAt)
+  const { t } = useTranslation();
+  if (isCatalogUnpublished(catalog)) return null;
+  const age = snapshotAgeInDays(catalog);
+  const stamp = formatDate(catalog.generatedAt);
 
   return (
     <p className="text-sm text-muted-foreground">
@@ -63,10 +67,10 @@ export function CatalogFreshness({ catalog }: { catalog: PublicCatalog }) {
         <span className="ms-2 text-warning-text">{t('ai.models.staleNotice')}</span>
       )}
     </p>
-  )
+  );
 }
 
 function formatDate(value: string): string {
-  const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? value : date.toISOString().slice(0, 10)
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toISOString().slice(0, 10);
 }

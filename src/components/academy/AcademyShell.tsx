@@ -1,15 +1,15 @@
-import { useMemo, useState, type ReactNode } from 'react'
-import { ContentPanel } from '@oxy.so/bloom/content-panel'
-import { Button } from '@oxy.so/bloom/button'
-import { Dialog } from '@oxy.so/bloom/dialog'
-import { RiMenuLine } from '@oxy.so/bloom/icons/RiMenuLine'
-import PageShell from '../layout/PageShell'
-import type { SEOProps } from '../SEO'
-import { useCurrentLocale, useTranslation } from '../../lib/i18n'
-import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom'
-import { loadCourses } from '../../content/academy-loader'
-import { useAcademyAllProgress } from './useAcademyProgress'
-import { AcademyRail } from './AcademyRail'
+import { useMemo, useState, type ReactNode } from 'react';
+import { ContentPanel } from '@oxy.so/bloom/content-panel';
+import { Button } from '@oxy.so/bloom/button';
+import { Dialog } from '@oxy.so/bloom/dialog';
+import { RiMenuLine } from '@oxy.so/bloom/icons/RiMenuLine';
+import PageShell from '../layout/PageShell';
+import type { SEOProps } from '../SEO';
+import { useCurrentLocale, useTranslation } from '../../lib/i18n';
+import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom';
+import { loadCourses } from '../../content/academy-loader';
+import { useAcademyAllProgress } from './useAcademyProgress';
+import { AcademyRail } from './AcademyRail';
 
 /* ──────────────────────────────────────────────
  * The frame every Academy route shares: the site's header and footer
@@ -23,17 +23,17 @@ import { AcademyRail } from './AcademyRail'
  * ──────────────────────────────────────────── */
 
 interface AcademyShellProps {
-  seo: SEOProps
-  activeCourse?: string
-  activeLesson?: string
+  seo: SEOProps;
+  activeCourse?: string;
+  activeLesson?: string;
   /** Controlled search, for the index — where the rail's search filters the catalog too. */
-  query?: string
-  onQueryChange?: (query: string) => void
+  query?: string;
+  onQueryChange?: (query: string) => void;
   /** What the compact bar says beside the course-menu button below lg. */
-  context?: ReactNode
+  context?: ReactNode;
   /** Right-hand column on xl+, pinned like the rail. */
-  aside?: ReactNode
-  children: ReactNode
+  aside?: ReactNode;
+  children: ReactNode;
 }
 
 export default function AcademyShell({
@@ -46,17 +46,24 @@ export default function AcademyShell({
   aside,
   children,
 }: AcademyShellProps) {
-  const { t } = useTranslation()
-  const locale = useCurrentLocale()
-  const courses = useMemo(() => loadCourses(locale), [locale])
-  const { data: progress } = useAcademyAllProgress()
-  const [ownQuery, setOwnQuery] = useState('')
-  const query = controlledQuery ?? ownQuery
-  const setQuery = onQueryChange ?? setOwnQuery
-  const [menuOpen, setMenuOpen] = useState(false)
-  const headerBottom = useSiteHeaderBottom()
+  const { t } = useTranslation();
+  const locale = useCurrentLocale();
+  const courses = useMemo(() => loadCourses(locale), [locale]);
+  const { data: progress } = useAcademyAllProgress();
+  const [ownQuery, setOwnQuery] = useState('');
+  const query = controlledQuery ?? ownQuery;
+  const setQuery = onQueryChange ?? setOwnQuery;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const headerBottom = useSiteHeaderBottom();
 
-  const railProps = { courses, progress, query, onQueryChange: setQuery, activeCourse, activeLesson }
+  const railProps = {
+    courses,
+    progress,
+    query,
+    onQueryChange: setQuery,
+    activeCourse,
+    activeLesson,
+  };
 
   return (
     <PageShell
@@ -78,14 +85,17 @@ export default function AcademyShell({
         <div className="min-w-0 flex-1 pb-10 lg:py-4 lg:pr-6">
           <div className="flex items-center gap-3 border-b border-border px-4 py-3 sm:px-6 lg:hidden">
             <Button
-              appearance="outline" tone="neutral"
+              appearance="outline"
+              tone="neutral"
               leadingIcon={RiMenuLine}
               onPress={() => setMenuOpen(true)}
               accessibilityLabel={t('academy.openMenuLabel')}
             >
               {t('academy.openMenu')}
             </Button>
-            {context ? <div className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{context}</div> : null}
+            {context ? (
+              <div className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{context}</div>
+            ) : null}
           </div>
 
           <div className="flex w-full gap-8">
@@ -118,8 +128,12 @@ export default function AcademyShell({
         width={336}
         label={t('academy.navLabel')}
       >
-        <AcademyRail {...railProps} onNavigate={() => setMenuOpen(false)} onClose={() => setMenuOpen(false)} />
+        <AcademyRail
+          {...railProps}
+          onNavigate={() => setMenuOpen(false)}
+          onClose={() => setMenuOpen(false)}
+        />
       </Dialog>
     </PageShell>
-  )
+  );
 }

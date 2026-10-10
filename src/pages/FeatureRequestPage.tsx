@@ -1,23 +1,27 @@
-import { useParams } from 'react-router-dom'
-import { Link } from '../lib/navigation'
-import { useAuth } from '@oxy.so/services/ui/client'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
-import { RiArrowUpSLine } from '@oxy.so/bloom/icons/RiArrowUpSLine'
-import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import FeatureStatusBadge from '../components/features/FeatureStatusBadge'
-import FeaturePriorityBadge from '../components/features/FeaturePriorityBadge'
-import FeatureMarkdown from '../components/features/FeatureMarkdown'
-import FeatureComments from '../components/features/FeatureComments'
-import { useFeatureRequest, useToggleFeatureVote, type FeatureRequestData } from '../api/hooks'
-import { errorStatus } from '../api/client'
-import { featureRequestDescription, featureRequestPath } from '../lib/featureRequest'
+import { useParams } from 'react-router-dom';
+import { Link } from '../lib/navigation';
+import { useAuth } from '@oxy.so/services/ui/client';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine';
+import { RiArrowUpSLine } from '@oxy.so/bloom/icons/RiArrowUpSLine';
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import FeatureStatusBadge from '../components/features/FeatureStatusBadge';
+import FeaturePriorityBadge from '../components/features/FeaturePriorityBadge';
+import FeatureMarkdown from '../components/features/FeatureMarkdown';
+import FeatureComments from '../components/features/FeatureComments';
+import { useFeatureRequest, useToggleFeatureVote, type FeatureRequestData } from '../api/hooks';
+import { errorStatus } from '../api/client';
+import { featureRequestDescription, featureRequestPath } from '../lib/featureRequest';
 
 function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+  return new Date(value).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
 }
 
 function PageShell({ children }: { children: React.ReactNode }) {
@@ -27,7 +31,7 @@ function PageShell({ children }: { children: React.ReactNode }) {
       <main className="container flex-1 pb-20 pt-10 lg:pb-28">{children}</main>
       <Footer />
     </div>
-  )
+  );
 }
 
 function BackToBoard() {
@@ -39,12 +43,16 @@ function BackToBoard() {
       <RiArrowLeftLine width={16} height={16} fill="currentColor" aria-hidden />
       Feature board
     </Link>
-  )
+  );
 }
 
 export default function FeatureRequestPage() {
-  const { owner = '', repo = '', number = '' } = useParams<{ owner: string; repo: string; number: string }>()
-  const { data: feature, isPending, error } = useFeatureRequest(owner, repo, number)
+  const {
+    owner = '',
+    repo = '',
+    number = '',
+  } = useParams<{ owner: string; repo: string; number: string }>();
+  const { data: feature, isPending, error } = useFeatureRequest(owner, repo, number);
 
   // No `<SEO>` while the request is in flight, matching every other detail page
   // here. A skeleton knows nothing about whether the page exists, and the
@@ -62,7 +70,7 @@ export default function FeatureRequestPage() {
           <Skeleton.Box width="100%" height={120} borderRadius={8} />
         </div>
       </PageShell>
-    )
+    );
   }
 
   // A request that is not on the board is genuinely gone: an unknown repo, an
@@ -71,7 +79,7 @@ export default function FeatureRequestPage() {
   // their link is dead when the truth is "try again in a minute" is worse than
   // saying nothing.
   if (!feature) {
-    const missing = errorStatus(error) === 404
+    const missing = errorStatus(error) === 404;
     return (
       <PageShell>
         <SEO
@@ -98,7 +106,7 @@ export default function FeatureRequestPage() {
           </Link>
         </div>
       </PageShell>
-    )
+    );
   }
 
   return (
@@ -120,7 +128,9 @@ export default function FeatureRequestPage() {
           <VoteControl feature={feature} />
 
           <div className="min-w-0 flex-1">
-            <h1 className="text-balance text-heading-responsive-sm text-foreground">{feature.title}</h1>
+            <h1 className="text-balance text-heading-responsive-sm text-foreground">
+              {feature.title}
+            </h1>
 
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <FeatureStatusBadge status={feature.status} />
@@ -162,9 +172,13 @@ export default function FeatureRequestPage() {
         </header>
 
         <div className="mt-8">
-          {feature.description
-            ? <FeatureMarkdown content={feature.description} />
-            : <p className="text-sm text-muted-foreground">This request was opened without a description.</p>}
+          {feature.description ? (
+            <FeatureMarkdown content={feature.description} />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              This request was opened without a description.
+            </p>
+          )}
         </div>
 
         <FeatureComments
@@ -176,7 +190,7 @@ export default function FeatureRequestPage() {
         />
       </article>
     </PageShell>
-  )
+  );
 }
 
 /**
@@ -184,15 +198,15 @@ export default function FeatureRequestPage() {
  * both surfaces apply the same optimistic update and the same rollback.
  */
 function VoteControl({ feature }: { feature: FeatureRequestData }) {
-  const { isAuthenticated, signIn } = useAuth()
-  const toggleVote = useToggleFeatureVote(feature.owner, feature.repoName, feature.number)
+  const { isAuthenticated, signIn } = useAuth();
+  const toggleVote = useToggleFeatureVote(feature.owner, feature.repoName, feature.number);
 
   function handleVote() {
     if (!isAuthenticated) {
-      signIn()
-      return
+      signIn();
+      return;
     }
-    toggleVote.mutate()
+    toggleVote.mutate();
   }
 
   return (
@@ -209,12 +223,14 @@ function VoteControl({ feature }: { feature: FeatureRequestData }) {
       >
         <RiArrowUpSLine width={24} height={24} fill="currentColor" aria-hidden />
       </button>
-      <span className={`text-base font-semibold ${feature.userVoted ? 'text-primary' : 'text-muted-foreground'}`}>
+      <span
+        className={`text-base font-semibold ${feature.userVoted ? 'text-primary' : 'text-muted-foreground'}`}
+      >
         {feature.totalVotes}
       </span>
       <span className="text-body-xs text-muted-foreground">
         {feature.totalVotes === 1 ? 'vote' : 'votes'}
       </span>
     </div>
-  )
+  );
 }

@@ -1,49 +1,66 @@
-import { Link } from '../lib/navigation'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import { useServiceStatus, useServiceUptime, useIncidentHistory, type ServiceStatusEntry, type ServiceStatusValue, type UptimeDay } from '../api/hooks'
-import { AnimatedTitle } from '../components/ui/AnimatedTitle'
-import { DashedHLine } from '../components/ui/GridDecoration'
-import { STATUS_DOT, STATUS_LABEL, STATUS_SURFACE } from '../lib/statusTheme'
-import UptimeBar from '../components/status/UptimeBar'
-import IncidentCard from '../components/status/IncidentCard'
+import { Link } from '../lib/navigation';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import {
+  useServiceStatus,
+  useServiceUptime,
+  useIncidentHistory,
+  type ServiceStatusEntry,
+  type ServiceStatusValue,
+  type UptimeDay,
+} from '../api/hooks';
+import { AnimatedTitle } from '../components/ui/AnimatedTitle';
+import { DashedHLine } from '../components/ui/GridDecoration';
+import { STATUS_DOT, STATUS_LABEL, STATUS_SURFACE } from '../lib/statusTheme';
+import UptimeBar from '../components/status/UptimeBar';
+import IncidentCard from '../components/status/IncidentCard';
 
 const OVERALL_HEADLINE: Record<ServiceStatusValue, string> = {
   operational: 'All systems operational.',
   degraded: 'Some systems are experiencing issues.',
   down: 'We have an active incident.',
   unknown: 'Checking service health…',
-}
+};
 
 const OVERALL_KICKER: Record<ServiceStatusValue, string> = {
   operational: 'Every Oxy service is up and responding quickly.',
   degraded: 'At least one service is responding slower than usual.',
   down: 'At least one service is unreachable. Our team is on it.',
   unknown: 'Running the first probe batch now.',
-}
+};
 
-function StatusDot({ status, pulse = false, size = 'md' }: { status: ServiceStatusValue; pulse?: boolean; size?: 'sm' | 'md' | 'lg' }) {
-  const sizeClass = size === 'lg' ? 'h-3 w-3' : size === 'sm' ? 'h-2 w-2' : 'h-2.5 w-2.5'
+function StatusDot({
+  status,
+  pulse = false,
+  size = 'md',
+}: {
+  status: ServiceStatusValue;
+  pulse?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+}) {
+  const sizeClass = size === 'lg' ? 'h-3 w-3' : size === 'sm' ? 'h-2 w-2' : 'h-2.5 w-2.5';
   return (
     <span className={`relative inline-flex shrink-0 ${sizeClass}`} aria-hidden="true">
       {pulse && status !== 'unknown' && (
-        <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${STATUS_DOT[status]}`} />
+        <span
+          className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${STATUS_DOT[status]}`}
+        />
       )}
       <span className={`relative inline-flex rounded-full ${sizeClass} ${STATUS_DOT[status]}`} />
     </span>
-  )
+  );
 }
 
 function ServiceLogo({ service }: { service: ServiceStatusEntry }) {
-  const hasLogo = Boolean(service.logoUrl)
+  const hasLogo = Boolean(service.logoUrl);
   // Without a logo the mark sits on the service's brand colour, not on the
   // page, so it takes `.force-dark` and `--foreground` is light in either theme.
   const style = hasLogo
     ? undefined
-    : { backgroundColor: service.brand, color: service.brandForeground || 'var(--foreground)' }
+    : { backgroundColor: service.brand, color: service.brandForeground || 'var(--foreground)' };
   return (
     <span
       className={`relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-base font-semibold tracking-tight ${
@@ -64,28 +81,34 @@ function ServiceLogo({ service }: { service: ServiceStatusEntry }) {
         service.mark || '?'
       )}
     </span>
-  )
+  );
 }
 
 function formatLatency(ms: number | null): string {
-  if (ms == null) return '—'
-  if (ms < 1) return '<1 ms'
-  return `${ms} ms`
+  if (ms == null) return '—';
+  if (ms < 1) return '<1 ms';
+  return `${ms} ms`;
 }
 
 function formatRelative(iso: string): string {
-  const delta = Date.now() - new Date(iso).getTime()
-  if (delta < 0) return 'just now'
-  const seconds = Math.floor(delta / 1000)
-  if (seconds < 60) return `${seconds}s ago`
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
-  return new Date(iso).toLocaleDateString()
+  const delta = Date.now() - new Date(iso).getTime();
+  if (delta < 0) return 'just now';
+  const seconds = Math.floor(delta / 1000);
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return new Date(iso).toLocaleDateString();
 }
 
-function ServiceRow({ service, uptimeDays }: { service: ServiceStatusEntry; uptimeDays?: UptimeDay[] }) {
+function ServiceRow({
+  service,
+  uptimeDays,
+}: {
+  service: ServiceStatusEntry;
+  uptimeDays?: UptimeDay[];
+}) {
   return (
     <div className="group relative transition-colors duration-200 hover:bg-foreground/5">
       {/* brand accent strip on hover */}
@@ -111,9 +134,13 @@ function ServiceRow({ service, uptimeDays }: { service: ServiceStatusEntry; upti
           <div className="mt-0.5 truncate text-xs text-muted-foreground">{service.description}</div>
         </div>
         <div className="hidden shrink-0 text-right sm:block">
-          <div className="text-xs font-mono tabular-nums text-muted-foreground">{formatLatency(service.latencyMs)}</div>
+          <div className="text-xs font-mono tabular-nums text-muted-foreground">
+            {formatLatency(service.latencyMs)}
+          </div>
           {service.httpStatus != null && (
-            <div className="text-[10px] font-mono tabular-nums text-muted-foreground/70">HTTP {service.httpStatus}</div>
+            <div className="text-[10px] font-mono tabular-nums text-muted-foreground/70">
+              HTTP {service.httpStatus}
+            </div>
           )}
         </div>
         <span
@@ -138,30 +165,39 @@ function ServiceRow({ service, uptimeDays }: { service: ServiceStatusEntry; upti
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function groupByCategory(services: ServiceStatusEntry[]): Array<[string, ServiceStatusEntry[]]> {
-  const map = new Map<string, ServiceStatusEntry[]>()
+  const map = new Map<string, ServiceStatusEntry[]>();
   for (const svc of services) {
-    const list = map.get(svc.section) ?? []
-    list.push(svc)
-    map.set(svc.section, list)
+    const list = map.get(svc.section) ?? [];
+    list.push(svc);
+    map.set(svc.section, list);
   }
-  return Array.from(map.entries())
+  return Array.from(map.entries());
 }
 
 function SectionHealth({ services }: { services: ServiceStatusEntry[] }) {
-  const down = services.filter((s) => s.status === 'down').length
-  const degraded = services.filter((s) => s.status === 'degraded').length
-  const operational = services.filter((s) => s.status === 'operational').length
-  const overall: ServiceStatusValue = down > 0 ? 'down' : degraded > 0 ? 'degraded' : operational === services.length ? 'operational' : 'unknown'
+  const down = services.filter((s) => s.status === 'down').length;
+  const degraded = services.filter((s) => s.status === 'degraded').length;
+  const operational = services.filter((s) => s.status === 'operational').length;
+  const overall: ServiceStatusValue =
+    down > 0
+      ? 'down'
+      : degraded > 0
+        ? 'degraded'
+        : operational === services.length
+          ? 'operational'
+          : 'unknown';
   return (
-    <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ${STATUS_SURFACE[overall]}`}>
+    <span
+      className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ${STATUS_SURFACE[overall]}`}
+    >
       <StatusDot status={overall} size="sm" />
       {STATUS_LABEL[overall]}
     </span>
-  )
+  );
 }
 
 function SkeletonCard() {
@@ -177,25 +213,31 @@ function SkeletonCard() {
             <Skeleton.Box width={44} height={44} borderRadius={16} />
             <div className="flex-1">
               <Skeleton.Box width={128} height={12} borderRadius={4} />
-              <Skeleton.Box width={256} height={12} borderRadius={4} blend style={{ marginTop: 8 }} />
+              <Skeleton.Box
+                width={256}
+                height={12}
+                borderRadius={4}
+                blend
+                style={{ marginTop: 8 }}
+              />
             </div>
             <Skeleton.Pill size={20} style={{ width: 80 }} />
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 export default function StatusPage() {
-  const { data, isLoading, isError, refetch, isFetching } = useServiceStatus()
-  const { data: uptimeData } = useServiceUptime()
-  const { data: incidentData } = useIncidentHistory(1)
-  const uptimeByProductId = new Map((uptimeData?.services ?? []).map((s) => [s.productId, s.days]))
-  const overall: ServiceStatusValue = data?.overall ?? 'unknown'
-  const headline = OVERALL_HEADLINE[overall]
-  const kicker = OVERALL_KICKER[overall]
-  const grouped = data ? groupByCategory(data.services) : []
+  const { data, isLoading, isError, refetch, isFetching } = useServiceStatus();
+  const { data: uptimeData } = useServiceUptime();
+  const { data: incidentData } = useIncidentHistory(1);
+  const uptimeByProductId = new Map((uptimeData?.services ?? []).map((s) => [s.productId, s.days]));
+  const overall: ServiceStatusValue = data?.overall ?? 'unknown';
+  const headline = OVERALL_HEADLINE[overall];
+  const kicker = OVERALL_KICKER[overall];
+  const grouped = data ? groupByCategory(data.services) : [];
   const totals = data
     ? {
         total: data.services.length,
@@ -203,7 +245,7 @@ export default function StatusPage() {
         degraded: data.services.filter((s) => s.status === 'degraded').length,
         down: data.services.filter((s) => s.status === 'down').length,
       }
-    : null
+    : null;
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -225,7 +267,10 @@ export default function StatusPage() {
                     <StatusDot status={overall} pulse size="md" />
                     System status
                   </span>
-                  <AnimatedTitle as="h1" className="max-w-[18em] text-balance text-heading-responsive-lg text-foreground">
+                  <AnimatedTitle
+                    as="h1"
+                    className="max-w-[18em] text-balance text-heading-responsive-lg text-foreground"
+                  >
                     {headline}
                   </AnimatedTitle>
                   <p className="max-w-2xl text-pretty text-lg text-muted-foreground">{kicker}</p>
@@ -246,12 +291,18 @@ export default function StatusPage() {
                         className={`size-4 ${isFetching ? 'animate-spin' : ''}`}
                         aria-hidden="true"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                        />
                       </svg>
                       {isFetching ? 'Refreshing…' : 'Refresh now'}
                     </button>
                     {data && (
-                      <span className="text-xs text-muted-foreground">Last checked {formatRelative(data.generatedAt)}</span>
+                      <span className="text-xs text-muted-foreground">
+                        Last checked {formatRelative(data.generatedAt)}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -265,8 +316,16 @@ export default function StatusPage() {
                 <div className="grid grid-cols-4 gap-0 border-t border-border">
                   {[
                     { label: 'Services', value: totals.total, tone: '' as const },
-                    { label: 'Operational', value: totals.operational, tone: 'operational' as ServiceStatusValue },
-                    { label: 'Degraded', value: totals.degraded, tone: 'degraded' as ServiceStatusValue },
+                    {
+                      label: 'Operational',
+                      value: totals.operational,
+                      tone: 'operational' as ServiceStatusValue,
+                    },
+                    {
+                      label: 'Degraded',
+                      value: totals.degraded,
+                      tone: 'degraded' as ServiceStatusValue,
+                    },
                     { label: 'Outage', value: totals.down, tone: 'down' as ServiceStatusValue },
                   ].map((stat, idx) => (
                     <div
@@ -277,7 +336,9 @@ export default function StatusPage() {
                         {stat.tone && <StatusDot status={stat.tone} size="sm" />}
                         {stat.label}
                       </div>
-                      <div className="text-3xl font-medium tabular-nums text-foreground">{stat.value}</div>
+                      <div className="text-3xl font-medium tabular-nums text-foreground">
+                        {stat.value}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -294,7 +355,8 @@ export default function StatusPage() {
                 <div className="max-w-[28em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
                   <h2 className="text-pretty inline">Every service, in one place.</h2>{' '}
                   <p className="inline text-pretty font-medium text-muted-foreground">
-                    Probed every 60 seconds from Oxy infrastructure. Click any row to open the service in a new tab.
+                    Probed every 60 seconds from Oxy infrastructure. Click any row to open the
+                    service in a new tab.
                   </p>
                 </div>
               </div>
@@ -334,7 +396,11 @@ export default function StatusPage() {
                     </header>
                     <div className="divide-y divide-border">
                       {services.map((service) => (
-                        <ServiceRow key={service.id} service={service} uptimeDays={uptimeByProductId.get(service.id)} />
+                        <ServiceRow
+                          key={service.id}
+                          service={service}
+                          uptimeDays={uptimeByProductId.get(service.id)}
+                        />
                       ))}
                     </div>
                   </section>
@@ -342,9 +408,15 @@ export default function StatusPage() {
 
                 {/* Legend */}
                 <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-border pt-6 text-xs text-muted-foreground">
-                  <span className="inline-flex items-center gap-2"><StatusDot status="operational" size="sm" /> Operational (&lt;1.5s)</span>
-                  <span className="inline-flex items-center gap-2"><StatusDot status="degraded" size="sm" /> Degraded (&gt;1.5s)</span>
-                  <span className="inline-flex items-center gap-2"><StatusDot status="down" size="sm" /> Outage</span>
+                  <span className="inline-flex items-center gap-2">
+                    <StatusDot status="operational" size="sm" /> Operational (&lt;1.5s)
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <StatusDot status="degraded" size="sm" /> Degraded (&gt;1.5s)
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <StatusDot status="down" size="sm" /> Outage
+                  </span>
                   <span className="ml-auto">Data refreshes automatically every 60 seconds.</span>
                 </div>
               </div>
@@ -358,7 +430,10 @@ export default function StatusPage() {
             <div className="grid grid-cols-12 pb-20">
               <div className="col-span-full flex items-center justify-between pb-6">
                 <h2 className="text-heading-responsive-sm text-foreground">Recent incidents</h2>
-                <Link to="/status/history/1" className="text-sm font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
+                <Link
+                  to="/status/history/1"
+                  className="text-sm font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                >
                   View full history →
                 </Link>
               </div>
@@ -377,5 +452,5 @@ export default function StatusPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

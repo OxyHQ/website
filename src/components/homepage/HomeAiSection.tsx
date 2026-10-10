@@ -1,8 +1,8 @@
-import { Link } from '../../lib/navigation'
-import Button from '../ui/Button'
-import AvailabilityBadge from '../ai/platform/AvailabilityBadge'
-import { useTranslation } from '../../lib/i18n'
-import { OXY_INFERENCE_AVAILABILITY } from '../../data/ai/taxonomy'
+import { Link } from '../../lib/navigation';
+import Button from '../ui/Button';
+import AvailabilityBadge from '../ai/platform/AvailabilityBadge';
+import { useTranslation } from '../../lib/i18n';
+import { OXY_INFERENCE_AVAILABILITY } from '../../data/ai/taxonomy';
 
 /**
  * The homepage's AI section: two paths, not one pitch.
@@ -15,7 +15,7 @@ import { OXY_INFERENCE_AVAILABILITY } from '../../data/ai/taxonomy'
  * every model it can reach.
  */
 export default function HomeAiSection() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <section className="py-24 sm:py-32">
@@ -91,5 +91,5 @@ export default function HomeAiSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

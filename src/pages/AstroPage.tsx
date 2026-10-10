@@ -1,7 +1,7 @@
-import PageShell from '../components/layout/PageShell'
-import Navbar from '../components/layout/Navbar'
-import AstroPageContent from '../components/astro/AstroPage'
-import { APP_CARD_IMAGES } from '../data/appCardImages'
+import PageShell from '../components/layout/PageShell';
+import Navbar from '../components/layout/Navbar';
+import AstroPageContent from '../components/astro/AstroPage';
+import { APP_CARD_IMAGES } from '../data/appCardImages';
 
 export default function AstroPage() {
   return (
@@ -19,5 +19,5 @@ export default function AstroPage() {
     >
       <AstroPageContent />
     </PageShell>
-  )
+  );
 }

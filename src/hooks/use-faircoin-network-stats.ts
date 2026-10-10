@@ -5,13 +5,13 @@
  * is expected to render skeletons while loading; on transient errors we keep
  * the last successful value via React Query's default cache behaviour.
  */
-import { useQuery } from '@tanstack/react-query'
-import { useReadContract, useReadContracts } from 'wagmi'
-import { base } from 'wagmi/chains'
-import { fetchExplorerStats, type ExplorerStats } from '../api/faircoin-explorer'
-import { WFAIR_ADDRESS, WFAIR_DECIMALS } from '../lib/wfair-contract'
+import { useQuery } from '@tanstack/react-query';
+import { useReadContract, useReadContracts } from 'wagmi';
+import { base } from 'wagmi/chains';
+import { fetchExplorerStats, type ExplorerStats } from '../api/faircoin-explorer';
+import { WFAIR_ADDRESS, WFAIR_DECIMALS } from '../lib/wfair-contract';
 
-const CHAIN_TIP_REFETCH_MS = 15_000
+const CHAIN_TIP_REFETCH_MS = 15_000;
 
 export function useFaircoinNetworkStats() {
   return useQuery<ExplorerStats, Error>({
@@ -21,13 +21,13 @@ export function useFaircoinNetworkStats() {
     refetchIntervalInBackground: false,
     staleTime: 10_000,
     retry: 2,
-  })
+  });
 }
 
 // ── Uniswap v3 pool — WFAIR / USDC on Base ──────────────────────────────
 
-const UNISWAP_POOL_ADDRESS = '0x9F4F694390c60b51e30461c785C1345A1545b7ca' as const
-const USDC_BASE_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as const
+const UNISWAP_POOL_ADDRESS = '0x9F4F694390c60b51e30461c785C1345A1545b7ca' as const;
+const USDC_BASE_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as const;
 
 const UNISWAP_V3_POOL_ABI = [
   {
@@ -66,7 +66,7 @@ const UNISWAP_V3_POOL_ABI = [
     inputs: [],
     outputs: [{ type: 'address' }],
   },
-] as const
+] as const;
 
 const ERC20_BALANCE_ABI = [
   {
@@ -76,19 +76,19 @@ const ERC20_BALANCE_ABI = [
     inputs: [{ name: 'account', type: 'address' }],
     outputs: [{ type: 'uint256' }],
   },
-] as const
+] as const;
 
 export interface UniswapPoolStats {
   /** WFAIR price in USDC, derived from the pool slot0 sqrtPrice. */
-  wfairPriceUsdc: number | null
+  wfairPriceUsdc: number | null;
   /** Total USDC value of WFAIR + USDC sitting in the pool (TVL). */
-  tvlUsdc: number | null
-  poolWfairBalance: bigint | null
-  poolUsdcBalance: bigint | null
+  tvlUsdc: number | null;
+  poolWfairBalance: bigint | null;
+  poolUsdcBalance: bigint | null;
 }
 
-const USDC_DECIMALS = 6
-const Q96 = 2n ** 96n
+const USDC_DECIMALS = 6;
+const Q96 = 2n ** 96n;
 
 /**
  * Convert a Uniswap v3 sqrtPriceX96 to a price ratio (token1/token0).
@@ -101,13 +101,13 @@ function sqrtPriceToPrice(
   token0Decimals: number,
   token1Decimals: number,
 ): number {
-  const numerator = sqrtPriceX96 * sqrtPriceX96
+  const numerator = sqrtPriceX96 * sqrtPriceX96;
   // Convert to a JavaScript number using a fixed-precision intermediate so
   // we don't blow precision on the bigint divide.
-  const ratio = Number(numerator) / Number(Q96 * Q96)
+  const ratio = Number(numerator) / Number(Q96 * Q96);
   // Adjust for decimals — multiplying by 10^(d0 - d1) inverts the difference.
-  const decimalAdj = 10 ** (token0Decimals - token1Decimals)
-  return ratio * decimalAdj
+  const decimalAdj = 10 ** (token0Decimals - token1Decimals);
+  return ratio * decimalAdj;
 }
 
 /**
@@ -119,9 +119,9 @@ function sqrtPriceToPrice(
  * approximate TVL number.
  */
 export function useUniswapPoolStats(): {
-  data: UniswapPoolStats | null
-  isLoading: boolean
-  isError: boolean
+  data: UniswapPoolStats | null;
+  isLoading: boolean;
+  isError: boolean;
 } {
   const slotQuery = useReadContract({
     address: UNISWAP_POOL_ADDRESS,
@@ -129,7 +129,7 @@ export function useUniswapPoolStats(): {
     functionName: 'slot0',
     chainId: base.id,
     query: { refetchInterval: 30_000 },
-  })
+  });
 
   const tokensQuery = useReadContracts({
     contracts: [
@@ -147,7 +147,7 @@ export function useUniswapPoolStats(): {
       },
     ],
     query: { staleTime: Infinity },
-  })
+  });
 
   const balancesQuery = useReadContracts({
     contracts: [
@@ -167,21 +167,21 @@ export function useUniswapPoolStats(): {
       },
     ],
     query: { refetchInterval: 30_000 },
-  })
+  });
 
-  const isLoading = slotQuery.isLoading || tokensQuery.isLoading || balancesQuery.isLoading
+  const isLoading = slotQuery.isLoading || tokensQuery.isLoading || balancesQuery.isLoading;
   const isError =
-    Boolean(slotQuery.error) || Boolean(tokensQuery.error) || Boolean(balancesQuery.error)
+    Boolean(slotQuery.error) || Boolean(tokensQuery.error) || Boolean(balancesQuery.error);
 
   if (isLoading || isError) {
-    return { data: null, isLoading, isError }
+    return { data: null, isLoading, isError };
   }
 
-  const slot = slotQuery.data
-  const token0Result = tokensQuery.data?.[0]
-  const token1Result = tokensQuery.data?.[1]
-  const wfairBalanceResult = balancesQuery.data?.[0]
-  const usdcBalanceResult = balancesQuery.data?.[1]
+  const slot = slotQuery.data;
+  const token0Result = tokensQuery.data?.[0];
+  const token1Result = tokensQuery.data?.[1];
+  const wfairBalanceResult = balancesQuery.data?.[0];
+  const usdcBalanceResult = balancesQuery.data?.[1];
 
   if (
     !slot ||
@@ -190,32 +190,32 @@ export function useUniswapPoolStats(): {
     wfairBalanceResult?.status !== 'success' ||
     usdcBalanceResult?.status !== 'success'
   ) {
-    return { data: null, isLoading: false, isError: true }
+    return { data: null, isLoading: false, isError: true };
   }
 
-  const sqrtPriceX96 = slot[0]
-  const token0 = token0Result.result.toLowerCase()
-  const wfairIsToken0 = token0 === WFAIR_ADDRESS.toLowerCase()
+  const sqrtPriceX96 = slot[0];
+  const token0 = token0Result.result.toLowerCase();
+  const wfairIsToken0 = token0 === WFAIR_ADDRESS.toLowerCase();
 
-  const wfairBalance = wfairBalanceResult.result
-  const usdcBalance = usdcBalanceResult.result
+  const wfairBalance = wfairBalanceResult.result;
+  const usdcBalance = usdcBalanceResult.result;
 
   // Price math: slot0 reports token1/token0 price as a sqrt-encoded fixed.
   // We always want WFAIR/USDC = how many USDC per 1 WFAIR.
-  let wfairPriceUsdc: number
+  let wfairPriceUsdc: number;
   if (wfairIsToken0) {
     // price token1/token0 = USDC per WFAIR — that's already what we want.
-    wfairPriceUsdc = sqrtPriceToPrice(sqrtPriceX96, WFAIR_DECIMALS, USDC_DECIMALS)
+    wfairPriceUsdc = sqrtPriceToPrice(sqrtPriceX96, WFAIR_DECIMALS, USDC_DECIMALS);
   } else {
     // price token1/token0 = WFAIR per USDC — invert.
-    const wfairPerUsdc = sqrtPriceToPrice(sqrtPriceX96, USDC_DECIMALS, WFAIR_DECIMALS)
-    wfairPriceUsdc = wfairPerUsdc > 0 ? 1 / wfairPerUsdc : 0
+    const wfairPerUsdc = sqrtPriceToPrice(sqrtPriceX96, USDC_DECIMALS, WFAIR_DECIMALS);
+    wfairPriceUsdc = wfairPerUsdc > 0 ? 1 / wfairPerUsdc : 0;
   }
 
   // TVL — sum of pool reserves valued in USDC.
-  const wfairFloat = Number(wfairBalance) / 10 ** WFAIR_DECIMALS
-  const usdcFloat = Number(usdcBalance) / 10 ** USDC_DECIMALS
-  const tvlUsdc = wfairFloat * wfairPriceUsdc + usdcFloat
+  const wfairFloat = Number(wfairBalance) / 10 ** WFAIR_DECIMALS;
+  const usdcFloat = Number(usdcBalance) / 10 ** USDC_DECIMALS;
+  const tvlUsdc = wfairFloat * wfairPriceUsdc + usdcFloat;
 
   return {
     data: {
@@ -226,5 +226,5 @@ export function useUniswapPoolStats(): {
     },
     isLoading: false,
     isError: false,
-  }
+  };
 }

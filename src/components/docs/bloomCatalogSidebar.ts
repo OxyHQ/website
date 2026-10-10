@@ -1,9 +1,9 @@
-import { bloomCategories, bloomIndex } from '../../content/bloom-catalog.generated'
-import { pascalPath } from '../../content/bloom-catalog'
-import { catalogPreviews } from '../bloom/catalogPreviews'
-import type { SidebarSection } from './docsTypes'
+import { bloomCategories, bloomIndex } from '../../content/bloom-catalog.generated';
+import { pascalPath } from '../../content/bloom-catalog';
+import { catalogPreviews } from '../bloom/catalogPreviews';
+import type { SidebarSection } from './docsTypes';
 
-const HUB_PATH = '/developers/docs/bloom/components'
+const HUB_PATH = '/developers/docs/bloom/components';
 
 export const bloomCatalogSections: SidebarSection[] = [
   {
@@ -18,9 +18,7 @@ export const bloomCatalogSections: SidebarSection[] = [
         key: 'bloom',
         leafCount: bloomIndex.length,
         children: bloomCategories.map((category) => {
-          const entries = bloomIndex.filter(
-            (entry) => entry.category === category.name,
-          )
+          const entries = bloomIndex.filter((entry) => entry.category === category.name);
           return {
             kind: 'group',
             label: category.name,
@@ -28,16 +26,13 @@ export const bloomCatalogSections: SidebarSection[] = [
             leafCount: entries.length,
             children: entries.map((entry) => ({
               kind: 'leaf',
-              label:
-                catalogPreviews[entry.subpath]?.title ??
-                pascalPath(entry.subpath),
+              label: catalogPreviews[entry.subpath]?.title ?? pascalPath(entry.subpath),
               href: `${HUB_PATH}/${entry.subpath}/`,
               slug: entry.subpath,
             })),
-          }
+          };
         }),
       },
     ],
   },
-]
-
+];

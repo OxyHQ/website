@@ -12,65 +12,61 @@
  * so moving amount → pay feels continuous (incoming slides in from the
  * right; back navigation reverses the direction).
  */
-import { useCallback, useMemo, useState } from 'react'
-import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
-import { QRCodeSVG } from 'qrcode.react'
-import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine'
-import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { RiCheckboxCircleLine } from '@oxy.so/bloom/icons/RiCheckboxCircleLine'
-import { RiCheckboxCircleFill } from '@oxy.so/bloom/icons/RiCheckboxCircleFill'
-import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
-import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
-import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
-import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
-import { RiLoader4Line } from '@oxy.so/bloom/icons/RiLoader4Line'
-import { RiResetLeftLine } from '@oxy.so/bloom/icons/RiResetLeftLine'
-import { RiErrorWarningLine } from '@oxy.so/bloom/icons/RiErrorWarningLine'
-import { RiWallet3Line } from '@oxy.so/bloom/icons/RiWallet3Line'
-import AppShell from '../app/AppShell'
-import StepTransition from '../app/StepTransition'
+import { useCallback, useMemo, useState } from 'react';
+import { useCopyToClipboard } from '../../../lib/useCopyToClipboard';
+import { QRCodeSVG } from 'qrcode.react';
+import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine';
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { RiCheckboxCircleLine } from '@oxy.so/bloom/icons/RiCheckboxCircleLine';
+import { RiCheckboxCircleFill } from '@oxy.so/bloom/icons/RiCheckboxCircleFill';
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine';
+import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine';
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine';
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine';
+import { RiLoader4Line } from '@oxy.so/bloom/icons/RiLoader4Line';
+import { RiResetLeftLine } from '@oxy.so/bloom/icons/RiResetLeftLine';
+import { RiErrorWarningLine } from '@oxy.so/bloom/icons/RiErrorWarningLine';
+import { RiWallet3Line } from '@oxy.so/bloom/icons/RiWallet3Line';
+import AppShell from '../app/AppShell';
+import StepTransition from '../app/StepTransition';
 import {
   BuyApiError,
   type BuyOrderStatus,
   type BuyQuoteResponse,
   type BuyStatusResponse,
   type PaymentCurrency,
-} from '../../../api/faircoin-buy'
-import {
-  useFaircoinBuyQuote,
-  useFaircoinBuyStatus,
-} from '../../../hooks/use-faircoin-buy'
-import { validateAmount, isValidFairAddress } from './validate'
-import { useWallClockSecond } from './useWallClockSecond'
+} from '../../../api/faircoin-buy';
+import { useFaircoinBuyQuote, useFaircoinBuyStatus } from '../../../hooks/use-faircoin-buy';
+import { validateAmount, isValidFairAddress } from './validate';
+import { useWallClockSecond } from './useWallClockSecond';
 
-const FAIRWALLET_RELEASES_URL =
-  'https://github.com/FairCoinOfficial/FAIRWallet/releases'
-const FAIR_EXPLORER_BASE = 'https://explorer.fairco.in'
-const BASESCAN_BASE = 'https://basescan.org'
+const FAIRWALLET_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases';
+const FAIR_EXPLORER_BASE = 'https://explorer.fairco.in';
+const BASESCAN_BASE = 'https://basescan.org';
 
 // Mirrors bridge `BUY_MIN_FAIR / BUY_MAX_FAIR` for client-side hints. The
 // server still rejects out-of-bounds amounts as the source of truth.
-const BUY_BOUNDS = { min: 1, max: 1000 } as const
+const BUY_BOUNDS = { min: 1, max: 1000 } as const;
 
-const PRESET_AMOUNTS = ['10', '25', '50', '100'] as const
+const PRESET_AMOUNTS = ['10', '25', '50', '100'] as const;
 // Coarse USD/FAIR estimate just for the inline conversion display below the
 // amount input. Live pricing is server-side; this is purely cosmetic.
-const COARSE_USD_PER_FAIR = 1.0
+const COARSE_USD_PER_FAIR = 1.0;
 
-const COPY_FLASH_MS = 1_500
+const COPY_FLASH_MS = 1_500;
 
 const STEPS = [
   { id: 'amount', label: 'Amount' },
   { id: 'pay', label: 'Pay' },
   { id: 'done', label: 'Done' },
-] as const
+] as const;
 
 interface PaymentOptionDef {
-  currency: PaymentCurrency
-  label: string
-  hint: string
-  comingSoon?: boolean
+  currency: PaymentCurrency;
+  label: string;
+  hint: string;
+  comingSoon?: boolean;
 }
 
 const PAYMENT_OPTIONS: readonly PaymentOptionDef[] = [
@@ -78,22 +74,22 @@ const PAYMENT_OPTIONS: readonly PaymentOptionDef[] = [
   { currency: 'ETH_BASE', label: 'ETH', hint: 'on Base · soon', comingSoon: true },
   { currency: 'BTC', label: 'BTC', hint: 'native · soon', comingSoon: true },
   { currency: 'CARD', label: 'Card', hint: 'Apple/Google Pay · soon', comingSoon: true },
-]
+];
 
-type StageKind = 'amount' | 'pay' | 'done' | 'failed'
+type StageKind = 'amount' | 'pay' | 'done' | 'failed';
 
 type Stage =
   | { kind: 'amount' }
   | { kind: 'pay'; quote: BuyQuoteResponse }
   | { kind: 'done'; status: BuyStatusResponse }
-  | { kind: 'failed'; message: string | null }
+  | { kind: 'failed'; message: string | null };
 
 interface ShellCopy {
-  eyebrow: string
-  title: string
-  subtitle?: string
-  currentStep: number
-  footnote?: React.ReactNode
+  eyebrow: string;
+  title: string;
+  subtitle?: string;
+  currentStep: number;
+  footnote?: React.ReactNode;
 }
 
 const SHELL_COPY: Record<StageKind, ShellCopy> = {
@@ -135,25 +131,25 @@ const SHELL_COPY: Record<StageKind, ShellCopy> = {
     subtitle: 'The bridge could not complete the transfer.',
     currentStep: 1,
   },
-}
+};
 
 export default function BuyApp() {
-  const [stage, setStage] = useState<Stage>({ kind: 'amount' })
-  const [direction, setDirection] = useState<1 | -1>(1)
-  const quoteMutation = useFaircoinBuyQuote()
+  const [stage, setStage] = useState<Stage>({ kind: 'amount' });
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const quoteMutation = useFaircoinBuyQuote();
 
   const handleQuoteIssued = useCallback((quote: BuyQuoteResponse) => {
-    setDirection(1)
-    setStage({ kind: 'pay', quote })
-  }, [])
+    setDirection(1);
+    setStage({ kind: 'pay', quote });
+  }, []);
 
   const handleReset = useCallback(() => {
-    quoteMutation.reset()
-    setDirection(-1)
-    setStage({ kind: 'amount' })
-  }, [quoteMutation])
+    quoteMutation.reset();
+    setDirection(-1);
+    setStage({ kind: 'amount' });
+  }, [quoteMutation]);
 
-  const copy = SHELL_COPY[stage.kind]
+  const copy = SHELL_COPY[stage.kind];
 
   return (
     <AppShell
@@ -175,16 +171,16 @@ export default function BuyApp() {
         />
       </StepTransition>
     </AppShell>
-  )
+  );
 }
 
 interface BuyStageProps {
-  stage: Stage
-  setStage: (s: Stage) => void
-  setDirection: (d: 1 | -1) => void
-  quoteMutation: ReturnType<typeof useFaircoinBuyQuote>
-  onQuoteIssued: (quote: BuyQuoteResponse) => void
-  onReset: () => void
+  stage: Stage;
+  setStage: (s: Stage) => void;
+  setDirection: (d: 1 | -1) => void;
+  quoteMutation: ReturnType<typeof useFaircoinBuyQuote>;
+  onQuoteIssued: (quote: BuyQuoteResponse) => void;
+  onReset: () => void;
 }
 
 function BuyStage({
@@ -196,79 +192,73 @@ function BuyStage({
   onReset,
 }: BuyStageProps) {
   if (stage.kind === 'amount') {
-    return <AmountStep mutation={quoteMutation} onQuoteIssued={onQuoteIssued} />
+    return <AmountStep mutation={quoteMutation} onQuoteIssued={onQuoteIssued} />;
   }
   if (stage.kind === 'pay') {
     return (
       <PaymentStep
         quote={stage.quote}
         onAdvance={(status) => {
-          setDirection(1)
-          setStage({ kind: 'done', status })
+          setDirection(1);
+          setStage({ kind: 'done', status });
         }}
         onFail={(message) => {
-          setDirection(1)
-          setStage({ kind: 'failed', message })
+          setDirection(1);
+          setStage({ kind: 'failed', message });
         }}
         onStartOver={onReset}
       />
-    )
+    );
   }
   if (stage.kind === 'done') {
-    return <SuccessStep status={stage.status} onStartOver={onReset} />
+    return <SuccessStep status={stage.status} onStartOver={onReset} />;
   }
-  return <FailedStep message={stage.message} onStartOver={onReset} />
+  return <FailedStep message={stage.message} onStartOver={onReset} />;
 }
 
 // ── Step 1 — amount, address, payment method ─────────────────────────────
 
 interface AmountStepProps {
-  mutation: ReturnType<typeof useFaircoinBuyQuote>
-  onQuoteIssued: (quote: BuyQuoteResponse) => void
+  mutation: ReturnType<typeof useFaircoinBuyQuote>;
+  onQuoteIssued: (quote: BuyQuoteResponse) => void;
 }
 
 function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
-  const [amount, setAmount] = useState('10')
-  const [address, setAddress] = useState('')
-  const [currency, setCurrency] = useState<PaymentCurrency>('USDC_BASE')
-  const [touched, setTouched] = useState({ amount: false, address: false })
+  const [amount, setAmount] = useState('10');
+  const [address, setAddress] = useState('');
+  const [currency, setCurrency] = useState<PaymentCurrency>('USDC_BASE');
+  const [touched, setTouched] = useState({ amount: false, address: false });
 
-  const amountCheck = useMemo(() => validateAmount(amount, BUY_BOUNDS), [amount])
-  const addressLooksValid = useMemo(
-    () => isValidFairAddress(address.trim()),
-    [address],
-  )
+  const amountCheck = useMemo(() => validateAmount(amount, BUY_BOUNDS), [amount]);
+  const addressLooksValid = useMemo(() => isValidFairAddress(address.trim()), [address]);
 
   const amountError =
-    !amountCheck.ok && touched.amount ? describeAmountError(amountCheck.reason) : null
+    !amountCheck.ok && touched.amount ? describeAmountError(amountCheck.reason) : null;
   const addressError =
     touched.address && address.trim().length > 0 && !addressLooksValid
       ? 'FairCoin addresses start with F and have 26–35 base58 characters.'
-      : null
+      : null;
 
   const usdEstimate = useMemo(() => {
-    if (!amountCheck.ok) return null
-    const usd = amountCheck.value * COARSE_USD_PER_FAIR
+    if (!amountCheck.ok) return null;
+    const usd = amountCheck.value * COARSE_USD_PER_FAIR;
     return usd.toLocaleString(undefined, {
       style: 'currency',
       currency: 'USD',
       maximumFractionDigits: 2,
-    })
-  }, [amountCheck])
+    });
+  }, [amountCheck]);
 
   const canSubmit =
-    amountCheck.ok &&
-    addressLooksValid &&
-    currency === 'USDC_BASE' &&
-    !mutation.isPending
+    amountCheck.ok && addressLooksValid && currency === 'USDC_BASE' && !mutation.isPending;
 
-  const submissionError = mutation.isError ? describeQuoteError(mutation.error) : null
+  const submissionError = mutation.isError ? describeQuoteError(mutation.error) : null;
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
-      setTouched({ amount: true, address: true })
-      if (!amountCheck.ok || !addressLooksValid || currency !== 'USDC_BASE') return
+      e.preventDefault();
+      setTouched({ amount: true, address: true });
+      if (!amountCheck.ok || !addressLooksValid || currency !== 'USDC_BASE') return;
       mutation.mutate(
         {
           fairAmount: amount.trim(),
@@ -276,10 +266,10 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
           fairDestinationAddress: address.trim(),
         },
         { onSuccess: onQuoteIssued },
-      )
+      );
     },
     [amount, address, currency, amountCheck, addressLooksValid, mutation, onQuoteIssued],
-  )
+  );
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -287,9 +277,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
       <div className="rounded-2xl border border-border bg-background/60 p-4">
         <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
           <span>You buy</span>
-          {usdEstimate ? (
-            <span className="text-muted-foreground/80">≈ {usdEstimate}</span>
-          ) : null}
+          {usdEstimate ? <span className="text-muted-foreground/80">≈ {usdEstimate}</span> : null}
         </div>
         <div className="mt-2.5 flex items-baseline justify-between gap-3">
           <input
@@ -305,7 +293,10 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
             className="w-full bg-transparent text-[44px] font-semibold leading-[1.05] tracking-tight text-foreground placeholder:text-muted-foreground/40 focus:outline-none sm:text-[52px]"
           />
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-body-xs font-bold text-primary-foreground">
+            <span
+              aria-hidden
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-body-xs font-bold text-primary-foreground"
+            >
               F
             </span>
             <span className="text-sm font-semibold text-foreground">FAIR</span>
@@ -314,7 +305,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
         <div className="mt-2.5 flex items-center justify-between text-xs">
           <div className="flex flex-wrap gap-1.5">
             {PRESET_AMOUNTS.map((preset) => {
-              const active = amount === preset
+              const active = amount === preset;
               return (
                 <button
                   key={preset}
@@ -329,7 +320,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
                 >
                   {preset}
                 </button>
-              )
+              );
             })}
           </div>
           <span className="text-muted-foreground/80">
@@ -355,8 +346,8 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
         </div>
         <div className="mt-2.5 flex flex-wrap gap-2">
           {PAYMENT_OPTIONS.map((option) => {
-            const active = option.currency === currency
-            const disabled = option.comingSoon === true
+            const active = option.currency === currency;
+            const disabled = option.comingSoon === true;
             return (
               <button
                 key={option.currency}
@@ -375,7 +366,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
                 <span className="text-sm font-semibold text-foreground">{option.label}</span>
                 <span className="text-body-xs text-muted-foreground">{option.hint}</span>
               </button>
-            )
+            );
           })}
         </div>
       </div>
@@ -389,7 +380,9 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
           Send FAIR to
         </label>
         <div className="mt-2.5 flex items-center gap-2 rounded-xl border border-border bg-popover/60 px-3 py-2.5 transition-colors focus-within:border-primary">
-          <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground"><RiWallet3Line width={16} height={16} fill="currentColor" /></span>
+          <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground">
+            <RiWallet3Line width={16} height={16} fill="currentColor" />
+          </span>
           <input
             id="buy-address"
             type="text"
@@ -428,56 +421,65 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
       >
         {mutation.isPending ? (
           <>
-            <span aria-hidden="true" className="inline-flex animate-spin"><RiLoader4Line width={16} height={16} fill="currentColor" /></span>
+            <span aria-hidden="true" className="inline-flex animate-spin">
+              <RiLoader4Line width={16} height={16} fill="currentColor" />
+            </span>
             Generating quote…
           </>
         ) : (
           <>
             Continue
-            <span aria-hidden="true" className="inline-flex transition-transform group-hover:translate-x-0.5"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
+            <span
+              aria-hidden="true"
+              className="inline-flex transition-transform group-hover:translate-x-0.5"
+            >
+              <RiArrowRightLine width={16} height={16} fill="currentColor" />
+            </span>
           </>
         )}
       </button>
 
       {submissionError ? (
         <div className="flex items-start gap-2 rounded-xl border border-error/40 bg-error-subtle px-3 py-2.5 text-xs text-error-text">
-          <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiErrorWarningLine width={14} height={14} fill="currentColor" /></span>
+          <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0">
+            <RiErrorWarningLine width={14} height={14} fill="currentColor" />
+          </span>
           <span>{submissionError}</span>
         </div>
       ) : null}
     </form>
-  )
+  );
 }
 
 // ── Step 2 — payment + status ────────────────────────────────────────────
 
 interface PaymentStepProps {
-  quote: BuyQuoteResponse
-  onAdvance: (status: BuyStatusResponse) => void
-  onFail: (message: string | null) => void
-  onStartOver: () => void
+  quote: BuyQuoteResponse;
+  onAdvance: (status: BuyStatusResponse) => void;
+  onFail: (message: string | null) => void;
+  onStartOver: () => void;
 }
 
 function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps) {
-  const statusQuery = useFaircoinBuyStatus(quote.id)
-  const status = statusQuery.data ?? null
-  const effectiveStatus: BuyOrderStatus = status?.status ?? 'AWAITING_PAYMENT'
+  const statusQuery = useFaircoinBuyStatus(quote.id);
+  const status = statusQuery.data ?? null;
+  const effectiveStatus: BuyOrderStatus = status?.status ?? 'AWAITING_PAYMENT';
 
-  const nowSeconds = useWallClockSecond()
+  const nowSeconds = useWallClockSecond();
   const expiresAtSeconds = useMemo(
     () => Math.floor(new Date(quote.paymentExpiresAt).getTime() / 1000),
     [quote.paymentExpiresAt],
-  )
-  const secondsRemaining = Math.max(0, expiresAtSeconds - nowSeconds)
+  );
+  const secondsRemaining = Math.max(0, expiresAtSeconds - nowSeconds);
 
-  const paymentNotStarted = effectiveStatus === 'AWAITING_PAYMENT'
+  const paymentNotStarted = effectiveStatus === 'AWAITING_PAYMENT';
   const quoteExpired =
-    effectiveStatus === 'EXPIRED' || (paymentNotStarted && secondsRemaining <= 0)
+    effectiveStatus === 'EXPIRED' || (paymentNotStarted && secondsRemaining <= 0);
 
   // Step transition: derive advance/fail from query state during render
   // (no `useEffect`). `StepTransition` handles the animation; this screen
   // just notifies the parent to swap stages.
-  useDerivedStageTransition(effectiveStatus, status, onAdvance, onFail)
+  useDerivedStageTransition(effectiveStatus, status, onAdvance, onFail);
 
   return (
     <div className="flex flex-col gap-4">
@@ -494,7 +496,10 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
             {quote.paymentAmountFormatted}
           </span>
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-label-sm font-bold text-white">
+            <span
+              aria-hidden
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-label-sm font-bold text-white"
+            >
               $
             </span>
             <span className="text-sm font-semibold text-foreground">{quote.paymentSymbol}</span>
@@ -523,22 +528,20 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
                 className="h-[180px] w-[180px] sm:h-[220px] sm:w-[220px]"
               />
             </div>
-            <CopyableValue
-              label="Payment address"
-              value={quote.paymentAddress}
-              monospace
-            />
+            <CopyableValue label="Payment address" value={quote.paymentAddress} monospace />
           </div>
         </div>
       ) : null}
 
       {/* Network warning */}
       <div className="flex items-start gap-2 rounded-2xl border border-warning/30 bg-warning-subtle px-3.5 py-2.5 text-xs leading-relaxed text-warning-text">
-        <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiErrorWarningLine width={16} height={16} fill="currentColor" /></span>
+        <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0">
+          <RiErrorWarningLine width={16} height={16} fill="currentColor" />
+        </span>
         <span>
           Send <strong>{quote.paymentSymbol}</strong> on{' '}
-          <strong>{quote.paymentNetworkLabel}</strong> only. The bridge cannot recover
-          cross-network transfers.
+          <strong>{quote.paymentNetworkLabel}</strong> only. The bridge cannot recover cross-network
+          transfers.
         </span>
       </div>
 
@@ -578,12 +581,14 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
 
       {statusQuery.isError && statusQuery.failureCount > 2 ? (
         <p className="text-center text-xs text-muted-foreground">
-          <span aria-hidden="true" className="inline-flex mr-1 animate-spin"><RiLoader4Line width={12} height={12} fill="currentColor" /></span>
+          <span aria-hidden="true" className="inline-flex mr-1 animate-spin">
+            <RiLoader4Line width={12} height={12} fill="currentColor" />
+          </span>
           Reconnecting to bridge…
         </p>
       ) : null}
     </div>
-  )
+  );
 }
 
 // ── Step 3 — success ─────────────────────────────────────────────────────
@@ -592,16 +597,16 @@ function SuccessStep({
   status,
   onStartOver,
 }: {
-  status: BuyStatusResponse
-  onStartOver: () => void
+  status: BuyStatusResponse;
+  onStartOver: () => void;
 }) {
-  const fairAmount = useMemo(() => satsToFair(status.fairAmountSats), [status.fairAmountSats])
+  const fairAmount = useMemo(() => satsToFair(status.fairAmountSats), [status.fairAmountSats]);
   const explorerTxUrl = status.fairDeliveryTxId
     ? `${FAIR_EXPLORER_BASE}/tx/${encodeURIComponent(status.fairDeliveryTxId)}`
-    : null
+    : null;
   const baseTxUrl = status.swapTxHash
     ? `${BASESCAN_BASE}/tx/${encodeURIComponent(status.swapTxHash)}`
-    : null
+    : null;
 
   return (
     <div className="flex flex-col items-center gap-5 py-1 text-center">
@@ -665,22 +670,18 @@ function SuccessStep({
         Buy more FAIR
       </button>
     </div>
-  )
+  );
 }
 
 // ── Failed ───────────────────────────────────────────────────────────────
 
-function FailedStep({
-  message,
-  onStartOver,
-}: {
-  message: string | null
-  onStartOver: () => void
-}) {
+function FailedStep({ message, onStartOver }: { message: string | null; onStartOver: () => void }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-start gap-2.5 rounded-2xl border border-error/40 bg-error-subtle p-3.5 text-sm text-error-text">
-        <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiErrorWarningLine width={20} height={20} fill="currentColor" /></span>
+        <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0">
+          <RiErrorWarningLine width={20} height={20} fill="currentColor" />
+        </span>
         <span>{message ?? 'No further detail was provided. Try a fresh quote.'}</span>
       </div>
       <button
@@ -692,28 +693,26 @@ function FailedStep({
         Start a new order
       </button>
     </div>
-  )
+  );
 }
 
 // ── Sub-components ───────────────────────────────────────────────────────
 
 function Countdown({ secondsRemaining }: { secondsRemaining: number }) {
-  const minutes = Math.floor(secondsRemaining / 60)
-  const seconds = secondsRemaining % 60
-  const warn = secondsRemaining < 60
+  const minutes = Math.floor(secondsRemaining / 60);
+  const seconds = secondsRemaining % 60;
+  const warn = secondsRemaining < 60;
   return (
     <span
       className={[
         'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-body-xs font-semibold tabular-nums',
-        warn
-          ? 'bg-warning-subtle text-warning-text'
-          : 'bg-muted text-muted-foreground',
+        warn ? 'bg-warning-subtle text-warning-text' : 'bg-muted text-muted-foreground',
       ].join(' ')}
     >
       <RiTimeLine aria-hidden width={12} height={12} fill="currentColor" />
       {minutes}:{String(seconds).padStart(2, '0')}
     </span>
-  )
+  );
 }
 
 function LiveDot({ active }: { active: boolean }) {
@@ -732,17 +731,17 @@ function LiveDot({ active }: { active: boolean }) {
       </span>
       {active ? 'Live' : 'Paused'}
     </span>
-  )
+  );
 }
 
 interface CopyableValueProps {
-  label: string
-  value: string
-  monospace?: boolean
+  label: string;
+  value: string;
+  monospace?: boolean;
 }
 
 function CopyableValue({ label, value, monospace }: CopyableValueProps) {
-  const { copied, copy } = useCopyToClipboard(COPY_FLASH_MS)
+  const { copied, copy } = useCopyToClipboard(COPY_FLASH_MS);
   return (
     <div className="w-full rounded-xl border border-border bg-popover/60 p-3">
       <div className="text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
@@ -771,13 +770,13 @@ function CopyableValue({ label, value, monospace }: CopyableValueProps) {
         </button>
       </div>
     </div>
-  )
+  );
 }
 
 interface TimelineStep {
-  key: BuyOrderStatus
-  label: string
-  hint: string
+  key: BuyOrderStatus;
+  label: string;
+  hint: string;
 }
 
 const TIMELINE: readonly TimelineStep[] = [
@@ -795,27 +794,27 @@ const TIMELINE: readonly TimelineStep[] = [
   { key: 'BURNING', label: 'Cross-chain transfer', hint: 'Burning WFAIR on Base.' },
   { key: 'DELIVERING', label: 'Delivering FAIR', hint: 'Broadcasting to FairCoin.' },
   { key: 'DELIVERED', label: 'Delivered', hint: 'FAIR is in your wallet.' },
-]
+];
 
 function StatusTimeline({
   status,
   status_data,
 }: {
-  status: BuyOrderStatus
-  status_data: BuyStatusResponse | null
+  status: BuyOrderStatus;
+  status_data: BuyStatusResponse | null;
 }) {
   const currentIdx = Math.max(
     0,
     TIMELINE.findIndex((s) => s.key === status),
-  )
+  );
 
   return (
     <ol className="relative ml-2 flex flex-col gap-3 border-l border-border pl-5">
       {TIMELINE.map((step, i) => {
-        const done = i < currentIdx
-        const active = i === currentIdx
-        const future = i > currentIdx
-        const txHash = txForStep(step.key, status_data)
+        const done = i < currentIdx;
+        const active = i === currentIdx;
+        const future = i > currentIdx;
+        const txHash = txForStep(step.key, status_data);
         return (
           <li key={step.key} className="relative">
             <span
@@ -830,7 +829,9 @@ function StatusTimeline({
               ].join(' ')}
             >
               {done ? (
-                <span aria-hidden="true" className="inline-flex text-primary-foreground"><RiCheckLine width={10} height={10} fill="currentColor" /></span>
+                <span aria-hidden="true" className="inline-flex text-primary-foreground">
+                  <RiCheckLine width={10} height={10} fill="currentColor" />
+                </span>
               ) : active ? (
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
               ) : null}
@@ -848,17 +849,17 @@ function StatusTimeline({
               {txHash ? <TxHashLink hash={txHash} chain={txChainForStep(step.key)} /> : null}
             </div>
           </li>
-        )
+        );
       })}
     </ol>
-  )
+  );
 }
 
 function TxHashLink({ hash, chain }: { hash: string; chain: 'base' | 'fair' }) {
   const url =
     chain === 'fair'
       ? `${FAIR_EXPLORER_BASE}/tx/${encodeURIComponent(hash)}`
-      : `${BASESCAN_BASE}/tx/${encodeURIComponent(hash)}`
+      : `${BASESCAN_BASE}/tx/${encodeURIComponent(hash)}`;
   return (
     <a
       href={url}
@@ -869,7 +870,7 @@ function TxHashLink({ hash, chain }: { hash: string; chain: 'base' | 'fair' }) {
       {shortHash(hash)}
       <RiExternalLinkLine aria-hidden width={10} height={10} fill="currentColor" />
     </a>
-  )
+  );
 }
 
 function SuccessCheckmark() {
@@ -877,12 +878,15 @@ function SuccessCheckmark() {
     <div className="relative flex h-16 w-16 items-center justify-center sm:h-20 sm:w-20">
       <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
       <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 sm:h-20 sm:w-20">
-        <span aria-hidden="true" className="inline-flex h-8 w-8 text-primary sm:h-10 sm:w-10 [&_svg]:size-full">
+        <span
+          aria-hidden="true"
+          className="inline-flex h-8 w-8 text-primary sm:h-10 sm:w-10 [&_svg]:size-full"
+        >
           <RiCheckboxCircleFill width={32} height={32} fill="currentColor" />
         </span>
       </span>
     </div>
-  )
+  );
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────
@@ -898,118 +902,114 @@ function useDerivedStageTransition(
   onAdvance: (status: BuyStatusResponse) => void,
   onFail: (message: string | null) => void,
 ) {
-  const [handled, setHandled] = useState<BuyOrderStatus | null>(null)
+  const [handled, setHandled] = useState<BuyOrderStatus | null>(null);
   if (handled !== 'DELIVERED' && effectiveStatus === 'DELIVERED' && status) {
-    setHandled('DELIVERED')
-    onAdvance(status)
+    setHandled('DELIVERED');
+    onAdvance(status);
   } else if (handled !== 'FAILED' && effectiveStatus === 'FAILED') {
-    setHandled('FAILED')
-    onFail(status?.errorMessage ?? null)
+    setHandled('FAILED');
+    onFail(status?.errorMessage ?? null);
   }
 }
 
 function txForStep(key: BuyOrderStatus, data: BuyStatusResponse | null): string | null {
-  if (!data) return null
+  if (!data) return null;
   switch (key) {
     case 'PAYMENT_DETECTED':
-      return data.paymentDetectedTxHash
+      return data.paymentDetectedTxHash;
     case 'SWAPPING':
-      return data.swapTxHash
+      return data.swapTxHash;
     case 'BURNING':
-      return data.burnTxHash
+      return data.burnTxHash;
     case 'DELIVERED':
-      return data.fairDeliveryTxId
+      return data.fairDeliveryTxId;
     default:
-      return null
+      return null;
   }
 }
 
 function txChainForStep(key: BuyOrderStatus): 'base' | 'fair' {
-  return key === 'DELIVERED' ? 'fair' : 'base'
+  return key === 'DELIVERED' ? 'fair' : 'base';
 }
 
 function shortAddress(a: string): string {
-  if (a.length <= 14) return a
-  return `${a.slice(0, 8)}…${a.slice(-6)}`
+  if (a.length <= 14) return a;
+  return `${a.slice(0, 8)}…${a.slice(-6)}`;
 }
 
 function shortHash(h: string): string {
-  if (h.length <= 14) return h
-  return `${h.slice(0, 8)}…${h.slice(-6)}`
+  if (h.length <= 14) return h;
+  return `${h.slice(0, 8)}…${h.slice(-6)}`;
 }
 
 function describeAmountError(reason: 'empty' | 'malformed' | 'below_min' | 'above_max'): string {
   switch (reason) {
     case 'empty':
-      return 'Enter an amount'
+      return 'Enter an amount';
     case 'malformed':
-      return 'Use up to 8 decimal places'
+      return 'Use up to 8 decimal places';
     case 'below_min':
-      return `Minimum ${BUY_BOUNDS.min} FAIR`
+      return `Minimum ${BUY_BOUNDS.min} FAIR`;
     case 'above_max':
-      return `Maximum ${BUY_BOUNDS.max.toLocaleString()} FAIR`
+      return `Maximum ${BUY_BOUNDS.max.toLocaleString()} FAIR`;
   }
 }
 
 function describeQuoteError(err: unknown): string {
   if (err instanceof BuyApiError) {
     if (err.code === 'invalid_request') {
-      const field = err.extras.field
+      const field = err.extras.field;
       if (field === 'fairDestinationAddress') {
-        return 'That FairCoin address looks invalid. Double-check for typos.'
+        return 'That FairCoin address looks invalid. Double-check for typos.';
       }
       if (field === 'fairAmount') {
-        return 'That amount is not a valid number. Use up to 8 decimals.'
+        return 'That amount is not a valid number. Use up to 8 decimals.';
       }
       if (field === 'paymentCurrency') {
-        return 'That payment method is not supported yet.'
+        return 'That payment method is not supported yet.';
       }
-      return err.message
+      return err.message;
     }
     switch (err.code) {
       case 'rate_limited':
-        return 'Too many requests. Try again in a minute.'
+        return 'Too many requests. Try again in a minute.';
       case 'invalid_fair_destination':
-        return 'The bridge rejected that FairCoin address.'
+        return 'The bridge rejected that FairCoin address.';
       case 'below_minimum': {
-        const min = err.extras.minimumFair
-        return typeof min === 'string'
-          ? `Below the minimum of ${min} FAIR.`
-          : 'Below the minimum.'
+        const min = err.extras.minimumFair;
+        return typeof min === 'string' ? `Below the minimum of ${min} FAIR.` : 'Below the minimum.';
       }
       case 'above_maximum': {
-        const max = err.extras.maximumFair
-        return typeof max === 'string'
-          ? `Above the maximum of ${max} FAIR.`
-          : 'Above the maximum.'
+        const max = err.extras.maximumFair;
+        return typeof max === 'string' ? `Above the maximum of ${max} FAIR.` : 'Above the maximum.';
       }
       case 'currency_unavailable':
-        return 'That payment method is not yet available. Use USDC on Base.'
+        return 'That payment method is not yet available. Use USDC on Base.';
       case 'card_not_configured':
-        return 'Card payments are coming soon. Use USDC on Base for now.'
+        return 'Card payments are coming soon. Use USDC on Base for now.';
       case 'pool_quote_failed':
-        return 'WFAIR pool quote temporarily unavailable. Try again.'
+        return 'WFAIR pool quote temporarily unavailable. Try again.';
       case 'address_allocation_failed':
-        return 'The bridge could not allocate a payment address. Retry shortly.'
+        return 'The bridge could not allocate a payment address. Retry shortly.';
       case 'network_error':
-        return 'Could not reach the bridge. Check your connection.'
+        return 'Could not reach the bridge. Check your connection.';
       default:
-        return err.message.length > 0 ? err.message : 'Bridge returned an error.'
+        return err.message.length > 0 ? err.message : 'Bridge returned an error.';
     }
   }
-  if (err instanceof Error) return err.message
-  return 'Unexpected error. Try again.'
+  if (err instanceof Error) return err.message;
+  return 'Unexpected error. Try again.';
 }
 
 function satsToFair(satsStr: string): string {
   try {
-    const sats = BigInt(satsStr)
-    const whole = sats / 100_000_000n
-    const frac = sats % 100_000_000n
-    if (frac === 0n) return whole.toString()
-    const fracStr = frac.toString().padStart(8, '0').replace(/0+$/, '')
-    return `${whole.toString()}.${fracStr}`
+    const sats = BigInt(satsStr);
+    const whole = sats / 100_000_000n;
+    const frac = sats % 100_000_000n;
+    if (frac === 0n) return whole.toString();
+    const fracStr = frac.toString().padStart(8, '0').replace(/0+$/, '');
+    return `${whole.toString()}.${fracStr}`;
   } catch {
-    return satsStr
+    return satsStr;
   }
 }

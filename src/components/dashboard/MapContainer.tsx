@@ -1,10 +1,10 @@
-import { lazy, Suspense } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import * as Skeleton from "@oxy.so/bloom/skeleton";
-import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
+import { lazy, Suspense } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import type { InfraStatusNode, PlatformActivityEvent } from '../../api/hooks';
 
-const LiveGlobe = lazy(() => import("./LiveGlobe"));
-const DottedMap = lazy(() => import("./DottedMap"));
+const LiveGlobe = lazy(() => import('./LiveGlobe'));
+const DottedMap = lazy(() => import('./DottedMap'));
 
 interface MapContainerProps {
   isGlobe: boolean;
@@ -15,11 +15,7 @@ interface MapContainerProps {
 export default function MapContainer({ isGlobe, infraStatus, activityEvents }: MapContainerProps) {
   return (
     <div className="relative h-full w-full">
-      <Suspense
-        fallback={
-          <Skeleton.Box width="100%" height={560} borderRadius={6} />
-        }
-      >
+      <Suspense fallback={<Skeleton.Box width="100%" height={560} borderRadius={6} />}>
         <AnimatePresence initial={false} mode="wait">
           {isGlobe ? (
             <motion.div

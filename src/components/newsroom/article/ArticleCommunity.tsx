@@ -1,7 +1,7 @@
-import CommentSection from '../../social/CommentSection'
-import DiscussOnMention from '../../social/DiscussOnMention'
-import LikeButton from '../../social/LikeButton'
-import type { NewsroomPost } from '../../../data/newsroom'
+import CommentSection from '../../social/CommentSection';
+import DiscussOnMention from '../../social/DiscussOnMention';
+import LikeButton from '../../social/LikeButton';
+import type { NewsroomPost } from '../../../data/newsroom';
 
 export default function ArticleCommunity({ post, url }: { post: NewsroomPost; url: string }) {
   return (
@@ -13,5 +13,5 @@ export default function ArticleCommunity({ post, url }: { post: NewsroomPost; ur
 
       <CommentSection targetType="newsroom" targetId={post.slug} />
     </>
-  )
+  );
 }

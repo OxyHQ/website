@@ -1,9 +1,9 @@
-import { Link } from '../../lib/navigation'
-import { BloomColorScope } from '@oxy.so/bloom/theme'
-import type { NewsroomPostSummary } from '../../data/newsroom'
-import { useCurrentLocale } from '../../lib/i18n'
-import { newsroomThemeFor } from '../../lib/newsroom-theme'
-import { usePrefetchNewsroomPost } from '../../api/hooks'
+import { Link } from '../../lib/navigation';
+import { BloomColorScope } from '@oxy.so/bloom/theme';
+import type { NewsroomPostSummary } from '../../data/newsroom';
+import { useCurrentLocale } from '../../lib/i18n';
+import { newsroomThemeFor } from '../../lib/newsroom-theme';
+import { usePrefetchNewsroomPost } from '../../api/hooks';
 
 function NewsroomLink({
   article,
@@ -11,12 +11,12 @@ function NewsroomLink({
   ariaLabel,
   children,
 }: {
-  article: NewsroomPostSummary
-  className: string
-  ariaLabel?: string
-  children: React.ReactNode
+  article: NewsroomPostSummary;
+  className: string;
+  ariaLabel?: string;
+  children: React.ReactNode;
 }) {
-  const preload = usePrefetchNewsroomPost(article.slug)
+  const preload = usePrefetchNewsroomPost(article.slug);
 
   return (
     <Link
@@ -29,15 +29,17 @@ function NewsroomLink({
     >
       {children}
     </Link>
-  )
+  );
 }
 
-function ThemedCard({ article, children }: { article: NewsroomPostSummary; children: React.ReactElement }) {
-  return (
-    <BloomColorScope colorPreset={newsroomThemeFor(article)}>
-      {children}
-    </BloomColorScope>
-  )
+function ThemedCard({
+  article,
+  children,
+}: {
+  article: NewsroomPostSummary;
+  children: React.ReactElement;
+}) {
+  return <BloomColorScope colorPreset={newsroomThemeFor(article)}>{children}</BloomColorScope>;
 }
 
 function NewsImage({
@@ -46,10 +48,10 @@ function NewsImage({
   priority = false,
   sizes,
 }: {
-  article: NewsroomPostSummary
-  className: string
-  priority?: boolean
-  sizes: string
+  article: NewsroomPostSummary;
+  className: string;
+  priority?: boolean;
+  sizes: string;
 }) {
   return (
     <div className={`relative overflow-hidden rounded-md bg-surface ${className}`}>
@@ -71,30 +73,32 @@ function NewsImage({
           width={1200}
           height={675}
           onError={(event) => {
-            event.currentTarget.hidden = true
+            event.currentTarget.hidden = true;
           }}
           className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.025] motion-reduce:transition-none"
         />
       )}
     </div>
-  )
+  );
 }
 
 function NewsMeta({ article }: { article: NewsroomPostSummary }) {
-  const locale = useCurrentLocale()
+  const locale = useCurrentLocale();
   const date = new Date(article.publishedAt).toLocaleDateString(locale, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
-  })
+  });
 
   return (
     <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-body-sm text-muted-foreground">
       {article.categories[0] && <span>{article.categories[0]}</span>}
       {article.categories[0] && <span aria-hidden>·</span>}
-      <time className="whitespace-nowrap" dateTime={article.publishedAt}>{date}</time>
+      <time className="whitespace-nowrap" dateTime={article.publishedAt}>
+        {date}
+      </time>
     </p>
-  )
+  );
 }
 
 export function NewsCardFeatured({ article }: { article: NewsroomPostSummary }) {
@@ -118,7 +122,7 @@ export function NewsCardFeatured({ article }: { article: NewsroomPostSummary }) 
         </div>
       </NewsroomLink>
     </ThemedCard>
-  )
+  );
 }
 
 export function NewsCardGrid({ article }: { article: NewsroomPostSummary }) {
@@ -141,7 +145,7 @@ export function NewsCardGrid({ article }: { article: NewsroomPostSummary }) {
         </div>
       </NewsroomLink>
     </ThemedCard>
-  )
+  );
 }
 
 export function NewsCardCarousel({ article }: { article: NewsroomPostSummary }) {
@@ -164,7 +168,7 @@ export function NewsCardCarousel({ article }: { article: NewsroomPostSummary }) 
         </div>
       </NewsroomLink>
     </ThemedCard>
-  )
+  );
 }
 
 export function NewsCardRow({ article }: { article: NewsroomPostSummary }) {
@@ -192,16 +196,16 @@ export function NewsCardRow({ article }: { article: NewsroomPostSummary }) {
         </div>
       </NewsroomLink>
     </ThemedCard>
-  )
+  );
 }
 
 export function NewsCardListRow({ article }: { article: NewsroomPostSummary }) {
-  const locale = useCurrentLocale()
+  const locale = useCurrentLocale();
   const date = new Date(article.publishedAt).toLocaleDateString(locale, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
-  })
+  });
 
   return (
     <article className="group relative border-b border-border py-8 transition-colors hover:border-muted-foreground">
@@ -229,12 +233,10 @@ export function NewsCardListRow({ article }: { article: NewsroomPostSummary }) {
             {article.title}
           </h2>
           {article.resume && (
-            <p className="mt-3 line-clamp-2 text-body-md text-muted-foreground">
-              {article.resume}
-            </p>
+            <p className="mt-3 line-clamp-2 text-body-md text-muted-foreground">{article.resume}</p>
           )}
         </NewsroomLink>
       </div>
     </article>
-  )
+  );
 }

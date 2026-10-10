@@ -1,17 +1,17 @@
-import { useLocation } from 'react-router-dom'
-import { NavLink } from '../../lib/navigation'
-import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom'
+import { useLocation } from 'react-router-dom';
+import { NavLink } from '../../lib/navigation';
+import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom';
 
 interface DocsTab {
-  label: string
-  to: string
+  label: string;
+  to: string;
   /**
    * Match function that decides whether the tab is active for the given
    * pathname. Each tab owns its own predicate so we can disambiguate
    * `/developers/docs` (Overview) from `/developers/docs/services` (App SDK)
    * without depending on `NavLink`'s `end` heuristic.
    */
-  isActive: (pathname: string) => boolean
+  isActive: (pathname: string) => boolean;
 }
 
 const tabs: DocsTab[] = [
@@ -43,15 +43,11 @@ const tabs: DocsTab[] = [
     to: '/developers/docs/mcp',
     isActive: (pathname) => pathname.startsWith('/developers/docs/mcp'),
   },
-]
+];
 
-export default function DocsSubNav({
-  overview = false,
-}: {
-  overview?: boolean
-}) {
-  const headerBottom = useSiteHeaderBottom()
-  const { pathname } = useLocation()
+export default function DocsSubNav({ overview = false }: { overview?: boolean }) {
+  const headerBottom = useSiteHeaderBottom();
+  const { pathname } = useLocation();
   /*
    * Parked on the header's measured BOTTOM, not on its height. The header sits
    * below a banner that scrolls away over its first 40px, so its bottom edge
@@ -77,7 +73,7 @@ export default function DocsSubNav({
             {tabs
               .filter((tab) => !overview || tab.label !== 'Bloom')
               .map((tab) => {
-                const active = tab.isActive(pathname.replace(/\/+$/, ''))
+                const active = tab.isActive(pathname.replace(/\/+$/, ''));
                 return active ? (
                   <NavLink
                     key={tab.label}
@@ -95,11 +91,11 @@ export default function DocsSubNav({
                   >
                     {tab.label}
                   </NavLink>
-                )
+                );
               })}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

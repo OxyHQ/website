@@ -1,25 +1,31 @@
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Button } from '@oxy.so/bloom/button'
-import { Pagination } from '@oxy.so/bloom/pagination'
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@oxy.so/bloom/button';
+import { Pagination } from '@oxy.so/bloom/pagination';
 import {
   SegmentedControl,
   SegmentedControlItem,
   SegmentedControlItemText,
-} from '@oxy.so/bloom/segmented-control'
-import { apiFetch } from '../../../api/client'
-import type { FeatureListResponse } from '../../../api/hooks'
+} from '@oxy.so/bloom/segmented-control';
+import { apiFetch } from '../../../api/client';
+import type { FeatureListResponse } from '../../../api/hooks';
 
 interface ReconcileReport {
-  dryRun: boolean
-  checked: number
-  unchanged: number
-  changes: Array<{ repo: string; issueNumber: number; totalVotes: number; from: string | null; to: string | null }>
-  errors: Array<{ scope: string; message: string }>
+  dryRun: boolean;
+  checked: number;
+  unchanged: number;
+  changes: Array<{
+    repo: string;
+    issueNumber: number;
+    totalVotes: number;
+    from: string | null;
+    to: string | null;
+  }>;
+  errors: Array<{ scope: string; message: string }>;
 }
 
 /** A segmented control reads '' as "nothing selected", so "All" has a value of its own here. */
-const ALL_STATUSES = 'all'
+const ALL_STATUSES = 'all';
 
 const STATUS_COLORS: Record<string, string> = {
   open: 'bg-muted text-muted-foreground',
@@ -28,28 +34,32 @@ const STATUS_COLORS: Record<string, string> = {
   in_progress: 'bg-warning-subtle text-warning-text',
   completed: 'bg-success-subtle text-success-text',
   declined: 'bg-error-subtle text-error-text',
-}
+};
 
 export default function FeaturesAdmin() {
-  const queryClient = useQueryClient()
-  const [statusFilter, setStatusFilter] = useState<string>('')
-  const [currentPage, setCurrentPage] = useState(1)
+  const queryClient = useQueryClient();
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data, isPending } = useQuery({
     queryKey: ['admin-features', statusFilter, currentPage],
     queryFn: () => {
-      const params = new URLSearchParams({ page: String(currentPage), limit: '20', sort: 'newest' })
-      if (statusFilter) params.set('status', statusFilter)
-      return apiFetch<FeatureListResponse>(`/features?${params}`)
+      const params = new URLSearchParams({
+        page: String(currentPage),
+        limit: '20',
+        sort: 'newest',
+      });
+      if (statusFilter) params.set('status', statusFilter);
+      return apiFetch<FeatureListResponse>(`/features?${params}`);
     },
-  })
+  });
 
   const clearCache = useMutation({
     mutationFn: () => apiFetch('/features/cache/clear', { method: 'POST' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-features'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-features'] });
     },
-  })
+  });
 
   // The same pass the scheduler runs, on demand. It writes a label only where
   // the vote count has actually crossed a threshold, so running it twice in a
@@ -57,11 +67,11 @@ export default function FeaturesAdmin() {
   const reconcile = useMutation({
     mutationFn: () => apiFetch<ReconcileReport>('/features/priority/reconcile', { method: 'POST' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-features'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-features'] });
     },
-  })
+  });
 
-  const statuses = ['open', 'under_review', 'planned', 'in_progress', 'completed', 'declined']
+  const statuses = ['open', 'under_review', 'planned', 'in_progress', 'completed', 'declined'];
 
   return (
     <div>
@@ -69,15 +79,25 @@ export default function FeaturesAdmin() {
         <div>
           <h2 className="text-xl font-semibold text-foreground">Feature Board</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            {data?.total ?? 0} feature requests across the tracked apps. Manage which apps are on the
-            board under Repositories.
+            {data?.total ?? 0} feature requests across the tracked apps. Manage which apps are on
+            the board under Repositories.
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <Button appearance="outline" tone="neutral" onPress={() => reconcile.mutate()} disabled={reconcile.isPending}>
+          <Button
+            appearance="outline"
+            tone="neutral"
+            onPress={() => reconcile.mutate()}
+            disabled={reconcile.isPending}
+          >
             {reconcile.isPending ? 'Reconciling...' : 'Reconcile priorities'}
           </Button>
-          <Button appearance="outline" tone="neutral" onPress={() => clearCache.mutate()} disabled={clearCache.isPending}>
+          <Button
+            appearance="outline"
+            tone="neutral"
+            onPress={() => clearCache.mutate()}
+            disabled={clearCache.isPending}
+          >
             {clearCache.isPending ? 'Clearing...' : 'Clear Cache'}
           </Button>
         </div>
@@ -99,8 +119,8 @@ export default function FeaturesAdmin() {
           </p>
           {reconcile.data.changes.map((change) => (
             <p key={`${change.repo}#${change.issueNumber}`} className="mt-1 font-mono text-xs">
-              {change.repo}#{change.issueNumber}: {change.from ?? 'none'} to {change.to ?? 'none'} at{' '}
-              {change.totalVotes} votes
+              {change.repo}#{change.issueNumber}: {change.from ?? 'none'} to {change.to ?? 'none'}{' '}
+              at {change.totalVotes} votes
             </p>
           ))}
           {reconcile.data.errors.map((error) => (
@@ -117,14 +137,19 @@ export default function FeaturesAdmin() {
           label="Status"
           type="radio"
           value={statusFilter || ALL_STATUSES}
-          onValueChange={(next) => { setStatusFilter(next === ALL_STATUSES ? '' : next); setCurrentPage(1) }}
+          onValueChange={(next) => {
+            setStatusFilter(next === ALL_STATUSES ? '' : next);
+            setCurrentPage(1);
+          }}
         >
           <SegmentedControlItem value={ALL_STATUSES}>
             <SegmentedControlItemText>All</SegmentedControlItemText>
           </SegmentedControlItem>
-          {statuses.map(s => (
+          {statuses.map((s) => (
             <SegmentedControlItem key={s} value={s}>
-              <SegmentedControlItemText style={{ textTransform: 'capitalize' }}>{s.replace('_', ' ')}</SegmentedControlItemText>
+              <SegmentedControlItemText style={{ textTransform: 'capitalize' }}>
+                {s.replace('_', ' ')}
+              </SegmentedControlItemText>
             </SegmentedControlItem>
           ))}
         </SegmentedControl>
@@ -134,7 +159,7 @@ export default function FeaturesAdmin() {
       <div className="mt-6 flex flex-col gap-3">
         {isPending && <p className="text-sm text-muted-foreground">Loading...</p>}
 
-        {data?.items.map(feature => (
+        {data?.items.map((feature) => (
           <div key={feature.id} className="rounded-xl border border-border p-4">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0 flex-1">
@@ -147,7 +172,9 @@ export default function FeaturesAdmin() {
                   >
                     {feature.title}
                   </a>
-                  <span className={`rounded px-1.5 py-0.5 text-xs capitalize ${STATUS_COLORS[feature.status] ?? ''}`}>
+                  <span
+                    className={`rounded px-1.5 py-0.5 text-xs capitalize ${STATUS_COLORS[feature.status] ?? ''}`}
+                  >
                     {feature.status.replace('_', ' ')}
                   </span>
                   <span className="rounded bg-surface px-1.5 py-0.5 text-xs text-muted-foreground">
@@ -163,10 +190,15 @@ export default function FeaturesAdmin() {
                   {feature.description || 'No description'}
                 </p>
                 <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-                  <span>{feature.owner}/{feature.repoName}</span>
+                  <span>
+                    {feature.owner}/{feature.repoName}
+                  </span>
                   <span>#{feature.number}</span>
                   <span>by {feature.author}</span>
-                  <span>{feature.totalVotes} votes ({feature.githubReactions} GH + {feature.localVotes} site)</span>
+                  <span>
+                    {feature.totalVotes} votes ({feature.githubReactions} GH + {feature.localVotes}{' '}
+                    site)
+                  </span>
                   <span>{feature.commentCount} comments</span>
                   <span>{new Date(feature.createdAt).toLocaleDateString()}</span>
                 </div>
@@ -184,7 +216,9 @@ export default function FeaturesAdmin() {
         ))}
 
         {!isPending && data?.items.length === 0 && (
-          <p className="py-8 text-center text-sm text-muted-foreground">No feature requests found.</p>
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            No feature requests found.
+          </p>
         )}
       </div>
 
@@ -198,5 +232,5 @@ export default function FeaturesAdmin() {
         />
       )}
     </div>
-  )
+  );
 }

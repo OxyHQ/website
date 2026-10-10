@@ -1,51 +1,53 @@
-import { lazy, Suspense, useEffect, useMemo, useRef } from 'react'
-import { useParams } from 'react-router-dom'
-import { Link } from '../lib/navigation'
-import { BloomColorScope } from '@oxy.so/bloom/theme'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { useNewsroomPost } from '../api/hooks'
-import { errorStatus } from '../api/client'
-import PageShell from '../components/layout/PageShell'
-import NewsroomRouteFallback from '../components/newsroom/NewsroomRouteFallback'
-import ArticleHero from '../components/newsroom/article/ArticleHero'
-import ArticleMarkdown from '../components/newsroom/article/ArticleMarkdown'
-import ArticleProducts from '../components/newsroom/article/ArticleProducts'
-import ArticleScrollProgress from '../components/newsroom/article/ArticleScrollProgress'
-import { extractHeadings } from '../components/newsroom/article/headings'
-import ArticleToc from '../components/slices/ArticleToc'
-import { WIDE_ARTICLE_BLOCK } from '../components/slices/articleBlock'
-import ArticleAuthors from '../components/social/ArticleAuthor'
-import StructuredData from '../components/StructuredData'
-import { newsroomThemeFor } from '../lib/newsroom-theme'
-import { brandConfig } from '../lib/seo'
-import { buildNewsroomArticleStructuredData, normalizeNewsroomSeoTitle } from '../lib/newsroomSeo'
-import { markNewsroomArticleReady } from '../lib/newsroom-performance'
-import BackToNewsroomButton from '../components/newsroom/article/BackToNewsroomButton'
-import DeferredMount from '../components/ui/DeferredMount'
+import { lazy, Suspense, useEffect, useMemo, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import { Link } from '../lib/navigation';
+import { BloomColorScope } from '@oxy.so/bloom/theme';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import { useNewsroomPost } from '../api/hooks';
+import { errorStatus } from '../api/client';
+import PageShell from '../components/layout/PageShell';
+import NewsroomRouteFallback from '../components/newsroom/NewsroomRouteFallback';
+import ArticleHero from '../components/newsroom/article/ArticleHero';
+import ArticleMarkdown from '../components/newsroom/article/ArticleMarkdown';
+import ArticleProducts from '../components/newsroom/article/ArticleProducts';
+import ArticleScrollProgress from '../components/newsroom/article/ArticleScrollProgress';
+import { extractHeadings } from '../components/newsroom/article/headings';
+import ArticleToc from '../components/slices/ArticleToc';
+import { WIDE_ARTICLE_BLOCK } from '../components/slices/articleBlock';
+import ArticleAuthors from '../components/social/ArticleAuthor';
+import StructuredData from '../components/StructuredData';
+import { newsroomThemeFor } from '../lib/newsroom-theme';
+import { brandConfig } from '../lib/seo';
+import { buildNewsroomArticleStructuredData, normalizeNewsroomSeoTitle } from '../lib/newsroomSeo';
+import { markNewsroomArticleReady } from '../lib/newsroom-performance';
+import BackToNewsroomButton from '../components/newsroom/article/BackToNewsroomButton';
+import DeferredMount from '../components/ui/DeferredMount';
 
-const ArticleCommunity = lazy(() => import('../components/newsroom/article/ArticleCommunity'))
-const NewsroomRelatedArticles = lazy(() => import('../components/newsroom/article/NewsroomRelatedArticles'))
+const ArticleCommunity = lazy(() => import('../components/newsroom/article/ArticleCommunity'));
+const NewsroomRelatedArticles = lazy(
+  () => import('../components/newsroom/article/NewsroomRelatedArticles'),
+);
 
 export default function NewsroomPostPage() {
-  const readingBodyRef = useRef<HTMLDivElement>(null)
-  const { slug = '' } = useParams<{ slug: string }>()
+  const readingBodyRef = useRef<HTMLDivElement>(null);
+  const { slug = '' } = useParams<{ slug: string }>();
   // Host-aware so an article read on fairco.in never emits oxy.so JSON-LD.
   const { origin, siteName, ogImage } = brandConfig(
     typeof window === 'undefined' ? undefined : window.location.hostname,
-  )
-  const { data: post, error, isLoading, isFetching, refetch } = useNewsroomPost(slug)
-  const headings = useMemo(() => extractHeadings(post?.content ?? ''), [post?.content])
+  );
+  const { data: post, error, isLoading, isFetching, refetch } = useNewsroomPost(slug);
+  const headings = useMemo(() => extractHeadings(post?.content ?? ''), [post?.content]);
 
   useEffect(() => {
-    if (post) markNewsroomArticleReady(post.slug)
-  }, [post])
+    if (post) markNewsroomArticleReady(post.slug);
+  }, [post]);
 
   if (isLoading) {
-    return <NewsroomRouteFallback />
+    return <NewsroomRouteFallback />;
   }
 
   if (!post) {
-    const missing = errorStatus(error) === 404
+    const missing = errorStatus(error) === 404;
     return (
       <PageShell
         seo={{
@@ -76,10 +78,10 @@ export default function NewsroomPostPage() {
           Back to Newsroom
         </Link>
       </PageShell>
-    )
+    );
   }
 
-  const url = `${origin}/newsroom/${post.slug}/`
+  const url = `${origin}/newsroom/${post.slug}/`;
 
   return (
     <BloomColorScope colorPreset={newsroomThemeFor(post)}>
@@ -97,60 +99,73 @@ export default function NewsroomPostPage() {
         className="slice-theme bg-background text-foreground"
         mainClassName="flex-1"
       >
-        <StructuredData data={buildNewsroomArticleStructuredData(post, { origin, siteName, ogImage })} />
+        <StructuredData
+          data={buildNewsroomArticleStructuredData(post, { origin, siteName, ogImage })}
+        />
 
         <article className="mt-10 flex flex-col gap-12 bg-background md:gap-16">
           <ArticleHero post={post} url={url} />
 
           <section data-article-body className="w-full bg-background text-foreground">
-          <div className="container grid grid-cols-8 place-items-start gap-x-2.5 pb-24 pt-10 sm:grid-cols-12 sm:gap-x-5 sm:pt-16 md:gap-x-6 md:pb-32 2xl:pb-40">
-            {headings.length > 0 && (
-              <ArticleToc
-                entries={headings.map((heading) => ({
-                  id: heading.id,
-                  label: heading.text,
-                  level: heading.level,
-                }))}
-              />
-            )}
+            <div className="container grid grid-cols-8 place-items-start gap-x-2.5 pb-24 pt-10 sm:grid-cols-12 sm:gap-x-5 sm:pt-16 md:gap-x-6 md:pb-32 2xl:pb-40">
+              {headings.length > 0 && (
+                <ArticleToc
+                  entries={headings.map((heading) => ({
+                    id: heading.id,
+                    label: heading.text,
+                    level: heading.level,
+                  }))}
+                />
+              )}
 
-            <div className="contents">
-              <div ref={readingBodyRef} data-reading-body className="contents">
-                <ArticleMarkdown content={post.content} />
-              </div>
-              <ArticleProducts post={post} />
-
-              <footer data-toc-skip data-toc-collision-target className={`${WIDE_ARTICLE_BLOCK} mt-14 w-full lg:mt-20`}>
-                <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4">
-                  <BackToNewsroomButton />
-                  <div className="text-body-sm text-muted-foreground">
-                    {post.authorUsername ? (
-                      <span>By {post.authorUsername}</span>
-                    ) : post.oxyUserId ? (
-                      <ArticleAuthors userIds={[post.oxyUserId]} />
-                    ) : null}
-                  </div>
+              <div className="contents">
+                <div ref={readingBodyRef} data-reading-body className="contents">
+                  <ArticleMarkdown content={post.content} />
                 </div>
-                {post.tags.length > 0 && (
-                  <div className="mb-8 flex flex-wrap gap-2" aria-label="Article tags">
-                    {post.tags.map((tag) => (
-                      <span key={tag} className="rounded-full bg-surface px-3 py-1.5 text-body-sm text-muted-foreground">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                <ArticleProducts post={post} />
 
-                <DeferredMount
-                  fallback={<div className="mt-6 h-24"><Skeleton.Box width="100%" height="100%" borderRadius={12} /></div>}
+                <footer
+                  data-toc-skip
+                  data-toc-collision-target
+                  className={`${WIDE_ARTICLE_BLOCK} mt-14 w-full lg:mt-20`}
                 >
-                  <Suspense fallback={<div className="mt-6 h-24 rounded-radius-12 bg-surface" />}>
-                    <ArticleCommunity post={post} url={url} />
-                  </Suspense>
-                </DeferredMount>
-              </footer>
+                  <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4">
+                    <BackToNewsroomButton />
+                    <div className="text-body-sm text-muted-foreground">
+                      {post.authorUsername ? (
+                        <span>By {post.authorUsername}</span>
+                      ) : post.oxyUserId ? (
+                        <ArticleAuthors userIds={[post.oxyUserId]} />
+                      ) : null}
+                    </div>
+                  </div>
+                  {post.tags.length > 0 && (
+                    <div className="mb-8 flex flex-wrap gap-2" aria-label="Article tags">
+                      {post.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full bg-surface px-3 py-1.5 text-body-sm text-muted-foreground"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <DeferredMount
+                    fallback={
+                      <div className="mt-6 h-24">
+                        <Skeleton.Box width="100%" height="100%" borderRadius={12} />
+                      </div>
+                    }
+                  >
+                    <Suspense fallback={<div className="mt-6 h-24 rounded-radius-12 bg-surface" />}>
+                      <ArticleCommunity post={post} url={url} />
+                    </Suspense>
+                  </DeferredMount>
+                </footer>
+              </div>
             </div>
-          </div>
           </section>
           <ArticleScrollProgress key={post.slug} bodyRef={readingBodyRef} />
         </article>
@@ -160,8 +175,7 @@ export default function NewsroomPostPage() {
             <NewsroomRelatedArticles post={post} />
           </Suspense>
         </DeferredMount>
-
       </PageShell>
     </BloomColorScope>
-  )
+  );
 }

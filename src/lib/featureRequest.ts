@@ -8,11 +8,15 @@
  */
 
 /** Longest meta description emitted for a feature request, in characters. */
-const FEATURE_DESCRIPTION_MAX_LENGTH = 155
+const FEATURE_DESCRIPTION_MAX_LENGTH = 155;
 
 /** In-site path for one request. Mirrors the route registered in `App.tsx`. */
-export function featureRequestPath(owner: string, repo: string, issueNumber: number | string): string {
-  return `/features/${owner}/${repo}/${issueNumber}`
+export function featureRequestPath(
+  owner: string,
+  repo: string,
+  issueNumber: number | string,
+): string {
+  return `/features/${owner}/${repo}/${issueNumber}`;
 }
 
 /**
@@ -34,9 +38,9 @@ export function featureRequestDescription(body: string, title: string): string {
     .replace(/^\s*[-*+]\s+/gm, '')
     .replace(/[*_`>#|]/g, '')
     .replace(/\s+/g, ' ')
-    .trim()
+    .trim();
 
-  if (plain.length === 0) return title
-  if (plain.length <= FEATURE_DESCRIPTION_MAX_LENGTH) return plain
-  return `${plain.slice(0, FEATURE_DESCRIPTION_MAX_LENGTH - 1).trimEnd()}…`
+  if (plain.length === 0) return title;
+  if (plain.length <= FEATURE_DESCRIPTION_MAX_LENGTH) return plain;
+  return `${plain.slice(0, FEATURE_DESCRIPTION_MAX_LENGTH - 1).trimEnd()}…`;
 }

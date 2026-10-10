@@ -1,7 +1,7 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
-import { config } from '../config.js'
-import crypto from 'node:crypto'
-import path from 'node:path'
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { config } from '../config.js';
+import crypto from 'node:crypto';
+import path from 'node:path';
 
 // No `credentials`: the SDK's default chain reads AWS_ACCESS_KEY_ID/
 // AWS_SECRET_ACCESS_KEY locally and the ECS task role in production.
@@ -9,7 +9,7 @@ const s3 = new S3Client({
   endpoint: config.s3.endpoint,
   region: config.s3.region,
   forcePathStyle: false,
-})
+});
 
 const MIME_EXT: Record<string, string> = {
   'image/jpeg': '.jpg',
@@ -22,11 +22,11 @@ const MIME_EXT: Record<string, string> = {
   'image/bmp': '.bmp',
   'image/tiff': '.tiff',
   'image/x-icon': '.ico',
-}
+};
 
 function extFromMime(contentType: string): string {
-  const base = contentType.split(';')[0].trim().toLowerCase()
-  return MIME_EXT[base] || ''
+  const base = contentType.split(';')[0].trim().toLowerCase();
+  return MIME_EXT[base] || '';
 }
 
 /**
@@ -43,25 +43,25 @@ export function buildObjectKey(
   contentType: string,
   folder = 'oxy-website/images',
 ): string {
-  const urlExt = path.extname(originalName)
-  const ext = urlExt || extFromMime(contentType) || '.bin'
-  const hash = crypto.createHash('md5').update(buffer).digest('hex').slice(0, 8)
-  const baseName = urlExt ? path.basename(originalName, urlExt) : originalName
-  const safeName = (baseName.replace(/[^a-z0-9_-]/gi, '-').slice(0, 60)) || 'image'
-  return `${folder}/${safeName}-${hash}${ext}`
+  const urlExt = path.extname(originalName);
+  const ext = urlExt || extFromMime(contentType) || '.bin';
+  const hash = crypto.createHash('md5').update(buffer).digest('hex').slice(0, 8);
+  const baseName = urlExt ? path.basename(originalName, urlExt) : originalName;
+  const safeName = baseName.replace(/[^a-z0-9_-]/gi, '-').slice(0, 60) || 'image';
+  return `${folder}/${safeName}-${hash}${ext}`;
 }
 
 /** The public CDN URL for a logical key. */
 export function publicUrlForKey(key: string): string {
-  return `${config.s3.cdnBaseUrl}/${key}`
+  return `${config.s3.cdnBaseUrl}/${key}`;
 }
 
 /** The logical key behind a stored CDN URL, or `null` when the URL is not parseable. */
 export function keyFromPublicUrl(url: string): string | null {
   try {
-    return new URL(url).pathname.slice(1) || null
+    return new URL(url).pathname.slice(1) || null;
   } catch {
-    return null
+    return null;
   }
 }
 
@@ -78,24 +78,28 @@ export async function uploadToSpaces(
   contentType: string,
   folder = 'oxy-website/images',
 ): Promise<string> {
-  const key = buildObjectKey(buffer, originalName, contentType, folder)
+  const key = buildObjectKey(buffer, originalName, contentType, folder);
 
-  await s3.send(new PutObjectCommand({
-    Bucket: config.s3.bucket,
-    Key: `${config.s3.keyPrefix}${key}`,
-    Body: buffer,
-    ContentType: contentType,
-  }))
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: config.s3.bucket,
+      Key: `${config.s3.keyPrefix}${key}`,
+      Body: buffer,
+      ContentType: contentType,
+    }),
+  );
 
-  return publicUrlForKey(key)
+  return publicUrlForKey(key);
 }
 
 /**
  * Delete an object by its logical key (as returned in the stored CDN URL path).
  */
 export async function deleteFromSpaces(key: string): Promise<void> {
-  await s3.send(new DeleteObjectCommand({
-    Bucket: config.s3.bucket,
-    Key: `${config.s3.keyPrefix}${key}`,
-  }))
+  await s3.send(
+    new DeleteObjectCommand({
+      Bucket: config.s3.bucket,
+      Key: `${config.s3.keyPrefix}${key}`,
+    }),
+  );
 }

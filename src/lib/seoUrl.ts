@@ -8,12 +8,12 @@
  * wastes crawl budget and weakens canonical agreement.
  */
 export function withDocumentTrailingSlash(value: string): string {
-  const suffixIndex = value.search(/[?#]/)
-  const pathname = suffixIndex === -1 ? value : value.slice(0, suffixIndex)
-  const suffix = suffixIndex === -1 ? '' : value.slice(suffixIndex)
-  const rooted = pathname.startsWith('/') ? pathname : `/${pathname}`
-  const normalized = rooted === '/' ? '/' : `${rooted.replace(/\/+$/, '')}/`
-  return normalized + suffix
+  const suffixIndex = value.search(/[?#]/);
+  const pathname = suffixIndex === -1 ? value : value.slice(0, suffixIndex);
+  const suffix = suffixIndex === -1 ? '' : value.slice(suffixIndex);
+  const rooted = pathname.startsWith('/') ? pathname : `/${pathname}`;
+  const normalized = rooted === '/' ? '/' : `${rooted.replace(/\/+$/, '')}/`;
+  return normalized + suffix;
 }
 
 /** Build one canonical/hreflang URL for the default or a translated locale. */
@@ -23,10 +23,9 @@ export function buildLocalizedSeoUrl(
   locale: string,
   defaultLocale: string,
 ): string {
-  const cleanOrigin = origin.replace(/\/+$/, '')
-  const path = withDocumentTrailingSlash(canonicalPath)
-  if (locale === defaultLocale) return `${cleanOrigin}${path}`
-  if (path === '/') return `${cleanOrigin}/${locale}/`
-  return `${cleanOrigin}/${locale}${path}`
+  const cleanOrigin = origin.replace(/\/+$/, '');
+  const path = withDocumentTrailingSlash(canonicalPath);
+  if (locale === defaultLocale) return `${cleanOrigin}${path}`;
+  if (path === '/') return `${cleanOrigin}/${locale}/`;
+  return `${cleanOrigin}/${locale}${path}`;
 }
-

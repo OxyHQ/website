@@ -2,11 +2,11 @@ const PRIORITY_STYLES: Record<string, string> = {
   medium: 'border-warning/30 bg-warning-subtle text-warning-text',
   high: 'border-tertiary/30 bg-tertiary-subtle text-tertiary-text',
   critical: 'border-error/30 bg-error-subtle text-error-text',
-}
+};
 
 interface FeaturePriorityBadgeProps {
   /** Tier key, or null when the request has not reached the first tier. */
-  priority: string | null
+  priority: string | null;
 }
 
 /**
@@ -15,7 +15,7 @@ interface FeaturePriorityBadgeProps {
  * sit: a badge on everything would say nothing.
  */
 export default function FeaturePriorityBadge({ priority }: FeaturePriorityBadgeProps) {
-  if (!priority) return null
+  if (!priority) return null;
 
   return (
     <span
@@ -26,5 +26,5 @@ export default function FeaturePriorityBadge({ priority }: FeaturePriorityBadgeP
     >
       {priority} priority
     </span>
-  )
+  );
 }

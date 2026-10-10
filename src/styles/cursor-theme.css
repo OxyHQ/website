@@ -56,37 +56,81 @@
 }
 
 /* ── Typography ── */
-.cursor-theme .type-sm { font-size: var(--type-sm); line-height: 1.5; }
-.cursor-theme .type-base { font-size: var(--type-base); line-height: 1.5; }
-.cursor-theme .type-md { font-size: var(--type-md); line-height: 1.3; }
-.cursor-theme .type-md-lg { font-size: var(--type-md-lg); line-height: 1.2; }
-.cursor-theme .type-lg { font-size: var(--type-lg); line-height: 1.1; }
-.cursor-theme .type-xl { font-size: var(--type-xl); line-height: 1.05; }
-.cursor-theme .type-2xl { font-size: var(--type-2xl); line-height: 1; }
+.cursor-theme .type-sm {
+  font-size: var(--type-sm);
+  line-height: 1.5;
+}
+.cursor-theme .type-base {
+  font-size: var(--type-base);
+  line-height: 1.5;
+}
+.cursor-theme .type-md {
+  font-size: var(--type-md);
+  line-height: 1.3;
+}
+.cursor-theme .type-md-lg {
+  font-size: var(--type-md-lg);
+  line-height: 1.2;
+}
+.cursor-theme .type-lg {
+  font-size: var(--type-lg);
+  line-height: 1.1;
+}
+.cursor-theme .type-xl {
+  font-size: var(--type-xl);
+  line-height: 1.05;
+}
+.cursor-theme .type-2xl {
+  font-size: var(--type-2xl);
+  line-height: 1;
+}
 
 /* Responsive type overrides */
 @media (min-width: 768px) {
-  .cursor-theme .md\:type-md { font-size: var(--type-md); line-height: 1.3; }
-  .cursor-theme .md\:type-sm { font-size: var(--type-sm); line-height: 1.5; }
+  .cursor-theme .md\:type-md {
+    font-size: var(--type-md);
+    line-height: 1.3;
+  }
+  .cursor-theme .md\:type-sm {
+    font-size: var(--type-sm);
+    line-height: 1.5;
+  }
 }
 @media (min-width: 640px) {
-  .cursor-theme .sm\:type-2xl { font-size: var(--type-2xl); line-height: 1; }
+  .cursor-theme .sm\:type-2xl {
+    font-size: var(--type-2xl);
+    line-height: 1;
+  }
 }
 
 /* ── Section ── */
 /* Vertical rhythm only. The horizontal frame belongs to the `.container`
  * inside each section; adding a gutter here too stacked on top of it and left
  * these pages 24px inside the header. */
-.cursor-theme .section { padding: var(--v3) 0; }
-.cursor-theme .section--flush-x { padding-left: 0; padding-right: 0; }
-.cursor-theme .section--flush-y { padding-top: 0; padding-bottom: 0; }
-.cursor-theme .section--headline { padding-top: var(--v4); padding-bottom: var(--v4); }
+.cursor-theme .section {
+  padding: var(--v3) 0;
+}
+.cursor-theme .section--flush-x {
+  padding-left: 0;
+  padding-right: 0;
+}
+.cursor-theme .section--flush-y {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.cursor-theme .section--headline {
+  padding-top: var(--v4);
+  padding-bottom: var(--v4);
+}
 
 /* ── Layout ──
  * No width of its own: `.container` is the site frame, defined once in
  * index.css. Capping it at 1200px here put every themed page's content 24px
  * inside the header and the footer above and below it. */
-.cursor-theme .grid-cursor { display: grid; grid-template-columns: repeat(24, 1fr); }
+.cursor-theme .grid-cursor {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+}
 
 /* ── Card ── */
 .cursor-theme .card {
@@ -96,8 +140,12 @@
   overflow: hidden;
   padding: clamp(1rem, 0.75rem + 0.5vw, 1.5rem);
 }
-.cursor-theme .card--large { padding: clamp(1.5rem, 1rem + 1vw, 2.5rem); }
-.cursor-theme .card--feature { display: grid; }
+.cursor-theme .card--large {
+  padding: clamp(1.5rem, 1rem + 1vw, 2.5rem);
+}
+.cursor-theme .card--feature {
+  display: grid;
+}
 .cursor-theme .card--text {
   padding: clamp(1rem, 0.75rem + 0.5vw, 1.5rem);
 }
@@ -116,7 +164,9 @@
   transition: opacity 0.15s;
   text-decoration: none;
 }
-.cursor-theme .btn:hover { opacity: 0.9; }
+.cursor-theme .btn:hover {
+  opacity: 0.9;
+}
 .cursor-theme .btn--secondary {
   background: transparent;
   color: var(--color-foreground);
@@ -130,20 +180,29 @@
   font-weight: 500;
   text-decoration: none;
 }
-.cursor-theme .btn-tertiary:hover { opacity: 0.8; }
-.cursor-theme .btn-icon { display: inline-flex; margin-left: 0.25rem; }
+.cursor-theme .btn-tertiary:hover {
+  opacity: 0.8;
+}
+.cursor-theme .btn-icon {
+  display: inline-flex;
+  margin-left: 0.25rem;
+}
 .cursor-theme .btn-text {
   color: var(--color-foreground);
   font-weight: 500;
   text-decoration: none;
 }
-.cursor-theme .btn-text:hover { opacity: 0.8; }
+.cursor-theme .btn-text:hover {
+  opacity: 0.8;
+}
 
 /* ── Card border / media ── */
 .cursor-theme .card-border {
   border: 1px solid var(--color-border);
 }
-.cursor-theme .rounded-xs { border-radius: 12px; }
+.cursor-theme .rounded-xs {
+  border-radius: 12px;
+}
 
 .cursor-theme .media-border-container {
   border: 1px solid var(--color-border);
@@ -152,64 +211,143 @@
 }
 
 /* ── Spacing utilities – Margin ── */
-.cursor-theme .mb-v1 { margin-bottom: var(--v1); }
-.cursor-theme .mb-v2 { margin-bottom: var(--v2); }
-.cursor-theme .mb-v2\.5 { margin-bottom: var(--v2-5); }
-.cursor-theme .mb-v4 { margin-bottom: var(--v4); }
-.cursor-theme .mb-v4\.5 { margin-bottom: var(--v4-5); }
-.cursor-theme .mb-g1 { margin-bottom: var(--g1); }
+.cursor-theme .mb-v1 {
+  margin-bottom: var(--v1);
+}
+.cursor-theme .mb-v2 {
+  margin-bottom: var(--v2);
+}
+.cursor-theme .mb-v2\.5 {
+  margin-bottom: var(--v2-5);
+}
+.cursor-theme .mb-v4 {
+  margin-bottom: var(--v4);
+}
+.cursor-theme .mb-v4\.5 {
+  margin-bottom: var(--v4-5);
+}
+.cursor-theme .mb-g1 {
+  margin-bottom: var(--g1);
+}
 
-.cursor-theme .mt-v1 { margin-top: var(--v1); }
-.cursor-theme .mt-v2 { margin-top: var(--v2); }
-.cursor-theme .mt-v8\/12 { margin-top: var(--v8-12); }
+.cursor-theme .mt-v1 {
+  margin-top: var(--v1);
+}
+.cursor-theme .mt-v2 {
+  margin-top: var(--v2);
+}
+.cursor-theme .mt-v8\/12 {
+  margin-top: var(--v8-12);
+}
 
-.cursor-theme .my-v2 { margin-top: var(--v2); margin-bottom: var(--v2); }
+.cursor-theme .my-v2 {
+  margin-top: var(--v2);
+  margin-bottom: var(--v2);
+}
 
 /* ── Spacing utilities – Padding ── */
-.cursor-theme .pt-0 { padding-top: 0; }
-.cursor-theme .pt-v1 { padding-top: var(--v1); }
-.cursor-theme .pt-v3 { padding-top: var(--v3); }
-.cursor-theme .pt-v8\/12 { padding-top: var(--v8-12); }
-.cursor-theme .pt-g1\.75 { padding-top: var(--g1-75); }
+.cursor-theme .pt-0 {
+  padding-top: 0;
+}
+.cursor-theme .pt-v1 {
+  padding-top: var(--v1);
+}
+.cursor-theme .pt-v3 {
+  padding-top: var(--v3);
+}
+.cursor-theme .pt-v8\/12 {
+  padding-top: var(--v8-12);
+}
+.cursor-theme .pt-g1\.75 {
+  padding-top: var(--g1-75);
+}
 
-.cursor-theme .pb-v1\.5 { padding-bottom: var(--v1-5); }
-.cursor-theme .pb-g2 { padding-bottom: var(--g2); }
-.cursor-theme .pb-v2\.5\/12 { padding-bottom: var(--v2-5-12); }
+.cursor-theme .pb-v1\.5 {
+  padding-bottom: var(--v1-5);
+}
+.cursor-theme .pb-g2 {
+  padding-bottom: var(--g2);
+}
+.cursor-theme .pb-v2\.5\/12 {
+  padding-bottom: var(--v2-5-12);
+}
 
-.cursor-theme .px-g2 { padding-left: var(--g2); padding-right: var(--g2); }
-.cursor-theme .px-g0\.75 { padding-left: var(--g0-75); padding-right: var(--g0-75); }
+.cursor-theme .px-g2 {
+  padding-left: var(--g2);
+  padding-right: var(--g2);
+}
+.cursor-theme .px-g0\.75 {
+  padding-left: var(--g0-75);
+  padding-right: var(--g0-75);
+}
 
-.cursor-theme .p-g1\.75 { padding: var(--g1-75); }
-.cursor-theme .pl-g0\.25 { padding-left: var(--g0-25); }
-.cursor-theme .pr-g3 { padding-right: var(--g3); }
-.cursor-theme .pr-g0\.25 { padding-right: var(--g0-25); }
-.cursor-theme .pl-g3 { padding-left: var(--g3); }
+.cursor-theme .p-g1\.75 {
+  padding: var(--g1-75);
+}
+.cursor-theme .pl-g0\.25 {
+  padding-left: var(--g0-25);
+}
+.cursor-theme .pr-g3 {
+  padding-right: var(--g3);
+}
+.cursor-theme .pr-g0\.25 {
+  padding-right: var(--g0-25);
+}
+.cursor-theme .pl-g3 {
+  padding-left: var(--g3);
+}
 
 @media (min-width: 1024px) {
-  .cursor-theme .lg\:pl-g0\.25 { padding-left: var(--g0-25); }
-  .cursor-theme .lg\:pr-g3 { padding-right: var(--g3); }
-  .cursor-theme .lg\:pr-g0\.25 { padding-right: var(--g0-25); }
-  .cursor-theme .lg\:pl-g3 { padding-left: var(--g3); }
+  .cursor-theme .lg\:pl-g0\.25 {
+    padding-left: var(--g0-25);
+  }
+  .cursor-theme .lg\:pr-g3 {
+    padding-right: var(--g3);
+  }
+  .cursor-theme .lg\:pr-g0\.25 {
+    padding-right: var(--g0-25);
+  }
+  .cursor-theme .lg\:pl-g3 {
+    padding-left: var(--g3);
+  }
 }
 @media (max-width: 1023px) {
-  .cursor-theme .max-lg\:mt-g1\.75 { margin-top: var(--g1-75); }
-  .cursor-theme .max-lg\:pt-v1 { padding-top: var(--v1); }
-  .cursor-theme .max-lg\:grid-rows-subgrid { grid-template-rows: subgrid; }
+  .cursor-theme .max-lg\:mt-g1\.75 {
+    margin-top: var(--g1-75);
+  }
+  .cursor-theme .max-lg\:pt-v1 {
+    padding-top: var(--v1);
+  }
+  .cursor-theme .max-lg\:grid-rows-subgrid {
+    grid-template-rows: subgrid;
+  }
 }
 @media (min-width: 768px) {
-  .cursor-theme .md\:pb-g3 { padding-bottom: var(--g3); }
+  .cursor-theme .md\:pb-g3 {
+    padding-bottom: var(--g3);
+  }
 }
 
 /* ── Gap utilities ── */
-.cursor-theme .gap-g1 { gap: var(--g1); }
-.cursor-theme .gap-x-g1 { column-gap: var(--g1); }
-.cursor-theme .gap-g1\.5 { gap: var(--g1-5); }
+.cursor-theme .gap-g1 {
+  gap: var(--g1);
+}
+.cursor-theme .gap-x-g1 {
+  column-gap: var(--g1);
+}
+.cursor-theme .gap-g1\.5 {
+  gap: var(--g1-5);
+}
 
 /* ── Flex utilities ── */
-.cursor-theme .grow-1 { flex-grow: 1; }
+.cursor-theme .grow-1 {
+  flex-grow: 1;
+}
 
 /* ── Stack ── */
-.cursor-theme .stack > * + * { margin-top: var(--stack-gap, 0.75rem); }
+.cursor-theme .stack > * + * {
+  margin-top: var(--stack-gap, 0.75rem);
+}
 
 /* ── Logo garden ── */
 .cursor-theme .logo-garden-responsive-8 {
@@ -224,9 +362,15 @@
 }
 
 /* ── Max-width ── */
-.cursor-theme .max-w-prose { max-width: 65ch; }
-.cursor-theme .max-w-prose-medium-wide { max-width: 55ch; }
-.cursor-theme .max-w-prose-narrow { max-width: 45ch; }
+.cursor-theme .max-w-prose {
+  max-width: 65ch;
+}
+.cursor-theme .max-w-prose-medium-wide {
+  max-width: 55ch;
+}
+.cursor-theme .max-w-prose-narrow {
+  max-width: 45ch;
+}
 
 /* ── Line clamp (for testimonials) ── */
 .cursor-theme .line-clamp-4 {

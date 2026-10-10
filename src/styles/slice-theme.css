@@ -311,7 +311,12 @@
  * box stays full width; only the padding grows past the cap, which lands the
  * content on the same line as `layout-px-large` at every width. */
 @utility layout-px-bleed {
-  padding-inline: max(var(--layout-gutter), (100% - var(--layout-max-width)) / 2 + var(--layout-gutter));
+  padding-inline: max(
+    var(--layout-gutter),
+    (100% - var(--layout-max-width)) /
+    2 +
+    var(--layout-gutter)
+  );
 }
 
 @utility layout-py {

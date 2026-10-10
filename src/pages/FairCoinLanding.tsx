@@ -1,8 +1,8 @@
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import FairCoinLandingContent from '../components/faircoin/FairCoinLandingContent'
-import { isFairCoinHost } from '../lib/host'
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import FairCoinLandingContent from '../components/faircoin/FairCoinLandingContent';
+import { isFairCoinHost } from '../lib/host';
 import {
   useFairCoinDropdowns,
   useFairCoinFooterBrand,
@@ -12,27 +12,28 @@ import {
   useFairCoinNavCtaButtons,
   useFairCoinNavbarBrand,
   useFairCoinSimpleNavLinks,
-} from '../lib/faircoin-chrome'
+} from '../lib/faircoin-chrome';
 
-const SEO_TITLE = 'FairCoin — community-run cryptocurrency'
+const SEO_TITLE = 'FairCoin — community-run cryptocurrency';
 const SEO_DESCRIPTION =
-  'FairCoin is a community-run cryptocurrency. Decentralized, fair, free of speculation. Hybrid PoW/PoS, capped at 33M coins. Wallets, masternodes, explorer and an optional Base bridge.'
+  'FairCoin is a community-run cryptocurrency. Decentralized, fair, free of speculation. Hybrid PoW/PoS, capped at 33M coins. Wallets, masternodes, explorer and an optional Base bridge.';
 
 export default function FairCoinLanding() {
-  const onFairCoinHost = isFairCoinHost()
-  const navbarBrand = useFairCoinNavbarBrand()
-  const dropdowns = useFairCoinDropdowns()
-  const simpleNavLinks = useFairCoinSimpleNavLinks()
-  const ctaButtons = useFairCoinNavCtaButtons()
-  const footerBrand = useFairCoinFooterBrand()
-  const footerColumns = useFairCoinFooterColumns()
-  const footerLegalLinks = useFairCoinFooterLegalLinks()
-  const footerCopyright = useFairCoinFooterCopyright()
+  const onFairCoinHost = isFairCoinHost();
+  const navbarBrand = useFairCoinNavbarBrand();
+  const dropdowns = useFairCoinDropdowns();
+  const simpleNavLinks = useFairCoinSimpleNavLinks();
+  const ctaButtons = useFairCoinNavCtaButtons();
+  const footerBrand = useFairCoinFooterBrand();
+  const footerColumns = useFairCoinFooterColumns();
+  const footerLegalLinks = useFairCoinFooterLegalLinks();
+  const footerCopyright = useFairCoinFooterCopyright();
 
   // The FairCoin landing page owns its visual identity on both hosts. The
   // chrome changes on fairco.in, but the content surface always follows the
   // FairCoin Bloom recipe instead of inheriting Oxy's saved preset.
-  const rootClass = 'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
+  const rootClass =
+    'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background';
 
   return (
     <div className={rootClass}>
@@ -57,5 +58,5 @@ export default function FairCoinLanding() {
         copyright={footerCopyright}
       />
     </div>
-  )
+  );
 }

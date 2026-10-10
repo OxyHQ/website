@@ -1,9 +1,9 @@
-import { Avatar } from '@oxy.so/bloom/avatar'
-import type { PlaygroundValues } from './_playground'
+import { Avatar } from '@oxy.so/bloom/avatar';
+import type { PlaygroundValues } from './_playground';
 
 export const meta = {
   description: 'Profile image with deterministic fallback color and initials.',
-}
+};
 
 export default function AvatarDemo() {
   return (
@@ -19,14 +19,14 @@ export default function AvatarDemo() {
       <Avatar name="Squircle" size={56} shape="squircle" />
       <Avatar name="Verified" size={56} verified />
     </div>
-  )
+  );
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const name = typeof values.name === 'string' ? values.name : 'Ada Lovelace'
-  const size = typeof values.size === 'number' ? values.size : 56
-  const shape = values.shape === 'squircle' ? 'squircle' : 'circle'
-  const verified = values.verified === true
-  const source = typeof values.source === 'string' && values.source ? values.source : undefined
-  return <Avatar name={name} size={size} shape={shape} verified={verified} source={source} />
+  const name = typeof values.name === 'string' ? values.name : 'Ada Lovelace';
+  const size = typeof values.size === 'number' ? values.size : 56;
+  const shape = values.shape === 'squircle' ? 'squircle' : 'circle';
+  const verified = values.verified === true;
+  const source = typeof values.source === 'string' && values.source ? values.source : undefined;
+  return <Avatar name={name} size={size} shape={shape} verified={verified} source={source} />;
 }

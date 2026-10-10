@@ -1,4 +1,4 @@
-import type { BloomSurfaceProps } from './bloom-catalog'
+import type { BloomSurfaceProps } from './bloom-catalog';
 
 /**
  * Browser-side access to the generated per-surface prop modules.
@@ -13,9 +13,7 @@ import type { BloomSurfaceProps } from './bloom-catalog'
  *
  * Hand-written rather than generated: nothing in it varies with the catalog.
  */
-const propModules = import.meta.glob<{ props: BloomSurfaceProps }>(
-  './bloom-catalog-props/**/*.ts',
-)
+const propModules = import.meta.glob<{ props: BloomSurfaceProps }>('./bloom-catalog-props/**/*.ts');
 
 /**
  * One surface's props, fetched on demand. Vite code-splits every module the
@@ -27,11 +25,11 @@ const propModules = import.meta.glob<{ props: BloomSurfaceProps }>(
  * error anywhere — which is the exact silence this catalog exists to end.
  */
 export async function loadBloomSurfaceProps(subpath: string): Promise<BloomSurfaceProps> {
-  const load = propModules[`./bloom-catalog-props/${subpath}.ts`]
+  const load = propModules[`./bloom-catalog-props/${subpath}.ts`];
   if (!load) {
     throw new Error(
       `No generated prop module for @oxy.so/bloom/${subpath}. Run \`bun run generate:bloom-catalog\`.`,
-    )
+    );
   }
-  return (await load()).props
+  return (await load()).props;
 }

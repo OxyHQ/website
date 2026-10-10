@@ -1,10 +1,11 @@
-import Button from '../ui/Button'
-import FaqSection, { type FaqEntry } from '../sections/FaqSection'
+import Button from '../ui/Button';
+import FaqSection, { type FaqEntry } from '../sections/FaqSection';
 
 const featureCards = [
   {
     title: 'Lightweight by design',
-    description: 'OxyOS strips away the bloat. A minimal Openbox desktop that boots fast and stays out of your way, so you can focus on what matters.',
+    description:
+      'OxyOS strips away the bloat. A minimal Openbox desktop that boots fast and stays out of your way, so you can focus on what matters.',
     cta: 'Learn more about Openbox \u2192',
     ctaHref: 'http://openbox.org/',
     layout: 'left' as const,
@@ -13,7 +14,8 @@ const featureCards = [
   },
   {
     title: 'Modern desktop shelf',
-    description: 'A custom bottom dock with app launcher, pinned icons with running indicators, and a quick settings panel. Built from scratch with Python and GTK3.',
+    description:
+      'A custom bottom dock with app launcher, pinned icons with running indicators, and a quick settings panel. Built from scratch with Python and GTK3.',
     cta: 'View on GitHub \u2192',
     ctaHref: 'https://github.com/OxyHQ/OxyOS-shelf',
     layout: 'right' as const,
@@ -22,21 +24,27 @@ const featureCards = [
   },
   {
     title: 'Rock-solid foundation',
-    description: 'Access to a vast package ecosystem. Stable, secure, and well-documented. Thousands of packages available out of the box.',
+    description:
+      'Access to a vast package ecosystem. Stable, secure, and well-documented. Thousands of packages available out of the box.',
     cta: 'Browse packages \u2192',
     ctaHref: 'https://github.com/OxyHQ/OxyOS',
     layout: 'left' as const,
     image: '/images/oxyos/os-desktop.jpg',
     imageAlt: 'OxyOS desktop environment',
   },
-]
+];
 
-const logoPartners = ['Openbox', 'Pipewire', 'systemd', 'GRUB', 'Mesa', 'Linux', 'GTK', 'X11']
+const logoPartners = ['Openbox', 'Pipewire', 'systemd', 'GRUB', 'Mesa', 'Linux', 'GTK', 'X11'];
 
-const newFeatures: Array<{ title: string; description: string; link?: { label: string; href: string } }> = [
+const newFeatures: Array<{
+  title: string;
+  description: string;
+  link?: { label: string; href: string };
+}> = [
   {
     title: 'Trixie base',
-    description: 'Built on the latest stable foundation with modern packages and long-term security support.',
+    description:
+      'Built on the latest stable foundation with modern packages and long-term security support.',
   },
   {
     title: 'Linux 6.18',
@@ -44,24 +52,27 @@ const newFeatures: Array<{ title: string; description: string; link?: { label: s
   },
   {
     title: 'Pipewire Support',
-    description: 'A modern audio daemon replacing PulseAudio, with better performance and lower latency.',
+    description:
+      'A modern audio daemon replacing PulseAudio, with better performance and lower latency.',
   },
   {
     title: 'Power Profiles',
-    description: 'Easily switch between performance and power saving modes right from the Openbox menu using powerprofilesctl.',
+    description:
+      'Easily switch between performance and power saving modes right from the Openbox menu using powerprofilesctl.',
   },
   {
     title: 'OxyOS Shelf',
-    description: 'A custom dock with app launcher, pinned apps, system tray, and quick settings panel.',
+    description:
+      'A custom dock with app launcher, pinned apps, system tray, and quick settings panel.',
   },
-]
+];
 
 const screenshots = [
   '/images/oxyos/screenshot-1.png',
   '/images/oxyos/screenshot-2.png',
   '/images/oxyos/screenshot-3.png',
   '/images/oxyos/screenshot-4.png',
-]
+];
 
 const faqItems: readonly FaqEntry[] = [
   {
@@ -70,11 +81,13 @@ const faqItems: readonly FaqEntry[] = [
   },
   {
     question: 'What happened to the i686 (32-bit) image?',
-    answer: 'The upstream base has dropped i686 as a first-class architecture. We only produce 64-bit (amd64) images.',
+    answer:
+      'The upstream base has dropped i686 as a first-class architecture. We only produce 64-bit (amd64) images.',
   },
   {
     question: 'Will you still be supporting older OxyOS releases?',
-    answer: "The upstream base continues to issue security updates for ~1 year after a new stable release. While older OxyOS releases won't get new updates from us, the repos will remain available.",
+    answer:
+      "The upstream base continues to issue security updates for ~1 year after a new stable release. While older OxyOS releases won't get new updates from us, the repos will remain available.",
   },
   {
     question: 'Where are the direct downloads?',
@@ -90,28 +103,67 @@ const faqItems: readonly FaqEntry[] = [
       </>
     ),
   },
-]
+];
 
 const hardwareCards = [
   {
     title: 'x86_64 / amd64',
-    description: 'Standard desktop and laptop PCs with Intel or AMD processors. Full hardware support out of the box.',
-    specs: ['Intel Core / AMD Ryzen', 'BIOS and UEFI boot', 'Full GPU support (Intel, AMD, NVIDIA)'],
+    description:
+      'Standard desktop and laptop PCs with Intel or AMD processors. Full hardware support out of the box.',
+    specs: [
+      'Intel Core / AMD Ryzen',
+      'BIOS and UEFI boot',
+      'Full GPU support (Intel, AMD, NVIDIA)',
+    ],
     download: { label: 'Download ISO', href: 'https://os.oxy.so/downloads/oxyos-1.0-amd64.iso' },
   },
   {
     title: 'Minimum Requirements',
-    description: 'OxyOS is designed to be lightweight. It runs well on modest hardware and flies on modern machines.',
-    specs: ['1 GHz processor (64-bit)', '512 MB RAM (1 GB recommended)', '10 GB disk space', 'USB port for live boot'],
+    description:
+      'OxyOS is designed to be lightweight. It runs well on modest hardware and flies on modern machines.',
+    specs: [
+      '1 GHz processor (64-bit)',
+      '512 MB RAM (1 GB recommended)',
+      '10 GB disk space',
+      'USB port for live boot',
+    ],
   },
-]
+];
 
 const highlights = [
-  { title: 'OxyOS Ozone released', description: 'New desktop shelf, full OxyOS branding, custom package repo, and refreshed desktop experience.', category: 'release', date: 'Mar 2026', href: 'https://github.com/OxyHQ/OxyOS/releases' },
-  { title: 'OxyOS Shelf built from scratch', description: 'A custom bottom dock with app launcher, pinned icons, system tray, and quick settings panel.', category: 'feature', date: 'Mar 2026', href: 'https://github.com/OxyHQ/OxyOS-shelf' },
-  { title: 'Pipewire replaces PulseAudio', description: 'Lower latency, better Bluetooth support, and seamless audio switching out of the box.', category: 'feature', date: 'Feb 2026', href: '/changelog' },
-  { title: 'Power profiles integration', description: 'Switch between performance and battery saving modes directly from your Openbox menu.', category: 'feature', date: 'Dec 2025', href: '/changelog' },
-]
+  {
+    title: 'OxyOS Ozone released',
+    description:
+      'New desktop shelf, full OxyOS branding, custom package repo, and refreshed desktop experience.',
+    category: 'release',
+    date: 'Mar 2026',
+    href: 'https://github.com/OxyHQ/OxyOS/releases',
+  },
+  {
+    title: 'OxyOS Shelf built from scratch',
+    description:
+      'A custom bottom dock with app launcher, pinned icons, system tray, and quick settings panel.',
+    category: 'feature',
+    date: 'Mar 2026',
+    href: 'https://github.com/OxyHQ/OxyOS-shelf',
+  },
+  {
+    title: 'Pipewire replaces PulseAudio',
+    description:
+      'Lower latency, better Bluetooth support, and seamless audio switching out of the box.',
+    category: 'feature',
+    date: 'Feb 2026',
+    href: '/changelog',
+  },
+  {
+    title: 'Power profiles integration',
+    description:
+      'Switch between performance and battery saving modes directly from your Openbox menu.',
+    category: 'feature',
+    date: 'Dec 2025',
+    href: '/changelog',
+  },
+];
 
 export default function OxyOSContent() {
   return (
@@ -128,14 +180,10 @@ export default function OxyOSContent() {
             </p>
             <div className="flex justify-center gap-x-g1 items-center">
               <div className="hidden md:block">
-                <Button href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
-                  Download ISO
-                </Button>
+                <Button href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">Download ISO</Button>
               </div>
               <div className="block md:hidden">
-                <Button href="https://github.com/OxyHQ/OxyOS/releases">
-                  All Downloads
-                </Button>
+                <Button href="https://github.com/OxyHQ/OxyOS/releases">All Downloads</Button>
               </div>
             </div>
           </div>
@@ -156,9 +204,7 @@ export default function OxyOSContent() {
       {/* ── 2. Logo Garden ── */}
       <section className="section bg-background text-foreground pb-v1.5 pt-0" id="logo-garden">
         <div className="stack container text-center">
-          <h2 className="type-sm mb-v1">
-            Built on battle-tested open source foundations
-          </h2>
+          <h2 className="type-sm mb-v1">Built on battle-tested open source foundations</h2>
           <div className="logo-garden-responsive-8">
             {logoPartners.map((name) => (
               <div key={name} className="relative flex items-center justify-center">
@@ -174,13 +220,18 @@ export default function OxyOSContent() {
       {/* ── 3. Feature Cards (large, alternating layout) ── */}
       <section className="section section--flush-x">
         {featureCards.map((feature, i) => (
-          <section key={feature.title} className="section bg-background text-foreground section--flush-y">
+          <section
+            key={feature.title}
+            className="section bg-background text-foreground section--flush-y"
+          >
             <div className={i < featureCards.length - 1 ? 'container mb-v4' : 'container'}>
               <div className="grid grid-rows-[auto_1fr]">
                 <a
                   className="card card--large card--feature grid-cursor col-span-full row-span-full gap-y-0 max-lg:grid-rows-subgrid"
                   href={feature.ctaHref}
-                  {...(feature.ctaHref.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  {...(feature.ctaHref.startsWith('http')
+                    ? { target: '_blank', rel: 'noopener noreferrer' }
+                    : {})}
                 >
                   {/* Text column */}
                   <div
@@ -190,7 +241,9 @@ export default function OxyOSContent() {
                         : 'lg:col-start-1 lg:col-end-9 lg:pl-g0.25 lg:pr-g3'
                     }`}
                   >
-                    <div className={`w-full max-w-prose ${feature.layout === 'right' ? 'lg:justify-self-end' : 'lg:justify-self-start'}`}>
+                    <div
+                      className={`w-full max-w-prose ${feature.layout === 'right' ? 'lg:justify-self-end' : 'lg:justify-self-start'}`}
+                    >
                       <div className="type-base">
                         <h3 className="type-base md:type-md text-pretty">{feature.title}</h3>
                         <div className="type-base md:type-md text-muted-foreground text-pretty">
@@ -286,7 +339,15 @@ export default function OxyOSContent() {
               <div key={src} className="flex flex-col">
                 <div className="card stack pb-g2 grow-1">
                   <div className="media-border-container relative bg-card overflow-hidden">
-                    <img alt={`OxyOS screenshot ${i + 1}`} src={src} className="w-full h-auto" width={1920} height={1080} loading="lazy" decoding="async" />
+                    <img
+                      alt={`OxyOS screenshot ${i + 1}`}
+                      src={src}
+                      className="w-full h-auto"
+                      width={1920}
+                      height={1080}
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
                 </div>
               </div>
@@ -350,14 +411,14 @@ export default function OxyOSContent() {
                     </div>
                     <ul className="mt-v8/12 space-y-1 text-muted-foreground">
                       {card.specs.map((spec) => (
-                        <li key={spec} className="type-sm">{spec}</li>
+                        <li key={spec} className="type-sm">
+                          {spec}
+                        </li>
                       ))}
                     </ul>
                     {card.download && (
                       <div className="mt-auto pt-v8/12">
-                        <Button href={card.download.href}>
-                          {card.download.label}
-                        </Button>
+                        <Button href={card.download.href}>{card.download.label}</Button>
                       </div>
                     )}
                   </div>
@@ -392,16 +453,23 @@ export default function OxyOSContent() {
         <div className="container">
           <div className="grid-cursor gap-0">
             <div className="col-span-full md:col-start-1 md:col-end-7 lg:col-start-1 lg:col-end-9 xl:col-start-1 xl:col-end-7">
-              <h2 className="type-base text-foreground mb-v1 sticky top-0 lg:mb-0">Recent highlights</h2>
+              <h2 className="type-base text-foreground mb-v1 sticky top-0 lg:mb-0">
+                Recent highlights
+              </h2>
             </div>
             <div className="col-span-full md:col-start-7 md:col-end-25 lg:col-start-9 lg:col-end-25 xl:col-start-7 xl:col-end-19">
               {highlights.map((h, i) => (
-                <article key={h.title} className={`flex grow-1 flex-col${i < highlights.length - 1 ? ' mb-g1' : ''}`}>
+                <article
+                  key={h.title}
+                  className={`flex grow-1 flex-col${i < highlights.length - 1 ? ' mb-g1' : ''}`}
+                >
                   <a className="card card--text grow-1" href={h.href}>
                     <div className="flex flex-col">
                       <div className="grow-1">
                         <p className="type-base text-foreground text-pretty">{h.title}</p>
-                        <p className="type-base text-muted-foreground text-pretty">{h.description}</p>
+                        <p className="type-base text-muted-foreground text-pretty">
+                          {h.description}
+                        </p>
                       </div>
                       <div className="mt-v1 text-muted-foreground flex shrink-0 items-center">
                         <span className="capitalize">{h.category}&nbsp;&middot;&nbsp;</span>
@@ -425,24 +493,18 @@ export default function OxyOSContent() {
       <section className="section bg-background text-foreground section--headline">
         <div className="container">
           <div className="text-center mx-auto max-w-prose-medium-wide">
-            <h2 className="type-xl sm:type-2xl text-balance mx-auto mb-v1">
-              Try OxyOS now.
-            </h2>
+            <h2 className="type-xl sm:type-2xl text-balance mx-auto mb-v1">Try OxyOS now.</h2>
             <div className="flex justify-center gap-x-g1 items-center flex-wrap">
               <div className="hidden md:block">
-                <Button href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
-                  Download ISO
-                </Button>
+                <Button href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">Download ISO</Button>
               </div>
               <div className="block md:hidden">
-                <Button href="https://github.com/OxyHQ/OxyOS/releases">
-                  All Downloads
-                </Button>
+                <Button href="https://github.com/OxyHQ/OxyOS/releases">All Downloads</Button>
               </div>
             </div>
           </div>
         </div>
       </section>
     </div>
-  )
+  );
 }

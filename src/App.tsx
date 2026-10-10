@@ -1,18 +1,18 @@
-import { MotionConfig } from 'framer-motion'
-import { useState, useCallback, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
-import { Navigate } from './lib/navigation'
-import { TRANSPARENCY_REDIRECTS } from './lib/transparency'
-import TransparencyPage from './pages/TransparencyPage'
-import { QueryClientProvider } from '@tanstack/react-query'
-import { OxyProvider, useOxy } from '@oxy.so/services/ui/client'
-import type { User } from '@oxy.so/core'
-import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxy.so/bloom/theme'
-import { ImageResolverProvider } from '@oxy.so/bloom/image-resolver'
-import { BloomScope } from '@oxy.so/bloom/appearance'
-import { AgentAvatarProvider } from '@oxy.so/bloom/agent-avatar'
-import { BLOOM_CHARACTER_RUNTIME_URL } from './lib/bloomCharacterRuntime'
-import { OXY_API } from './lib/oxyApi'
+import { MotionConfig } from 'framer-motion';
+import { useState, useCallback, lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom';
+import { Navigate } from './lib/navigation';
+import { TRANSPARENCY_REDIRECTS } from './lib/transparency';
+import TransparencyPage from './pages/TransparencyPage';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { OxyProvider, useOxy } from '@oxy.so/services/ui/client';
+import type { User } from '@oxy.so/core';
+import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxy.so/bloom/theme';
+import { ImageResolverProvider } from '@oxy.so/bloom/image-resolver';
+import { BloomScope } from '@oxy.so/bloom/appearance';
+import { AgentAvatarProvider } from '@oxy.so/bloom/agent-avatar';
+import { BLOOM_CHARACTER_RUNTIME_URL } from './lib/bloomCharacterRuntime';
+import { OXY_API } from './lib/oxyApi';
 import {
   getSavedMode,
   getSavedPreset,
@@ -21,102 +21,102 @@ import {
   applyUserColor,
   type ThemeMode,
   type AppColorName,
-} from './theme'
-import { LocaleProvider, DEFAULT_LOCALE, SUPPORTED_LOCALES } from './lib/i18n'
-import { setOxyServices } from './api/client'
-import { setPlatformStatsOxyServices } from './api/platformStatsStore'
-import { isFairCoinHost } from './lib/host'
-import ErrorBoundary from './components/ErrorBoundary'
-import IntercomMessenger from './components/integrations/IntercomMessenger'
-import NewsroomRouteFallback from './components/newsroom/NewsroomRouteFallback'
-import { queryClient } from './api/queryClient'
-import { loadNewsroomPage, loadNewsroomPostPage } from './lib/route-preload'
+} from './theme';
+import { LocaleProvider, DEFAULT_LOCALE, SUPPORTED_LOCALES } from './lib/i18n';
+import { setOxyServices } from './api/client';
+import { setPlatformStatsOxyServices } from './api/platformStatsStore';
+import { isFairCoinHost } from './lib/host';
+import ErrorBoundary from './components/ErrorBoundary';
+import IntercomMessenger from './components/integrations/IntercomMessenger';
+import NewsroomRouteFallback from './components/newsroom/NewsroomRouteFallback';
+import { queryClient } from './api/queryClient';
+import { loadNewsroomPage, loadNewsroomPostPage } from './lib/route-preload';
 
-import HomePage from './pages/HomePage'
+import HomePage from './pages/HomePage';
 // Lazy on purpose, and it must stay that way. `FairCoinLandingContent` pulls in
 // `WagmiAppProvider` → wagmi → viem → WalletConnect + Coinbase Wallet SDK, on
 // the order of 1.3 MB. A static import here puts all of it in the entry chunk,
 // which every oxy.so visitor downloads to render a page they never open — the
 // exact outcome `WagmiAppProvider`'s own docstring says it exists to prevent.
 // It is the index route on fairco.in, which pays one extra round trip for it.
-const FairCoinLanding = lazy(() => import('./pages/FairCoinLanding'))
-const FairCoinBridgePage = lazy(() => import('./pages/FairCoinBridge'))
-const FairCoinBuyPage = lazy(() => import('./pages/FairCoinBuy'))
-const FairCoinUnwrapPage = lazy(() => import('./pages/FairCoinUnwrap'))
-const FairCoinWalletPage = lazy(() => import('./pages/FairCoinWallet'))
+const FairCoinLanding = lazy(() => import('./pages/FairCoinLanding'));
+const FairCoinBridgePage = lazy(() => import('./pages/FairCoinBridge'));
+const FairCoinBuyPage = lazy(() => import('./pages/FairCoinBuy'));
+const FairCoinUnwrapPage = lazy(() => import('./pages/FairCoinUnwrap'));
+const FairCoinWalletPage = lazy(() => import('./pages/FairCoinWallet'));
 
-const AdminPage = lazy(() => import('./pages/AdminPage'))
-const PartnersPage = lazy(() => import('./pages/PartnersPage'))
-const CareersPage = lazy(() => import('./pages/CareersPage'))
-const OnePage = lazy(() => import('./pages/OnePage'))
-const StorePage = lazy(() => import('./pages/StorePage'))
-const StoreProductPage = lazy(() => import('./pages/StoreProductPage'))
-const PricingPage = lazy(() => import('./pages/PricingPage'))
-const NewsroomPage = lazy(loadNewsroomPage)
-const NewsroomPostPage = lazy(loadNewsroomPostPage)
-const AcademyPage = lazy(() => import('./pages/AcademyPage'))
-const CourseDetailPage = lazy(() => import('./pages/CourseDetailPage'))
-const LessonPage = lazy(() => import('./pages/LessonPage'))
-const BlogPage = lazy(() => import('./pages/BlogPage'))
-const CodeaPage = lazy(() => import('./pages/CodeaPage'))
-const CodexExtensionPage = lazy(() => import('./pages/CodexExtensionPage'))
-const OxyOSPage = lazy(() => import('./pages/OxyOSPage'))
-const TNPPage = lazy(() => import('./pages/TNPPage'))
-const TNPInstallPage = lazy(() => import('./pages/TNPInstallPage'))
-const HomiioPage = lazy(() => import('./pages/HomiioPage'))
-const MentionPage = lazy(() => import('./pages/MentionPage'))
-const PeablePage = lazy(() => import('./pages/PeablePage'))
-const CommonsPage = lazy(() => import('./pages/CommonsPage'))
-const AppsPage = lazy(() => import('./pages/AppsPage'))
-const AppDetailPage = lazy(() => import('./pages/AppDetailPage'))
-const FaqsPage = lazy(() => import('./pages/FaqsPage'))
-const CareerDetailPage = lazy(() => import('./pages/CareerDetailPage'))
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
-const BrandPage = lazy(() => import('./pages/BrandPage'))
-const InboxPage = lazy(() => import('./pages/InboxPage'))
-const DashboardPage = lazy(() => import('./pages/DashboardPage'))
-const InitiativePage = lazy(() => import('./pages/InitiativePage'))
-const AIPricingPage = lazy(() => import('./pages/AIPricingPage'))
-const AIInferencePage = lazy(() => import('./pages/AIInferencePage'))
-const AIModelsPage = lazy(() => import('./pages/AIModelsPage'))
-const AIModelDetailPage = lazy(() => import('./pages/AIModelDetailPage'))
-const AIEnterprisePage = lazy(() => import('./pages/AIEnterprisePage'))
-const AITrustPage = lazy(() => import('./pages/AITrustPage'))
-const EnterprisePage = lazy(() => import('./pages/EnterprisePage'))
-const ContactSalesPage = lazy(() => import('./pages/ContactSalesPage'))
-const HelpPage = lazy(() => import('./pages/HelpPage'))
-const HelpArticlePage = lazy(() => import('./pages/HelpArticlePage'))
-const ChangelogPage = lazy(() => import('./pages/ChangelogPage'))
-const DocsPage = lazy(() => import('./pages/DocsPage'))
-const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
-const BloomPage = lazy(() => import('./pages/BloomPage'))
-const BloomDemoIsolationPage = lazy(() => import('./pages/BloomDemoIsolationPage'))
-const BloomColorSystemPage = lazy(() => import('./components/docs/BloomColorSystemPage'))
-const BloomComponentPage = lazy(() => import('./components/docs/BloomComponentPage'))
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+const PartnersPage = lazy(() => import('./pages/PartnersPage'));
+const CareersPage = lazy(() => import('./pages/CareersPage'));
+const OnePage = lazy(() => import('./pages/OnePage'));
+const StorePage = lazy(() => import('./pages/StorePage'));
+const StoreProductPage = lazy(() => import('./pages/StoreProductPage'));
+const PricingPage = lazy(() => import('./pages/PricingPage'));
+const NewsroomPage = lazy(loadNewsroomPage);
+const NewsroomPostPage = lazy(loadNewsroomPostPage);
+const AcademyPage = lazy(() => import('./pages/AcademyPage'));
+const CourseDetailPage = lazy(() => import('./pages/CourseDetailPage'));
+const LessonPage = lazy(() => import('./pages/LessonPage'));
+const BlogPage = lazy(() => import('./pages/BlogPage'));
+const CodeaPage = lazy(() => import('./pages/CodeaPage'));
+const CodexExtensionPage = lazy(() => import('./pages/CodexExtensionPage'));
+const OxyOSPage = lazy(() => import('./pages/OxyOSPage'));
+const TNPPage = lazy(() => import('./pages/TNPPage'));
+const TNPInstallPage = lazy(() => import('./pages/TNPInstallPage'));
+const HomiioPage = lazy(() => import('./pages/HomiioPage'));
+const MentionPage = lazy(() => import('./pages/MentionPage'));
+const PeablePage = lazy(() => import('./pages/PeablePage'));
+const CommonsPage = lazy(() => import('./pages/CommonsPage'));
+const AppsPage = lazy(() => import('./pages/AppsPage'));
+const AppDetailPage = lazy(() => import('./pages/AppDetailPage'));
+const FaqsPage = lazy(() => import('./pages/FaqsPage'));
+const CareerDetailPage = lazy(() => import('./pages/CareerDetailPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const BrandPage = lazy(() => import('./pages/BrandPage'));
+const InboxPage = lazy(() => import('./pages/InboxPage'));
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const InitiativePage = lazy(() => import('./pages/InitiativePage'));
+const AIPricingPage = lazy(() => import('./pages/AIPricingPage'));
+const AIInferencePage = lazy(() => import('./pages/AIInferencePage'));
+const AIModelsPage = lazy(() => import('./pages/AIModelsPage'));
+const AIModelDetailPage = lazy(() => import('./pages/AIModelDetailPage'));
+const AIEnterprisePage = lazy(() => import('./pages/AIEnterprisePage'));
+const AITrustPage = lazy(() => import('./pages/AITrustPage'));
+const EnterprisePage = lazy(() => import('./pages/EnterprisePage'));
+const ContactSalesPage = lazy(() => import('./pages/ContactSalesPage'));
+const HelpPage = lazy(() => import('./pages/HelpPage'));
+const HelpArticlePage = lazy(() => import('./pages/HelpArticlePage'));
+const ChangelogPage = lazy(() => import('./pages/ChangelogPage'));
+const DocsPage = lazy(() => import('./pages/DocsPage'));
+const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'));
+const BloomPage = lazy(() => import('./pages/BloomPage'));
+const BloomDemoIsolationPage = lazy(() => import('./pages/BloomDemoIsolationPage'));
+const BloomColorSystemPage = lazy(() => import('./components/docs/BloomColorSystemPage'));
+const BloomComponentPage = lazy(() => import('./components/docs/BloomComponentPage'));
 const BloomComponentsHub = lazy(() =>
   import('./components/docs-platform/BloomComponentsHub').then((m) => ({
     default: m.BloomComponentsHub,
   })),
-)
-const DevelopersPage = lazy(() => import('./pages/DevelopersPage'))
-const SettingsPage = lazy(() => import('./pages/SettingsPage'))
-const LegalPage = lazy(() => import('./pages/LegalPage'))
-const AccountDeletionPage = lazy(() => import('./pages/AccountDeletionPage'))
-const UserProfilePage = lazy(() => import('./pages/UserProfilePage'))
-const UserFollowersPage = lazy(() => import('./pages/UserFollowersPage'))
-const FeatureBoardPage = lazy(() => import('./pages/FeatureBoardPage'))
-const FeatureRequestPage = lazy(() => import('./pages/FeatureRequestPage'))
-const AstroPage = lazy(() => import('./pages/AstroPage'))
-const MercariaPage = lazy(() => import('./pages/MercariaPage'))
-const AIPage = lazy(() => import('./pages/AIPage'))
-const CompanyPage = lazy(() => import('./pages/CompanyPage'))
-const TeamPage = lazy(() => import('./pages/TeamPage'))
-const CompanyArticlePage = lazy(() => import('./pages/CompanyArticlePage'))
-const StatusPage = lazy(() => import('./pages/StatusPage'))
-const StatusHistoryPage = lazy(() => import('./pages/StatusHistoryPage'))
-const ReferralsPage = lazy(() => import('./pages/ReferralsPage'))
-const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'))
-const SustainPage = lazy(() => import('./pages/SustainPage'))
+);
+const DevelopersPage = lazy(() => import('./pages/DevelopersPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const LegalPage = lazy(() => import('./pages/LegalPage'));
+const AccountDeletionPage = lazy(() => import('./pages/AccountDeletionPage'));
+const UserProfilePage = lazy(() => import('./pages/UserProfilePage'));
+const UserFollowersPage = lazy(() => import('./pages/UserFollowersPage'));
+const FeatureBoardPage = lazy(() => import('./pages/FeatureBoardPage'));
+const FeatureRequestPage = lazy(() => import('./pages/FeatureRequestPage'));
+const AstroPage = lazy(() => import('./pages/AstroPage'));
+const MercariaPage = lazy(() => import('./pages/MercariaPage'));
+const AIPage = lazy(() => import('./pages/AIPage'));
+const CompanyPage = lazy(() => import('./pages/CompanyPage'));
+const TeamPage = lazy(() => import('./pages/TeamPage'));
+const CompanyArticlePage = lazy(() => import('./pages/CompanyArticlePage'));
+const StatusPage = lazy(() => import('./pages/StatusPage'));
+const StatusHistoryPage = lazy(() => import('./pages/StatusHistoryPage'));
+const ReferralsPage = lazy(() => import('./pages/ReferralsPage'));
+const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'));
+const SustainPage = lazy(() => import('./pages/SustainPage'));
 
 // Registered Oxy OAuth client id for the public website, read from the site's
 // standard `VITE_*` env convention. The deploy workflow injects the PRODUCTION
@@ -126,10 +126,10 @@ const SustainPage = lazy(() => import('./pages/SustainPage'))
 // case where the env var stops being injected, because nothing then changes.
 const OXY_CLIENT_ID =
   (import.meta.env.VITE_OXY_CLIENT_ID as string | undefined) ||
-  'oxy_dk_e572a3df046f98c2c29098f1349a7927183751e08ca2b757'
+  'oxy_dk_e572a3df046f98c2c29098f1349a7927183751e08ca2b757';
 
 function ScrollToTop() {
-  const { pathname, hash } = useLocation()
+  const { pathname, hash } = useLocation();
   // Derived-state pattern: react to location changes during render without
   // reaching for useEffect. Track the last (pathname, hash) tuple and pick
   // one of two behaviours when it changes:
@@ -142,50 +142,50 @@ function ScrollToTop() {
   // rAF is needed for case 1 because react-router updates `location`
   // synchronously during render — the new page hasn't mounted yet at this
   // point, so `getElementById` would return null.
-  const [lastKey, setLastKey] = useState(`${pathname}${hash}`)
-  const currentKey = `${pathname}${hash}`
+  const [lastKey, setLastKey] = useState(`${pathname}${hash}`);
+  const currentKey = `${pathname}${hash}`;
   if (lastKey !== currentKey) {
-    setLastKey(currentKey)
+    setLastKey(currentKey);
     if (typeof window !== 'undefined') {
       if (hash) {
-        const targetId = hash.slice(1)
+        const targetId = hash.slice(1);
         requestAnimationFrame(() => {
-          const el = document.getElementById(targetId)
+          const el = document.getElementById(targetId);
           if (el) {
-            el.scrollIntoView({ block: 'start' })
+            el.scrollIntoView({ block: 'start' });
           } else {
-            window.scrollTo(0, 0)
+            window.scrollTo(0, 0);
           }
-        })
+        });
       } else {
-        window.scrollTo(0, 0)
+        window.scrollTo(0, 0);
       }
     }
   }
-  return null
+  return null;
 }
 
 function AppSetup({ children }: { children: React.ReactNode }) {
-  const { oxyServices } = useOxy()
+  const { oxyServices } = useOxy();
 
   // Wire the website's own-backend fetch client to the SDK session so every
   // /api call carries the current bearer token without manual token plumbing.
-  setOxyServices(oxyServices)
-  setPlatformStatsOxyServices(oxyServices)
+  setOxyServices(oxyServices);
+  setPlatformStatsOxyServices(oxyServices);
 
   // Resolve Bloom image file IDs to download URLs. The optional `variant`
   // selects the rendition (e.g. 'thumb') and is forwarded from Avatar's
   // variant prop — the single chokepoint for cloud.oxy.so URL construction.
   const resolveImage = useCallback(
     (fileId: string, variant?: string): string | undefined => {
-      if (!fileId) return undefined
-      if (fileId.startsWith('http')) return fileId
-      return oxyServices.assets.publicUrl(fileId, variant)
+      if (!fileId) return undefined;
+      if (fileId.startsWith('http')) return fileId;
+      return oxyServices.assets.publicUrl(fileId, variant);
     },
     [oxyServices],
-  )
+  );
 
-  return <ImageResolverProvider value={resolveImage}>{children}</ImageResolverProvider>
+  return <ImageResolverProvider value={resolveImage}>{children}</ImageResolverProvider>;
 }
 
 function LocaleLayout() {
@@ -193,7 +193,7 @@ function LocaleLayout() {
     <LocaleProvider>
       <Outlet />
     </LocaleProvider>
-  )
+  );
 }
 
 /**
@@ -207,7 +207,7 @@ function LocaleLayout() {
  * someone flips a CMS toggle, or every already-indexed URL silently changes
  * meaning.
  */
-const LOCALE_PREFIXES = SUPPORTED_LOCALES.filter((code) => code !== DEFAULT_LOCALE)
+const LOCALE_PREFIXES = SUPPORTED_LOCALES.filter((code) => code !== DEFAULT_LOCALE);
 
 /**
  * Collapse `/en/pricing` onto the canonical `/pricing`.
@@ -216,14 +216,14 @@ const LOCALE_PREFIXES = SUPPORTED_LOCALES.filter((code) => code !== DEFAULT_LOCA
  * those only exist for non-default locales now — see {@link LOCALE_PREFIXES}.
  */
 function CollapseDefaultLocalePrefix() {
-  const location = useLocation()
-  const rest = location.pathname.slice(DEFAULT_LOCALE.length + 1) || '/'
-  return <Navigate to={rest + location.search + location.hash} replace />
+  const location = useLocation();
+  const rest = location.pathname.slice(DEFAULT_LOCALE.length + 1) || '/';
+  return <Navigate to={rest + location.search + location.hash} replace />;
 }
 
 function TransparencyRedirect({ to }: { to: string }) {
-  const { search, hash } = useLocation()
-  return <Navigate to={to + search + hash} replace />
+  const { search, hash } = useLocation();
+  return <Navigate to={to + search + hash} replace />;
 }
 
 function PublicRoutes() {
@@ -241,7 +241,7 @@ function PublicRoutes() {
         <Route path="bridge" element={<FairCoinBridgePage />} />
         <Route path="wallet" element={<FairCoinWalletPage />} />
       </>
-    )
+    );
   }
   return (
     <>
@@ -269,7 +269,11 @@ function PublicRoutes() {
           <CompanyArticlePage
             slug="manifesto"
             canonicalPath="/transparency/manifesto"
-            cta={{ title: 'Read the founding charter.', label: 'Open the charter', href: '/transparency/charter' }}
+            cta={{
+              title: 'Read the founding charter.',
+              label: 'Open the charter',
+              href: '/transparency/charter',
+            }}
           />
         }
       />
@@ -279,7 +283,11 @@ function PublicRoutes() {
           <CompanyArticlePage
             slug="influence"
             canonicalPath="/transparency/influence"
-            cta={{ title: 'Read the founding commitments.', label: 'Open the charter', href: '/transparency/charter/' }}
+            cta={{
+              title: 'Read the founding commitments.',
+              label: 'Open the charter',
+              href: '/transparency/charter/',
+            }}
           />
         }
       />
@@ -299,7 +307,11 @@ function PublicRoutes() {
           <CompanyArticlePage
             slug="transparency"
             canonicalPath="/transparency/approach"
-            cta={{ title: 'See where the money goes.', label: 'How our business works', href: '/transparency/business' }}
+            cta={{
+              title: 'See where the money goes.',
+              label: 'How our business works',
+              href: '/transparency/business',
+            }}
           />
         }
       />
@@ -309,7 +321,11 @@ function PublicRoutes() {
           <CompanyArticlePage
             slug="business"
             canonicalPath="/transparency/business"
-            cta={{ title: 'See the full picture.', label: 'Open the Transparency Center', href: '/transparency/' }}
+            cta={{
+              title: 'See the full picture.',
+              label: 'Open the Transparency Center',
+              href: '/transparency/',
+            }}
           />
         }
       />
@@ -321,19 +337,19 @@ function PublicRoutes() {
       <Route path="store/p/:id" element={<StoreProductPage />} />
       <Route
         path="newsroom"
-        element={(
+        element={
           <Suspense fallback={<NewsroomRouteFallback />}>
             <NewsroomPage />
           </Suspense>
-        )}
+        }
       />
       <Route
         path="newsroom/:slug"
-        element={(
+        element={
           <Suspense fallback={<NewsroomRouteFallback />}>
             <NewsroomPostPage />
           </Suspense>
-        )}
+        }
       />
       <Route path="academy" element={<AcademyPage />} />
       <Route path="academy/:slug" element={<CourseDetailPage />} />
@@ -355,7 +371,10 @@ function PublicRoutes() {
         DocsPage (which would return a 404 since there's no MDX file
         with that slug in the typedoc output).
       */}
-      <Route path="developers/docs/bloom/playground" element={<Navigate to="/developers/docs/bloom/components/" replace />} />
+      <Route
+        path="developers/docs/bloom/playground"
+        element={<Navigate to="/developers/docs/bloom/components/" replace />}
+      />
       <Route
         path="developers/docs/bloom/:version/playground"
         element={<Navigate to="/developers/docs/bloom/components/" replace />}
@@ -458,12 +477,12 @@ function PublicRoutes() {
       <Route path="features/:owner/:repo/:number" element={<FeatureRequestPage />} />
       <Route path="sustain" element={<SustainPage />} />
     </>
-  )
+  );
 }
 
 function AppProviders() {
-  const location = useLocation()
-  const [mode, setThemeMode] = useState<ThemeMode>(getSavedMode)
+  const location = useLocation();
+  const [mode, setThemeMode] = useState<ThemeMode>(getSavedMode);
   // `getSavedPreset()` is host-aware — on the FairCoin apex it always returns
   // `'faircoin'`, ignoring the localStorage value. So Bloom's faircoin preset
   // is what gets written to `:root` for the entire document. On oxy.so the
@@ -472,25 +491,22 @@ function AppProviders() {
   // theme, only the page body shows FairCoin content. The full FairCoin
   // brand (green Bloom theme + dedicated nav/footer) only takes over on
   // fairco.in itself.
-  const [preset, setThemePreset] = useState<AppColorName>(getSavedPreset)
+  const [preset, setThemePreset] = useState<AppColorName>(getSavedPreset);
   // `applyUserColor()` is also host-aware (no-op on FairCoin), but we forward
   // it through here so the auth event still fires for any future hooks.
-  const handleAuthChange = useCallback(
-    (user: unknown) => {
-      applyUserColor((user as User | null)?.color)
-      setThemePreset(getSavedPreset())
-    },
-    [],
-  )
+  const handleAuthChange = useCallback((user: unknown) => {
+    applyUserColor((user as User | null)?.color);
+    setThemePreset(getSavedPreset());
+  }, []);
   const handleModeChange = useCallback((next: BloomThemeMode) => {
-    if (next !== 'light' && next !== 'dark') return
-    saveModePreference(next)
-    setThemeMode(next)
-  }, [])
+    if (next !== 'light' && next !== 'dark') return;
+    saveModePreference(next);
+    setThemeMode(next);
+  }, []);
   const handlePresetChange = useCallback((next: AppColorName) => {
-    saveColorPresetPreference(next)
-    setThemePreset(next)
-  }, [])
+    saveColorPresetPreference(next);
+    setThemePreset(next);
+  }, []);
 
   // The isolated demo route is the one route that can request a mode different
   // from the saved site preference. Keep that override on the ONE app-wide
@@ -498,11 +514,10 @@ function AppProviders() {
   // routes automatically restores the persisted mode held in state. The demo
   // page itself must never mount a second provider or mutate <html> during
   // render.
-  const isDemoIsolationRoute = location.pathname.includes('/developers/docs/bloom/_demo/')
-  const requestedMode = new URLSearchParams(location.search).get('theme') === 'dark'
-    ? 'dark'
-    : 'light'
-  const renderedMode = isDemoIsolationRoute ? requestedMode : mode
+  const isDemoIsolationRoute = location.pathname.includes('/developers/docs/bloom/_demo/');
+  const requestedMode =
+    new URLSearchParams(location.search).get('theme') === 'dark' ? 'dark' : 'light';
+  const renderedMode = isDemoIsolationRoute ? requestedMode : mode;
 
   // BloomThemeProvider must wrap OxyProvider: OxyProvider mounts
   // OxyAccountDialog + ToastOutlet as siblings of `children`, and those
@@ -531,23 +546,23 @@ function AppProviders() {
                 <ScrollToTop />
                 <IntercomMessenger />
                 <Suspense fallback={<div className="min-h-screen" />}>
-                    <Routes>
-                        {/* Guarded: /admin/* is a top-level route with no shared
+                  <Routes>
+                    {/* Guarded: /admin/* is a top-level route with no shared
                             layout, so an unhandled render error here would blank the
                             whole document instead of a section of a page. */}
-                        <Route
-                          path="/admin/*"
-                          element={
-                            <ErrorBoundary>
-                              <AdminPage />
-                            </ErrorBoundary>
-                          }
-                        />
-                        <Route path="/" element={<LocaleLayout />}>
-                          {PublicRoutes()}
-                          <Route path="*" element={<NotFoundPage />} />
-                        </Route>
-                        {/*
+                    <Route
+                      path="/admin/*"
+                      element={
+                        <ErrorBoundary>
+                          <AdminPage />
+                        </ErrorBoundary>
+                      }
+                    />
+                    <Route path="/" element={<LocaleLayout />}>
+                      {PublicRoutes()}
+                      <Route path="*" element={<NotFoundPage />} />
+                    </Route>
+                    {/*
                           The same route table mounted again under each locale, so
                           `/es/pricing` resolves without maintaining a parallel list.
 
@@ -564,14 +579,14 @@ function AppProviders() {
                           construction — an unknown prefix like `/xx/pricing` now
                           falls through to the catch-all above.
                         */}
-                        {LOCALE_PREFIXES.map((code) => (
-                          <Route key={code} path={code} element={<LocaleLayout />}>
-                            {PublicRoutes()}
-                            <Route path="*" element={<NotFoundPage />} />
-                          </Route>
-                        ))}
-                        <Route path={`${DEFAULT_LOCALE}/*`} element={<CollapseDefaultLocalePrefix />} />
-                    </Routes>
+                    {LOCALE_PREFIXES.map((code) => (
+                      <Route key={code} path={code} element={<LocaleLayout />}>
+                        {PublicRoutes()}
+                        <Route path="*" element={<NotFoundPage />} />
+                      </Route>
+                    ))}
+                    <Route path={`${DEFAULT_LOCALE}/*`} element={<CollapseDefaultLocalePrefix />} />
+                  </Routes>
                 </Suspense>
               </AppSetup>
             </OxyProvider>
@@ -579,7 +594,7 @@ function AppProviders() {
         </AgentAvatarProvider>
       </BloomThemeProvider>
     </QueryClientProvider>
-  )
+  );
 }
 
 export default function App() {
@@ -587,7 +602,9 @@ export default function App() {
   // resolve route-scoped rendering modes before it paints its descendants.
   return (
     <BrowserRouter>
-      <MotionConfig reducedMotion="user"><AppProviders /></MotionConfig>
+      <MotionConfig reducedMotion="user">
+        <AppProviders />
+      </MotionConfig>
     </BrowserRouter>
-  )
+  );
 }

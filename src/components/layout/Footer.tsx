@@ -1,62 +1,79 @@
-import { Link } from '../../lib/navigation'
-import { useTranslation } from '../../lib/i18n'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { Divider } from '@oxy.so/bloom/divider'
-import { defaultFooterColumns, type FooterLink } from '../../data/content'
-import { LogoText } from '@oxy.so/services/ui/client'
-import MentionIcon from '../social/MentionIcon'
+import { Link } from '../../lib/navigation';
+import { useTranslation } from '../../lib/i18n';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { Divider } from '@oxy.so/bloom/divider';
+import { defaultFooterColumns, type FooterLink } from '../../data/content';
+import { LogoText } from '@oxy.so/services/ui/client';
+import MentionIcon from '../social/MentionIcon';
 
 /* ─── Shared small components ─── */
 
 function NewBadge() {
-  return (
-    <NewBadgeInner />
-  )
+  return <NewBadgeInner />;
 }
 
 function NewBadgeInner() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <div className="ml-1.5 rounded-[10px] bg-primary px-1.5 py-1 font-normal text-label-sm text-primary-foreground leading-[7px] tracking-normal">
       {t('common.new')}
     </div>
-  )
+  );
 }
 
 /* ─── SVG Social Icons ─── */
 
 function LinkedInIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      className={className}
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 448 512"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
     </svg>
-  )
+  );
 }
 
 function XIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      className={className}
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 512 512"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
     </svg>
-  )
+  );
 }
 
 function FacebookIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      className={className}
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path d="M12 0C5.373 0 0 5.373 0 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.356c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 22.954 24 17.99 24 12C24 5.373 18.627 0 12 0z" />
     </svg>
-  )
+  );
 }
-
-
 
 /* ─── Data ─── */
 
 interface SocialLink {
-  label: string
-  icon: React.ComponentType<{ className?: string }>
-  href: string
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  href: string;
 }
 
 // Brand social URLs are constant; labels are translated via `t()` at render time.
@@ -65,20 +82,21 @@ const SOCIAL_URLS = {
   x: 'https://x.com/oxyhqinc',
   facebook: 'https://facebook.com/OxyHQ',
   mention: 'https://mention.earth/@oxy',
-} as const
+} as const;
 
 interface LegalLink {
-  label: string
+  label: string;
   /** Internal route (uses react-router Link) when this is set. */
-  to?: string
+  to?: string;
   /** External URL (uses an anchor tag) when this is set instead of `to`. */
-  href?: string
-  isExternal?: boolean
+  href?: string;
+  isExternal?: boolean;
 }
 
 /* ─── Footer link (handles internal/external, badge, arrow) ─── */
 
-const LINK_CLASS = 'group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-muted-foreground transition-[background-color,color] duration-150 ease-out hover:bg-primary-subtle hover:text-primary-text focus-visible:text-primary-text active:text-primary-text active:duration-50'
+const LINK_CLASS =
+  'group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-muted-foreground transition-[background-color,color] duration-150 ease-out hover:bg-primary-subtle hover:text-primary-text focus-visible:text-primary-text active:text-primary-text active:duration-50';
 
 function FooterLinkItem({ link }: { link: FooterLink }) {
   const content = (
@@ -86,13 +104,22 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
       <span className="footer-hover-underline group-hover:duration-150">{link.label}</span>
       {link.isNewBadge && <NewBadge />}
       {link.isExternal && (
-        <span aria-hidden="true" className="inline-flex ml-0.5 -rotate-45 text-muted-foreground transition-colors duration-200 ease-in-out-cubic group-hover:text-foreground group-hover:delay-50 group-focus:text-foreground group-focus:delay-50 group-active:text-foreground group-active:duration-50"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
+        <span
+          aria-hidden="true"
+          className="inline-flex ml-0.5 -rotate-45 text-muted-foreground transition-colors duration-200 ease-in-out-cubic group-hover:text-foreground group-hover:delay-50 group-focus:text-foreground group-focus:delay-50 group-active:text-foreground group-active:duration-50"
+        >
+          <RiArrowRightLine width={14} height={14} fill="currentColor" />
+        </span>
       )}
     </>
-  )
+  );
 
   if (link.href.startsWith('/') && !link.isExternal) {
-    return <Link to={link.href} className={LINK_CLASS}>{content}</Link>
+    return (
+      <Link to={link.href} className={LINK_CLASS}>
+        {content}
+      </Link>
+    );
   }
 
   return (
@@ -103,39 +130,39 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
     >
       {content}
     </a>
-  )
+  );
 }
 
 /* ─── Main component ─── */
 
 /** Brand block (logo + description + home link) for the footer. */
 export interface FooterBrand {
-  homeHref: string
-  ariaLabel: string
+  homeHref: string;
+  ariaLabel: string;
   /** Logo / wordmark element. Sized by the caller. */
-  logo: React.ReactNode
-  description: string
+  logo: React.ReactNode;
+  description: string;
 }
 
 /** A single footer column. Product pages can still provide their own variant. */
 export interface FooterColumnConfig {
-  title: string
-  links: readonly FooterLink[]
+  title: string;
+  links: readonly FooterLink[];
 }
 
 interface FooterProps {
   /** Override the brand block. Defaults to Oxy logo + description. */
-  brand?: FooterBrand
+  brand?: FooterBrand;
   /**
    * Override the column data for a product-specific footer variant. When
    * omitted, the public website footer uses the code-owned defaults.
    */
-  columns?: readonly FooterColumnConfig[]
-  socialLinks?: readonly SocialLink[]
-  legalLinks?: readonly LegalLink[]
-  copyright?: string
+  columns?: readonly FooterColumnConfig[];
+  socialLinks?: readonly SocialLink[];
+  legalLinks?: readonly LegalLink[];
+  copyright?: string;
   /** Lets a preceding page section own the single boundary rule. */
-  hideTopDivider?: boolean
+  hideTopDivider?: boolean;
 }
 
 export default function Footer({
@@ -146,14 +173,15 @@ export default function Footer({
   copyright,
   hideTopDivider = false,
 }: FooterProps = {}) {
-  const { t } = useTranslation()
-  const footerColumns: readonly { title: string; links: readonly FooterLink[] }[] = columns ?? defaultFooterColumns
+  const { t } = useTranslation();
+  const footerColumns: readonly { title: string; links: readonly FooterLink[] }[] =
+    columns ?? defaultFooterColumns;
   const defaultSocial: readonly SocialLink[] = [
     { label: t('footer.socialLinkedIn'), icon: LinkedInIcon, href: SOCIAL_URLS.linkedIn },
     { label: t('footer.socialX'), icon: XIcon, href: SOCIAL_URLS.x },
     { label: 'Facebook', icon: FacebookIcon, href: SOCIAL_URLS.facebook },
     { label: t('footer.socialMention'), icon: MentionIcon, href: SOCIAL_URLS.mention },
-  ]
+  ];
   const defaultLegal: readonly LegalLink[] = [
     { label: t('footer.legal'), to: '/transparency/legal' },
     { label: t('footer.privacyPolicy'), to: '/transparency/legal/privacy' },
@@ -167,17 +195,15 @@ export default function Footer({
     { label: 'Sitemap', href: '/sitemap.xml' },
     { label: 'RSS', href: '/newsroom.xml' },
     { label: t('footer.settings'), to: '/settings' },
-  ]
-  const social = socialLinks ?? defaultSocial
-  const legal = legalLinks ?? defaultLegal
-  const copyrightText = copyright ?? t('footer.copyright')
-  const description = brand?.description ?? t('footer.description')
-  const homeHref = brand?.homeHref ?? '/'
-  const ariaLabel = brand?.ariaLabel ?? t('navbar.homepage')
+  ];
+  const social = socialLinks ?? defaultSocial;
+  const legal = legalLinks ?? defaultLegal;
+  const copyrightText = copyright ?? t('footer.copyright');
+  const description = brand?.description ?? t('footer.description');
+  const homeHref = brand?.homeHref ?? '/';
+  const ariaLabel = brand?.ariaLabel ?? t('navbar.homepage');
   return (
-    <footer
-      className="relative flex w-full flex-col justify-between bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))] text-foreground"
-    >
+    <footer className="relative flex w-full flex-col justify-between bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))] text-foreground">
       {!hideTopDivider && <Divider color="var(--border)" />}
 
       {/* Columns */}
@@ -210,8 +236,19 @@ export default function Footer({
           {/* Logo + Social row */}
           <div className="flex flex-wrap items-center justify-between gap-6 px-px pt-4 pb-4">
             <div className="flex flex-col gap-3">
-              <Link className="-m-1.5 inline-block w-fit rounded-lg p-1.5" aria-label={ariaLabel} to={homeHref} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                {brand?.logo ?? <LogoText height={44} color="var(--primary)" letterColor="var(--logo-letter-color, var(--primary-foreground))" />}
+              <Link
+                className="-m-1.5 inline-block w-fit rounded-lg p-1.5"
+                aria-label={ariaLabel}
+                to={homeHref}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                {brand?.logo ?? (
+                  <LogoText
+                    height={44}
+                    color="var(--primary)"
+                    letterColor="var(--logo-letter-color, var(--primary-foreground))"
+                  />
+                )}
               </Link>
               <p className="max-w-lg text-sm text-muted-foreground">{description}</p>
             </div>
@@ -239,10 +276,14 @@ export default function Footer({
               {legal.map((item) => {
                 if (item.to) {
                   return (
-                    <Link key={item.label} className="transition-colors duration-150 hover:text-primary-text" to={item.to}>
+                    <Link
+                      key={item.label}
+                      className="transition-colors duration-150 hover:text-primary-text"
+                      to={item.to}
+                    >
                       {item.label}
                     </Link>
-                  )
+                  );
                 }
                 return (
                   <a
@@ -253,7 +294,7 @@ export default function Footer({
                   >
                     {item.label}
                   </a>
-                )
+                );
               })}
             </div>
           )}
@@ -265,5 +306,5 @@ export default function Footer({
         </div>
       </div>
     </footer>
-  )
+  );
 }

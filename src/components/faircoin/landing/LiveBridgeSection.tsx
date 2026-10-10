@@ -1,22 +1,22 @@
-import { useMemo } from 'react'
-import { Link } from '../../../lib/navigation'
-import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { motion } from 'framer-motion'
-import type { BloomIconComponent } from '@oxy.so/bloom/icons'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { RiPulseLine } from '@oxy.so/bloom/icons/RiPulseLine'
-import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
-import { RiCoinsLine } from '@oxy.so/bloom/icons/RiCoinsLine'
-import { formatUnits } from 'viem'
-import { useReadContract } from 'wagmi'
-import { base } from 'wagmi/chains'
-import { fc } from '../../../lib/faircoin-links'
-import { useBridgeReserves } from '../../../hooks/use-faircoin-bridge-stats'
-import { WFAIR_ABI, WFAIR_ADDRESS, WFAIR_DECIMALS } from '../../../lib/wfair-contract'
-import BridgeFlowVisual from './BridgeFlowVisual'
+import { useMemo } from 'react';
+import { Link } from '../../../lib/navigation';
+import * as Skeleton from '@oxy.so/bloom/skeleton';
+import { motion } from 'framer-motion';
+import type { BloomIconComponent } from '@oxy.so/bloom/icons';
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine';
+import { RiPulseLine } from '@oxy.so/bloom/icons/RiPulseLine';
+import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine';
+import { RiCoinsLine } from '@oxy.so/bloom/icons/RiCoinsLine';
+import { formatUnits } from 'viem';
+import { useReadContract } from 'wagmi';
+import { base } from 'wagmi/chains';
+import { fc } from '../../../lib/faircoin-links';
+import { useBridgeReserves } from '../../../hooks/use-faircoin-bridge-stats';
+import { WFAIR_ABI, WFAIR_ADDRESS, WFAIR_DECIMALS } from '../../../lib/wfair-contract';
+import BridgeFlowVisual from './BridgeFlowVisual';
 
-const WFAIR_BASESCAN_URL = `https://basescan.org/address/${WFAIR_ADDRESS}`
-const UNISWAP_SWAP_URL = `https://app.uniswap.org/swap?outputCurrency=${WFAIR_ADDRESS}&chain=base`
+const WFAIR_BASESCAN_URL = `https://basescan.org/address/${WFAIR_ADDRESS}`;
+const UNISWAP_SWAP_URL = `https://app.uniswap.org/swap?outputCurrency=${WFAIR_ADDRESS}&chain=base`;
 
 /**
  * Live WFAIR + bridge dashboard. Fetches the on-chain WFAIR supply via wagmi
@@ -24,51 +24,57 @@ const UNISWAP_SWAP_URL = `https://app.uniswap.org/swap?outputCurrency=${WFAIR_AD
  * that the peg is fully backed.
  */
 export default function LiveBridgeSection() {
-  const reservesQuery = useBridgeReserves()
+  const reservesQuery = useBridgeReserves();
   const supplyQuery = useReadContract({
     address: WFAIR_ADDRESS,
     abi: WFAIR_ABI,
     functionName: 'totalSupply',
     chainId: base.id,
     query: { refetchInterval: 30_000 },
-  })
+  });
 
   const wfairSupply = useMemo(() => {
     if (typeof supplyQuery.data === 'bigint') {
-      return formatNumber(formatUnits(supplyQuery.data, WFAIR_DECIMALS), 4)
+      return formatNumber(formatUnits(supplyQuery.data, WFAIR_DECIMALS), 4);
     }
     if (reservesQuery.data) {
       try {
-        return formatNumber(formatUnits(BigInt(reservesQuery.data.wfairSupplyWei), WFAIR_DECIMALS), 4)
+        return formatNumber(
+          formatUnits(BigInt(reservesQuery.data.wfairSupplyWei), WFAIR_DECIMALS),
+          4,
+        );
       } catch {
-        return '—'
+        return '—';
       }
     }
-    return '—'
-  }, [supplyQuery.data, reservesQuery.data])
+    return '—';
+  }, [supplyQuery.data, reservesQuery.data]);
 
   const fairCustody = useMemo(() => {
-    if (!reservesQuery.data) return '—'
+    if (!reservesQuery.data) return '—';
     try {
-      const sats = BigInt(reservesQuery.data.fairCustodySats)
-      const fair = Number(sats) / 1e8
-      return formatNumber(fair.toString(), 4)
+      const sats = BigInt(reservesQuery.data.fairCustodySats);
+      const fair = Number(sats) / 1e8;
+      return formatNumber(fair.toString(), 4);
     } catch {
-      return '—'
+      return '—';
     }
-  }, [reservesQuery.data])
+  }, [reservesQuery.data]);
 
-  const pegHealthy = reservesQuery.data?.pegHealthy ?? null
+  const pegHealthy = reservesQuery.data?.pegHealthy ?? null;
   const snapshotAt = reservesQuery.data?.snapshotAt
     ? new Date(reservesQuery.data.snapshotAt).toLocaleString(undefined, {
         dateStyle: 'medium',
         timeStyle: 'short',
       })
-    : null
+    : null;
 
   return (
     <section className="relative isolate overflow-hidden">
-      <div aria-hidden className="absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent"
+      />
 
       <div className="container mx-auto px-4 py-20 sm:py-24">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-start">
@@ -106,9 +112,9 @@ export default function LiveBridgeSection() {
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
               className="mt-5 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground"
             >
-              WFAIR is a 1:1 wrapped representation of FAIR on Base. Trade it in
-              Uniswap, hold it in any EVM wallet, redeem it back to native FAIR
-              any time. Fully backed by FairCoin chain reserves.
+              WFAIR is a 1:1 wrapped representation of FAIR on Base. Trade it in Uniswap, hold it in
+              any EVM wallet, redeem it back to native FAIR any time. Fully backed by FairCoin chain
+              reserves.
             </motion.p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <a
@@ -118,7 +124,10 @@ export default function LiveBridgeSection() {
                 className="group inline-flex h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-[0_8px_20px_-8px] shadow-primary/40 transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
               >
                 Trade WFAIR
-                <span aria-hidden="true" className="inline-flex transition-transform group-hover:translate-x-0.5">
+                <span
+                  aria-hidden="true"
+                  className="inline-flex transition-transform group-hover:translate-x-0.5"
+                >
                   <RiArrowRightLine width={16} height={16} fill="currentColor" />
                 </span>
               </a>
@@ -162,16 +171,16 @@ export default function LiveBridgeSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 interface StatTileProps {
-  icon: BloomIconComponent
-  label: string
-  value: string
-  suffix: string
-  isLoading: boolean
-  href?: string
+  icon: BloomIconComponent;
+  label: string;
+  value: string;
+  suffix: string;
+  isLoading: boolean;
+  href?: string;
 }
 
 function StatTile({ icon: Icon, label, value, suffix, isLoading, href }: StatTileProps) {
@@ -202,38 +211,38 @@ function StatTile({ icon: Icon, label, value, suffix, isLoading, href }: StatTil
         </span>
       ) : null}
     </div>
-  )
+  );
   if (href) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer">
         {inner}
       </a>
-    )
+    );
   }
-  return inner
+  return inner;
 }
 
 function PegHealthTile({
   pegHealthy,
   snapshotAt,
 }: {
-  pegHealthy: boolean | null
-  snapshotAt: string | null
+  pegHealthy: boolean | null;
+  snapshotAt: string | null;
 }) {
   const status: 'healthy' | 'unknown' | 'attention' =
-    pegHealthy === true ? 'healthy' : pegHealthy === false ? 'attention' : 'unknown'
+    pegHealthy === true ? 'healthy' : pegHealthy === false ? 'attention' : 'unknown';
   const label =
     status === 'healthy'
       ? 'Peg fully backed'
       : status === 'attention'
         ? 'Peg attention required'
-        : 'Awaiting first snapshot'
+        : 'Awaiting first snapshot';
   const dotClass =
     status === 'healthy'
       ? 'bg-success'
       : status === 'attention'
         ? 'bg-error'
-        : 'bg-muted-foreground/40'
+        : 'bg-muted-foreground/40';
   return (
     <div className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-background/60 p-5 backdrop-blur-sm">
       <div className="flex items-center gap-4">
@@ -247,21 +256,21 @@ function PegHealthTile({
           <span className="flex items-center gap-2 text-base font-semibold text-foreground">
             <span className="relative flex h-2 w-2">
               {status === 'healthy' ? (
-                <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dotClass}`} />
+                <span
+                  className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dotClass}`}
+                />
               ) : null}
               <span className={`relative inline-flex h-2 w-2 rounded-full ${dotClass}`} />
             </span>
             {label}
           </span>
           {snapshotAt ? (
-            <span className="text-xs text-muted-foreground">
-              Snapshot {snapshotAt}
-            </span>
+            <span className="text-xs text-muted-foreground">Snapshot {snapshotAt}</span>
           ) : null}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function Shimmer({ width = '4rem' }: { width?: string }) {
@@ -269,15 +278,15 @@ function Shimmer({ width = '4rem' }: { width?: string }) {
     <span aria-hidden className="inline-block align-middle" style={{ width }}>
       <Skeleton.Box width="100%" height={28} borderRadius={6} />
     </span>
-  )
+  );
 }
 
 function formatNumber(raw: string, maxFractionDigits: number): string {
-  const numeric = Number(raw)
-  if (!Number.isFinite(numeric)) return raw
-  if (numeric === 0) return '0'
+  const numeric = Number(raw);
+  if (!Number.isFinite(numeric)) return raw;
+  if (numeric === 0) return '0';
   return numeric.toLocaleString(undefined, {
     maximumFractionDigits: maxFractionDigits,
     minimumFractionDigits: 0,
-  })
+  });
 }

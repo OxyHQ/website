@@ -1,154 +1,196 @@
-import { Router, type Request, type Response } from 'express'
-import { and, asc, count, desc, eq, ilike, or, sql, type SQL } from 'drizzle-orm'
-import { z } from 'zod'
-import { db } from '../db/postgres.js'
-import { newsroomPosts, products } from '../db/schema/index.js'
-import { populate, populateOne } from '../db/refs.js'
-import { optionalAuth, requireAuth } from '../middleware/auth.js'
-import { adminOnly } from '../middleware/adminOnly.js'
-import { localeMiddleware } from '../middleware/locale.js'
-import { localizeMany, localizeOne } from '../utils/localize.js'
-import { toErrorMessage } from '../utils/errorMessage.js'
-import { parsePagination } from '../utils/parsePagination.js'
-import { validate } from '../utils/validate.js'
-import { isAdminUser } from '../utils/adminAccess.js'
-import { isNewsroomThemePreset, newsroomThemeForSlug } from '../constants/newsroomThemes.js'
-import { attachProducts, attachSummaryCoverImages, NEWSROOM_REFS, NEWSROOM_SUMMARY_COLUMNS, toNewsroomSummary } from '../services/newsroom.js'
+import { Router, type Request, type Response } from 'express';
+import { and, asc, count, desc, eq, ilike, or, sql, type SQL } from 'drizzle-orm';
+import { z } from 'zod';
+import { db } from '../db/postgres.js';
+import { newsroomPosts, products } from '../db/schema/index.js';
+import { populate, populateOne } from '../db/refs.js';
+import { optionalAuth, requireAuth } from '../middleware/auth.js';
+import { adminOnly } from '../middleware/adminOnly.js';
+import { localeMiddleware } from '../middleware/locale.js';
+import { localizeMany, localizeOne } from '../utils/localize.js';
+import { toErrorMessage } from '../utils/errorMessage.js';
+import { parsePagination } from '../utils/parsePagination.js';
+import { validate } from '../utils/validate.js';
+import { isAdminUser } from '../utils/adminAccess.js';
+import { isNewsroomThemePreset, newsroomThemeForSlug } from '../constants/newsroomThemes.js';
+import {
+  attachProducts,
+  attachSummaryCoverImages,
+  NEWSROOM_REFS,
+  NEWSROOM_SUMMARY_COLUMNS,
+  toNewsroomSummary,
+} from '../services/newsroom.js';
 
-const router = Router()
+const router = Router();
 
-const PUBLIC_NEWSROOM_CACHE = 'public, max-age=60, s-maxage=300, stale-while-revalidate=86400'
+const PUBLIC_NEWSROOM_CACHE = 'public, max-age=60, s-maxage=300, stale-while-revalidate=86400';
 
 function hasAuthContext(req: Request): boolean {
-  return Boolean(req.user || req.get('authorization') || req.headers.cookie)
+  return Boolean(req.user || req.get('authorization') || req.headers.cookie);
 }
 
 function setNewsroomReadCache(req: Request, res: Response, privateResponse = false): void {
   // Auth changes both visibility (draft previews) and the list representation
   // (the CMS receives full rows), so shared caches must keep it in their key.
-  res.vary('Authorization')
-  res.vary('Cookie')
-  if (req.locale) res.set('Content-Language', req.locale)
-  res.set('Cache-Control', privateResponse || hasAuthContext(req) ? 'private, no-store' : PUBLIC_NEWSROOM_CACHE)
+  res.vary('Authorization');
+  res.vary('Cookie');
+  if (req.locale) res.set('Content-Language', req.locale);
+  res.set(
+    'Cache-Control',
+    privateResponse || hasAuthContext(req) ? 'private, no-store' : PUBLIC_NEWSROOM_CACHE,
+  );
 }
 
-const listQuerySchema = z.object({
-  category: z.string().optional(),
-  tag: z.string().optional(),
-  product: z.string().optional(),
-  featured: z.string().optional(),
-  status: z.enum(['draft', 'published']).optional(),
-  search: z.string().optional(),
-  author: z.string().optional(),
-  limit: z.string().optional(),
-  page: z.string().optional(),
-  locale: z.string().optional(),
-  view: z.enum(['summary', 'full']).optional(),
-}).passthrough()
+const listQuerySchema = z
+  .object({
+    category: z.string().optional(),
+    tag: z.string().optional(),
+    product: z.string().optional(),
+    featured: z.string().optional(),
+    status: z.enum(['draft', 'published']).optional(),
+    search: z.string().optional(),
+    author: z.string().optional(),
+    limit: z.string().optional(),
+    page: z.string().optional(),
+    locale: z.string().optional(),
+    view: z.enum(['summary', 'full']).optional(),
+  })
+  .passthrough();
 
-const detailQuerySchema = z.object({
-  preview: z.string().optional(),
-  locale: z.string().optional(),
-}).passthrough()
+const detailQuerySchema = z
+  .object({
+    preview: z.string().optional(),
+    locale: z.string().optional(),
+  })
+  .passthrough();
 
-const slugParamsSchema = z.object({ slug: z.string().min(1) })
-const postBodySchema = z.object({
-  status: z.enum(['draft', 'published']).optional(),
-}).passthrough()
+const slugParamsSchema = z.object({ slug: z.string().min(1) });
+const postBodySchema = z
+  .object({
+    status: z.enum(['draft', 'published']).optional(),
+  })
+  .passthrough();
 
 router.get('/', localeMiddleware, optionalAuth, async (req, res) => {
   const {
-    category, tag, product: productId, featured, status, search, author,
-    limit = '20', page = '1', view = 'summary',
-  } = validate(listQuerySchema, req.query)
-  const adminRequest = isAdminUser(req.user)
+    category,
+    tag,
+    product: productId,
+    featured,
+    status,
+    search,
+    author,
+    limit = '20',
+    page = '1',
+    view = 'summary',
+  } = validate(listQuerySchema, req.query);
+  const adminRequest = isAdminUser(req.user);
   // The authenticated CMS must keep receiving editable rows. Public build-time
   // consumers that genuinely need article bodies can opt in with `view=full`.
-  const fullResponse = adminRequest || view === 'full'
-  const privateResponse = adminRequest || status !== undefined
+  const fullResponse = adminRequest || view === 'full';
+  const privateResponse = adminRequest || status !== undefined;
 
-  const filters: SQL[] = []
-  if (category) filters.push(sql`${newsroomPosts.categories} @> ARRAY[${category}]::text[]`)
-  if (tag) filters.push(sql`${newsroomPosts.tags} @> ARRAY[${tag}]::text[]`)
-  if (featured === 'true') filters.push(eq(newsroomPosts.featured, true))
-  if (author) filters.push(eq(newsroomPosts.oxyUserId, author))
+  const filters: SQL[] = [];
+  if (category) filters.push(sql`${newsroomPosts.categories} @> ARRAY[${category}]::text[]`);
+  if (tag) filters.push(sql`${newsroomPosts.tags} @> ARRAY[${tag}]::text[]`);
+  if (featured === 'true') filters.push(eq(newsroomPosts.featured, true));
+  if (author) filters.push(eq(newsroomPosts.oxyUserId, author));
 
   if (productId) {
-    const [product] = await db.select({ id: products._id }).from(products).where(eq(products.productId, productId)).limit(1)
+    const [product] = await db
+      .select({ id: products._id })
+      .from(products)
+      .where(eq(products.productId, productId))
+      .limit(1);
     if (!product) {
-      const { pageNum } = parsePagination(page, limit)
-      setNewsroomReadCache(req, res, privateResponse)
-      return res.json({ posts: [], total: 0, page: pageNum, pages: 0 })
+      const { pageNum } = parsePagination(page, limit);
+      setNewsroomReadCache(req, res, privateResponse);
+      return res.json({ posts: [], total: 0, page: pageNum, pages: 0 });
     }
-    filters.push(sql`${newsroomPosts.products} @> ARRAY[${product.id}]::text[]`)
+    filters.push(sql`${newsroomPosts.products} @> ARRAY[${product.id}]::text[]`);
   }
 
   // Default to published posts for public requests; only admins may select a status.
-  filters.push(eq(newsroomPosts.status, adminRequest && status ? status : 'published'))
+  filters.push(eq(newsroomPosts.status, adminRequest && status ? status : 'published'));
 
   // Search on title and excerpt. `ilike` takes the pattern as a bound
   // parameter, so the user's string is never interpolated into SQL.
   if (search) {
-    const pattern = `%${search}%`
-    const searchFilter = or(ilike(newsroomPosts.title, pattern), ilike(newsroomPosts.resume, pattern))
-    if (searchFilter) filters.push(searchFilter)
+    const pattern = `%${search}%`;
+    const searchFilter = or(
+      ilike(newsroomPosts.title, pattern),
+      ilike(newsroomPosts.resume, pattern),
+    );
+    if (searchFilter) filters.push(searchFilter);
   }
 
-  const where = and(...filters)
-  const { pageNum, limitNum, skip } = parsePagination(page, limit)
+  const where = and(...filters);
+  const { pageNum, limitNum, skip } = parsePagination(page, limit);
   const rowsQuery = fullResponse
-    ? db.select().from(newsroomPosts).where(where).orderBy(desc(newsroomPosts.publishedAt), asc(newsroomPosts._id)).offset(skip).limit(limitNum)
-    : db.select(NEWSROOM_SUMMARY_COLUMNS).from(newsroomPosts).where(where).orderBy(desc(newsroomPosts.publishedAt), asc(newsroomPosts._id)).offset(skip).limit(limitNum)
+    ? db
+        .select()
+        .from(newsroomPosts)
+        .where(where)
+        .orderBy(desc(newsroomPosts.publishedAt), asc(newsroomPosts._id))
+        .offset(skip)
+        .limit(limitNum)
+    : db
+        .select(NEWSROOM_SUMMARY_COLUMNS)
+        .from(newsroomPosts)
+        .where(where)
+        .orderBy(desc(newsroomPosts.publishedAt), asc(newsroomPosts._id))
+        .offset(skip)
+        .limit(limitNum);
   const [rows, [totals]] = await Promise.all([
     rowsQuery,
     db.select({ value: count() }).from(newsroomPosts).where(where),
-  ])
-  const total = Number(totals?.value ?? 0)
+  ]);
+  const total = Number(totals?.value ?? 0);
 
   if (fullResponse) {
-    await populate(rows, NEWSROOM_REFS)
-    await attachProducts(rows)
+    await populate(rows, NEWSROOM_REFS);
+    await attachProducts(rows);
   } else {
-    await attachSummaryCoverImages(rows)
+    await attachSummaryCoverImages(rows);
   }
-  const localized = await localizeMany(req, 'newsroom', rows)
+  const localized = await localizeMany(req, 'newsroom', rows);
   // Translation rows contain the full editorial document. Project once more
   // after localization so translated summaries cannot reintroduce `content`.
-  const result = fullResponse ? localized : localized.map(toNewsroomSummary)
+  const result = fullResponse ? localized : localized.map(toNewsroomSummary);
 
-  setNewsroomReadCache(req, res, privateResponse)
-  res.json({ posts: result, total, page: pageNum, pages: Math.ceil(total / limitNum) })
-})
+  setNewsroomReadCache(req, res, privateResponse);
+  res.json({ posts: result, total, page: pageNum, pages: Math.ceil(total / limitNum) });
+});
 
 router.get('/:slug', localeMiddleware, optionalAuth, async (req, res) => {
-  const { slug } = validate(slugParamsSchema, req.params)
-  const { preview } = validate(detailQuerySchema, req.query)
+  const { slug } = validate(slugParamsSchema, req.params);
+  const { preview } = validate(detailQuerySchema, req.query);
 
-  const [row] = await db.select().from(newsroomPosts).where(eq(newsroomPosts.slug, slug)).limit(1)
-  const post = await populateOne(row, NEWSROOM_REFS)
+  const [row] = await db.select().from(newsroomPosts).where(eq(newsroomPosts.slug, slug)).limit(1);
+  const post = await populateOne(row, NEWSROOM_REFS);
   if (!post) {
-    setNewsroomReadCache(req, res, true)
-    return res.status(404).json({ error: 'Post not found' })
+    setNewsroomReadCache(req, res, true);
+    return res.status(404).json({ error: 'Post not found' });
   }
   // Every non-published state is private; admins may inspect it explicitly.
   // The column predates a database enum, so checking only literal `draft`
   // would accidentally publish a malformed or future workflow state.
   if (post.status !== 'published' && (preview !== 'true' || !isAdminUser(req.user))) {
-    setNewsroomReadCache(req, res, true)
-    return res.status(404).json({ error: 'Post not found' })
+    setNewsroomReadCache(req, res, true);
+    return res.status(404).json({ error: 'Post not found' });
   }
-  const [withProducts] = await attachProducts([post])
-  setNewsroomReadCache(req, res, preview === 'true' || post.status !== 'published')
-  res.json(await localizeOne(req, 'newsroom', withProducts))
-})
+  const [withProducts] = await attachProducts([post]);
+  setNewsroomReadCache(req, res, preview === 'true' || post.status !== 'published');
+  res.json(await localizeOne(req, 'newsroom', withProducts));
+});
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {
-  const user = req.user
-  if (!user) return res.status(401).json({ error: 'Authentication required' })
+  const user = req.user;
+  if (!user) return res.status(401).json({ error: 'Authentication required' });
 
-  const body = validate(postBodySchema, req.body)
+  const body = validate(postBodySchema, req.body);
   if (body.themePreset !== undefined && !isNewsroomThemePreset(body.themePreset)) {
-    return res.status(400).json({ error: 'Invalid newsroom theme preset' })
+    return res.status(400).json({ error: 'Invalid newsroom theme preset' });
   }
 
   try {
@@ -161,41 +203,44 @@ router.post('/', requireAuth, adminOnly, async (req, res) => {
           : newsroomThemeForSlug(typeof body.slug === 'string' ? body.slug : ''),
         oxyUserId: user.id,
       } as never)
-      .returning()
-    res.status(201).json(post)
+      .returning();
+    res.status(201).json(post);
   } catch (err) {
-    res.status(500).json({ error: `Failed to create post: ${toErrorMessage(err)}` })
+    res.status(500).json({ error: `Failed to create post: ${toErrorMessage(err)}` });
   }
-})
+});
 
 router.put('/:slug', requireAuth, adminOnly, async (req, res) => {
-  const { slug } = validate(slugParamsSchema, req.params)
-  const body = validate(postBodySchema, req.body)
+  const { slug } = validate(slugParamsSchema, req.params);
+  const body = validate(postBodySchema, req.body);
   if (body.themePreset !== undefined && !isNewsroomThemePreset(body.themePreset)) {
-    return res.status(400).json({ error: 'Invalid newsroom theme preset' })
+    return res.status(400).json({ error: 'Invalid newsroom theme preset' });
   }
   try {
     const [post] = await db
       .update(newsroomPosts)
       .set({ ...body, updatedAt: new Date() } as never)
       .where(eq(newsroomPosts.slug, slug))
-      .returning()
-    if (!post) return res.status(404).json({ error: 'Post not found' })
-    res.json(post)
+      .returning();
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+    res.json(post);
   } catch (err) {
-    res.status(500).json({ error: `Failed to update post: ${toErrorMessage(err)}` })
+    res.status(500).json({ error: `Failed to update post: ${toErrorMessage(err)}` });
   }
-})
+});
 
 router.delete('/:slug', requireAuth, adminOnly, async (req, res) => {
-  const { slug } = validate(slugParamsSchema, req.params)
+  const { slug } = validate(slugParamsSchema, req.params);
   try {
-    const [post] = await db.delete(newsroomPosts).where(eq(newsroomPosts.slug, slug)).returning({ id: newsroomPosts._id })
-    if (!post) return res.status(404).json({ error: 'Post not found' })
-    res.json({ ok: true })
+    const [post] = await db
+      .delete(newsroomPosts)
+      .where(eq(newsroomPosts.slug, slug))
+      .returning({ id: newsroomPosts._id });
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+    res.json({ ok: true });
   } catch (err) {
-    res.status(500).json({ error: `Failed to delete post: ${toErrorMessage(err)}` })
+    res.status(500).json({ error: `Failed to delete post: ${toErrorMessage(err)}` });
   }
-})
+});
 
-export default router
+export default router;

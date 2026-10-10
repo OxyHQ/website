@@ -1,22 +1,22 @@
-import { useState } from 'react'
-import { Button } from '@oxy.so/bloom/button'
-import { CodeLines } from '@oxy.so/bloom/code'
-import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
-import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
+import { useState } from 'react';
+import { Button } from '@oxy.so/bloom/button';
+import { CodeLines } from '@oxy.so/bloom/code';
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine';
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine';
 import {
   SegmentedControl,
   SegmentedControlItem,
   SegmentedControlItemText,
-} from '@oxy.so/bloom/segmented-control'
-import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
-import { useTranslation } from '../../../lib/i18n'
-import type { CodeSample } from '../../../data/ai/quickstart'
+} from '@oxy.so/bloom/segmented-control';
+import { useCopyToClipboard } from '../../../lib/useCopyToClipboard';
+import { useTranslation } from '../../../lib/i18n';
+import type { CodeSample } from '../../../data/ai/quickstart';
 
 interface CodeSampleTabsProps {
-  samples: readonly CodeSample[]
+  samples: readonly CodeSample[];
   /** Rendered above the tabs; usually says what the snippet does. */
-  caption?: string
-  className?: string
+  caption?: string;
+  className?: string;
 }
 
 /**
@@ -30,12 +30,12 @@ interface CodeSampleTabsProps {
  * single sample gets no switcher at all.
  */
 export default function CodeSampleTabs({ samples, caption, className = '' }: CodeSampleTabsProps) {
-  const { t } = useTranslation()
-  const [active, setActive] = useState(samples[0]?.key ?? '')
-  const { copied, copy } = useCopyToClipboard()
+  const { t } = useTranslation();
+  const [active, setActive] = useState(samples[0]?.key ?? '');
+  const { copied, copy } = useCopyToClipboard();
 
-  if (samples.length === 0) return null
-  const activeSample = samples.find((sample) => sample.key === active) ?? samples[0]
+  if (samples.length === 0) return null;
+  const activeSample = samples.find((sample) => sample.key === active) ?? samples[0];
 
   return (
     <figure className={`overflow-hidden rounded-2xl border border-border bg-card ${className}`}>
@@ -90,5 +90,5 @@ export default function CodeSampleTabs({ samples, caption, className = '' }: Cod
         </figcaption>
       )}
     </figure>
-  )
+  );
 }

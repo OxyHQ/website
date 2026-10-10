@@ -1,4 +1,4 @@
-import { defineConfig } from 'drizzle-kit'
+import { defineConfig } from 'drizzle-kit';
 
 /**
  * Migrations are generated from the schema and committed; nothing pushes a
@@ -13,4 +13,4 @@ export default defineConfig({
   dbCredentials: { url: process.env.DATABASE_URL ?? '' },
   strict: true,
   verbose: true,
-})
+});

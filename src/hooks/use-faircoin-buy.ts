@@ -6,7 +6,7 @@
  * - `useFaircoinBuyStatus` is a polling query that automatically backs off
  *   once the order reaches a terminal status — no manual cleanup required.
  */
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   type BuyQuoteRequest,
   type BuyQuoteResponse,
@@ -14,9 +14,9 @@ import {
   TERMINAL_BUY_STATUSES,
   getBuyStatus,
   requestBuyQuote,
-} from '../api/faircoin-buy'
+} from '../api/faircoin-buy';
 
-const STATUS_POLL_INTERVAL_MS = 5_000
+const STATUS_POLL_INTERVAL_MS = 5_000;
 
 /**
  * Mutation that asks the bridge for a fresh buy quote. On success the caller
@@ -26,7 +26,7 @@ const STATUS_POLL_INTERVAL_MS = 5_000
 export function useFaircoinBuyQuote() {
   return useMutation<BuyQuoteResponse, Error, BuyQuoteRequest>({
     mutationFn: (body) => requestBuyQuote(body),
-  })
+  });
 }
 
 /**
@@ -40,30 +40,27 @@ export function useFaircoinBuyQuote() {
  * so a brief connectivity blip doesn't surface a hard failure to the user —
  * the parent UI displays a "reconnecting" hint after a few failed fetches.
  */
-export function useFaircoinBuyStatus(
-  id: string | null,
-  enabled = true,
-) {
+export function useFaircoinBuyStatus(id: string | null, enabled = true) {
   return useQuery<BuyStatusResponse, Error>({
     queryKey: ['faircoin-buy-status', id],
     queryFn: () => {
       if (!id) {
         // `enabled` guards against this in practice, but TypeScript doesn't
         // know that, so we throw a typed error rather than fetch with empty.
-        return Promise.reject(new Error('faircoin-buy: missing order id'))
+        return Promise.reject(new Error('faircoin-buy: missing order id'));
       }
-      return getBuyStatus(id)
+      return getBuyStatus(id);
     },
     enabled: enabled && Boolean(id),
     refetchInterval: (query) => {
-      const data = query.state.data
-      if (!data) return STATUS_POLL_INTERVAL_MS
-      if (TERMINAL_BUY_STATUSES.has(data.status)) return false
-      return STATUS_POLL_INTERVAL_MS
+      const data = query.state.data;
+      if (!data) return STATUS_POLL_INTERVAL_MS;
+      if (TERMINAL_BUY_STATUSES.has(data.status)) return false;
+      return STATUS_POLL_INTERVAL_MS;
     },
     refetchIntervalInBackground: false,
     staleTime: 0,
     retry: Infinity,
     retryDelay: (attemptIndex) => Math.min(2_000 * 2 ** attemptIndex, 30_000),
-  })
+  });
 }

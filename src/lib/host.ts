@@ -12,7 +12,7 @@
  * edge but Oxy to the SPA (they previously disagreed on case-folding).
  */
 
-import { brandForHost } from './seo'
+import { brandForHost } from './seo';
 
 /**
  * `true` when the current document is served from the FairCoin apex or its
@@ -21,6 +21,6 @@ import { brandForHost } from './seo'
  * the document, so this is a plain synchronous read — no subscription needed.
  */
 export function isFairCoinHost(): boolean {
-  if (typeof window === 'undefined') return false
-  return brandForHost(window.location.hostname) === 'faircoin'
+  if (typeof window === 'undefined') return false;
+  return brandForHost(window.location.hostname) === 'faircoin';
 }

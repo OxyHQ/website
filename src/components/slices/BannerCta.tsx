@@ -1,23 +1,23 @@
-import { Link } from '../../lib/navigation'
+import { Link } from '../../lib/navigation';
 interface BannerAction {
-  label: string
-  href: string
-  external?: boolean
+  label: string;
+  href: string;
+  external?: boolean;
 }
 
 interface BannerCtaProps {
-  title: string
-  body: string
-  primary: BannerAction
-  secondary?: BannerAction
+  title: string;
+  body: string;
+  primary: BannerAction;
+  secondary?: BannerAction;
   /** Fills the panel edge to edge. A `video` needs its `poster` as the image. */
-  background?: { image: string; video?: string; alt?: string }
+  background?: { image: string; video?: string; alt?: string };
 }
 
 const PRIMARY_CLASSES =
-  'relative rounded-full px-6 py-3.5 text-b1 bg-gray-a10 text-gray-a1 transition-all duration-200 ease-impulse hover:bg-gray-a8'
+  'relative rounded-full px-6 py-3.5 text-b1 bg-gray-a10 text-gray-a1 transition-all duration-200 ease-impulse hover:bg-gray-a8';
 const SECONDARY_CLASSES =
-  'relative rounded-full px-6 py-3.5 text-b1 border border-gray-a10/30 bg-transparent text-gray-a10 transition-all duration-200 ease-impulse hover:border-gray-a10'
+  'relative rounded-full px-6 py-3.5 text-b1 border border-gray-a10/30 bg-transparent text-gray-a10 transition-all duration-200 ease-impulse hover:border-gray-a10';
 
 function Action({ action, classes }: { action: BannerAction; classes: string }) {
   return action.external || !action.href.startsWith('/') ? (
@@ -28,7 +28,7 @@ function Action({ action, classes }: { action: BannerAction; classes: string }) 
     <Link className={classes} to={action.href}>
       {action.label}
     </Link>
-  )
+  );
 }
 
 /**
@@ -54,7 +54,13 @@ export default function BannerCta({ title, body, primary, secondary, background 
               <source src={background.video} type="video/mp4" />
             </video>
           ) : (
-            <img alt={background.alt ?? ''} loading="lazy" decoding="async" className="absolute inset-0 -z-10 size-full object-cover" src={background.image} />
+            <img
+              alt={background.alt ?? ''}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 -z-10 size-full object-cover"
+              src={background.image}
+            />
           )}
           {/* Scrim in the ramp's dark end, so the panel keeps its contrast whichever
            * way the theme runs. */}
@@ -74,5 +80,5 @@ export default function BannerCta({ title, body, primary, secondary, background 
         </div>
       </div>
     </section>
-  )
+  );
 }

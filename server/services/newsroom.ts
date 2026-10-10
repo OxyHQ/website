@@ -1,6 +1,6 @@
-import { inArray } from 'drizzle-orm'
-import { db } from '../db/postgres.js'
-import { media, newsroomPosts, products } from '../db/schema/index.js'
+import { inArray } from 'drizzle-orm';
+import { db } from '../db/postgres.js';
+import { media, newsroomPosts, products } from '../db/schema/index.js';
 
 /* ──────────────────────────────────────────────
  * Newsroom representations, shared by the REST route and the MCP tools so a
@@ -9,7 +9,7 @@ import { media, newsroomPosts, products } from '../db/schema/index.js'
  * ──────────────────────────────────────────── */
 
 /** Single-valued refs resolved inline on every post. */
-export const NEWSROOM_REFS = { coverImage: media, ogImage: media }
+export const NEWSROOM_REFS = { coverImage: media, ogImage: media };
 
 /**
  * The public feed only needs the fields rendered by newsroom cards and rails.
@@ -27,7 +27,7 @@ export const NEWSROOM_SUMMARY_COLUMNS = {
   featured: newsroomPosts.featured,
   themePreset: newsroomPosts.themePreset,
   publishedAt: newsroomPosts.publishedAt,
-}
+};
 
 export function toNewsroomSummary(post: Record<string, unknown>): Record<string, unknown> {
   return {
@@ -41,16 +41,18 @@ export function toNewsroomSummary(post: Record<string, unknown>): Record<string,
     featured: post.featured,
     themePreset: post.themePreset,
     publishedAt: post.publishedAt,
-  }
+  };
 }
 
 /**
  * `products` is an array of product ids, expanded to `productId` and `name`
  * only, in one query for the whole page.
  */
-export async function attachProducts(posts: Record<string, unknown>[]): Promise<Record<string, unknown>[]> {
-  const ids = [...new Set(posts.flatMap((post) => (post.products as string[] | null) ?? []))]
-  if (ids.length === 0) return posts
+export async function attachProducts(
+  posts: Record<string, unknown>[],
+): Promise<Record<string, unknown>[]> {
+  const ids = [...new Set(posts.flatMap((post) => (post.products as string[] | null) ?? []))];
+  if (ids.length === 0) return posts;
 
   // `inArray`, not `= ANY(${ids})`: a JS array bound into a raw fragment
   // arrives as one scalar parameter, and Postgres reads the first id as an
@@ -59,34 +61,41 @@ export async function attachProducts(posts: Record<string, unknown>[]): Promise<
   const rows = await db
     .select({ _id: products._id, productId: products.productId, name: products.name })
     .from(products)
-    .where(inArray(products._id, ids))
-  const byId = new Map(rows.map((row) => [row._id, row]))
+    .where(inArray(products._id, ids));
+  const byId = new Map(rows.map((row) => [row._id, row]));
 
   for (const post of posts) {
-    const refs = (post.products as string[] | null) ?? []
-    post.products = refs.map((id) => byId.get(id)).filter(Boolean)
+    const refs = (post.products as string[] | null) ?? [];
+    post.products = refs.map((id) => byId.get(id)).filter(Boolean);
   }
-  return posts
+  return posts;
 }
 
 /** Populate only the media fields a card can render, without storage metadata. */
-export async function attachSummaryCoverImages(posts: Record<string, unknown>[]): Promise<Record<string, unknown>[]> {
-  const ids = [...new Set(posts.map((post) => post.coverImage).filter((id): id is string => typeof id === 'string' && id.length > 0))]
+export async function attachSummaryCoverImages(
+  posts: Record<string, unknown>[],
+): Promise<Record<string, unknown>[]> {
+  const ids = [
+    ...new Set(
+      posts
+        .map((post) => post.coverImage)
+        .filter((id): id is string => typeof id === 'string' && id.length > 0),
+    ),
+  ];
   if (ids.length === 0) {
-    for (const post of posts) post.coverImage = null
-    return posts
+    for (const post of posts) post.coverImage = null;
+    return posts;
   }
 
   const rows = await db
     .select({ _id: media._id, url: media.url, thumbnails: media.thumbnails })
     .from(media)
-    .where(inArray(media._id, ids))
-  const byId = new Map(rows.map((row) => [row._id, row]))
+    .where(inArray(media._id, ids));
+  const byId = new Map(rows.map((row) => [row._id, row]));
 
   for (const post of posts) {
-    const id = post.coverImage
-    post.coverImage = typeof id === 'string' ? (byId.get(id) ?? null) : null
+    const id = post.coverImage;
+    post.coverImage = typeof id === 'string' ? (byId.get(id) ?? null) : null;
   }
-  return posts
+  return posts;
 }
-

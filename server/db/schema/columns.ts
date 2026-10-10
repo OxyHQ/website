@@ -1,5 +1,5 @@
-import { sql } from 'drizzle-orm'
-import { text, timestamp } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm';
+import { text, timestamp } from 'drizzle-orm/pg-core';
 
 /* ──────────────────────────────────────────────
  * The two shapes every table in this schema repeats.
@@ -15,23 +15,23 @@ import { text, timestamp } from 'drizzle-orm/pg-core'
 export const objectId = () =>
   text('_id')
     .primaryKey()
-    .$defaultFn(() => newObjectId())
+    .$defaultFn(() => newObjectId());
 
 export const timestamps = {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().default(sql`now()`),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().default(sql`now()`),
-}
+};
 
 /**
  * A fresh id: 4 bytes of seconds, 5 random, 3 from a counter, so ids stay
  * sortable by creation time and every row carries the same shape.
  */
-let counter = Math.floor(Math.random() * 0xffffff)
-const MACHINE = Array.from({ length: 5 }, () => Math.floor(Math.random() * 256))
+let counter = Math.floor(Math.random() * 0xffffff);
+const MACHINE = Array.from({ length: 5 }, () => Math.floor(Math.random() * 256));
 
 export function newObjectId(): string {
-  const seconds = Math.floor(Date.now() / 1000)
-  counter = (counter + 1) % 0xffffff
+  const seconds = Math.floor(Date.now() / 1000);
+  counter = (counter + 1) % 0xffffff;
   const bytes = [
     (seconds >> 24) & 0xff,
     (seconds >> 16) & 0xff,
@@ -41,6 +41,6 @@ export function newObjectId(): string {
     (counter >> 16) & 0xff,
     (counter >> 8) & 0xff,
     counter & 0xff,
-  ]
-  return bytes.map((byte) => byte.toString(16).padStart(2, '0')).join('')
+  ];
+  return bytes.map((byte) => byte.toString(16).padStart(2, '0')).join('');
 }

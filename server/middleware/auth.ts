@@ -3,12 +3,12 @@ import {
   createOxyAuthMiddleware,
   createOptionalOxyAuth,
   type OxyRequestUser,
-} from '@oxy.so/core/server'
-import { config } from '../config.js'
+} from '@oxy.so/core/server';
+import { config } from '../config.js';
 
 // Single shared OxyServer instance for the whole backend — constructed once.
 // Routes that need to call the Oxy API import this rather than building their own.
-export const oxy = new OxyServer({ baseURL: config.oxyApiBase })
+export const oxy = new OxyServer({ baseURL: config.oxyApiBase });
 
 declare global {
   // The Express namespace is the canonical augmentation point for
@@ -16,19 +16,19 @@ declare global {
   // biome-ignore lint/style/noNamespace: the Express namespace is the canonical augmentation point; module syntax cannot extend it
   namespace Express {
     interface Request {
-      user?: OxyRequestUser
+      user?: OxyRequestUser;
     }
   }
 }
 
-export type { OxyRequestUser }
+export type { OxyRequestUser };
 
 /**
  * Optional auth — attaches user to req if valid token present, continues either way.
  */
-export const optionalAuth = createOptionalOxyAuth(oxy, { auth: { loadUser: true } })
+export const optionalAuth = createOptionalOxyAuth(oxy, { auth: { loadUser: true } });
 
 /**
  * Require auth — 401s when no valid token is present.
  */
-export const requireAuth = createOxyAuthMiddleware(oxy, { auth: { loadUser: true } })
+export const requireAuth = createOxyAuthMiddleware(oxy, { auth: { loadUser: true } });

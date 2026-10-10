@@ -1,14 +1,14 @@
-import type { Request } from 'express'
-import { and, eq, inArray } from 'drizzle-orm'
-import { db } from '../db/postgres.js'
-import { translations } from '../db/schema/index.js'
-import { applyTranslation, applyTranslations } from './applyTranslation.js'
-import type { TRANSLATABLE_COLLECTIONS } from '../constants/translations.js'
+import type { Request } from 'express';
+import { and, eq, inArray } from 'drizzle-orm';
+import { db } from '../db/postgres.js';
+import { translations } from '../db/schema/index.js';
+import { applyTranslation, applyTranslations } from './applyTranslation.js';
+import type { TRANSLATABLE_COLLECTIONS } from '../constants/translations.js';
 
-type TranslatableCollection = (typeof TRANSLATABLE_COLLECTIONS)[number]
+type TranslatableCollection = (typeof TRANSLATABLE_COLLECTIONS)[number];
 
 /** A row as it comes back from the database, with locale overrides merged in. */
-export type LocalizedDoc = Record<string, unknown>
+export type LocalizedDoc = Record<string, unknown>;
 
 /**
  * Overlays the caller's locale on one row.
@@ -21,7 +21,7 @@ export async function localizeOne(
   collectionName: TranslatableCollection,
   doc: LocalizedDoc,
 ): Promise<LocalizedDoc> {
-  if (req.isDefaultLocale) return doc
+  if (req.isDefaultLocale) return doc;
 
   const [translation] = await db
     .select()
@@ -33,8 +33,8 @@ export async function localizeOne(
         eq(translations.documentId, String(doc._id)),
       ),
     )
-    .limit(1)
-  return applyTranslation(doc, translation ?? null)
+    .limit(1);
+  return applyTranslation(doc, translation ?? null);
 }
 
 /**
@@ -46,7 +46,7 @@ export async function localizeMany(
   collectionName: TranslatableCollection,
   docs: LocalizedDoc[],
 ): Promise<LocalizedDoc[]> {
-  if (req.isDefaultLocale || docs.length === 0) return docs
+  if (req.isDefaultLocale || docs.length === 0) return docs;
 
   const rows = await db
     .select()
@@ -55,8 +55,11 @@ export async function localizeMany(
       and(
         eq(translations.locale, req.locale),
         eq(translations.collectionName, collectionName),
-        inArray(translations.documentId, docs.map((doc) => String(doc._id))),
+        inArray(
+          translations.documentId,
+          docs.map((doc) => String(doc._id)),
+        ),
       ),
-    )
-  return applyTranslations(docs, rows)
+    );
+  return applyTranslations(docs, rows);
 }

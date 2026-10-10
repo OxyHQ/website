@@ -1,24 +1,25 @@
-import { useParams } from 'react-router-dom'
-import { getPackage, resolveVersion } from '../../content/docs-loader'
-import PageShell from '../layout/PageShell'
-import ColorSystemPlayground from './ColorSystemPlayground'
-import { DocsShell } from './DocsShell'
-import { buildSidebar } from './DocsPackageSidebar'
+import { useParams } from 'react-router-dom';
+import { getPackage, resolveVersion } from '../../content/docs-loader';
+import PageShell from '../layout/PageShell';
+import ColorSystemPlayground from './ColorSystemPlayground';
+import { DocsShell } from './DocsShell';
+import { buildSidebar } from './DocsPackageSidebar';
 
 /** Public Bloom colour laboratory, hosted inside the complete Website chrome. */
 export default function BloomColorSystemPage() {
-  const params = useParams<{ version?: string }>()
-  const pkg = getPackage('bloom')
-  const resolvedVersion = pkg ? resolveVersion(pkg, params.version) : undefined
-  const versionString = resolvedVersion?.version ?? pkg?.latestVersion ?? params.version ?? 'main'
-  const sections = pkg && resolvedVersion ? buildSidebar(pkg, resolvedVersion) : null
+  const params = useParams<{ version?: string }>();
+  const pkg = getPackage('bloom');
+  const resolvedVersion = pkg ? resolveVersion(pkg, params.version) : undefined;
+  const versionString = resolvedVersion?.version ?? pkg?.latestVersion ?? params.version ?? 'main';
+  const sections = pkg && resolvedVersion ? buildSidebar(pkg, resolvedVersion) : null;
 
   return (
     <PageShell
       className="docs-theme bg-background"
       seo={{
         title: 'Bloom color system playground',
-        description: 'Compare every Bloom color combination across light and dark Mention interfaces.',
+        description:
+          'Compare every Bloom color combination across light and dark Mention interfaces.',
         canonicalPath: '/developers/docs/bloom/color-system',
       }}
       mainClassName="flex-1 bg-background text-muted-foreground"
@@ -41,5 +42,5 @@ export default function BloomColorSystemPage() {
         </div>
       </DocsShell>
     </PageShell>
-  )
+  );
 }

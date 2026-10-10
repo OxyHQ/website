@@ -1,9 +1,9 @@
-import PageShell from '../components/layout/PageShell'
-import HelpPageContent from '../components/help/HelpPage'
-import { useTranslation } from '../lib/i18n'
+import PageShell from '../components/layout/PageShell';
+import HelpPageContent from '../components/help/HelpPage';
+import { useTranslation } from '../lib/i18n';
 
 export default function HelpPage() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <PageShell
       seo={{
@@ -16,5 +16,5 @@ export default function HelpPage() {
     >
       <HelpPageContent />
     </PageShell>
-  )
+  );
 }

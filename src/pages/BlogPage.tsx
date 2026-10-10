@@ -1,8 +1,8 @@
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import StructuredData from '../components/StructuredData'
-import NewsroomBody from '../components/newsroom/NewsroomBody'
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import StructuredData from '../components/StructuredData';
+import NewsroomBody from '../components/newsroom/NewsroomBody';
 
 /* ──────────────────────────────────────────────────
  * /company/news — newsroom layout scoped to Company-category posts.
@@ -12,16 +12,12 @@ import NewsroomBody from '../components/newsroom/NewsroomBody'
  * (Stories / Research / Engineering) are skipped on this scoped variant.
  * ────────────────────────────────────────────── */
 export default function BlogPage() {
-  const title = 'Company news'
-  const description = 'Updates, product announcements, and stories from the Oxy team.'
+  const title = 'Company news';
+  const description = 'Updates, product announcements, and stories from the Oxy team.';
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
-      <SEO
-        title={title}
-        description={description}
-        canonicalPath="/company/news"
-      />
+      <SEO title={title} description={description} canonicalPath="/company/news" />
       <StructuredData
         data={{
           '@context': 'https://schema.org',
@@ -39,12 +35,8 @@ export default function BlogPage() {
         }}
       />
       <Navbar />
-      <NewsroomBody
-        category="Company"
-        heroTitle={title}
-        recentNewsHref="/company/news"
-      />
+      <NewsroomBody category="Company" heroTitle={title} recentNewsHref="/company/news" />
       <Footer />
     </div>
-  )
+  );
 }

@@ -15,5 +15,5 @@
  *   3. Re-export it from this file.
  */
 
-export { DocsIcon } from './DocsIcon'
-export { ModelingIcon } from './ModelingIcon'
+export { DocsIcon } from './DocsIcon';
+export { ModelingIcon } from './ModelingIcon';

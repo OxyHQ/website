@@ -1,24 +1,24 @@
-import { useState } from 'react'
-import { useHero, useUpdateHero, type HeroContent } from '../../../api/hooks'
-import { Button } from '@oxy.so/bloom/button'
-import { Textarea } from '@oxy.so/bloom/textarea'
-import MediaPicker from '../MediaPicker'
+import { useState } from 'react';
+import { useHero, useUpdateHero, type HeroContent } from '../../../api/hooks';
+import { Button } from '@oxy.so/bloom/button';
+import { Textarea } from '@oxy.so/bloom/textarea';
+import MediaPicker from '../MediaPicker';
 
 function mediaId(image: unknown): string {
-  if (!image) return ''
-  if (typeof image === 'string') return image
+  if (!image) return '';
+  if (typeof image === 'string') return image;
   if (typeof image === 'object' && image !== null && '_id' in image) {
-    const id = (image as { _id?: unknown })._id
-    return typeof id === 'string' ? id : ''
+    const id = (image as { _id?: unknown })._id;
+    return typeof id === 'string' ? id : '';
   }
-  return ''
+  return '';
 }
 
 interface HeroForm {
-  title: string
-  backgroundVideoWebm: string
-  backgroundVideoMp4: string
-  backgroundPoster: string
+  title: string;
+  backgroundVideoWebm: string;
+  backgroundVideoMp4: string;
+  backgroundPoster: string;
 }
 
 function toForm(data: HeroContent | undefined): HeroForm {
@@ -27,47 +27,47 @@ function toForm(data: HeroContent | undefined): HeroForm {
     backgroundVideoWebm: mediaId(data?.backgroundVideoWebm),
     backgroundVideoMp4: mediaId(data?.backgroundVideoMp4),
     backgroundPoster: mediaId(data?.backgroundPoster),
-  }
+  };
 }
 
 export default function HeroAdmin() {
-  const { data, refetch } = useHero()
-  const updateHero = useUpdateHero()
-  const [form, setForm] = useState<HeroForm>(() => toForm(data))
-  const [lastSyncedData, setLastSyncedData] = useState(data)
-  const [saving, setSaving] = useState(false)
-  const [statusMessage, setStatusMessage] = useState<string | null>(null)
+  const { data, refetch } = useHero();
+  const updateHero = useUpdateHero();
+  const [form, setForm] = useState<HeroForm>(() => toForm(data));
+  const [lastSyncedData, setLastSyncedData] = useState(data);
+  const [saving, setSaving] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   if (data !== lastSyncedData) {
-    setLastSyncedData(data)
-    if (data) setForm(toForm(data))
+    setLastSyncedData(data);
+    if (data) setForm(toForm(data));
   }
 
   const save = async () => {
-    setStatusMessage(null)
-    setSaving(true)
+    setStatusMessage(null);
+    setSaving(true);
     try {
       await updateHero.mutateAsync({
         title: form.title,
         backgroundVideoWebm: form.backgroundVideoWebm,
         backgroundVideoMp4: form.backgroundVideoMp4,
         backgroundPoster: form.backgroundPoster,
-      })
-      await refetch()
-      setStatusMessage('Saved.')
+      });
+      await refetch();
+      setStatusMessage('Saved.');
     } catch (err) {
-      setStatusMessage(err instanceof Error ? err.message : 'Failed to save hero')
+      setStatusMessage(err instanceof Error ? err.message : 'Failed to save hero');
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <div>
       <h2 className="text-xl font-semibold text-foreground">Hero</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Homepage hero section: the headline, and the ambient video and poster
-        that play in the panel below it.
+        Homepage hero section: the headline, and the ambient video and poster that play in the panel
+        below it.
       </p>
 
       <div className="mt-6 flex flex-col gap-4">
@@ -82,9 +82,8 @@ export default function HeroAdmin() {
         <div className="rounded-xl border border-border p-4">
           <h3 className="text-sm font-medium text-foreground">Background media</h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            Upload or pick from the media library. WebM and MP4 are both
-            served so browsers get the best-supported format; the poster shows
-            before the video starts playing.
+            Upload or pick from the media library. WebM and MP4 are both served so browsers get the
+            best-supported format; the poster shows before the video starts playing.
           </p>
           <div className="mt-3 flex flex-col gap-4">
             <MediaPicker
@@ -115,11 +114,9 @@ export default function HeroAdmin() {
           <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
             {saving ? 'Saving...' : 'Save changes'}
           </Button>
-          {statusMessage && (
-            <span className="text-xs text-muted-foreground">{statusMessage}</span>
-          )}
+          {statusMessage && <span className="text-xs text-muted-foreground">{statusMessage}</span>}
         </div>
       </div>
     </div>
-  )
+  );
 }

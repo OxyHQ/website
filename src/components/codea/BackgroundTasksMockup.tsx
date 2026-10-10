@@ -1,43 +1,43 @@
 const tasks = [
   {
-    name: "Migrate database schema",
-    status: "completed" as const,
+    name: 'Migrate database schema',
+    status: 'completed' as const,
     progress: 100,
-    time: "5m 12s",
+    time: '5m 12s',
     files: 12,
   },
   {
-    name: "Add API rate limiting",
-    status: "completed" as const,
+    name: 'Add API rate limiting',
+    status: 'completed' as const,
     progress: 100,
-    time: "3m 47s",
+    time: '3m 47s',
     files: 8,
   },
   {
-    name: "Update test fixtures",
-    status: "running" as const,
+    name: 'Update test fixtures',
+    status: 'running' as const,
     progress: 68,
-    time: "2m 34s",
+    time: '2m 34s',
     files: 4,
   },
   {
-    name: "Refactor auth middleware",
-    status: "running" as const,
+    name: 'Refactor auth middleware',
+    status: 'running' as const,
     progress: 35,
-    time: "1m 08s",
+    time: '1m 08s',
     files: 3,
   },
   {
-    name: "Generate API documentation",
-    status: "queued" as const,
+    name: 'Generate API documentation',
+    status: 'queued' as const,
     progress: 0,
-    time: "queued",
+    time: 'queued',
     files: 0,
   },
 ];
 
-function StatusIcon({ status }: { status: "completed" | "running" | "queued" }) {
-  if (status === "completed") {
+function StatusIcon({ status }: { status: 'completed' | 'running' | 'queued' }) {
+  if (status === 'completed') {
     return (
       <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success-subtle">
         <svg
@@ -54,7 +54,7 @@ function StatusIcon({ status }: { status: "completed" | "running" | "queued" }) 
       </div>
     );
   }
-  if (status === "running") {
+  if (status === 'running') {
     return (
       <div className="flex h-5 w-5 shrink-0 items-center justify-center">
         <span className="relative flex h-2.5 w-2.5">
@@ -87,14 +87,10 @@ function ProgressBar({
   status,
 }: {
   progress: number;
-  status: "completed" | "running" | "queued";
+  status: 'completed' | 'running' | 'queued';
 }) {
   const fillColor =
-    status === "completed"
-      ? "bg-success"
-      : status === "running"
-        ? "bg-info"
-        : "bg-transparent";
+    status === 'completed' ? 'bg-success' : status === 'running' ? 'bg-info' : 'bg-transparent';
 
   return (
     <div className="h-1.5 w-full rounded-full bg-foreground/[0.06]">
@@ -136,7 +132,7 @@ export default function BackgroundTasksMockup() {
               )}
               <span
                 className={`shrink-0 text-[11px] ${
-                  task.status === "queued" ? "text-foreground/20" : "text-foreground/30"
+                  task.status === 'queued' ? 'text-foreground/20' : 'text-foreground/30'
                 }`}
               >
                 {task.time}
@@ -165,9 +161,8 @@ export default function BackgroundTasksMockup() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[13px] leading-snug text-foreground/60">
-              <span className="font-medium text-foreground/80">Task completed:</span>{" "}
-              Add API rate limiting.{" "}
-              <span className="text-foreground/40">12 files changed.</span>
+              <span className="font-medium text-foreground/80">Task completed:</span> Add API rate
+              limiting. <span className="text-foreground/40">12 files changed.</span>
             </p>
             <span className="mt-1 inline-block text-xs font-medium text-info-text">
               View diff →

@@ -1,9 +1,9 @@
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import BridgeContent from '../components/faircoin/bridge/BridgeContent'
-import WagmiAppProvider from '../components/faircoin/WagmiAppProvider'
-import { isFairCoinHost } from '../lib/host'
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
+import BridgeContent from '../components/faircoin/bridge/BridgeContent';
+import WagmiAppProvider from '../components/faircoin/WagmiAppProvider';
+import { isFairCoinHost } from '../lib/host';
 import {
   useFairCoinDropdowns,
   useFairCoinFooterBrand,
@@ -13,11 +13,11 @@ import {
   useFairCoinNavCtaButtons,
   useFairCoinNavbarBrand,
   useFairCoinSimpleNavLinks,
-} from '../lib/faircoin-chrome'
+} from '../lib/faircoin-chrome';
 
-const SEO_TITLE = 'FairCoin bridge (WFAIR on Base) — fairco.in'
+const SEO_TITLE = 'FairCoin bridge (WFAIR on Base) — fairco.in';
 const SEO_DESCRIPTION =
-  'Technical reference for the WFAIR bridge — 1:1 wrapped FairCoin on Base. Contract, source, status, reserves, API endpoints.'
+  'Technical reference for the WFAIR bridge — 1:1 wrapped FairCoin on Base. Contract, source, status, reserves, API endpoints.';
 
 /**
  * `/bridge` (or `/faircoin/bridge` on oxy.so) — polished bridge reference
@@ -25,21 +25,21 @@ const SEO_DESCRIPTION =
  * stats tiles can read on-chain WFAIR data.
  */
 export default function FairCoinBridgePage() {
-  const onFairCoinHost = isFairCoinHost()
-  const navbarBrand = useFairCoinNavbarBrand()
-  const dropdowns = useFairCoinDropdowns()
-  const simpleNavLinks = useFairCoinSimpleNavLinks()
-  const ctaButtons = useFairCoinNavCtaButtons()
-  const footerBrand = useFairCoinFooterBrand()
-  const footerColumns = useFairCoinFooterColumns()
-  const footerLegalLinks = useFairCoinFooterLegalLinks()
-  const footerCopyright = useFairCoinFooterCopyright()
+  const onFairCoinHost = isFairCoinHost();
+  const navbarBrand = useFairCoinNavbarBrand();
+  const dropdowns = useFairCoinDropdowns();
+  const simpleNavLinks = useFairCoinSimpleNavLinks();
+  const ctaButtons = useFairCoinNavCtaButtons();
+  const footerBrand = useFairCoinFooterBrand();
+  const footerColumns = useFairCoinFooterColumns();
+  const footerLegalLinks = useFairCoinFooterLegalLinks();
+  const footerCopyright = useFairCoinFooterCopyright();
 
   // Same dual-mount story as the other FairCoin pages — Bloom/CSS theme is
   // host-gated so /faircoin/bridge on oxy.so reads as an Oxy subpage.
   const rootClass = onFairCoinHost
     ? 'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
-    : 'faircoin-surface flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
+    : 'faircoin-surface flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background';
 
   return (
     <div className={rootClass}>
@@ -66,5 +66,5 @@ export default function FairCoinBridgePage() {
         copyright={footerCopyright}
       />
     </div>
-  )
+  );
 }

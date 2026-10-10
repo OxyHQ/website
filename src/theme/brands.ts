@@ -14,13 +14,13 @@
  * with one palette and hydrate into another.
  */
 
-import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets'
+import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets';
 
 /** The palette on oxy.so, and the floor every other surface sits on. */
-export const SITE_PRESET: AppColorName = 'oxy'
+export const SITE_PRESET: AppColorName = 'oxy';
 
 /** The palette on the FairCoin apex, where the Oxy purple never appears. */
-export const FAIRCOIN_PRESET: AppColorName = 'faircoin'
+export const FAIRCOIN_PRESET: AppColorName = 'faircoin';
 
 /**
  * `<html data-brand>` values. `index.html` stamps one from the hostname before
@@ -28,7 +28,7 @@ export const FAIRCOIN_PRESET: AppColorName = 'faircoin'
  */
 export const HOST_BRANDS: Readonly<Record<string, AppColorName>> = {
   faircoin: FAIRCOIN_PRESET,
-}
+};
 
 /** How a surface answers the site's light/dark toggle. */
 export type BrandMode =
@@ -37,19 +37,19 @@ export type BrandMode =
   /** Stays dark whatever the toggle says — a product page designed dark. */
   | 'dark'
   /** Stays light whatever the toggle says — a fixed light illustration. */
-  | 'light'
+  | 'light';
 
 export interface BrandSurface {
   /** The class the page's root element carries. */
-  selector: string
+  selector: string;
   /** The brand colour, `#rrggbb`. */
-  seed: string
+  seed: string;
   /** Optional Bloom accent seeds for curated multi-colour presets. */
-  secondarySeed?: string
-  tertiarySeed?: string
-  mode: BrandMode
+  secondarySeed?: string;
+  tertiarySeed?: string;
+  mode: BrandMode;
   /** What the surface is, for whoever reads the generated file. */
-  label: string
+  label: string;
 }
 
 /**
@@ -62,8 +62,8 @@ export interface BrandSurface {
  * makes the sibling's palette take, and what leaves Codea's in place on the page
  * that uses `.cursor-theme` alone.
  */
-const HELP_PRESET = APP_COLOR_PRESETS['arctic-signal']
-const COMMONS_PRESET = APP_COLOR_PRESETS['pacific-flare']
+const HELP_PRESET = APP_COLOR_PRESETS['arctic-signal'];
+const COMMONS_PRESET = APP_COLOR_PRESETS['pacific-flare'];
 
 export const BRAND_SURFACES: readonly BrandSurface[] = [
   {
@@ -82,7 +82,14 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     mode: 'auto',
     label: 'Help center — Arctic Signal',
   },
-  { selector: '.help-photo-theme', seed: HELP_PRESET.hex, secondarySeed: HELP_PRESET.secondaryHex, tertiarySeed: HELP_PRESET.tertiaryHex, mode: 'dark', label: 'Help center photo overlays' },
+  {
+    selector: '.help-photo-theme',
+    seed: HELP_PRESET.hex,
+    secondarySeed: HELP_PRESET.secondaryHex,
+    tertiarySeed: HELP_PRESET.tertiaryHex,
+    mode: 'dark',
+    label: 'Help center photo overlays',
+  },
   {
     // The Homiio landing is one fixed daytime illustration — a blue sky over a
     // cream ground — so it stays light whatever the toggle says. The yellow seed
@@ -333,4 +340,4 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     mode: 'dark',
     label: 'FAIRWallet phone mockup',
   },
-]
+];

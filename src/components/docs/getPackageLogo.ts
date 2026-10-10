@@ -1,1 +1,1 @@
-export { getBrandMark as getPackageLogo } from '../../data/brand-assets'
+export { getBrandMark as getPackageLogo } from '../../data/brand-assets';

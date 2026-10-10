@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
-import { useMediaQuery } from '../../../hooks/useMediaQuery'
-import { useSiteHeaderBottom } from '../../../hooks/useSiteHeaderBottom'
+import type { ReactNode } from 'react';
+import { useMediaQuery } from '../../../hooks/useMediaQuery';
+import { useSiteHeaderBottom } from '../../../hooks/useSiteHeaderBottom';
 import {
   FEED_FLEX,
   FRAMED_QUERY,
@@ -11,17 +11,17 @@ import {
   railStickyTop,
   stickyHeaderTop,
   stickyTabsTop,
-} from './boardChrome'
+} from './boardChrome';
 
 interface BoardShellProps {
   /** The panel's own header row. Sticks at level 0. */
-  header: ReactNode
+  header: ReactNode;
   /** The tab bar, stacked under the header. Sticks at level 1. */
-  tabs?: ReactNode
+  tabs?: ReactNode;
   /** The feed. */
-  children: ReactNode
+  children: ReactNode;
   /** The right rail. Not rendered below `RAIL_BREAKPOINT`. */
-  rail?: ReactNode
+  rail?: ReactNode;
 }
 
 /**
@@ -34,9 +34,9 @@ interface BoardShellProps {
  * search input never exists twice in the document.
  */
 export default function BoardShell({ header, tabs, children, rail }: BoardShellProps) {
-  const framed = useMediaQuery(FRAMED_QUERY)
-  const showRail = useMediaQuery(RAIL_QUERY)
-  const headerBottom = useSiteHeaderBottom()
+  const framed = useMediaQuery(FRAMED_QUERY);
+  const showRail = useMediaQuery(RAIL_QUERY);
+  const headerBottom = useSiteHeaderBottom();
 
   return (
     <div className="flex w-full justify-center bg-background">
@@ -52,10 +52,7 @@ export default function BoardShell({ header, tabs, children, rail }: BoardShellP
           style={{ top: headerBottom, height: PANEL_GUTTER }}
         />
       )}
-      <div
-        className="flex w-full flex-row justify-between"
-        style={{ maxWidth: SHELL_MAX_WIDTH }}
-      >
+      <div className="flex w-full flex-row justify-between" style={{ maxWidth: SHELL_MAX_WIDTH }}>
         {/* The gutter: a band of page background around the floating panel.
             `pl-0` in Mention lets the panel meet the left rail flush; here the
             left edge is the page, so the gutter is symmetric on that side. */}
@@ -70,7 +67,11 @@ export default function BoardShell({ header, tabs, children, rail }: BoardShellP
               sticky being ignored. The chrome masks the corners itself instead,
               with its own `bg-card` and `rounded-t-[28px]`, which is what
               Mention's `PanelStickyHeader` does and why it does it. */}
-          <div className={framed ? 'rounded-t-[28px] border border-b-0 border-border bg-card' : 'bg-card'}>
+          <div
+            className={
+              framed ? 'rounded-t-[28px] border border-b-0 border-border bg-card' : 'bg-card'
+            }
+          >
             <div
               className={`sticky z-30 bg-card ${framed ? 'rounded-t-[28px]' : ''}`}
               style={{ top: stickyHeaderTop(headerBottom, framed) }}
@@ -78,7 +79,10 @@ export default function BoardShell({ header, tabs, children, rail }: BoardShellP
               {header}
             </div>
             {tabs && (
-              <div className="sticky z-20 bg-card" style={{ top: stickyTabsTop(headerBottom, framed) }}>
+              <div
+                className="sticky z-20 bg-card"
+                style={{ top: stickyTabsTop(headerBottom, framed) }}
+              >
                 {tabs}
               </div>
             )}
@@ -96,5 +100,5 @@ export default function BoardShell({ header, tabs, children, rail }: BoardShellP
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,16 +1,19 @@
-import { Dialog, useDialogControl } from '@oxy.so/bloom/dialog'
-import { Button } from '@oxy.so/bloom/button'
-import type { PlaygroundValues } from './_playground'
+import { Dialog, useDialogControl } from '@oxy.so/bloom/dialog';
+import { Button } from '@oxy.so/bloom/button';
+import type { PlaygroundValues } from './_playground';
 
 export const meta = {
-  description: 'Overlay with placement — centered modal, side-sheet (left/right), or bottom-sheet — with declarative title, description and actions.',
-}
+  description:
+    'Overlay with placement — centered modal, side-sheet (left/right), or bottom-sheet — with declarative title, description and actions.',
+};
 
 export default function DialogDemo() {
-  const control = useDialogControl()
+  const control = useDialogControl();
   return (
     <div className="flex flex-col gap-3">
-      <Button appearance="solid" tone="accent" onPress={() => control.open()}>Open dialog</Button>
+      <Button appearance="solid" tone="accent" onPress={() => control.open()}>
+        Open dialog
+      </Button>
       <Dialog
         control={control}
         title="Confirm action"
@@ -21,18 +24,20 @@ export default function DialogDemo() {
         ]}
       />
     </div>
-  )
+  );
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const title = typeof values.title === 'string' ? values.title : 'Confirm action'
-  const description = typeof values.description === 'string' ? values.description : ''
-  const confirmLabel = typeof values.confirmLabel === 'string' ? values.confirmLabel : 'Confirm'
-  const cancelLabel = typeof values.cancelLabel === 'string' ? values.cancelLabel : 'Cancel'
-  const control = useDialogControl()
+  const title = typeof values.title === 'string' ? values.title : 'Confirm action';
+  const description = typeof values.description === 'string' ? values.description : '';
+  const confirmLabel = typeof values.confirmLabel === 'string' ? values.confirmLabel : 'Confirm';
+  const cancelLabel = typeof values.cancelLabel === 'string' ? values.cancelLabel : 'Cancel';
+  const control = useDialogControl();
   return (
     <div className="flex flex-col gap-3">
-      <Button appearance="solid" tone="accent" onPress={() => control.open()}>Open dialog</Button>
+      <Button appearance="solid" tone="accent" onPress={() => control.open()}>
+        Open dialog
+      </Button>
       <Dialog
         control={control}
         title={title}
@@ -43,5 +48,5 @@ export function Playground({ values }: { values: PlaygroundValues }) {
         ]}
       />
     </div>
-  )
+  );
 }

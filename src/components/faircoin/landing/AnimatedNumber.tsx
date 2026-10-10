@@ -1,20 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
 
 interface AnimatedNumberProps {
   /** Numeric value to display. Pass `null` to render the placeholder. */
-  value: number | null
+  value: number | null;
   /** Number of decimals to show in the rendered output. */
-  decimals?: number
+  decimals?: number;
   /** Format with thousands separators when true (default). */
-  thousands?: boolean
+  thousands?: boolean;
   /** Suffix appended after the number (e.g. "FAIR"). */
-  suffix?: string
+  suffix?: string;
   /** Prefix before the number (e.g. "$"). */
-  prefix?: string
+  prefix?: string;
   /** Placeholder shown while value is null. */
-  placeholder?: string
+  placeholder?: string;
   /** Animation duration in ms. */
-  durationMs?: number
+  durationMs?: number;
 }
 
 /**
@@ -37,56 +37,58 @@ export default function AnimatedNumber({
   placeholder = '—',
   durationMs = 800,
 }: AnimatedNumberProps) {
-  const [display, setDisplay] = useState<number | null>(value)
-  const startRef = useRef<number | null>(null)
-  const fromRef = useRef<number>(value ?? 0)
-  const toRef = useRef<number | null>(value)
-  const rafRef = useRef<number | null>(null)
+  const [display, setDisplay] = useState<number | null>(value);
+  const startRef = useRef<number | null>(null);
+  const fromRef = useRef<number>(value ?? 0);
+  const toRef = useRef<number | null>(value);
+  const rafRef = useRef<number | null>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: `display` is intentionally omitted from deps — it would cancel the tween
   useEffect(() => {
     // Nothing to tween toward — the render below shows the placeholder
     // directly off `value`, so `display` is simply left at its last number.
-    if (value === null) return
-    fromRef.current = display ?? value
-    toRef.current = value
-    startRef.current = null
+    if (value === null) return;
+    fromRef.current = display ?? value;
+    toRef.current = value;
+    startRef.current = null;
 
     const tick = (ts: number) => {
-      if (startRef.current === null) startRef.current = ts
-      const elapsed = ts - startRef.current
-      const t = Math.min(1, elapsed / durationMs)
-      const eased = 1 - (1 - t) ** 3 // ease-out cubic
-      const from = fromRef.current
-      const to = toRef.current
-      if (to === null) return
-      const next = from + (to - from) * eased
-      setDisplay(next)
+      if (startRef.current === null) startRef.current = ts;
+      const elapsed = ts - startRef.current;
+      const t = Math.min(1, elapsed / durationMs);
+      const eased = 1 - (1 - t) ** 3; // ease-out cubic
+      const from = fromRef.current;
+      const to = toRef.current;
+      if (to === null) return;
+      const next = from + (to - from) * eased;
+      setDisplay(next);
       if (t < 1) {
-        rafRef.current = window.requestAnimationFrame(tick)
+        rafRef.current = window.requestAnimationFrame(tick);
       }
-    }
-    rafRef.current = window.requestAnimationFrame(tick)
+    };
+    rafRef.current = window.requestAnimationFrame(tick);
     return () => {
-      if (rafRef.current !== null) window.cancelAnimationFrame(rafRef.current)
-    }
+      if (rafRef.current !== null) window.cancelAnimationFrame(rafRef.current);
+    };
     // We intentionally omit `display` from deps — it would cancel the tween.
-  }, [value, durationMs])
+  }, [value, durationMs]);
 
   if (value === null || display === null) {
-    return <span>{placeholder}</span>
+    return <span>{placeholder}</span>;
   }
 
   const formatted = display.toLocaleString(undefined, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
     useGrouping: thousands,
-  })
+  });
   return (
     <span className="tabular-nums">
       {prefix}
       {formatted}
-      {suffix ? <span className="ml-1.5 text-sm font-medium text-muted-foreground">{suffix}</span> : null}
+      {suffix ? (
+        <span className="ml-1.5 text-sm font-medium text-muted-foreground">{suffix}</span>
+      ) : null}
     </span>
-  )
+  );
 }

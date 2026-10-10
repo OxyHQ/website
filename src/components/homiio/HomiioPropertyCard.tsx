@@ -1,9 +1,9 @@
-import { CoinGlyph } from './icons'
-import type { HomiioListing } from './data'
+import { CoinGlyph } from './icons';
+import type { HomiioListing } from './data';
 
 interface HomiioPropertyCardProps {
-  listing: HomiioListing
-  className?: string
+  listing: HomiioListing;
+  className?: string;
 }
 
 /**
@@ -40,5 +40,5 @@ export default function HomiioPropertyCard({ listing, className = '' }: HomiioPr
         <span className="text-label-sm font-semibold text-muted-foreground">/mo</span>
       </div>
     </a>
-  )
+  );
 }

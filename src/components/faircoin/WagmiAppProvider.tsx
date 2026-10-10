@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
-import { WagmiProvider } from 'wagmi'
-import { FAIRCOIN_WAGMI_CONFIG } from '../../lib/wagmi-config'
+import type { ReactNode } from 'react';
+import { WagmiProvider } from 'wagmi';
+import { FAIRCOIN_WAGMI_CONFIG } from '../../lib/wagmi-config';
 
 /**
  * Mounts the wagmi provider for FairCoin pages that need wallet access.
@@ -11,5 +11,5 @@ import { FAIRCOIN_WAGMI_CONFIG } from '../../lib/wagmi-config'
  * pages that import it (the redemption flow), not the marketing pages.
  */
 export default function WagmiAppProvider({ children }: { children: ReactNode }) {
-  return <WagmiProvider config={FAIRCOIN_WAGMI_CONFIG}>{children}</WagmiProvider>
+  return <WagmiProvider config={FAIRCOIN_WAGMI_CONFIG}>{children}</WagmiProvider>;
 }

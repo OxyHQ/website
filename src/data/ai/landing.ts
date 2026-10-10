@@ -14,11 +14,11 @@
  */
 
 export interface RoutingCapability {
-  key: string
-  title: string
-  description: string
+  key: string;
+  title: string;
+  description: string;
   /** What the site can honestly say about this today. */
-  state: 'implemented' | 'planned'
+  state: 'implemented' | 'planned';
 }
 
 /**
@@ -112,12 +112,12 @@ export const routingCapabilities: RoutingCapability[] = [
     description: 'Per-application spend limits and rate limits, configured in Oxy Console.',
     state: 'planned',
   },
-]
+];
 
 export interface InfrastructureTier {
-  key: string
-  title: string
-  description: string
+  key: string;
+  title: string;
+  description: string;
 }
 
 /** Routed, managed and dedicated, told apart in the visitor's terms. */
@@ -140,7 +140,7 @@ export const infrastructureTiers: InfrastructureTier[] = [
     description:
       'A private endpoint with capacity reserved for one organization, sized and contracted rather than shared. Custom and fine-tuned serving is discussed here, not ordered from a page.',
   },
-]
+];
 
 export const trustSummary = {
   heading: 'What happens to what you send',
@@ -152,28 +152,25 @@ export const trustSummary = {
     'A routed request is served by a provider with its own policy. That policy is a property of the route, so every route can disclose its provider, its region, its retention window and whether the upstream may train on content.',
   constraintStatement:
     'Where an application sets provider, region or retention constraints, the router applies them instead of optimising past them.',
-}
+};
 
 export const pricingSummary = {
   heading: 'What it costs',
-  payg:
-    'Inference is priced per model and per unit — input, cached input, output and, where a model uses them, reasoning and multimodal units. Prices come from the Oxy pricing source with a published price version; this site never restates one of its own.',
+  payg: 'Inference is priced per model and per unit — input, cached input, output and, where a model uses them, reasoning and multimodal units. Prices come from the Oxy pricing source with a published price version; this site never restates one of its own.',
   enterprise:
     'Managed and dedicated capacity is priced per agreement, because it is capacity rather than usage.',
   aliaNote:
     'Looking for Alia plans? Alia is a product with its own subscription, sold by Alia. Its plans are not inference pricing and are not shown here.',
-}
+};
 
 export const aliaModelsPreview = {
   heading: 'Alia Models',
-  body:
-    'Oxy intends to publish its own models. Nothing is released yet, so there is no artifact, no revision, no benchmark, no context length and no date to quote — and the earlier names that circulated were routing aliases, not models.',
+  body: 'Oxy intends to publish its own models. Nothing is released yet, so there is no artifact, no revision, no benchmark, no context length and no date to quote — and the earlier names that circulated were routing aliases, not models.',
   commitment:
     'When a release exists it will arrive the same way any other model does: an artifact with an immutable revision, a model card, published evaluations, provenance and a licence, listed through the Oxy catalogue rather than as website-only copy.',
-}
+};
 
 export const productsOnPlatform = {
   heading: 'Products built on Oxy AI',
-  body:
-    'Oxy builds its own products on the same platform it sells. That is why Alia and Codea exist here as products with their own pages and their own pricing — and why neither of them owns the infrastructure underneath.',
-}
+  body: 'Oxy builds its own products on the same platform it sells. That is why Alia and Codea exist here as products with their own pages and their own pricing — and why neither of them owns the infrastructure underneath.',
+};
