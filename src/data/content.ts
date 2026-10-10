@@ -218,7 +218,8 @@ export const resourcesNavDropdown: NavDropdown = {
  */
 export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: string }> = [
   { title: 'Mention', description: 'Decentralized social media', href: '/mention', image: '/images/apps/mention.png', logoColor: '#40c2ed', section: 'Social & Communication' },
-  { title: 'Inbox by Oxy', description: 'A calmer way to handle email', href: '/inbox', image: '/images/apps/inbox.png', logoColor: '#bf40ed', section: 'Tools' },
+  { title: 'Allo', description: 'Private communication', href: 'https://allo.you', image: BRAND_MARKS.allo, section: 'Social & Communication' },
+  { title: 'Inbox by Oxy', description: 'A calmer way to handle email', href: '/inbox', image: BRAND_MARKS.inbox, logoColor: '#bf40ed', section: 'Tools' },
   { title: 'Noted', description: "Oxy's workspace for notes and ideas", href: 'https://noted.oxy.so', image: BRAND_MARKS.noted, section: 'Tools' },
   { title: 'Nilo', description: 'Workspace for docs and databases', href: 'https://nilo.so', section: 'Tools' },
   { title: 'Alia', description: 'The Oxy assistant for people and teams', href: 'https://alia.onl/', image: '/images/apps/alia-dropdown.svg', logoColor: '#fab8ff', preserveImageColors: true, section: 'AI & Research' },
@@ -230,9 +231,9 @@ export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: st
   { title: 'Peable', description: 'Simple payments across Oxy', href: '/peable', image: '/images/apps/peable.png', preserveImageColors: true, section: 'Finance' },
   { title: 'FairCoin', description: 'Ethical Digital Currency', href: 'https://fairco.in', image: '/images/apps/faircoin.svg', logoColor: '#204700', preserveImageColors: true, section: 'Finance' },
   { title: 'FAIRWallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: '/images/apps/faircoin-wallet.svg', logoColor: '#0c6600', preserveImageColors: true, section: 'Finance' },
-  { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/mercaria', image: '/images/apps/mercaria.svg', logoColor: '#ed4040', section: 'Commerce' },
+  { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/mercaria', image: BRAND_MARKS.mercaria, logoColor: '#ed4040', section: 'Commerce' },
   { title: 'Wholesale by Mercaria', description: 'Manage products, suppliers and wholesale sales', href: 'https://dashboard.mercaria.co', image: '/images/apps/wholesale.svg', preserveImageColors: true, section: 'Commerce' },
-  { title: 'Homiio', description: 'Rental made easy', href: '/homiio', section: 'Housing' },
+  { title: 'Homiio', description: 'Rental made easy', href: '/homiio', image: BRAND_MARKS.homiio, section: 'Housing' },
   { title: 'Moovo', description: 'Mobility and urban transport', href: '/moovo', section: 'Mobility' },
   { title: 'TNP', description: 'The network protocol', href: '/tnp', image: '/images/apps/tnp.png', logoColor: '#2f9e00', section: 'Infrastructure' },
 ];
