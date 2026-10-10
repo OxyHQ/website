@@ -3,13 +3,11 @@ import { config } from '../config.js'
 import crypto from 'node:crypto'
 import path from 'node:path'
 
+// No `credentials`: the SDK's default chain reads AWS_ACCESS_KEY_ID/
+// AWS_SECRET_ACCESS_KEY locally and the ECS task role in production.
 const s3 = new S3Client({
   endpoint: config.s3.endpoint,
   region: config.s3.region,
-  credentials: {
-    accessKeyId: config.s3.accessKeyId,
-    secretAccessKey: config.s3.secretAccessKey,
-  },
   forcePathStyle: false,
 })
 
