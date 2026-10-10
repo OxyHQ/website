@@ -1,6 +1,19 @@
 import en, { type Translations } from './en';
 
 const ko: Translations = {
+  oxyosDownloads: {
+    title: '다운로드',
+    description: 'OxyOS 최신 버전을 다운로드하세요',
+    tableLabel: 'OxyOS 릴리스',
+    version: '버전',
+    architecture: '아키텍처',
+    download: '직접 다운로드',
+    status: '상태',
+    iso: 'ISO',
+    current: '현재',
+    older: '이전',
+    empty: '릴리스를 찾을 수 없습니다',
+  },
   storeLive: {
     loading: '컬렉션을 불러오는 중…',
     error: '컬렉션을 불러오지 못했습니다.',

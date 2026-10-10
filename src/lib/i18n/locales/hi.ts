@@ -3,6 +3,19 @@ import en, { type Translations } from './en';
 /** Hindi translations. English remains the structural source of truth. */
 const hi: Translations = {
   ...en,
+  oxyosDownloads: {
+    title: 'डाउनलोड',
+    description: 'OxyOS का नवीनतम संस्करण डाउनलोड करें',
+    tableLabel: 'OxyOS रिलीज़',
+    version: 'संस्करण',
+    architecture: 'आर्किटेक्चर',
+    download: 'सीधा डाउनलोड',
+    status: 'स्थिति',
+    iso: 'ISO',
+    current: 'वर्तमान',
+    older: 'पुराना',
+    empty: 'कोई रिलीज़ नहीं मिली',
+  },
   storeLive: {
     loading: 'संग्रह लोड हो रहा है…',
     error: 'संग्रह लोड नहीं हो सका।',

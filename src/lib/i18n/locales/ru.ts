@@ -3,6 +3,19 @@ import en, { type Translations } from './en';
 /** Russian translations. English remains the structural source of truth. */
 const ru: Translations = {
   ...en,
+  oxyosDownloads: {
+    title: 'Загрузки',
+    description: 'Скачайте последнюю версию OxyOS',
+    tableLabel: 'Выпуски OxyOS',
+    version: 'Версия',
+    architecture: 'Архитектура',
+    download: 'Прямая загрузка',
+    status: 'Статус',
+    iso: 'ISO',
+    current: 'Текущая',
+    older: 'Предыдущая',
+    empty: 'Выпуски не найдены',
+  },
   storeLive: {
     loading: 'Загрузка коллекции…',
     error: 'Не удалось загрузить коллекцию.',
