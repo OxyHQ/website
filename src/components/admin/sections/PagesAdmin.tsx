@@ -36,6 +36,7 @@ export default function PagesAdmin() {
       <div className="mt-6 flex flex-col gap-2">
         {PAGE_SLUGS.map((slug) => (
           <button
+            type="button"
             key={slug}
             onClick={() => setActiveSlug(slug)}
             className="flex items-center justify-between rounded-lg border border-border px-4 py-3 text-left transition-colors hover:bg-muted/50"

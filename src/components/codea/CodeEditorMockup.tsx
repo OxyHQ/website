@@ -47,6 +47,7 @@ export default function CodeEditorMockup() {
       <div className="flex items-center bg-background">
         {tabs.map((tab) => (
           <button
+            type="button"
             key={tab.name}
             className={`px-4 py-2 text-xs font-medium transition-colors ${
               tab.active

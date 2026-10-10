@@ -156,6 +156,7 @@ export function BloomComponentsHub() {
               <h2 className="text-xl">No matching components</h2>
               <p className="mt-3">Try a different name or choose another category.</p>
               <button
+                type="button"
                 className="oxy-link mt-3"
                 onClick={() => {
                   setQuery('');
