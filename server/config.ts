@@ -106,8 +106,6 @@ export const config = {
     endpoint: process.env.AWS_ENDPOINT_URL || undefined,
     region: process.env.AWS_REGION || 'us-west-2',
     bucket: process.env.AWS_S3_BUCKET || 'oxy-oxy-api-media-usw2-237343248947',
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
     // Objects are written under this prefix; CloudFront origin path "/public" strips it back
     // off when serving.
     keyPrefix: process.env.AWS_S3_KEY_PREFIX || 'public/',
