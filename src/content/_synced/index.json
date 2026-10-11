@@ -19738,13 +19738,6 @@
               "section": "guides"
             },
             {
-              "slug": "mongodb-runtime-boundary",
-              "title": "PostgreSQL-only runtime",
-              "file": "alia/main/mongodb-runtime-boundary.md",
-              "order": 1000,
-              "section": "guides"
-            },
-            {
               "slug": "onboarding",
               "title": "Alia Developer Onboarding",
               "file": "alia/main/onboarding.md",
@@ -20139,13 +20132,6 @@
               "slug": "moderation-crowdsource",
               "title": "Moderation (CrowdSource) — design detail",
               "file": "mention/main/moderation-crowdsource.md",
-              "order": 1000,
-              "section": "guides"
-            },
-            {
-              "slug": "MONGO-TO-POSTGRES-CUTOVER",
-              "title": "Mongo → Postgres cutover (historical)",
-              "file": "mention/main/MONGO-TO-POSTGRES-CUTOVER.md",
               "order": 1000,
               "section": "guides"
             },
