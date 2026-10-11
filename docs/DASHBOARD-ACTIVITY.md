@@ -42,9 +42,13 @@ claiming that every product's traffic appears:
 2. Install `createEcosystemTraffic` in each HTTP service using its existing
    trusted service credential. Mount its middleware before routes, wrap outbound
    fetch once, report readiness and call `stop` during graceful shutdown.
-3. Add corresponding producers for Kaana's Go transports, static web/edge requests,
-   queues, socket messages and other non-fetch transports. Those paths are not
-   covered by an Express middleware or a global fetch wrapper.
+3. Add corresponding producers for Kaana's Go transports, queues, socket
+   messages and other non-fetch transports. Those paths are not covered by an
+   Express middleware or a global fetch wrapper. Static web traffic needs no
+   producer: oxy-api measures it keylessly from Cloudflare analytics (OxyHQ/oxy
+   `docs/operations/cloudflare-web-activity.md`), and it arrives as per-minute
+   aggregates delayed a few minutes, carrying `windowStartedAt` and an additive
+   `windowEndedAt` field.
 4. Verify each producer with real ingress/egress, an internal call, a media call,
    a region change and shutdown. Confirm the running image after deployment.
 
