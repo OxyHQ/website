@@ -308,6 +308,7 @@ export default function DottedMap({
   return (
     <div ref={rootRef} className="relative h-full w-full">
       <svg
+        aria-hidden="true"
         viewBox={`${viewport.x} ${viewport.y} ${viewport.width} ${viewport.height}`}
         className="h-full w-full cursor-grab touch-none bg-background active:cursor-grabbing"
         preserveAspectRatio="none"

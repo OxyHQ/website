@@ -36,6 +36,7 @@ export default function FeatureCard({ feature, onVote, hideApp = false }: Featur
       {/* Vote column */}
       <div className="flex shrink-0 flex-col items-center gap-0.5">
         <button
+          type="button"
           onClick={onVote}
           className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border transition-colors ${
             feature.userVoted

@@ -383,7 +383,12 @@ export default function SustainPage() {
             <DashedVLines />
             <div className="relative grid grid-cols-12">
               {/* Dot pattern background */}
-              <svg width="100%" height="100%" className="mask-t-to-50% absolute inset-0 text-muted">
+              <svg
+                aria-hidden="true"
+                width="100%"
+                height="100%"
+                className="mask-t-to-50% absolute inset-0 text-muted"
+              >
                 <defs>
                   <pattern id="funding-dots" width="10" height="10" patternUnits="userSpaceOnUse">
                     <rect x="5.5" y="5.5" width="1" height="1" fill="currentColor" />

@@ -268,6 +268,7 @@ function SimilarPanel({
 
       {!acknowledged && (
         <button
+          type="button"
           onClick={onAcknowledge}
           className="mt-3 cursor-pointer text-xs font-medium text-foreground underline underline-offset-2 transition-opacity hover:opacity-70"
         >
@@ -294,6 +295,7 @@ function SimilarMatch({ match }: { match: FeatureRequestData }) {
   return (
     <div className="flex items-start gap-2.5">
       <button
+        type="button"
         onClick={handleVote}
         aria-label={match.userVoted ? `Remove vote from ${match.title}` : `Vote for ${match.title}`}
         aria-pressed={match.userVoted}

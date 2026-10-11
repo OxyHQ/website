@@ -121,7 +121,7 @@ function ApplyActions({ href }: { href: string }) {
           aria-label="Copy link to this role"
           className="inline-flex size-12 items-center justify-center rounded-sm bg-surface text-foreground transition-colors duration-200 hover:bg-border"
         >
-          <svg viewBox="0 0 20 20" fill="none" className="size-5 shrink-0">
+          <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="size-5 shrink-0">
             <path
               d="m9 6 2.5-2.5a3.536 3.536 0 0 1 5 5L14 11M6 9l-2.5 2.5a3.536 3.536 0 1 0 5 5L11 14"
               stroke="currentColor"

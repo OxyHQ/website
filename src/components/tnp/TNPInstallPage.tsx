@@ -66,6 +66,7 @@ export default function TNPInstallContent() {
             <div className="flex gap-2 mb-v1">
               {platforms.map((p) => (
                 <button
+                  type="button"
                   key={p.id}
                   onClick={() => setPlatform(p.id)}
                   className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors ${

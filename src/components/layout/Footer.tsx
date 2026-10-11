@@ -26,6 +26,7 @@ function NewBadgeInner() {
 function LinkedInIcon({ className }: { className?: string }) {
   return (
     <svg
+      aria-hidden="true"
       className={className}
       stroke="currentColor"
       fill="currentColor"
@@ -41,6 +42,7 @@ function LinkedInIcon({ className }: { className?: string }) {
 function XIcon({ className }: { className?: string }) {
   return (
     <svg
+      aria-hidden="true"
       className={className}
       stroke="currentColor"
       fill="currentColor"
@@ -56,6 +58,7 @@ function XIcon({ className }: { className?: string }) {
 function FacebookIcon({ className }: { className?: string }) {
   return (
     <svg
+      aria-hidden="true"
       className={className}
       stroke="currentColor"
       fill="currentColor"

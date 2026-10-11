@@ -212,6 +212,7 @@ function VoteControl({ feature }: { feature: FeatureRequestData }) {
   return (
     <div className="flex shrink-0 flex-col items-center gap-1">
       <button
+        type="button"
         onClick={handleVote}
         className={`flex h-12 w-12 cursor-pointer items-center justify-center rounded-xl border transition-colors ${
           feature.userVoted

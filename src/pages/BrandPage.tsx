@@ -259,7 +259,7 @@ function MotionStudio() {
         >
           <Mark />
         </motion.div>
-        <button className="brand-text-button" onClick={() => setReplay((r) => r + 1)}>
+        <button type="button" className="brand-text-button" onClick={() => setReplay((r) => r + 1)}>
           Replay entrance <span aria-hidden="true">↻</span>
         </button>
       </div>
@@ -579,6 +579,7 @@ export default function BrandPage() {
         <div className="brand-voice-tabs" role="group" aria-label="Voice examples">
           {Object.keys(voices).map((name) => (
             <button
+              type="button"
               key={name}
               aria-pressed={voice === name}
               onClick={() => setVoice(name as keyof typeof voices)}

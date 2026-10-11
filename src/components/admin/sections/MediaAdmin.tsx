@@ -231,6 +231,7 @@ export default function MediaAdmin() {
             const isImage = item.mimeType?.startsWith('image/');
             return (
               <button
+                type="button"
                 key={item._id}
                 onClick={() => setEditing(item)}
                 className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-surface transition-all hover:border-input hover:ring-2 hover:ring-ring/30"
@@ -245,6 +246,7 @@ export default function MediaAdmin() {
                 ) : (
                   <div className="flex size-full flex-col items-center justify-center gap-1 p-2">
                     <svg
+                      aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
                       fill="none"

@@ -22,7 +22,12 @@ const ArrowGlyph = () => (
     aria-hidden="true"
     className="inline-block ps-[0.375em] transition-transform will-change-transform group-hover/link:translate-x-1"
   >
-    <svg viewBox="0 0 6 10" fill="currentColor" className="mb-[0.025em] inline h-[0.5em]">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 6 10"
+      fill="currentColor"
+      className="mb-[0.025em] inline h-[0.5em]"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"

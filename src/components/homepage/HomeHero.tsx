@@ -578,7 +578,7 @@ function ScrollArrow({
       className={`relative block ${sizeClass} ${animated ? 'animate-[hero-scroll-arrow_1.5s_ease-in-out_infinite]' : ''} ${className}`}
       style={{ animationDelay: `${delay}s` }}
     >
-      <svg viewBox="0 0 30 30" fill="none">
+      <svg aria-hidden="true" viewBox="0 0 30 30" fill="none">
         <path
           d="M13.0013 2.99951L17.001 2.99951L17.001 18.9978L20.9942 18.9978V22.998L16.9945 22.998V18.9978H13.0091L13.0091 22.998H9.00934L9.00934 18.9978H13.0013L13.0013 2.99951Z"
           fill="currentColor"

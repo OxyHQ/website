@@ -144,6 +144,7 @@ function InboxExample() {
             <div className="my-5 flex gap-2" role="group" aria-label="Filter sample messages">
               {['All', 'Personal', 'Work'].map((name) => (
                 <button
+                  type="button"
                   key={name}
                   aria-pressed={name === label}
                   onClick={() => setLabel(name)}
@@ -156,6 +157,7 @@ function InboxExample() {
             <div className="divide-y divide-border">
               {filtered.map((m) => (
                 <button
+                  type="button"
                   key={m.id}
                   onClick={() => setSelected(m.id)}
                   className="flex w-full gap-4 rounded-lg py-5 text-left transition-colors hover:bg-primary-subtle"

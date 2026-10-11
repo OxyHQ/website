@@ -8,7 +8,14 @@ function CardIcon({ type }: { type: string }) {
   switch (type) {
     case 'linkedin':
       return (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="size-5">
+        <svg
+          aria-hidden="true"
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          className="size-5"
+        >
           <path
             d="M4.5 3C3.67 3 3 3.67 3 4.5S3.67 6 4.5 6 6 5.33 6 4.5 5.33 3 4.5 3zM3 8h3v9H3V8zm5.5 0H11v1.23C11.6 8.46 12.5 8 13.5 8c2.21 0 3.5 1.45 3.5 3.99V17h-3v-4.5c0-1.12-.5-1.75-1.5-1.75S11 11.38 11 12.5V17H8.5V8z"
             fill="currentColor"
@@ -18,7 +25,14 @@ function CardIcon({ type }: { type: string }) {
       );
     case 'x':
       return (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="size-5">
+        <svg
+          aria-hidden="true"
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          className="size-5"
+        >
           <path
             d="M11.2 9.2L16.5 3h-1.3l-4.6 5.4L6.9 3H3l5.6 8.1L3 18h1.3l4.9-5.7L13.1 18H17L11.2 9.2zm-1.7 2l-.6-.8L4.8 4h1.9l3.6 5.2.6.8 4.8 6.9h-1.9l-3.9-5.6v-.1z"
             fill="currentColor"

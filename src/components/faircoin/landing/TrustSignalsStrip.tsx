@@ -81,7 +81,13 @@ export default function TrustSignalsStrip() {
 
 function BaseLogo() {
   return (
-    <svg viewBox="0 0 111 111" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 111 111"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5"
+    >
       <path
         d="M54.921 110.034C85.359 110.034 110.034 85.402 110.034 55.017C110.034 24.6319 85.359 0 54.921 0C26.0432 0 2.35281 21.8704 0 49.6916H72.8467V60.3274H0C2.35281 88.1485 26.0432 110.034 54.921 110.034Z"
         fill="#0052FF"
@@ -92,7 +98,13 @@ function BaseLogo() {
 
 function UniswapLogo() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5"
+    >
       <path
         d="M7.21 6.836c-.165-.025-.171-.028-.094-.04.149-.022.498.009.74.066.563.131 1.075.471 1.62 1.075l.146.16.207-.033c.872-.139 1.762-.029 2.504.314.205.094.527.281.567.328.013.015.036.114.052.22.054.366.026.643-.085.853-.062.114-.063.149-.022.245.034.077.124.135.213.135.184 0 .38-.295.473-.706l.034-.164.066.075c.366.41.654.97.7 1.366l.013.103-.061-.094a1.473 1.473 0 0 0-.342-.376c-.292-.195-.595-.262-1.394-.301-.722-.038-1.13-.099-1.534-.231-.687-.224-1.034-.522-1.85-1.587-.36-.471-.586-.733-.808-.943-.508-.486-1.005-.74-1.645-.83Z"
         fill="#FF007A"
@@ -107,7 +119,13 @@ function UniswapLogo() {
 
 function BasescanLogo() {
   return (
-    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5"
+    >
       <circle cx="16" cy="16" r="15" stroke="currentColor" strokeWidth="1.5" />
       <path
         d="M9 13L16 9L23 13L23 19L16 23L9 19L9 13Z"
@@ -123,6 +141,7 @@ function BasescanLogo() {
 function GithubLogo() {
   return (
     <svg
+      aria-hidden="true"
       viewBox="0 0 24 24"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
