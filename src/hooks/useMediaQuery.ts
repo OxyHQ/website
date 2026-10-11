@@ -44,7 +44,9 @@ function getStore(query: string): QueryStore | null {
 }
 
 function emptySubscribe(): () => void {
-  return () => {};
+  return () => {
+    // Nothing was subscribed, so nothing to remove.
+  };
 }
 
 function falseSnapshot(): boolean {

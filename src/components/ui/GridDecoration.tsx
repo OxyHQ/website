@@ -6,7 +6,7 @@ export function HorizontalLine({
   dashed?: boolean;
 }) {
   return (
-    <svg width="100%" height="1" className={className}>
+    <svg aria-hidden="true" width="100%" height="1" className={className}>
       <line
         x1="0"
         y1="0.5"
@@ -28,7 +28,7 @@ function VerticalLine({
   dashed?: boolean;
 }) {
   return (
-    <svg width="1" height="100%" className={className}>
+    <svg aria-hidden="true" width="1" height="100%" className={className}>
       <line
         x1="0.5"
         y1="0"

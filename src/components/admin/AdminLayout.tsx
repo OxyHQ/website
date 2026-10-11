@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from '../../lib/navigation';
 import { useAuth, useOxy } from '@oxy.so/services/ui/client';

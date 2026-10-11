@@ -227,7 +227,7 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
       const segments = location.pathname.split('/').filter(Boolean);
       const head = segments[0];
       const isLocaleHead = head ? coerceLocale(head) !== null : false;
-      const pathWithoutLocale = '/' + (isLocaleHead ? segments.slice(1) : segments).join('/');
+      const pathWithoutLocale = `/${(isLocaleHead ? segments.slice(1) : segments).join('/')}`;
 
       // Keyed on the static DEFAULT_LOCALE, NOT the CMS-configured
       // `defaultLocale`: `buildLocalizedUrl` in SEO.tsx (canonical, hreflang,

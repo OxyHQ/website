@@ -268,7 +268,7 @@ export default function DottedMap({
     const animateFocus = (now: number) => {
       if (dragRef.current) return;
       const progress = Math.min(1, (now - startedAt) / 900);
-      const eased = 1 - Math.pow(1 - progress, 3);
+      const eased = 1 - (1 - progress) ** 3;
       setViewport((current) => ({
         ...current,
         x: start.x + (targetX - start.x) * eased,
@@ -308,6 +308,7 @@ export default function DottedMap({
   return (
     <div ref={rootRef} className="relative h-full w-full">
       <svg
+        aria-hidden="true"
         viewBox={`${viewport.x} ${viewport.y} ${viewport.width} ${viewport.height}`}
         className="h-full w-full cursor-grab touch-none bg-background active:cursor-grabbing"
         preserveAspectRatio="none"

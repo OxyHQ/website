@@ -123,7 +123,12 @@ export default function ChangelogContent() {
               aria-hidden="true"
             />
             {/* Dot pattern background */}
-            <svg width="100%" height="100%" className="mask-t-to-50% absolute inset-0 text-muted">
+            <svg
+              aria-hidden="true"
+              width="100%"
+              height="100%"
+              className="mask-t-to-50% absolute inset-0 text-muted"
+            >
               <defs>
                 <pattern
                   id="changelog-hero-dots"

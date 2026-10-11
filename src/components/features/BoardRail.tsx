@@ -57,6 +57,7 @@ export default function BoardRail({
             ))}
           </ul>
           <button
+            type="button"
             onClick={onOpenRoadmap}
             className="mt-3 cursor-pointer text-sm font-medium text-foreground transition-opacity hover:opacity-70"
           >

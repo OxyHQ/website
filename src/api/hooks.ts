@@ -21,11 +21,11 @@ import {
   type PlatformActivityEvent,
 } from './platformActivityStore';
 
-import { type Testimonial } from '../data/content';
+import type { Testimonial } from '../data/content';
 import { BRAND_MARKS } from '../data/brand-assets';
-import { type BillingPlan, type PricingPlan } from '../data/pricing';
+import type { BillingPlan, PricingPlan } from '../data/pricing';
 import { OXY_API } from '../lib/oxyApi';
-import { type NewsroomPost, type NewsroomPostSummary } from '../data/newsroom';
+import type { NewsroomPost, NewsroomPostSummary } from '../data/newsroom';
 import type { CareerJob } from '../lib/careers';
 import {
   fetchNewsroomPost,

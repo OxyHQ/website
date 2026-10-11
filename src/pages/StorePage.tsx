@@ -11,7 +11,7 @@ import { useStoreCatalog, useStoreCollection } from '../components/store/useStor
 import StoreLoadState from '../components/store/StoreLoadState';
 import { formatStorePrice } from '../lib/mercaria-store';
 import { useStoreBag } from '../components/store/useStoreBag';
-import { type StoreCategory, type StoreProduct } from '../data/store';
+import type { StoreCategory, StoreProduct } from '../data/store';
 import { useCurrentLocale, useTranslation } from '../lib/i18n';
 import { Link } from '../lib/navigation';
 

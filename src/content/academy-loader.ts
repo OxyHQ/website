@@ -1,5 +1,5 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
-import { z } from 'zod';
+import type { z } from 'zod';
 import { AcademyFrontmatter, DEFAULT_LOCALE, parseLocaleFromPath } from './schemas';
 import { ACADEMY_COURSES, type CourseMeta } from './academy-courses';
 

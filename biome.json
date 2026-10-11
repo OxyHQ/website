@@ -238,6 +238,16 @@
       }
     },
     {
+      "includes": ["public/images/apps/kaana.svg"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noSvgWithoutTitle": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["server/mcp/http.test.ts"],
       "linter": {
         "rules": {

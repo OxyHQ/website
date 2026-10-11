@@ -41,6 +41,7 @@ function StatusIcon({ status }: { status: 'completed' | 'running' | 'queued' }) 
     return (
       <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success-subtle">
         <svg
+          aria-hidden="true"
           className="h-3 w-3 text-success-text"
           viewBox="0 0 12 12"
           fill="none"
@@ -67,6 +68,7 @@ function StatusIcon({ status }: { status: 'completed' | 'running' | 'queued' }) 
   return (
     <div className="flex h-5 w-5 shrink-0 items-center justify-center text-foreground/30">
       <svg
+        aria-hidden="true"
         className="h-3.5 w-3.5"
         viewBox="0 0 14 14"
         fill="none"
@@ -148,6 +150,7 @@ export default function BackgroundTasksMockup() {
         <div className="flex items-start gap-2.5">
           <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success-subtle">
             <svg
+              aria-hidden="true"
               className="h-3 w-3 text-success-text"
               viewBox="0 0 12 12"
               fill="none"

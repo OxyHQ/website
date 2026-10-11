@@ -349,7 +349,7 @@ function ActionIcon({
   };
   if (name === 'arrow-up') {
     return (
-      <svg {...props}>
+      <svg aria-hidden="true" {...props}>
         <path
           d="M12 19V5M5 12l7-7 7 7"
           stroke="currentColor"
@@ -362,7 +362,7 @@ function ActionIcon({
   }
   if (name === 'arrow-down') {
     return (
-      <svg {...props}>
+      <svg aria-hidden="true" {...props}>
         <path
           d="M12 5v14M5 12l7 7 7-7"
           stroke="currentColor"
@@ -375,7 +375,7 @@ function ActionIcon({
   }
   if (name === 'plus') {
     return (
-      <svg {...props}>
+      <svg aria-hidden="true" {...props}>
         <path
           d="M12 5v14M5 12h14"
           stroke="currentColor"
@@ -387,7 +387,7 @@ function ActionIcon({
   }
   if (name === 'pin') {
     return (
-      <svg {...props}>
+      <svg aria-hidden="true" {...props}>
         <path
           d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"
           stroke="currentColor"
@@ -401,7 +401,7 @@ function ActionIcon({
   }
   if (name === 'people') {
     return (
-      <svg {...props}>
+      <svg aria-hidden="true" {...props}>
         <path
           d="M16 14a4 4 0 1 0-8 0m12 7v-1a4 4 0 0 0-3-3.87M4 21v-1a4 4 0 0 1 3-3.87M16 3.13a4 4 0 0 1 0 7.75M8 3.13a4 4 0 0 0 0 7.75"
           stroke="currentColor"
@@ -414,7 +414,7 @@ function ActionIcon({
   }
   if (name === 'server') {
     return (
-      <svg {...props}>
+      <svg aria-hidden="true" {...props}>
         <rect x="3" y="4" width="18" height="7" rx="2" stroke="currentColor" strokeWidth={stroke} />
         <rect
           x="3"
@@ -436,7 +436,7 @@ function ActionIcon({
   }
   if (name === 'cog') {
     return (
-      <svg {...props}>
+      <svg aria-hidden="true" {...props}>
         <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth={stroke} />
         <path
           d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1A2 2 0 1 1 4.4 16.9l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1A2 2 0 1 1 7 4.4l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"
@@ -450,7 +450,7 @@ function ActionIcon({
   }
   if (name === 'wallet') {
     return (
-      <svg {...props}>
+      <svg aria-hidden="true" {...props}>
         <rect
           x="3"
           y="6"
@@ -474,7 +474,7 @@ function ActionIcon({
 
 function ChevronDownGlyph() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none">
       <path
         d="M6 9l6 6 6-6"
         stroke="currentColor"
@@ -488,7 +488,7 @@ function ChevronDownGlyph() {
 
 function SignalGlyph() {
   return (
-    <svg width="14" height="10" viewBox="0 0 14 10" fill="currentColor">
+    <svg aria-hidden="true" width="14" height="10" viewBox="0 0 14 10" fill="currentColor">
       <rect x="0" y="6" width="2" height="4" rx="0.4" />
       <rect x="3.5" y="4" width="2" height="6" rx="0.4" />
       <rect x="7" y="2" width="2" height="8" rx="0.4" />
@@ -499,7 +499,7 @@ function SignalGlyph() {
 
 function WifiGlyph() {
   return (
-    <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
+    <svg aria-hidden="true" width="12" height="9" viewBox="0 0 12 9" fill="none">
       <path
         d="M6 8a1 1 0 100-2 1 1 0 000 2zM2.5 4.5C3.5 3.5 4.7 3 6 3s2.5.5 3.5 1.5M.5 2.5C2 1 4 .25 6 .25s4 .75 5.5 2.25"
         stroke="currentColor"
@@ -512,7 +512,7 @@ function WifiGlyph() {
 
 function BatteryGlyph() {
   return (
-    <svg width="22" height="11" viewBox="0 0 22 11" fill="none">
+    <svg aria-hidden="true" width="22" height="11" viewBox="0 0 22 11" fill="none">
       <rect x="0.5" y="0.5" width="18" height="10" rx="2" stroke="currentColor" />
       <rect x="2" y="2" width="13" height="7" rx="1" fill="currentColor" />
       <rect x="20" y="3.5" width="1.5" height="4" rx="0.4" fill="currentColor" />

@@ -71,12 +71,12 @@ const eagerSource = import.meta.glob<string>('./*.tsx', {
 
 function demoNameFromPath(p: string): string | null {
   const m = p.match(/^\.\/([A-Z][^./]*)\.tsx$/);
-  return m && m[1] ? m[1] : null;
+  return m?.[1] ? m[1] : null;
 }
 
 function propsNameFromPath(p: string): string | null {
   const m = p.match(/^\.\/([A-Z][^./]*)\.props\.ts$/);
-  return m && m[1] ? m[1] : null;
+  return m?.[1] ? m[1] : null;
 }
 
 const propsByName = new Map<string, readonly PlaygroundProp[]>();

@@ -71,7 +71,10 @@ export default function DashboardPage() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
       setWindowFullscreen(false);
-      if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+      if (document.fullscreenElement)
+        void document.exitFullscreen().catch(() => {
+          // Leaving fullscreen can be refused; the page still drops its fullscreen layout.
+        });
       setSearchParams(
         (current) => {
           const next = new URLSearchParams(current);
@@ -87,7 +90,10 @@ export default function DashboardPage() {
 
   async function toggleFullscreen() {
     if (isFullscreen) {
-      if (document.fullscreenElement) await document.exitFullscreen().catch(() => {});
+      if (document.fullscreenElement)
+        await document.exitFullscreen().catch(() => {
+          // Already out of fullscreen, or refused: the toggle state below still updates.
+        });
       setWindowFullscreen(false);
       if (searchParams.get('fullscreen') === 'true') {
         const next = new URLSearchParams(searchParams);

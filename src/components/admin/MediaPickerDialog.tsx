@@ -219,6 +219,7 @@ export default function MediaPickerDialog({
                     const isImg = item.mimeType?.startsWith('image/');
                     return (
                       <button
+                        type="button"
                         key={item._id}
                         onClick={() => onSelect(item)}
                         className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-surface transition-all hover:border-input hover:ring-2 hover:ring-ring/30"

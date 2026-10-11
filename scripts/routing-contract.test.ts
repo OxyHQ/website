@@ -104,7 +104,7 @@ function main(): void {
 
   const rules = parseRedirects(readFileSync(redirectsFile, 'utf8'));
   const catchAll = rules.at(-1);
-  if (!catchAll || catchAll.from !== '/*' || catchAll.status !== 404) {
+  if (catchAll?.from !== '/*' || catchAll.status !== 404) {
     throw new Error('[routing-contract] _redirects must end in a `/*  /404.html  404` rule');
   }
   const reachable = rules.slice(0, -1);

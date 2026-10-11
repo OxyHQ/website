@@ -15,7 +15,9 @@ function brandSurfaceFor(className: string): BrandSurface | undefined {
   return BRAND_SURFACES.findLast((surface) => classes.has(surface.selector.slice(1)));
 }
 
-const subscribeNever = () => () => {};
+const subscribeNever = () => () => {
+  // Nothing was subscribed, so nothing to remove.
+};
 
 /**
  * Carries a brand surface's palette to the Bloom components inside it.

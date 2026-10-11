@@ -32,8 +32,7 @@ export default function Preview() {
         return;
       const data = event.data;
       if (
-        !data ||
-        data.type !== 'bloom:render' ||
+        data?.type !== 'bloom:render' ||
         !APP_COLOR_NAMES.includes(data.preset) ||
         !['light', 'dark'].includes(data.mode)
       )

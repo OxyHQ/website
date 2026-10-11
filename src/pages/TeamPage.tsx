@@ -127,9 +127,10 @@ export default function TeamPage() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-muted-foreground hover:text-foreground"
-                                  aria-label="LinkedIn"
                                 >
+                                  <span className="sr-only">LinkedIn</span>
                                   <svg
+                                    aria-hidden="true"
                                     width="16"
                                     height="16"
                                     viewBox="0 0 20 20"
@@ -145,9 +146,10 @@ export default function TeamPage() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-muted-foreground hover:text-foreground"
-                                  aria-label="GitHub"
                                 >
+                                  <span className="sr-only">GitHub</span>
                                   <svg
+                                    aria-hidden="true"
                                     width="16"
                                     height="16"
                                     viewBox="0 0 20 20"

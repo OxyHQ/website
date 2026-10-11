@@ -61,11 +61,17 @@ function Fixture() {
   return (
     <BloomThemeProvider mode={theme}>
       <>
-        <button onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}>
+        <button
+          type="button"
+          onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+        >
           Toggle theme
         </button>
-        <button onClick={() => setGlobe(!isGlobe)}>Toggle map</button>
+        <button type="button" onClick={() => setGlobe(!isGlobe)}>
+          Toggle map
+        </button>
         <button
+          type="button"
           onClick={() =>
             setActivity((current) => [
               ...current,
@@ -79,7 +85,9 @@ function Fixture() {
         >
           Next bucket
         </button>
-        <button onClick={() => setInfraStatus([])}>Remove infrastructure</button>
+        <button type="button" onClick={() => setInfraStatus([])}>
+          Remove infrastructure
+        </button>
         <div style={{ width: 1200, height: 760 }}>
           <TrafficLegend />
           <MapContainer isGlobe={isGlobe} activityEvents={activity} infraStatus={infraStatus} />

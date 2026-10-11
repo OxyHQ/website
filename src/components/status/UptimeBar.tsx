@@ -8,7 +8,7 @@ const BAR_TONE: Record<UptimeDay['status'], string> = {
 };
 
 function formatTooltip(day: UptimeDay): string {
-  const date = new Date(day.date + 'T00:00:00Z').toLocaleDateString(undefined, {
+  const date = new Date(`${day.date}T00:00:00Z`).toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
     timeZone: 'UTC',

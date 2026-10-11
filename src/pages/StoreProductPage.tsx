@@ -14,7 +14,7 @@ import StoreProductImage from '../components/store/StoreProductImage';
 import { productGallery } from '../components/store/product-gallery';
 import { useStoreBag } from '../components/store/useStoreBag';
 import { FaqList } from '../components/sections/FaqSection';
-import { type StoreProduct } from '../data/store';
+import type { StoreProduct } from '../data/store';
 import { useCurrentLocale, useTranslation } from '../lib/i18n';
 import { Link } from '../lib/navigation';
 import { useCopyToClipboard } from '../lib/useCopyToClipboard';

@@ -20,7 +20,7 @@ import {
   testimonials,
   translations,
 } from '../db/schema/index.js';
-import { TRANSLATABLE_COLLECTIONS } from '../constants/translations.js';
+import type { TRANSLATABLE_COLLECTIONS } from '../constants/translations.js';
 import { DomainError } from '../utils/domainError.js';
 
 /* ──────────────────────────────────────────────

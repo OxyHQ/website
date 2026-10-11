@@ -10,6 +10,9 @@ import {
   sanitizeErrorMessage,
 } from './mcpCatalogRegistration.js';
 
+/** Stands in for the callbacks these tests do not observe (logging, token invalidation). */
+const ignore = (): void => undefined;
+
 const SERVICE_TOKEN =
   'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJvLXdlYnNpdGUifQ.c2VjcmV0LXNpZ25hdHVyZS12YWx1ZQ';
 
@@ -98,10 +101,10 @@ describe('mcp catalog registration', () => {
 
   test('reports retrying with a next attempt while the outage lasts', async () => {
     let clock = 0;
-    let release: () => void = () => {};
+    let release: () => void = ignore;
     const registration = createMcpCatalogRegistration({
       catalog,
-      oxy: { serviceToken: async () => SERVICE_TOKEN, invalidateServiceToken: () => {} } as never,
+      oxy: { serviceToken: async () => SERVICE_TOKEN, invalidateServiceToken: ignore } as never,
       oxyApiBase: 'https://api.oxy.test',
       deps: {
         fetch: async () => new Response('unavailable', { status: 500 }),
@@ -112,8 +115,8 @@ describe('mcp catalog registration', () => {
             release = resolve;
           }),
         random: () => 0.5,
-        log: () => {},
-        error: () => {},
+        log: ignore,
+        error: ignore,
       },
     });
     expect(registration.status().state).toBe('pending');
@@ -228,16 +231,16 @@ describe('mcp catalog registration', () => {
     const newerRequests: string[] = [];
     const newer = createMcpCatalogRegistration({
       catalog: newerCatalog,
-      oxy: { serviceToken: async () => SERVICE_TOKEN, invalidateServiceToken: () => {} } as never,
+      oxy: { serviceToken: async () => SERVICE_TOKEN, invalidateServiceToken: ignore } as never,
       oxyApiBase: 'https://api.oxy.test',
       deps: {
         fetch: async (url) => {
           newerRequests.push(url);
           return new Response('', { status: 201 });
         },
-        sleep: async () => {},
-        log: () => {},
-        error: () => {},
+        sleep: async () => undefined,
+        log: ignore,
+        error: ignore,
       },
     });
     await Promise.all([older.registration.start(), newer.start()]);
@@ -257,7 +260,7 @@ describe('mcp catalog registration', () => {
         serviceToken: async () => {
           throw new Error('credentials unavailable');
         },
-        invalidateServiceToken: () => {},
+        invalidateServiceToken: ignore,
       } as never,
       oxyApiBase: 'https://api.oxy.test',
       deps: {
@@ -267,8 +270,8 @@ describe('mcp catalog registration', () => {
             clock += ms;
             signal.addEventListener('abort', () => resolve(), { once: true });
           }),
-        log: () => {},
-        error: () => {},
+        log: ignore,
+        error: ignore,
       },
     });
     const done = registration.start();

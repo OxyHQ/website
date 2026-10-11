@@ -282,7 +282,7 @@ export function useAcademyAllProgress(): {
       const entries: string[] = [];
       for (let i = 0; i < window.localStorage.length; i += 1) {
         const key = window.localStorage.key(i);
-        if (key && key.startsWith(LOCAL_STORAGE_PREFIX)) {
+        if (key?.startsWith(LOCAL_STORAGE_PREFIX)) {
           entries.push(`${key}:${window.localStorage.getItem(key) ?? ''}`);
         }
       }

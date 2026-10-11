@@ -125,7 +125,9 @@ export function CommonsPhoneFilm() {
     if (!element) return;
     const update = () => {
       if (visible && !reduced && document.visibilityState === 'visible')
-        void element.play().catch(() => {});
+        void element.play().catch(() => {
+          // Autoplay can be refused; the poster frame stays.
+        });
       else element.pause();
     };
     update();

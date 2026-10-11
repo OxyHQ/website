@@ -326,11 +326,11 @@ const ROLL = (() => {
   const yframes: string[] = [];
   const times: number[] = [];
   for (let i = 0; i < N; i++) {
-    const y = (-i * unit).toFixed(3) + '%';
+    const y = `${(-i * unit).toFixed(3)}%`;
     yframes.push(y, y);
     times.push(i / N, (i + HOLD) / N);
   }
-  yframes.push((-N * unit).toFixed(3) + '%');
+  yframes.push(`${(-N * unit).toFixed(3)}%`);
   times.push(1);
   return {
     yframes,

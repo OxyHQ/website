@@ -177,7 +177,7 @@ function normalize(
   name: string,
   displayName: string,
 ): ChangelogEntryStatic {
-  const title = (release.name && release.name.trim()) || release.tag_name;
+  const title = release.name?.trim() || release.tag_name;
   const date = release.published_at ?? release.created_at;
   return {
     _id: `gh-${release.id}`,

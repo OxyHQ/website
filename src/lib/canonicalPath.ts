@@ -95,7 +95,7 @@ export function canonicalTo(to: To): To {
       (transparencyDestination(pathname) ?? pathname) + to.slice(pathname.length),
     );
   }
-  if (!to.pathname || !to.pathname.startsWith('/') || !isDocumentPath(to.pathname)) return to;
+  if (!to.pathname?.startsWith('/') || !isDocumentPath(to.pathname)) return to;
   return {
     ...to,
     pathname: withDocumentTrailingSlash(transparencyDestination(to.pathname) ?? to.pathname),

@@ -652,7 +652,7 @@ async function loadBloomDemoNames(): Promise<Set<string>> {
   const out = new Set<string>();
   for (const file of entries) {
     const match = file.match(/^([A-Z][^./]*)\.tsx$/);
-    if (match && match[1]) out.add(match[1]);
+    if (match?.[1]) out.add(match[1]);
   }
   return out;
 }

@@ -21,7 +21,10 @@ export default function CommonsHero() {
   useEffect(() => {
     const video = backgroundVideo.current;
     if (!video) return;
-    if (playing && inView && visible) void video.play().catch(() => {});
+    if (playing && inView && visible)
+      void video.play().catch(() => {
+        // Autoplay can be refused; the poster frame stays.
+      });
     else video.pause();
   }, [playing, inView, visible]);
 

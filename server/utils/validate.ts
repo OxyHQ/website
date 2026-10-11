@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 
 /**
  * Thrown by {@link validate} when an input fails a zod schema.

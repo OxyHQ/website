@@ -26,6 +26,7 @@ export default function LikeButton({ targetType, targetId }: LikeButtonProps) {
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={toggleLike.isPending}
       className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-surface disabled:opacity-50"

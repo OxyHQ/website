@@ -127,6 +127,7 @@ export default function ArticleGridSection({ ui = {}, category }: ArticleGridSec
             {ui.noResults ?? 'No articles match your filters'}
           </p>
           <button
+            type="button"
             onClick={clearFilters}
             className="mt-3 cursor-pointer text-sm font-medium text-primary transition-colors duration-150 hover:underline"
           >
