@@ -86,6 +86,46 @@ try {
     'Bloom geometry is served with the wrong MIME type',
   );
 
+  // Framer Motion snapshots reduced-motion at mount. Verify live portraits
+  // in a fresh normal-motion page, not by changing media on a paused page.
+  const motionContext = await browser.newContext({
+    viewport: { width: 1440, height: 1100 },
+    reducedMotion: 'no-preference',
+  });
+  const motionPage = await motionContext.newPage();
+  await motionPage.goto(`${origin}/bloom/`);
+  await motionPage.locator('[data-bloom-agent-presets]').scrollIntoViewIfNeeded();
+  await motionPage.waitForFunction(() => {
+    const canvases = [
+      ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+    ];
+    return (
+      canvases.length === 9 &&
+      canvases.every((canvas) => {
+        const pixels = canvas
+          .getContext('2d')
+          ?.getImageData(0, 0, canvas.width, canvas.height).data;
+        return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
+      })
+    );
+  });
+  // Observe multiple later presentations, so initial geometry repaint alone
+  // cannot satisfy the animation check.
+  for (let sample = 0; sample < 3; sample++) {
+    const motionBefore = await motionPage
+      .locator('[data-bloom-agent-presets] canvas')
+      .evaluateAll((nodes) => nodes.map((node) => (node as HTMLCanvasElement).toDataURL()));
+    await motionPage.waitForTimeout(200);
+    await motionPage.waitForFunction(
+      (previous) =>
+        [...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas')].some(
+          (canvas, index) => canvas.toDataURL() !== previous[index],
+        ),
+      motionBefore,
+    );
+  }
+  await motionContext.close();
+
   for (const mode of ['light', 'dark'] as const) {
     const context = await browser.newContext({
       viewport: { width: 1440, height: 1100 },
@@ -345,15 +385,6 @@ try {
       alfred.colored > 100 && alfred.rgb[1] > alfred.rgb[0] && alfred.rgb[2] > alfred.rgb[0],
       'Alfred lost its chosen cyan body color',
     );
-    await page.emulateMedia({ reducedMotion: 'no-preference' });
-    await page.waitForFunction(
-      (previous) =>
-        [...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas')].some(
-          (canvas, index) => canvas.toDataURL() !== previous[index],
-        ),
-      paintedPresets.map((preset) => preset.pixels),
-    );
-    await page.emulateMedia({ reducedMotion: 'reduce' });
     mkdirSync(join(ROOT, '.local/bloom-preset-showcase'), { recursive: true });
     await page
       .locator('#multi-agent-chat')
