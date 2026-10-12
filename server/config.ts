@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
-dotenv.config();
+// `.env` is loaded by Bun itself (the server and every script run on Bun)
+// before any module runs; a variable the shell already set wins.
 
 function parseCsvEnv(value: string | undefined): string[] {
   return (
