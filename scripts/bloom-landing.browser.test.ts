@@ -418,15 +418,19 @@ try {
     // pending and Playwright will not scroll a disabled eye button into view.
     // Center the preview in both scroll containers; an edge-visible image can
     // still leave its lazy renderer outside the clipped editor viewport.
-    await chat
-      .getByRole('img', { name: 'Launch planner, live avatar preview', exact: true })
-      .evaluate((node) =>
-        node.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
-      );
     const avatarPreview = chat.getByRole('img', {
       name: 'Launch planner, live avatar preview',
       exact: true,
     });
+    // Revealing a cold canvas can itself block on SwiftShader preparation.
+    // The locator's default 30s expired before the existing 90s paint wait.
+    await renderStage(page, `${mode} cold editor brought into view`, () =>
+      avatarPreview.evaluate(
+        (node) => node.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
+        undefined,
+        { timeout: COLD_RENDER_TIMEOUT },
+      ),
+    );
     const previewCanvas = avatarPreview.locator('canvas');
     await previewCanvas.waitFor();
     await renderStage(page, `${mode} editor preview painted`, async () =>
@@ -451,7 +455,13 @@ try {
       'agent eye style does not change',
     );
     await chat.getByRole('button', { name: 'Create bot or chat', exact: true }).click();
-    await page.getByRole('menuitem', { name: /Chat with your agents/ }).click();
+    // Opening the picker prepares its avatar portraits for the first time;
+    // retain a real hit-tested click, with the same cold-render budget.
+    await renderStage(page, `${mode} cold agent picker opened`, () =>
+      page
+        .getByRole('menuitem', { name: /Chat with your agents/ })
+        .click({ timeout: COLD_RENDER_TIMEOUT }),
+    );
     await page.getByRole('button', { name: 'Launch planner', exact: true }).last().click();
     await page.getByRole('button', { name: 'content reviewer', exact: true }).last().click();
     await page.getByRole('button', { name: /Start chat.*2 agents/ }).click();
