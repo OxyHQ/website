@@ -442,10 +442,6 @@ try {
       alfred.colored > 100 && alfred.rgb[1] > alfred.rgb[0] && alfred.rgb[2] > alfred.rgb[0],
       'Alfred lost its chosen cyan body color',
     );
-    mkdirSync(join(ROOT, '.local/bloom-preset-showcase'), { recursive: true });
-    await page
-      .locator('#multi-agent-chat')
-      .screenshot({ path: join(ROOT, `.local/bloom-preset-showcase/${mode}-desktop.png`) });
     await page.locator('[data-bloom-preview="multi-agent"]').scrollIntoViewIfNeeded();
     const chat = page.getByTestId('multi-agent-chat');
     await chat.getByRole('textbox', { name: 'Agent name', exact: true }).fill('Launch planner');
@@ -509,9 +505,6 @@ try {
       .getByText('Help me plan the release', { exact: true })
       .waitFor();
     await presets.scrollIntoViewIfNeeded();
-    await presets.screenshot({
-      path: join(ROOT, `.local/bloom-preset-showcase/${mode}-mobile.png`),
-    });
     const portraitBounds = await presets.boundingBox();
     invariant(
       portraitBounds && portraitBounds.x >= 0 && portraitBounds.x + portraitBounds.width <= 390,
