@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-12T13:17:08.488Z",
+  "generatedAt": "2026-10-12T16:58:10.242Z",
   "repos": [
     {
       "owner": "OxyHQ",
@@ -48,6 +48,55 @@
     }
   ],
   "entries": [
+    {
+      "_id": "gh-410822279",
+      "title": "@oxy.so/bloom@8.1.1",
+      "content": "Eye selector previews now use the same rendered pigment brightness limits as the avatar engine. Very dark and light choices stay visually consistent across the avatar and selector, while the exact selected color remains available for editing and saving.\n\nValidated with DOM and browser checks for black, white, extreme colors and the named palette, plus 4,096 RGB parity samples. Package build, exports, consumer types and source types pass.\n\nCompatible patch to 8.1.0; no API or documentation-version change.\n",
+      "tags": [],
+      "date": "2026-10-12T16:49:42Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 410822279,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%408.1.1",
+      "tagName": "@oxy.so/bloom@8.1.1"
+    },
+    {
+      "_id": "gh-410730384",
+      "title": "TNP Client v0.5.1",
+      "content": "**Install (one command):**\n```bash\n# macOS / Linux\ncurl -fsSL https://get.tnp.network | sh\n\n# Windows (PowerShell)\nirm https://get.tnp.network/ps | iex\n```\n\n**Verify a download yourself:** `SHA256SUMS.sig` is the raw 64-byte\nEd25519 signature over `SHA256SUMS` by the TNP release key\n`n4CCDVyVmPikeULWtYh6ohrhAPvd4n9CvhdDgwVSRjw=` — procedure in\n`docs/architecture/security.md` §7. Build provenance:\n`gh attestation verify <file> --repo OxyHQ/tnp`.\n\n**Platforms:** linux-x64, linux-arm64, darwin-x64, darwin-arm64, windows-x64\n\n\n## What's Changed\n* release(api): serve the signed client 0.5.0 by @NateIsern in https://github.com/OxyHQ/tnp/pull/108\n* fix: Devin review follow-ups — signed Windows installs, verified Windows ACLs, HKLM folders by @NateIsern in https://github.com/OxyHQ/tnp/pull/109\n* release(client): 0.5.1 — Windows ACL and path hardening by @NateIsern in https://github.com/OxyHQ/tnp/pull/110\n\n\n**Full Changelog**: https://github.com/OxyHQ/tnp/compare/v0.5.0...v0.5.1",
+      "tags": [
+        "Bug Fix"
+      ],
+      "date": "2026-10-12T15:07:18Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 410730384,
+      "repoOwner": "OxyHQ",
+      "repoName": "tnp",
+      "repoDisplayName": "TNP",
+      "htmlUrl": "https://github.com/OxyHQ/tnp/releases/tag/v0.5.1",
+      "tagName": "v0.5.1"
+    },
+    {
+      "_id": "gh-410691579",
+      "title": "TNP Client v0.5.0",
+      "content": "**Install (one command):**\n```bash\n# macOS / Linux\ncurl -fsSL https://get.tnp.network | sh\n\n# Windows (PowerShell)\nirm https://get.tnp.network/ps | iex\n```\n\n**Verify a download yourself:** `SHA256SUMS.sig` is the raw 64-byte\nEd25519 signature over `SHA256SUMS` by the TNP release key\n`n4CCDVyVmPikeULWtYh6ohrhAPvd4n9CvhdDgwVSRjw=` — procedure in\n`docs/architecture/security.md` §7. Build provenance:\n`gh attestation verify <file> --repo OxyHQ/tnp`.\n\n**Platforms:** linux-x64, linux-arm64, darwin-x64, darwin-arm64, windows-x64\n\n\n## What's Changed\n* release(api): serve the signed client 0.4.0 by @NateIsern in https://github.com/OxyHQ/tnp/pull/101\n* ci(image): one reviewed pin, checked on every PR and enforced by the publish by @NateIsern in https://github.com/OxyHQ/tnp/pull/87\n* ci: pin every remaining action by commit SHA by @NateIsern in https://github.com/OxyHQ/tnp/pull/102\n* security(images): production-only installs, non-root assertions in CI by @NateIsern in https://github.com/OxyHQ/tnp/pull/103\n* test(overlay): size the backpressure test past what kernel buffers absorb by @NateIsern in https://github.com/OxyHQ/tnp/pull/104\n* security(relay): signed relay directory and relay authentication to clients by @NateIsern in https://github.com/OxyHQ/tnp/pull/105\n* feat(vpn): WireGuard standard-tier VPN to TNP-operated exits by @NateIsern in https://github.com/OxyHQ/tnp/pull/106\n* release(client): 0.5.0 — signed relay directory and tnp vpn by @NateIsern in https://github.com/OxyHQ/tnp/pull/107\n\n\n**Full Changelog**: https://github.com/OxyHQ/tnp/compare/v0.4.0...v0.5.0",
+      "tags": [
+        "Feature"
+      ],
+      "date": "2026-10-12T14:26:56Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 410691579,
+      "repoOwner": "OxyHQ",
+      "repoName": "tnp",
+      "repoDisplayName": "TNP",
+      "htmlUrl": "https://github.com/OxyHQ/tnp/releases/tag/v0.5.0",
+      "tagName": "v0.5.0"
+    },
     {
       "_id": "gh-410608986",
       "title": "@oxy.so/bloom@8.1.0",
@@ -1013,23 +1062,6 @@
       "repoDisplayName": "Bloom",
       "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%407.2.0",
       "tagName": "@oxy.so/bloom@7.2.0"
-    },
-    {
-      "_id": "gh-403484691",
-      "title": "@oxy.so/bloom@7.1.5",
-      "content": "Published to npm under the `main` dist-tag (`latest` stays 7.1.4, built from the unmerged `codex/avatar-shared-renderer` branch).\n\n- fix(agent-avatar): the editor's live preview prepares before passive thumbnails (#261). The agent editor's eye/colour controls no longer stay disabled while every avatar mounted ahead of it prepares.",
-      "tags": [
-        "Bug Fix"
-      ],
-      "date": "2026-10-05T07:53:47Z",
-      "items": [],
-      "media": null,
-      "githubReleaseId": 403484691,
-      "repoOwner": "OxyHQ",
-      "repoName": "Bloom",
-      "repoDisplayName": "Bloom",
-      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%407.1.5",
-      "tagName": "@oxy.so/bloom@7.1.5"
     },
     {
       "_id": "gh-345863387",

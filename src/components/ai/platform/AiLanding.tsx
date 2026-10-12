@@ -4,6 +4,7 @@ import Button from '../../ui/Button';
 import RecentNewsSection from '../../newsroom/RecentNewsSection';
 import AIResearchSection from '../AIResearchSection';
 import AiSection from './AiSection';
+import AgentInterfaceSection from '../../bloom/AgentInterfaceSection';
 import AvailabilityBadge from './AvailabilityBadge';
 import ServiceCard from './ServiceCard';
 import CodeSampleTabs from './CodeSampleTabs';
@@ -99,6 +100,8 @@ export default function AiLanding() {
           ))}
         </div>
       </AiSection>
+
+      <AgentInterfaceSection presentation="presets" />
 
       {/* ── Quickstart ───────────────────────────────────────────────── */}
       <AiSection
