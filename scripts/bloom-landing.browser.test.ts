@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, relative } from 'node:path';
 import { chromium, type Page } from 'playwright';
@@ -288,6 +288,76 @@ try {
       'table search does not filter rows',
     );
     await search.fill('');
+    const presets = page.locator('[data-bloom-agent-presets]');
+    await presets.scrollIntoViewIfNeeded();
+    invariant((await presets.locator('li').count()) === 9, 'named preset lineup is incomplete');
+    await page.waitForFunction(() => {
+      const canvases = [
+        ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+      ];
+      return (
+        canvases.length === 9 &&
+        canvases.every((canvas) => {
+          const pixels = canvas
+            .getContext('2d')
+            ?.getImageData(0, 0, canvas.width, canvas.height).data;
+          return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
+        })
+      );
+    });
+    const paintedPresets = await presets.locator('li').evaluateAll((items) =>
+      items.map((item) => {
+        const canvas = item.querySelector('canvas')!;
+        const pixels = canvas
+          .getContext('2d')!
+          .getImageData(0, 0, canvas.width, canvas.height).data;
+        const rgb = [0, 0, 0];
+        let colored = 0;
+        for (let i = 0; i < pixels.length; i += 4) {
+          const color = [pixels[i], pixels[i + 1], pixels[i + 2]];
+          if (pixels[i + 3] < 128 || Math.max(...color) - Math.min(...color) < 32) continue;
+          colored++;
+          color.forEach((value, channel) => {
+            rgb[channel] += value;
+          });
+        }
+        return {
+          name: item.textContent?.trim(),
+          pixels: canvas.toDataURL(),
+          colored,
+          rgb: rgb.map((value) => value / Math.max(1, colored)),
+        };
+      }),
+    );
+    invariant(
+      new Set(paintedPresets.map((preset) => preset.pixels)).size === 9,
+      'preset portraits repeat the same appearance',
+    );
+    for (const name of ['Todd', 'Iris', 'Felipe']) {
+      const preset = paintedPresets.find((item) => item.name === name)!;
+      invariant(
+        preset.colored > 100 && preset.rgb[0] > preset.rgb[1] && preset.rgb[0] > preset.rgb[2],
+        `${name} lost its chosen warm body color`,
+      );
+    }
+    const alfred = paintedPresets.find((item) => item.name === 'Alfred')!;
+    invariant(
+      alfred.colored > 100 && alfred.rgb[1] > alfred.rgb[0] && alfred.rgb[2] > alfred.rgb[0],
+      'Alfred lost its chosen cyan body color',
+    );
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.waitForFunction(
+      (previous) =>
+        [...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas')].some(
+          (canvas, index) => canvas.toDataURL() !== previous[index],
+        ),
+      paintedPresets.map((preset) => preset.pixels),
+    );
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    mkdirSync(join(ROOT, '.local/bloom-preset-showcase'), { recursive: true });
+    await page
+      .locator('#multi-agent-chat')
+      .screenshot({ path: join(ROOT, `.local/bloom-preset-showcase/${mode}-desktop.png`) });
     await page.locator('[data-bloom-preview="multi-agent"]').scrollIntoViewIfNeeded();
     const chat = page.getByTestId('multi-agent-chat');
     await chat.getByRole('textbox', { name: 'Agent name', exact: true }).fill('Launch planner');
@@ -350,6 +420,15 @@ try {
       .getByLabel('Agent conversation', { exact: true })
       .getByText('Help me plan the release', { exact: true })
       .waitFor();
+    await presets.scrollIntoViewIfNeeded();
+    await presets.screenshot({
+      path: join(ROOT, `.local/bloom-preset-showcase/${mode}-mobile.png`),
+    });
+    const portraitBounds = await presets.boundingBox();
+    invariant(
+      portraitBounds && portraitBounds.x >= 0 && portraitBounds.x + portraitBounds.width <= 390,
+      'preset lineup overflows mobile',
+    );
     await page.setViewportSize({ width: 1440, height: 1100 });
     await chat
       .getByLabel('Agent conversation', { exact: true })

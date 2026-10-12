@@ -14,7 +14,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@oxy.so/bloom/accordion';
-import { AgentAvatar, FOLD_CONFIG, FOLD_PRESETS } from '@oxy.so/bloom/agent-avatar';
+import { AgentAvatar, DEFAULT_CONFIG } from '@oxy.so/bloom/agent-avatar';
 import {
   SegmentedControl,
   SegmentedControlItem,
@@ -42,6 +42,7 @@ import { Link } from '../lib/navigation';
 import { useTranslation } from '../lib/i18n';
 import { useCopyToClipboard } from '../lib/useCopyToClipboard';
 import { BLOOM_SEO } from '../content/bloom-landing';
+import { BLOOM_AGENT_PRESETS } from '../content/bloom-agent-presets';
 import '../styles/bloom-landing.css';
 
 const DOCS = '/developers/docs/bloom/components/';
@@ -364,33 +365,6 @@ function Heading({
     </div>
   );
 }
-function AgentMarks() {
-  return (
-    <div className="relative h-[104px] w-[120px]" aria-hidden>
-      {[
-        [40, 0],
-        [0, 34],
-        [80, 34],
-        [40, 64],
-      ].map(([left, top], i) => (
-        <div
-          key={i}
-          className="absolute"
-          style={{ left, top, transform: `rotate(${i % 2 ? 10 : -10}deg)` }}
-        >
-          <AgentAvatar
-            config={{
-              ...FOLD_PRESETS[i].config,
-              foldShape: (['pocket', 'cloud', 'star', 'flower'] as const)[i],
-            }}
-            size={44}
-            label={FOLD_PRESETS[i].name}
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export default function BloomPage() {
   const { t, locale } = useTranslation();
@@ -652,9 +626,6 @@ export default function BloomPage() {
           aria-labelledby="bloom-agents"
         >
           <div className="flex w-full max-w-[640px] flex-col items-center text-center">
-            <div className="relative mb-6 flex h-28 w-40 items-center justify-center">
-              <AgentMarks />
-            </div>
             <Heading
               id="bloom-agents"
               title={text('agentsTitle')}
@@ -666,35 +637,28 @@ export default function BloomPage() {
               </Action>
             </div>
           </div>
+          <ul
+            data-bloom-agent-presets
+            aria-labelledby="bloom-agents"
+            className="mt-10 grid w-full grid-cols-3 gap-x-3 gap-y-6 sm:grid-cols-5 lg:grid-cols-9"
+          >
+            {BLOOM_AGENT_PRESETS.map((preset) => (
+              <li key={preset.name} className="flex min-w-0 flex-col items-center gap-2">
+                <AgentAvatar
+                  config={{ ...DEFAULT_CONFIG, character: preset.character }}
+                  size={96}
+                  paused={Boolean(reduce)}
+                  interactive={false}
+                  label={preset.name}
+                />
+                <span className="text-body-medium text-text-secondary">{preset.name}</span>
+              </li>
+            ))}
+          </ul>
           <div
-            className="relative isolate mt-16 w-full [--preview-inset:6px] sm:[--preview-inset:8px]"
+            className="relative isolate mt-10 w-full [--preview-inset:6px] sm:[--preview-inset:8px]"
             style={{ '--preview-radius': '31.45px' } as CSSProperties}
           >
-            <div
-              className="pointer-events-none absolute -top-[85px] left-5 z-20 sm:left-14"
-              aria-hidden
-            >
-              <AgentAvatar
-                config={{ ...FOLD_CONFIG, hue: 157, saturation: 37 }}
-                size={110}
-                label="Bloom agent"
-              />
-            </div>
-            <div
-              className="pointer-events-none absolute -top-[85px] right-5 z-20 sm:right-14"
-              aria-hidden
-            >
-              <AgentAvatar
-                config={{
-                  ...FOLD_CONFIG,
-                  foldShape: 'star',
-                  hue: 255,
-                  saturation: 65,
-                }}
-                size={110}
-                label="Bloom agent"
-              />
-            </div>
             <div className="relative z-10 rounded-[calc(var(--preview-radius)+var(--preview-inset)+1px)] border border-border-button-default bg-background-secondary-default p-1.5 shadow-lg sm:p-2">
               <BloomPreview name="multi-agent" />
             </div>

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { MultiAgentChat, type MultiAgentChatWorkspace } from '@oxy.so/bloom/multi-agent-chat';
-import { FOLD_CONFIG } from '@oxy.so/bloom/agent-avatar';
+import { DEFAULT_CONFIG } from '@oxy.so/bloom/agent-avatar';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { BLOOM_AGENT_PRESETS } from '../../content/bloom-agent-presets';
 
 const agents: MultiAgentChatWorkspace['agents'] = [
   {
@@ -9,49 +10,49 @@ const agents: MultiAgentChatWorkspace['agents'] = [
     name: 'landing page designer',
     label: 'Design',
     description: 'Thoughtful layouts and clear hierarchy.',
-    avatar: { ...FOLD_CONFIG, foldShape: 'shield', hue: 80, saturation: 65 },
+    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[0].character },
   },
   {
     id: 'content',
     name: 'content reviewer',
     label: 'Writing',
     description: 'Clear and concise writing.',
-    avatar: { ...FOLD_CONFIG, foldShape: 'pocket', hue: 25, saturation: 60 },
+    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[1].character },
   },
   {
     id: 'marketing',
     name: 'marketing bot',
     label: 'Marketing',
     description: 'Campaigns people remember.',
-    avatar: { ...FOLD_CONFIG, foldShape: 'star', hue: 185, saturation: 50 },
+    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[2].character },
   },
   {
     id: 'seo',
     name: 'seo bot',
     label: 'SEO',
     description: 'Help people find your work.',
-    avatar: { ...FOLD_CONFIG, foldShape: 'flower', hue: 255, saturation: 65 },
+    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[3].character },
   },
   {
     id: 'research',
     name: 'research assistant',
     label: 'Research',
     description: 'Explore questions and sources.',
-    avatar: { ...FOLD_CONFIG, hue: 45, saturation: 75 },
+    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[4].character },
   },
   {
     id: 'security',
     name: 'Security agent',
     label: 'Security',
     description: 'Review access and permissions.',
-    avatar: { ...FOLD_CONFIG, foldShape: 'shield', hue: 175, saturation: 45 },
+    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[6].character },
   },
   {
     id: 'product',
     name: 'Product planner',
     label: 'Product',
     description: 'Turn ideas into next steps.',
-    avatar: { ...FOLD_CONFIG, foldShape: 'diamond', hue: 215, saturation: 70 },
+    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[5].character },
   },
 ];
 const initialWorkspace: MultiAgentChatWorkspace = {
