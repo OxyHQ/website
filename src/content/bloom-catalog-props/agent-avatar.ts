@@ -12,7 +12,7 @@ export const props: BloomSurfaceProps = {
         { name: 'paused', type: 'boolean', optional: true },
         { name: 'label', type: 'string', optional: true },
         { name: 'locale', type: 'string', optional: true },
-        { name: 'interactive', type: 'boolean', optional: true, description: 'Enables pointer and touch reactions when a 3D runtime provider is available.' },
+        { name: 'interactive', type: 'boolean', optional: true, description: 'Enables pointer and touch reactions in the character renderer.' },
         { name: 'portrait', type: 'boolean', optional: true, description: 'Uses a cached still portrait for optional character previews, avoiding a live renderer per thumbnail.' },
         { name: 'reactionKey', type: 'number', optional: true, description: 'Replays the supported 3D reaction (signature or migrated silhouette wave) when the key changes.' },
         { name: 'entranceKey', type: 'number', optional: true },
@@ -26,7 +26,7 @@ export const props: BloomSurfaceProps = {
     },
     'AgentAvatarProviderProps': {
       props: [
-        { name: 'runtimeUrl', type: 'string', optional: false },
+        { name: 'runtimeUrl', type: 'string', optional: true, description: 'Defaults to /bloom-character/runtime.mjs on web; native requires an absolute hosted URL.' },
         { name: 'children', type: 'ReactNode', optional: false },
       ],
     },

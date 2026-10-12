@@ -24,7 +24,7 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
-    'OverlaySurfaceProps': {
+    'PopoverContentProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'label', type: 'string', optional: true, description: 'Accessible name of the surface.' },
@@ -38,6 +38,7 @@ export const props: BloomSurfaceProps = {
         { name: 'align', type: 'FloatingAlign', options: ['start', 'center', 'end'], optional: true, description: 'Horizontal alignment against the anchor. Defaults per component.' },
         { name: 'sideOffset', type: 'number', optional: true, description: 'Gap between the anchor and the surface, on the `side` axis.' },
         { name: 'alignOffset', type: 'number', optional: true, description: 'Shift along the `align` axis, applied before the viewport clamp.' },
+        { name: 'material', type: "'surface' | 'flat'", options: ['surface', 'flat'], optional: true, description: 'Standard optical surface or plain fill. Default surface.' },
       ],
     },
     'PopoverHeaderProps': {
@@ -87,7 +88,7 @@ export const props: BloomSurfaceProps = {
   components: [
     { name: 'Popover', propsType: 'PopoverProps' },
     { name: 'PopoverTrigger', propsType: 'OverlayTriggerProps' },
-    { name: 'PopoverContent', propsType: 'OverlaySurfaceProps' },
+    { name: 'PopoverContent', propsType: 'PopoverContentProps' },
     { name: 'PopoverHeader', propsType: 'PopoverHeaderProps' },
     { name: 'PopoverTitle', propsType: 'PopoverTitleProps' },
     { name: 'PopoverDescription', propsType: 'PopoverDescriptionProps' },

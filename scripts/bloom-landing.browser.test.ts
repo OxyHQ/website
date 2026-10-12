@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, relative } from 'node:path';
 import { chromium, type Page } from 'playwright';
@@ -22,6 +22,63 @@ const browser = await chromium.launch({
 });
 function invariant(value: unknown, message: string): asserts value {
   if (!value) throw new Error(message);
+}
+
+const COLD_RENDER_TIMEOUT = 90_000;
+const renderMessages = new WeakMap<Page, string[]>();
+function observeRendering(page: Page) {
+  const messages: string[] = [];
+  renderMessages.set(page, messages);
+  page.on('pageerror', (error) => messages.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'warning' || message.type() === 'error') messages.push(message.text());
+  });
+  page.on('requestfailed', (request) =>
+    messages.push(`${request.url()}: ${request.failure()?.errorText}`),
+  );
+}
+async function renderStage(page: Page, name: string, check: () => Promise<unknown>) {
+  const started = performance.now();
+  console.log(`[bloom-landing] ${name}`);
+  try {
+    await check();
+    console.log(`[bloom-landing] ${name} passed in ${Math.round(performance.now() - started)}ms`);
+  } catch (error) {
+    const diagnostics = await page.evaluate(() => {
+      function describe(item: Element) {
+        const canvas = item.querySelector('canvas');
+        const pixels = canvas
+          ?.getContext('2d')
+          ?.getImageData(0, 0, canvas.width, canvas.height).data;
+        return {
+          name: item.getAttribute('aria-label') ?? item.textContent,
+          bounds: item.getBoundingClientRect().toJSON(),
+          canvas: canvas ? [canvas.width, canvas.height] : null,
+          painted: pixels?.some((value, index) => index % 4 === 3 && value > 20) ?? false,
+        };
+      }
+      return {
+        url: location.href,
+        viewport: [innerWidth, innerHeight],
+        scroll: [scrollX, scrollY],
+        reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+        presets: [...document.querySelectorAll('[data-bloom-agent-presets] li')].map(describe),
+        editors: [
+          ...document.querySelectorAll('[role="img"][aria-label$=", live avatar preview"]'),
+        ].map(describe),
+      };
+    });
+    const messages = renderMessages.get(page) ?? [];
+    const destination = join(ROOT, 'review-artifacts');
+    mkdirSync(destination, { recursive: true });
+    writeFileSync(
+      join(destination, 'bloom-landing-failure.json'),
+      JSON.stringify({ name, diagnostics, messages }, null, 2),
+    );
+    console.error(`[bloom-landing] ${name} failed`, JSON.stringify(diagnostics), messages);
+    await page.screenshot({ path: join(destination, 'bloom-landing-failure.png') });
+    throw new Error(`Bloom landing ${name} failed`, { cause: error });
+  }
 }
 
 async function assertNoOverflow(page: Page) {
@@ -59,7 +116,7 @@ try {
   }
   for (const [file, mime] of [
     ['runtime.mjs', 'text/javascript'],
-    ['orbit-characters.wasm', 'application/wasm'],
+    ['manifest.json', 'application/json'],
   ] as const) {
     const response = await fetch(`${origin}${BLOOM_CHARACTER_BASE}${file}`, { method: 'HEAD' });
     invariant(
@@ -67,6 +124,77 @@ try {
       `Bloom runtime asset is missing or served with the wrong MIME type: ${file}`,
     );
   }
+  const manifestResponse = await fetch(`${origin}${BLOOM_CHARACTER_BASE}manifest.json`);
+  const manifest = (await manifestResponse.json()) as { files: Record<string, string> };
+  invariant(
+    Object.keys(manifest.files).some(
+      (file) => file.startsWith('assets/') && file.endsWith('.bin'),
+    ) && !Object.keys(manifest.files).some((file) => /\.(wasm|data)$/.test(file)),
+    'Bloom must ship the new geometry assets without the retired runtime',
+  );
+  const geometryFile = Object.keys(manifest.files).find((file) => file.endsWith('.bin'));
+  invariant(geometryFile, 'Bloom geometry manifest is empty');
+  const geometryHead = await fetch(`${origin}${BLOOM_CHARACTER_BASE}${geometryFile}`, {
+    method: 'HEAD',
+  });
+  invariant(
+    geometryHead.ok &&
+      geometryHead.headers.get('content-type')?.includes('application/octet-stream'),
+    'Bloom geometry is served with the wrong MIME type',
+  );
+
+  // Framer Motion snapshots reduced-motion at mount. Verify live portraits
+  // in a fresh normal-motion page, not by changing media on a paused page.
+  const motionContext = await browser.newContext({
+    viewport: { width: 1440, height: 1100 },
+    reducedMotion: 'no-preference',
+  });
+  const motionPage = await motionContext.newPage();
+  observeRendering(motionPage);
+  await motionPage.goto(`${origin}/bloom/`);
+  await motionPage.locator('[data-bloom-agent-presets]').scrollIntoViewIfNeeded();
+  // Cold custom geometry took 43.8s on a single CPU with bundled Chromium
+  // SwiftShader. Allow preparation headroom; subsequent frame checks retain
+  // Playwright's 30s bound and still require actual changed painted pixels.
+  await renderStage(motionPage, 'nine normal-motion portraits painted', () =>
+    motionPage.waitForFunction(
+      () => {
+        const canvases = [
+          ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+        ];
+        return (
+          canvases.length === 9 &&
+          canvases.every((canvas) => {
+            const pixels = canvas
+              .getContext('2d')
+              ?.getImageData(0, 0, canvas.width, canvas.height).data;
+            return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
+          })
+        );
+      },
+      undefined,
+      { timeout: COLD_RENDER_TIMEOUT },
+    ),
+  );
+  // Observe multiple later presentations, so initial geometry repaint alone
+  // cannot satisfy the animation check.
+  for (let sample = 0; sample < 3; sample++) {
+    const motionBefore = await motionPage
+      .locator('[data-bloom-agent-presets] canvas')
+      .evaluateAll((nodes) => nodes.map((node) => (node as HTMLCanvasElement).toDataURL()));
+    await motionPage.waitForTimeout(200);
+    await renderStage(motionPage, `normal-motion presentation ${sample + 1}`, () =>
+      motionPage.waitForFunction(
+        (previous) =>
+          [
+            ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+          ].some((canvas, index) => canvas.toDataURL() !== previous[index]),
+        motionBefore,
+      ),
+    );
+  }
+  await motionContext.close();
+
   for (const mode of ['light', 'dark'] as const) {
     const context = await browser.newContext({
       viewport: { width: 1440, height: 1100 },
@@ -74,6 +202,7 @@ try {
     });
     await context.addInitScript((mode) => localStorage.setItem('theme', mode), mode);
     const page = await context.newPage();
+    observeRendering(page);
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     // A generated brand palette must match before and after React starts.
@@ -269,6 +398,69 @@ try {
       'table search does not filter rows',
     );
     await search.fill('');
+    const presets = page.locator('[data-bloom-agent-presets]');
+    await presets.scrollIntoViewIfNeeded();
+    invariant((await presets.locator('li').count()) === 9, 'named preset lineup is incomplete');
+    await renderStage(page, `${mode} nine reduced-motion portraits painted`, () =>
+      page.waitForFunction(
+        () => {
+          const canvases = [
+            ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+          ];
+          return (
+            canvases.length === 9 &&
+            canvases.every((canvas) => {
+              const pixels = canvas
+                .getContext('2d')
+                ?.getImageData(0, 0, canvas.width, canvas.height).data;
+              return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
+            })
+          );
+        },
+        undefined,
+        { timeout: COLD_RENDER_TIMEOUT },
+      ),
+    );
+    const paintedPresets = await presets.locator('li').evaluateAll((items) =>
+      items.map((item) => {
+        const canvas = item.querySelector('canvas')!;
+        const pixels = canvas
+          .getContext('2d')!
+          .getImageData(0, 0, canvas.width, canvas.height).data;
+        const rgb = [0, 0, 0];
+        let colored = 0;
+        for (let i = 0; i < pixels.length; i += 4) {
+          const color = [pixels[i], pixels[i + 1], pixels[i + 2]];
+          if (pixels[i + 3] < 128 || Math.max(...color) - Math.min(...color) < 32) continue;
+          colored++;
+          color.forEach((value, channel) => {
+            rgb[channel] += value;
+          });
+        }
+        return {
+          name: item.textContent?.trim(),
+          pixels: canvas.toDataURL(),
+          colored,
+          rgb: rgb.map((value) => value / Math.max(1, colored)),
+        };
+      }),
+    );
+    invariant(
+      new Set(paintedPresets.map((preset) => preset.pixels)).size === 9,
+      'preset portraits repeat the same appearance',
+    );
+    for (const name of ['Todd', 'Iris', 'Felipe']) {
+      const preset = paintedPresets.find((item) => item.name === name)!;
+      invariant(
+        preset.colored > 100 && preset.rgb[0] > preset.rgb[1] && preset.rgb[0] > preset.rgb[2],
+        `${name} lost its chosen warm body color`,
+      );
+    }
+    const alfred = paintedPresets.find((item) => item.name === 'Alfred')!;
+    invariant(
+      alfred.colored > 100 && alfred.rgb[1] > alfred.rgb[0] && alfred.rgb[2] > alfred.rgb[0],
+      'Alfred lost its chosen cyan body color',
+    );
     await page.locator('[data-bloom-preview="multi-agent"]').scrollIntoViewIfNeeded();
     const chat = page.getByTestId('multi-agent-chat');
     await chat.getByRole('textbox', { name: 'Agent name', exact: true }).fill('Launch planner');
@@ -282,6 +474,26 @@ try {
       .evaluate((node) =>
         node.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
       );
+    const avatarPreview = chat.getByRole('img', {
+      name: 'Launch planner, live avatar preview',
+      exact: true,
+    });
+    const previewCanvas = avatarPreview.locator('canvas');
+    await previewCanvas.waitFor();
+    await renderStage(page, `${mode} editor preview painted`, async () =>
+      page.waitForFunction(
+        (canvas) => {
+          const node = canvas as HTMLCanvasElement;
+          const context = node.getContext('2d');
+          if (!context || !node.width || !node.height) return false;
+          const pixels = context.getImageData(0, 0, node.width, node.height).data;
+          for (let i = 3; i < pixels.length; i += 4) if (pixels[i] > 20) return true;
+          return false;
+        },
+        await previewCanvas.elementHandle(),
+        { timeout: COLD_RENDER_TIMEOUT },
+      ),
+    );
     await chat.getByRole('button', { name: 'Sparkle capsules', exact: true }).click();
     invariant(
       (await chat
@@ -314,6 +526,12 @@ try {
       .getByLabel('Agent conversation', { exact: true })
       .getByText('Help me plan the release', { exact: true })
       .waitFor();
+    await presets.scrollIntoViewIfNeeded();
+    const portraitBounds = await presets.boundingBox();
+    invariant(
+      portraitBounds && portraitBounds.x >= 0 && portraitBounds.x + portraitBounds.width <= 390,
+      'preset lineup overflows mobile',
+    );
     await page.setViewportSize({ width: 1440, height: 1100 });
     await chat
       .getByLabel('Agent conversation', { exact: true })

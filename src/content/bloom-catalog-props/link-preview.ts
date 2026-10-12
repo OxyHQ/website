@@ -10,7 +10,7 @@ export const props: BloomSurfaceProps = {
         { name: 'url', type: 'string', optional: false, description: 'The previewed URL. Opened via `Linking.openURL` when `onPress` is omitted.' },
         { name: 'title', type: 'string', optional: true, description: 'OpenGraph / page title. Falls back to the URL hostname when absent.' },
         { name: 'description', type: 'string', optional: true, description: 'OpenGraph / meta description.' },
-        { name: 'image', type: 'string', optional: true, description: 'Absolute cover-image URL (e.g. a `cloud.oxy.so` OG image). Rendered directly with the RN `Image` primitive — NOT through `ImageResolver` / `Avatar`, which are for bare Oxy file IDs.' },
+        { name: 'image', type: 'string | readonly LinkPreviewImageSource[]', optional: true, description: "The cover image: one absolute URL, or the same image at several widths (e.g. `contentImageSources(url)` from `@oxy.so/utils/image`). With several, `expo-image` loads the smallest that covers the cover's rendered size — a `srcset` on web, the view's size × pixel ratio on native — so a card in a narrow row never downloads the full-width rendition. Rendered directly, NOT through `ImageResolver` / `Avatar`, which are for bare Oxy file IDs." },
         { name: 'siteName', type: 'string', optional: true, description: 'Site / brand name shown above the title. Falls back to the URL hostname.' },
         { name: 'coverFill', type: 'boolean', optional: true, description: 'Fill-height mode for the cover image. Defaults to `false`.' },
         { name: 'onPress', type: '() => void', optional: true, description: 'Press handler. When omitted, the card opens `url` via `Linking.openURL`.' },

@@ -20,7 +20,7 @@ export default function bloomCharacterAssets(): Plugin {
   const allowed = new Set(files);
   const mime: Record<string, string> = {
     '.mjs': 'text/javascript',
-    '.wasm': 'application/wasm',
+    '.bin': 'application/octet-stream',
     '.png': 'image/png',
     '.json': 'application/json',
     '.md': 'text/plain',

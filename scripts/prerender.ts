@@ -46,6 +46,12 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { build as viteBuild } from 'vite';
 import { fetchPrerender } from './prerender-fetch';
+import {
+  assertDeploymentFileBudget,
+  countDeploymentFiles,
+  CF_PAGES_FILE_LIMIT,
+  FILE_BUDGET,
+} from './deployment-file-budget';
 import type { SyncedIndex } from './types.ts';
 import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './sitemap.ts';
 import { hasLocalizedVariants } from '../src/lib/localizedRoute';
@@ -141,15 +147,6 @@ const FEATURES_API = `${API_BASE}/api/features`;
 const FEATURE_PRERENDER_PAGE_SIZE = 50;
 const SEO_API = `${API_BASE}/api/seo`;
 const LOCALES_API = `${API_BASE}/api/locales`;
-
-/**
- * Cloudflare Pages hard-fails a deployment above 20,000 files. Every extra
- * locale mirrors the entire route tree, so the ceiling is reached after only a
- * couple of locales. We stop well short of it and fail loudly rather than let
- * a deploy get rejected (or worse, silently truncated) after a green build.
- */
-const CF_PAGES_FILE_LIMIT = 20_000;
-const FILE_BUDGET = 18_000;
 
 /** Canonical public origin, used to absolutise OG image URLs. */
 const SITE_URL = process.env.SITE_URL || 'https://oxy.so';
@@ -1729,8 +1726,12 @@ async function writeRoute(
  */
 async function countNonRouteFiles(dir: string): Promise<number> {
   if (!existsSync(dir)) return 0;
-  const entries = await readdir(dir, { recursive: true, withFileTypes: true });
-  return entries.filter((entry) => entry.isFile() && entry.name !== 'index.html').length;
+  // Search stubs disappear after Pagefind. Its final output is counted again
+  // by run-pagefind.ts, together with every route and asset that will ship.
+  return countDeploymentFiles(dir, {
+    excludeRouteDocuments: true,
+    excludeIndexStubs: true,
+  });
 }
 
 /**
@@ -1927,13 +1928,7 @@ async function main(): Promise<void> {
     `[prerender] file budget: ${assetFiles} assets + ${jobs.length} routes ` +
       `= ~${projected} (budget ${FILE_BUDGET}, Cloudflare limit ${CF_PAGES_FILE_LIMIT})`,
   );
-  if (projected > FILE_BUDGET) {
-    throw new Error(
-      `[prerender] projected ~${projected} files exceeds the ${FILE_BUDGET} budget ` +
-        `(Cloudflare Pages rejects deploys above ${CF_PAGES_FILE_LIMIT}). ` +
-        `Reduce the number of prerendered locales (currently ${localeInfo.locales.length}).`,
-    );
-  }
+  assertDeploymentFileBudget(projected);
 
   await writeLocaleManifest(localeInfo.locales);
   await writeFallbackDocuments(shell);

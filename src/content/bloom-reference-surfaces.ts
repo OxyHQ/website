@@ -21,6 +21,8 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
   'preset-vars': 'Resolved preset variables for styling and server rendering.',
   provider: 'The app-level provider used by these live examples.',
   scroll: 'Scroll restoration requires a router adapter and navigation history.',
+  'settings-modal/modal':
+    'Modal-only import of SettingsModal. See Settings Modal for the interactive application settings example.',
   'scroll/expo-router':
     'Scroll adapter for an Expo Router application. This documentation uses React Router.',
   styles: 'Styling utilities and surface-level context used by visual components.',
@@ -33,4 +35,8 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
   teleport: 'Named portal hosts transport content between parts of an application.',
   theme:
     'Theme providers used by every live example. The website theme picker changes their appearance.',
+  'video-view':
+    'Inline video surface backed by the optional expo-video peer and an application-owned player. See Media Surface for the surrounding media composition.',
+  viewport:
+    'Visibility hooks and viewport bindings for application scroll containers. They coordinate offscreen rendering without a standalone visual.',
 };

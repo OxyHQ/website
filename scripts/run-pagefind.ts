@@ -18,6 +18,7 @@ import { existsSync } from 'node:fs';
 import { readdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { assertDeploymentFileBudget, countDeploymentFiles } from './deployment-file-budget';
 
 const WEBSITE_ROOT = path.resolve(import.meta.dir, '..');
 const DIST = path.join(WEBSITE_ROOT, 'dist');
@@ -88,6 +89,9 @@ async function main(): Promise<void> {
     // Runs on every path — including the early "nothing to index" return and a
     // failed Pagefind run — so the stubs can never survive into `dist/`.
     await removeIndexStubs();
+    const deploymentFiles = await countDeploymentFiles(DIST);
+    assertDeploymentFileBudget(deploymentFiles);
+    console.log(`[run-pagefind] final deployment: ${deploymentFiles} files within budget`);
   }
 
   if (exitCode !== 0) process.exit(exitCode);

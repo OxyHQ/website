@@ -76,6 +76,51 @@ async function openRoute(path: string): Promise<void> {
   await assertGlobalDocsChrome(page);
 }
 
+async function assertLazyMarkdownCopy(): Promise<void> {
+  const isolated = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    permissions: ['clipboard-read', 'clipboard-write'],
+  });
+  try {
+    const article = await isolated.newPage();
+    const chunks = new Set<string>();
+    article.on('pageerror', (error) => pageErrors.push(error.message));
+    article.on('request', (request) => {
+      const name = new URL(request.url()).pathname;
+      if (/\/docs-(page|source)-\d+-/.test(name)) chunks.add(name);
+    });
+    await article.goto(`${origin}/developers/docs/bloom/${bloom!.latestVersion}/getting-started/`);
+    await article.locator('[data-docs-install]').first().waitFor();
+    const compiled = [...chunks].filter((name) => name.includes('/docs-page-'));
+    invariant(
+      compiled.length > 0 && compiled.length <= 4,
+      `one article loaded ${compiled.length} document chunks`,
+    );
+    invariant(
+      ![...chunks].some((name) => name.includes('/docs-source-')),
+      'Markdown sources loaded before copy was requested',
+    );
+    await article.getByRole('button', { name: 'More actions', exact: true }).click();
+    await article.getByRole('menuitem', { name: 'Copy as Markdown', exact: true }).click();
+    const source = readFileSync(
+      join(ROOT, 'src/content/_synced/bloom', bloom!.latestVersion, 'getting-started.mdx'),
+      'utf8',
+    )
+      .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n*/, '')
+      .trim();
+    await article.waitForFunction(
+      async (expected) => (await navigator.clipboard.readText()).endsWith(`${expected}\n`),
+      source,
+    );
+    invariant(
+      [...chunks].filter((name) => name.includes('/docs-source-')).length === 1,
+      'copy did not lazily fetch exactly one source chunk',
+    );
+  } finally {
+    await isolated.close();
+  }
+}
+
 async function assertCurrentSidebarLink(href: string): Promise<void> {
   const sidebar = page.locator('aside');
   await sidebar.locator(`a[href="${href}"][aria-current="page"]`).waitFor();
@@ -97,6 +142,7 @@ async function assertContained(selector: string): Promise<void> {
 }
 
 try {
+  await assertLazyMarkdownCopy();
   for (const path of [
     '/developers/docs/bloom/playground',
     '/developers/docs/bloom/playground/',

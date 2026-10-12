@@ -7,7 +7,13 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'BottomSheetProps': {
       props: [
+        { name: 'material', type: "'surface' | 'flat'", options: ['surface', 'flat'], optional: true, description: 'Standard optical surface, or the unmodified backing fill. Default surface.' },
+        { name: 'backdrop', type: 'BackdropAppearance', optional: true, description: 'Backdrop paint; the surface continues to own dismissal and layering.' },
+        { name: 'transition', type: 'SurfaceTransition', optional: true, description: 'Opt-in timing for panel and backdrop. Live reduced motion settles immediately.' },
         { name: 'children', type: 'React.ReactNode', optional: false },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Accessible name for the modal sheet panel on web.' },
+        { name: 'aria-labelledby', type: 'string', optional: true, description: 'IDs of the elements naming/describing the modal sheet panel on web.' },
+        { name: 'aria-describedby', type: 'string', optional: true },
         { name: 'open', type: 'boolean', optional: true, description: 'Controlled open state. When provided, the sheet mounts already-open if `true` (seeding its internal visible/rendered state) instead of relying on an imperative `present()` after mount. This is what makes a responsive `Dialog` survive a placement swap (centered card ↔ bottom sheet on resize): the freshly-mounted sheet is visible on its first commit, with no present()-in-effect race that would otherwise leave it blank. Omit for the purely imperative `present()`/`dismiss()` API.' },
         { name: 'onDismiss', type: '() => void', optional: true },
         { name: 'enablePanDownToClose', type: 'boolean', optional: true },

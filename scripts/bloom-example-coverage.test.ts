@@ -1,5 +1,6 @@
 import { test, expect } from 'bun:test';
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { bloomIndex } from '../src/content/bloom-catalog.generated';
 import { bloomReferenceSurfaces } from '../src/content/bloom-reference-surfaces';
 import { catalogPreviews } from '../src/components/bloom/catalogPreviews';
@@ -32,4 +33,18 @@ test('every published Bloom surface has a real example or an explicit integratio
       (subpath) => !bloomIndex.some((entry) => entry.subpath === subpath),
     ),
   ).toEqual([]);
+});
+
+test('Bloom examples, runtime and documentation use the same published release', () => {
+  const require = createRequire(import.meta.url);
+  const installed = JSON.parse(readFileSync(require.resolve('@oxy.so/bloom/package.json'), 'utf8'));
+  const website = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  const registry = JSON.parse(
+    readFileSync(new URL('../docs-registry.json', import.meta.url), 'utf8'),
+  );
+  const bloom = registry.repos.find((entry: { name: string }) => entry.name === 'Bloom');
+  expect(website.dependencies['@oxy.so/bloom']).toBe(installed.version);
+  expect(website.overrides['@oxy.so/bloom']).toBe(installed.version);
+  expect(bloom?.ref).toBe(`@oxy.so/bloom@${installed.version}`);
+  expect(bloom?.localPath).toBeUndefined();
 });

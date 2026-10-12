@@ -85,6 +85,7 @@ export const props: BloomSurfaceProps = {
     },
     'AiChatUserMessageProps': {
       props: [
+        { name: 'bubbleStyle', type: 'StyleProp<ViewStyle> | ((columnWidth: number) => StyleProp<ViewStyle>)', optional: true, description: 'Style the bubble itself; a callback receives its measured column width. The callback receives 0 before the initial layout.' },
         { name: 'children', type: 'ReactNode', optional: false, description: '`AiChatMessageLine`s — or a string, wrapped in one.' },
         { name: 'actions', type: 'ReadonlyArray<AiChatTurnAction>', optional: true, description: 'Buttons under the card, right-aligned — copy, edit. On a web pointer they fade in while the turn is hovered or holds focus; they stay in the tab order and the accessibility tree throughout, and on native (and touch web) they are always shown.' },
         { name: 'animate', type: 'boolean', optional: true, description: 'Skip the blur-in (a turn restored from history). Default `true`.' },

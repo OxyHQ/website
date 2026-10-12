@@ -24,6 +24,7 @@ const compilerRules = Object.fromEntries(
 export default defineConfig([
   globalIgnores([
     '**/dist/**',
+    '**/dist-ssr/**',
     '**/node_modules/**',
     '.worktrees/**',
     'src/content/_synced/**',
