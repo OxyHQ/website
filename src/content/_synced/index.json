@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-12T13:17:02.206Z",
+  "generatedAt": "2026-10-12T16:58:04.268Z",
   "packages": [
     {
       "package": "@oxy.so/bloom",
@@ -37835,6 +37835,14 @@
               "description": "Block domains or point them at another server on your own devices and router, with rules encrypted end to end so TNP never sees them.",
               "file": "tnp/main/dns-rules.mdx",
               "order": 4,
+              "section": "guides"
+            },
+            {
+              "slug": "vpn",
+              "title": "VPN (WireGuard)",
+              "description": "Use TNP's standard-tier VPN on an OpenWrt router, a phone or a computer with the official WireGuard apps — and what it does and does not protect.",
+              "file": "tnp/main/vpn.mdx",
+              "order": 5,
               "section": "guides"
             },
             {

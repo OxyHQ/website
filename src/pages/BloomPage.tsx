@@ -14,7 +14,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@oxy.so/bloom/accordion';
-import { AgentAvatar, DEFAULT_CONFIG } from '@oxy.so/bloom/agent-avatar';
 import {
   SegmentedControl,
   SegmentedControlItem,
@@ -42,7 +41,7 @@ import { Link } from '../lib/navigation';
 import { useTranslation } from '../lib/i18n';
 import { useCopyToClipboard } from '../lib/useCopyToClipboard';
 import { BLOOM_SEO } from '../content/bloom-landing';
-import { BLOOM_AGENT_PRESETS } from '../content/bloom-agent-presets';
+import AgentInterfaceSection from '../components/bloom/AgentInterfaceSection';
 import '../styles/bloom-landing.css';
 
 const DOCS = '/developers/docs/bloom/components/';
@@ -620,50 +619,7 @@ export default function BloomPage() {
             ))}
           </div>
         </section>
-        <section
-          id="multi-agent-chat"
-          className="mx-auto flex w-full max-w-[1276px] scroll-mt-20 flex-col items-center px-3 pt-40 pb-24 sm:px-6 sm:pt-48 sm:pb-32 xl:px-0"
-          aria-labelledby="bloom-agents"
-        >
-          <div className="flex w-full max-w-[640px] flex-col items-center text-center">
-            <Heading
-              id="bloom-agents"
-              title={text('agentsTitle')}
-              description={text('agentsDescription')}
-            />
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
-              <Action secondary asChild>
-                <Link to={`${DOCS}multi-agent-chat/`}>{text('docs')}</Link>
-              </Action>
-            </div>
-          </div>
-          <ul
-            data-bloom-agent-presets
-            aria-labelledby="bloom-agents"
-            className="mt-10 grid w-full grid-cols-3 gap-x-3 gap-y-6 sm:grid-cols-5 lg:grid-cols-9"
-          >
-            {BLOOM_AGENT_PRESETS.map((preset) => (
-              <li key={preset.name} className="flex min-w-0 flex-col items-center gap-2">
-                <AgentAvatar
-                  config={{ ...DEFAULT_CONFIG, character: preset.character }}
-                  size={96}
-                  paused={Boolean(reduce)}
-                  interactive={false}
-                  label={preset.name}
-                />
-                <span className="text-body-medium text-text-secondary">{preset.name}</span>
-              </li>
-            ))}
-          </ul>
-          <div
-            className="relative isolate mt-10 w-full [--preview-inset:6px] sm:[--preview-inset:8px]"
-            style={{ '--preview-radius': '31.45px' } as CSSProperties}
-          >
-            <div className="relative z-10 rounded-[calc(var(--preview-radius)+var(--preview-inset)+1px)] border border-border-button-default bg-background-secondary-default p-1.5 shadow-lg sm:p-2">
-              <BloomPreview name="multi-agent" />
-            </div>
-          </div>
-        </section>
+        <AgentInterfaceSection presentation="decorative" />
         <section
           className="mx-auto mt-36 flex w-full max-w-[1276px] flex-col items-center px-3 pb-16 sm:mt-56 sm:px-6 sm:pb-28 xl:px-0"
           aria-labelledby="bloom-loader"

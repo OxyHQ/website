@@ -3,7 +3,7 @@
     {
       "name": "Bloom",
       "git": "https://github.com/OxyHQ/Bloom.git",
-      "ref": "@oxy.so/bloom@8.1.0"
+      "ref": "@oxy.so/bloom@8.1.1"
     },
     {
       "name": "OxyHQServices",

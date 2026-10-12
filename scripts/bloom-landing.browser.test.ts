@@ -151,7 +151,7 @@ try {
   });
   const motionPage = await motionContext.newPage();
   observeRendering(motionPage);
-  await motionPage.goto(`${origin}/bloom/`);
+  await motionPage.goto(`${origin}/ai/`);
   await motionPage.locator('[data-bloom-agent-presets]').scrollIntoViewIfNeeded();
   // Cold custom geometry took 43.8s on a single CPU with bundled Chromium
   // SwiftShader. Allow preparation headroom; subsequent frame checks retain
@@ -398,68 +398,17 @@ try {
       'table search does not filter rows',
     );
     await search.fill('');
-    const presets = page.locator('[data-bloom-agent-presets]');
-    await presets.scrollIntoViewIfNeeded();
-    invariant((await presets.locator('li').count()) === 9, 'named preset lineup is incomplete');
-    await renderStage(page, `${mode} nine reduced-motion portraits painted`, () =>
-      page.waitForFunction(
-        () => {
-          const canvases = [
-            ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
-          ];
-          return (
-            canvases.length === 9 &&
-            canvases.every((canvas) => {
-              const pixels = canvas
-                .getContext('2d')
-                ?.getImageData(0, 0, canvas.width, canvas.height).data;
-              return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
-            })
-          );
-        },
-        undefined,
-        { timeout: COLD_RENDER_TIMEOUT },
-      ),
-    );
-    const paintedPresets = await presets.locator('li').evaluateAll((items) =>
-      items.map((item) => {
-        const canvas = item.querySelector('canvas')!;
-        const pixels = canvas
-          .getContext('2d')!
-          .getImageData(0, 0, canvas.width, canvas.height).data;
-        const rgb = [0, 0, 0];
-        let colored = 0;
-        for (let i = 0; i < pixels.length; i += 4) {
-          const color = [pixels[i], pixels[i + 1], pixels[i + 2]];
-          if (pixels[i + 3] < 128 || Math.max(...color) - Math.min(...color) < 32) continue;
-          colored++;
-          color.forEach((value, channel) => {
-            rgb[channel] += value;
-          });
-        }
-        return {
-          name: item.textContent?.trim(),
-          pixels: canvas.toDataURL(),
-          colored,
-          rgb: rgb.map((value) => value / Math.max(1, colored)),
-        };
-      }),
+    invariant(
+      (await page.locator('[data-bloom-agent-presets]').count()) === 0,
+      'Bloom must keep the original decoration layout, without the preset row',
     );
     invariant(
-      new Set(paintedPresets.map((preset) => preset.pixels)).size === 9,
-      'preset portraits repeat the same appearance',
+      (await page.locator('[data-agent-preset-marks] canvas').count()) === 4,
+      'Bloom lost its four heading avatars',
     );
-    for (const name of ['Todd', 'Iris', 'Felipe']) {
-      const preset = paintedPresets.find((item) => item.name === name)!;
-      invariant(
-        preset.colored > 100 && preset.rgb[0] > preset.rgb[1] && preset.rgb[0] > preset.rgb[2],
-        `${name} lost its chosen warm body color`,
-      );
-    }
-    const alfred = paintedPresets.find((item) => item.name === 'Alfred')!;
     invariant(
-      alfred.colored > 100 && alfred.rgb[1] > alfred.rgb[0] && alfred.rgb[2] > alfred.rgb[0],
-      'Alfred lost its chosen cyan body color',
+      (await page.locator('[data-agent-preset-decoration]').count()) === 2,
+      'Bloom lost its two workspace avatars',
     );
     await page.locator('[data-bloom-preview="multi-agent"]').scrollIntoViewIfNeeded();
     const chat = page.getByTestId('multi-agent-chat');
@@ -526,12 +475,6 @@ try {
       .getByLabel('Agent conversation', { exact: true })
       .getByText('Help me plan the release', { exact: true })
       .waitFor();
-    await presets.scrollIntoViewIfNeeded();
-    const portraitBounds = await presets.boundingBox();
-    invariant(
-      portraitBounds && portraitBounds.x >= 0 && portraitBounds.x + portraitBounds.width <= 390,
-      'preset lineup overflows mobile',
-    );
     await page.setViewportSize({ width: 1440, height: 1100 });
     await chat
       .getByLabel('Agent conversation', { exact: true })
@@ -624,6 +567,87 @@ try {
     invariant(
       !(await page.locator('main h1').innerText()).includes('React Design System'),
       'Spanish hero is not translated',
+    );
+    await assertNoOverflow(page);
+    await page.setViewportSize({ width: 1440, height: 1100 });
+    await page.goto(`${origin}/ai/`);
+    await assertNoOverflow(page);
+    const presets = page.locator('[data-bloom-agent-presets]');
+    await presets.scrollIntoViewIfNeeded();
+    invariant((await presets.locator('li').count()) === 9, 'named preset lineup is incomplete');
+    await renderStage(page, `${mode} nine reduced-motion portraits painted`, () =>
+      page.waitForFunction(
+        () => {
+          const canvases = [
+            ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+          ];
+          return (
+            canvases.length === 9 &&
+            canvases.every((canvas) => {
+              const pixels = canvas
+                .getContext('2d')
+                ?.getImageData(0, 0, canvas.width, canvas.height).data;
+              return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
+            })
+          );
+        },
+        undefined,
+        { timeout: COLD_RENDER_TIMEOUT },
+      ),
+    );
+    const paintedPresets = await presets.locator('li').evaluateAll((items) =>
+      items.map((item) => {
+        const canvas = item.querySelector('canvas')!;
+        const pixels = canvas
+          .getContext('2d')!
+          .getImageData(0, 0, canvas.width, canvas.height).data;
+        const rgb = [0, 0, 0];
+        let colored = 0;
+        for (let i = 0; i < pixels.length; i += 4) {
+          const color = [pixels[i], pixels[i + 1], pixels[i + 2]];
+          if (pixels[i + 3] < 128 || Math.max(...color) - Math.min(...color) < 32) continue;
+          colored++;
+          color.forEach((value, channel) => {
+            rgb[channel] += value;
+          });
+        }
+        return {
+          name: item.textContent?.trim(),
+          pixels: canvas.toDataURL(),
+          colored,
+          rgb: rgb.map((value) => value / Math.max(1, colored)),
+        };
+      }),
+    );
+    invariant(
+      new Set(paintedPresets.map((preset) => preset.pixels)).size === 9,
+      'preset portraits repeat the same appearance',
+    );
+    for (const name of ['Todd', 'Iris', 'Felipe']) {
+      const preset = paintedPresets.find((item) => item.name === name)!;
+      invariant(
+        preset.colored > 100 && preset.rgb[0] > preset.rgb[1] && preset.rgb[0] > preset.rgb[2],
+        `${name} lost its chosen warm body color`,
+      );
+    }
+    const alfred = paintedPresets.find((item) => item.name === 'Alfred')!;
+    invariant(
+      alfred.colored > 100 && alfred.rgb[1] > alfred.rgb[0] && alfred.rgb[2] > alfred.rgb[0],
+      'Alfred lost its chosen cyan body color',
+    );
+    const aiChat = page.getByTestId('multi-agent-chat');
+    await aiChat.scrollIntoViewIfNeeded();
+    await aiChat.getByRole('textbox', { name: 'Agent name', exact: true }).waitFor();
+    invariant(
+      (await page.locator('[data-agent-preset-decoration]').count()) === 0,
+      'AI must retain the preset showcase, without the Bloom decorations',
+    );
+    await page.setViewportSize({ width: 390, height: 844 });
+    await presets.scrollIntoViewIfNeeded();
+    const portraitBounds = await presets.boundingBox();
+    invariant(
+      portraitBounds && portraitBounds.x >= 0 && portraitBounds.x + portraitBounds.width <= 390,
+      'preset lineup overflows mobile',
     );
     await assertNoOverflow(page);
     invariant(errors.length === 0, `browser errors: ${errors.join('; ')}`);
