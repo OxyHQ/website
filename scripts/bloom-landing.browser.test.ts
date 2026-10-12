@@ -141,21 +141,28 @@ try {
   );
   await motionPage.goto(`${origin}/bloom/`);
   await motionPage.locator('[data-bloom-agent-presets]').scrollIntoViewIfNeeded();
+  // Cold custom geometry took 43.8s on a single CPU with bundled Chromium
+  // SwiftShader. Allow preparation headroom; subsequent frame checks retain
+  // Playwright's 30s bound and still require actual changed painted pixels.
   await motionStage(motionPage, 'nine normal-motion portraits painted', () =>
-    motionPage.waitForFunction(() => {
-      const canvases = [
-        ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
-      ];
-      return (
-        canvases.length === 9 &&
-        canvases.every((canvas) => {
-          const pixels = canvas
-            .getContext('2d')
-            ?.getImageData(0, 0, canvas.width, canvas.height).data;
-          return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
-        })
-      );
-    }),
+    motionPage.waitForFunction(
+      () => {
+        const canvases = [
+          ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+        ];
+        return (
+          canvases.length === 9 &&
+          canvases.every((canvas) => {
+            const pixels = canvas
+              .getContext('2d')
+              ?.getImageData(0, 0, canvas.width, canvas.height).data;
+            return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
+          })
+        );
+      },
+      undefined,
+      { timeout: 90_000 },
+    ),
   );
   // Observe multiple later presentations, so initial geometry repaint alone
   // cannot satisfy the animation check.
