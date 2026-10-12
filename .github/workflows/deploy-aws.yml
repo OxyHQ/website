@@ -26,7 +26,6 @@ env:
   ECR_REGISTRY: 237343248947.dkr.ecr.us-west-2.amazonaws.com
   APP: website-api
   CLUSTER: oxy-cluster
-  DOCKERFILE: Dockerfile
 
 jobs:
   deploy:
@@ -73,10 +72,28 @@ jobs:
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
 
+      # Production builds only what the owner reviewed. The Dockerfile, its
+      # context, target and both .dockerignore files are hashed and compared
+      # with the ONE pin in .github/scripts/reviewed-images.json; a mismatch
+      # stops here, before anything is built or pushed. The Dockerfile path,
+      # context and the label values below are this step's outputs, so the
+      # build cannot use a different file than the one checked, and no hash is
+      # spelled out in this workflow to drift from the pin. checks.yml runs the
+      # same check on every pull request and merge group (`reviewed-image.py
+      # check`, job `checks`), so a change that would stop here cannot merge.
+      - name: Refuse unreviewed image build inputs
+        id: reviewed
+        run: python3 -B .github/scripts/reviewed-image.py guard --recipe website-api
+
       # --provenance=false keeps what reaches ECR a single linux/arm64 image
       # manifest, the same shape `docker build` + `docker push` produced, rather
       # than an index carrying an attestation.
       - name: Build and push (linux/arm64)
+        env:
+          DOCKERFILE: ${{ steps.reviewed.outputs.dockerfile }}
+          CONTEXT: ${{ steps.reviewed.outputs.context }}
+          SOURCE_TREE: ${{ steps.reviewed.outputs.source_tree }}
+          BUILD_INPUTS_SHA256: ${{ steps.reviewed.outputs.build_inputs_sha256 }}
         run: |
           IMG=$ECR_REGISTRY/oxy/$APP
           docker buildx build \
@@ -85,10 +102,14 @@ jobs:
             --cache-from type=gha,scope=$APP \
             --cache-to type=gha,scope=$APP,mode=max,ignore-error=true \
             -f "$DOCKERFILE" \
+            --label "org.opencontainers.image.revision=$GITHUB_SHA" \
+            --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
+            --label "io.oxy.source.tree=$SOURCE_TREE" \
+            --label "io.oxy.build-inputs.sha256=$BUILD_INPUTS_SHA256" \
             -t "$IMG:${{ github.sha }}" \
             -t "$IMG:latest" \
             --push \
-            .
+            "$CONTEXT"
 
       # The check lives in `scripts/deploy-ecs.sh`, where it can be read and run
       # outside a workflow run — and where editing it does not re-open the

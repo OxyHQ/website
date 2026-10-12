@@ -3,13 +3,11 @@
   "recipes": [
     {
       "name": "website-api",
-      "services": ["website-api"],
       "ecrRepository": "oxy/website-api",
       "dockerfile": "Dockerfile",
-      "dockerfileSha256": "ed6b14b0f98eb41e4d8cd26f840b585f1d36b8b77b1eafd360fbea18a5528a5d",
+      "context": ".",
       "target": null,
-      "tagSuffix": "",
-      "cacheScope": "website-api"
+      "buildInputsSha256": "2973865cd335d23b13d54462e15815e62da75e9a4f4af58d0f33625b3da5a90b"
     }
   ]
 }

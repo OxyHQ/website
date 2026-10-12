@@ -5,5 +5,9 @@
 .github
 .vscode
 *.log
-.env
-.env.*
+# Secrets: any .env at any depth (the server reads its config from the task's
+# environment, and nothing in the image needs .env.example).
+**/.env
+**/.env.*
+# Local git worktrees: full checkouts, each with its own untracked files.
+.worktrees
