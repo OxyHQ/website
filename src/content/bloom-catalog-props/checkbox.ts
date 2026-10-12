@@ -11,6 +11,7 @@ export const props: BloomSurfaceProps = {
         { name: 'defaultChecked', type: 'boolean', optional: true },
         { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: true, description: 'Called when the checked state changes.' },
         { name: 'label', type: 'string', optional: true, description: 'Optional label text.' },
+        { name: 'labelContent', type: 'ReactNode', optional: true, description: 'Decorative label layout, rendered in a View instead of Text. Supply `label` or `accessibilityLabel` for its accessible name. Do not nest controls.' },
         { name: 'description', type: 'string', optional: true, description: 'Optional description shown below the label.' },
         { name: 'size', type: 'CheckboxSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Size preset.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Whether the checkbox is disabled.' },

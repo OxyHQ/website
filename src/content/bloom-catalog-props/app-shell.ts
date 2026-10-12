@@ -124,6 +124,7 @@ export const props: BloomSurfaceProps = {
         { name: 'detailErrorBoundary', type: 'false | PanelErrorBoundaryOptions', optional: true },
         { name: 'infoErrorBoundary', type: 'false | PanelErrorBoundaryOptions', optional: true },
         { name: 'variant', type: "'joined' | 'separated'", options: ['joined', 'separated'], optional: true, description: 'Joined uses hairline dividers (default); separated leaves a 12px gutter for independent panel surfaces.' },
+        { name: 'transition', type: "'none' | 'slide'", options: ['none', 'slide'], optional: true, description: 'Animate list/detail visibility using live layout geometry. Defaults to none. Showing both panes reveals detail beside a shrinking list; hiding the list slides between full-width panes. Exiting content remains mounted until the expansion motion settles, but is immediately inactive/inaccessible. Info visibility is unchanged. Respects the system reduced-motion setting.' },
         { name: 'list', type: 'ReactNode', optional: true },
         { name: 'detail', type: 'ReactNode', optional: true },
         { name: 'info', type: 'ReactNode', optional: true },

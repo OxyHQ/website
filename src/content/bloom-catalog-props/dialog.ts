@@ -7,6 +7,9 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'DialogProps': {
       props: [
+        { name: 'material', type: "'surface' | 'flat'", options: ['surface', 'flat'], optional: true, description: 'Standard optical surface, or a plain fill without refraction/sheen. Default surface.' },
+        { name: 'backdrop', type: 'BackdropAppearance', optional: true, description: 'Backdrop paint; the surface continues to own dismissal and layering.' },
+        { name: 'transition', type: 'SurfaceTransition', optional: true, description: 'Opt-in timing for panel and backdrop. Live reduced motion settles immediately.' },
         { name: 'presentation', type: "'default' | 'custom'", options: ['default', 'custom'], optional: true, description: 'Content owns paint and motion; shared overlay, focus and dismissal remain.' },
         { name: 'exitDuration', type: 'number', optional: true, description: 'Custom presentation exit lifetime, in milliseconds.' },
         { name: 'control', type: 'DialogControlProps', optional: true, description: 'Imperative open/close handle from `useDialogControl()`. Optional — omit it when driving the dialog with the controlled `open` prop instead.' },
@@ -18,6 +21,7 @@ export const props: BloomSurfaceProps = {
         { name: 'actions', type: 'DialogAction[]', optional: true, description: 'Optional action row. When provided, bloom renders the appropriate confirm/cancel/destructive buttons for you. Order is preserved.' },
         { name: 'placement', type: 'ResponsiveDialogPlacement', optional: true, description: "Surface anchor. Defaults to `'center'` (the centered modal — current behavior). `'left'`/`'right'` render an anchored side-sheet on that physical edge; `'start'`/`'end'` on the logical edge (mirrored, with its slide-in, in a right-to-left layout); `'bottom'` a bottom-sheet. A responsive map resolves by viewport width, e.g. `{ base: 'bottom', md: 'left' }` (drawer on wide, sheet on narrow)." },
         { name: 'width', type: 'number', optional: true, description: 'Side-sheet width (px) on wide screens. Defaults to `460`.' },
+        { name: 'minSideGutter', type: 'number', optional: true, description: 'Minimum space beyond a side sheet and its insets. Defaults to 24; zero permits full viewport width.' },
         { name: 'maxWidth', type: 'number', optional: true, description: 'Centered-card max width (px). Defaults to `480`.' },
         { name: 'maxHeightRatio', type: 'number', optional: true, description: 'Bottom-sheet max height as a fraction of the viewport height. Defaults to `0.9`.' },
         { name: 'inset', type: 'DialogInset', optional: true, description: "Side-sheet inset (px) from the root overlay's edges." },

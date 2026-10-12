@@ -7,6 +7,10 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'ZoomableMediaGalleryProps': {
       props: [
+        { name: 'appearance', type: "'overlay' | 'page'", options: ['overlay', 'page'], optional: true, description: 'Existing dimmed overlay (default), or an opaque page using the current theme.' },
+        { name: 'onIndexChange', type: '(index: number) => void', optional: true, description: 'Zero-based media index, emitted on opening and once per actual page change.' },
+        { name: 'onOpenChange', type: '(open: boolean) => void', optional: true, description: 'Reports an accepted opening and completion of the closing transition. Also reports false if an open viewer unmounts. No initial false event. Use this to coordinate consumer-owned video players with inline views.' },
+        { name: 'renderVideoOverlay', type: '(media: GalleryVideo) => ReactNode', optional: true, description: "Consumer-owned status/actions over the active video, within its fitted box. Rendered outside the viewer's dismiss gestures so interactive children work normally. Called with current props; never called for images or while closed. Return null when no status UI is needed. Bloom retains no player ownership." },
         { name: 'labels', type: 'Partial<ZoomableMediaGalleryLabels>', optional: true, description: "Overrides any of the viewer's names." },
         { name: 'measureThumb', type: 'MeasureThumb', optional: true, description: 'Measures any thumbnail by its media subset index, used on dismiss.' },
         { name: 'cornerRadius', type: "number | 'circle'", optional: true, description: "Corner radius applied to the zoomed media. `'circle'` rounds each item to a full circle at whatever size it is fitted to — what an avatar needs, and the reason avatars don't need their own viewer." },

@@ -14,6 +14,8 @@ export const props: BloomSurfaceProps = {
         { name: 'newLabel', type: 'string', optional: true, description: 'Drawn (and announced) when there is no rating yet (`"New"` in English).' },
         { name: 'size', type: 'RatingSize', options: ['small', 'medium'], optional: true, description: 'Default `medium`.' },
         { name: 'variant', type: 'RatingVariant', options: ['compact', 'stars'], optional: true, description: 'Default `compact` — one star. `stars` draws a row of five, filled fractionally.' },
+        { name: 'showValue', type: 'boolean', optional: true, description: 'Hide the visible numeric value while retaining its accessible name. Default true.' },
+        { name: 'starSize', type: 'number', optional: true, description: 'Star dimensions, independent of the label type size. Defaults to the size scale.' },
         { name: 'color', type: 'string', optional: true, description: 'Paints the star(s) and the value — and the count, unless `countColor` is given — e.g. white over a brand-coloured hero, where text-primary and text-secondary are illegible. Default: text-primary (count text-secondary).' },
         { name: 'starColor', type: 'string', optional: true, description: 'The filled star(s) alone, e.g. a gold star beside neutral text. Default `color`.' },
         { name: 'countColor', type: 'string', optional: true, description: 'The count alone. Default `color` when given, else text-secondary.' },
@@ -26,6 +28,12 @@ export const props: BloomSurfaceProps = {
     },
     'RatingBarProps': {
       props: [
+        { name: 'reveal', type: 'MeterReveal', optional: true, description: 'Forwarded to Meter; never changes the accessible measurement.' },
+        { name: 'className', type: 'string', optional: true },
+        { name: 'labelClassName', type: 'string', optional: true },
+        { name: 'displayClassName', type: 'string', optional: true },
+        { name: 'trackClassName', type: 'string', optional: true, description: 'Classes on the underlying Meter track (geometry and paint).' },
+        { name: 'fillClassName', type: 'string', optional: true, description: 'Classes on the underlying Meter fill; its measured fraction stays data-owned.' },
         { name: 'label', type: 'string', optional: false, description: 'What the row measures ("Cleanliness", "5 stars"). Also the bar\'s accessible name.' },
         { name: 'value', type: 'number', optional: false, description: 'Position on the scale, `0..max`; clamped.' },
         { name: 'max', type: 'number', optional: true, description: 'The scale. Default `5`; pass `1` for a fraction.' },

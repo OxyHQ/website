@@ -203,40 +203,39 @@ interface FetchResult {
 }
 
 async function verifyPublicRepo(repo: TrackedRepo): Promise<boolean> {
-  const url = `https://api.github.com/repos/${repo.owner}/${repo.name}`;
-  const headers: Record<string, string> = {
-    'User-Agent': 'oxy-website-changelog',
-    Accept: 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28',
-  };
-
-  const res = await fetch(url, { headers });
-
-  if (res.status === 404) {
+  // Anonymous smart-HTTP discovery proves public Git read access without
+  // spending GitHub's separate, shared anonymous REST API quota.
+  // https://git-scm.com/docs/http-protocol#_smart_clients
+  const url = `https://github.com/${repo.owner}/${repo.name}.git/info/refs?service=git-upload-pack`;
+  const res = await fetch(url, {
+    credentials: 'omit',
+    redirect: 'error',
+    headers: {
+      'User-Agent': 'oxy-website-changelog',
+      Accept: 'application/x-git-upload-pack-advertisement',
+    },
+  });
+  if (res.status === 401 || res.status === 404) {
     console.warn(
-      `[sync-changelog] ${repo.owner}/${repo.name}: repo is not publicly visible (404), skipping`,
+      `[sync-changelog] ${repo.owner}/${repo.name}: repo is not publicly readable (${res.status}), skipping`,
     );
     return false;
   }
-
-  if (!res.ok) {
+  if (res.status !== 200) {
     throw new Error(
       `[sync-changelog] ${repo.owner}/${repo.name}: unable to verify public visibility (HTTP ${res.status})`,
     );
   }
-
-  const raw: unknown = await res.json();
-  if (!raw || typeof raw !== 'object' || !('private' in raw) || typeof raw.private !== 'boolean') {
+  const type = res.headers.get('content-type')?.split(';')[0].trim();
+  const advertisement = await res.text();
+  if (
+    type !== 'application/x-git-upload-pack-advertisement' ||
+    !advertisement.startsWith('001e# service=git-upload-pack\n0000')
+  ) {
     throw new Error(
-      `[sync-changelog] ${repo.owner}/${repo.name}: invalid repository visibility response`,
+      `[sync-changelog] ${repo.owner}/${repo.name}: invalid anonymous Git advertisement`,
     );
   }
-
-  if (raw.private) {
-    console.warn(`[sync-changelog] ${repo.owner}/${repo.name}: repo is private, skipping`);
-    return false;
-  }
-
   return true;
 }
 
@@ -310,6 +309,7 @@ async function main(): Promise<void> {
 
   const allEntries: ChangelogEntryStatic[] = [];
   let cachedCount = 0;
+  const failures: string[] = [];
 
   for (const repo of repos) {
     try {
@@ -323,7 +323,14 @@ async function main(): Promise<void> {
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       console.error(`[sync-changelog] ${repo.owner}/${repo.name}: ${msg}`);
+      failures.push(`${repo.owner}/${repo.name}: ${msg}`);
     }
+  }
+
+  if (failures.length) {
+    throw new Error(
+      `[sync-changelog] Preserving the previous index: ${failures.length} repository sync(s) failed.\n${failures.join('\n')}`,
+    );
   }
 
   allEntries.sort((a, b) => {

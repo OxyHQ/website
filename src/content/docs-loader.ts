@@ -1,15 +1,10 @@
+/// <reference path="./docs-chunks.d.ts" />
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
 import indexJson from './_synced/index.json';
+import { fileBuckets, pageChunks, sourceChunks } from 'virtual:docs-chunks';
 import type { SyncedIndex, SyncedPackage, SyncedPage, SyncedVersion } from '../../scripts/types';
 
 const index = indexJson as SyncedIndex;
-
-// Vite glob: eager so package landing pages can show whatever exists, lazy so
-// big leaf pages don't bloat the initial chunk. We get both: an eager
-// metadata map (for sidebars) and a lazy module loader (for rendering).
-const lazyMdx = import.meta.glob<{ default: ComponentType<Record<string, unknown>> }>(
-  './_synced/**/*.{mdx,md}',
-);
 
 // Pre-bound `React.lazy` components, keyed by the MDX file's relative path
 // (matching the `file` field on `SyncedPage`). Building the lazy wrappers at
@@ -19,23 +14,29 @@ const lazyComponents = new Map<
   string,
   LazyExoticComponent<ComponentType<Record<string, unknown>>>
 >();
-for (const key of Object.keys(lazyMdx)) {
-  const loader = lazyMdx[key];
-  if (!loader) continue;
-  // Strip the `./_synced/` prefix to match `SyncedPage.file`.
-  const file = key.replace(/^\.\/_synced\//, '');
-  lazyComponents.set(file, lazy(loader));
+for (const [file, bucket] of Object.entries(fileBuckets)) {
+  lazyComponents.set(
+    file,
+    lazy(async () => {
+      const chunk = await pageChunks[bucket]();
+      const Component = chunk.default[file];
+      if (!Component) throw new Error(`Documentation page missing from its chunk: ${file}`);
+      return { default: Component };
+    }),
+  );
 }
 
-// The same files as raw text, for "Copy as Markdown". Lazy, so each source is
-// its own chunk and is only fetched when someone asks for it.
-const rawMdx = import.meta.glob<string>('./_synced/**/*.{mdx,md}', {
-  query: '?raw',
-  import: 'default',
-});
+// The same files as raw text, for "Copy as Markdown". Lazy imports are grouped
+// into bounded build chunks and fetched only when someone asks for a source.
 const rawSources = new Map<string, () => Promise<string>>();
-for (const [key, loader] of Object.entries(rawMdx)) {
-  rawSources.set(key.replace(/^\.\/_synced\//, ''), loader);
+for (const [file, bucket] of Object.entries(fileBuckets)) {
+  rawSources.set(file, async () => {
+    const chunk = await sourceChunks[bucket]();
+    const source = chunk.default[file];
+    if (typeof source !== 'string')
+      throw new Error(`Documentation source missing from its chunk: ${file}`);
+    return source;
+  });
 }
 
 /** The page's source text, keyed like `SyncedPage.file`; undefined when there is none. */

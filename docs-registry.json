@@ -2,9 +2,8 @@
   "repos": [
     {
       "name": "Bloom",
-      "localPath": "/home/nate/Oxy/Bloom",
       "git": "https://github.com/OxyHQ/Bloom.git",
-      "ref": "main"
+      "ref": "@oxy.so/bloom@8.1.0"
     },
     {
       "name": "OxyHQServices",

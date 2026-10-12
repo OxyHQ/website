@@ -7,6 +7,8 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'TextFieldProps': {
       props: [
+        { name: 'className', type: 'string', optional: true, description: 'Classes on the layout host: width, height and padding.' },
+        { name: 'chromeClassName', type: 'string', optional: true, description: 'Classes on the inset surface: background, border/ring and radius. State paint remains authoritative.' },
         { name: 'invalid', type: 'boolean', optional: true },
         { name: 'isInvalid', type: 'boolean', optional: true },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Paint the whole field disabled: the dimmed fill, no ring, dimmed adornments, and a non-editable input. An input with `disabled` or `editable={false}` reports the same state up on its own.' },
@@ -56,7 +58,8 @@ export const props: BloomSurfaceProps = {
     },
     'TextFieldIconProps': {
       props: [
-        { name: 'icon', type: 'React.ComponentType<SVGIconProps>', optional: false, description: 'A Bloom icon component, drawn at 20px.' },
+        { name: 'icon', type: 'React.ComponentType<SVGIconProps>', optional: false, description: 'A Bloom icon component.' },
+        { name: 'size', type: 'number', optional: true, description: 'Icon edge in pixels. Default 20.' },
         { name: 'position', type: "'leading' | 'trailing'", options: ['leading', 'trailing'], optional: true, description: '`leading` (default) sits 2px before the input; `trailing` 8px after it.' },
       ],
     },

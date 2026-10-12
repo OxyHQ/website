@@ -43,6 +43,10 @@ export const props: BloomSurfaceProps = {
     },
     'FollowButtonProps': {
       props: [
+        { name: 'appearance', type: "ButtonProps['appearance']", options: ['solid', 'subtle', 'outline', 'plain'], optional: true, description: 'Shared Button surface; defaults to subtle.' },
+        { name: 'material', type: "ButtonProps['material']", options: ['surface', 'flat'], optional: true, description: 'Shared Button material; preserves the standard surface by default.' },
+        { name: 'className', type: 'string', optional: true, description: 'Classes on the Button layout and surface owner.' },
+        { name: 'labelClassName', type: 'string', optional: true, description: 'Typography classes on both animated labels and their measuring copies. Text mode only; explicit color/textStyle still take precedence.' },
         { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true, description: 'Shared Button tone. Defaults to support (secondary).' },
         { name: 'iconOnly', type: 'boolean', optional: true, description: 'Compact toggle with icons and the same accessible name.' },
         { name: 'following', type: 'boolean', optional: false },

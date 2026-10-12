@@ -7,6 +7,9 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'ChatComposerProps': {
       props: [
+        { name: 'barStyle', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style the input bar itself; outer `style` includes suggestions and banners.' },
+        { name: 'inputStyle', type: 'StyleProp<TextStyle>', optional: true, description: 'Typography and other text styles on the editable field.' },
+        { name: 'sendIcon', type: 'ChatComposerIcon', optional: true, description: 'Send control glyph. Defaults to the paper plane.' },
         { name: 'value', type: 'string', optional: true, description: 'The draft. Works controlled or uncontrolled.' },
         { name: 'defaultValue', type: 'string', optional: true },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
@@ -26,7 +29,7 @@ export const props: BloomSurfaceProps = {
         { name: 'emojiSlot', type: 'ReactNode', optional: true, description: 'Replaces the default emoji button — e.g. an `EmojiPicker` in a popover.' },
         { name: 'onEmojiPress', type: '() => void', optional: true },
         { name: 'onCameraPress', type: '() => void', optional: true, description: 'Draws a camera button between the field and the emoji button.' },
-        { name: 'onMicPress', type: '() => void', optional: true, description: 'The mic, shown whenever the draft is empty and there are no attachments.' },
+        { name: 'onMicPress', type: '() => void', optional: true, description: 'The mic, shown for an empty draft only when a mic callback is provided. Without recording callbacks, the empty composer shows a disabled send button.' },
         { name: 'onMicPressIn', type: '() => void', optional: true, description: 'Press-and-hold on the mic (native). Both fire on web too.' },
         { name: 'onMicPressOut', type: '() => void', optional: true },
         { name: 'canSend', type: 'boolean', optional: true, description: 'Forces the send button even with an empty draft — an app that lets a bare attachment or a sticker be sent.' },

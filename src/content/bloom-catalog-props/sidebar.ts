@@ -16,6 +16,9 @@ export const props: BloomSurfaceProps = {
         { name: 'footer', type: 'ReactNode | ((state: { collapsed: boolean; }) => ReactNode)', optional: true, description: 'Additional persistent bottom content, outside destination scrolling. Receives the rendered state: true in a rail, false in a mobile panel. Existing account/theme/team controls remain; omit account when supplying your own account footer.' },
         { name: 'primaryAction', type: '{ label: string; icon: SidebarIcon; onPress: () => void; disabled?: boolean; }', optional: true, description: 'Persistent primary action below destinations. Its label collapses to a named icon button.' },
         { name: 'variant', type: 'SidebarVariant', options: ['panel', 'rail'], optional: true, description: 'Defaults to `panel`.' },
+        { name: 'railLabels', type: "'visible' | 'hidden'", options: ['visible', 'hidden'], optional: true, description: 'Rail captions; hidden retains accessible names and native browser tooltips.' },
+        { name: 'railSelection', type: "'pill' | 'icon'", options: ['pill', 'icon'], optional: true, description: 'Rail selection uses an accent pill by default, or only an emphasized icon.' },
+        { name: 'railWidth', type: 'number', optional: true, description: 'Rail width, owned by the navigation layout. Default 80, minimum 64.' },
         { name: 'items', type: 'SidebarNavItem[]', optional: true, description: 'Primary navigation rows.' },
         { name: 'modes', type: 'ReadonlyArray<SidebarMode>', optional: true, description: 'A mode switcher under the header (Search / Computer): a vertical segmented control of icon + label rows. Rendered when given; see `SidebarModeSwitcher`.' },
         { name: 'mode', type: 'string', optional: true, description: 'Key of the selected mode.' },
@@ -129,6 +132,8 @@ export const props: BloomSurfaceProps = {
     },
     'SidebarRailItemProps': {
       props: [
+        { name: 'labelVisibility', type: "'visible' | 'hidden'", options: ['visible', 'hidden'], optional: true, description: 'Keep the accessible name while hiding the visual caption. Default visible.' },
+        { name: 'selectedAppearance', type: "'pill' | 'icon'", options: ['pill', 'icon'], optional: true, description: 'Selected pill, or emphasis on the glyph alone. Default pill.' },
         { name: 'icon', type: 'SidebarIcon', optional: false },
         { name: 'activeIcon', type: 'SidebarIcon', optional: true, description: 'The glyph while selected (e.g. the filled icon); defaults to `icon`.' },
         { name: 'label', type: 'string', optional: false },

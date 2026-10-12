@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'PageFooterProps': {
       props: [
+        { name: 'position', type: "'absolute' | 'document'", options: ['absolute', 'document'], optional: true, description: "Absolute inside a bounded frame (default), or pinned to the document viewport while aligned to this footer's in-flow column on web. Native always uses absolute positioning inside its bounded frame." },
         { name: 'children', type: 'ReactNode', optional: true, description: 'Optional content before the actions, for example a selection summary.' },
         { name: 'actions', type: 'ReactNode', optional: true, description: 'Controls grouped by the caller; inherits the surrounding Bloom size.' },
         { name: 'bottomInset', type: 'number', optional: true, description: "Distance from the containing frame's bottom. Defaults to the occupied bottom edge (for example AppShell's measured bottom bar). Pass 0 when the frame already ends above navigation, or the footer is in a desktop pane." },

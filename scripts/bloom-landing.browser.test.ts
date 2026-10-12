@@ -59,7 +59,7 @@ try {
   }
   for (const [file, mime] of [
     ['runtime.mjs', 'text/javascript'],
-    ['orbit-characters.wasm', 'application/wasm'],
+    ['manifest.json', 'application/json'],
   ] as const) {
     const response = await fetch(`${origin}${BLOOM_CHARACTER_BASE}${file}`, { method: 'HEAD' });
     invariant(
@@ -67,6 +67,25 @@ try {
       `Bloom runtime asset is missing or served with the wrong MIME type: ${file}`,
     );
   }
+  const manifestResponse = await fetch(`${origin}${BLOOM_CHARACTER_BASE}manifest.json`);
+  const manifest = (await manifestResponse.json()) as { files: Record<string, string> };
+  invariant(
+    Object.keys(manifest.files).some(
+      (file) => file.startsWith('assets/') && file.endsWith('.bin'),
+    ) && !Object.keys(manifest.files).some((file) => /\.(wasm|data)$/.test(file)),
+    'Bloom must ship the new geometry assets without the retired runtime',
+  );
+  const geometryFile = Object.keys(manifest.files).find((file) => file.endsWith('.bin'));
+  invariant(geometryFile, 'Bloom geometry manifest is empty');
+  const geometryHead = await fetch(`${origin}${BLOOM_CHARACTER_BASE}${geometryFile}`, {
+    method: 'HEAD',
+  });
+  invariant(
+    geometryHead.ok &&
+      geometryHead.headers.get('content-type')?.includes('application/octet-stream'),
+    'Bloom geometry is served with the wrong MIME type',
+  );
+
   for (const mode of ['light', 'dark'] as const) {
     const context = await browser.newContext({
       viewport: { width: 1440, height: 1100 },
@@ -282,6 +301,23 @@ try {
       .evaluate((node) =>
         node.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
       );
+    const avatarPreview = chat.getByRole('img', {
+      name: 'Launch planner, live avatar preview',
+      exact: true,
+    });
+    const previewCanvas = avatarPreview.locator('canvas');
+    await previewCanvas.waitFor();
+    await page.waitForFunction(
+      (canvas) => {
+        const node = canvas as HTMLCanvasElement;
+        const context = node.getContext('2d');
+        if (!context || !node.width || !node.height) return false;
+        const pixels = context.getImageData(0, 0, node.width, node.height).data;
+        for (let i = 3; i < pixels.length; i += 4) if (pixels[i] > 20) return true;
+        return false;
+      },
+      await previewCanvas.elementHandle(),
+    );
     await chat.getByRole('button', { name: 'Sparkle capsules', exact: true }).click();
     invariant(
       (await chat

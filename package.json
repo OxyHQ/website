@@ -9,7 +9,7 @@
     "predev": "bun scripts/sync-ai-catalog.ts && bun scripts/generate-theme-css.ts && bun scripts/generate-bloom-catalog.ts && bun scripts/generate-bloom-live-scope.ts && bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts",
     "dev": "bun server/index.ts & vite",
     "dev:client": "vite",
-    "prebuild": "bun scripts/sync-ai-catalog.ts && bun scripts/generate-theme-css.ts && bun run test:theme && bun run test:links && bun test scripts/prerender-fetch.test.ts scripts/transparency.test.ts scripts/seo-contract.test.ts scripts/sitemap.test.ts scripts/mdx-literal-tags.test.ts scripts/mcp-docs.test.ts scripts/bloom-example-coverage.test.ts && bun test scripts/kaana-brand.test.ts && bun run test:ai && bun scripts/generate-bloom-catalog.ts && bun scripts/generate-bloom-live-scope.ts && bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts && bun scripts/build-help-og-images.ts && rm -rf node_modules/.tmp",
+    "prebuild": "bun scripts/sync-ai-catalog.ts && bun scripts/generate-theme-css.ts && bun run test:theme && bun run test:links && bun test scripts/sync-changelog.test.ts scripts/deployment-file-budget.test.ts scripts/prerender-fetch.test.ts scripts/transparency.test.ts scripts/seo-contract.test.ts scripts/sitemap.test.ts scripts/mdx-literal-tags.test.ts scripts/mcp-docs.test.ts scripts/bloom-example-coverage.test.ts && bun test scripts/kaana-brand.test.ts && bun run test:ai && bun scripts/generate-bloom-catalog.ts && bun scripts/generate-bloom-live-scope.ts && bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts && bun scripts/build-help-og-images.ts && rm -rf node_modules/.tmp",
     "build": "tsc -b && vite build",
     "postbuild": "bun scripts/build-docs-search-index.ts && NODE_ENV=production bun scripts/prerender.ts && bun scripts/build-csp-headers.ts && bun run test:ai:dist && bun run test:routing && bun run test:link-audit && bun scripts/run-pagefind.ts && bun run test:theme:browser && bun run test:docs:browser && bun run test:bloom-demos:browser && bun run test:bloom-landing:browser && bun run test:transparency:browser && bun run test:help:browser && bun run test:store:browser",
     "prerender": "NODE_ENV=production bun scripts/prerender.ts",
@@ -22,7 +22,7 @@
     "test:transparency:browser": "bun scripts/transparency.browser.test.ts",
     "test:theme": "bun test scripts/theme-contract.test.ts",
     "test:theme:browser": "bun scripts/theme-prepaint.browser.test.ts",
-    "test:docs:browser": "bun scripts/docs-special-routes.browser.test.ts",
+    "test:docs:browser": "bun scripts/docs-chunks.browser.test.ts && bun scripts/docs-special-routes.browser.test.ts",
     "test:one:browser": "bun test scripts/one-pricing.test.ts scripts/pricing-seats.test.ts && bun scripts/one-catalogue.browser.test.ts",
     "test:bloom-demos:browser": "bun scripts/bloom-demos.browser.test.ts",
     "validate:bloom-catalog": "bun ./scripts/validate-bloom-catalog.ts && bun ./scripts/test-validate-bloom-catalog.ts",
@@ -69,7 +69,7 @@
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
     "@mercaria.co/sdk": "~0.2.0",
-    "@oxy.so/bloom": "7.7.1",
+    "@oxy.so/bloom": "8.1.0",
     "@oxy.so/contracts": "4.11.0-oxy-one.0",
     "@oxy.so/core": "4.5.0-oxy-one.0",
     "@oxy.so/mcp": "1.1.0",
@@ -167,7 +167,7 @@
     "@oxy.so/core": "4.5.0-oxy-one.0",
     "@oxy.so/services": "11.2.0-oxy-one.0",
     "@oxy.so/mcp": "1.1.0",
-    "@oxy.so/bloom": "7.7.1",
+    "@oxy.so/bloom": "8.1.0",
     "@oxy.so/telemetry": "1.2.0"
   }
 }

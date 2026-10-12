@@ -14,6 +14,7 @@ import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 import rehypeSlug from 'rehype-slug';
 import mdxHeadings from './scripts/vite-mdx-headings';
 import bloomCharacterAssets from './scripts/vite-bloom-character-assets';
+import docsChunks from './scripts/vite-docs-chunks';
 import oxyosReleasesFeed from './scripts/vite-oxyos-releases-feed';
 import reactNativeWeb from 'vite-plugin-react-native-web';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -95,6 +96,7 @@ function mdxExceptRaw(options: Parameters<typeof mdx>[0]): Plugin {
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
+    docsChunks(),
     bloomCharacterAssets(),
     oxyosReleasesFeed(),
     reactNativeWeb(),
