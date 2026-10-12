@@ -200,6 +200,10 @@ try {
       viewport: { width: 1440, height: 1100 },
       reducedMotion: 'reduce',
     });
+    // Cold avatar work also holds up unrelated locator operations (including
+    // scrolling out of the editor) on CI's software GPU. This walkthrough
+    // checks functionality; the separate motion context retains its 30s bound.
+    context.setDefaultTimeout(COLD_RENDER_TIMEOUT);
     await context.addInitScript((mode) => localStorage.setItem('theme', mode), mode);
     const page = await context.newPage();
     observeRendering(page);
