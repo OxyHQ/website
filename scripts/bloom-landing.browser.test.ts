@@ -1,4 +1,4 @@
-import { mkdirSync, readdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, relative } from 'node:path';
 import { chromium, type Page } from 'playwright';
@@ -22,6 +22,44 @@ const browser = await chromium.launch({
 });
 function invariant(value: unknown, message: string): asserts value {
   if (!value) throw new Error(message);
+}
+
+const motionMessages: string[] = [];
+async function motionStage(page: Page, name: string, check: () => Promise<unknown>) {
+  const started = performance.now();
+  console.log(`[bloom-landing] ${name}`);
+  try {
+    await check();
+    console.log(`[bloom-landing] ${name} passed in ${Math.round(performance.now() - started)}ms`);
+  } catch (error) {
+    const diagnostics = await page.evaluate(() => ({
+      url: location.href,
+      viewport: [innerWidth, innerHeight],
+      scroll: [scrollX, scrollY],
+      reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+      presets: [...document.querySelectorAll('[data-bloom-agent-presets] li')].map((item) => {
+        const canvas = item.querySelector('canvas');
+        const pixels = canvas
+          ?.getContext('2d')
+          ?.getImageData(0, 0, canvas.width, canvas.height).data;
+        return {
+          name: item.textContent,
+          bounds: item.getBoundingClientRect().toJSON(),
+          canvas: canvas ? [canvas.width, canvas.height] : null,
+          painted: pixels?.some((value, index) => index % 4 === 3 && value > 20) ?? false,
+        };
+      }),
+    }));
+    const destination = join(ROOT, 'review-artifacts');
+    mkdirSync(destination, { recursive: true });
+    writeFileSync(
+      join(destination, 'bloom-landing-failure.json'),
+      JSON.stringify({ name, diagnostics, messages: motionMessages }, null, 2),
+    );
+    console.error(`[bloom-landing] ${name} failed`, JSON.stringify(diagnostics), motionMessages);
+    await page.screenshot({ path: join(destination, 'bloom-landing-failure.png') });
+    throw new Error(`Bloom landing ${name} failed`, { cause: error });
+  }
 }
 
 async function assertNoOverflow(page: Page) {
@@ -93,22 +131,32 @@ try {
     reducedMotion: 'no-preference',
   });
   const motionPage = await motionContext.newPage();
+  motionPage.on('pageerror', (error) => motionMessages.push(error.message));
+  motionPage.on('console', (message) => {
+    if (message.type() === 'warning' || message.type() === 'error')
+      motionMessages.push(message.text());
+  });
+  motionPage.on('requestfailed', (request) =>
+    motionMessages.push(`${request.url()}: ${request.failure()?.errorText}`),
+  );
   await motionPage.goto(`${origin}/bloom/`);
   await motionPage.locator('[data-bloom-agent-presets]').scrollIntoViewIfNeeded();
-  await motionPage.waitForFunction(() => {
-    const canvases = [
-      ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
-    ];
-    return (
-      canvases.length === 9 &&
-      canvases.every((canvas) => {
-        const pixels = canvas
-          .getContext('2d')
-          ?.getImageData(0, 0, canvas.width, canvas.height).data;
-        return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
-      })
-    );
-  });
+  await motionStage(motionPage, 'nine normal-motion portraits painted', () =>
+    motionPage.waitForFunction(() => {
+      const canvases = [
+        ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+      ];
+      return (
+        canvases.length === 9 &&
+        canvases.every((canvas) => {
+          const pixels = canvas
+            .getContext('2d')
+            ?.getImageData(0, 0, canvas.width, canvas.height).data;
+          return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
+        })
+      );
+    }),
+  );
   // Observe multiple later presentations, so initial geometry repaint alone
   // cannot satisfy the animation check.
   for (let sample = 0; sample < 3; sample++) {
@@ -116,12 +164,14 @@ try {
       .locator('[data-bloom-agent-presets] canvas')
       .evaluateAll((nodes) => nodes.map((node) => (node as HTMLCanvasElement).toDataURL()));
     await motionPage.waitForTimeout(200);
-    await motionPage.waitForFunction(
-      (previous) =>
-        [...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas')].some(
-          (canvas, index) => canvas.toDataURL() !== previous[index],
-        ),
-      motionBefore,
+    await motionStage(motionPage, `normal-motion presentation ${sample + 1}`, () =>
+      motionPage.waitForFunction(
+        (previous) =>
+          [
+            ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+          ].some((canvas, index) => canvas.toDataURL() !== previous[index]),
+        motionBefore,
+      ),
     );
   }
   await motionContext.close();
