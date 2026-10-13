@@ -7,16 +7,17 @@ FROM oven/bun:1.4.3-alpine@sha256:629e17411f1f129dbec3af78d5af9c9f2a937435c80349
 WORKDIR /app
 
 # Install dependencies first for layer caching.
-# `--production` skips devDependencies (vite, typescript, playwright, sharp,
-# satori, typedoc, drizzle-kit): the frontend is built in CI and shipped to
-# Cloudflare Pages, and this image only runs `server/`. `dependencies` still
-# serves both halves, so the frontend's runtime packages (react, three, wagmi)
-# are installed here too, unused.
+# `--production` skips devDependencies (vite, playwright, sharp, satori,
+# typedoc, drizzle-kit, biome, eslint): the frontend is built in CI and shipped
+# to Cloudflare Pages, and this image only runs `server/`. `dependencies` still
+# serves both halves, so the frontend's runtime packages (react, three, wagmi,
+# and Expo through @oxy.so/services and @oxy.so/bloom, which brings typescript
+# and @babel/core back in) are installed here too, unused by the server.
 # `--ignore-scripts` runs no dependency lifecycle script. Measured on this
 # lockfile: the only install-time script in the production closure is
 # vue-demi's postinstall (pulled in by the frontend's @floating-ui/vue), and the
-# tree it leaves is byte-identical with and without it. A new dependency that
-# needs its install script fails CI's image smoke, which boots this image.
+# tree it leaves is byte-identical with and without it. A server dependency
+# that needs its install script fails CI's image smoke, which boots this image.
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile --production --ignore-scripts
 
