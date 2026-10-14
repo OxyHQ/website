@@ -26,14 +26,20 @@ name: Checks
 # seconds.
 #
 # main lands through a merge queue whose one required check is `CI complete`.
-# The backend suite and the frontend review build live here too, gated by the
-# paths they cover on a pull request or a push; a queued merge runs them all.
+# The backend suite, the frontend review build and the API image smoke live here
+# too, gated by the paths they cover on a pull request or a push; a queued merge
+# or a dispatch runs them all.
 
 on:
   pull_request:
   merge_group:
   push:
     branches: [main]
+  # bump-base-digests.yml opens its pull request with GITHUB_TOKEN, which
+  # starts no `pull_request` run, so it dispatches this workflow on its branch
+  # instead. A dispatch runs every job, the image smoke and the
+  # reviewed-image check included.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -44,13 +50,14 @@ concurrency:
 
 jobs:
   # Which of the path-scoped jobs this event needs. A merge-queue entry runs
-  # everything: it is the last gate before main.
+  # everything: it is the last gate before main. So does a dispatch.
   changes:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
       server: ${{ steps.paths.outputs.server }}
       review: ${{ steps.paths.outputs.review }}
+      image: ${{ steps.paths.outputs.image }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - id: paths
@@ -59,9 +66,10 @@ jobs:
           PR_BASE: ${{ github.event.pull_request.base.sha }}
           PUSH_BEFORE: ${{ github.event.before }}
         run: |
-          if [ "$EVENT" = merge_group ]; then
+          if [ "$EVENT" = merge_group ] || [ "$EVENT" = workflow_dispatch ]; then
             echo server=true >>"$GITHUB_OUTPUT"
             echo review=true >>"$GITHUB_OUTPUT"
+            echo image=true >>"$GITHUB_OUTPUT"
             exit 0
           fi
           base=$PR_BASE
@@ -70,6 +78,7 @@ jobs:
             # An unknown base (a new branch, a force push): run everything.
             echo server=true >>"$GITHUB_OUTPUT"
             echo review=true >>"$GITHUB_OUTPUT"
+            echo image=true >>"$GITHUB_OUTPUT"
             exit 0
           fi
           files=$(git diff --name-only "$base" HEAD)
@@ -77,11 +86,17 @@ jobs:
           # Everything `bun run build` reads. The review build does not run on a
           # push: the deploy builds main itself.
           review_paths='^(src/|public/|scripts/|functions/|index\.html$|tsconfig[^/]*\.json$|docs\.config\.json$|docs-registry\.json$|package\.json$|bun\.lock$|vite\.config\.ts$|\.github/workflows/checks\.yml$)'
-          server=false; review=false
+          # What the API image is built from and runs: its build inputs, the
+          # pin and gate over them, the server and its install, and every
+          # workflow that builds it. Not on a push either: the deploy builds it.
+          image_paths='^(Dockerfile$|Dockerfile\.dockerignore$|\.dockerignore$|server/|package\.json$|bun\.lock$|\.github/scripts/(reviewed-image|check-server-imports)|\.github/actions/expose-actions-runtime/|\.github/workflows/(checks|deploy-aws|refresh-build-cache)\.yml$)'
+          server=false; review=false; image=false
           grep -qE "$server_paths" <<<"$files" && server=true
           [ "$EVENT" = pull_request ] && grep -qE "$review_paths" <<<"$files" && review=true
+          [ "$EVENT" = pull_request ] && grep -qE "$image_paths" <<<"$files" && image=true
           echo "server=$server" >>"$GITHUB_OUTPUT"
           echo "review=$review" >>"$GITHUB_OUTPUT"
+          echo "image=$image" >>"$GITHUB_OUTPUT"
 
   checks:
     runs-on: ubuntu-latest
@@ -123,6 +138,9 @@ jobs:
       # that it stopped looking.
       - name: Prove the reviewed-image gate can fail
         run: python3 -B -m unittest discover -s .github/scripts -p test_reviewed_image.py
+      # The weekly base-image digest bump (bump-base-digests.yml), on fixtures.
+      - name: Prove the base-image digest bump works on fixtures
+        run: python3 -B -m unittest discover -s .github/scripts -p test_bump_base_digests.py
       - name: Verify the production image's build inputs are reviewed
         run: python3 -B .github/scripts/reviewed-image.py check
 
@@ -232,12 +250,189 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  # Builds the production API image exactly as deploy-aws.yml does (the
+  # reviewed Dockerfile and context from `guard`, linux/arm64 on an arm64
+  # runner, the same pinned BuildKit), then runs and boots it. Before this job
+  # the deploy was the only place the image was built, after merge, so a
+  # Dockerfile change was first exercised by the production rollout.
+  #
+  # It reads the deploy's `website-api` GHA cache scope and never writes it (no
+  # --cache-to), loads the image into the runner's daemon and never pushes, and
+  # holds no AWS credentials. Asserted, in order: the runtime user is `bun`
+  # (uid 1000), owns nothing under /app and can write nothing there, while /tmp
+  # and its home stay writable; no build-only devDependency is installed; every
+  # package the server's module graph imports resolves in the image; and it boots in
+  # production mode against a fresh PostgreSQL, applies its migrations as that
+  # user and answers the load balancer's `/api/health` and `/api/ready`.
+  image-smoke:
+    name: Image build + boot (linux/arm64)
+    needs: changes
+    if: needs.changes.outputs.image == 'true'
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: website
+          POSTGRES_PASSWORD: website
+          POSTGRES_DB: website
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U website -d website"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      IMAGE: website-api-image-smoke:${{ github.sha }}
+      # The containers share the runner's network (`--network host`), so the
+      # service's mapped port is reachable on 127.0.0.1.
+      DATABASE_URL: postgres://website:website@127.0.0.1:5432/website
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      # The same builder and BuildKit as deploy-aws.yml (see the comment there).
+      - name: Set up Docker Buildx
+        run: |
+          docker buildx create --use --driver docker-container \
+            --driver-opt image=moby/buildkit:v0.33.1@sha256:cec9f139f45e93c5c69c60f8b07cfad9f43f4ef6b6a6cd917527fea5ff2e3dea
+          docker buildx inspect --bootstrap
+
+      # `--cache-from type=gha` needs the Actions runtime token and cache URL,
+      # which GitHub gives to JavaScript actions and NOT to `run:` steps.
+      - name: Expose the Actions cache to buildx
+        uses: ./.github/actions/expose-actions-runtime
+
+      # The same refusal the deploy runs: unreviewed inputs stop here, and the
+      # Dockerfile, context and label values below are its outputs.
+      - name: Refuse unreviewed image build inputs
+        id: reviewed
+        run: python3 -B .github/scripts/reviewed-image.py guard --recipe website-api
+
+      - name: Build the production image (linux/arm64, loaded, not pushed)
+        env:
+          DOCKERFILE: ${{ steps.reviewed.outputs.dockerfile }}
+          CONTEXT: ${{ steps.reviewed.outputs.context }}
+          SOURCE_TREE: ${{ steps.reviewed.outputs.source_tree }}
+          BUILD_INPUTS_SHA256: ${{ steps.reviewed.outputs.build_inputs_sha256 }}
+        run: |
+          docker buildx build \
+            --platform linux/arm64 \
+            --cache-from type=gha,scope=website-api \
+            -f "$DOCKERFILE" \
+            --label "org.opencontainers.image.revision=$GITHUB_SHA" \
+            --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
+            --label "io.oxy.source.tree=$SOURCE_TREE" \
+            --label "io.oxy.build-inputs.sha256=$BUILD_INPUTS_SHA256" \
+            --load \
+            -t "$IMAGE" \
+            "$CONTEXT"
+          docker image inspect "$IMAGE" --format 'size={{.Size}} arch={{.Architecture}} user={{.Config.User}}'
+
+      - name: Runtime user owns and can write nothing under /app
+        run: |
+          set -euo pipefail
+          test "$(docker image inspect "$IMAGE" --format '{{.Architecture}}')" = arm64
+          test "$(docker image inspect "$IMAGE" --format '{{.Config.User}}')" = bun
+          test "$(docker run --rm --entrypoint id "$IMAGE" -u)" = 1000
+          test "$(docker run --rm --entrypoint id "$IMAGE" -un)" = bun
+          # Owned by root, group root, and not world-writable: every file and
+          # directory under /app (symlinks carry no permissions of their own).
+          bad=$(docker run --rm --user 0 --entrypoint sh "$IMAGE" -c \
+            'find /app ! -type l \( ! -user 0 -o ! -group 0 -o -perm -0002 \) -print')
+          if [ -n "$bad" ]; then echo "::error::not root-owned, or world-writable:"; echo "$bad" | head -n 20; exit 1; fi
+          # The probe can see a writable path: as root the same write succeeds.
+          docker run --rm --user 0 --entrypoint sh "$IMAGE" -c 'touch /app/.write-probe'
+          # As the app user every write into the app fails; /tmp and the home
+          # (Bun's own cache) work.
+          docker run --rm --entrypoint sh "$IMAGE" -euc '
+            for path in /app /app/node_modules /app/node_modules/express /app/server \
+                        /app/server/db /app/server/db/migrations; do
+              if touch "$path/.write-probe" 2>/dev/null; then
+                echo "::error::the runtime user can write to $path"; exit 1
+              fi
+            done
+            if echo tampered 2>/dev/null >> /app/server/index.ts; then
+              echo "::error::the runtime user can modify server/index.ts"; exit 1
+            fi
+            if echo tampered 2>/dev/null >> /app/node_modules/express/package.json; then
+              echo "::error::the runtime user can modify node_modules"; exit 1
+            fi
+            writable=$(find /app ! -type l | while IFS= read -r f; do
+              if [ -w "$f" ]; then echo "$f"; fi
+            done | head -n 5)
+            if [ -n "$writable" ]; then echo "::error::writable by the runtime user: $writable"; exit 1; fi
+            touch /tmp/.write-probe && rm /tmp/.write-probe
+            touch "$HOME/.write-probe" && rm "$HOME/.write-probe"
+            echo "uid $(id -u), home $HOME: /app read-only to the app, /tmp and home writable"
+          '
+
+      # `--production` leaves out devDependencies, but `dependencies` serves the
+      # frontend too, and its closure pulls a few dev packages back in (Expo's
+      # tooling brings typescript and @babel/core). So: the build-only tools
+      # must be absent, the rest is reported, and every package the server
+      # imports must resolve.
+      - name: Build tools are absent, and every server import resolves
+        run: |
+          set -euo pipefail
+          docker run --rm --entrypoint sh "$IMAGE" -c \
+            'echo "runtime node_modules: $(ls /app/node_modules | wc -l) top-level entries, $(du -sm /app/node_modules | cut -f1) MB"'
+          docker run --rm --entrypoint bun "$IMAGE" -e '
+            const { existsSync } = require("node:fs");
+            const installed = (name) => existsSync(`/app/node_modules/${name}/package.json`);
+            const buildOnly = ["vite", "@vitejs/plugin-react", "@tailwindcss/vite", "playwright", "sharp",
+              "satori", "@resvg/resvg-js", "typedoc", "drizzle-kit", "@biomejs/biome", "eslint", "pagefind",
+              "svgo", "rollup-plugin-visualizer", "vite-plugin-image-optimizer"];
+            const leaked = buildOnly.filter(installed);
+            if (leaked.length) { console.error("::error::build-only packages in the runtime image:", leaked.join(" ")); process.exit(1); }
+            const { devDependencies } = await Bun.file("/app/package.json").json();
+            const transitive = Object.keys(devDependencies).filter(installed);
+            console.log(`absent: ${buildOnly.join(" ")}`);
+            console.log(`devDependencies a production package requires: ${transitive.join(" ") || "none"}`);
+          '
+          docker run --rm \
+            -v "$PWD/.github/scripts:/checks:ro" \
+            --entrypoint bun "$IMAGE" \
+            /checks/check-server-imports.mjs /app/server/index.ts /app/server/db/migrate.ts
+
+      # The task definition sets NODE_ENV, PORT and DATABASE_URL; nothing else
+      # is needed to boot. `/api/health` turns 200 only once the migrations ran
+      # (under the migration lock) and the start-up data fixes finished, so it
+      # proves the runtime user can apply the schema; `/api/ready` adds a live
+      # database round trip. SIGTERM must end it cleanly within the deadline.
+      - name: Boot in production mode and answer the load balancer
+        run: |
+          set -euo pipefail
+          docker run -d --name website-api-smoke --network host \
+            -e NODE_ENV=production -e PORT=8080 -e DATABASE_URL \
+            "$IMAGE"
+          for _ in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:8080/api/health >/dev/null 2>&1; then break; fi
+            if [ "$(docker inspect -f '{{.State.Running}}' website-api-smoke)" != true ]; then break; fi
+            sleep 1
+          done
+          health=$(curl -fsS http://127.0.0.1:8080/api/health) || { docker logs website-api-smoke; exit 1; }
+          ready=$(curl -fsS http://127.0.0.1:8080/api/ready) || { docker logs website-api-smoke; exit 1; }
+          echo "GET /api/health -> $health"
+          echo "GET /api/ready -> $ready"
+          echo "$health" | grep -q '"ready":true'
+          echo "$ready" | grep -q '"db":"connected"'
+          docker logs website-api-smoke 2>&1 | grep -q 'migrations applied under the migration lock'
+          docker stop -t 20 website-api-smoke >/dev/null
+          test "$(docker inspect -f '{{.State.ExitCode}}' website-api-smoke)" = 0
+          docker logs website-api-smoke 2>&1 | tail -n 20
+
+      - name: Server logs on failure
+        if: failure()
+        run: docker logs website-api-smoke 2>&1 | tail -n 200 || true
+
   # The one required check of the main merge queue. A path-scoped job that was
   # not needed is `skipped`; anything else short of success fails it.
   ci-complete:
     name: CI complete
     if: always()
-    needs: [changes, checks, server, review]
+    needs: [changes, checks, server, review, image-smoke]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -246,10 +441,13 @@ jobs:
           RESULTS: ${{ needs.changes.result }} ${{ needs.checks.result }} ${{ needs.server.result }} ${{ needs.review.result }}
           SERVER: ${{ needs.changes.outputs.server }}
           REVIEW: ${{ needs.changes.outputs.review }}
+          IMAGE: ${{ needs.changes.outputs.image }}
           SERVER_RESULT: ${{ needs.server.result }}
           REVIEW_RESULT: ${{ needs.review.result }}
+          IMAGE_RESULT: ${{ needs.image-smoke.result }}
         run: |
           set -- $RESULTS
           [ "$1" = success ] && [ "$2" = success ] || { echo "::error::changes=$1 checks=$2"; exit 1; }
           [ "$SERVER" != true ] || [ "$SERVER_RESULT" = success ] || { echo "::error::server=$SERVER_RESULT"; exit 1; }
           [ "$REVIEW" != true ] || [ "$REVIEW_RESULT" = success ] || { echo "::error::review=$REVIEW_RESULT"; exit 1; }
+          [ "$IMAGE" != true ] || [ "$IMAGE_RESULT" = success ] || { echo "::error::image-smoke=$IMAGE_RESULT"; exit 1; }
