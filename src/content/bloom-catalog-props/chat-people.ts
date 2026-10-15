@@ -64,7 +64,7 @@ export const props: BloomSurfaceProps = {
         { name: 'actionDoneLabel', type: 'string', optional: true },
         { name: 'onPress', type: '() => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
-        { name: 'size', type: "'small' | 'medium'", options: ['small', 'medium'], optional: true, description: '`medium` 44px avatar (default), `small` 36 for a dense picker.' },
+        { name: 'size', type: "'sm' | 'md'", options: ['sm', 'md'], optional: true, description: '`md` 44px avatar (default), `sm` 36 for a dense picker.' },
         { name: 'horizontalInset', type: 'number', optional: true, description: 'Horizontal inset around the avatar/text area. Default 10; use 0 in an already-inset widget.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true },

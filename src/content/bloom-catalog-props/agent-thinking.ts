@@ -12,12 +12,26 @@ export const props: BloomSurfaceProps = {
         { name: 'tone', type: 'AgentThinkingTone', options: ['subtle', 'default', 'primary', 'accent'], optional: true, description: 'Tone of the indicator + label. Defaults per variant (`stars` is `subtle`, the rest `default`).' },
         { name: 'shimmer', type: 'boolean', optional: true, description: 'Highlight travelling across the label (web; static tone on native). Default `true`.' },
         { name: 'showTimer', type: 'boolean', optional: true, description: 'Elapsed seconds since mount (`12.3s`), rendered after the label. Default `true`.' },
+        { name: 'thinking', type: 'boolean', optional: true, description: 'Still reasoning. `false` is the finished header: no indicator, shimmer or timer, just "Thought for 12 s" (`durationMs`), "Thought for a moment" under half a second, or "Reasoning" with no duration. Default `true`.' },
+        { name: 'durationMs', type: 'number', optional: true, description: 'How long the model reasoned, in ms, for the finished header. Rounded to whole seconds.' },
+        { name: 'children', type: 'ReactNode', optional: true, description: "The model's reasoning: text or nodes. Giving it turns the row into a disclosure (a button with a chevron) with this folded under it. It opens while `thinking` and shuts when thinking ends, unless the user got there first. A string that grows token by token is fine. The timer is off in this mode (it would change the button's name every tenth of a second) unless you pass `showTimer`." },
+        { name: 'open', type: 'boolean', optional: true, description: 'Controlled open state of the disclosure. Automatic open/close is reported through `onOpenChange`.' },
+        { name: 'defaultOpen', type: 'boolean', optional: true, description: 'Initial open state when uncontrolled. Defaults to `thinking`.' },
+        { name: 'onOpenChange', type: '(open: boolean) => void', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'ThinkingReasoning': {
+      props: [
+        { name: 'open', type: 'boolean', optional: false },
+        { name: 'children', type: 'ReactNode', optional: false },
         { name: 'testID', type: 'string', optional: true },
       ],
     },
   },
   components: [
     { name: 'AgentThinking', propsType: 'AgentThinkingProps' },
+    { name: 'ThinkingReasoning', propsType: 'ThinkingReasoning' },
   ],
 }

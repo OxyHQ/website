@@ -12,7 +12,7 @@ export const props: BloomSurfaceProps = {
         { name: 'countStyle', type: 'RatingCountStyle', options: ['parenthesis', 'reviews'], optional: true, description: 'Default `parenthesis`.' },
         { name: 'reviewsLabel', type: 'string', optional: true, description: 'The word after the count in the `reviews` style and in the accessible name, drawn after the count as given. Default: the locale\'s pluralised word (`"reviews"` in English).' },
         { name: 'newLabel', type: 'string', optional: true, description: 'Drawn (and announced) when there is no rating yet (`"New"` in English).' },
-        { name: 'size', type: 'RatingSize', options: ['small', 'medium'], optional: true, description: 'Default `medium`.' },
+        { name: 'size', type: 'RatingSize', options: ['sm', 'md'], optional: true, description: 'Default `md`.' },
         { name: 'variant', type: 'RatingVariant', options: ['compact', 'stars'], optional: true, description: 'Default `compact` — one star. `stars` draws a row of five, filled fractionally.' },
         { name: 'showValue', type: 'boolean', optional: true, description: 'Hide the visible numeric value while retaining its accessible name. Default true.' },
         { name: 'starSize', type: 'number', optional: true, description: 'Star dimensions, independent of the label type size. Defaults to the size scale.' },

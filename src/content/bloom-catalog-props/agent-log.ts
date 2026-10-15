@@ -53,6 +53,30 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'AgentLogToolCallProps': {
+      props: [
+        { name: 'name', type: 'string', optional: false, description: "The tool's identifier, e.g. `web_search`. Titles the row when there is no `label`." },
+        { name: 'label', type: 'string', optional: true, description: 'Human title, e.g. "Searching the web".' },
+        { name: 'status', type: 'AgentLogToolCallStatus', options: ['running', 'done', 'error'], optional: false },
+        { name: 'detail', type: 'string', optional: true, description: 'One-line argument or result summary after the title.' },
+        { name: 'error', type: 'string', optional: true, description: 'Shown instead of `detail` in the `error` state.' },
+        { name: 'durationMs', type: 'number', optional: true, description: 'How long the call took (or has taken), in milliseconds.' },
+        { name: 'onPress', type: '() => void', optional: true, description: 'Makes the whole row a button that opens the result, with a chevron.' },
+        { name: 'children', type: 'ReactNode', optional: true, description: 'An inline result revealed under the row. Makes the row a disclosure (a press also calls `onPress`).' },
+        { name: 'expanded', type: 'boolean', optional: true },
+        { name: 'defaultExpanded', type: 'boolean', optional: true, description: 'Default `false`.' },
+        { name: 'onExpandedChange', type: '(expanded: boolean) => void', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'AgentLogToolCallsProps': {
+      props: [
+        { name: 'children', type: 'ReactNode', optional: false, description: '`AgentLogToolCall`s, one per row.' },
+        { name: 'reduce', type: 'boolean', optional: true, description: "Skip the guide's draw animation. Defaults to the system reduced-motion setting." },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the list for assistive technology, e.g. "Tool calls".' },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'AgentLogGuideBridge', propsType: 'AgentLogGuideBridgeProps' },
@@ -61,5 +85,7 @@ export const props: BloomSurfaceProps = {
     { name: 'AgentLogRowConnector', propsType: 'AgentLogRowConnectorProps' },
     { name: 'AgentLogShimmerText', propsType: 'AgentLogShimmerTextProps' },
     { name: 'AgentLogWorkingRow', propsType: 'AgentLogWorkingRowProps' },
+    { name: 'AgentLogToolCall', propsType: 'AgentLogToolCallProps' },
+    { name: 'AgentLogToolCalls', propsType: 'AgentLogToolCallsProps' },
   ],
 }

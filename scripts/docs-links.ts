@@ -96,3 +96,33 @@ export function rewriteCrossPackageDocRootLinks(
     },
   );
 }
+
+/**
+ * Draw a link to a page this version never had as plain text.
+ *
+ * A tagged release cannot be edited. Bloom 9 removed the Glass page, but its migration guide for
+ * 3.0 (kept in every later tag) still says `[Glass](/docs/glass)`; the page exists in 8.1.0 and
+ * not in 9.0.0, so the bare path `/developers/docs/glass` resolves to nothing on this site and
+ * the build's link audit rightly refuses it. Only a page that some OTHER version of the SAME
+ * package serves, and this one does not, is unlinked: a slug no version has stays a link, so a
+ * genuine typo is still reported rather than hidden.
+ */
+export function unlinkRemovedPageLinks(source: string, removedSlugs: ReadonlySet<string>): string {
+  if (removedSlugs.size === 0) return source;
+  return source.replace(
+    /\[([^\]]+)\]\(\/developers\/docs\/([A-Za-z0-9][A-Za-z0-9._-]*)\/?(#[^)\s]*)?\)/g,
+    (match, text: string, slug: string) => (removedSlugs.has(slug) ? text : match),
+  );
+}
+
+/** The slugs `version` lacks that some other version of the package has. */
+export function removedSlugsOf(
+  versionSlugs: ReadonlySet<string>,
+  otherVersionsSlugs: ReadonlyArray<ReadonlySet<string>>,
+): Set<string> {
+  const removed = new Set<string>();
+  for (const slugs of otherVersionsSlugs) {
+    for (const slug of slugs) if (!versionSlugs.has(slug)) removed.add(slug);
+  }
+  return removed;
+}

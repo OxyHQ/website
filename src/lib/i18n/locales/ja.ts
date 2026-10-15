@@ -1217,6 +1217,16 @@ const ja: Translations = {
     viewImage: '画像{number}を見る',
     back: 'ストアに戻る',
   },
+  askAlia: {
+    label: 'Aliaに聞く',
+    clientContext:
+      "The person is browsing the Oxy website (oxy.so): Oxy's apps, products, pricing, developer docs and company pages. They are asking you for help about Oxy. They are on the page:",
+    suggestions: {
+      products: 'Oxyで何ができますか？',
+      developers: '開発者としてOxy上で構築するには？',
+      apps: '自分に合うOxyアプリは？',
+    },
+  },
 };
 
 export default ja;

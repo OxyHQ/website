@@ -1,5 +1,13 @@
 /** Modules that need an app host or publish configuration, rather than a standalone visual. */
 export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
+  'agent-reply':
+    'The pieces of an agent’s reply (bubble, who answered, actions, team profile) need a conversation with agents behind them. See Agent Chat for the composed conversation.',
+  'avatar-flight':
+    'Avatars that fly between anchors measure two places on a real screen. It needs an app layout with anchors; the Alia chat sheet is its reference host.',
+  'conversation-sidebar':
+    'A sidebar of conversations needs the account’s chats and agents. See Sidebar for the live panel it is built on.',
+  voice:
+    'Voice mode drives a live audio session (levels, transcript, mute). Pass it the state of your own voice session.',
   appearance:
     'Appearance scope inherited by the live component examples. Configure it around your app or a component subtree.',
   'color-presets': 'Colour preset definitions. See the colour recipes page for rendered palettes.',

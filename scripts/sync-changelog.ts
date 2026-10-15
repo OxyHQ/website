@@ -91,7 +91,7 @@ interface RepoCache {
 }
 
 function parseRepos(): TrackedRepo[] {
-  const override = process.env.CHANGELOG_REPOS?.trim();
+  const override: string | undefined = process.env.CHANGELOG_REPOS?.trim();
   const slugs = override
     ? override
         .split(',')

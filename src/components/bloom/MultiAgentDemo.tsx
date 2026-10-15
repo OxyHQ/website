@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { MultiAgentChat, type MultiAgentChatWorkspace } from '@oxy.so/bloom/multi-agent-chat';
-import { DEFAULT_CONFIG } from '@oxy.so/bloom/agent-avatar';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { BLOOM_AGENT_PRESETS } from '../../content/bloom-agent-presets';
 
@@ -10,49 +9,49 @@ const agents: MultiAgentChatWorkspace['agents'] = [
     name: 'landing page designer',
     label: 'Design',
     description: 'Thoughtful layouts and clear hierarchy.',
-    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[0].character },
+    avatar: BLOOM_AGENT_PRESETS[0].character,
   },
   {
     id: 'content',
     name: 'content reviewer',
     label: 'Writing',
     description: 'Clear and concise writing.',
-    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[1].character },
+    avatar: BLOOM_AGENT_PRESETS[1].character,
   },
   {
     id: 'marketing',
     name: 'marketing bot',
     label: 'Marketing',
     description: 'Campaigns people remember.',
-    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[2].character },
+    avatar: BLOOM_AGENT_PRESETS[2].character,
   },
   {
     id: 'seo',
     name: 'seo bot',
     label: 'SEO',
     description: 'Help people find your work.',
-    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[3].character },
+    avatar: BLOOM_AGENT_PRESETS[3].character,
   },
   {
     id: 'research',
     name: 'research assistant',
     label: 'Research',
     description: 'Explore questions and sources.',
-    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[4].character },
+    avatar: BLOOM_AGENT_PRESETS[4].character,
   },
   {
     id: 'security',
     name: 'Security agent',
     label: 'Security',
     description: 'Review access and permissions.',
-    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[6].character },
+    avatar: BLOOM_AGENT_PRESETS[6].character,
   },
   {
     id: 'product',
     name: 'Product planner',
     label: 'Product',
     description: 'Turn ideas into next steps.',
-    avatar: { ...DEFAULT_CONFIG, character: BLOOM_AGENT_PRESETS[5].character },
+    avatar: BLOOM_AGENT_PRESETS[5].character,
   },
 ];
 const initialWorkspace: MultiAgentChatWorkspace = {

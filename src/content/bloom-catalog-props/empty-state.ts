@@ -14,6 +14,8 @@ export const props: BloomSurfaceProps = {
         { name: 'description', type: 'string', optional: true, description: 'The one line that says why, and what would change it.' },
         { name: 'action', type: 'EmptyStateAction', optional: true, description: 'The thing to do about it.' },
         { name: 'secondaryAction', type: 'EmptyStateAction', optional: true, description: 'The other thing to do about it. Drawn beside `action`, quieter.' },
+        { name: 'suggestions', type: 'ReadonlyArray<EmptyStateSuggestion>', optional: true, description: "Pills under the description: a branded greeting's first prompts, the searches that would find something. Centred, wrapping, and named as one group (`suggestionsLabel`)." },
+        { name: 'suggestionsLabel', type: 'string', optional: true, description: "Names the suggestions group. `'Suggestions'` in English; Bloom speaks it in the locale." },
         { name: 'children', type: 'ReactNode', optional: true, description: "Anything between the explanation and the actions — a reference chip, a status strip, a list of facts. Stretched to the block's full width and left to lay itself out, because the things that go here are not centred text." },
         { name: 'footer', type: 'ReactNode', optional: true, description: 'Under the actions: a note, a link, a row of suggestions. Centred.' },
         { name: 'variant', type: 'EmptyStateVariant', options: ['comfortable', 'compact'], optional: true, description: 'Default `comfortable`.' },

@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { AgentCreator } from '@oxy.so/bloom/agent-creator';
-import { DEFAULT_CONFIG } from '@oxy.so/bloom/agent-avatar';
+import { AgentCreator, type AgentCreatorAgent } from '@oxy.so/bloom/agent-creator';
 
 export default function AgentCreatorExample() {
-  const [agent, setAgent] = useState({
+  const [agent, setAgent] = useState<AgentCreatorAgent>({
     id: 'alex',
     name: 'Alex',
     label: 'Research assistant',
     description: 'Helps your team explore ideas.',
-    avatar: DEFAULT_CONFIG,
+    avatar: { preset: 'blue_beret' },
   });
   return (
     <div className="w-full max-w-lg space-y-4 text-foreground">

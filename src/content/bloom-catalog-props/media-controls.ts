@@ -36,7 +36,7 @@ export const props: BloomSurfaceProps = {
     },
     'ExplicitBadgeProps': {
       props: [
-        { name: 'size', type: 'ExplicitBadgeSize', options: ['small', 'medium'], optional: true, description: 'Default `medium`.' },
+        { name: 'size', type: 'ExplicitBadgeSize', options: ['sm', 'md'], optional: true, description: 'Default `medium`.' },
         { name: 'letter', type: 'string', optional: true, description: 'The drawn letter. Default `"E"`.' },
         { name: 'label', type: 'string', optional: true, description: 'The accessible name (`"Explicit"` in English).' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

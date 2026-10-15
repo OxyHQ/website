@@ -206,13 +206,7 @@ export default defineConfig(({ mode }) => ({
         find: '@react-native/assets-registry/registry',
         replacement: 'react-native-web/dist/modules/AssetRegistry',
       },
-      {
-        find: '@react-native-async-storage/async-storage',
-        replacement: emptyModule,
-      },
       { find: 'expo-web-browser', replacement: emptyModule },
-      { find: 'expo-document-picker', replacement: emptyModule },
-      { find: 'expo-haptics', replacement: emptyModule },
       { find: 'expo-image-manipulator', replacement: emptyModule },
       // Native-only spec helper that `react-native-svg` and Bloom's
       // `BottomSheet` pull in transitively. `react-native-web` doesn't ship

@@ -30,9 +30,26 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'AgentProgressPlanProps': {
+      props: [
+        { name: 'title', type: 'string', optional: true, description: 'Heading above the steps. "Proposed plan" in English.' },
+        { name: 'steps', type: 'readonly string[]', optional: false, description: 'The steps the agent proposes, in order.' },
+        { name: 'decision', type: 'AgentProgressPlanDecision', options: ['pending', 'approved', 'rejected'], optional: true, description: "Controlled. `pending` shows Approve and Reject; once `approved` or `rejected` they are replaced by a status badge, and nothing else changes the plan. Default `'pending'`." },
+        { name: 'onApprove', type: '() => void', optional: true },
+        { name: 'onReject', type: '() => void', optional: true },
+        { name: 'approveLabel', type: 'string', optional: true, description: 'Overrides "Approve".' },
+        { name: 'rejectLabel', type: 'string', optional: true, description: 'Overrides "Reject".' },
+        { name: 'disabled', type: 'boolean', optional: true, description: 'Blocks both buttons.' },
+        { name: 'loading', type: 'boolean', optional: true, description: 'A decision is being sent: both buttons block and the one pressed shows a spinner.' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Card style (width, margins…). Default card is 341 wide, `max-width: 100%`, like `AgentProgress`.' },
+        { name: 'testID', type: 'string', optional: true },
+        { name: 'ref', type: 'Ref<View>', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'AgentProgress', propsType: 'AgentProgressProps' },
     { name: 'AgentProgressLoadingText', propsType: 'AgentProgressLoadingTextProps' },
+    { name: 'AgentProgressPlan', propsType: 'AgentProgressPlanProps' },
   ],
 }

@@ -8,8 +8,8 @@ export default function CommandExample() {
     <div className="w-full max-w-lg space-y-4 text-foreground">
       <Button onPress={() => setOpen(true)}>Open command menu</Button>
       <Command
-        visible={open}
-        onClose={() => setOpen(false)}
+        open={open}
+        onOpenChange={setOpen}
         items={[
           { id: 'new', label: 'Create a project', onSelect: () => setOpen(false) },
           { id: 'search', label: 'Search your workspace', onSelect: () => setOpen(false) },

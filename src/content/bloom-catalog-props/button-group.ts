@@ -7,8 +7,9 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'ButtonGroupProps': {
       props: [
-        { name: 'size', type: 'ButtonGroupSize', options: ['md', 'sm'], optional: true, description: 'Size for every item that does not set its own. Inherited from the nearest `BloomScope` when omitted, then `md`.' },
+        { name: 'size', type: 'ButtonGroupSize', options: ['md', 'sm', 'xs'], optional: true, description: 'Size for every item that does not set its own. Inherited from the nearest `BloomScope` when omitted, then `md`.' },
         { name: 'dividers', type: 'boolean', optional: true, description: 'Whether to draw the 1px hairlines BETWEEN items.' },
+        { name: 'separated', type: 'boolean', optional: true, description: 'Draw each item as its own pill with a gap between them, instead of one joined control with hairlines. There is no shared surface and no sliding selection: an item is `subtle`, and `outline` while `checked`. Default `false`.' },
         { name: 'children', type: 'React.ReactNode', optional: false, description: '`ButtonGroupItem` children.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the group.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
@@ -19,7 +20,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'onPress', type: '(event: GestureResponderEvent) => void', optional: true, description: "Press handler. Receives the event, so a handler composed onto this item by an anchored family's `asChild` trigger can `preventDefault()` it — see `floating/TriggerSlot.tsx`." },
         { name: 'children', type: 'React.ReactNode', optional: true, description: 'Label. Ignored when `iconOnly`.' },
-        { name: 'size', type: 'ButtonGroupSize', options: ['md', 'sm'], optional: true, description: "Overrides the group's size." },
+        { name: 'size', type: 'ButtonGroupSize', options: ['md', 'sm', 'xs'], optional: true, description: "Overrides the group's size." },
         { name: 'checked', type: 'boolean', optional: true, description: 'Highlights the item like its hover state and announces it as pressed.' },
         { name: 'selected', type: 'boolean', optional: true },
         { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: true },

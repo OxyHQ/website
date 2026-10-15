@@ -8,7 +8,8 @@ export const props: BloomSurfaceProps = {
     'SidebarProps': {
       props: [
         { name: 'className', type: 'string', optional: true },
-        { name: 'header', type: 'ReactNode | ((state: { collapsed: boolean; }) => ReactNode)', optional: true, description: 'Replaces the account/logo header. The panel still owns its fixed chrome and scroll area.' },
+        { name: 'header', type: 'ReactNode | ((state: { collapsed: boolean; }) => ReactNode)', optional: true, description: 'Replaces the account/logo header row (logo, account, the collapse control). The panel still owns its fixed chrome and scroll area. `false` draws no header row at all.' },
+        { name: 'toolbar', type: 'ReactNode | ((state: { collapsed: boolean; }) => ReactNode)', optional: true, description: 'A fixed row UNDER the header, above the modes and quick search: the header (logo, account, collapse control) stays. A conversations sidebar puts its search and tools here.' },
         { name: 'contentPadding', type: 'number', optional: true, description: "Expanded panel inset, also used to measure app-owned scroll content. Defaults to the size's inset." },
         { name: 'contentAlignment', type: "'start' | 'center'", options: ['start', 'center'], optional: true, description: 'Center the main navigation group in space above the persistent footer.' },
         { name: 'content', type: 'ReactNode', optional: true, description: 'App-owned destination content after the built-in rows/tree, inside the same scroll viewport. Hidden and noninteractive while collapsed; remains mounted so pagination and disclosure state survive. Not rendered in variant="rail". Compose rows here, never another ScrollView. Quick search filters only the built-in items/tree; disable it when your content owns search.' },
@@ -38,7 +39,7 @@ export const props: BloomSurfaceProps = {
         { name: 'closeLabel', type: 'string', optional: true, description: 'Names the `mobile` close button (`"Close sidebar"` in English).' },
         { name: 'fluid', type: 'boolean', optional: true, description: "Expanded width fills the container instead of the size's own width." },
         { name: 'surface', type: 'SidebarSurface', options: ['card', 'plain', 'docked'], optional: true, description: "The panel's edge. Defaults to `card`." },
-        { name: 'size', type: 'SidebarSize', options: ['sm', 'md', 'lg', 'small', 'medium', 'large'], optional: true, description: 'The row size, and the panel width that follows it. Defaults to `md`.' },
+        { name: 'size', type: 'SidebarSize', options: ['sm', 'md', 'lg'], optional: true, description: 'The row size, and the panel width that follows it. Defaults to `md`.' },
         { name: 'showThemeToggle', type: 'boolean', optional: true, description: 'Shows `ThemeToggle` above the secondary rows. Defaults to true.' },
         { name: 'showSearch', type: 'boolean', optional: true, description: 'Quick search over the rows. Defaults to true.' },
         { name: 'searchQuery', type: 'string', optional: true, description: 'Controlled quick-search text; also lets app-owned content filter the same query.' },
@@ -91,7 +92,7 @@ export const props: BloomSurfaceProps = {
         { name: 'aria-expanded', type: 'boolean', optional: true },
         { name: 'aria-haspopup', type: "'menu' | 'dialog' | 'listbox' | 'tree' | 'grid'", options: ['menu', 'dialog', 'listbox', 'tree', 'grid'], optional: true },
         { name: 'aria-describedby', type: 'string', optional: true },
-        { name: 'size', type: 'SidebarSize', options: ['sm', 'md', 'lg', 'small', 'medium', 'large'], optional: true, description: "The row's size. Inside a `Sidebar` it is inherited from the panel — pass it only for a row standing on its own." },
+        { name: 'size', type: 'SidebarSize', options: ['sm', 'md', 'lg'], optional: true, description: "The row's size. Inside a `Sidebar` it is inherited from the panel — pass it only for a row standing on its own." },
         { name: 'href', type: 'string', optional: true },
         { name: 'badge', type: 'ReactNode', optional: true, description: "Sits at the row's end while expanded; over the icon's top-end corner while collapsed." },
         { name: 'collapsedBadge', type: 'ReactNode', optional: true, description: 'The badge shown over the icon while collapsed, when it should differ from `badge` — e.g. a capped count (`max={99}`) that fits the square. Defaults to `badge`.' },

@@ -25,12 +25,14 @@ export const props: BloomSurfaceProps = {
       ],
       inheritsFrom: ['ViewProps'],
     },
-    'ScrollAreaProps': {
+    'ScrollBarProps': {
       props: [
-        { name: 'className', type: 'string', optional: true, description: "Utilities for the scrolling viewport, resolved by Bloom's own interop." },
-        { name: 'contentContainerClassName', type: 'string', optional: true, description: 'Utilities for the inner content container.' },
+        { name: 'target', type: "RefObject<Pick<ScrollView, 'getScrollableNode'> | null>", optional: false, description: 'The scroller this bar belongs to: a `ScrollView` ref (a reanimated one works).' },
+        { name: 'scrollbar', type: "Exclude<ScrollAreaScrollbar, 'never'>", options: ['hover', 'scroll', 'always'], optional: true, description: "When the bar shows. Default `'scroll'`." },
+        { name: 'size', type: "'sm' | 'md'", options: ['sm', 'md'], optional: true, description: "The bar's thickness: `sm` 4px (default) or `md` 6px." },
+        { name: 'horizontal', type: 'boolean', optional: true, description: 'The bar lies along the bottom edge instead of the inline end.' },
+        { name: 'insets', type: '{ start?: number; end?: number; }', optional: true, description: "Room kept free at the track's ends, for chrome that floats over the scroller." },
       ],
-      inheritsFrom: ['ScrollViewProps', 'RefAttributes<ScrollView>'],
     },
   },
   components: [
@@ -41,6 +43,6 @@ export const props: BloomSurfaceProps = {
     { name: 'HeaderDockProvider', propsType: 'PropsWithChildren<{ scrollY?: SharedValue<number> | undefined; }>' },
     { name: 'StickySection', propsType: 'StickySectionProps' },
     { name: 'ScrollMetricsProvider', propsType: 'BottomEdgeProvider' },
-    { name: 'ScrollArea', propsType: 'ScrollAreaProps' },
+    { name: 'ScrollBar', propsType: 'ScrollBarProps' },
   ],
 }

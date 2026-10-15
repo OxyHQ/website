@@ -17,7 +17,7 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'ReactNode', optional: true, description: 'The label. Defaults to the `action` phrase in the app\'s locale, e.g. `"Continue with <Brand>"` in English.' },
         { name: 'onPress', type: '() => void', optional: true },
         { name: 'href', type: 'string', optional: true, description: 'Makes the button a link — OAuth starts are navigations. On web it renders a real `<a href>`; on native a press opens it with `Linking.openURL` after `onPress` runs. Dropped while `disabled`.' },
-        { name: 'disabled', type: 'boolean', optional: true, description: 'Shared Button disabled tint; retains glass and ignores presses.' },
+        { name: 'disabled', type: 'boolean', optional: true, description: 'Shared Button disabled tint; retains its material and ignores presses.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true, description: 'Label text style override.' },
         { name: 'className', type: 'string', optional: true },

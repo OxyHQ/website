@@ -76,7 +76,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'status', type: 'ReleaseStatus', options: ['draft', 'in-review', 'scheduled', 'live', 'rejected', 'takedown'], optional: false },
         { name: 'label', type: 'string', optional: true, description: "Overrides the status's default text." },
-        { name: 'size', type: "'small' | 'medium'", options: ['small', 'medium'], optional: true },
+        { name: 'size', type: "'sm' | 'md'", options: ['sm', 'md'], optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
     },

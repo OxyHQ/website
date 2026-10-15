@@ -26,9 +26,11 @@ import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import {
+  removedSlugsOf,
   rewriteCrossPackageDocRootLinks,
   rewriteSiblingDocLinks,
   rewriteStaleDocsVersionLinks,
+  unlinkRemovedPageLinks,
 } from './docs-links.ts';
 import { escapeUnclosedProseTags } from './mdx-literal-tags.ts';
 import type {
@@ -324,6 +326,36 @@ async function rewriteSiblingLinksInPlace(
       baseUrl,
     );
     if (rewritten !== original) await writeFile(full, rewritten);
+  }
+}
+
+/**
+ * Second to last pass, once every version of every package is synced: a link to a page that other
+ * versions of the same package serve and this one does not is drawn as text (see
+ * `unlinkRemovedPageLinks`). Versioned packages only; a lone version has no "other version".
+ */
+async function unlinkRemovedPagesInPlace(packages: readonly SyncedPackage[]): Promise<void> {
+  for (const pkg of packages) {
+    if (!pkg.versioned || pkg.versions.length < 2) continue;
+    const slugSets = pkg.versions.map(
+      (version) =>
+        new Set(version.pages.map((page) => page.slug).filter((slug) => slug.length > 0)),
+    );
+    for (const [index, version] of pkg.versions.entries()) {
+      const removed = removedSlugsOf(
+        slugSets[index] as ReadonlySet<string>,
+        slugSets.filter((_, other) => other !== index),
+      );
+      if (removed.size === 0) continue;
+      for (const page of version.pages) {
+        if (!page.file) continue;
+        const full = path.join(SYNCED_DIR, page.file);
+        if (!existsSync(full)) continue;
+        const original = await readFile(full, 'utf8');
+        const rewritten = unlinkRemovedPageLinks(original, removed);
+        if (rewritten !== original) await writeFile(full, rewritten);
+      }
+    }
   }
 }
 
@@ -993,6 +1025,7 @@ async function main(): Promise<void> {
     packages.push(...synced);
   }
   await rewriteCrossPackageRootsInPlace(packages);
+  await unlinkRemovedPagesInPlace(packages);
   const index: SyncedIndex = {
     generatedAt: new Date().toISOString(),
     packages,

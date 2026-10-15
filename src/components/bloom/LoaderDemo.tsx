@@ -88,7 +88,7 @@ export default function LoaderDemo({
           maxLines={1}
           models={['Bloom', 'Design agent', 'Review agent']}
           surface={false}
-          glass
+          frosted
           onSubmit={() => setValue('')}
           style={{ width: '100%' }}
         />

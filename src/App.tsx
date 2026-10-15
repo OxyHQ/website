@@ -23,6 +23,7 @@ import {
   type AppColorName,
 } from './theme';
 import { LocaleProvider, DEFAULT_LOCALE, SUPPORTED_LOCALES } from './lib/i18n';
+import { AskAliaProvider } from './lib/ask-alia';
 import { setOxyServices } from './api/client';
 import { setPlatformStatsOxyServices } from './api/platformStatsStore';
 import { isFairCoinHost } from './lib/host';
@@ -192,7 +193,9 @@ function AppSetup({ children }: { children: React.ReactNode }) {
 function LocaleLayout() {
   return (
     <LocaleProvider>
-      <Outlet />
+      <AskAliaProvider>
+        <Outlet />
+      </AskAliaProvider>
     </LocaleProvider>
   );
 }
