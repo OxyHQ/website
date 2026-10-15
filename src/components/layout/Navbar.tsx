@@ -52,7 +52,7 @@ import NavbarSearchResults from './NavbarSearchResults';
 import { RiLoginBoxLine } from '@oxy.so/bloom/icons/RiLoginBoxLine';
 import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine';
 import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine';
-import { useAskAlia } from '../../lib/ask-alia';
+import { useAskAlia } from '../../lib/ask-alia-context';
 import { RiSettings3Line } from '@oxy.so/bloom/icons/RiSettings3Line';
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine';
 import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine';

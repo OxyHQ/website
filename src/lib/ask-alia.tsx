@@ -1,34 +1,10 @@
-import {
-  Suspense,
-  createContext,
-  lazy,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { Suspense, lazy, useCallback, useMemo, useState, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@oxy.so/services/ui/client';
+import { AskAliaContext } from './ask-alia-context';
 import { useTranslation } from './i18n';
 
 const AskAliaSheet = lazy(() => import('../components/ai/AskAliaSheet'));
-
-interface AskAliaContextValue {
-  /**
-   * Opens Alia's chat sheet. Signed out, there is no session to call Alia with, so this opens
-   * the Oxy sign-in dialog instead.
-   */
-  open: () => void;
-}
-
-const AskAliaContext = createContext<AskAliaContextValue | null>(null);
-
-export function useAskAlia(): AskAliaContextValue {
-  const value = useContext(AskAliaContext);
-  if (!value) throw new Error('useAskAlia must be used within an AskAliaProvider');
-  return value;
-}
 
 /**
  * Owns the one `AliaChatSheet` and the way to open it. The sheet mounts after the first press, so
