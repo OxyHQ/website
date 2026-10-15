@@ -18,6 +18,7 @@ export const props: BloomSurfaceProps = {
         { name: 'entranceKey', type: 'number', optional: true },
         { name: 'workingKey', type: 'number', optional: true },
         { name: 'workingCycles', type: 'number', optional: true },
+        { name: 'onReady', type: '() => void', optional: true, description: 'The first picture of the character has been painted. Fires once per mounted renderer.' },
         { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true },
@@ -26,7 +27,8 @@ export const props: BloomSurfaceProps = {
     },
     'AgentAvatarProviderProps': {
       props: [
-        { name: 'runtimeUrl', type: 'string', optional: true, description: 'Defaults to /bloom-character/runtime.mjs on web; native requires an absolute hosted URL.' },
+        { name: 'runtimeUrl', type: 'string', optional: true, description: "The runtime module's absolute URL. Defaults to `BLOOM_CHARACTER_RUNTIME_URL` (the SDK's own hosted copy); an app that self-hosts `assets/character-runtime/` passes its own." },
+        { name: 'stillStorage', type: 'BloomThemeStorage', optional: true, description: 'Where drawn stills persist across launches: any `getItem`/`setItem` adapter (the one `BloomThemeProvider` takes). Without it stills live in memory for the session.' },
         { name: 'children', type: 'ReactNode', optional: false },
       ],
     },
