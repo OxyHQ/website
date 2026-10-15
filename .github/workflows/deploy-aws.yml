@@ -4,9 +4,31 @@ name: Deploy to AWS
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
+    # Only what the API image is built from, runs, or is deployed by — the same
+    # inputs as checks.yml's `image_paths` (its image smoke). The image is
+    # `COPY . .` of the repository, but the container runs `bun server/index.ts`
+    # and nothing outside `server/` is imported at runtime; a frontend-only
+    # merge rebuilt and rolled ECS onto an identical server for nothing. When a
+    # new runtime input appears (a file the server reads, a bunfig), add it
+    # here AND to `image_paths`. Not a required-check workflow, so a workflow
+    # level filter cannot strand a merge; dispatch still deploys anything.
+    paths:
+      - 'server/**'
+      - 'package.json'
+      - 'bun.lock'
+      - 'bunfig.toml'
+      - 'tsconfig.json'
+      - 'tsconfig.server.json'
+      - 'drizzle.config.ts'
+      - 'Dockerfile'
+      - 'Dockerfile.dockerignore'
+      - '.dockerignore'
+      - 'scripts/deploy-ecs.sh'
+      - '.github/scripts/reviewed-image.py'
+      - '.github/scripts/reviewed-images.json'
+      - '.github/scripts/check-server-imports.mjs'
+      - '.github/actions/expose-actions-runtime/**'
+      - '.github/workflows/deploy-aws.yml'
   workflow_dispatch:
 
 permissions:
@@ -30,6 +52,8 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-24.04-arm
+    # Typically 5-8 minutes (cached build + ECS rollout wait).
+    timeout-minutes: 30
     steps:
       # Every action this job runs is pinned to a full commit SHA, so an
       # upstream tag move cannot change what executes beside the deploy role.

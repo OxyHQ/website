@@ -28,7 +28,8 @@ name: Checks
 # main lands through a merge queue whose one required check is `CI complete`.
 # The backend suite, the frontend review build and the API image smoke live here
 # too, gated by the paths they cover on a pull request or a push; a queued merge
-# or a dispatch runs them all.
+# or a dispatch runs them all. A push whose exact commit the queue already
+# verified runs none of them (job `provenance`).
 
 on:
   pull_request:
@@ -49,9 +50,58 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Has the full suite already run on this exact tree? On a push to main that
+  # came through the merge queue it has: the queue tested THIS SHA in its
+  # merge_group run (every job, the image smoke and review build included) and
+  # fast-forwarded main to it only after `CI complete` went green. Re-running
+  # `checks` and `server` on push re-tested an identical tree, and this org is
+  # on GitHub Free: 20 concurrent jobs across ALL repositories, with queue
+  # waits longer than the jobs themselves. Ported from OxyHQ/Mention's ci.yml.
+  #
+  # So a queue-verified push runs only this job and `CI complete`, and `CI
+  # complete` accepts every other job as skipped ONLY when this job says
+  # verified. Every other push (the queue switched off, a bypass) and every
+  # dispatch runs exactly what it ran before, because this job answers nothing
+  # for them. The push run still concludes `success`, which is what
+  # deploy.yml's manual-release verifier (verify-manual-frontend.py) requires.
+  #
+  # An unanswerable question means RUN EVERYTHING: the step is
+  # continue-on-error, an API failure leaves `verified` unset, and unset is not
+  # 'true'. Skipped outright on pull_request and merge_group, where a skipped
+  # job takes no runner slot.
+  provenance:
+    name: Merge-queue provenance
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      verified: ${{ steps.verified.outputs.verified }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          sparse-checkout: .github/scripts
+      - name: Did this exact commit pass Checks in the merge queue?
+        id: verified
+        continue-on-error: true
+        env:
+          DEPLOY_SHA: ${{ github.sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/merge-queue-verified.sh
+
   # Which of the path-scoped jobs this event needs. A merge-queue entry runs
   # everything: it is the last gate before main. So does a dispatch.
+  #
+  # Every job below hangs off this one (or carries the same condition), so a
+  # queue-verified push skips them all. `!cancelled()` because a dependency on
+  # a SKIPPED job (every pull_request, merge_group and dispatch run) would
+  # otherwise skip this one too; it runs unless provenance positively answered
+  # verified.
   changes:
+    needs: provenance
+    if: ${{ !cancelled() && needs.provenance.outputs.verified != 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -99,6 +149,8 @@ jobs:
           echo "image=$image" >>"$GITHUB_OUTPUT"
 
   checks:
+    needs: provenance
+    if: ${{ !cancelled() && needs.provenance.outputs.verified != 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -143,6 +195,12 @@ jobs:
         run: python3 -B -m unittest discover -s .github/scripts -p test_bump_base_digests.py
       - name: Verify the production image's build inputs are reviewed
         run: python3 -B .github/scripts/reviewed-image.py check
+      # The predicate the push run uses to skip the suite (job `provenance`),
+      # on fixtures: only a green merge_group run of this workflow, for this
+      # exact SHA, with a green `CI complete`, may vouch for a commit, and an
+      # API failure is never read as a yes.
+      - name: Prove the merge-queue provenance predicate can refuse
+        run: bash .github/scripts/test-merge-queue-verified.sh
 
       # `--frozen-lockfile` so the Bloom catalog below is checked against the
       # Bloom version the lockfile pins, not whatever resolves today.
@@ -180,9 +238,15 @@ jobs:
         run: bun run validate:bloom-live-scope
 
   # The server and MCP suite against a real PostgreSQL.
+  #
+  # This and the two path-scoped jobs below test `!cancelled()` and the result
+  # of `changes` explicitly: `changes` depends on `provenance`, which is skipped
+  # on every pull_request and merge_group run, and the implicit `success()` of a
+  # plain `if:` reads a skipped ANCESTOR as a reason to skip — which would skip
+  # them where they are needed most.
   server:
     needs: changes
-    if: needs.changes.outputs.server == 'true'
+    if: ${{ !cancelled() && needs.changes.result == 'success' && needs.changes.outputs.server == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     services:
@@ -217,7 +281,7 @@ jobs:
   # The full frontend build with its browser gates, plus the brand review.
   review:
     needs: changes
-    if: needs.changes.outputs.review == 'true'
+    if: ${{ !cancelled() && needs.changes.result == 'success' && needs.changes.outputs.review == 'true' }}
     runs-on: ubuntu-latest
     # The full docs build plus cold software-GPU browser checks can exceed 20m.
     # Individual browser actions and animation checks remain bounded.
@@ -267,7 +331,7 @@ jobs:
   image-smoke:
     name: Image build + boot (linux/arm64)
     needs: changes
-    if: needs.changes.outputs.image == 'true'
+    if: ${{ !cancelled() && needs.changes.result == 'success' && needs.changes.outputs.image == 'true' }}
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 30
     services:
@@ -432,11 +496,39 @@ jobs:
   ci-complete:
     name: CI complete
     if: always()
-    needs: [changes, checks, server, review, image-smoke]
+    needs: [provenance, changes, checks, server, review, image-smoke]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      # Provenance runs on push and nowhere else. On push it must SUCCEED: its
+      # step is continue-on-error, so even an unanswerable API call leaves the
+      # job green with `verified` unset; anything else means the job itself
+      # broke. When it answered verified, every other job must be SKIPPED — one
+      # that ran anyway means the gating broke, and is worth a red. Otherwise
+      # the full rules below apply, exactly as before.
+      - name: Merge-queue provenance
+        id: provenance
+        env:
+          EVENT: ${{ github.event_name }}
+          PROVENANCE: ${{ needs.provenance.result }}
+          VERIFIED: ${{ needs.provenance.outputs.verified }}
+          OTHERS: ${{ needs.changes.result }} ${{ needs.checks.result }} ${{ needs.server.result }} ${{ needs.review.result }} ${{ needs.image-smoke.result }}
+        run: |
+          if [ "$EVENT" = push ]; then
+            [ "$PROVENANCE" = success ] || { echo "::error::provenance did not pass on push: $PROVENANCE"; exit 1; }
+          else
+            [ "$PROVENANCE" = skipped ] || { echo "::error::provenance ran on $EVENT: $PROVENANCE"; exit 1; }
+            VERIFIED=
+          fi
+          if [ "$VERIFIED" = true ]; then
+            for result in $OTHERS; do
+              [ "$result" = skipped ] || { echo "::error::a job ran on a queue-verified push: $OTHERS"; exit 1; }
+            done
+            echo "::notice::$GITHUB_SHA passed CI complete in the merge queue on this exact tree; the suite was not re-run."
+            echo verified=true >>"$GITHUB_OUTPUT"
+          fi
       - name: Every needed job passed
+        if: steps.provenance.outputs.verified != 'true'
         env:
           RESULTS: ${{ needs.changes.result }} ${{ needs.checks.result }} ${{ needs.server.result }} ${{ needs.review.result }}
           SERVER: ${{ needs.changes.outputs.server }}

@@ -14,10 +14,21 @@ on:
   push:
     branches: [main]
 
+# One Pages deploy at a time, and never one abandoned half-way: two merges in
+# quick succession each held a ~20-minute runner slot side by side, and the
+# older one could publish after the newer. Queued, a superseded pending run is
+# dropped and the newest one deploys the newest main.
+concurrency:
+  group: deploy-website-pages
+  cancel-in-progress: false
+
 jobs:
   deploy:
     if: github.ref == 'refs/heads/main' && vars.OXY_1519_ROLLOUT_HOLD != 'true'
     runs-on: ubuntu-latest
+    # The build plus its browser gate runs ~10-30 minutes; without a bound a
+    # hung browser holds one of the org's 20 job slots for six hours.
+    timeout-minutes: 60
     environment: production
     permissions:
       contents: read
