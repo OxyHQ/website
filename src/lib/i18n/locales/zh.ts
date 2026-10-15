@@ -1173,6 +1173,16 @@ const zh: Translations = {
     viewImage: '查看图片 {number}',
     back: '返回商店',
   },
+  askAlia: {
+    label: '向 Alia 提问',
+    clientContext:
+      "The person is browsing the Oxy website (oxy.so): Oxy's apps, products, pricing, developer docs and company pages. They are asking you for help about Oxy. They are on the page:",
+    suggestions: {
+      products: '我能用 Oxy 做什么？',
+      developers: '作为开发者，如何在 Oxy 上构建？',
+      apps: '哪款 Oxy 应用适合我？',
+    },
+  },
 };
 
 export default zh;

@@ -1200,6 +1200,16 @@ const ko: Translations = {
     viewImage: '이미지 {number} 보기',
     back: '스토어로 돌아가기',
   },
+  askAlia: {
+    label: 'Alia에게 묻기',
+    clientContext:
+      "The person is browsing the Oxy website (oxy.so): Oxy's apps, products, pricing, developer docs and company pages. They are asking you for help about Oxy. They are on the page:",
+    suggestions: {
+      products: 'Oxy로 무엇을 할 수 있나요?',
+      developers: '개발자로서 Oxy 위에 어떻게 만드나요?',
+      apps: '어떤 Oxy 앱이 저에게 맞나요?',
+    },
+  },
 };
 
 export default ko;

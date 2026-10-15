@@ -11,7 +11,7 @@ export const props: BloomSurfaceProps = {
         { name: 'pending', type: 'boolean', optional: true },
         { name: 'label', type: 'string', optional: true, description: 'The text after the class. `"Energy"` in English; `""` draws the class alone.' },
         { name: 'pendingLabel', type: 'string', optional: true, description: 'Drawn in place of the class while pending. `"Pending"` in English.' },
-        { name: 'size', type: 'EnergyBadgeSize', options: ['small', 'medium'], optional: true, description: 'Default `medium`.' },
+        { name: 'size', type: 'EnergyBadgeSize', options: ['sm', 'md'], optional: true, description: 'Default `medium`.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: '`"Energy rating C"` / `"Energy rating pending"` in English.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },

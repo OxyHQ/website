@@ -51,6 +51,8 @@ import NavDropdownItem from '../ui/NavDropdownItem';
 import NavbarSearchResults from './NavbarSearchResults';
 import { RiLoginBoxLine } from '@oxy.so/bloom/icons/RiLoginBoxLine';
 import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine';
+import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine';
+import { useAskAlia } from '../../lib/ask-alia';
 import { RiSettings3Line } from '@oxy.so/bloom/icons/RiSettings3Line';
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine';
 import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine';
@@ -427,6 +429,7 @@ export default function Navbar({
   const { locales } = useLocaleContext();
   const { oxyServices } = useOxy();
   const { isAuthenticated, isAuthResolved, signIn } = useAuth();
+  const askAlia = useAskAlia();
   // The settings gear (theme + language) always shows; the language section
   // inside it only when more than one locale is offered.
   const showLanguageInSettings = !hideLocalePicker && locales.length > 1;
@@ -1408,6 +1411,18 @@ export default function Navbar({
               <div className={`ms-auto flex items-stretch ${searchOpen ? 'lg:hidden' : ''}`}>
                 {/* Mobile controls */}
                 <div className="flex items-stretch gap-2 lg:hidden">
+                  <NavBarButton ink={barInk} square>
+                    <button
+                      type="button"
+                      className={iconButtonClass}
+                      onClick={() => {
+                        askAlia.open();
+                      }}
+                      aria-label={t('askAlia.label')}
+                    >
+                      <RiSparklingLine aria-hidden width={18} height={18} fill="currentColor" />
+                    </button>
+                  </NavBarButton>
                   {settingsButton}
                   {/* The avatar is the only child of these toggles, and it renders
                   no text, so without a label the button has no accessible name
@@ -1445,6 +1460,19 @@ export default function Navbar({
                       aria-expanded={searchOpen}
                     >
                       <RiSearchLine aria-hidden width={18} height={18} fill="currentColor" />
+                    </button>
+                  </NavBarButton>
+                  <NavBarButton ink={barInk} square>
+                    <button
+                      type="button"
+                      className={iconButtonClass}
+                      onClick={() => {
+                        closeAll();
+                        askAlia.open();
+                      }}
+                      aria-label={t('askAlia.label')}
+                    >
+                      <RiSparklingLine aria-hidden width={18} height={18} fill="currentColor" />
                     </button>
                   </NavBarButton>
                   {settingsButton}

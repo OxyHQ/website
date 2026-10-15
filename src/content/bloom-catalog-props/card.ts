@@ -14,7 +14,7 @@ export const props: BloomSurfaceProps = {
         { name: 'cornerCurve', type: 'CornerCurve', options: ['round', 'smooth'], optional: true, description: 'Circular by default; smooth opts into platform-adaptive curves. radius-max remains circular.' },
         { name: 'clipContent', type: 'boolean', optional: true, description: 'Clip children in an inner layer, preserving outer shadows and focus.' },
         { name: 'contentStyle', type: 'StyleProp<CardStyle>', optional: true, description: 'Child layout and padding when clipContent is enabled.' },
-        { name: 'elevation', type: 'CardElevation', options: ['none', 's', 'm', 'glass'], optional: true, description: "Overrides the appearance's elevation." },
+        { name: 'elevation', type: 'CardElevation', options: ['none', 's', 'm', 'floating'], optional: true, description: "Overrides the appearance's elevation." },
         { name: 'border', type: 'CardBorder', options: ['none', 'hairline', 'thin', 'medium'], optional: true, description: "Overrides the appearance's border width." },
         { name: 'style', type: 'StyleProp<CardStyle>', optional: true },
         { name: 'className', type: 'string', optional: true },

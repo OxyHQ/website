@@ -101,11 +101,11 @@ export default function HelpPageContent() {
               labels={{ message: t('help.supportPrompt'), send: t('common.submit') }}
               addMenu={[]}
               permissions={[]}
-              listening={dictation.listening}
-              onListeningChange={(next) => {
+              voiceState={dictation.listening ? 'recording' : 'idle'}
+              onVoiceStateChange={(next) => {
                 if (sending) return;
                 setVoiceFailed(false);
-                dictation.setActive(next);
+                dictation.setActive(next === 'recording');
               }}
               disabled={sending || !message.trim()}
               onValueChange={(value) => {

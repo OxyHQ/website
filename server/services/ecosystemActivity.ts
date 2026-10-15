@@ -26,7 +26,9 @@ type Activity = ReturnType<typeof createEcosystemTraffic>;
  * "the website cannot act as itself here", and the two names are still the thing
  * to set THERE.
  */
-function canAuthenticateAsOxyService(environment: NodeJS.ProcessEnv): boolean {
+function canAuthenticateAsOxyService(
+  environment: Readonly<Record<string, string | undefined>>,
+): boolean {
   return (
     canAttestWorkloadIdentity() ||
     Boolean(environment.OXY_SERVICE_API_KEY?.trim() && environment.OXY_SERVICE_API_SECRET?.trim())
@@ -36,7 +38,7 @@ function canAuthenticateAsOxyService(environment: NodeJS.ProcessEnv): boolean {
 /** Configure before listen, once per process; activates on any usable identity, and a missing region still fails at boot. */
 export function startWebsiteActivity(
   ready: () => boolean,
-  environment: NodeJS.ProcessEnv = process.env,
+  environment: Readonly<Record<string, string | undefined>> = process.env,
   create: (options: EcosystemTrafficOptions) => Activity = createEcosystemTraffic,
 ): Activity | undefined {
   if (!canAuthenticateAsOxyService(environment)) return undefined;

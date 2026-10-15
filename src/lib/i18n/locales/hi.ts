@@ -771,6 +771,16 @@ const hi: Translations = {
     viewImage: 'चित्र {number} देखें',
     back: 'स्टोर पर वापस जाएँ',
   },
+  askAlia: {
+    label: 'Alia से पूछें',
+    clientContext:
+      "The person is browsing the Oxy website (oxy.so): Oxy's apps, products, pricing, developer docs and company pages. They are asking you for help about Oxy. They are on the page:",
+    suggestions: {
+      products: 'मैं Oxy के साथ क्या कर सकता हूँ?',
+      developers: 'डेवलपर के रूप में Oxy पर कैसे बनाऊँ?',
+      apps: 'मेरे लिए कौन-सा Oxy ऐप सही है?',
+    },
+  },
 };
 
 export default hi;

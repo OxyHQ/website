@@ -8,8 +8,8 @@ export default function AlertDialogExample() {
     <div className="w-full max-w-lg space-y-4 text-foreground">
       <Button onPress={() => setOpen(true)}>Open alert</Button>
       <AlertDialog
-        visible={open}
-        onClose={() => setOpen(false)}
+        open={open}
+        onOpenChange={setOpen}
         title="Discard changes?"
         description="Your unsaved changes will be lost."
       />

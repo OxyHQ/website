@@ -7,8 +7,8 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'CommandProps': {
       props: [
-        { name: 'visible', type: 'boolean', optional: false, description: 'Whether the palette is open (controlled).' },
-        { name: 'onClose', type: '() => void', optional: false, description: 'Close request (Escape, backdrop, after a selection).' },
+        { name: 'open', type: 'boolean', optional: false, description: 'Whether the palette is open (controlled).' },
+        { name: 'onOpenChange', type: '(open: boolean) => void', optional: false, description: 'Close request (Escape, backdrop, after a selection) as `onOpenChange(false)`.' },
         { name: 'items', type: 'CommandItem[]', optional: false, description: 'Command items.' },
         { name: 'placeholder', type: 'string', optional: true, description: "Input placeholder (`'Type a command or search…'` in English)." },
         { name: 'emptyText', type: 'string', optional: true, description: "Shown when no items match (`'No results found.'` in English)." },

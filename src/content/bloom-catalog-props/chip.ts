@@ -20,7 +20,7 @@ export const props: BloomSurfaceProps = {
         { name: 'color', type: 'AccentTone', options: ['default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'info'], optional: true, description: 'Semantic color.' },
         { name: 'hue', type: 'ChipHue', options: ['lime', 'rose', 'yellow', 'cyan', 'blue', 'purple', 'neutral', 'gray', 'soft'], optional: true, description: 'Paints the chip in one of the data hues instead of `color` + `variant` (both are ignored while it is set; `selected` still promotes the chip to the brand tone). Pair it with a size for the right emphasis: `bold` is `medium`, `subtle` is `large`, `caption` is `small`.' },
         { name: 'surface', type: 'string', optional: true, description: "The colour the chip sits on. A hue's dark fill is translucent, so it is mixed over this. Defaults to the page background." },
-        { name: 'size', type: 'ChipSize', options: ['medium', 'sm', 'md', 'lg', 'xl', 'xs', 'small', 'large', '2xl'], optional: true, description: 'Size preset.' },
+        { name: 'size', type: 'ChipSize', options: ['sm', 'md', 'lg', 'xl', 'xs', '2xl'], optional: true, description: 'Size preset.' },
         { name: 'startIcon', type: 'React.ReactNode', optional: true, description: 'Icon rendered before the label.' },
         { name: 'endIcon', type: 'React.ReactNode', optional: true, description: 'Icon or close button rendered after the label.' },
         { name: 'onPress', type: '() => void', optional: true, description: 'Called when the chip is pressed. Makes the chip interactive.' },

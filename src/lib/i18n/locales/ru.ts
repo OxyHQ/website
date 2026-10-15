@@ -786,6 +786,16 @@ const ru: Translations = {
     viewImage: 'Посмотреть изображение {number}',
     back: 'Вернуться в магазин',
   },
+  askAlia: {
+    label: 'Спросить Алию',
+    clientContext:
+      "The person is browsing the Oxy website (oxy.so): Oxy's apps, products, pricing, developer docs and company pages. They are asking you for help about Oxy. They are on the page:",
+    suggestions: {
+      products: 'Что я могу делать с Oxy?',
+      developers: 'Как разработчику строить на Oxy?',
+      apps: 'Какое приложение Oxy мне подходит?',
+    },
+  },
 };
 
 export default ru;

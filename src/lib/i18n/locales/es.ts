@@ -1416,6 +1416,16 @@ const es: Translations = {
     viewImage: 'Ver imagen {number}',
     back: 'Volver a la tienda',
   },
+  askAlia: {
+    label: 'Preguntar a Alia',
+    clientContext:
+      "The person is browsing the Oxy website (oxy.so): Oxy's apps, products, pricing, developer docs and company pages. They are asking you for help about Oxy. They are on the page:",
+    suggestions: {
+      products: '¿Qué puedo hacer con Oxy?',
+      developers: '¿Cómo construyo sobre Oxy como desarrollador?',
+      apps: '¿Qué app de Oxy es la mejor para mí?',
+    },
+  },
 };
 
 export default es;

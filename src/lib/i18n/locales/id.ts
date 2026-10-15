@@ -790,6 +790,16 @@ const id: Translations = {
     viewImage: 'Lihat gambar {number}',
     back: 'Kembali ke toko',
   },
+  askAlia: {
+    label: 'Tanya Alia',
+    clientContext:
+      "The person is browsing the Oxy website (oxy.so): Oxy's apps, products, pricing, developer docs and company pages. They are asking you for help about Oxy. They are on the page:",
+    suggestions: {
+      products: 'Apa yang bisa saya lakukan dengan Oxy?',
+      developers: 'Bagaimana membangun di Oxy sebagai pengembang?',
+      apps: 'Aplikasi Oxy mana yang cocok untuk saya?',
+    },
+  },
 };
 
 export default id;

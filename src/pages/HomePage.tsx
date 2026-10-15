@@ -418,8 +418,8 @@ function CommonsAppSection() {
               </div>
             </div>
             <AlertDialog
-              visible={iosSoonOpen}
-              onClose={() => setIosSoonOpen(false)}
+              open={iosSoonOpen}
+              onOpenChange={setIosSoonOpen}
               title={t('home.commonsIosSoonTitle')}
               description={t('home.commonsIosSoonBody')}
               confirmLabel={t('common.close')}

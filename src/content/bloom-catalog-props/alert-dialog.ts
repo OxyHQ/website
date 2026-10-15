@@ -7,14 +7,14 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'AlertDialogProps': {
       props: [
-        { name: 'visible', type: 'boolean', optional: false, description: 'Whether the dialog is mounted + visible (controlled).' },
-        { name: 'onClose', type: '() => void', optional: false, description: 'Close request — backdrop tap, Escape, cancel, or after confirm.' },
+        { name: 'open', type: 'boolean', optional: false, description: 'Whether the dialog is open (controlled).' },
+        { name: 'onOpenChange', type: '(open: boolean) => void', optional: false, description: 'Close request — backdrop tap, Escape, cancel, or after confirm — as `onOpenChange(false)`.' },
         { name: 'title', type: 'string', optional: false, description: 'Headline.' },
         { name: 'description', type: 'string', optional: true, description: 'Supporting copy.' },
         { name: 'confirmLabel', type: 'string', optional: true, description: "Confirm button label; `'Confirm'` in English." },
         { name: 'cancelLabel', type: 'string', optional: true, description: "Cancel button label; `'Cancel'` in English." },
         { name: 'onConfirm', type: '() => void', optional: true, description: 'Confirm handler. The dialog closes after it runs (sync).' },
-        { name: 'onCancel', type: '() => void', optional: true, description: 'Cancel handler. Runs in addition to `onClose`.' },
+        { name: 'onCancel', type: '() => void', optional: true, description: 'Cancel handler. Runs in addition to `onOpenChange(false)`.' },
         { name: 'destructive', type: 'boolean', optional: true, description: 'Style the confirm button as destructive (negative color). Defaults to `false`.' },
         { name: 'hideCancel', type: 'boolean', optional: true, description: 'Render only the confirm button (no cancel). Defaults to `false`.' },
         { name: 'dismissible', type: 'boolean', optional: true, description: "Tap-outside / Escape dismisses. Defaults to `true` — matching the shared `Dialog` default and Mention's `ConfirmPrompt`. A backdrop / Escape dismissal always resolves the confirm as cancelled (`false`), so it is safe by default; pass `false` for a truly blocking confirm." },

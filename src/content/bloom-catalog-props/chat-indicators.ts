@@ -8,7 +8,7 @@ export const props: BloomSurfaceProps = {
     'PresenceDotProps': {
       props: [
         { name: 'status', type: 'PresenceStatus', options: ['online', 'idle', 'offline', 'busy'], optional: false },
-        { name: 'size', type: 'PresenceDotSize', options: ['small', 'medium', 'large'], optional: true, description: 'Default `medium`.' },
+        { name: 'size', type: 'PresenceDotSize', options: ['sm', 'md', 'lg'], optional: true, description: 'Default `medium`.' },
         { name: 'ringColor', type: 'string', optional: true, description: "The colour of the ring that separates the dot from whatever is behind it — the page or card surface it sits on. Default `theme.colors.background`; pass the card's own colour when the row is on a raised surface." },
         { name: 'ringWidth', type: 'number', optional: true, description: 'Ring thickness. Default `2`. `0` draws no ring.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: "The accessible name. Defaults to the status's word in the app's locale (`'Online'`, `'Away'`, `'Offline'`, `'Busy'` in English). An empty string hides the dot from assistive tech, for rows that already say the status in their own text." },
@@ -19,7 +19,7 @@ export const props: BloomSurfaceProps = {
     'AvatarPresenceProps': {
       props: [
         { name: 'status', type: 'PresenceStatus', options: ['online', 'idle', 'offline', 'busy'], optional: true, description: 'The status drawn in the corner. Omit to draw the avatar alone.' },
-        { name: 'presenceSize', type: 'PresenceDotSize', options: ['small', 'medium', 'large'], optional: true, description: "Overrides the dot size picked from the avatar's own size." },
+        { name: 'presenceSize', type: 'PresenceDotSize', options: ['sm', 'md', 'lg'], optional: true, description: "Overrides the dot size picked from the avatar's own size." },
         { name: 'presenceRingColor', type: 'string', optional: true, description: "Forwarded to the dot's `ringColor`." },
         { name: 'presenceLabel', type: 'string', optional: true, description: "Forwarded to the dot's `accessibilityLabel`." },
         { name: 'containerStyle', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style for the wrapper that positions the dot (not the avatar itself).' },
@@ -63,7 +63,7 @@ export const props: BloomSurfaceProps = {
         { name: 'max', type: 'number', optional: true, description: 'Above this the pill reads `"99+"`. Default `99`.' },
         { name: 'dot', type: 'boolean', optional: true, description: 'Draw a plain dot with no number (the count still names it).' },
         { name: 'muted', type: 'boolean', optional: true, description: 'Neutral fill instead of the accent — a muted conversation.' },
-        { name: 'size', type: 'UnreadBadgeSize', options: ['small', 'medium'], optional: true, description: 'Default `medium`.' },
+        { name: 'size', type: 'UnreadBadgeSize', options: ['sm', 'md'], optional: true, description: 'Default `medium`.' },
         { name: 'formatLabel', type: '(count: number) => string', optional: true, description: 'Builds the accessible name from the count. Defaults to the app\'s locale ("1 unread message" / "3 unread messages", and "Unread" for a `dot` with no count, in English). It receives the REAL count, not the clamped text.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Replaces the composed name entirely.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

@@ -1475,6 +1475,16 @@ const en = {
     viewImage: 'View image {number}',
     back: 'Back to the store',
   },
+  askAlia: {
+    label: 'Ask Alia',
+    clientContext:
+      "The person is browsing the Oxy website (oxy.so): Oxy's apps, products, pricing, developer docs and company pages. They are asking you for help about Oxy. They are on the page:",
+    suggestions: {
+      products: 'What can I do with Oxy?',
+      developers: 'How do I build on Oxy as a developer?',
+      apps: 'Which Oxy app is right for me?',
+    },
+  },
 };
 
 export default en;

@@ -8,6 +8,7 @@ export const props: BloomSurfaceProps = {
     'CollapsibleProps': {
       props: [
         { name: 'open', type: 'boolean', optional: false },
+        { name: 'appear', type: 'boolean', optional: true, description: 'Mounted open, it opens: the height and the fade run from nothing instead of starting settled. For content that arrives while the person watches (a new row in a thread). Default `false`: a collapsible that is open at mount (a restored page, a history) does not move.' },
         { name: 'children', type: 'ReactNode', optional: true },
         { name: 'transition', type: 'SurfaceTransition', optional: true, description: 'Defaults to 300ms CSS ease-in-out. Live reduced motion settles immediately.' },
         { name: 'returnFocusRef', type: 'RefObject<CollapsibleFocusTarget | null>', optional: true, description: 'Used only if focus was inside when closing; never steals deliberate outside focus.' },

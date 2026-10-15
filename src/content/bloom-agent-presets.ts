@@ -1,4 +1,4 @@
-import type { AvatarCharacterConfig } from '@oxy.so/bloom/agent-avatar';
+import type { AvatarCharacter } from '@oxy.so/bloom/agent-avatar';
 
 /** App-owned creation templates, passed through Bloom's public character API. */
 export const BLOOM_AGENT_PRESETS = [
@@ -6,33 +6,39 @@ export const BLOOM_AGENT_PRESETS = [
     name: 'Todd',
     character: {
       preset: 'lime_frog',
-      selections: { eyes: 'clippo', eyewear: 'none', accessory: 'bow', color: 'coral' },
+      eyes: 'clippo',
+      eyewear: 'none',
+      accessory: 'bow',
+      color: 'coral',
     },
   },
   {
     name: 'Alfred',
     character: {
       preset: 'alfred',
-      selections: { eyes: 'cyclops', eyewear: 'monocle', accessory: 'bow', color: 'cyan' },
+      eyes: 'cyclops',
+      eyewear: 'monocle',
+      accessory: 'bow',
+      color: 'cyan',
     },
   },
   {
     name: 'Iris',
     character: {
       preset: 'coral_monocle',
-      selections: { eyes: 'clippo', eyewear: 'round_sunglasses', accessory: 'none' },
+      eyes: 'clippo',
+      eyewear: 'round_sunglasses',
+      accessory: 'none',
     },
   },
   {
     name: 'Felipe',
     character: {
-      selections: {
-        eyes: 'sleepy_lids',
-        eyewear: 'none',
-        accessory: 'felipe_beret',
-        shape: 'six_lobed_flower',
-        color: 'blue',
-      },
+      eyes: 'sleepy_lids',
+      eyewear: 'none',
+      accessory: 'felipe_beret',
+      shape: 'six_lobed_flower',
+      color: 'blue',
       bodyColor: '#ff9547',
     },
   },
@@ -41,4 +47,4 @@ export const BLOOM_AGENT_PRESETS = [
   { name: 'Josh', character: { preset: 'blue_spectacles' } },
   { name: 'Iggy', character: { preset: 'lime_headphones' } },
   { name: 'Clippo', character: { preset: 'clippo' } },
-] satisfies { name: string; character: AvatarCharacterConfig }[];
+] satisfies { name: string; character: AvatarCharacter }[];

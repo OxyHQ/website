@@ -15,6 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'voices', type: 'readonly AgentVoice[]', optional: true, description: "Native hosts can supply their speech provider's catalog. Web uses local device voices by default." },
+        { name: 'showPreferences', type: 'boolean', optional: true, description: 'Draw the speech preferences (voice, speed, language, notifications) under the profile. Default `true`. A host that does not keep them, because its agents have no voice, turns it off: the editor is then the profile and the look alone, and `agent.preferences` is left untouched.' },
         { name: 'onPreviewVoice', type: '(text: string, preferences: AgentPreferences) => void', optional: true, description: 'Host-owned speech preview, used on native and optionally on web.' },
       ],
     },

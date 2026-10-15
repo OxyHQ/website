@@ -770,6 +770,16 @@ const bn: Translations = {
     viewImage: 'ছবি {number} দেখুন',
     back: 'স্টোরে ফিরে যান',
   },
+  askAlia: {
+    label: 'Alia-কে জিজ্ঞাসা করুন',
+    clientContext:
+      "The person is browsing the Oxy website (oxy.so): Oxy's apps, products, pricing, developer docs and company pages. They are asking you for help about Oxy. They are on the page:",
+    suggestions: {
+      products: 'Oxy দিয়ে আমি কী করতে পারি?',
+      developers: 'ডেভেলপার হিসেবে Oxy-তে কীভাবে তৈরি করব?',
+      apps: 'আমার জন্য কোন Oxy অ্যাপ ঠিক?',
+    },
+  },
 };
 
 export default bn;

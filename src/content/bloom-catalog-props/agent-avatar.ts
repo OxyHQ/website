@@ -7,7 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'AgentAvatarProps': {
       props: [
-        { name: 'config', type: 'AvatarConfig', optional: false },
+        { name: 'character', type: 'AvatarCharacter', optional: false, description: "What the avatar is. `{ preset: 'blue_beret' }` is a complete one; see `AvatarCharacter`." },
         { name: 'size', type: 'number', optional: true },
         { name: 'paused', type: 'boolean', optional: true },
         { name: 'label', type: 'string', optional: true },
