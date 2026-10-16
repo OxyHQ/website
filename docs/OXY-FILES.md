@@ -2,7 +2,7 @@
 
 Every file the site stores — an SVG excepted, until Oxy Files takes sanitized
 SVG — is a file **the Oxy Website application owns** in Oxy Files (OxyHQ/oxy
-ADR 0041, stages 4 and 4b). Content belongs to the site,
+ADR 0043, stages 4 and 4b). Content belongs to the site,
 not to whichever editor uploaded it; the editor is kept on the media row as
 `uploadedBy`, an audit field. Oxy stores the bytes once, serves them from
 `cloud.oxy.so`, makes the webp renditions and deletes a file of the
@@ -55,7 +55,7 @@ suite replaces.
   SHA-256 Oxy reports must equal the one the site computed.
   An import by URL is read back from Oxy and held to the same rules, because
   Oxy's importer accepts whatever image type the source declares.
-- **Reconciliation is the net** (ADR 0041 D6). Once a day one task sends the
+- **Reconciliation is the net** (ADR 0043 D6). Once a day one task sends the
   full inventory of `media` rows holding an Oxy file; Oxy adds what it is
   missing and removes what no row holds. Runs are recorded in
   `oxy_file_reconciliations`; `bun run oxy-files reconcile [--dry-run]` runs
@@ -91,7 +91,7 @@ The Oxy Website application (Oxy seed, `first_party`) needs the staff-granted
 scopes `files:app:write`, `files:app:delete` and `files:references:write`, and
 its file-events endpoint set to `https://website-api.oxy.so/api/oxy/file-events`
 (console → Webhooks → File events, or `oxy.apps.setFilesWebhook`). Oxy's own
-applications are not metered (ADR 0041 D2).
+applications are not metered (ADR 0043 D2).
 
 ## Moving the legacy storage over
 

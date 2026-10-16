@@ -7,7 +7,7 @@ import { MEDIA_ENTITY_TYPE, reconcileMediaReferences } from './oxyFiles.js';
 import { legacyStorageCensus } from './oxyFilesMigration.js';
 
 /* ──────────────────────────────────────────────
- * The safety net under the reference writes (ADR 0041 D6).
+ * The safety net under the reference writes (ADR 0043 D6).
  *
  * Every media row registers its reference before it is written and withdraws
  * it through a durable queue when it is deleted, but a crash, an old bug or an

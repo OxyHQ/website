@@ -860,7 +860,7 @@ export interface MediaItem {
   filename: string;
   /** The legacy storage key; null for a file stored only in Oxy Files. */
   key: string | null;
-  /** The Oxy file holding the bytes (ADR 0041); null while the item is on the legacy storage. */
+  /** The Oxy file holding the bytes (ADR 0043); null while the item is on the legacy storage. */
   oxyFileId?: string | null;
   mimeType: string;
   size: number;

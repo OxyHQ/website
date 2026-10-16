@@ -12,7 +12,7 @@ import {
 } from './s3.js';
 
 /* ──────────────────────────────────────────────
- * The one door between the site and file storage (ADR 0041, docs/OXY-FILES.md).
+ * The one door between the site and file storage (ADR 0043, docs/OXY-FILES.md).
  *
  * Every file but an SVG is a file the Oxy Website APPLICATION owns in Oxy
  * Files — images and videos through the media upload, any other type (a PDF,
@@ -189,7 +189,7 @@ export async function uploadFile(
 
 /**
  * Store bytes of ANY type Oxy Files takes — a PDF, an icon, an archive — as one
- * of the site's files, public, through the resumable large upload (ADR 0041
+ * of the site's files, public, through the resumable large upload (ADR 0043
  * stage 4b, `uploadAppFileLarge`). Oxy refuses programs and active documents
  * (HTML, SVG, XML, scripts) by type and by the name's extension (415), and
  * serves every type a browser would not render safely as a download. Oxy
@@ -229,7 +229,7 @@ export async function uploadLargeFile(
 }
 
 /**
- * Have Oxy fetch a URL into one of the site's files (ADR 0041 D7): Oxy's own
+ * Have Oxy fetch a URL into one of the site's files (ADR 0043 D7): Oxy's own
  * SSRF-safe fetcher, and the same URL imported again answers the file it
  * already made without fetching. Unreferenced until {@link addMediaReference}.
  */
@@ -305,7 +305,7 @@ export async function deleteFile(fileId: string): Promise<'deleted' | 'in_use' |
 
 /**
  * Send Oxy the full inventory of the site's `media` references and let it add
- * the missing and remove the stale (ADR 0041 D6).
+ * the missing and remove the stale (ADR 0043 D6).
  */
 export async function reconcileMediaReferences(
   items: AsyncIterable<ServiceReferenceInventoryItem>,

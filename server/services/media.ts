@@ -865,7 +865,7 @@ function normalizeVideoFilename(requested: string | undefined, mimeType: string)
 }
 
 /**
- * Import an image by URL. Oxy fetches it (ADR 0041 D7: its own SSRF-safe
+ * Import an image by URL. Oxy fetches it (ADR 0043 D7: its own SSRF-safe
  * fetcher, and a URL it already imported is answered without fetching), and
  * the stored bytes are then read back from Oxy and held to the same rules as
  * an upload — signature, decode, pixel ceiling — because Oxy accepts any image

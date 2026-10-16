@@ -37,7 +37,7 @@ export const categories = pgTable('categories', {
  * bytes live in exactly one place:
  *
  * - `oxyFileId`: a file the Oxy Website application owns in Oxy Files (ADR
- *   0041). The row's own reference (`media`, `_id`) is what keeps the file
+ *   0043). The row's own reference (`media`, `_id`) is what keeps the file
  *   alive; `url` and `thumbnails` are its public URL and renditions.
  * - `key` alone: an object in the legacy storage (`services/s3.ts`), or, for a
  *   seeded row, a path the site itself serves. A migrated row keeps its legacy

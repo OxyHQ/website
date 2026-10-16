@@ -4,7 +4,7 @@ import { config } from '../config.js';
 import { applyFileEvent } from '../services/oxyFileEvents.js';
 
 /**
- * The Oxy Website application's file-events endpoint (ADR 0041 D9), set in the
+ * The Oxy Website application's file-events endpoint (ADR 0043 D9), set in the
  * Oxy console as `https://website-api.oxy.so/api/oxy/file-events`.
  *
  * Mounted BEFORE `express.json()`: the signature covers the exact bytes Oxy

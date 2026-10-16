@@ -110,7 +110,7 @@ export const config = {
     retentionDays: parsePositiveIntEnv(process.env.STATUS_HISTORY_RETENTION_DAYS, 90),
   },
   /**
-   * Oxy Files (ADR 0041): every image and video the site stores is a file the
+   * Oxy Files (ADR 0043): every image and video the site stores is a file the
    * Oxy Website APPLICATION owns, written with the service credential above
    * (`files:app:write`, `files:app:delete`, `files:references:write`).
    * `docs/OXY-FILES.md` is the procedure.

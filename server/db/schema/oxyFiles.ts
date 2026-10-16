@@ -11,7 +11,7 @@ import {
 import { objectId, timestamps } from './columns.js';
 
 /* ──────────────────────────────────────────────
- * The site's side of Oxy Files (ADR 0041, `docs/OXY-FILES.md`).
+ * The site's side of Oxy Files (ADR 0043, `docs/OXY-FILES.md`).
  *
  * Oxy owns the bytes and garbage-collects an application's file nobody
  * references. What the site keeps is what only it can know: which of its rows
@@ -109,7 +109,7 @@ export const mediaStorageMigrations = pgTable(
 );
 
 /**
- * Every reconciliation of the site's references with Oxy (ADR 0041 D6): the
+ * Every reconciliation of the site's references with Oxy (ADR 0043 D6): the
  * claim that keeps several tasks from running one each, and the record of
  * what each run found. A run still `running` after `RECONCILE_STALE_AFTER`
  * crashed and no longer blocks the next.

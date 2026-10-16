@@ -4,7 +4,7 @@ import { db } from '../db/postgres.js';
 import { media, oxyFileEvents } from '../db/schema/index.js';
 
 /* ──────────────────────────────────────────────
- * What Oxy tells the site about its files (ADR 0041 D9).
+ * What Oxy tells the site about its files (ADR 0043 D9).
  *
  * A file can stop being servable without the site doing anything: taken down
  * after a content claim (`file.blocked`), moved to trash or deleted. Oxy then
