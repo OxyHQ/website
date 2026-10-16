@@ -25,6 +25,10 @@ const WEBM = Buffer.concat([
 const SVG = Buffer.from(
   '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10"/></svg>',
 );
+/** An SVG carrying active content, which Oxy's sanitizer removes (stage 4c). */
+const ACTIVE_SVG = Buffer.from(
+  '<?xml version="1.0"?>\n<!-- logo -->\n<svg xmlns="http://www.w3.org/2000/svg" width="24" height="12" onload="alert(1)"><script>alert(2)</script><rect width="24" height="12"/></svg>',
+);
 /** A real, decodable JPEG. */
 async function sharpJpeg(): Promise<Buffer> {
   const sharp = (await import('sharp')).default;
@@ -82,7 +86,60 @@ describe('an editor upload', () => {
     expect(row.thumbnails).toEqual({ sm: '', md: '', lg: '' });
   });
 
-  test('an SVG — the one type Oxy Files refuses — stays in the legacy storage, typed by its bytes', async () => {
+  test('an SVG becomes a file of the application, stored as Oxy’s sanitized document, with renditions', async () => {
+    const { media: row, reused } = await ingestUpload({
+      buffer: ACTIVE_SVG,
+      filename: 'logo.bin',
+      folder: 'products',
+      uploadedBy: 'editor-1',
+    });
+    expect(reused).toBe(false);
+    expect(row.oxyFileId).toBeTruthy();
+    expect(row.key).toBeNull();
+    expect(row.mimeType).toBe('image/svg+xml');
+    expect(row.filename).toBe('logo.svg');
+    const stored = oxy.files.get(row.oxyFileId ?? '');
+    expect(stored?.mime).toBe('image/svg+xml');
+    expect(stored?.bytes.toString()).not.toContain('script');
+    expect(stored?.bytes.toString()).not.toContain('onload');
+    // The row holds what Oxy stores: the sanitized document's hash and size.
+    expect(row.sha256).toBe(stored?.sha256 ?? 'missing');
+    expect(row.size).toBe(stored?.size ?? -1);
+    expect(row.width).toBe(24);
+    expect(row.height).toBe(12);
+    expect(row.url).toBe(`https://cloud.test/${row.oxyFileId}`);
+    expect(row.thumbnails.lg).toBe(`https://cloud.test/${row.oxyFileId}?variant=w1280`);
+    expect(oxy.references.has(`${row.oxyFileId}|media|${row._id}`)).toBe(true);
+    expect(oxy.largeUploads).toEqual([]);
+    expect(storage.objects.size).toBe(0);
+  });
+
+  test('the same SVG again reuses its row, though Oxy stored different bytes than were sent', async () => {
+    const input = { buffer: ACTIVE_SVG, filename: 'logo.svg', folder: 'products', uploadedBy: 'e' };
+    const first = await ingestUpload(input);
+    const second = await ingestUpload(input);
+    expect(second.reused).toBe(true);
+    expect(second.media._id).toBe(first.media._id);
+    expect(await countRows('media')).toBe(1);
+    expect(oxy.files.size).toBe(1);
+  });
+
+  test('an SVG Oxy cannot sanitize is refused, and no row is written', async () => {
+    await expect(
+      ingestUpload({
+        buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><rect width="1"'),
+        filename: 'broken.svg',
+        folder: 'products',
+        uploadedBy: 'editor-1',
+      }),
+    ).rejects.toThrow('not a well-formed UTF-8 SVG document');
+    expect(await countRows('media')).toBe(0);
+    expect(storage.objects.size).toBe(0);
+    expect(oxy.references.size).toBe(0);
+  });
+
+  test('an Oxy API without stage 4c refuses SVG: it goes to the legacy storage as before', async () => {
+    oxy.svgSupported = false;
     const { media: row } = await ingestUpload({
       buffer: Buffer.concat([Buffer.from('<?xml version="1.0"?>\n<!-- logo -->\n'), SVG]),
       filename: 'logo.bin',
@@ -232,6 +289,7 @@ describe('the migration', () => {
     const bytes = await png(300, 200, 1);
     const row = await legacyRow('a.png', bytes);
     const svg = await legacyRow('logo.svg', SVG, 'image/svg+xml');
+    await db.insert(testimonials).values({ quote: 'logo', author: 'B', avatar: svg.url });
     const [{ _id: testimonialId }] = await db
       .insert(testimonials)
       .values({ quote: 'q', author: 'A', avatar: row.url })
@@ -258,7 +316,7 @@ describe('the migration', () => {
 
     const report = await migrateLegacyStorage({ apply: true });
     expect(report.orphans).toEqual({ found: 1, created: 1, missing: 0 });
-    expect(report.media).toEqual({ migrated: 2, would_migrate: 0, deferred: 1, failed: 0 });
+    expect(report.media).toEqual({ migrated: 3, would_migrate: 0, deferred: 0, failed: 0 });
     expect(JSON.stringify(report)).not.toContain('https://');
 
     const [migrated] = await db.select().from(media).where(eq(media._id, row._id));
@@ -274,8 +332,12 @@ describe('the migration', () => {
     expect(record.legacySha256).toBe(record.oxySha256 ?? 'missing');
     expect(record.legacyThumbnails.md).toBe(row.thumbnails.md);
 
-    const [deferred] = await db.select().from(media).where(eq(media._id, svg._id));
-    expect(deferred.oxyFileId).toBeNull();
+    const [migratedSvg] = await db.select().from(media).where(eq(media._id, svg._id));
+    expect(migratedSvg.oxyFileId).toBeTruthy();
+    expect(migratedSvg.key).toBe(svg.key);
+    expect(oxy.references.has(`${migratedSvg.oxyFileId}|media|${svg._id}`)).toBe(true);
+    const [logo] = await db.select().from(testimonials).where(eq(testimonials.author, 'B'));
+    expect(logo.avatar).toBe(migratedSvg.url);
 
     const [testimonial] = await db
       .select()
@@ -295,13 +357,13 @@ describe('the migration', () => {
 
     const again = await migrateLegacyStorage({ apply: true });
     expect(again.orphans.found).toBe(0);
-    expect(again.media).toEqual({ migrated: 0, would_migrate: 0, deferred: 1, failed: 0 });
+    expect(again.media).toEqual({ migrated: 0, would_migrate: 0, deferred: 0, failed: 0 });
     expect(again.rewrite.rows).toEqual({});
 
     const census = await legacyStorageCensus();
-    expect(census.media).toMatchObject({ oxy: 2, legacy: 0, legacyAwaitingSvg: 1 });
+    expect(census.media).toMatchObject({ oxy: 3, legacy: 0 });
     expect(census.legacyUrlRows).toEqual({});
-    expect(census.migrations).toEqual({ migrated: 2, deferred: 1 });
+    expect(census.migrations).toEqual({ migrated: 3 });
   });
 
   test('a hash Oxy does not confirm leaves the row on the legacy storage', async () => {
@@ -329,15 +391,15 @@ describe('the migration', () => {
     // How the newsroom's JPEGs were recorded: an octet stream named `.bin`.
     const image = await legacyRow('cover.bin', jpeg, 'application/octet-stream');
     const pdf = await legacyRow('kit.pdf', PDF, 'application/pdf');
-    const svg = await legacyRow('logo.bin', SVG, 'application/octet-stream');
+    const svg = await legacyRow('logo.bin', ACTIVE_SVG, 'application/octet-stream');
 
     const preview = await migrateLegacyStorage({ apply: false });
-    expect(preview.media).toEqual({ migrated: 0, would_migrate: 2, deferred: 1, failed: 0 });
+    expect(preview.media).toEqual({ migrated: 0, would_migrate: 3, deferred: 0, failed: 0 });
     const [untouched] = await db.select().from(media).where(eq(media._id, svg._id));
     expect(untouched.mimeType).toBe('application/octet-stream'); // a preview writes nothing
 
     const report = await migrateLegacyStorage({ apply: true });
-    expect(report.media).toEqual({ migrated: 2, would_migrate: 0, deferred: 1, failed: 0 });
+    expect(report.media).toEqual({ migrated: 3, would_migrate: 0, deferred: 0, failed: 0 });
 
     const [migratedImage] = await db.select().from(media).where(eq(media._id, image._id));
     expect(migratedImage.mimeType).toBe('image/jpeg');
@@ -352,13 +414,59 @@ describe('the migration', () => {
     expect(migratedPdf.thumbnails).toEqual({ sm: '', md: '', lg: '' });
     expect(oxy.largeUploads).toEqual([{ mime: 'application/pdf', filename: 'kit.pdf' }]);
 
-    // TODO(oxy-svg): the SVG waits, recorded as the SVG it is.
-    const [deferred] = await db.select().from(media).where(eq(media._id, svg._id));
-    expect(deferred.oxyFileId).toBeNull();
-    expect(deferred.mimeType).toBe('image/svg+xml');
-    expect(deferred.filename).toBe('logo.svg');
+    // The SVG is stored as Oxy's sanitized document: its hash is not the
+    // legacy object's, and the row takes the stored document's hash and size.
+    const [migratedSvg] = await db.select().from(media).where(eq(media._id, svg._id));
+    const storedSvg = oxy.files.get(migratedSvg.oxyFileId ?? '');
+    expect(migratedSvg.mimeType).toBe('image/svg+xml');
+    expect(migratedSvg.filename).toBe('logo.svg');
+    expect(storedSvg?.bytes.toString()).not.toContain('script');
+    expect(migratedSvg.sha256).toBe(storedSvg?.sha256 ?? 'missing');
+    expect(migratedSvg.size).toBe(storedSvg?.size ?? -1);
+    expect(migratedSvg.thumbnails.md).toBe(
+      `https://cloud.test/${migratedSvg.oxyFileId}?variant=w640`,
+    );
+    const [svgRecord] = await db
+      .select()
+      .from(mediaStorageMigrations)
+      .where(eq(mediaStorageMigrations.mediaId, svg._id));
+    expect(svgRecord.status).toBe('migrated');
+    expect(svgRecord.oxySha256).toBe(storedSvg?.sha256 ?? 'missing');
+    expect(svgRecord.legacySha256).not.toBe(svgRecord.oxySha256);
     const census = await legacyStorageCensus();
-    expect(census.media).toMatchObject({ oxy: 2, legacy: 0, legacyAwaitingSvg: 1 });
+    expect(census.media).toMatchObject({ oxy: 3, legacy: 0 });
+  });
+
+  test('against an Oxy API without stage 4c an SVG is deferred, and the next run carries it over', async () => {
+    const svg = await legacyRow('logo.bin', SVG, 'application/octet-stream');
+    oxy.svgSupported = false;
+    const report = await migrateLegacyStorage({ apply: true });
+    expect(report.media).toEqual({ migrated: 0, would_migrate: 0, deferred: 1, failed: 0 });
+    expect(report.items[0]?.error).toContain('svg_not_accepted');
+    const [waiting] = await db.select().from(media).where(eq(media._id, svg._id));
+    expect(waiting.oxyFileId).toBeNull();
+    expect(waiting.url).toBe(svg.url);
+    expect(waiting.mimeType).toBe('image/svg+xml'); // typed by its bytes meanwhile
+    expect(waiting.filename).toBe('logo.svg');
+    expect(oxy.files.size).toBe(0);
+    expect((await legacyStorageCensus()).media).toMatchObject({ oxy: 0, legacy: 1 });
+
+    oxy.svgSupported = true;
+    const retry = await migrateLegacyStorage({ apply: true });
+    expect(retry.media).toEqual({ migrated: 1, would_migrate: 0, deferred: 0, failed: 0 });
+    const [record] = await db.select().from(mediaStorageMigrations);
+    expect(record).toMatchObject({ status: 'migrated', attempts: 2, error: null });
+    expect((await legacyStorageCensus()).media).toMatchObject({ oxy: 1, legacy: 0 });
+  });
+
+  test('an SVG Oxy serves differently than it reported is not switched', async () => {
+    const svg = await legacyRow('logo.svg', SVG, 'image/svg+xml');
+    oxy.serveDifferentBytes = true;
+    const report = await migrateLegacyStorage({ apply: true });
+    expect(report.media.failed).toBe(1);
+    const [after] = await db.select().from(media).where(eq(media._id, svg._id));
+    expect(after.oxyFileId).toBeNull();
+    expect(oxy.references.size).toBe(0);
   });
 
   test('a missing legacy object is reported, not invented', async () => {

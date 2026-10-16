@@ -28,10 +28,13 @@ import {
   removeReference,
   sha256Hex,
   type StoredFile,
+  SVG_MIME_TYPE,
+  SVG_NOT_ACCEPTED,
   type Thumbnails,
   uploadFile,
   uploadLargeFile,
   uploadLegacyFile,
+  uploadSvgFile,
 } from './oxyFiles.js';
 import { downloadRemote } from './remoteDownload.js';
 import { processImage } from './thumbnails.js';
@@ -55,8 +58,8 @@ import { DomainError } from '../utils/domainError.js';
  *    (`oxy_file_reference_removals`) written in the same transaction, and
  *    deletes the file once no other row uses it. Several rows may share one
  *    file (Oxy dedupes the bytes), each with its own reference.
- * 4. Legacy objects (rows not migrated yet, and types Oxy Files cannot hold
- *    yet) keep the old rule: no object is deleted while any row still uses its
+ * 4. Legacy objects (rows not migrated yet, and an SVG an Oxy API without
+ *    stage 4c refused) keep the old rule: no object is deleted while any row still uses its
  *    key, and a delete the storage refuses is queued in `storage_cleanups`.
  * ──────────────────────────────────────────── */
 
@@ -725,7 +728,7 @@ async function findReusable(match: {
   sha256: string;
   folder: string;
   filename: string;
-  legacyKey: string;
+  legacyKey?: string;
 }): Promise<MediaRow | undefined> {
   const [row] = await db
     .select()
@@ -739,7 +742,7 @@ async function findReusable(match: {
             eq(media.folder, match.folder),
             eq(media.filename, match.filename),
           ),
-          eq(media.key, match.legacyKey),
+          match.legacyKey ? eq(media.key, match.legacyKey) : undefined,
         ),
       ),
     )
@@ -929,8 +932,7 @@ export async function ingestRemoteImage<A = undefined>(
  * never the browser's declared type, which is how raster images were once
  * recorded as `application/octet-stream`. An image or a video is an Oxy file
  * through the media upload; any other type (a PDF, an icon, an archive) through
- * Oxy's large upload; an SVG stays on the legacy storage until Oxy Files takes
- * sanitized SVG (TODO(oxy-svg), `services/oxyFiles.ts`).
+ * Oxy's large upload; an SVG as Oxy's sanitized document ({@link ingestSvg}).
  */
 export async function ingestUpload(input: IngestInput): Promise<IngestResult<undefined>> {
   const folder = normalizeFolder(input.folder);
@@ -938,8 +940,7 @@ export async function ingestUpload(input: IngestInput): Promise<IngestResult<und
   if (sniffImageType(input.buffer)) return ingestImage({ ...input, folder });
   const video = sniffVideoType(input.buffer);
   if (video) return ingestOxyBytes(input, folder, { mimeType: video, decoded: false }, undefined);
-  // TODO(oxy-svg): an SVG is the one type Oxy Files refuses (an active document).
-  if (isSvgDocument(input.buffer)) return ingestLegacySvg(input, folder);
+  if (isSvgDocument(input.buffer)) return ingestSvg(input, folder);
   return ingestOxyDocument(input, folder);
 }
 
@@ -975,7 +976,90 @@ async function ingestOxyDocument(
   return { media: row, attached: undefined, reused: false, warnings: [] };
 }
 
-/** TODO(oxy-svg): an SVG on the legacy storage, recorded as the SVG its bytes are. */
+/**
+ * Read an SVG Oxy stored back from its public URL and hold it to what Oxy
+ * reported: the bytes must hash to the file's SHA-256 and be an SVG document.
+ * Oxy stores the SANITIZED document, so the upload's own hash cannot be the
+ * check (`uploadSvgFile`); this is. Returns the stored document.
+ */
+export async function readBackSvg(file: StoredFile, signal?: AbortSignal): Promise<Buffer> {
+  const { buffer } = await downloadRemote(oxyFileUrl(file.fileId), {
+    signal,
+    maxBytes: OXY_FILES_MAX_BYTES,
+  });
+  if (sha256Hex(buffer) !== file.sha256)
+    throw new MediaError('unavailable', 'Oxy Files served different bytes than it stored; try again');
+  if (!isSvgDocument(buffer))
+    throw new MediaError('unavailable', 'Oxy Files stored something other than an SVG; try again');
+  return buffer;
+}
+
+/** An SVG's intrinsic size, when its document states one the decoder reads. */
+async function svgDimensions(buffer: Buffer): Promise<{ width?: number; height?: number }> {
+  const sharp = await loadSharp();
+  if (!sharp) return {};
+  try {
+    const { width, height } = await sharp(buffer).metadata();
+    return { width, height };
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * An editor's SVG: one of the site's files, stored by Oxy as its sanitized
+ * document (ADR 0043 stage 4c), read back and checked, with Oxy's renditions.
+ * An Oxy API that predates stage 4c refuses SVG outright; the SVG then goes
+ * to the legacy storage exactly as before, and the operator-run migration
+ * carries it over once the API takes SVG.
+ */
+async function ingestSvg(input: IngestInput, folder: string): Promise<IngestResult<undefined>> {
+  const mimeType = SVG_MIME_TYPE;
+  const filename = filenameForType(input.filename, mimeType);
+  const existing = await findReusable({
+    sha256: sha256Hex(input.buffer),
+    folder,
+    filename,
+    legacyKey: buildObjectKey(input.buffer, filename, mimeType, `oxy-website/${folder}`),
+  });
+  if (existing) return reuse(existing, undefined, []);
+
+  const file = await uploadSvgFile(input.buffer, filename);
+  if (file === SVG_NOT_ACCEPTED) {
+    console.warn(
+      '[oxy-files] Oxy Files refused SVG (its API predates ADR 0043 stage 4c): stored on the legacy storage until `oxy-files migrate` carries it over',
+    );
+    return ingestLegacySvg(input, folder);
+  }
+  const stored = await readBackSvg(file);
+  // The row's hash is the stored document's. The same SVG uploaded again
+  // sanitizes to the same document, which is that row.
+  const sanitizedTwin = await findReusable({ sha256: file.sha256, folder, filename });
+  if (sanitizedTwin) return reuse(sanitizedTwin, undefined, []);
+
+  const { width, height } = await svgDimensions(stored);
+  const { row } = await recordOxyMedia<undefined>(
+    file,
+    {
+      filename,
+      mimeType,
+      size: file.size,
+      width,
+      height,
+      alt: input.alt ?? '',
+      tags: input.tags ?? [],
+      folder,
+      uploadedBy: input.uploadedBy,
+    },
+    undefined,
+  );
+  return { media: row, attached: undefined, reused: false, warnings: [] };
+}
+
+/**
+ * An SVG on the legacy storage, recorded as the SVG its bytes are — only when
+ * the Oxy API refused SVG ({@link ingestSvg}).
+ */
 async function ingestLegacySvg(
   input: IngestInput,
   folder: string,

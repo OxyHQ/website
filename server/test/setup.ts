@@ -136,6 +136,13 @@ export const oxy = {
   failDeletes: false,
   /** Store different bytes than were sent (an integrity failure). */
   corruptNextUpload: false,
+  /**
+   * Whether the API takes SVG (ADR 0043 stage 4c). False plays an API deployed
+   * before 4c, which refuses SVG as an active document (415).
+   */
+  svgSupported: true,
+  /** Serve other bytes than a file holds from its public URL (a read-back failure). */
+  serveDifferentBytes: false,
   reconciliations: [] as { entityType: string; items: number; dryRun: boolean }[],
   busyReconcile: false,
   sequence: 0,
@@ -149,6 +156,8 @@ export const oxy = {
     this.failReferenceRemovals = false;
     this.failDeletes = false;
     this.corruptNextUpload = false;
+    this.svgSupported = true;
+    this.serveDifferentBytes = false;
     this.reconciliations = [];
     this.busyReconcile = false;
   },
@@ -169,13 +178,34 @@ export const oxy = {
   bytesAt(url: string): Buffer | undefined {
     const match = /^https:\/\/cloud\.test\/([^/?]+)/.exec(url);
     const file = match ? this.files.get(match[1]) : undefined;
-    return file && file.status === 'active' ? file.bytes : undefined;
+    if (!file || file.status !== 'active') return undefined;
+    return this.serveDifferentBytes ? Buffer.concat([file.bytes, Buffer.from(' ')]) : file.bytes;
   },
   referencesOf(fileId: string): string[] {
     return [...this.references].filter((reference) => reference.startsWith(`${fileId}|`));
   },
 };
 (globalThis as Record<string, unknown>).__testOxy = oxy;
+
+/**
+ * What stage 4c stores of an SVG: its sanitized document. A stand-in for Oxy's
+ * DOMPurify sanitizer with the properties the site relies on — deterministic,
+ * idempotent, an SVG document out, and different bytes whenever it removed
+ * something (declarations, comments, scripts, handlers).
+ */
+function sanitizeSvg(bytes: Buffer): Buffer<ArrayBuffer> {
+  const text = bytes.toString('utf8').replace(/^\uFEFF/, '');
+  const body = text
+    .replace(/<\?[\s\S]*?\?>/g, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<!doctype[^>]*>/gi, '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/\s+on[a-z]+="[^"]*"/gi, '')
+    .trim();
+  if (!/^<svg[\s>/]/i.test(body) || !/<\/svg>$|\/>$/.test(body))
+    throw oxyError(415, 'INVALID_SVG');
+  return Buffer.from(body);
+}
 
 function view(file: OxyFile) {
   return {
@@ -202,6 +232,10 @@ mock.module('../services/oxyFilesApi.js', () => ({
         throw oxyError(503, 'SERVICE_UNAVAILABLE');
       }
       let stored = Buffer.from(bytes);
+      if (mime.startsWith('image/svg')) {
+        if (!oxy.svgSupported) throw oxyError(415, 'UNSUPPORTED_MEDIA_TYPE');
+        stored = sanitizeSvg(stored);
+      }
       if (oxy.corruptNextUpload) {
         oxy.corruptNextUpload = false;
         stored = Buffer.concat([stored, Buffer.from([0])]);

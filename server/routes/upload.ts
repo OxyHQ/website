@@ -18,7 +18,7 @@ const uploadBodySchema = z
 
 /**
  * An editor's upload into the media library: a file of the Oxy Website
- * application in Oxy Files, an SVG excepted (`services/media.ts`); the editor is
+ * application in Oxy Files (an SVG as Oxy's sanitized document, `services/media.ts`); the editor is
  * recorded on the row as `uploadedBy`. The browser's declared type
  * (`req.file.mimetype`) is deliberately not passed on: what a file is comes
  * from its bytes.

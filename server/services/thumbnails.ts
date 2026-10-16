@@ -16,8 +16,8 @@ const SIZES = [
 
 /**
  * Detect image dimensions and generate thumbnail variants, for a file kept in
- * the LEGACY storage — an SVG (TODO(oxy-svg), `services/oxyFiles.ts`). A file in Oxy
- * Files gets Oxy's own renditions instead.
+ * the LEGACY storage — an SVG an Oxy API without ADR 0043 stage 4c refused
+ * (`services/media.ts`). A file in Oxy Files gets Oxy's own renditions instead.
  * Falls back gracefully if sharp is unavailable (e.g. missing native bindings).
  */
 export async function processImage(

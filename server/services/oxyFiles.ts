@@ -14,17 +14,21 @@ import {
 /* ──────────────────────────────────────────────
  * The one door between the site and file storage (ADR 0043, docs/OXY-FILES.md).
  *
- * Every file but an SVG is a file the Oxy Website APPLICATION owns in Oxy
- * Files — images and videos through the media upload, any other type (a PDF,
- * an icon, an archive) through the resumable large upload (stage 4b) — content belonging to the site, not to whichever editor uploaded it
- * (the media row keeps that editor as `uploadedBy`, an audit field). Each
+ * Every file is a file the Oxy Website APPLICATION owns in Oxy Files — images
+ * and videos through the media upload, an SVG through the same upload, stored
+ * as Oxy's sanitized document (stage 4c), any other type (a PDF, an icon, an
+ * archive) through the resumable large upload (stage 4b) — content belonging
+ * to the site, not to whichever editor uploaded it (the media row keeps that
+ * editor as `uploadedBy`, an audit field). Each
  * media row registers its own use of the file (`media`, the row's `_id`);
  * Oxy moves an application's file nobody uses to trash after 24 hours and
  * deletes it 30 days later, so the site never deletes bytes another row still
  * needs and never has to garbage-collect anything itself.
  *
  * Nothing else in the server talks to storage. The legacy functions at the
- * bottom are what is left of the bucket the site wrote to before.
+ * bottom are what is left of the bucket the site wrote to before: read by the
+ * migration and by deletes of rows not migrated yet, and written only when an
+ * Oxy API without stage 4c refuses an SVG ({@link uploadSvgFile}).
  * ──────────────────────────────────────────── */
 
 /** The entity type of every reference the site registers: one per media row. */
@@ -36,13 +40,21 @@ export const THUMBNAIL_VARIANTS = { sm: 'w320', md: 'w640', lg: 'w1280' } as con
 /** The largest image or video Oxy Files stores (`USER_MEDIA_MAX_BYTES` in the Oxy API). */
 export const OXY_FILES_MAX_BYTES = 40 * 1024 * 1024;
 
-/** The raster types Oxy makes webp renditions of; any other file is served as stored. */
+/** The type of an SVG document, as the site records it and Oxy stores it. */
+export const SVG_MIME_TYPE = 'image/svg+xml';
+
+/**
+ * The image types Oxy makes webp renditions of — the rasters, and an SVG,
+ * which Oxy rasterizes from its sanitized document (stage 4c); any other file
+ * is served as stored.
+ */
 const RENDERED_IMAGE_TYPES = new Set([
   'image/jpeg',
   'image/png',
   'image/gif',
   'image/webp',
   'image/avif',
+  SVG_MIME_TYPE,
 ]);
 
 /** A whole upload (40 MiB at worst) may take longer than the SDK's default request timeout. */
@@ -65,16 +77,8 @@ export function sha256Hex(buffer: Uint8Array): string {
   return createHash('sha256').update(buffer).digest('hex');
 }
 
-/**
- * Whether a file of this type must stay on the legacy storage: an SVG, which
- * Oxy Files refuses as an active document until it stores sanitized SVG.
- * Everything else is an Oxy file. The type must be what the BYTES are, never a
- * declared Content-Type.
- *
- * TODO(oxy-svg): drop this, and the legacy path behind it, once Oxy Files
- * takes sanitized SVG.
- */
-export function awaitsOxySvgSupport(mimeType: string): boolean {
+/** Whether a type is an SVG. The type must be what the BYTES are, never a declared Content-Type. */
+export function isSvgType(mimeType: string): boolean {
   return mimeType.toLowerCase().startsWith('image/svg');
 }
 
@@ -188,10 +192,68 @@ export async function uploadFile(
 }
 
 /**
- * Store bytes of ANY type Oxy Files takes — a PDF, an icon, an archive — as one
- * of the site's files, public, through the resumable large upload (ADR 0043
- * stage 4b, `uploadAppFileLarge`). Oxy refuses programs and active documents
- * (HTML, SVG, XML, scripts) by type and by the name's extension (415), and
+ * The answer of {@link uploadSvgFile} when the Oxy API does not take SVG at
+ * all: one deployed before ADR 0043 stage 4c, which refuses it as an active
+ * document (415 `UNSUPPORTED_MEDIA_TYPE`).
+ */
+export const SVG_NOT_ACCEPTED = 'svg_not_accepted' as const;
+
+/**
+ * Store an SVG as one of the site's files, public (ADR 0043 stage 4c). Oxy
+ * stores ONLY its sanitized document — no script, no handler, no external
+ * reference, no foreign namespace — serves it inline under a sandboxing CSP,
+ * and renders the webp renditions from it. The stored bytes are therefore not
+ * the uploaded ones whenever sanitizing removed something, so Oxy's SHA-256 is
+ * the SANITIZED document's and is not compared with the upload's: the caller
+ * reads the file back ({@link readBackSvg} in `media.ts`) to hold Oxy to the
+ * hash it reported and to an SVG document.
+ *
+ * {@link SVG_NOT_ACCEPTED} when the Oxy API predates stage 4c and refuses SVG
+ * outright; the caller keeps the SVG where it was (the legacy storage). An SVG
+ * Oxy cannot sanitize (malformed, not UTF-8, compressed) is refused to the
+ * editor: 415 `INVALID_SVG`. Unreferenced until {@link addMediaReference}.
+ */
+export async function uploadSvgFile(
+  buffer: Buffer,
+  originalName: string,
+): Promise<StoredFile | typeof SVG_NOT_ACCEPTED> {
+  let answer: Awaited<ReturnType<ReturnType<typeof oxyFilesApi>['uploadAppFile']>>;
+  try {
+    answer = await oxyFilesApi().uploadAppFile(new Uint8Array(buffer), SVG_MIME_TYPE, {
+      visibility: 'public',
+      originalName,
+      timeout: UPLOAD_TIMEOUT_MS,
+    });
+  } catch (error) {
+    if (statusOf(error) === 415) {
+      if (codeOf(error) === 'INVALID_SVG')
+        throw new DomainError(
+          'invalid',
+          'The SVG cannot be stored: it is not a well-formed UTF-8 SVG document',
+        );
+      return SVG_NOT_ACCEPTED;
+    }
+    throw fromOxyFilesError(error);
+  }
+  if (!isSvgType(answer.file.mime)) {
+    console.error(`[oxy-files] stored SVG ${answer.file.id} came back as ${answer.file.mime}`);
+    throw new DomainError('unavailable', 'Oxy Files stored a different type; try again');
+  }
+  return {
+    fileId: answer.file.id,
+    sha256: answer.file.sha256,
+    mimeType: SVG_MIME_TYPE,
+    size: answer.file.size,
+    deduplicated: answer.deduplicated,
+  };
+}
+
+/**
+ * Store bytes of ANY other type Oxy Files takes — a PDF, an icon, an archive —
+ * as one of the site's files, public, through the resumable large upload (ADR
+ * 0043 stage 4b, `uploadAppFileLarge`). An SVG goes by {@link uploadSvgFile}.
+ * Oxy refuses programs and active documents (HTML, XML, scripts) by type and
+ * by the name's extension (415), and
  * serves every type a browser would not render safely as a download. Oxy
  * hashes the assembled file before it is one; the site checks that hash
  * against its own as for any upload. Unreferenced until {@link addMediaReference}.
@@ -324,12 +386,10 @@ export async function reconcileMediaReferences(
 // ── Legacy storage ──────────────────────────────────────────────────────────
 
 /**
- * TODO(oxy-svg): Oxy Files refuses SVG (an active document) until it stores
- * sanitized SVG. Until then an SVG an editor uploads still goes to the legacy
- * storage, and its row keeps a legacy `key`; `bun run oxy-files migrate`
- * records those rows `deferred` and carries them over once Oxy accepts SVG,
- * and the bucket cannot be retired before that (docs/OXY-FILES.md). Every
- * other type is an Oxy file ({@link uploadFile}, {@link uploadLargeFile}).
+ * Write to the legacy storage. Only for an SVG an Oxy API without stage 4c
+ * refused ({@link SVG_NOT_ACCEPTED}): the row keeps a legacy `key`, and
+ * `bun run oxy-files migrate` carries it over once the API takes SVG
+ * (docs/OXY-FILES.md). Every file is otherwise an Oxy file.
  */
 export async function uploadLegacyFile(
   buffer: Buffer,

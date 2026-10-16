@@ -39,6 +39,10 @@ export interface TestOxy {
   failReferenceRemovals: boolean;
   failDeletes: boolean;
   corruptNextUpload: boolean;
+  /** False plays an Oxy API deployed before ADR 0043 stage 4c, which refuses SVG. */
+  svgSupported: boolean;
+  /** Serve other bytes than a file holds from its public URL. */
+  serveDifferentBytes: boolean;
   reconciliations: { entityType: string; items: number; dryRun: boolean }[];
   busyReconcile: boolean;
   reset(): void;
