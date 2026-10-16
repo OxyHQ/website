@@ -109,6 +109,31 @@ export const config = {
     snapshotIntervalMinutes: parsePositiveIntEnv(process.env.STATUS_HISTORY_INTERVAL_MINUTES, 5),
     retentionDays: parsePositiveIntEnv(process.env.STATUS_HISTORY_RETENTION_DAYS, 90),
   },
+  /**
+   * Oxy Files (ADR 0041): every image and video the site stores is a file the
+   * Oxy Website APPLICATION owns, written with the service credential above
+   * (`files:app:write`, `files:app:delete`, `files:references:write`).
+   * `docs/OXY-FILES.md` is the procedure.
+   */
+  oxyFiles: {
+    /** Where Oxy serves public files: `<cloudUrl>/<fileId>[?variant=…]`. */
+    cloudUrl: process.env.OXY_CLOUD_URL || 'https://cloud.oxy.so',
+    /**
+     * The signing secret of this application's file-events endpoint, shown once
+     * when the endpoint is set in the console. Without it every event but the
+     * endpoint's verification challenge is answered 503, so Oxy retries it.
+     */
+    webhookSecret: process.env.OXY_FILES_WEBHOOK_SECRET?.trim() || '',
+    /** How often a task reconciles the site's references with Oxy (one task runs it at a time). */
+    reconcileIntervalHours: parsePositiveIntEnv(process.env.OXY_FILES_RECONCILE_HOURS, 24),
+  },
+  /**
+   * The storage the site wrote to before Oxy Files: objects under
+   * `oxy-website/` in Oxy's media bucket, served from `cdnBaseUrl`. Read by the
+   * migration and by deletes of rows not yet migrated, and written only for a
+   * file Oxy Files cannot hold yet (`services/oxyFiles.ts`, TODO(oxy-4b)).
+   * Retired by `docs/OXY-FILES.md`.
+   */
   s3: {
     // Leave endpoint unset for native AWS S3; set AWS_ENDPOINT_URL for an S3-compatible
     // provider.

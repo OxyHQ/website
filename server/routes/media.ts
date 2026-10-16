@@ -1,5 +1,18 @@
 import { Router } from 'express';
-import { and, asc, count, desc, eq, ilike, like, not, or, sql, type SQL } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  ilike,
+  isNull,
+  like,
+  not,
+  or,
+  sql,
+  type SQL,
+} from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db/postgres.js';
 import { media as mediaTable } from '../db/schema/index.js';
@@ -83,10 +96,15 @@ router.get('/', requireAuth, adminOnly, async (req, res) => {
   res.json({ items, total, page: pageNum, pages: Math.ceil(total / limitNum) });
 });
 
-// Get single media by ID (public — used for resolving media refs)
+// Get single media by ID (public — used for resolving media refs). A row whose
+// file Oxy reported unavailable reads as missing, as it does in every populate.
 router.get('/:id', async (req, res) => {
   const { id } = validate(idParamsSchema, req.params);
-  const [row] = await db.select().from(mediaTable).where(eq(mediaTable._id, id)).limit(1);
+  const [row] = await db
+    .select()
+    .from(mediaTable)
+    .where(and(eq(mediaTable._id, id), isNull(mediaTable.unavailableAt)))
+    .limit(1);
   if (!row) return res.status(404).json({ error: 'Media not found' });
   res.json(row);
 });

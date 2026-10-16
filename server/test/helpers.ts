@@ -5,7 +5,7 @@ import type { ToolContext } from '../mcp.js';
 import type { ToolResult } from '../mcp/results.js';
 
 export interface TestStorage {
-  objects: Map<string, { size: number; contentType: string }>;
+  objects: Map<string, { size: number; contentType: string; buffer: Buffer }>;
   failPuts: number;
   failDeletes: Set<string>;
   failAllDeletes: boolean;
@@ -19,9 +19,35 @@ export interface TestRemote {
   reset(): void;
 }
 
+export interface TestOxyFile {
+  id: string;
+  sha256: string;
+  mime: string;
+  size: number;
+  bytes: Buffer;
+  status: 'active' | 'trash' | 'blocked' | 'deleted';
+}
+
+export interface TestOxy {
+  files: Map<string, TestOxyFile>;
+  imports: Map<string, string>;
+  /** `fileId|entityType|entityId` */
+  references: Set<string>;
+  failUploads: number;
+  failReferenceAdds: number;
+  failReferenceRemovals: boolean;
+  failDeletes: boolean;
+  corruptNextUpload: boolean;
+  reconciliations: { entityType: string; items: number; dryRun: boolean }[];
+  busyReconcile: boolean;
+  reset(): void;
+  referencesOf(fileId: string): string[];
+}
+
 /** The doubles installed by `setup.ts`. */
 export const storage = (globalThis as Record<string, unknown>).__testStorage as TestStorage;
 export const remote = (globalThis as Record<string, unknown>).__testRemote as TestRemote;
+export const oxy = (globalThis as Record<string, unknown>).__testOxy as TestOxy;
 
 export const admin: ToolContext = { actorId: 'admin-account', requestId: 'test' };
 export const reader: ToolContext = { actorId: 'reader-account', requestId: 'test' };
@@ -36,6 +62,7 @@ export async function resetDatabase(): Promise<void> {
     await db.execute(sql.raw(`truncate ${tables.join(', ')} restart identity cascade`));
   storage.reset();
   remote.reset();
+  oxy.reset();
   // The public routes cache the locale list for a few seconds; a wiped database
   // must not be answered from the previous test's locales.
   invalidateLocaleCache();

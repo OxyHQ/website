@@ -8,6 +8,7 @@ import { config } from '../config.js';
  */
 export const oxyService = new OxyServer({
   baseURL: config.oxyApiBase,
+  cloudURL: config.oxyFiles.cloudUrl,
   ...(config.oxyServiceApiKey && config.oxyServiceApiSecret
     ? { serviceAuth: { apiKey: config.oxyServiceApiKey, apiSecret: config.oxyServiceApiSecret } }
     : {}),

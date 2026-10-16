@@ -1,7 +1,27 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
+} from '@aws-sdk/client-s3';
 import { config } from '../config.js';
 import crypto from 'node:crypto';
 import path from 'node:path';
+
+/* ──────────────────────────────────────────────
+ * The LEGACY storage: objects under `oxy-website/` in Oxy's media bucket,
+ * served from `config.s3.cdnBaseUrl`. Only `services/oxyFiles.ts` and the
+ * migration write, read or delete through this module; new images and videos
+ * go to Oxy Files. Retired with the bucket prefix (docs/OXY-FILES.md).
+ * ──────────────────────────────────────────── */
+
+/** Every object the site ever wrote is under this prefix of the logical key. */
+export const LEGACY_KEY_PREFIX = 'oxy-website/';
+
+/** Whether a logical key is one of the site's own legacy objects. */
+export function isLegacyStorageKey(key: string): boolean {
+  return key.startsWith(LEGACY_KEY_PREFIX) && !key.includes('..');
+}
 
 // No `credentials`: the SDK's default chain reads AWS_ACCESS_KEY_ID/
 // AWS_SECRET_ACCESS_KEY locally and the ECS task role in production.
@@ -102,4 +122,24 @@ export async function deleteFromSpaces(key: string): Promise<void> {
       Key: `${config.s3.keyPrefix}${key}`,
     }),
   );
+}
+
+/** Read a legacy object's bytes by its logical key; `null` when there is no such object. */
+export async function readFromSpaces(
+  key: string,
+): Promise<{ buffer: Buffer; contentType: string } | null> {
+  try {
+    const answer = await s3.send(
+      new GetObjectCommand({ Bucket: config.s3.bucket, Key: `${config.s3.keyPrefix}${key}` }),
+    );
+    if (!answer.Body) return null;
+    const bytes = await answer.Body.transformToByteArray();
+    return {
+      buffer: Buffer.from(bytes),
+      contentType: answer.ContentType ?? 'application/octet-stream',
+    };
+  } catch (error) {
+    if ((error as { name?: unknown } | null)?.name === 'NoSuchKey') return null;
+    throw error;
+  }
 }

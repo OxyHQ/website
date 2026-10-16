@@ -3,10 +3,8 @@ import multer from 'multer';
 import { z } from 'zod';
 import { requireAuth } from '../middleware/auth.js';
 import { adminOnly } from '../middleware/adminOnly.js';
-import { uploadToSpaces } from '../services/s3.js';
-import { processImage } from '../services/thumbnails.js';
-import { db } from '../db/postgres.js';
-import { media as mediaTable } from '../db/schema/index.js';
+import { ingestUpload } from '../services/media.js';
+import { DOMAIN_ERROR_HTTP_STATUS, DomainError } from '../utils/domainError.js';
 import { validate } from '../utils/validate.js';
 
 const router = Router();
@@ -18,64 +16,29 @@ const uploadBodySchema = z
   })
   .passthrough();
 
+/**
+ * An editor's upload into the media library. Images and videos become files of
+ * the Oxy Website application in Oxy Files (`services/media.ts`); the editor is
+ * recorded on the row as `uploadedBy`.
+ */
 router.post('/', requireAuth, adminOnly, upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file provided' });
 
-  const { folder: folderInput } = validate(uploadBodySchema, req.body);
-  const folder = folderInput ? `oxy-website/${folderInput}` : 'oxy-website/images';
-
+  const { folder } = validate(uploadBodySchema, req.body);
   try {
-    // Step 1: Upload original to S3 (must succeed)
-    const url = await uploadToSpaces(
-      req.file.buffer,
-      req.file.originalname,
-      req.file.mimetype,
-      folder,
-    );
-    const key = new URL(url).pathname.slice(1);
-
-    // Step 2: Generate thumbnails (optional — graceful failure)
-    let width: number | undefined;
-    let height: number | undefined;
-    let thumbnails = { sm: '', md: '', lg: '' };
-    try {
-      const result = await processImage(
-        req.file.buffer,
-        req.file.originalname,
-        req.file.mimetype,
-        folder,
-      );
-      width = result.width;
-      height = result.height;
-      thumbnails = result.thumbnails;
-    } catch (e) {
-      console.warn('Thumbnail generation failed, continuing without thumbnails:', e);
-    }
-
-    // Step 3: Create Media document (must succeed)
-    const [media] = await db
-      .insert(mediaTable)
-      .values({
-        url,
-        thumbnails,
-        filename: req.file.originalname,
-        key,
-        mimeType: req.file.mimetype,
-        size: req.file.size,
-        width,
-        height,
-        alt: '',
-        tags: [],
-        folder: folderInput || 'images',
-        uploadedBy: req.user?.id || '',
-      })
-      .returning();
-
-    res.json(media);
+    const result = await ingestUpload({
+      buffer: req.file.buffer,
+      filename: req.file.originalname,
+      declaredType: req.file.mimetype,
+      folder: folder || 'images',
+      uploadedBy: req.user?.id || '',
+    });
+    res.json(result.media);
   } catch (err: unknown) {
+    if (err instanceof DomainError)
+      return res.status(DOMAIN_ERROR_HTTP_STATUS[err.kind]).json({ error: err.message });
     console.error('Upload error:', err);
-    const message = err instanceof Error ? err.message : 'Upload failed';
-    res.status(500).json({ error: message });
+    res.status(500).json({ error: 'Upload failed' });
   }
 });
 

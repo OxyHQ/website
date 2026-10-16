@@ -138,6 +138,7 @@ const DOMAIN_CODES: Record<DomainErrorKind, McpErrorCode> = {
   conflict: 'conflict',
   too_large: 'request_too_large',
   precondition_failed: 'precondition_failed',
+  unavailable: 'service_unavailable',
 };
 
 /**

@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { and, asc, count, eq, inArray, lte, ne, or, sql, type SQL } from 'drizzle-orm';
+import { and, asc, count, eq, inArray, isNull, lte, ne, or, sql, type SQL } from 'drizzle-orm';
 import { getTableConfig, PgTable, type PgColumn } from 'drizzle-orm/pg-core';
 import { is } from 'drizzle-orm';
 import { db, rootDb } from '../db/postgres.js';
@@ -7,35 +7,56 @@ import * as schema from '../db/schema/index.js';
 import {
   heroContents,
   media,
+  mediaStorageMigrations,
+  newObjectId,
+  oxyFileReferenceRemovals,
   seoEntries,
   storageCleanups,
   testimonials,
 } from '../db/schema/index.js';
+import { buildObjectKey, isLegacyStorageKey, publicUrlForKey } from './s3.js';
 import {
-  buildObjectKey,
-  deleteFromSpaces,
-  keyFromPublicUrl,
-  publicUrlForKey,
-  uploadToSpaces,
-} from './s3.js';
+  addMediaReference,
+  deleteFile,
+  deleteLegacyObject,
+  importFile,
+  legacyKeyOfUrl,
+  MEDIA_ENTITY_TYPE,
+  OXY_FILES_MAX_BYTES,
+  oxyFileUrl,
+  oxyMediaUrls,
+  removeReference,
+  sha256Hex,
+  type StoredFile,
+  type Thumbnails,
+  uploadFile,
+  uploadLegacyFile,
+} from './oxyFiles.js';
+import { downloadRemote } from './remoteDownload.js';
 import { processImage } from './thumbnails.js';
 import { DomainError } from '../utils/domainError.js';
 
 /* ──────────────────────────────────────────────
  * The media pipeline: validate, store, attach, delete — and account for every
- * object it creates.
+ * file it stores.
  *
- * Three rules hold throughout:
+ * Four rules hold throughout:
  *
- * 1. Nothing is uploaded until the bytes are known to be a supported raster
- *    image. The declared Content-Type is never trusted, and a thumbnail
- *    failing to generate is not evidence either way — so the original is
- *    checked on its own (signature, then a real decode under a pixel ceiling).
- * 2. An object key is content-addressed and can be shared by several media
- *    rows. No object is deleted while any media row still uses its key.
- * 3. A delete the storage refuses is not forgotten: the key is recorded in
- *    `storage_cleanups` in the same transaction that removes the row, and a
- *    sweep retries it.
+ * 1. Nothing is stored until the bytes are known to be a supported image (or,
+ *    for an editor's upload, a video). The declared Content-Type is never
+ *    trusted: the original is checked on its own (signature, then a real
+ *    decode under a pixel ceiling).
+ * 2. Images and videos are files the Oxy Website application owns in Oxy Files
+ *    (`services/oxyFiles.ts`). A media row registers its use of its file
+ *    BEFORE the row is written, so no committed row is without one; a store
+ *    that fails before that leaves a file nothing uses, which Oxy collects.
+ * 3. A delete withdraws the row's reference through a durable queue
+ *    (`oxy_file_reference_removals`) written in the same transaction, and
+ *    deletes the file once no other row uses it. Several rows may share one
+ *    file (Oxy dedupes the bytes), each with its own reference.
+ * 4. Legacy objects (rows not migrated yet, and types Oxy Files cannot hold
+ *    yet) keep the old rule: no object is deleted while any row still uses its
+ *    key, and a delete the storage refuses is queued in `storage_cleanups`.
  * ──────────────────────────────────────────── */
 
 export type MediaRow = typeof media.$inferSelect;
@@ -192,11 +213,30 @@ export function normalizeFilename(
   return `${safe}${EXTENSION[mimeType]}`;
 }
 
-// ── Object ownership ────────────────────────────────────────────────────────
+/** The video container the bytes declare, or `null`. Only what browsers play. */
+export function sniffVideoType(buffer: Buffer): 'video/mp4' | 'video/webm' | null {
+  if (
+    buffer.length >= 4 &&
+    buffer[0] === 0x1a &&
+    buffer[1] === 0x45 &&
+    buffer[2] === 0xdf &&
+    buffer[3] === 0xa3 &&
+    buffer.subarray(0, 64).includes(Buffer.from('webm', 'latin1'))
+  )
+    return 'video/webm';
+  if (buffer.length >= 12 && buffer.subarray(4, 8).toString('latin1') === 'ftyp') {
+    const brand = buffer.subarray(8, 12).toString('latin1');
+    if (['isom', 'iso2', 'iso5', 'iso6', 'mp41', 'mp42', 'avc1', 'dash', 'M4V '].includes(brand))
+      return 'video/mp4';
+  }
+  return null;
+}
+
+// ── Legacy objects ──────────────────────────────────────────────────────────
 
 type Executor = Pick<typeof db, 'select'>;
 
-/** Whether any media row other than `excludeId` still uses this key. */
+/** Whether any media row other than `excludeId` still uses this legacy key. */
 export async function isKeyInUse(
   key: string,
   executor: Executor = db,
@@ -215,23 +255,51 @@ export async function isKeyInUse(
     .from(media)
     .where(excludeId ? and(uses, ne(media._id, excludeId)) : uses)
     .limit(1);
-  return Boolean(row);
+  if (row) return true;
+  // A migrated row's legacy thumbnails are recorded only in its migration.
+  const [migrated] = await executor
+    .select({ id: mediaStorageMigrations.mediaId })
+    .from(mediaStorageMigrations)
+    .innerJoin(media, eq(media._id, mediaStorageMigrations.mediaId))
+    .where(
+      and(
+        or(
+          sql`${mediaStorageMigrations.legacyThumbnails}->>'sm' = ${url}`,
+          sql`${mediaStorageMigrations.legacyThumbnails}->>'md' = ${url}`,
+          sql`${mediaStorageMigrations.legacyThumbnails}->>'lg' = ${url}`,
+        ),
+        excludeId ? ne(media._id, excludeId) : undefined,
+      ),
+    )
+    .limit(1);
+  return Boolean(migrated);
 }
 
-/** Every object key a media row owns: the original and each thumbnail. */
-export function objectKeysOf(row: Pick<MediaRow, 'key' | 'thumbnails'>): {
-  keys: string[];
-  unparseable: string[];
-} {
-  const keys = new Set<string>([row.key]);
-  const unparseable: string[] = [];
-  for (const url of [row.thumbnails?.sm, row.thumbnails?.md, row.thumbnails?.lg]) {
-    if (!url) continue;
-    const key = keyFromPublicUrl(url);
-    if (key) keys.add(key);
-    else unparseable.push(url);
-  }
-  return { keys: [...keys], unparseable };
+/**
+ * Every legacy object a media row owns: its original and each thumbnail,
+ * including the thumbnails a migrated row replaced with Oxy renditions. Only
+ * keys under the site's own prefix: a seeded row's path, an external URL or an
+ * Oxy URL is no object of the site's.
+ */
+export async function legacyObjectKeysOf(
+  row: Pick<MediaRow, '_id' | 'key' | 'thumbnails'>,
+  executor: Executor = db,
+): Promise<string[]> {
+  const keys = new Set<string>();
+  if (row.key && isLegacyStorageKey(row.key)) keys.add(row.key);
+  const [migration] = await executor
+    .select({ legacyThumbnails: mediaStorageMigrations.legacyThumbnails })
+    .from(mediaStorageMigrations)
+    .where(eq(mediaStorageMigrations.mediaId, row._id))
+    .limit(1);
+  const thumbnails: Thumbnails[] = [row.thumbnails];
+  if (migration) thumbnails.push(migration.legacyThumbnails);
+  for (const set of thumbnails)
+    for (const url of [set?.sm, set?.md, set?.lg]) {
+      const key = url ? legacyKeyOfUrl(url) : null;
+      if (key) keys.add(key);
+    }
+  return [...keys];
 }
 
 const RETRY_BASE_MS = 60_000;
@@ -250,8 +318,8 @@ function describeStorageError(error: unknown): string {
 }
 
 /**
- * Try to delete owed objects now. Each key is re-checked against the media
- * table first: a row created since the debt was recorded owns it again.
+ * Try to delete owed legacy objects now. Each key is re-checked against the
+ * media table first: a row created since the debt was recorded owns it again.
  */
 async function settleCleanups(
   rows: { _id: string; key: string; attempts: number }[],
@@ -267,7 +335,7 @@ async function settleCleanups(
       continue;
     }
     try {
-      await deleteFromSpaces(row.key);
+      await deleteLegacyObject(row.key);
       await executor.delete(storageCleanups).where(eq(storageCleanups._id, row._id));
       deleted.push(row.key);
     } catch (error) {
@@ -287,7 +355,7 @@ async function settleCleanups(
   return { deleted, pending, kept };
 }
 
-/** Record keys as owed, skipping any another media row still uses. */
+/** Record legacy keys as owed, skipping any another media row still uses. */
 async function owe(
   tx: Pick<typeof db, 'select' | 'insert'>,
   keys: string[],
@@ -319,12 +387,12 @@ async function owe(
 }
 
 /**
- * Undo the objects a failed operation uploaded — only those it uploaded, and
- * only while no media row uses them. Never throws: a compensation failure is
- * recorded for the sweep instead of masking the original error. Written on the
- * pool, not the caller's unit of work, which is about to roll back.
+ * Undo the legacy objects a failed operation uploaded — only those it uploaded,
+ * and only while no media row uses them. Never throws: a compensation failure
+ * is recorded for the sweep instead of masking the original error. Written on
+ * the pool, not the caller's unit of work, which is about to roll back.
  */
-export async function compensateUploads(keys: string[]): Promise<void> {
+async function compensateLegacyUploads(keys: string[]): Promise<void> {
   if (keys.length === 0) return;
   try {
     const { owed } = await rootDb.transaction((tx) => owe(tx, keys, 'upload_compensation', null));
@@ -334,7 +402,7 @@ export async function compensateUploads(keys: string[]): Promise<void> {
   }
 }
 
-/** One pass of the durable cleanup queue; safe to run from several tasks at once. */
+/** One pass of the legacy cleanup queue; safe to run from several tasks at once. */
 export async function retryStorageCleanups(
   limit = 25,
 ): Promise<{ deleted: number; pending: number; kept: number }> {
@@ -366,9 +434,158 @@ export async function retryStorageCleanups(
   };
 }
 
+// ── Oxy Files references ────────────────────────────────────────────────────
+
+type RemovalRow = Pick<
+  typeof oxyFileReferenceRemovals.$inferSelect,
+  '_id' | 'fileId' | 'entityType' | 'entityId' | 'purge' | 'attempts'
+>;
+
+const REMOVAL_COLUMNS = {
+  _id: oxyFileReferenceRemovals._id,
+  fileId: oxyFileReferenceRemovals.fileId,
+  entityType: oxyFileReferenceRemovals.entityType,
+  entityId: oxyFileReferenceRemovals.entityId,
+  purge: oxyFileReferenceRemovals.purge,
+  attempts: oxyFileReferenceRemovals.attempts,
+};
+
+/** What became of one owed removal. `file` is only reported for a purge. */
+export interface RemovalOutcome {
+  fileId: string;
+  reference: 'removed' | 'pending';
+  file?: 'deleted' | 'shared' | 'in_use' | 'gone' | 'pending';
+}
+
+/** Record that a row's reference must be withdrawn — in the caller's transaction. */
+async function oweReferenceRemoval(
+  tx: Pick<typeof db, 'insert'>,
+  removal: { fileId: string; entityId: string; purge: boolean; reason: string },
+): Promise<RemovalRow> {
+  const [row] = await tx
+    .insert(oxyFileReferenceRemovals)
+    .values({ ...removal, entityType: MEDIA_ENTITY_TYPE })
+    .onConflictDoUpdate({
+      target: [
+        oxyFileReferenceRemovals.fileId,
+        oxyFileReferenceRemovals.entityType,
+        oxyFileReferenceRemovals.entityId,
+      ],
+      set: {
+        purge: sql`${oxyFileReferenceRemovals.purge} or excluded.purge`,
+        nextAttemptAt: new Date(),
+        updatedAt: new Date(),
+      },
+    })
+    .returning(REMOVAL_COLUMNS);
+  return row;
+}
+
+/**
+ * Withdraw owed references now. A purge then deletes the file unless a media
+ * row still holds it (re-checked here, as a legacy key is) — Oxy itself
+ * refuses while anything else references it, so this can never take a file
+ * from under another user.
+ */
+async function settleReferenceRemovals(
+  rows: RemovalRow[],
+  executor: typeof db = db,
+): Promise<RemovalOutcome[]> {
+  const outcomes: RemovalOutcome[] = [];
+  for (const row of rows) {
+    // A row that took the same id again (it cannot: ids are fresh) or that
+    // was restored would hold the reference legitimately.
+    const [live] = await executor
+      .select({ id: media._id })
+      .from(media)
+      .where(and(eq(media._id, row.entityId), eq(media.oxyFileId, row.fileId)))
+      .limit(1);
+    try {
+      if (!live) await removeReference(row.fileId, row.entityType, row.entityId);
+      let file: RemovalOutcome['file'];
+      if (row.purge) {
+        const [sharer] = await executor
+          .select({ id: media._id })
+          .from(media)
+          .where(eq(media.oxyFileId, row.fileId))
+          .limit(1);
+        file = sharer ? 'shared' : await deleteFile(row.fileId);
+      }
+      await executor
+        .delete(oxyFileReferenceRemovals)
+        .where(eq(oxyFileReferenceRemovals._id, row._id));
+      outcomes.push({ fileId: row.fileId, reference: 'removed', ...(file ? { file } : {}) });
+    } catch (error) {
+      const attempts = row.attempts + 1;
+      await executor
+        .update(oxyFileReferenceRemovals)
+        .set({
+          attempts,
+          lastError: describeStorageError(error),
+          nextAttemptAt: nextAttemptAfter(attempts),
+          updatedAt: new Date(),
+        })
+        .where(eq(oxyFileReferenceRemovals._id, row._id));
+      outcomes.push({
+        fileId: row.fileId,
+        reference: 'pending',
+        ...(row.purge ? { file: 'pending' as const } : {}),
+      });
+    }
+  }
+  return outcomes;
+}
+
+/**
+ * Withdraw a reference registered for a row that was never written (its
+ * transaction rolled back). Never throws; an Oxy outage leaves it queued, and
+ * the nightly reconciliation would remove it regardless.
+ */
+async function compensateReference(fileId: string, mediaId: string): Promise<void> {
+  try {
+    const row = await oweReferenceRemoval(rootDb, {
+      fileId,
+      entityId: mediaId,
+      purge: false,
+      reason: 'upload_compensation',
+    });
+    await settleReferenceRemovals([row], rootDb);
+  } catch (error) {
+    console.error(`[media] could not withdraw the reference of unwritten row ${mediaId}:`, error);
+  }
+}
+
+/** One pass of the reference-removal queue; safe to run from several tasks at once. */
+export async function retryReferenceRemovals(
+  limit = 25,
+): Promise<{ removed: number; pending: number }> {
+  const claimed = await db
+    .update(oxyFileReferenceRemovals)
+    .set({ nextAttemptAt: sql`now() + interval '10 minutes'`, updatedAt: new Date() })
+    .where(
+      inArray(
+        oxyFileReferenceRemovals._id,
+        db
+          .select({ id: oxyFileReferenceRemovals._id })
+          .from(oxyFileReferenceRemovals)
+          .where(lte(oxyFileReferenceRemovals.nextAttemptAt, new Date()))
+          .orderBy(asc(oxyFileReferenceRemovals.nextAttemptAt), asc(oxyFileReferenceRemovals._id))
+          .limit(limit)
+          .for('update', { skipLocked: true }),
+      ),
+    )
+    .returning(REMOVAL_COLUMNS);
+  const outcomes = await settleReferenceRemovals(claimed);
+  const removed = outcomes.filter((outcome) => outcome.reference === 'removed').length;
+  return { removed, pending: outcomes.length - removed };
+}
+
 export async function pendingStorageCleanupCount(): Promise<number> {
-  const [row] = await db.select({ value: count() }).from(storageCleanups);
-  return Number(row?.value ?? 0);
+  const [[legacy], [references]] = await Promise.all([
+    db.select({ value: count() }).from(storageCleanups),
+    db.select({ value: count() }).from(oxyFileReferenceRemovals),
+  ]);
+  return Number(legacy?.value ?? 0) + Number(references?.value ?? 0);
 }
 
 let sweep: ReturnType<typeof setInterval> | null = null;
@@ -377,6 +594,9 @@ let sweep: ReturnType<typeof setInterval> | null = null;
 export function startStorageCleanupSweep(intervalMs = 15 * 60 * 1000): void {
   if (sweep) return;
   const run = () => {
+    retryReferenceRemovals().catch((error: unknown) =>
+      console.error('[media] reference removal sweep failed:', error),
+    );
     retryStorageCleanups().catch((error: unknown) =>
       console.error('[media] storage cleanup sweep failed:', error),
     );
@@ -390,106 +610,313 @@ export function startStorageCleanupSweep(intervalMs = 15 * 60 * 1000): void {
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
-export interface IngestInput {
-  buffer: Buffer;
+interface MediaDetails {
   filename?: string;
   folder: string;
   alt?: string;
   tags?: string[];
+  /** The acting account: an audit field, never the file's owner (the application is). */
   uploadedBy: string;
+}
+
+export interface IngestInput extends MediaDetails {
+  buffer: Buffer;
+}
+
+export interface IngestRemoteInput extends MediaDetails {
+  sourceUrl: string;
+  signal?: AbortSignal;
 }
 
 export interface IngestResult<A> {
   media: MediaRow;
   attached: A;
-  /** True when an existing media row with the same object key was reused. */
+  /** True when an existing media row with the same bytes, folder and name was reused. */
   reused: boolean;
   warnings: string[];
 }
 
-/**
- * Validate and store an image, then create its media row and run `attach` in
- * ONE transaction. If `attach` throws — the target is gone, say — the row is
- * rolled back and the objects this call uploaded are compensated.
- *
- * Identical bytes under the same name and folder reuse the existing row
- * instead of uploading again, which is also what makes a retried or resumed
- * batch safe to repeat.
- */
-export async function ingestImage<A = undefined>(
-  input: IngestInput,
-  attach?: (tx: Tx, row: MediaRow) => Promise<A>,
-): Promise<IngestResult<A>> {
-  const folder = normalizeFolder(input.folder);
-  const image = await inspectImage(input.buffer);
-  const filename = normalizeFilename(input.filename, image.mimeType);
-  const storageFolder = `oxy-website/${folder}`;
-  const key = buildObjectKey(input.buffer, filename, image.mimeType, storageFolder);
-  const warnings: string[] = [];
-  if (!image.decoded)
-    warnings.push('thumbnails_unavailable: the image decoder is not available on this server');
+type Attach<A> = (tx: Tx, row: MediaRow) => Promise<A>;
 
-  const [existing] = await db
+const REUSED_WARNING =
+  'reused_existing_media: identical file already in the library; its alt text and tags were left unchanged';
+
+/**
+ * The row an upload of these bytes under this name and folder would duplicate:
+ * one in Oxy Files with the same hash, or one not migrated yet under the key a
+ * legacy upload would have used. A row Oxy reported unavailable is never
+ * reused — those bytes may have been taken down.
+ */
+async function findReusable(match: {
+  sha256: string;
+  folder: string;
+  filename: string;
+  legacyKey: string;
+}): Promise<MediaRow | undefined> {
+  const [row] = await db
     .select()
     .from(media)
-    .where(eq(media.key, key))
+    .where(
+      and(
+        isNull(media.unavailableAt),
+        or(
+          and(
+            eq(media.sha256, match.sha256),
+            eq(media.folder, match.folder),
+            eq(media.filename, match.filename),
+          ),
+          eq(media.key, match.legacyKey),
+        ),
+      ),
+    )
     .orderBy(asc(media._id))
     .limit(1);
-  if (existing) {
-    const attached = await db.transaction(async (tx) =>
-      attach ? attach(tx, existing) : (undefined as A),
-    );
-    warnings.push(
-      'reused_existing_media: identical file already in the library; its alt text and tags were left unchanged',
-    );
-    return { media: existing, attached, reused: true, warnings };
-  }
+  return row;
+}
 
-  const uploaded: string[] = [];
+async function reuse<A>(
+  row: MediaRow,
+  attach: Attach<A> | undefined,
+  warnings: string[],
+): Promise<IngestResult<A>> {
+  const attached = await db.transaction(async (tx) =>
+    attach ? attach(tx, row) : (undefined as A),
+  );
+  return { media: row, attached, reused: true, warnings: [...warnings, REUSED_WARNING] };
+}
+
+/**
+ * Write the media row for a file in Oxy Files, and run `attach` in the same
+ * transaction. The reference is registered first; if the transaction then
+ * fails, the reference is withdrawn and the error rethrown.
+ */
+async function recordOxyMedia<A>(
+  file: StoredFile,
+  values: Omit<typeof media.$inferInsert, '_id' | 'url' | 'thumbnails' | 'oxyFileId' | 'sha256'>,
+  attach: Attach<A> | undefined,
+): Promise<{ row: MediaRow; attached: A }> {
+  const mediaId = newObjectId();
+  await addMediaReference(file.fileId, mediaId);
   try {
-    const url = await uploadToSpaces(input.buffer, filename, image.mimeType, storageFolder);
-    uploaded.push(key);
-
-    let thumbnails = { sm: '', md: '', lg: '' };
-    if (image.decoded) {
-      const processed = await processImage(input.buffer, filename, image.mimeType, storageFolder);
-      thumbnails = processed.thumbnails;
-      for (const thumbUrl of Object.values(thumbnails)) {
-        const thumbKey = thumbUrl ? keyFromPublicUrl(thumbUrl) : null;
-        if (thumbKey) uploaded.push(thumbKey);
-      }
-      const expected = [200, 400, 800].filter((size) => (image.width ?? 0) > size).length;
-      const generated = Object.values(thumbnails).filter(Boolean).length;
-      if (generated < expected)
-        warnings.push(
-          'thumbnails_incomplete: some thumbnail sizes could not be generated; the original is stored',
-        );
-    }
-
-    const result = await db.transaction(async (tx) => {
+    return await db.transaction(async (tx) => {
       const [row] = await tx
         .insert(media)
         .values({
-          url,
-          thumbnails,
-          filename,
-          key,
-          mimeType: image.mimeType,
-          size: input.buffer.length,
-          width: image.width,
-          height: image.height,
-          alt: input.alt ?? '',
-          tags: input.tags ?? [],
-          folder,
-          uploadedBy: input.uploadedBy,
+          ...values,
+          _id: mediaId,
+          ...oxyMediaUrls(file.fileId, values.mimeType),
+          key: null,
+          oxyFileId: file.fileId,
+          sha256: file.sha256,
         })
         .returning();
       const attached = attach ? await attach(tx, row) : (undefined as A);
       return { row, attached };
     });
-    return { media: result.row, attached: result.attached, reused: false, warnings };
   } catch (error) {
-    await compensateUploads(uploaded);
+    await compensateReference(file.fileId, mediaId);
+    throw error;
+  }
+}
+
+/**
+ * Validate an image, store it in Oxy Files, then create its media row and run
+ * `attach` in ONE transaction. If `attach` throws — the target is gone, say —
+ * the row is rolled back and its reference withdrawn; the file, now used by
+ * nothing, is Oxy's to collect.
+ *
+ * Identical bytes under the same name and folder reuse the existing row
+ * instead of storing again, which is also what makes a retried or resumed
+ * batch safe to repeat.
+ */
+export async function ingestImage<A = undefined>(
+  input: IngestInput,
+  attach?: Attach<A>,
+): Promise<IngestResult<A>> {
+  const folder = normalizeFolder(input.folder);
+  const image = await inspectImage(input.buffer);
+  return ingestOxyBytes(input, folder, image, attach);
+}
+
+async function ingestOxyBytes<A>(
+  input: IngestInput,
+  folder: string,
+  described: { mimeType: string; width?: number; height?: number; decoded: boolean },
+  attach: Attach<A> | undefined,
+): Promise<IngestResult<A>> {
+  const isImage = described.mimeType.startsWith('image/');
+  const filename = isImage
+    ? normalizeFilename(input.filename, described.mimeType as SupportedImageType)
+    : normalizeVideoFilename(input.filename, described.mimeType);
+  const warnings: string[] = [];
+  if (isImage && !described.decoded)
+    warnings.push('dimensions_unavailable: the image decoder is not available on this server');
+
+  const existing = await findReusable({
+    sha256: sha256Hex(input.buffer),
+    folder,
+    filename,
+    legacyKey: buildObjectKey(input.buffer, filename, described.mimeType, `oxy-website/${folder}`),
+  });
+  if (existing) return reuse(existing, attach, warnings);
+
+  const file = await uploadFile(input.buffer, described.mimeType, filename);
+  const { row, attached } = await recordOxyMedia(
+    file,
+    {
+      filename,
+      mimeType: described.mimeType,
+      size: input.buffer.length,
+      width: described.width,
+      height: described.height,
+      alt: input.alt ?? '',
+      tags: input.tags ?? [],
+      folder,
+      uploadedBy: input.uploadedBy,
+    },
+    attach,
+  );
+  return { media: row, attached, reused: false, warnings };
+}
+
+function normalizeVideoFilename(requested: string | undefined, mimeType: string): string {
+  const base = path.basename(requested ?? '').replace(/\.[^.]*$/, '');
+  const safe =
+    base
+      .replace(/[^a-z0-9_-]/gi, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 60) || 'video';
+  return `${safe}${mimeType === 'video/webm' ? '.webm' : '.mp4'}`;
+}
+
+/**
+ * Import an image by URL. Oxy fetches it (ADR 0041 D7: its own SSRF-safe
+ * fetcher, and a URL it already imported is answered without fetching), and
+ * the stored bytes are then read back from Oxy and held to the same rules as
+ * an upload — signature, decode, pixel ceiling — because Oxy accepts any image
+ * the source DECLARES. A file that fails is left referenced by nothing, which
+ * Oxy collects.
+ */
+export async function ingestRemoteImage<A = undefined>(
+  input: IngestRemoteInput,
+  attach?: Attach<A>,
+): Promise<IngestResult<A>> {
+  const folder = normalizeFolder(input.folder);
+  const file = await importFile(input.sourceUrl, input.signal);
+  if (!(SUPPORTED_IMAGE_TYPES as readonly string[]).includes(file.mimeType))
+    throw new MediaError(
+      'invalid',
+      'The file is not a supported image (JPEG, PNG, GIF, WebP or AVIF)',
+    );
+  const { buffer } = await downloadRemote(oxyFileUrl(file.fileId), {
+    signal: input.signal,
+    maxBytes: OXY_FILES_MAX_BYTES,
+  });
+  if (sha256Hex(buffer) !== file.sha256)
+    throw new MediaError(
+      'unavailable',
+      'Oxy Files served different bytes than it stored; try again',
+    );
+  const image = await inspectImage(buffer);
+  const filename = normalizeFilename(input.filename, image.mimeType);
+  const warnings: string[] = [];
+  if (!image.decoded)
+    warnings.push('dimensions_unavailable: the image decoder is not available on this server');
+
+  const existing = await findReusable({
+    sha256: file.sha256,
+    folder,
+    filename,
+    legacyKey: buildObjectKey(buffer, filename, image.mimeType, `oxy-website/${folder}`),
+  });
+  if (existing) return reuse(existing, attach, warnings);
+
+  const { row, attached } = await recordOxyMedia(
+    file,
+    {
+      filename,
+      mimeType: image.mimeType,
+      size: buffer.length,
+      width: image.width,
+      height: image.height,
+      alt: input.alt ?? '',
+      tags: input.tags ?? [],
+      folder,
+      uploadedBy: input.uploadedBy,
+    },
+    attach,
+  );
+  return { media: row, attached, reused: false, warnings };
+}
+
+/**
+ * An editor's upload from the admin: an image or a video goes to Oxy Files
+ * like any other; any other type is kept in the legacy storage until Oxy
+ * Files takes it (TODO(oxy-4b), `services/oxyFiles.ts`).
+ */
+export async function ingestUpload(
+  input: IngestInput & { declaredType: string },
+): Promise<IngestResult<undefined>> {
+  const folder = normalizeFolder(input.folder);
+  if (input.buffer.length === 0) throw new MediaError('invalid', 'The file is empty');
+  if (sniffImageType(input.buffer)) return ingestImage({ ...input, folder });
+  const video = sniffVideoType(input.buffer);
+  if (video) return ingestOxyBytes(input, folder, { mimeType: video, decoded: false }, undefined);
+  // TODO(oxy-4b): what the bytes do not prove to be a supported image or video
+  // (an SVG, an icon, a PDF) is not handed to Oxy Files on its declared type.
+  return ingestLegacyUpload(input, folder);
+}
+
+async function ingestLegacyUpload(
+  input: IngestInput & { declaredType: string },
+  folder: string,
+): Promise<IngestResult<undefined>> {
+  const storageFolder = `oxy-website/${folder}`;
+  const filename = input.filename || 'file';
+  const legacyKey = buildObjectKey(input.buffer, filename, input.declaredType, storageFolder);
+  const [existing] = await db
+    .select()
+    .from(media)
+    .where(and(eq(media.key, legacyKey), isNull(media.unavailableAt)))
+    .orderBy(asc(media._id))
+    .limit(1);
+  if (existing) return reuse(existing, undefined, []);
+
+  const uploaded: string[] = [];
+  try {
+    const stored = await uploadLegacyFile(
+      input.buffer,
+      filename,
+      input.declaredType,
+      storageFolder,
+    );
+    uploaded.push(stored.key);
+    const processed = await processImage(input.buffer, filename, input.declaredType, storageFolder);
+    for (const url of Object.values(processed.thumbnails)) {
+      const key = url ? legacyKeyOfUrl(url) : null;
+      if (key) uploaded.push(key);
+    }
+    const [row] = await db
+      .insert(media)
+      .values({
+        url: stored.url,
+        thumbnails: processed.thumbnails,
+        filename,
+        key: stored.key,
+        mimeType: input.declaredType,
+        size: input.buffer.length,
+        width: processed.width,
+        height: processed.height,
+        alt: input.alt ?? '',
+        tags: input.tags ?? [],
+        folder,
+        uploadedBy: input.uploadedBy,
+      })
+      .returning();
+    return { media: row, attached: undefined, reused: false, warnings: [] };
+  } catch (error) {
+    await compensateLegacyUploads(uploaded);
     throw error;
   }
 }
@@ -604,10 +1031,19 @@ export interface DeleteMediaResult {
   referencesCleared: MediaReference[];
   storage: {
     status: 'complete' | 'pending';
+    /** Legacy objects deleted. */
     deletedKeys: string[];
+    /** Legacy objects whose delete failed and is queued. */
     pendingKeys: string[];
-    /** Objects another media row still uses; left in place. */
+    /** Legacy objects another media row still uses; left in place. */
     sharedKeys: string[];
+    /**
+     * The row's file in Oxy Files, when it had one: its reference withdrawn
+     * (or queued), and the file deleted — unless another row still uses it
+     * (`shared`) or something outside the site does (`in_use`, Oxy collects
+     * it once free).
+     */
+    oxyFile?: RemovalOutcome;
   };
   warnings: string[];
 }
@@ -617,9 +1053,22 @@ export async function previewMediaDelete(id: string): Promise<Record<string, unk
   const [row] = await db.select().from(media).where(eq(media._id, id)).limit(1);
   if (!row) throw new MediaError('not_found', 'Media not found');
   const references = await findMediaReferences(row);
-  const { keys, unparseable } = objectKeysOf(row);
+  const keys = await legacyObjectKeysOf(row);
   const shared: string[] = [];
   for (const key of keys) if (await isKeyInUse(key, db, row._id)) shared.push(key);
+  let oxyFile: Record<string, unknown> | undefined;
+  if (row.oxyFileId) {
+    const [sharer] = await db
+      .select({ id: media._id })
+      .from(media)
+      .where(and(eq(media.oxyFileId, row.oxyFileId), ne(media._id, row._id)))
+      .limit(1);
+    oxyFile = {
+      fileId: row.oxyFileId,
+      fileDeleted: !sharer,
+      sharedWithOtherMedia: Boolean(sharer),
+    };
+  }
   return {
     deleted: false,
     dryRun: true,
@@ -629,13 +1078,14 @@ export async function previewMediaDelete(id: string): Promise<Record<string, unk
     storage: {
       keysToDelete: keys.filter((key) => !shared.includes(key)),
       sharedKeysKept: shared,
-      unparseableThumbnails: unparseable,
+      ...(oxyFile ? { oxyFile } : {}),
     },
   };
 }
 
 /**
- * Delete a media row and the objects only it owned.
+ * Delete a media row, its use of its Oxy file, and the legacy objects only it
+ * owned.
  *
  * A row still in use is refused unless `force` — then the foreign keys clear
  * themselves (`ON DELETE SET NULL`), the hero's loose ids are cleared in the
@@ -657,11 +1107,7 @@ export async function deleteMedia(
     );
   }
 
-  const { keys, unparseable } = objectKeysOf(row);
-  const warnings = unparseable.map(
-    (url) =>
-      `unparseable_thumbnail_url: ${url} could not be mapped to an object key and may remain in storage`,
-  );
+  const warnings: string[] = [];
   for (const ref of references) {
     if (ref.table === 'testimonials' || ref.table === 'seo_entries') {
       warnings.push(
@@ -670,7 +1116,8 @@ export async function deleteMedia(
     }
   }
 
-  const { owed, shared } = await db.transaction(async (tx) => {
+  const keys = await legacyObjectKeysOf(row);
+  const { owed, shared, removal } = await db.transaction(async (tx) => {
     for (const field of HERO_MEDIA_FIELDS) {
       await tx
         .update(heroContents)
@@ -678,19 +1125,31 @@ export async function deleteMedia(
         .where(sql`${heroContents[field]} #>> '{}' = ${row._id}`);
     }
     await tx.delete(media).where(eq(media._id, row._id));
-    return owe(tx, keys, 'media_deleted', row._id);
+    const legacy = await owe(tx, keys, 'media_deleted', row._id);
+    const removal = row.oxyFileId
+      ? await oweReferenceRemoval(tx, {
+          fileId: row.oxyFileId,
+          entityId: row._id,
+          purge: true,
+          reason: 'media_deleted',
+        })
+      : null;
+    return { ...legacy, removal };
   });
 
   const settled = await settleCleanups(owed);
+  const [oxyFile] = removal ? await settleReferenceRemovals([removal]) : [];
+  const pending = settled.pending.length > 0 || oxyFile?.reference === 'pending';
   return {
     deleted: true,
     id: row._id,
     referencesCleared: references,
     storage: {
-      status: settled.pending.length > 0 ? 'pending' : 'complete',
+      status: pending ? 'pending' : 'complete',
       deletedKeys: settled.deleted,
       pendingKeys: settled.pending,
       sharedKeys: [...shared, ...settled.kept],
+      ...(oxyFile ? { oxyFile } : {}),
     },
     warnings,
   };

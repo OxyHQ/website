@@ -1,4 +1,4 @@
-import { uploadToSpaces } from './s3.js';
+import { uploadLegacyFile } from './oxyFiles.js';
 
 interface ThumbnailResult {
   width?: number;
@@ -15,7 +15,9 @@ const SIZES = [
 ];
 
 /**
- * Detect image dimensions and generate thumbnail variants.
+ * Detect image dimensions and generate thumbnail variants, for a file kept in
+ * the LEGACY storage (TODO(oxy-4b), `services/oxyFiles.ts`). A file in Oxy
+ * Files gets Oxy's own renditions instead.
  * Falls back gracefully if sharp is unavailable (e.g. missing native bindings).
  */
 export async function processImage(
@@ -53,12 +55,9 @@ export async function processImage(
 
       const base = originalName.replace(/\.[^.]+$/, '') || 'image';
       const thumbName = `${base}-${size.name}.jpg`;
-      thumbs[size.name] = await uploadToSpaces(
-        resized,
-        thumbName,
-        'image/jpeg',
-        `${folder}/thumbs`,
-      );
+      thumbs[size.name] = (
+        await uploadLegacyFile(resized, thumbName, 'image/jpeg', `${folder}/thumbs`)
+      ).url;
     }
 
     return {
