@@ -17,11 +17,16 @@
  * Fails the build if the placeholder is missing or no inline scripts are found:
  * either means the CSP is silently not what it claims to be, and a security
  * header that quietly stops applying is worse than one that was never added.
+ *
+ * The same policy also receives what the embedded Alia SDK (Ask Alia) loads,
+ * from the SDK's own declaration (`@alia.onl/sdk/csp`), so this file never
+ * copies Alia's origins: its avatar runtime is a module on `https://alia.onl`.
  */
 import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
+import { ALIA_SDK_CSP } from '@alia.onl/sdk/csp';
 
 const WEBSITE_ROOT = path.resolve(import.meta.dir, '..');
 const DIST_DIR = path.join(WEBSITE_ROOT, 'dist');
@@ -75,5 +80,35 @@ if (hashes.length === 0) {
   );
 }
 
-await writeFile(HEADERS_FILE, headers.replaceAll(PLACEHOLDER, hashes.join(' ')), 'utf8');
+/** `connectSrc` → `connect-src`, as `@oxy.so/core` spells a directive and a header names it. */
+const directiveName = (key: string) =>
+  key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+
+/** One policy with `additions` appended to its directives, each source once. */
+function withSources(
+  policy: string,
+  additions: Readonly<Record<string, readonly string[]>>,
+): string {
+  const directives = policy.split(';').map((part) => part.trim().split(/\s+/));
+  for (const [key, sources] of Object.entries(additions)) {
+    const name = directiveName(key);
+    let directive = directives.find(([existing]) => existing === name);
+    if (directive === undefined) {
+      directive = [name, "'self'"];
+      directives.splice(directives.length - 1, 0, directive);
+    }
+    for (const source of sources) if (!directive.includes(source)) directive.push(source);
+  }
+  return directives.map((parts) => parts.join(' ')).join('; ');
+}
+
+const [policyLine] = headers.split('\n').filter((line) => line.includes(PLACEHOLDER));
+const [prefix, policy] = policyLine!.split(/(?<=Content-Security-Policy:)\s*/);
+const composed = `${prefix} ${withSources(policy!, ALIA_SDK_CSP)}`;
+
+await writeFile(
+  HEADERS_FILE,
+  headers.replace(policyLine!, composed).replaceAll(PLACEHOLDER, hashes.join(' ')),
+  'utf8',
+);
 console.log(`[csp] wrote ${hashes.length} inline-script hashes into dist/_headers`);
