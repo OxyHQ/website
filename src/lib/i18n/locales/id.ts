@@ -901,6 +901,110 @@ const id: Translations = {
       accurate: 'Konfirmasi bahwa informasinya akurat',
       signature: 'Ketik nama lengkap Anda sebagai tanda tangan',
     },
+    counterNoticePrompt: 'Konten Anda sendiri dihapus setelah sebuah laporan?',
+    counterNoticeLink: 'Kirim pemberitahuan balasan',
+    counterNotice: {
+      title: 'Kirim pemberitahuan balasan',
+      intro:
+        'Jika kami menghapus konten yang Anda unggah di layanan Oxy setelah sebuah klaim, dan Anda yakin itu kesalahan atau salah identifikasi, Anda bisa meminta kami memulihkannya. Setiap pemberitahuan balasan ditinjau oleh manusia.',
+      signInRequired:
+        'Masuk dengan akun Oxy yang mengunggah konten tersebut. Hanya akun itu yang bisa menyanggah penghapusannya.',
+      signIn: 'Masuk',
+      signedInAs:
+        'Masuk sebagai @{handle}. Di sini hanya konten yang diunggah akun ini yang bisa disanggah.',
+      signedInAsAccount:
+        'Di sini hanya konten yang diunggah akun yang sedang Anda gunakan yang bisa disanggah.',
+      sectionClaim: 'Penghapusan mana yang Anda sanggah?',
+      reference: 'Referensi klaim',
+      referenceHelp: 'Referensi di email yang kami kirim kepada Anda, misalnya OXY-7K3M-9Q2D.',
+      fileIds: 'ID file yang dihapus',
+      fileIdsHelp:
+        'Satu per baris, hingga {maxFileIds}. Gunakan jika Anda tidak punya referensi, atau untuk menyanggah sebagian file saja.',
+      sectionMaterial: 'Kontennya',
+      materialDescription: 'Apa yang dihapus?',
+      materialDescriptionHelp:
+        'Minimal {minMaterial} karakter. Jelaskan foto, video, teks, atau materi lainnya.',
+      materialLocation: 'Di mana materi itu muncul sebelum dihapus?',
+      materialLocationHelp:
+        'Sebuah tautan, atau letaknya di aplikasi, misalnya postingan di profil Anda.',
+      explanation: 'Mengapa penghapusan itu sebuah kesalahan?',
+      explanationHelp:
+        'Minimal {minExplanation} karakter. Jelaskan mengapa materi itu dihapus karena kesalahan atau salah identifikasi, misalnya karena Anda pemiliknya atau punya izin untuk menggunakannya.',
+      sectionYou: 'Tentang Anda',
+      youHelp:
+        'Hukum mewajibkan nama lengkap, alamat pos, dan nomor telepon Anda dalam pemberitahuan balasan.',
+      name: 'Nama lengkap sesuai identitas resmi',
+      phone: 'Telepon',
+      address: 'Alamat pos',
+      statementsEnglish:
+        'Pernyataan dicatat dalam rumusan bahasa Inggrisnya, yang ditampilkan di bawah masing-masing pernyataan.',
+      statementPerjury:
+        'Saya bersumpah, dengan ancaman pidana sumpah palsu, bahwa saya dengan iktikad baik meyakini materi yang disebutkan di atas dihapus atau dinonaktifkan akibat kesalahan atau salah identifikasi atas materi yang seharusnya dihapus atau dinonaktifkan.',
+      statementJurisdiction:
+        'Saya menerima yurisdiksi Pengadilan Distrik Federal untuk distrik peradilan tempat alamat saya berada atau, jika alamat saya di luar Amerika Serikat, distrik peradilan mana pun tempat Oxy dapat ditemukan.',
+      statementServiceOfProcess:
+        'Saya akan menerima penyampaian dokumen hukum dari orang yang mengajukan pemberitahuan dugaan pelanggaran, atau dari kuasanya.',
+      statementDisclosure:
+        'Saya memahami bahwa Oxy mengirimkan salinan pemberitahuan balasan ini, termasuk nama dan detail kontak saya, kepada orang yang mengajukan klaim, sebagaimana diwajibkan hukum.',
+      warning:
+        'Dengan sengaja menyatakan secara keliru bahwa materi dihapus karena kesalahan dapat membuat Anda bertanggung jawab atas ganti rugi.',
+      signatureHelp:
+        'Ketik nama lengkap Anda sesuai identitas resmi. Ini berlaku sebagai tanda tangan Anda pada pemberitahuan balasan ini.',
+      privacyNotice:
+        'Kami menggunakan apa yang Anda kirim untuk meninjau pemberitahuan balasan ini. Untuk klaim hak cipta, kami mengirimkan salinannya, termasuk nama dan detail kontak Anda, kepada orang yang mengajukan klaim.',
+      submit: 'Kirim pemberitahuan balasan',
+      submitSignIn: 'Masuk untuk mengirim',
+      submitting: 'Mengirim…',
+      ambiguous:
+        'File ini dihapus setelah lebih dari satu klaim. Masukkan referensi klaim yang Anda sanggah.',
+      errorTitle: 'Kami tidak dapat mengirim pemberitahuan balasan Anda',
+      errorBody:
+        'Tidak ada yang Anda ketik yang hilang. Coba lagi, atau kirim email ke {email} jika terus gagal.',
+      rateLimitedTitle: 'Terlalu banyak pemberitahuan balasan dalam waktu singkat',
+      rateLimitedBody:
+        'Tunggu sebentar, lalu kirim lagi. Pemberitahuan balasan Anda masih terisi di bawah.',
+      rateLimitedBodyAt:
+        'Anda bisa mengirim lagi setelah {time}. Pemberitahuan balasan Anda masih terisi di bawah.',
+      notFoundTitle: 'Tidak ada penghapusan yang bisa disanggah',
+      notFoundBody:
+        'Tidak ada klaim yang menghapus konten akun yang sedang Anda gunakan dengan referensi atau file tersebut. Periksa referensi di email kami dan pastikan Anda masuk dengan akun yang mengunggah konten itu, atau kirim email ke {email}.',
+      alreadySentTitle: 'Anda sudah mengirim pemberitahuan balasan',
+      alreadySentBody:
+        'Akun ini sudah menyanggah klaim ini, dan seseorang sedang meninjaunya. Kirim email ke {email} dengan menyebutkan referensinya untuk menambahkan sesuatu.',
+      notDisputableTitle: 'Klaim ini tidak bisa disanggah sekarang',
+      notDisputableBody:
+        'Pemberitahuan balasan hanya bisa dikirim setelah konten dihapus dan selama klaim masih terbuka. Kirim email ke {email} dengan menyebutkan referensinya jika menurut Anda ini keliru.',
+      signedOutTitle: 'Masuk untuk mengirim pemberitahuan balasan Anda',
+      signedOutBody:
+        'Sesi Anda telah berakhir. Masuk lagi dengan akun yang mengunggah konten tersebut; pemberitahuan balasan Anda masih terisi di bawah.',
+      successTitle: 'Pemberitahuan balasan diterima',
+      successReference: 'Ini menanggapi klaim {reference}.',
+      successFilesOne: 'Ini mencakup 1 file yang dihapus.',
+      successFilesMany: 'Ini mencakup {count} file yang dihapus.',
+      successEmail: 'Kami telah mengirim konfirmasi ke {email}.',
+      successNext:
+        'Seseorang dari tim kami akan meninjaunya. Untuk klaim hak cipta, kami dapat memulihkan materi 10 hingga 14 hari kerja setelah menerima pemberitahuan balasan Anda, kecuali orang yang mengajukan klaim memberi tahu kami bahwa mereka telah menempuh jalur pengadilan.',
+      errors: {
+        claim: 'Masukkan referensi klaim atau ID file yang dihapus',
+        reference: 'Masukkan referensi seperti yang tertera di email kami, misalnya OXY-7K3M-9Q2D',
+        claimId: 'Klaim ini tidak valid',
+        fileIds: 'Masukkan 1 hingga {maxFileIds} ID file, satu per baris',
+        name: 'Masukkan nama lengkap Anda sesuai identitas resmi',
+        address: 'Masukkan alamat pos Anda',
+        phone: 'Masukkan nomor telepon yang bisa kami hubungi',
+        email: 'Masukkan email yang bisa kami balas',
+        materialDescription: 'Jelaskan apa yang dihapus dalam minimal {minMaterial} karakter',
+        materialLocation: 'Sebutkan di mana materi itu muncul',
+        explanation:
+          'Jelaskan mengapa penghapusan itu kesalahan dalam minimal {minExplanation} karakter',
+        perjury: 'Konfirmasi pernyataan di bawah ancaman pidana sumpah palsu',
+        jurisdiction: 'Konfirmasi persetujuan Anda atas yurisdiksi',
+        serviceOfProcess: 'Konfirmasi bahwa Anda akan menerima penyampaian dokumen hukum',
+        disclosure:
+          'Konfirmasi bahwa Anda memahami orang yang mengajukan klaim menerima salinannya',
+        signature: 'Ketik nama lengkap Anda sesuai identitas resmi sebagai tanda tangan',
+      },
+    },
   },
 };
 

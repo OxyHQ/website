@@ -1345,6 +1345,112 @@ const de: Translations = {
       accurate: 'Bestätige, dass die Angaben zutreffend sind',
       signature: 'Gib deinen vollständigen Namen als Unterschrift ein',
     },
+    counterNoticePrompt: 'Wurden eigene Inhalte nach einer Meldung entfernt?',
+    counterNoticeLink: 'Gegendarstellung senden',
+    counterNotice: {
+      title: 'Gegendarstellung senden',
+      intro:
+        'Wenn wir Inhalte, die du in einem Oxy-Dienst veröffentlicht hast, nach einer Beschwerde entfernt haben und du glaubst, dass es ein Fehler oder eine Verwechslung war, kannst du uns bitten, sie wiederherzustellen. Jede Gegendarstellung wird von einem Menschen geprüft.',
+      signInRequired:
+        'Melde dich mit dem Oxy-Konto an, das die Inhalte veröffentlicht hat. Nur dieses Konto kann die Entfernung anfechten.',
+      signIn: 'Anmelden',
+      signedInAs:
+        'Angemeldet als @{handle}. Hier können nur Inhalte angefochten werden, die dieses Konto veröffentlicht hat.',
+      signedInAsAccount:
+        'Hier können nur Inhalte angefochten werden, die das angemeldete Konto veröffentlicht hat.',
+      sectionClaim: 'Welche Entfernung fichtst du an?',
+      reference: 'Referenz der Beschwerde',
+      referenceHelp:
+        'Die Referenz aus der E-Mail, die wir dir geschickt haben, zum Beispiel OXY-7K3M-9Q2D.',
+      fileIds: 'IDs der entfernten Dateien',
+      fileIdsHelp:
+        'Eine pro Zeile, bis zu {maxFileIds}. Nutze sie, wenn du keine Referenz hast oder nur einige Dateien anfechten möchtest.',
+      sectionMaterial: 'Die Inhalte',
+      materialDescription: 'Was wurde entfernt?',
+      materialDescriptionHelp:
+        'Mindestens {minMaterial} Zeichen. Beschreibe das Foto, Video, den Text oder das andere Material.',
+      materialLocation: 'Wo war es zu sehen, bevor es entfernt wurde?',
+      materialLocationHelp:
+        'Ein Link oder die Stelle in der App, zum Beispiel ein Beitrag auf deinem Profil.',
+      explanation: 'Warum war die Entfernung ein Fehler?',
+      explanationHelp:
+        'Mindestens {minExplanation} Zeichen. Erkläre, warum das Material irrtümlich entfernt oder verwechselt wurde, zum Beispiel weil es dir gehört oder du es verwenden darfst.',
+      sectionYou: 'Über dich',
+      youHelp:
+        'Das Gesetz verlangt in einer Gegendarstellung deinen vollständigen Namen, deine Postanschrift und deine Telefonnummer.',
+      name: 'Vollständiger rechtlicher Name',
+      phone: 'Telefon',
+      address: 'Postanschrift',
+      statementsEnglish:
+        'Die Erklärungen werden in ihrem englischen Wortlaut erfasst, der unter jeder Erklärung steht.',
+      statementPerjury:
+        'Ich versichere unter Strafe des Meineids, dass ich in gutem Glauben davon ausgehe, dass das oben bezeichnete Material aufgrund eines Fehlers oder einer Verwechslung des zu entfernenden oder zu sperrenden Materials entfernt oder gesperrt wurde.',
+      statementJurisdiction:
+        'Ich unterwerfe mich der Zuständigkeit des Federal District Court für den Gerichtsbezirk, in dem sich meine Anschrift befindet, oder, falls meine Anschrift außerhalb der Vereinigten Staaten liegt, jedes Gerichtsbezirks, in dem Oxy ansässig ist.',
+      statementServiceOfProcess:
+        'Ich nehme die Zustellung von Klagen und Schriftstücken durch die Person, die die Meldung der behaupteten Rechtsverletzung eingereicht hat, oder durch deren Vertreter an.',
+      statementDisclosure:
+        'Mir ist bekannt, dass Oxy eine Kopie dieser Gegendarstellung einschließlich meines Namens und meiner Kontaktdaten an die Person sendet, die die Beschwerde eingereicht hat, wie es das Gesetz verlangt.',
+      warning:
+        'Wer wissentlich falsch behauptet, Material sei irrtümlich entfernt worden, kann auf Schadensersatz haften.',
+      signatureHelp:
+        'Gib deinen vollständigen rechtlichen Namen ein. Er gilt als deine Unterschrift unter dieser Gegendarstellung.',
+      privacyNotice:
+        'Wir verwenden deine Angaben, um diese Gegendarstellung zu prüfen. Bei einer Urheberrechtsbeschwerde senden wir eine Kopie mit deinem Namen und deinen Kontaktdaten an die Person, die die Beschwerde eingereicht hat.',
+      submit: 'Gegendarstellung senden',
+      submitSignIn: 'Zum Senden anmelden',
+      submitting: 'Wird gesendet…',
+      ambiguous:
+        'Diese Dateien wurden nach mehr als einer Beschwerde entfernt. Gib die Referenz der Beschwerde ein, die du anfichtst.',
+      errorTitle: 'Wir konnten deine Gegendarstellung nicht senden',
+      errorBody:
+        'Deine Eingaben sind nicht verloren. Versuche es erneut oder schreibe an {email}, wenn es weiterhin fehlschlägt.',
+      rateLimitedTitle: 'Zu viele Gegendarstellungen in kurzer Zeit',
+      rateLimitedBody:
+        'Warte eine Weile und sende sie dann erneut. Deine Gegendarstellung ist unten noch ausgefüllt.',
+      rateLimitedBodyAt:
+        'Du kannst sie nach {time} erneut senden. Deine Gegendarstellung ist unten noch ausgefüllt.',
+      notFoundTitle: 'Keine Entfernung zum Anfechten gefunden',
+      notFoundBody:
+        'Keine Beschwerde hat unter dieser Referenz oder für diese Dateien Inhalte des angemeldeten Kontos entfernt. Prüfe die Referenz in unserer E-Mail und ob du mit dem Konto angemeldet bist, das die Inhalte veröffentlicht hat, oder schreibe an {email}.',
+      alreadySentTitle: 'Du hast bereits eine Gegendarstellung gesendet',
+      alreadySentBody:
+        'Dieses Konto hat diese Beschwerde bereits angefochten, und ein Mensch prüft sie. Schreibe an {email} und nenne die Referenz, um etwas zu ergänzen.',
+      notDisputableTitle: 'Diese Beschwerde kann gerade nicht angefochten werden',
+      notDisputableBody:
+        'Eine Gegendarstellung ist nur möglich, wenn Inhalte entfernt wurden und die Beschwerde noch offen ist. Schreibe an {email} und nenne die Referenz, wenn du das für falsch hältst.',
+      signedOutTitle: 'Melde dich an, um deine Gegendarstellung zu senden',
+      signedOutBody:
+        'Deine Sitzung ist abgelaufen. Melde dich erneut mit dem Konto an, das die Inhalte veröffentlicht hat; deine Gegendarstellung ist unten noch ausgefüllt.',
+      successTitle: 'Gegendarstellung eingegangen',
+      successReference: 'Sie bezieht sich auf die Beschwerde {reference}.',
+      successFilesOne: 'Sie umfasst 1 entfernte Datei.',
+      successFilesMany: 'Sie umfasst {count} entfernte Dateien.',
+      successEmail: 'Wir haben eine Bestätigung an {email} gesendet.',
+      successNext:
+        'Ein Mensch aus unserem Team prüft sie. Bei einer Urheberrechtsbeschwerde können wir das Material 10 bis 14 Werktage nach Eingang deiner Gegendarstellung wiederherstellen, es sei denn, die Person, die die Beschwerde eingereicht hat, teilt uns mit, dass sie vor Gericht gegangen ist.',
+      errors: {
+        claim: 'Gib die Referenz der Beschwerde oder die IDs der entfernten Dateien ein',
+        reference:
+          'Gib die Referenz so ein, wie sie in unserer E-Mail steht, zum Beispiel OXY-7K3M-9Q2D',
+        claimId: 'Diese Beschwerde ist ungültig',
+        fileIds: 'Gib zwischen 1 und {maxFileIds} Datei-IDs ein, eine pro Zeile',
+        name: 'Gib deinen vollständigen rechtlichen Namen ein',
+        address: 'Gib deine Postanschrift ein',
+        phone: 'Gib eine Telefonnummer ein, unter der wir dich erreichen',
+        email: 'Gib eine E-Mail-Adresse ein, an die wir antworten können',
+        materialDescription: 'Beschreibe in mindestens {minMaterial} Zeichen, was entfernt wurde',
+        materialLocation: 'Gib an, wo das Material zu sehen war',
+        explanation:
+          'Erkläre in mindestens {minExplanation} Zeichen, warum die Entfernung ein Fehler war',
+        perjury: 'Bestätige die Erklärung unter Strafe des Meineids',
+        jurisdiction: 'Bestätige deine Zustimmung zur Gerichtszuständigkeit',
+        serviceOfProcess: 'Bestätige, dass du Zustellungen annimmst',
+        disclosure:
+          'Bestätige, dass du weißt, dass die Person, die die Beschwerde eingereicht hat, eine Kopie erhält',
+        signature: 'Gib deinen vollständigen rechtlichen Namen als Unterschrift ein',
+      },
+    },
   },
 };
 

@@ -1338,6 +1338,110 @@ const ca: Translations = {
       accurate: 'Confirma que la informació és exacta',
       signature: 'Escriu el teu nom complet com a signatura',
     },
+    counterNoticePrompt: 'S’ha retirat contingut teu després d’una denúncia?',
+    counterNoticeLink: 'Envia una contranotificació',
+    counterNotice: {
+      title: 'Envia una contranotificació',
+      intro:
+        'Si vam retirar contingut que vas publicar en un servei d’Oxy arran d’una reclamació i creus que va ser un error o una identificació equivocada, ens pots demanar que el restablim. Una persona revisa cada contranotificació.',
+      signInRequired:
+        'Inicia la sessió amb el compte d’Oxy que va publicar el contingut. Només aquest compte en pot impugnar la retirada.',
+      signIn: 'Inicia la sessió',
+      signedInAs:
+        'Has iniciat la sessió com a @{handle}. Aquí només es pot impugnar contingut publicat per aquest compte.',
+      signedInAsAccount:
+        'Aquí només es pot impugnar contingut publicat pel compte amb què has iniciat la sessió.',
+      sectionClaim: 'Quina retirada impugnes?',
+      reference: 'Referència de la reclamació',
+      referenceHelp: 'La referència del correu que et vam enviar, per exemple OXY-7K3M-9Q2D.',
+      fileIds: 'ID dels fitxers retirats',
+      fileIdsHelp:
+        'Un per línia, fins a {maxFileIds}. Fes-los servir si no tens la referència o per impugnar només alguns fitxers.',
+      sectionMaterial: 'El contingut',
+      materialDescription: 'Què es va retirar?',
+      materialDescriptionHelp:
+        'Com a mínim {minMaterial} caràcters. Descriu la foto, el vídeo, el text o un altre material.',
+      materialLocation: 'On apareixia abans de ser retirat?',
+      materialLocationHelp:
+        'Un enllaç, o on era dins l’aplicació, com una publicació del teu perfil.',
+      explanation: 'Per què la retirada va ser un error?',
+      explanationHelp:
+        'Com a mínim {minExplanation} caràcters. Explica per què el material es va retirar per error o es va identificar malament, per exemple perquè és teu o tens permís per fer-lo servir.',
+      sectionYou: 'Sobre tu',
+      youHelp:
+        'La llei exigeix el teu nom complet, la teva adreça postal i el teu número de telèfon en una contranotificació.',
+      name: 'Nom legal complet',
+      phone: 'Telèfon',
+      address: 'Adreça postal',
+      statementsEnglish:
+        'Les declaracions es registren en la seva redacció en anglès, que es mostra sota cadascuna.',
+      statementPerjury:
+        'Juro, sota pena de perjuri, que crec de bona fe que el material identificat més amunt es va retirar o inhabilitar com a resultat d’un error o d’una identificació equivocada del material que s’havia de retirar o inhabilitar.',
+      statementJurisdiction:
+        'Accepto la jurisdicció del Tribunal Federal de Districte del districte judicial on es troba la meva adreça o, si la meva adreça és fora dels Estats Units, de qualsevol districte judicial on es pugui trobar Oxy.',
+      statementServiceOfProcess:
+        'Acceptaré la notificació d’actes processals de la persona que va presentar la notificació de la suposada infracció, o d’un agent d’aquesta persona.',
+      statementDisclosure:
+        'Entenc que Oxy envia una còpia d’aquesta contranotificació, amb el meu nom i les meves dades de contacte, a la persona que va fer la reclamació, tal com exigeix la llei.',
+      warning:
+        'Afirmar conscientment i falsament que un material es va retirar per error et pot fer responsable de danys i perjudicis.',
+      signatureHelp:
+        'Escriu el teu nom legal complet. Compta com la teva signatura en aquesta contranotificació.',
+      privacyNotice:
+        'Fem servir el que envies per revisar aquesta contranotificació. En una reclamació de drets d’autor enviem una còpia, amb el teu nom i les teves dades de contacte, a la persona que va fer la reclamació.',
+      submit: 'Envia la contranotificació',
+      submitSignIn: 'Inicia la sessió per enviar',
+      submitting: 'S’està enviant…',
+      ambiguous:
+        'Aquests fitxers es van retirar arran de més d’una reclamació. Escriu la referència de la reclamació que impugnes.',
+      errorTitle: 'No hem pogut enviar la teva contranotificació',
+      errorBody:
+        'No s’ha perdut res del que has escrit. Torna-ho a provar o escriu a {email} si continua fallant.',
+      rateLimitedTitle: 'Massa contranotificacions en poc temps',
+      rateLimitedBody:
+        'Espera una estona i torna-la a enviar. La teva contranotificació continua emplenada a sota.',
+      rateLimitedBodyAt:
+        'La podràs tornar a enviar després de les {time}. La teva contranotificació continua emplenada a sota.',
+      notFoundTitle: 'No hem trobat cap retirada per impugnar',
+      notFoundBody:
+        'Cap reclamació no ha retirat contingut del compte amb què has iniciat la sessió amb aquesta referència o aquests fitxers. Comprova la referència del nostre correu i que has iniciat la sessió amb el compte que va publicar el contingut, o escriu a {email}.',
+      alreadySentTitle: 'Ja has enviat una contranotificació',
+      alreadySentBody:
+        'Aquest compte ja ha impugnat aquesta reclamació i una persona l’està revisant. Escriu a {email}, indicant la referència, per afegir-hi res.',
+      notDisputableTitle: 'Ara no es pot impugnar aquesta reclamació',
+      notDisputableBody:
+        'Només es pot enviar una contranotificació quan s’ha retirat contingut i la reclamació continua oberta. Escriu a {email}, indicant la referència, si creus que és un error.',
+      signedOutTitle: 'Inicia la sessió per enviar la teva contranotificació',
+      signedOutBody:
+        'La teva sessió ha acabat. Torna a iniciar la sessió amb el compte que va publicar el contingut; la teva contranotificació continua emplenada a sota.',
+      successTitle: 'Contranotificació rebuda',
+      successReference: 'Respon a la reclamació {reference}.',
+      successFilesOne: 'Inclou 1 fitxer retirat.',
+      successFilesMany: 'Inclou {count} fitxers retirats.',
+      successEmail: 'Hem enviat una confirmació a {email}.',
+      successNext:
+        'Una persona del nostre equip la revisarà. En una reclamació de drets d’autor, podem restablir el material entre 10 i 14 dies feiners després de rebre la teva contranotificació, tret que la persona que va fer la reclamació ens digui que ha anat als tribunals.',
+      errors: {
+        claim: 'Escriu la referència de la reclamació o els ID dels fitxers retirats',
+        reference:
+          'Escriu la referència tal com apareix al nostre correu, per exemple OXY-7K3M-9Q2D',
+        claimId: 'Aquesta reclamació no és vàlida',
+        fileIds: 'Escriu entre 1 i {maxFileIds} ID de fitxer, un per línia',
+        name: 'Escriu el teu nom legal complet',
+        address: 'Escriu la teva adreça postal',
+        phone: 'Escriu un telèfon on et puguem localitzar',
+        email: 'Escriu un correu on puguem respondre’t',
+        materialDescription: 'Descriu què es va retirar en com a mínim {minMaterial} caràcters',
+        materialLocation: 'Indica on apareixia el material',
+        explanation:
+          'Explica per què la retirada va ser un error en com a mínim {minExplanation} caràcters',
+        perjury: 'Confirma la declaració feta sota pena de perjuri',
+        jurisdiction: 'Confirma que acceptes la jurisdicció',
+        serviceOfProcess: 'Confirma que acceptaràs la notificació d’actes processals',
+        disclosure: 'Confirma que entens que la persona que va fer la reclamació en rep una còpia',
+        signature: 'Escriu el teu nom legal complet com a signatura',
+      },
+    },
   },
 };
 

@@ -1332,6 +1332,112 @@ const it: Translations = {
       accurate: 'Conferma che le informazioni sono esatte',
       signature: 'Scrivi il tuo nome e cognome come firma',
     },
+    counterNoticePrompt: 'Un tuo contenuto è stato rimosso dopo una segnalazione?',
+    counterNoticeLink: 'Invia una contronotifica',
+    counterNotice: {
+      title: 'Invia una contronotifica',
+      intro:
+        'Se abbiamo rimosso un contenuto che hai pubblicato in un servizio Oxy dopo un reclamo e ritieni che sia stato un errore o un’identificazione sbagliata, puoi chiederci di ripristinarlo. Ogni contronotifica viene esaminata da una persona.',
+      signInRequired:
+        'Accedi con l’account Oxy che ha pubblicato il contenuto. Solo quell’account può contestarne la rimozione.',
+      signIn: 'Accedi',
+      signedInAs:
+        'Accesso effettuato come @{handle}. Qui si possono contestare solo contenuti pubblicati da questo account.',
+      signedInAsAccount:
+        'Qui si possono contestare solo contenuti pubblicati dall’account con cui hai effettuato l’accesso.',
+      sectionClaim: 'Quale rimozione stai contestando?',
+      reference: 'Riferimento del reclamo',
+      referenceHelp:
+        'Il riferimento indicato nell’email che ti abbiamo inviato, ad esempio OXY-7K3M-9Q2D.',
+      fileIds: 'ID dei file rimossi',
+      fileIdsHelp:
+        'Uno per riga, fino a {maxFileIds}. Usali se non hai il riferimento o per contestare solo alcuni file.',
+      sectionMaterial: 'Il contenuto',
+      materialDescription: 'Che cosa è stato rimosso?',
+      materialDescriptionHelp:
+        'Almeno {minMaterial} caratteri. Descrivi la foto, il video, il testo o l’altro materiale.',
+      materialLocation: 'Dove appariva prima di essere rimosso?',
+      materialLocationHelp:
+        'Un link, oppure dove si trovava nell’app, ad esempio un post sul tuo profilo.',
+      explanation: 'Perché la rimozione è stata un errore?',
+      explanationHelp:
+        'Almeno {minExplanation} caratteri. Spiega perché il materiale è stato rimosso per errore o identificato in modo sbagliato, ad esempio perché è tuo o hai il permesso di usarlo.',
+      sectionYou: 'Informazioni su di te',
+      youHelp:
+        'La legge richiede nella contronotifica il tuo nome completo, il tuo indirizzo postale e il tuo numero di telefono.',
+      name: 'Nome legale completo',
+      phone: 'Telefono',
+      address: 'Indirizzo postale',
+      statementsEnglish:
+        'Le dichiarazioni vengono registrate nella loro formulazione inglese, riportata sotto ciascuna.',
+      statementPerjury:
+        'Giuro, sotto pena di falsa testimonianza, di ritenere in buona fede che il materiale sopra indicato sia stato rimosso o disattivato a causa di un errore o di un’errata identificazione del materiale da rimuovere o disattivare.',
+      statementJurisdiction:
+        'Accetto la giurisdizione del Tribunale federale distrettuale del distretto giudiziario in cui si trova il mio indirizzo oppure, se il mio indirizzo è al di fuori degli Stati Uniti, di qualsiasi distretto giudiziario in cui si trovi Oxy.',
+      statementServiceOfProcess:
+        'Accetterò la notifica di atti giudiziari dalla persona che ha presentato la notifica della presunta violazione, o da un suo rappresentante.',
+      statementDisclosure:
+        'Comprendo che Oxy invia una copia di questa contronotifica, compresi il mio nome e i miei recapiti, alla persona che ha presentato il reclamo, come richiesto dalla legge.',
+      warning:
+        'Dichiarare consapevolmente il falso, sostenendo che un materiale è stato rimosso per errore, può renderti responsabile per danni.',
+      signatureHelp:
+        'Scrivi il tuo nome legale completo. Vale come tua firma su questa contronotifica.',
+      privacyNotice:
+        'Usiamo ciò che invii per esaminare questa contronotifica. Per un reclamo sul diritto d’autore inviamo una copia, con il tuo nome e i tuoi recapiti, alla persona che ha presentato il reclamo.',
+      submit: 'Invia contronotifica',
+      submitSignIn: 'Accedi per inviare',
+      submitting: 'Invio in corso…',
+      ambiguous:
+        'Questi file sono stati rimossi dopo più di un reclamo. Inserisci il riferimento del reclamo che stai contestando.',
+      errorTitle: 'Non è stato possibile inviare la tua contronotifica',
+      errorBody:
+        'Non hai perso nulla di ciò che hai scritto. Riprova oppure scrivi a {email} se il problema persiste.',
+      rateLimitedTitle: 'Troppe contronotifiche in poco tempo',
+      rateLimitedBody:
+        'Attendi un po’, poi inviala di nuovo. La tua contronotifica è ancora compilata qui sotto.',
+      rateLimitedBodyAt:
+        'Potrai inviarla di nuovo dopo le {time}. La tua contronotifica è ancora compilata qui sotto.',
+      notFoundTitle: 'Nessuna rimozione da contestare',
+      notFoundBody:
+        'Nessun reclamo ha rimosso contenuti dell’account con cui hai effettuato l’accesso con quel riferimento o per quei file. Controlla il riferimento nella nostra email e di aver effettuato l’accesso con l’account che ha pubblicato il contenuto, oppure scrivi a {email}.',
+      alreadySentTitle: 'Hai già inviato una contronotifica',
+      alreadySentBody:
+        'Questo account ha già contestato questo reclamo e una persona lo sta esaminando. Scrivi a {email}, citando il riferimento, per aggiungere qualcosa.',
+      notDisputableTitle: 'Questo reclamo non può essere contestato ora',
+      notDisputableBody:
+        'Una contronotifica si può inviare solo dopo che il contenuto è stato rimosso e mentre il reclamo è ancora aperto. Scrivi a {email}, citando il riferimento, se pensi che sia un errore.',
+      signedOutTitle: 'Accedi per inviare la tua contronotifica',
+      signedOutBody:
+        'La tua sessione è scaduta. Accedi di nuovo con l’account che ha pubblicato il contenuto; la tua contronotifica è ancora compilata qui sotto.',
+      successTitle: 'Contronotifica ricevuta',
+      successReference: 'Risponde al reclamo {reference}.',
+      successFilesOne: 'Riguarda 1 file rimosso.',
+      successFilesMany: 'Riguarda {count} file rimossi.',
+      successEmail: 'Abbiamo inviato una conferma a {email}.',
+      successNext:
+        'Una persona del nostro team la esaminerà. Per un reclamo sul diritto d’autore, possiamo ripristinare il materiale tra 10 e 14 giorni lavorativi dopo aver ricevuto la tua contronotifica, a meno che la persona che ha presentato il reclamo non ci comunichi di essersi rivolta a un tribunale.',
+      errors: {
+        claim: 'Inserisci il riferimento del reclamo o gli ID dei file rimossi',
+        reference:
+          'Inserisci il riferimento come appare nella nostra email, ad esempio OXY-7K3M-9Q2D',
+        claimId: 'Questo reclamo non è valido',
+        fileIds: 'Inserisci da 1 a {maxFileIds} ID di file, uno per riga',
+        name: 'Inserisci il tuo nome legale completo',
+        address: 'Inserisci il tuo indirizzo postale',
+        phone: 'Inserisci un numero di telefono a cui possiamo contattarti',
+        email: 'Inserisci un’email a cui possiamo rispondere',
+        materialDescription: 'Descrivi cosa è stato rimosso in almeno {minMaterial} caratteri',
+        materialLocation: 'Indica dove appariva il materiale',
+        explanation:
+          'Spiega perché la rimozione è stata un errore in almeno {minExplanation} caratteri',
+        perjury: 'Conferma la dichiarazione resa sotto pena di falsa testimonianza',
+        jurisdiction: 'Conferma di accettare la giurisdizione',
+        serviceOfProcess: 'Conferma che accetterai la notifica di atti giudiziari',
+        disclosure:
+          'Conferma di aver compreso che la persona che ha presentato il reclamo ne riceve una copia',
+        signature: 'Scrivi il tuo nome legale completo come firma',
+      },
+    },
   },
 };
 

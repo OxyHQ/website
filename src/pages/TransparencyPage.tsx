@@ -1,7 +1,12 @@
 import TransparencyCollection, {
   type TransparencyCollectionProps,
 } from '../components/transparency/TransparencyCollection';
-import { LEGAL_DOCUMENTS, REPORT_CONTENT_PAGE, TRANSPARENCY_DOCUMENTS } from '../lib/transparency';
+import {
+  COUNTER_NOTICE_PAGE,
+  LEGAL_DOCUMENTS,
+  REPORT_CONTENT_PAGE,
+  TRANSPARENCY_DOCUMENTS,
+} from '../lib/transparency';
 
 const legalDocuments = LEGAL_DOCUMENTS.map((document) => ({
   ...document,
@@ -88,7 +93,10 @@ const legalCollection: TransparencyCollectionProps = {
     {
       id: 'report',
       title: 'Report content',
-      documents: [{ path: `${REPORT_CONTENT_PAGE.path}/`, title: REPORT_CONTENT_PAGE.title }],
+      documents: [
+        { path: `${REPORT_CONTENT_PAGE.path}/`, title: REPORT_CONTENT_PAGE.title },
+        { path: `${COUNTER_NOTICE_PAGE.path}/`, title: COUNTER_NOTICE_PAGE.title },
+      ],
     },
   ],
 };

@@ -1306,6 +1306,103 @@ const ko: Translations = {
       accurate: '정보가 정확함을 확인하세요',
       signature: '서명으로 성명을 입력하세요',
     },
+    counterNoticePrompt: '신고로 인해 내 콘텐츠가 삭제되었나요?',
+    counterNoticeLink: '반론 통지 보내기',
+    counterNotice: {
+      title: '반론 통지 보내기',
+      intro:
+        'Oxy 서비스에 게시한 콘텐츠가 신고 후 삭제되었고, 그것이 실수나 잘못된 식별 때문이라고 생각한다면 복원을 요청할 수 있습니다. 모든 반론 통지는 담당자가 직접 검토합니다.',
+      signInRequired:
+        '콘텐츠를 게시한 Oxy 계정으로 로그인하세요. 그 계정만 삭제에 이의를 제기할 수 있습니다.',
+      signIn: '로그인',
+      signedInAs:
+        '@{handle}(으)로 로그인했습니다. 여기서는 이 계정이 게시한 콘텐츠에 대해서만 이의를 제기할 수 있습니다.',
+      signedInAsAccount:
+        '여기서는 로그인한 계정이 게시한 콘텐츠에 대해서만 이의를 제기할 수 있습니다.',
+      sectionClaim: '어떤 삭제에 이의를 제기하나요?',
+      reference: '신고 참조 번호',
+      referenceHelp: '보내드린 이메일에 있는 참조 번호입니다(예: OXY-7K3M-9Q2D).',
+      fileIds: '삭제된 파일 ID',
+      fileIdsHelp:
+        '한 줄에 하나씩, 최대 {maxFileIds}개. 참조 번호가 없거나 일부 파일에만 이의를 제기할 때 사용하세요.',
+      sectionMaterial: '콘텐츠',
+      materialDescription: '무엇이 삭제되었나요?',
+      materialDescriptionHelp:
+        '{minMaterial}자 이상. 사진, 동영상, 텍스트 등 자료를 설명해 주세요.',
+      materialLocation: '삭제되기 전에 어디에 있었나요?',
+      materialLocationHelp: '링크 또는 앱 안의 위치(예: 내 프로필의 게시물).',
+      explanation: '삭제가 잘못된 이유는 무엇인가요?',
+      explanationHelp:
+        '{minExplanation}자 이상. 자료가 실수로 삭제되었거나 잘못 식별된 이유를 설명해 주세요(예: 본인 소유이거나 사용 허락을 받았음).',
+      sectionYou: '본인 정보',
+      youHelp: '법에 따라 반론 통지에는 성명, 우편 주소, 전화번호가 필요합니다.',
+      name: '법적 성명',
+      phone: '전화번호',
+      address: '우편 주소',
+      statementsEnglish: '진술은 영어 원문으로 기록되며, 각 진술 아래에 원문이 표시됩니다.',
+      statementPerjury:
+        '본인은 위증 시 처벌을 감수하고, 위에 명시된 자료가 삭제 또는 비활성화되어야 할 자료에 대한 실수나 잘못된 식별의 결과로 삭제 또는 비활성화되었다고 선의로 믿고 있음을 맹세합니다.',
+      statementJurisdiction:
+        '본인은 본인 주소지를 관할하는 사법 구역의 연방 지방 법원, 또는 본인 주소가 미국 밖에 있는 경우 Oxy가 소재하는 모든 사법 구역의 관할권에 동의합니다.',
+      statementServiceOfProcess:
+        '본인은 주장된 침해에 대한 통지를 제출한 사람 또는 그 대리인으로부터의 소송 서류 송달을 수락합니다.',
+      statementDisclosure:
+        '본인은 법에 따라 Oxy가 본인의 이름과 연락처를 포함한 이 반론 통지의 사본을 신고한 사람에게 보낸다는 것을 이해합니다.',
+      warning: '자료가 실수로 삭제되었다고 고의로 허위 주장하면 손해 배상 책임을 질 수 있습니다.',
+      signatureHelp: '법적 성명을 입력하세요. 이 반론 통지의 서명으로 간주됩니다.',
+      privacyNotice:
+        '보내주신 내용은 이 반론 통지를 검토하는 데 사용합니다. 저작권 신고의 경우 이름과 연락처를 포함한 사본을 신고한 사람에게 보냅니다.',
+      submit: '반론 통지 보내기',
+      submitSignIn: '로그인하고 보내기',
+      submitting: '보내는 중…',
+      ambiguous:
+        '이 파일들은 둘 이상의 신고로 삭제되었습니다. 이의를 제기할 신고의 참조 번호를 입력하세요.',
+      errorTitle: '반론 통지를 보내지 못했습니다',
+      errorBody:
+        '입력한 내용은 그대로 남아 있습니다. 다시 시도하거나, 계속 실패하면 {email}(으)로 이메일을 보내 주세요.',
+      rateLimitedTitle: '짧은 시간에 반론 통지가 너무 많습니다',
+      rateLimitedBody:
+        '잠시 기다린 후 다시 보내 주세요. 반론 통지는 아래에 그대로 입력되어 있습니다.',
+      rateLimitedBodyAt:
+        '{time} 이후에 다시 보낼 수 있습니다. 반론 통지는 아래에 그대로 입력되어 있습니다.',
+      notFoundTitle: '이의를 제기할 삭제를 찾지 못했습니다',
+      notFoundBody:
+        '해당 참조 번호나 파일로 로그인한 계정의 콘텐츠를 삭제한 신고가 없습니다. 이메일의 참조 번호와 콘텐츠를 게시한 계정으로 로그인했는지 확인하거나 {email}(으)로 연락해 주세요.',
+      alreadySentTitle: '이미 반론 통지를 보냈습니다',
+      alreadySentBody:
+        '이 계정은 이미 이 신고에 이의를 제기했으며 담당자가 검토 중입니다. 추가할 내용이 있으면 참조 번호와 함께 {email}(으)로 보내 주세요.',
+      notDisputableTitle: '지금은 이 신고에 이의를 제기할 수 없습니다',
+      notDisputableBody:
+        '반론 통지는 콘텐츠가 삭제되고 신고가 아직 진행 중일 때만 보낼 수 있습니다. 잘못되었다고 생각되면 참조 번호와 함께 {email}(으)로 연락해 주세요.',
+      signedOutTitle: '로그인하여 반론 통지를 보내세요',
+      signedOutBody:
+        '세션이 종료되었습니다. 콘텐츠를 게시한 계정으로 다시 로그인하세요. 반론 통지는 아래에 그대로 입력되어 있습니다.',
+      successTitle: '반론 통지를 받았습니다',
+      successReference: '신고 {reference}에 대한 반론입니다.',
+      successFilesOne: '삭제된 파일 1개가 대상입니다.',
+      successFilesMany: '삭제된 파일 {count}개가 대상입니다.',
+      successEmail: '{email}(으)로 확인 메일을 보냈습니다.',
+      successNext:
+        '팀 담당자가 검토합니다. 저작권 신고의 경우, 신고한 사람이 소송을 제기했다고 알려오지 않는 한 반론 통지를 받은 후 영업일 기준 10~14일 뒤에 자료를 복원할 수 있습니다.',
+      errors: {
+        claim: '신고 참조 번호 또는 삭제된 파일 ID를 입력하세요',
+        reference: '이메일에 표시된 대로 참조 번호를 입력하세요(예: OXY-7K3M-9Q2D)',
+        claimId: '유효하지 않은 신고입니다',
+        fileIds: '파일 ID를 1~{maxFileIds}개, 한 줄에 하나씩 입력하세요',
+        name: '법적 성명을 입력하세요',
+        address: '우편 주소를 입력하세요',
+        phone: '연락 가능한 전화번호를 입력하세요',
+        email: '답장을 받을 이메일을 입력하세요',
+        materialDescription: '삭제된 내용을 {minMaterial}자 이상으로 설명하세요',
+        materialLocation: '자료가 있던 위치를 입력하세요',
+        explanation: '삭제가 잘못된 이유를 {minExplanation}자 이상으로 설명하세요',
+        perjury: '위증 시 처벌을 감수하는 진술을 확인하세요',
+        jurisdiction: '관할권 동의를 확인하세요',
+        serviceOfProcess: '소송 서류 송달 수락을 확인하세요',
+        disclosure: '신고한 사람이 사본을 받는다는 점을 이해했음을 확인하세요',
+        signature: '서명으로 법적 성명을 입력하세요',
+      },
+    },
   },
 };
 

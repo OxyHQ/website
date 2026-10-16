@@ -57,6 +57,7 @@ import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './
 import { hasLocalizedVariants } from '../src/lib/localizedRoute';
 import { buildRedirectsFile } from './redirects.ts';
 import {
+  COUNTER_NOTICE_PAGE,
   LEGAL_DOCUMENTS,
   REPORT_CONTENT_PAGE,
   TRANSPARENCY_DOCUMENTS,
@@ -575,6 +576,11 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     title: REPORT_CONTENT_PAGE.title,
     description: REPORT_CONTENT_PAGE.description,
     canonicalPath: REPORT_CONTENT_PAGE.path,
+  },
+  [COUNTER_NOTICE_PAGE.path]: {
+    title: COUNTER_NOTICE_PAGE.title,
+    description: COUNTER_NOTICE_PAGE.description,
+    canonicalPath: COUNTER_NOTICE_PAGE.path,
   },
   '/account-deletion': {
     title: 'Delete your Oxy account',

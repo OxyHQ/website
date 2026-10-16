@@ -1532,6 +1532,111 @@ const es: Translations = {
       accurate: 'Confirma que la información es exacta',
       signature: 'Escribe tu nombre completo como firma',
     },
+    counterNoticePrompt: '¿Se retiró contenido tuyo tras una denuncia?',
+    counterNoticeLink: 'Enviar una contranotificación',
+    counterNotice: {
+      title: 'Enviar una contranotificación',
+      intro:
+        'Si retiramos contenido que publicaste en un servicio de Oxy tras una reclamación y crees que fue un error o una identificación equivocada, puedes pedirnos que lo restablezcamos. Una persona revisa cada contranotificación.',
+      signInRequired:
+        'Inicia sesión con la cuenta de Oxy que publicó el contenido. Solo esa cuenta puede impugnar su retirada.',
+      signIn: 'Iniciar sesión',
+      signedInAs:
+        'Has iniciado sesión como @{handle}. Aquí solo se puede impugnar contenido publicado por esta cuenta.',
+      signedInAsAccount:
+        'Aquí solo se puede impugnar contenido publicado por la cuenta con la que has iniciado sesión.',
+      sectionClaim: '¿Qué retirada impugnas?',
+      reference: 'Referencia de la reclamación',
+      referenceHelp: 'La referencia del correo que te enviamos, por ejemplo OXY-7K3M-9Q2D.',
+      fileIds: 'ID de los archivos retirados',
+      fileIdsHelp:
+        'Uno por línea, hasta {maxFileIds}. Úsalos si no tienes la referencia o para impugnar solo algunos archivos.',
+      sectionMaterial: 'El contenido',
+      materialDescription: '¿Qué se retiró?',
+      materialDescriptionHelp:
+        'Al menos {minMaterial} caracteres. Describe la foto, el vídeo, el texto u otro material.',
+      materialLocation: '¿Dónde aparecía antes de retirarse?',
+      materialLocationHelp:
+        'Un enlace, o en qué parte de la app estaba, como una publicación de tu perfil.',
+      explanation: '¿Por qué la retirada fue un error?',
+      explanationHelp:
+        'Al menos {minExplanation} caracteres. Explica por qué el material se retiró por error o se identificó mal, por ejemplo porque es tuyo o tienes permiso para usarlo.',
+      sectionYou: 'Sobre ti',
+      youHelp:
+        'La ley exige tu nombre completo, tu dirección postal y tu número de teléfono en una contranotificación.',
+      name: 'Nombre legal completo',
+      phone: 'Teléfono',
+      address: 'Dirección postal',
+      statementsEnglish:
+        'Las declaraciones se registran en su redacción en inglés, que se muestra debajo de cada una.',
+      statementPerjury:
+        'Juro, bajo pena de perjurio, que creo de buena fe que el material identificado arriba se retiró o deshabilitó como resultado de un error o de una identificación equivocada del material que debía retirarse o deshabilitarse.',
+      statementJurisdiction:
+        'Acepto la jurisdicción del Tribunal Federal de Distrito del distrito judicial en el que se encuentra mi dirección o, si mi dirección está fuera de Estados Unidos, de cualquier distrito judicial en el que se pueda encontrar a Oxy.',
+      statementServiceOfProcess:
+        'Aceptaré la notificación de actos procesales de la persona que presentó la notificación de la supuesta infracción, o de un agente de esa persona.',
+      statementDisclosure:
+        'Entiendo que Oxy envía una copia de esta contranotificación, con mi nombre y mis datos de contacto, a la persona que hizo la reclamación, como exige la ley.',
+      warning:
+        'Afirmar a sabiendas y de forma falsa que un material se retiró por error puede hacerte responsable de daños y perjuicios.',
+      signatureHelp:
+        'Escribe tu nombre legal completo. Cuenta como tu firma en esta contranotificación.',
+      privacyNotice:
+        'Usamos lo que envías para revisar esta contranotificación. En una reclamación de derechos de autor enviamos una copia, con tu nombre y tus datos de contacto, a la persona que hizo la reclamación.',
+      submit: 'Enviar contranotificación',
+      submitSignIn: 'Inicia sesión para enviar',
+      submitting: 'Enviando…',
+      ambiguous:
+        'Estos archivos se retiraron tras más de una reclamación. Escribe la referencia de la reclamación que impugnas.',
+      errorTitle: 'No pudimos enviar tu contranotificación',
+      errorBody:
+        'No se ha perdido nada de lo que escribiste. Inténtalo de nuevo o escribe a {email} si sigue fallando.',
+      rateLimitedTitle: 'Demasiadas contranotificaciones en poco tiempo',
+      rateLimitedBody:
+        'Espera un rato y vuelve a enviarla. Tu contranotificación sigue rellenada abajo.',
+      rateLimitedBodyAt:
+        'Podrás volver a enviarla después de las {time}. Tu contranotificación sigue rellenada abajo.',
+      notFoundTitle: 'No encontramos ninguna retirada que impugnar',
+      notFoundBody:
+        'Ninguna reclamación retiró contenido de la cuenta con la que has iniciado sesión con esa referencia o esos archivos. Comprueba la referencia de nuestro correo y que has iniciado sesión con la cuenta que publicó el contenido, o escribe a {email}.',
+      alreadySentTitle: 'Ya enviaste una contranotificación',
+      alreadySentBody:
+        'Esta cuenta ya impugnó esta reclamación y una persona la está revisando. Escribe a {email}, indicando la referencia, para añadir algo.',
+      notDisputableTitle: 'Esta reclamación no se puede impugnar ahora',
+      notDisputableBody:
+        'Solo se puede enviar una contranotificación cuando se ha retirado contenido y la reclamación sigue abierta. Escribe a {email}, indicando la referencia, si crees que es un error.',
+      signedOutTitle: 'Inicia sesión para enviar tu contranotificación',
+      signedOutBody:
+        'Tu sesión ha terminado. Vuelve a iniciar sesión con la cuenta que publicó el contenido; tu contranotificación sigue rellenada abajo.',
+      successTitle: 'Contranotificación recibida',
+      successReference: 'Responde a la reclamación {reference}.',
+      successFilesOne: 'Abarca 1 archivo retirado.',
+      successFilesMany: 'Abarca {count} archivos retirados.',
+      successEmail: 'Enviamos una confirmación a {email}.',
+      successNext:
+        'Una persona de nuestro equipo la revisará. En una reclamación de derechos de autor, podemos restablecer el material entre 10 y 14 días hábiles después de recibir tu contranotificación, salvo que la persona que hizo la reclamación nos diga que ha acudido a los tribunales.',
+      errors: {
+        claim: 'Escribe la referencia de la reclamación o los ID de los archivos retirados',
+        reference:
+          'Escribe la referencia tal como aparece en nuestro correo, por ejemplo OXY-7K3M-9Q2D',
+        claimId: 'Esta reclamación no es válida',
+        fileIds: 'Escribe entre 1 y {maxFileIds} ID de archivo, uno por línea',
+        name: 'Escribe tu nombre legal completo',
+        address: 'Escribe tu dirección postal',
+        phone: 'Escribe un teléfono en el que podamos localizarte',
+        email: 'Escribe un correo al que podamos responder',
+        materialDescription: 'Describe lo que se retiró en al menos {minMaterial} caracteres',
+        materialLocation: 'Indica dónde aparecía el material',
+        explanation:
+          'Explica por qué la retirada fue un error en al menos {minExplanation} caracteres',
+        perjury: 'Confirma la declaración hecha bajo pena de perjurio',
+        jurisdiction: 'Confirma que aceptas la jurisdicción',
+        serviceOfProcess: 'Confirma que aceptarás la notificación de actos procesales',
+        disclosure:
+          'Confirma que entiendes que la persona que hizo la reclamación recibe una copia',
+        signature: 'Escribe tu nombre legal completo como firma',
+      },
+    },
   },
 };
 

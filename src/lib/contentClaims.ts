@@ -1,114 +1,40 @@
 /**
  * The client for `POST {OXY_API}/content-claims` — the public "Report content /
- * rights claim" intake of ADR 0041 D10 (Oxy core,
- * `docs/adr/0041-application-owned-files.md`).
+ * rights claim" intake of ADR 0043 D10 (Oxy core,
+ * `docs/adr/0043-application-owned-files.md`).
  *
- * The endpoint belongs to the Oxy API, not to this site's backend, so the
- * contract lives here rather than under `server/contracts/`: this file is the
- * browser's half of it, and the form validates against `contentClaimSchema`
- * before it posts so it cannot accept what the API would answer 400 to. When
- * `@oxy.so/contracts` publishes the server's schema, this one is replaced by an
- * import of it.
+ * The contract is `@oxy.so/contracts`' — the schema the API parses with is the
+ * one the form validates against before it posts, so the form cannot accept
+ * what the API would answer 400 to. This file is the browser's half around it:
+ * the form shape, the request builder and a submitter that never throws.
  *
  * Every validation message is an i18n KEY under `contentClaim.errors.*`, filled
  * with `CONTENT_CLAIM_LIMITS` by the page, so the schema never carries English.
  */
-import { z } from 'zod';
+import {
+  CLAIMANT_RELATIONSHIPS,
+  CONTENT_CLAIM_KINDS,
+  CONTENT_CLAIM_LIMITS,
+  contentClaimSubmissionSchema,
+  isRightsClaim,
+  type ClaimantRelationship,
+  type ContentClaimKind,
+  type ContentClaimSubmission,
+} from '@oxy.so/contracts';
 
-export const CONTENT_CLAIM_KINDS = [
-  'copyright',
-  'trademark',
-  'privacy',
-  'illegal_content',
-  'other',
-] as const;
-export type ContentClaimKind = (typeof CONTENT_CLAIM_KINDS)[number];
+export {
+  CLAIMANT_RELATIONSHIPS,
+  CONTENT_CLAIM_KINDS,
+  CONTENT_CLAIM_LIMITS,
+  isRightsClaim,
+  type ClaimantRelationship,
+  type ContentClaimKind,
+};
 
-export const CLAIMANT_RELATIONSHIPS = [
-  'rights_holder',
-  'authorized_agent',
-  'affected_person',
-  'other',
-] as const;
-export type ClaimantRelationship = (typeof CLAIMANT_RELATIONSHIPS)[number];
+/** The schema the form validates with: the API's own. */
+export const contentClaimSchema = contentClaimSubmissionSchema;
 
-export const CONTENT_CLAIM_LIMITS = {
-  minUrls: 1,
-  maxUrls: 20,
-  maxUrlLength: 2048,
-  minDescription: 20,
-  maxDescription: 5000,
-  maxName: 200,
-  maxOrganization: 200,
-  maxEmail: 254,
-} as const;
-
-/**
- * The kinds whose claimant asserts a right in a work or a mark. Only these
- * carry the "under penalty of perjury" accuracy statement and the link to the
- * original — a privacy or illegal-content report asserts no ownership, and
- * asking someone to swear to one would be both wrong and off-putting.
- */
-export function isRightsClaim(kind: ContentClaimKind): boolean {
-  return kind === 'copyright' || kind === 'trademark';
-}
-
-function isHttpsUrl(value: string): boolean {
-  try {
-    const url = new URL(value);
-    return url.protocol === 'https:' && url.hostname.length > 0;
-  } catch {
-    return false;
-  }
-}
-
-const httpsUrl = (message: string) =>
-  z.string().trim().max(CONTENT_CLAIM_LIMITS.maxUrlLength, message).refine(isHttpsUrl, message);
-
-export const contentClaimSchema = z
-  .object({
-    kind: z.enum(CONTENT_CLAIM_KINDS, 'contentClaim.errors.kind'),
-    contentUrls: z
-      .array(httpsUrl('contentClaim.errors.contentUrlInvalid'))
-      .min(CONTENT_CLAIM_LIMITS.minUrls, 'contentClaim.errors.contentUrlsRequired')
-      .max(CONTENT_CLAIM_LIMITS.maxUrls, 'contentClaim.errors.contentUrlsTooMany'),
-    description: z
-      .string()
-      .trim()
-      .min(CONTENT_CLAIM_LIMITS.minDescription, 'contentClaim.errors.descriptionShort')
-      .max(CONTENT_CLAIM_LIMITS.maxDescription, 'contentClaim.errors.descriptionLong'),
-    originalWorkUrl: httpsUrl('contentClaim.errors.originalWorkUrl').optional(),
-    claimant: z.object({
-      name: z
-        .string()
-        .trim()
-        .min(1, 'contentClaim.errors.name')
-        .max(CONTENT_CLAIM_LIMITS.maxName, 'contentClaim.errors.name'),
-      email: z
-        .string()
-        .trim()
-        .email('contentClaim.errors.email')
-        .max(CONTENT_CLAIM_LIMITS.maxEmail, 'contentClaim.errors.email'),
-      organization: z
-        .string()
-        .trim()
-        .max(CONTENT_CLAIM_LIMITS.maxOrganization, 'contentClaim.errors.organization')
-        .optional(),
-      relationship: z.enum(CLAIMANT_RELATIONSHIPS, 'contentClaim.errors.relationship'),
-    }),
-    statements: z.object({
-      goodFaith: z.literal(true, 'contentClaim.errors.goodFaith'),
-      accurate: z.literal(true, 'contentClaim.errors.accurate'),
-    }),
-    signature: z
-      .string()
-      .trim()
-      .min(1, 'contentClaim.errors.signature')
-      .max(CONTENT_CLAIM_LIMITS.maxName, 'contentClaim.errors.signature'),
-  })
-  .strict();
-
-export type ContentClaimPayload = z.infer<typeof contentClaimSchema>;
+export type ContentClaimPayload = ContentClaimSubmission;
 
 /** What the form holds: strings and booleans, exactly as typed. */
 export interface ContentClaimForm {
