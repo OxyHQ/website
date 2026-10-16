@@ -800,6 +800,108 @@ const id: Translations = {
       apps: 'Aplikasi Oxy mana yang cocok untuk saya?',
     },
   },
+  // ── Report content / rights claim (/transparency/legal/report-content) ──
+  contentClaim: {
+    seoTitle: 'Laporkan konten atau klaim hak',
+    seoDescription:
+      'Minta Oxy menghapus konten yang melanggar hak cipta atau merek dagang Anda, membuka data pribadi Anda, atau melanggar hukum.',
+    eyebrow: 'Hukum',
+    title: 'Laporkan konten',
+    intro:
+      'Beri tahu kami tentang konten di layanan Oxy yang melanggar hak Anda, membuka data pribadi Anda, atau melanggar hukum. Setiap laporan ditinjau oleh manusia.',
+    optional: 'opsional',
+    sectionKind: 'Apa yang Anda laporkan?',
+    kindCopyright: 'Hak cipta',
+    kindCopyrightHelp:
+      'Seseorang memakai foto, teks, video, atau karya lain milik Anda, atau milik pihak yang Anda wakili, tanpa izin.',
+    kindTrademark: 'Merek dagang',
+    kindTrademarkHelp:
+      'Konten memakai nama merek, logo, atau merek dagang Anda yang lain dengan cara yang menyesatkan orang.',
+    kindPrivacy: 'Privasi atau data pribadi',
+    kindPrivacyHelp:
+      'Konten menampilkan data pribadi Anda, seperti gambar Anda, detail kontak, atau informasi lain tentang Anda. Pilih ini juga untuk meminta kami menghapus data pribadi Anda sendiri berdasarkan GDPR.',
+    kindIllegal: 'Konten ilegal',
+    kindIllegalHelp:
+      'Konten yang Anda yakini ilegal, seperti penipuan, ancaman, atau penjualan barang terlarang.',
+    kindOther: 'Lainnya',
+    kindOtherHelp: 'Alasan lain mengapa Anda yakin konten harus dihapus dari layanan Oxy.',
+    emergencyNotice:
+      'Jika seseorang dalam bahaya langsung, hubungi layanan darurat setempat terlebih dahulu.',
+    sectionContent: 'Kontennya',
+    contentUrls: 'Tautan ke konten',
+    contentUrlsHelp:
+      'Satu tautan per baris, maksimal {maxUrls}. Gunakan alamat gambar atau file, atau alamat halaman yang menampilkannya di aplikasi Oxy mana pun.',
+    description: 'Apa kontennya, dan mengapa harus dihapus?',
+    descriptionHelp: 'Minimal {minDescription} karakter. Jelaskan kontennya dan masalahnya.',
+    originalWorkUrl: 'Tautan ke karya asli Anda',
+    originalWorkUrlHelp: 'Tempat karya asli dapat dilihat, jika tersedia online.',
+    sectionYou: 'Tentang Anda',
+    signedInHelp:
+      'Nama dan email Anda diambil dari akun Oxy Anda. Anda bisa mengubahnya untuk laporan ini.',
+    name: 'Nama lengkap',
+    email: 'Email',
+    emailHelp:
+      'Kami mengirim konfirmasi, dan pertanyaan apa pun tentang laporan ini, ke alamat ini.',
+    organization: 'Organisasi',
+    relationship: 'Hubungan Anda dengan konten',
+    relationshipRightsHolder: 'Saya pemilik haknya',
+    relationshipAgent: 'Saya berwenang bertindak atas nama pemegang hak',
+    relationshipAffected: 'Saya orang yang terdampak',
+    relationshipOther: 'Lainnya',
+    sectionStatements: 'Pernyataan',
+    goodFaithRights:
+      'Saya dengan iktikad baik meyakini bahwa penggunaan konten yang dijelaskan di atas tidak diizinkan oleh pemegang hak, kuasanya, atau hukum.',
+    goodFaithPrivacy:
+      'Saya dengan iktikad baik meyakini bahwa konten ini berisi data pribadi saya, atau data pribadi orang yang saya wakili, dan harus dihapus.',
+    goodFaithIllegal: 'Saya dengan iktikad baik meyakini bahwa konten ini ilegal.',
+    goodFaithOther:
+      'Saya dengan iktikad baik meyakini bahwa konten ini harus dihapus karena alasan yang telah saya jelaskan.',
+    accurateRights:
+      'Dengan ancaman hukuman atas sumpah palsu, saya menyatakan bahwa informasi dalam laporan ini akurat dan bahwa saya adalah pemegang hak atau berwenang bertindak atas namanya.',
+    accurateGeneral: 'Sepanjang pengetahuan saya, informasi dalam laporan ini akurat dan lengkap.',
+    rightsWarning:
+      'Dengan sengaja menyatakan secara keliru bahwa konten melanggar hak Anda dapat membuat Anda bertanggung jawab atas ganti rugi.',
+    signature: 'Tanda tangan elektronik',
+    signatureHelp:
+      'Ketik nama lengkap Anda. Ini berlaku sebagai tanda tangan Anda pada laporan ini.',
+    privacyNotice:
+      'Yang Anda kirim hanya kami pakai untuk meninjau dan menindaklanjuti laporan ini. Jika kami menghapus konten, kami memberi tahu orang yang mengunggahnya, yang mungkin dapat menanggapi.',
+    privacyLink: 'Kebijakan Privasi',
+    submit: 'Kirim laporan',
+    submitting: 'Mengirim…',
+    errorSummaryTitle: 'Periksa kolom-kolom ini sebelum mengirim',
+    errorTitle: 'Kami tidak dapat mengirim laporan Anda',
+    errorBody:
+      'Tidak ada yang hilang dari yang Anda ketik. Coba lagi, atau kirim email ke {email} jika terus gagal.',
+    rateLimitedTitle: 'Terlalu banyak laporan dalam waktu singkat',
+    rateLimitedBodyAt:
+      'Anda bisa mengirim lagi setelah {time}. Laporan Anda masih terisi di bawah.',
+    rateLimitedBody: 'Tunggu beberapa menit, lalu kirim lagi. Laporan Anda masih terisi di bawah.',
+    retry: 'Coba lagi',
+    successTitle: 'Laporan diterima',
+    successReference: 'Nomor referensi Anda {reference}.',
+    successEmail: 'Kami telah mengirim konfirmasi ke {email}.',
+    successNext:
+      'Seseorang dari tim kami akan meninjau laporan Anda. Sebutkan nomor referensi jika Anda menghubungi kami tentang laporan ini.',
+    successAnother: 'Laporkan hal lain',
+    successBack: 'Semua dokumen hukum',
+    errors: {
+      kind: 'Pilih apa yang Anda laporkan',
+      contentUrlsRequired: 'Tambahkan setidaknya satu tautan ke konten',
+      contentUrlsTooMany: 'Tambahkan tidak lebih dari {maxUrls} tautan',
+      contentUrlInvalid: 'Setiap tautan harus berupa alamat lengkap yang diawali https://',
+      descriptionShort: 'Jelaskan konten dalam minimal {minDescription} karakter',
+      descriptionLong: 'Batasi deskripsi hingga {maxDescription} karakter',
+      originalWorkUrl: 'Masukkan alamat lengkap yang diawali https://',
+      name: 'Masukkan nama lengkap Anda',
+      email: 'Masukkan email yang bisa kami balas',
+      organization: 'Batasi nama organisasi hingga {maxOrganization} karakter',
+      relationship: 'Pilih hubungan Anda dengan konten',
+      goodFaith: 'Konfirmasi pernyataan iktikad baik',
+      accurate: 'Konfirmasi bahwa informasinya akurat',
+      signature: 'Ketik nama lengkap Anda sebagai tanda tangan',
+    },
+  },
 };
 
 export default id;

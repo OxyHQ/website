@@ -131,7 +131,11 @@ try {
   assert.equal(await page.locator('#documents a[href="/transparency/manifesto/"]').count(), 1);
   await page.screenshot({ path: '/tmp/transparency-desktop.png' });
   await visit('/transparency/legal/', 'Legal documents');
-  assert.equal(await page.locator('#documents ul li').count(), 8);
+  assert.equal(await page.locator('#documents ul li').count(), 9);
+  assert.equal(
+    await page.locator('#documents a[href="/transparency/legal/report-content/"]').count(),
+    1,
+  );
   await page.locator('#documents a[href="/transparency/legal/privacy/"]').click();
   await page.getByText('Policy test content.', { exact: true }).waitFor();
   assert.equal(await page.locator('[data-article-body] img').count(), 0);

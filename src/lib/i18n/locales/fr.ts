@@ -407,6 +407,7 @@ const fr: Translations = {
     accessibility: 'Accessibilité',
     termsAndConditions: 'Conditions générales',
     llms: 'LLM',
+    reportContent: 'Signaler un contenu',
     settings: 'Paramètres',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
@@ -1234,6 +1235,111 @@ const fr: Translations = {
       products: 'Que puis-je faire avec Oxy ?',
       developers: 'Comment développer sur Oxy ?',
       apps: 'Quelle app Oxy me convient le mieux ?',
+    },
+  },
+  // ── Report content / rights claim (/transparency/legal/report-content) ──
+  contentClaim: {
+    seoTitle: 'Signaler un contenu ou une atteinte à vos droits',
+    seoDescription:
+      "Demandez à Oxy de retirer un contenu qui enfreint vos droits d'auteur ou votre marque, expose vos données personnelles ou enfreint la loi.",
+    eyebrow: 'Mentions légales',
+    title: 'Signaler un contenu',
+    intro:
+      "Signalez-nous un contenu d'un service Oxy qui porte atteinte à vos droits, expose vos données personnelles ou enfreint la loi. Chaque signalement est examiné par une personne.",
+    optional: 'facultatif',
+    sectionKind: 'Que signalez-vous ?',
+    kindCopyright: "Droit d'auteur",
+    kindCopyrightHelp:
+      "Quelqu'un a utilisé sans autorisation une photo, un texte, une vidéo ou une autre œuvre qui vous appartient ou dont vous représentez le titulaire.",
+    kindTrademark: 'Marque',
+    kindTrademarkHelp:
+      "Le contenu utilise votre nom commercial, votre logo ou une autre marque d'une manière qui induit les gens en erreur.",
+    kindPrivacy: 'Vie privée ou données personnelles',
+    kindPrivacyHelp:
+      "Le contenu affiche vos données personnelles, comme votre image, vos coordonnées ou d'autres informations vous concernant. Utilisez aussi cette option pour nous demander d'effacer vos propres données personnelles en vertu du RGPD.",
+    kindIllegal: 'Contenu illicite',
+    kindIllegalHelp:
+      'Un contenu que vous estimez illicite, comme une fraude, des menaces ou la vente de produits interdits.',
+    kindOther: 'Autre chose',
+    kindOtherHelp:
+      "Une autre raison pour laquelle vous estimez qu'un contenu doit être retiré d'un service Oxy.",
+    emergencyNotice:
+      "Si quelqu'un est en danger immédiat, contactez d'abord les services d'urgence locaux.",
+    sectionContent: 'Le contenu',
+    contentUrls: 'Liens vers le contenu',
+    contentUrlsHelp:
+      "Un lien par ligne, jusqu'à {maxUrls}. Indiquez l'adresse de l'image ou du fichier, ou celle de la page qui l'affiche dans n'importe quelle app Oxy.",
+    description: "De quoi s'agit-il, et pourquoi faut-il le retirer ?",
+    descriptionHelp:
+      'Au moins {minDescription} caractères. Décrivez le contenu et expliquez le problème.',
+    originalWorkUrl: 'Lien vers votre œuvre originale',
+    originalWorkUrlHelp: "Où l'original peut être consulté, s'il est en ligne.",
+    sectionYou: 'À propos de vous',
+    signedInHelp:
+      'Votre nom et votre e-mail proviennent de votre compte Oxy. Vous pouvez les modifier pour ce signalement.',
+    name: 'Nom complet',
+    email: 'E-mail',
+    emailHelp:
+      'Nous envoyons la confirmation, et toute question concernant ce signalement, à cette adresse.',
+    organization: 'Organisation',
+    relationship: 'Votre lien avec le contenu',
+    relationshipRightsHolder: 'Je suis titulaire des droits',
+    relationshipAgent: 'Je suis autorisé(e) à agir au nom du titulaire des droits',
+    relationshipAffected: 'Je suis la personne concernée',
+    relationshipOther: 'Autre',
+    sectionStatements: 'Déclarations',
+    goodFaithRights:
+      "Je crois de bonne foi que l'utilisation du contenu décrit ci-dessus n'est autorisée ni par le titulaire des droits, ni par son représentant, ni par la loi.",
+    goodFaithPrivacy:
+      "Je crois de bonne foi que ce contenu contient mes données personnelles, ou celles de la personne que je représente, et qu'il doit être retiré.",
+    goodFaithIllegal: 'Je crois de bonne foi que ce contenu est illicite.',
+    goodFaithOther:
+      "Je crois de bonne foi que ce contenu doit être retiré pour les raisons que j'ai décrites.",
+    accurateRights:
+      'Je déclare, sous peine de parjure, que les informations de ce signalement sont exactes et que je suis le titulaire des droits ou autorisé(e) à agir en son nom.',
+    accurateGeneral:
+      'À ma connaissance, les informations de ce signalement sont exactes et complètes.',
+    rightsWarning:
+      "Affirmer sciemment et à tort qu'un contenu porte atteinte à vos droits peut engager votre responsabilité pour les dommages causés.",
+    signature: 'Signature électronique',
+    signatureHelp: 'Saisissez votre nom complet. Il vaut signature de ce signalement.',
+    privacyNotice:
+      "Nous utilisons ce que vous nous envoyez uniquement pour examiner ce signalement et y donner suite. Si nous retirons un contenu, nous en informons la personne qui l'a publié, qui pourra peut-être répondre.",
+    privacyLink: 'Politique de confidentialité',
+    submit: 'Envoyer le signalement',
+    submitting: 'Envoi…',
+    errorSummaryTitle: "Vérifiez ces champs avant d'envoyer",
+    errorTitle: "Nous n'avons pas pu envoyer votre signalement",
+    errorBody:
+      "Rien de ce que vous avez saisi n'a été perdu. Réessayez, ou écrivez à {email} si le problème persiste.",
+    rateLimitedTitle: 'Trop de signalements en peu de temps',
+    rateLimitedBodyAt:
+      'Vous pourrez renvoyer après {time}. Votre signalement est toujours rempli ci-dessous.',
+    rateLimitedBody:
+      'Patientez quelques minutes, puis renvoyez-le. Votre signalement est toujours rempli ci-dessous.',
+    retry: 'Réessayer',
+    successTitle: 'Signalement reçu',
+    successReference: 'Votre référence est {reference}.',
+    successEmail: 'Nous avons envoyé une confirmation à {email}.',
+    successNext:
+      'Une personne de notre équipe examinera votre signalement. Indiquez la référence si vous nous écrivez à ce sujet.',
+    successAnother: 'Signaler autre chose',
+    successBack: 'Tous les documents juridiques',
+    errors: {
+      kind: 'Choisissez ce que vous signalez',
+      contentUrlsRequired: 'Ajoutez au moins un lien vers le contenu',
+      contentUrlsTooMany: 'Ajoutez {maxUrls} liens au maximum',
+      contentUrlInvalid: 'Chaque lien doit être une adresse complète commençant par https://',
+      descriptionShort: 'Décrivez le contenu en au moins {minDescription} caractères',
+      descriptionLong: 'La description ne doit pas dépasser {maxDescription} caractères',
+      originalWorkUrl: 'Saisissez une adresse complète commençant par https://',
+      name: 'Saisissez votre nom complet',
+      email: 'Saisissez un e-mail auquel nous pouvons répondre',
+      organization: "Le nom de l'organisation ne doit pas dépasser {maxOrganization} caractères",
+      relationship: 'Choisissez votre lien avec le contenu',
+      goodFaith: 'Confirmez la déclaration de bonne foi',
+      accurate: 'Confirmez que les informations sont exactes',
+      signature: 'Saisissez votre nom complet en guise de signature',
     },
   },
 };
