@@ -202,8 +202,7 @@ function sanitizeSvg(bytes: Buffer): Buffer<ArrayBuffer> {
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/\s+on[a-z]+="[^"]*"/gi, '')
     .trim();
-  if (!/^<svg[\s>/]/i.test(body) || !/<\/svg>$|\/>$/.test(body))
-    throw oxyError(415, 'INVALID_SVG');
+  if (!/^<svg[\s>/]/i.test(body) || !/<\/svg>$|\/>$/.test(body)) throw oxyError(415, 'INVALID_SVG');
   return Buffer.from(body);
 }
 

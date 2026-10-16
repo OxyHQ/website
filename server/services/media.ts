@@ -988,7 +988,10 @@ export async function readBackSvg(file: StoredFile, signal?: AbortSignal): Promi
     maxBytes: OXY_FILES_MAX_BYTES,
   });
   if (sha256Hex(buffer) !== file.sha256)
-    throw new MediaError('unavailable', 'Oxy Files served different bytes than it stored; try again');
+    throw new MediaError(
+      'unavailable',
+      'Oxy Files served different bytes than it stored; try again',
+    );
   if (!isSvgDocument(buffer))
     throw new MediaError('unavailable', 'Oxy Files stored something other than an SVG; try again');
   return buffer;
