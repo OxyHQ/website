@@ -93,7 +93,7 @@ export const mediaStorageMigrations = pgTable(
     legacyKey: text().notNull(),
     legacyUrl: text().notNull(),
     legacyThumbnails: jsonb().$type<{ sm: string; md: string; lg: string }>().notNull(),
-    /** 'migrated' | 'failed' | 'deferred' (a type Oxy Files cannot hold yet) */
+    /** 'migrated' | 'failed' | 'deferred' (an SVG, which Oxy Files cannot hold yet — TODO(oxy-svg)) */
     status: text().notNull(),
     /** SHA-256 of the bytes read from the legacy storage. */
     legacySha256: text(),

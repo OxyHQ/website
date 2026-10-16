@@ -25,13 +25,23 @@ const WEBM = Buffer.concat([
 const SVG = Buffer.from(
   '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10"/></svg>',
 );
+/** A real, decodable JPEG. */
+async function sharpJpeg(): Promise<Buffer> {
+  const sharp = (await import('sharp')).default;
+  return sharp({
+    create: { width: 48, height: 32, channels: 3, background: { r: 9, g: 80, b: 200 } },
+  })
+    .jpeg()
+    .toBuffer();
+}
+
+const PDF = Buffer.from('%PDF-1.7\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF\n', 'latin1');
 
 describe('an editor upload', () => {
   test('an image becomes a file of the application, with Oxy renditions and the editor as audit', async () => {
     const { media: row, reused } = await ingestUpload({
       buffer: await png(500, 400, 3),
       filename: 'Launch Photo.png',
-      declaredType: 'image/png',
       folder: 'newsroom',
       uploadedBy: 'editor-1',
     });
@@ -50,7 +60,6 @@ describe('an editor upload', () => {
     const input = {
       buffer: await png(64, 64, 8),
       filename: 'a.png',
-      declaredType: 'image/png',
       folder: 'images',
       uploadedBy: 'editor-1',
     };
@@ -65,7 +74,6 @@ describe('an editor upload', () => {
     const { media: row } = await ingestUpload({
       buffer: WEBM,
       filename: 'hero.webm',
-      declaredType: 'video/webm',
       folder: 'hero',
       uploadedBy: 'editor-1',
     });
@@ -74,18 +82,82 @@ describe('an editor upload', () => {
     expect(row.thumbnails).toEqual({ sm: '', md: '', lg: '' });
   });
 
-  test('a type Oxy Files cannot take yet stays in the legacy storage', async () => {
+  test('an SVG — the one type Oxy Files refuses — stays in the legacy storage, typed by its bytes', async () => {
     const { media: row } = await ingestUpload({
-      buffer: SVG,
-      filename: 'logo.svg',
-      declaredType: 'image/svg+xml',
+      buffer: Buffer.concat([Buffer.from('<?xml version="1.0"?>\n<!-- logo -->\n'), SVG]),
+      filename: 'logo.bin',
       folder: 'products',
       uploadedBy: 'editor-1',
     });
     expect(row.oxyFileId).toBeNull();
+    expect(row.mimeType).toBe('image/svg+xml');
     expect(row.key).toMatch(/^oxy-website\/products\/logo-[0-9a-f]{8}\.svg$/);
     expect(oxy.files.size).toBe(0);
-    expect(storage.objects.has(row.key ?? '')).toBe(true);
+    expect(storage.objects.get(row.key ?? '')?.contentType).toBe('image/svg+xml');
+  });
+
+  test('a PDF becomes a file of the application through the large upload, with no renditions', async () => {
+    const { media: row } = await ingestUpload({
+      buffer: PDF,
+      filename: 'Press Kit.pdf',
+      folder: 'resources',
+      uploadedBy: 'editor-1',
+    });
+    expect(row.oxyFileId).toBeTruthy();
+    expect(row.key).toBeNull();
+    expect(row.mimeType).toBe('application/pdf');
+    expect(row.filename).toBe('Press-Kit.pdf');
+    expect(row.url).toBe(`https://cloud.test/${row.oxyFileId}`);
+    expect(row.thumbnails).toEqual({ sm: '', md: '', lg: '' });
+    expect(oxy.largeUploads).toEqual([{ mime: 'application/pdf', filename: 'Press-Kit.pdf' }]);
+    expect(oxy.references.has(`${row.oxyFileId}|media|${row._id}`)).toBe(true);
+    expect(storage.objects.size).toBe(0);
+  });
+
+  test('the type comes from the bytes, never the name or the browser', async () => {
+    // A JPEG named `.bin` (how newsroom images were once recorded as
+    // `application/octet-stream`) is an image, renamed to match.
+    const jpeg = await sharpJpeg();
+    const { media: image } = await ingestUpload({
+      buffer: jpeg,
+      filename: 'cover.bin',
+      folder: 'newsroom',
+      uploadedBy: 'editor-1',
+    });
+    expect(image.mimeType).toBe('image/jpeg');
+    expect(image.filename).toBe('cover.jpg');
+    // A PDF named `.png` is a PDF.
+    const { media: pdf } = await ingestUpload({
+      buffer: PDF,
+      filename: 'chart.png',
+      folder: 'resources',
+      uploadedBy: 'editor-1',
+    });
+    expect(pdf.mimeType).toBe('application/pdf');
+    expect(pdf.filename).toBe('chart.pdf');
+    // Bytes that prove nothing are an octet stream that keeps its own extension.
+    const { media: archive } = await ingestUpload({
+      buffer: Buffer.from([0x50, 0x4b, 0x03, 0x04, 1, 2, 3, 4]),
+      filename: 'brand assets.zip',
+      folder: 'resources',
+      uploadedBy: 'editor-1',
+    });
+    expect(archive.mimeType).toBe('application/octet-stream');
+    expect(archive.filename).toBe('brand-assets.zip');
+    expect(archive.oxyFileId).toBeTruthy();
+  });
+
+  test('a file Oxy refuses (an HTML page) is refused, and no row is written', async () => {
+    await expect(
+      ingestUpload({
+        buffer: Buffer.from('<!doctype html><script>alert(1)</script>'),
+        filename: 'page.html',
+        folder: 'resources',
+        uploadedBy: 'editor-1',
+      }),
+    ).rejects.toThrow('Oxy Files does not store this type of file');
+    expect(await countRows('media')).toBe(0);
+    expect(storage.objects.size).toBe(0);
   });
 
   test('a folder that is not one segment is refused before anything is stored', async () => {
@@ -93,7 +165,6 @@ describe('an editor upload', () => {
       ingestUpload({
         buffer: await png(),
         filename: 'x.png',
-        declaredType: 'image/png',
         folder: '../x',
         uploadedBy: 'editor-1',
       }),
@@ -107,7 +178,6 @@ describe('an editor upload', () => {
       ingestUpload({
         buffer: await png(70, 70, 2),
         filename: 'x.png',
-        declaredType: 'image/png',
         folder: 'images',
         uploadedBy: 'editor-1',
       }),
@@ -229,7 +299,7 @@ describe('the migration', () => {
     expect(again.rewrite.rows).toEqual({});
 
     const census = await legacyStorageCensus();
-    expect(census.media).toMatchObject({ oxy: 2, legacy: 0, legacyAwaitingOxy4b: 1 });
+    expect(census.media).toMatchObject({ oxy: 2, legacy: 0, legacyAwaitingSvg: 1 });
     expect(census.legacyUrlRows).toEqual({});
     expect(census.migrations).toEqual({ migrated: 2, deferred: 1 });
   });
@@ -254,6 +324,43 @@ describe('the migration', () => {
     expect(retried).toMatchObject({ status: 'migrated', attempts: 2 });
   });
 
+  test('each row takes the type its bytes prove: misrecorded images, documents and SVGs', async () => {
+    const jpeg = await sharpJpeg();
+    // How the newsroom's JPEGs were recorded: an octet stream named `.bin`.
+    const image = await legacyRow('cover.bin', jpeg, 'application/octet-stream');
+    const pdf = await legacyRow('kit.pdf', PDF, 'application/pdf');
+    const svg = await legacyRow('logo.bin', SVG, 'application/octet-stream');
+
+    const preview = await migrateLegacyStorage({ apply: false });
+    expect(preview.media).toEqual({ migrated: 0, would_migrate: 2, deferred: 1, failed: 0 });
+    const [untouched] = await db.select().from(media).where(eq(media._id, svg._id));
+    expect(untouched.mimeType).toBe('application/octet-stream'); // a preview writes nothing
+
+    const report = await migrateLegacyStorage({ apply: true });
+    expect(report.media).toEqual({ migrated: 2, would_migrate: 0, deferred: 1, failed: 0 });
+
+    const [migratedImage] = await db.select().from(media).where(eq(media._id, image._id));
+    expect(migratedImage.mimeType).toBe('image/jpeg');
+    expect(migratedImage.filename).toBe('cover.jpg');
+    expect(migratedImage.thumbnails.lg).toBe(
+      `https://cloud.test/${migratedImage.oxyFileId}?variant=w1280`,
+    );
+    expect(oxy.files.get(migratedImage.oxyFileId ?? '')?.mime).toBe('image/jpeg');
+
+    const [migratedPdf] = await db.select().from(media).where(eq(media._id, pdf._id));
+    expect(migratedPdf.mimeType).toBe('application/pdf');
+    expect(migratedPdf.thumbnails).toEqual({ sm: '', md: '', lg: '' });
+    expect(oxy.largeUploads).toEqual([{ mime: 'application/pdf', filename: 'kit.pdf' }]);
+
+    // TODO(oxy-svg): the SVG waits, recorded as the SVG it is.
+    const [deferred] = await db.select().from(media).where(eq(media._id, svg._id));
+    expect(deferred.oxyFileId).toBeNull();
+    expect(deferred.mimeType).toBe('image/svg+xml');
+    expect(deferred.filename).toBe('logo.svg');
+    const census = await legacyStorageCensus();
+    expect(census.media).toMatchObject({ oxy: 2, legacy: 0, legacyAwaitingSvg: 1 });
+  });
+
   test('a missing legacy object is reported, not invented', async () => {
     const row = await legacyRow('gone.png', await png());
     storage.objects.delete(row.key ?? '');
@@ -269,7 +376,6 @@ describe('reconciliation', () => {
     const { media: row } = await ingestUpload({
       buffer: await png(50, 50, 1),
       filename: 'a.png',
-      declaredType: 'image/png',
       folder: 'images',
       uploadedBy: 'e',
     });

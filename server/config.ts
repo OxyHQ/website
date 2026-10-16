@@ -131,7 +131,7 @@ export const config = {
    * The storage the site wrote to before Oxy Files: objects under
    * `oxy-website/` in Oxy's media bucket, served from `cdnBaseUrl`. Read by the
    * migration and by deletes of rows not yet migrated, and written only for a
-   * file Oxy Files cannot hold yet (`services/oxyFiles.ts`, TODO(oxy-4b)).
+   * file Oxy Files cannot hold yet — an SVG (`services/oxyFiles.ts`, TODO(oxy-svg)).
    * Retired by `docs/OXY-FILES.md`.
    */
   s3: {

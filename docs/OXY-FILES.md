@@ -1,7 +1,8 @@
 # The site's files in Oxy Files
 
-Every image and video the site stores is a file **the Oxy Website application
-owns** in Oxy Files (OxyHQ/oxy ADR 0041, stage 4). Content belongs to the site,
+Every file the site stores — an SVG excepted, until Oxy Files takes sanitized
+SVG — is a file **the Oxy Website application owns** in Oxy Files (OxyHQ/oxy
+ADR 0041, stages 4 and 4b). Content belongs to the site,
 not to whichever editor uploaded it; the editor is kept on the media row as
 `uploadedBy`, an audit field. Oxy stores the bytes once, serves them from
 `cloud.oxy.so`, makes the webp renditions and deletes a file of the
@@ -20,7 +21,8 @@ also its retirement runbook.
 | Media library image (newsroom covers, team avatars, product logos, course, help, resource and changelog art, hero poster, site settings) | Oxy Website application | admin upload (`POST /api/upload`) → `uploadAppFile` | `media`, the media row `_id` |
 | Media library video (hero background WebM/MP4, changelog video) | Oxy Website application | admin upload → `uploadAppFile` | `media`, row `_id` |
 | Image imported by URL (MCP `upload_image`, `upload_and_set_post_cover`, `upload_and_set_team_avatar`, `bulk_upload_post_covers`) | Oxy Website application | `importAppFile` — Oxy fetches the URL | `media`, row `_id` |
-| Any other type an editor uploads (SVG, icon, PDF) | — (legacy storage) | admin upload → legacy bucket, **TODO(oxy-4b)** | none |
+| Any other file an editor uploads (PDF, icon, archive, document) | Oxy Website application | admin upload → `uploadAppFileLarge` (resumable multipart, any type Oxy does not refuse; served as a download unless a browser renders it safely) | `media`, row `_id` |
+| SVG | — (legacy storage) | admin upload → legacy bucket, **TODO(oxy-svg)** until Oxy Files takes sanitized SVG (it refuses SVG as an active document today) | none |
 | Seeded app icons (`/images/apps/…`) and hotlinked seed covers | — (site's own static files / external) | `server/seed*.ts` | none |
 
 The media row is the unit of use: posts, products, team members, the hero and
@@ -44,9 +46,13 @@ suite replaces.
   media row uses the file, the file is deleted too (`deleteAppFile`), so an
   editor's delete takes the image off the CDN now rather than after Oxy's
   grace period; Oxy refuses (`FILE_IN_USE`) while anything else references it.
-- **Bytes are checked, never declared types.** Uploads are sniffed and
-  decoded as before (JPEG, PNG, GIF, WebP, AVIF; MP4/WebM for editor
-  uploads), and the SHA-256 Oxy reports must equal the one the site computed.
+- **Bytes are checked, never declared types.** The admin upload route does
+  not pass the browser's type on at all. Uploads are sniffed and decoded as
+  before (JPEG, PNG, GIF, WebP, AVIF; MP4/WebM for editor uploads); an SVG is
+  recognised by its document root; any other file is typed by its bytes (PDF,
+  Windows icon) or recorded `application/octet-stream`, keeping its own
+  extension, which Oxy uses to refuse programs and active documents (415). The
+  SHA-256 Oxy reports must equal the one the site computed.
   An import by URL is read back from Oxy and held to the same rules, because
   Oxy's importer accepts whatever image type the source declares.
 - **Reconciliation is the net** (ADR 0041 D6). Once a day one task sends the
@@ -95,14 +101,18 @@ through the AWS default credential chain (it needs `s3:GetObject` on
 carries ids, SHA-256s and counts, never a URL.
 
 1. `bun run oxy-files census` — where the media stands: rows in Oxy, on the
-   legacy storage (and how many are types Oxy cannot take yet), legacy URLs
+   legacy storage (and how many are SVGs, which Oxy cannot take yet), legacy URLs
    per `table.column` and per host, pending removals and cleanups.
 2. `bun run oxy-files migrate` — a preview: nothing is written anywhere.
 3. `bun run oxy-files migrate --apply [--limit N] [--report <file>]`:
    - legacy URLs that content holds but no media row owns get a row of their
      own (folder `migrated`);
-   - each legacy row is read from the bucket, hashed, stored as an application
-     file and switched only when Oxy's SHA-256 equals the bucket's; its
+   - each legacy row is read from the bucket, hashed, typed from its bytes
+     (the row's recorded type, and a name extension that disagrees, are
+     corrected — the legacy upload trusted the browser, so raster images were
+     recorded as `application/octet-stream` named `.bin`), stored as an
+     application file (the large upload for anything not an image or video)
+     and switched only when Oxy's SHA-256 equals the bucket's; its
      reference is registered; its legacy key and thumbnails are kept
      (`media_storage_migrations`) so a delete during the soak still removes
      the old copies;
@@ -111,7 +121,9 @@ carries ids, SHA-256s and counts, never a URL.
      still the one read.
    It exits non-zero while any row failed. Re-running is safe and resumes: a
    migrated row is never read again, a failed one is retried, and a row of a
-   type Oxy cannot take yet is recorded as `deferred` (TODO(oxy-4b)).
+   SVG is recorded as `deferred` (TODO(oxy-svg)), its type corrected to
+   `image/svg+xml`. A file Oxy refuses outright (an HTML page, a program — 415)
+   is reported `failed` and stays until an editor deletes it.
 4. Run `reconcile` once before Oxy's lifecycle sweep is switched to
    `enforce`: an application file the site uses but never referenced would
    otherwise be trashed 24 hours later.
@@ -126,7 +138,7 @@ counts above.
 The legacy storage is retired only when **all** of these hold:
 
 1. **No legacy rows or copies.** The census shows `media.legacy = 0`,
-   `media.legacyAwaitingOxy4b = 0` (needs Oxy stage 4b), `legacyUrlRows = {}`,
+   `media.legacyAwaitingSvg = 0` (needs SVG in Oxy Files), `legacyUrlRows = {}`,
    `legacyUrlHosts = {}` and `pending.legacyCleanups = 0`, on production, for
    14 consecutive daily census lines.
 2. **No legacy reads.** The `cloud.oxy.so` distribution (its cache behavior

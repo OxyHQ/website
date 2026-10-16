@@ -17,9 +17,11 @@ const uploadBodySchema = z
   .passthrough();
 
 /**
- * An editor's upload into the media library. Images and videos become files of
- * the Oxy Website application in Oxy Files (`services/media.ts`); the editor is
- * recorded on the row as `uploadedBy`.
+ * An editor's upload into the media library: a file of the Oxy Website
+ * application in Oxy Files, an SVG excepted (`services/media.ts`); the editor is
+ * recorded on the row as `uploadedBy`. The browser's declared type
+ * (`req.file.mimetype`) is deliberately not passed on: what a file is comes
+ * from its bytes.
  */
 router.post('/', requireAuth, adminOnly, upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file provided' });
@@ -29,7 +31,6 @@ router.post('/', requireAuth, adminOnly, upload.single('file'), async (req, res)
     const result = await ingestUpload({
       buffer: req.file.buffer,
       filename: req.file.originalname,
-      declaredType: req.file.mimetype,
       folder: folder || 'images',
       uploadedBy: req.user?.id || '',
     });

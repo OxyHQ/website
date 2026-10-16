@@ -16,7 +16,7 @@ const SIZES = [
 
 /**
  * Detect image dimensions and generate thumbnail variants, for a file kept in
- * the LEGACY storage (TODO(oxy-4b), `services/oxyFiles.ts`). A file in Oxy
+ * the LEGACY storage — an SVG (TODO(oxy-svg), `services/oxyFiles.ts`). A file in Oxy
  * Files gets Oxy's own renditions instead.
  * Falls back gracefully if sharp is unavailable (e.g. missing native bindings).
  */

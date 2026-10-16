@@ -128,6 +128,8 @@ export const oxy = {
   files: new Map<string, OxyFile>(),
   imports: new Map<string, string>(),
   references: new Set<string>(),
+  /** What reached the large upload (`uploadAppFileLarge`): its type and name. */
+  largeUploads: [] as { mime: string; filename: string }[],
   failUploads: 0,
   failReferenceAdds: 0,
   failReferenceRemovals: false,
@@ -141,6 +143,7 @@ export const oxy = {
     this.files.clear();
     this.imports.clear();
     this.references.clear();
+    this.largeUploads = [];
     this.failUploads = 0;
     this.failReferenceAdds = 0;
     this.failReferenceRemovals = false;
@@ -205,6 +208,28 @@ mock.module('../services/oxyFilesApi.js', () => ({
       }
       const { file, deduplicated } = oxy.store(stored, mime);
       return { file: view(file), deduplicated };
+    },
+    uploadAppFileLarge: async (
+      source: Uint8Array,
+      options: { mime: string; visibility: string; filename?: string; sha256?: string },
+    ) => {
+      if (oxy.failUploads > 0) {
+        oxy.failUploads -= 1;
+        throw oxyError(503, 'SERVICE_UNAVAILABLE');
+      }
+      // Oxy's content policy at open: active documents and programs, by type
+      // and by the name's extension (415).
+      const extension = /\.([a-z0-9]+)$/i.exec(options.filename ?? '')?.[1]?.toLowerCase();
+      if (
+        /^(image\/svg|text\/html|application\/xhtml|text\/xml|application\/xml|text\/javascript|application\/javascript)/.test(
+          options.mime,
+        ) ||
+        ['html', 'htm', 'svg', 'svgz', 'xml', 'js', 'exe', 'sh', 'bat'].includes(extension ?? '')
+      )
+        throw oxyError(415, 'UNSUPPORTED_MEDIA_TYPE');
+      oxy.largeUploads.push({ mime: options.mime, filename: options.filename ?? '' });
+      const { file, deduplicated } = oxy.store(Buffer.from(source), options.mime);
+      return { file: view(file), deduplicated, uploadId: deduplicated ? null : `u-${file.id}` };
     },
     importAppFile: async (sourceUrl: string) => {
       if (oxy.failUploads > 0) {

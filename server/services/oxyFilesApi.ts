@@ -8,7 +8,12 @@ import { oxyService } from './oxyService.js';
  */
 export type OxyFilesApi = Pick<
   ServerAssetsApi,
-  'uploadAppFile' | 'importAppFile' | 'deleteAppFile' | 'references' | 'publicUrl'
+  | 'uploadAppFile'
+  | 'uploadAppFileLarge'
+  | 'importAppFile'
+  | 'deleteAppFile'
+  | 'references'
+  | 'publicUrl'
 >;
 
 export function oxyFilesApi(): OxyFilesApi {

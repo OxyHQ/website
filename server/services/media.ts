@@ -30,6 +30,7 @@ import {
   type StoredFile,
   type Thumbnails,
   uploadFile,
+  uploadLargeFile,
   uploadLegacyFile,
 } from './oxyFiles.js';
 import { downloadRemote } from './remoteDownload.js';
@@ -230,6 +231,79 @@ export function sniffVideoType(buffer: Buffer): 'video/mp4' | 'video/webm' | nul
       return 'video/mp4';
   }
   return null;
+}
+
+/**
+ * Whether the bytes are an SVG document: optional BOM, XML declaration,
+ * comments and doctype, then an `<svg` root. Read from the bytes, never from a
+ * declared type or a name.
+ */
+export function isSvgDocument(buffer: Buffer): boolean {
+  const head = buffer
+    .subarray(0, 4096)
+    .toString('utf8')
+    .replace(/^\uFEFF/, '');
+  return /^\s*(<\?xml[^>]*\?>\s*)?((<!--[\s\S]*?-->|<!doctype[^>]*>)\s*)*<svg[\s>/]/i.test(head);
+}
+
+/** The type of a file that is not a supported image, a video or an SVG. */
+export type DocumentType = 'application/pdf' | 'image/x-icon' | 'application/octet-stream';
+
+/**
+ * What the bytes of any other file are: a PDF, a Windows icon, or — when the
+ * bytes prove nothing — `application/octet-stream`, which Oxy serves as a
+ * download. A declared type is never taken: a browser's guess (or a name
+ * ending `.bin`) is how raster images ended up recorded as octet streams.
+ */
+export function sniffDocumentType(buffer: Buffer): DocumentType {
+  if (buffer.length >= 5 && buffer.subarray(0, 5).toString('latin1') === '%PDF-')
+    return 'application/pdf';
+  if (
+    buffer.length >= 22 &&
+    buffer[0] === 0 &&
+    buffer[1] === 0 &&
+    buffer[2] === 1 &&
+    buffer[3] === 0 &&
+    buffer.readUInt16LE(4) > 0
+  )
+    return 'image/x-icon';
+  return 'application/octet-stream';
+}
+
+/** The type the bytes prove, whatever the file is. */
+export function sniffFileType(buffer: Buffer): string {
+  return (
+    sniffImageType(buffer) ??
+    sniffVideoType(buffer) ??
+    (isSvgDocument(buffer) ? 'image/svg+xml' : sniffDocumentType(buffer))
+  );
+}
+
+const TYPE_EXTENSION: Record<string, string> = {
+  ...EXTENSION,
+  'video/mp4': '.mp4',
+  'video/webm': '.webm',
+  'image/svg+xml': '.svg',
+  'application/pdf': '.pdf',
+  'image/x-icon': '.ico',
+};
+
+/**
+ * A safe file name whose extension matches the type the bytes proved. A file
+ * whose bytes prove nothing keeps its own extension (`.zip`, `.docx`), or none.
+ */
+export function filenameForType(requested: string | undefined, mimeType: string): string {
+  const original = path.basename(requested ?? '');
+  const ownExtension = /\.([a-z0-9]{1,10})$/i.exec(original)?.[1]?.toLowerCase();
+  const safe =
+    original
+      .replace(/\.[^.]*$/, '')
+      .replace(/[^a-z0-9_-]/gi, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 60) || 'file';
+  const extension = TYPE_EXTENSION[mimeType] ?? (ownExtension ? `.${ownExtension}` : '');
+  return `${safe}${extension}`;
 }
 
 // ── Legacy objects ──────────────────────────────────────────────────────────
@@ -851,30 +925,65 @@ export async function ingestRemoteImage<A = undefined>(
 }
 
 /**
- * An editor's upload from the admin: an image or a video goes to Oxy Files
- * like any other; any other type is kept in the legacy storage until Oxy
- * Files takes it (TODO(oxy-4b), `services/oxyFiles.ts`).
+ * An editor's upload from the admin. What the file IS comes from its bytes —
+ * never the browser's declared type, which is how raster images were once
+ * recorded as `application/octet-stream`. An image or a video is an Oxy file
+ * through the media upload; any other type (a PDF, an icon, an archive) through
+ * Oxy's large upload; an SVG stays on the legacy storage until Oxy Files takes
+ * sanitized SVG (TODO(oxy-svg), `services/oxyFiles.ts`).
  */
-export async function ingestUpload(
-  input: IngestInput & { declaredType: string },
-): Promise<IngestResult<undefined>> {
+export async function ingestUpload(input: IngestInput): Promise<IngestResult<undefined>> {
   const folder = normalizeFolder(input.folder);
   if (input.buffer.length === 0) throw new MediaError('invalid', 'The file is empty');
   if (sniffImageType(input.buffer)) return ingestImage({ ...input, folder });
   const video = sniffVideoType(input.buffer);
   if (video) return ingestOxyBytes(input, folder, { mimeType: video, decoded: false }, undefined);
-  // TODO(oxy-4b): what the bytes do not prove to be a supported image or video
-  // (an SVG, an icon, a PDF) is not handed to Oxy Files on its declared type.
-  return ingestLegacyUpload(input, folder);
+  // TODO(oxy-svg): an SVG is the one type Oxy Files refuses (an active document).
+  if (isSvgDocument(input.buffer)) return ingestLegacySvg(input, folder);
+  return ingestOxyDocument(input, folder);
 }
 
-async function ingestLegacyUpload(
-  input: IngestInput & { declaredType: string },
+/** Any file that is not an image, a video or an SVG: one of the site's files, by the large upload. */
+async function ingestOxyDocument(
+  input: IngestInput,
   folder: string,
 ): Promise<IngestResult<undefined>> {
+  const mimeType = sniffDocumentType(input.buffer);
+  const filename = filenameForType(input.filename, mimeType);
+  const existing = await findReusable({
+    sha256: sha256Hex(input.buffer),
+    folder,
+    filename,
+    legacyKey: buildObjectKey(input.buffer, filename, mimeType, `oxy-website/${folder}`),
+  });
+  if (existing) return reuse(existing, undefined, []);
+
+  const file = await uploadLargeFile(input.buffer, mimeType, filename);
+  const { row } = await recordOxyMedia<undefined>(
+    file,
+    {
+      filename,
+      mimeType,
+      size: input.buffer.length,
+      alt: input.alt ?? '',
+      tags: input.tags ?? [],
+      folder,
+      uploadedBy: input.uploadedBy,
+    },
+    undefined,
+  );
+  return { media: row, attached: undefined, reused: false, warnings: [] };
+}
+
+/** TODO(oxy-svg): an SVG on the legacy storage, recorded as the SVG its bytes are. */
+async function ingestLegacySvg(
+  input: IngestInput,
+  folder: string,
+): Promise<IngestResult<undefined>> {
+  const mimeType = 'image/svg+xml';
   const storageFolder = `oxy-website/${folder}`;
-  const filename = input.filename || 'file';
-  const legacyKey = buildObjectKey(input.buffer, filename, input.declaredType, storageFolder);
+  const filename = filenameForType(input.filename, mimeType);
+  const legacyKey = buildObjectKey(input.buffer, filename, mimeType, storageFolder);
   const [existing] = await db
     .select()
     .from(media)
@@ -885,14 +994,9 @@ async function ingestLegacyUpload(
 
   const uploaded: string[] = [];
   try {
-    const stored = await uploadLegacyFile(
-      input.buffer,
-      filename,
-      input.declaredType,
-      storageFolder,
-    );
+    const stored = await uploadLegacyFile(input.buffer, filename, mimeType, storageFolder);
     uploaded.push(stored.key);
-    const processed = await processImage(input.buffer, filename, input.declaredType, storageFolder);
+    const processed = await processImage(input.buffer, filename, mimeType, storageFolder);
     for (const url of Object.values(processed.thumbnails)) {
       const key = url ? legacyKeyOfUrl(url) : null;
       if (key) uploaded.push(key);
@@ -904,7 +1008,7 @@ async function ingestLegacyUpload(
         thumbnails: processed.thumbnails,
         filename,
         key: stored.key,
-        mimeType: input.declaredType,
+        mimeType,
         size: input.buffer.length,
         width: processed.width,
         height: processed.height,

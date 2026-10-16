@@ -41,7 +41,6 @@ async function storedImage() {
   const { media: row } = await ingestUpload({
     buffer: await png(40, 40, 6),
     filename: 'cover.png',
-    declaredType: 'image/png',
     folder: 'newsroom',
     uploadedBy: 'editor-1',
   });

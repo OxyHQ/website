@@ -14,8 +14,9 @@ import {
 /* ──────────────────────────────────────────────
  * The one door between the site and file storage (ADR 0041, docs/OXY-FILES.md).
  *
- * Every image and video is a file the Oxy Website APPLICATION owns in Oxy
- * Files — content belonging to the site, not to whichever editor uploaded it
+ * Every file but an SVG is a file the Oxy Website APPLICATION owns in Oxy
+ * Files — images and videos through the media upload, any other type (a PDF,
+ * an icon, an archive) through the resumable large upload (stage 4b) — content belonging to the site, not to whichever editor uploaded it
  * (the media row keeps that editor as `uploadedBy`, an audit field). Each
  * media row registers its own use of the file (`media`, the row's `_id`);
  * Oxy moves an application's file nobody uses to trash after 24 hours and
@@ -32,8 +33,17 @@ export const MEDIA_ENTITY_TYPE = 'media';
 /** Oxy's webp renditions standing in for the legacy 200/400/800-pixel JPEG thumbnails. */
 export const THUMBNAIL_VARIANTS = { sm: 'w320', md: 'w640', lg: 'w1280' } as const;
 
-/** The largest file Oxy Files stores (`USER_MEDIA_MAX_BYTES` in the Oxy API). */
+/** The largest image or video Oxy Files stores (`USER_MEDIA_MAX_BYTES` in the Oxy API). */
 export const OXY_FILES_MAX_BYTES = 40 * 1024 * 1024;
+
+/** The raster types Oxy makes webp renditions of; any other file is served as stored. */
+const RENDERED_IMAGE_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/avif',
+]);
 
 /** A whole upload (40 MiB at worst) may take longer than the SDK's default request timeout. */
 const UPLOAD_TIMEOUT_MS = 120_000;
@@ -56,14 +66,16 @@ export function sha256Hex(buffer: Uint8Array): string {
 }
 
 /**
- * Whether Oxy Files can hold this type today: images (not SVG, an active
- * document) and videos. The type must be what the BYTES are, never a declared
- * Content-Type.
+ * Whether a file of this type must stay on the legacy storage: an SVG, which
+ * Oxy Files refuses as an active document until it stores sanitized SVG.
+ * Everything else is an Oxy file. The type must be what the BYTES are, never a
+ * declared Content-Type.
+ *
+ * TODO(oxy-svg): drop this, and the legacy path behind it, once Oxy Files
+ * takes sanitized SVG.
  */
-export function isOxyFilesType(mimeType: string): boolean {
-  const type = mimeType.toLowerCase();
-  if (type.startsWith('image/svg')) return false;
-  return type.startsWith('image/') || type.startsWith('video/');
+export function awaitsOxySvgSupport(mimeType: string): boolean {
+  return mimeType.toLowerCase().startsWith('image/svg');
 }
 
 /** The public URL of a file, or of one of its image renditions. */
@@ -80,7 +92,8 @@ export function oxyMediaUrls(
   fileId: string,
   mimeType: string,
 ): { url: string; thumbnails: Thumbnails } {
-  if (!mimeType.startsWith('image/')) return { url: oxyFileUrl(fileId), thumbnails: NO_THUMBNAILS };
+  if (!RENDERED_IMAGE_TYPES.has(mimeType))
+    return { url: oxyFileUrl(fileId), thumbnails: NO_THUMBNAILS };
   return {
     url: oxyFileUrl(fileId),
     thumbnails: {
@@ -125,9 +138,12 @@ export function fromOxyFilesError(error: unknown): Error {
   if (code === 'SOURCE_FETCH_FAILED' || code === 'SOURCE_FETCH_TIMEOUT')
     return new UpstreamError('The remote source could not be downloaded');
   if (status === 415)
-    return new DomainError('invalid', 'The file is not an image or video Oxy Files accepts');
+    return new DomainError(
+      'invalid',
+      'Oxy Files does not store this type of file (programs, HTML, XML and scripts are refused)',
+    );
   if (status === 413)
-    return new DomainError('too_large', 'The file is larger than Oxy Files accepts (40 MiB)');
+    return new DomainError('too_large', 'The file is larger than Oxy Files accepts');
   console.error('[oxy-files] request failed:', status ?? 'no status', code ?? '', error);
   return new DomainError('unavailable', 'Oxy Files is unavailable; try again shortly');
 }
@@ -152,6 +168,47 @@ export async function uploadFile(
       visibility: 'public',
       originalName,
       timeout: UPLOAD_TIMEOUT_MS,
+    });
+  } catch (error) {
+    throw fromOxyFilesError(error);
+  }
+  if (answer.file.sha256 !== expected) {
+    console.error(
+      `[oxy-files] stored file ${answer.file.id} hashes to ${answer.file.sha256}, the upload to ${expected}`,
+    );
+    throw new DomainError('unavailable', 'Oxy Files stored different bytes; try again');
+  }
+  return {
+    fileId: answer.file.id,
+    sha256: answer.file.sha256,
+    mimeType: answer.file.mime,
+    size: answer.file.size,
+    deduplicated: answer.deduplicated,
+  };
+}
+
+/**
+ * Store bytes of ANY type Oxy Files takes — a PDF, an icon, an archive — as one
+ * of the site's files, public, through the resumable large upload (ADR 0041
+ * stage 4b, `uploadAppFileLarge`). Oxy refuses programs and active documents
+ * (HTML, SVG, XML, scripts) by type and by the name's extension (415), and
+ * serves every type a browser would not render safely as a download. Oxy
+ * hashes the assembled file before it is one; the site checks that hash
+ * against its own as for any upload. Unreferenced until {@link addMediaReference}.
+ */
+export async function uploadLargeFile(
+  buffer: Buffer,
+  mimeType: string,
+  filename: string,
+): Promise<StoredFile> {
+  const expected = sha256Hex(buffer);
+  let answer: Awaited<ReturnType<ReturnType<typeof oxyFilesApi>['uploadAppFileLarge']>>;
+  try {
+    answer = await oxyFilesApi().uploadAppFileLarge(new Uint8Array(buffer), {
+      mime: mimeType,
+      visibility: 'public',
+      filename,
+      sha256: expected,
     });
   } catch (error) {
     throw fromOxyFilesError(error);
@@ -267,11 +324,12 @@ export async function reconcileMediaReferences(
 // ── Legacy storage ──────────────────────────────────────────────────────────
 
 /**
- * TODO(oxy-4b): Oxy Files takes only images and videos until its stage 4b
- * adds other files. Until then a file of any other type an editor uploads
- * (an SVG, a PDF) still goes to the legacy storage, and its row keeps a legacy
- * `key`; `bun run oxy-files migrate` carries those rows over once Oxy accepts
- * them, and the bucket cannot be retired before that (docs/OXY-FILES.md).
+ * TODO(oxy-svg): Oxy Files refuses SVG (an active document) until it stores
+ * sanitized SVG. Until then an SVG an editor uploads still goes to the legacy
+ * storage, and its row keeps a legacy `key`; `bun run oxy-files migrate`
+ * records those rows `deferred` and carries them over once Oxy accepts SVG,
+ * and the bucket cannot be retired before that (docs/OXY-FILES.md). Every
+ * other type is an Oxy file ({@link uploadFile}, {@link uploadLargeFile}).
  */
 export async function uploadLegacyFile(
   buffer: Buffer,

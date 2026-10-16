@@ -10,16 +10,17 @@ import {
 } from '../db/schema/index.js';
 import {
   addMediaReference,
-  isOxyFilesType,
+  awaitsOxySvgSupport,
   legacyKeyOfUrl,
   oxyMediaUrls,
   removeReference,
   sha256Hex,
   MEDIA_ENTITY_TYPE,
   uploadFile,
+  uploadLargeFile,
 } from './oxyFiles.js';
 import { isLegacyStorageKey, LEGACY_KEY_PREFIX, publicUrlForKey, readFromSpaces } from './s3.js';
-import { sniffImageType, sniffVideoType } from './media.js';
+import { filenameForType, sniffFileType, sniffImageType, sniffVideoType } from './media.js';
 
 /* ──────────────────────────────────────────────
  * Carrying the legacy storage into Oxy Files, and measuring what is left.
@@ -31,7 +32,11 @@ import { sniffImageType, sniffVideoType } from './media.js';
  *    media row of its own in folder `migrated`, so it is carried over and
  *    referenced like any other.
  * 2. Rows. Each media row still on the legacy storage is read from the bucket,
- *    hashed, stored as one of the site's files and checked: Oxy's SHA-256 must
+ *    hashed, typed FROM ITS BYTES (the row's recorded type and name extension
+ *    are corrected to match — the legacy upload trusted the browser), stored as
+ *    one of the site's files (an image or video by the media upload, anything
+ *    else by the large upload; an SVG stays, `deferred`, until Oxy Files takes
+ *    it — TODO(oxy-svg)) and checked: Oxy's SHA-256 must
  *    equal the one computed here, or the row is NOT switched. The row then
  *    registers its reference and takes the Oxy URL and renditions; its legacy
  *    key and thumbnails are kept (row and `media_storage_migrations`) so a
@@ -159,8 +164,8 @@ export interface LegacyStorageCensus {
     oxy: number;
     /** On the legacy storage, a type Oxy Files takes: what `migrate` carries over. */
     legacy: number;
-    /** On the legacy storage, a type Oxy Files cannot take yet (TODO(oxy-4b)). */
-    legacyAwaitingOxy4b: number;
+    /** On the legacy storage, an SVG, which Oxy Files cannot take yet (TODO(oxy-svg)). */
+    legacyAwaitingSvg: number;
     /** A path the site serves itself (`/images/…`), not storage. */
     sitePath: number;
     /** A URL on another host, hotlinked. */
@@ -177,7 +182,7 @@ export interface LegacyStorageCensus {
 
 /**
  * Where the site's media stands. The bucket may be retired once `legacy`,
- * `legacyAwaitingOxy4b` and every `legacyUrlRows` count are zero and the CDN
+ * `legacyAwaitingSvg` and every `legacyUrlRows` count are zero and the CDN
  * has served the prefix nothing for the soak (docs/OXY-FILES.md).
  */
 export async function legacyStorageCensus(): Promise<LegacyStorageCensus> {
@@ -197,7 +202,7 @@ export async function legacyStorageCensus(): Promise<LegacyStorageCensus> {
       total: rows.length,
       oxy: 0,
       legacy: 0,
-      legacyAwaitingOxy4b: 0,
+      legacyAwaitingSvg: 0,
       sitePath: 0,
       external: 0,
       unavailable: 0,
@@ -213,8 +218,8 @@ export async function legacyStorageCensus(): Promise<LegacyStorageCensus> {
     else if (isLegacyRow(row))
       // What the migration found the bytes to be wins over the declared type.
       census.media[
-        row.migration === 'deferred' || (!row.migration && !isOxyFilesType(row.mimeType))
-          ? 'legacyAwaitingOxy4b'
+        row.migration === 'deferred' || (!row.migration && awaitsOxySvgSupport(row.mimeType))
+          ? 'legacyAwaitingSvg'
           : 'legacy'
       ] += 1;
     else if (row.url.startsWith('/')) census.media.sitePath += 1;
@@ -356,10 +361,21 @@ async function migrateRow(row: typeof media.$inferSelect, apply: boolean): Promi
       return await record(row, item, apply);
     }
     item.legacySha256 = sha256Hex(object.buffer);
-    const type = sniffImageType(object.buffer) ?? sniffVideoType(object.buffer);
-    if (!type) {
-      // TODO(oxy-4b): stays on the legacy storage until Oxy Files takes this type.
+    // What the row IS comes from the bytes, never the type the legacy upload
+    // recorded (a browser's guess: raster images were stored as
+    // `application/octet-stream`, named `.bin`). The row takes that type, and a
+    // name whose extension says otherwise is corrected with it.
+    const type = sniffFileType(object.buffer);
+    const filename = filenameForType(row.filename, type);
+    if (awaitsOxySvgSupport(type)) {
+      // TODO(oxy-svg): stays on the legacy storage until Oxy Files takes SVG,
+      // recorded as the SVG it is.
       item.status = 'deferred';
+      if (apply && (row.mimeType !== type || row.filename !== filename))
+        await db
+          .update(media)
+          .set({ mimeType: type, filename, updatedAt: new Date() })
+          .where(and(eq(media._id, row._id), isNull(media.oxyFileId)));
       return await record(row, item, apply);
     }
     if (!apply) {
@@ -367,7 +383,12 @@ async function migrateRow(row: typeof media.$inferSelect, apply: boolean): Promi
       return item;
     }
 
-    const file = await uploadFile(object.buffer, type, row.filename);
+    // An image or a video through the media upload, with its renditions; any
+    // other file (a PDF, an icon, an archive) through the large upload.
+    const isMedia = Boolean(sniffImageType(object.buffer) ?? sniffVideoType(object.buffer));
+    const file = isMedia
+      ? await uploadFile(object.buffer, type, filename)
+      : await uploadLargeFile(object.buffer, type, filename);
     item.oxySha256 = file.sha256;
     item.oxyFileId = file.fileId;
     if (file.sha256 !== item.legacySha256) throw new Error('integrity: the SHA-256 values differ');
@@ -380,6 +401,7 @@ async function migrateRow(row: typeof media.$inferSelect, apply: boolean): Promi
           oxyFileId: file.fileId,
           sha256: file.sha256,
           mimeType: type,
+          filename,
           updatedAt: new Date(),
         })
         .where(and(eq(media._id, row._id), isNull(media.oxyFileId)))

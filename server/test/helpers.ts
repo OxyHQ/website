@@ -33,6 +33,7 @@ export interface TestOxy {
   imports: Map<string, string>;
   /** `fileId|entityType|entityId` */
   references: Set<string>;
+  largeUploads: { mime: string; filename: string }[];
   failUploads: number;
   failReferenceAdds: number;
   failReferenceRemovals: boolean;
