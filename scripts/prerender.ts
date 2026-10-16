@@ -56,7 +56,11 @@ import type { SyncedIndex } from './types.ts';
 import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './sitemap.ts';
 import { hasLocalizedVariants } from '../src/lib/localizedRoute';
 import { buildRedirectsFile } from './redirects.ts';
-import { LEGAL_DOCUMENTS, TRANSPARENCY_DOCUMENTS } from '../src/lib/transparency';
+import {
+  LEGAL_DOCUMENTS,
+  REPORT_CONTENT_PAGE,
+  TRANSPARENCY_DOCUMENTS,
+} from '../src/lib/transparency';
 import type { SeoData } from '../src/lib/seo';
 import type { SEOLocaleSeed } from '../src/entry-server';
 import {
@@ -567,6 +571,11 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       { title, description, canonicalPath: `/transparency/legal/${slug}` },
     ]),
   ),
+  [REPORT_CONTENT_PAGE.path]: {
+    title: REPORT_CONTENT_PAGE.title,
+    description: REPORT_CONTENT_PAGE.description,
+    canonicalPath: REPORT_CONTENT_PAGE.path,
+  },
   '/account-deletion': {
     title: 'Delete your Oxy account',
     description: 'How to delete an Oxy account and what happens to your data when you do.',

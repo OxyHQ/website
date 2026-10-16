@@ -408,6 +408,7 @@ const de: Translations = {
     accessibility: 'Barrierefreiheit',
     termsAndConditions: 'Allgemeine Geschäftsbedingungen',
     llms: 'LLMs',
+    reportContent: 'Inhalte melden',
     settings: 'Einstellungen',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
@@ -1236,6 +1237,113 @@ const de: Translations = {
       products: 'Was kann ich mit Oxy machen?',
       developers: 'Wie entwickle ich als Entwickler auf Oxy?',
       apps: 'Welche Oxy-App passt zu mir?',
+    },
+  },
+  // ── Report content / rights claim (/transparency/legal/report-content) ──
+  contentClaim: {
+    seoTitle: 'Inhalte melden oder Rechte geltend machen',
+    seoDescription:
+      'Bitte Oxy, Inhalte zu entfernen, die dein Urheberrecht oder deine Marke verletzen, deine personenbezogenen Daten offenlegen oder gegen das Gesetz verstoßen.',
+    eyebrow: 'Rechtliches',
+    title: 'Inhalte melden',
+    intro:
+      'Nenne uns Inhalte in einem Oxy-Dienst, die deine Rechte verletzen, deine personenbezogenen Daten offenlegen oder gegen das Gesetz verstoßen. Jede Meldung wird von einem Menschen geprüft.',
+    optional: 'optional',
+    sectionKind: 'Was möchtest du melden?',
+    kindCopyright: 'Urheberrecht',
+    kindCopyrightHelp:
+      'Jemand hat ohne Erlaubnis ein Foto, einen Text, ein Video oder ein anderes Werk verwendet, das dir gehört oder dessen Rechteinhaber du vertrittst.',
+    kindTrademark: 'Marke',
+    kindTrademarkHelp:
+      'Inhalte verwenden deinen Markennamen, dein Logo oder eine andere Marke auf irreführende Weise.',
+    kindPrivacy: 'Privatsphäre oder personenbezogene Daten',
+    kindPrivacyHelp:
+      'Inhalte zeigen deine personenbezogenen Daten, etwa dein Bild, deine Kontaktdaten oder andere Informationen über dich. Wähle dies auch, wenn du die Löschung deiner eigenen personenbezogenen Daten nach der DSGVO verlangst.',
+    kindIllegal: 'Rechtswidrige Inhalte',
+    kindIllegalHelp:
+      'Inhalte, die du für rechtswidrig hältst, etwa Betrug, Drohungen oder der Verkauf verbotener Waren.',
+    kindOther: 'Etwas anderes',
+    kindOtherHelp:
+      'Ein anderer Grund, aus dem deiner Ansicht nach Inhalte aus einem Oxy-Dienst entfernt werden sollten.',
+    emergencyNotice:
+      'Wenn jemand in unmittelbarer Gefahr ist, wende dich zuerst an den örtlichen Notruf.',
+    sectionContent: 'Der Inhalt',
+    contentUrls: 'Links zum Inhalt',
+    contentUrlsHelp:
+      'Ein Link pro Zeile, höchstens {maxUrls}. Gib die Adresse des Bildes oder der Datei an oder die der Seite, die es in einer beliebigen Oxy-App zeigt.',
+    description: 'Worum handelt es sich, und warum sollte es entfernt werden?',
+    descriptionHelp:
+      'Mindestens {minDescription} Zeichen. Beschreibe den Inhalt und erkläre das Problem.',
+    originalWorkUrl: 'Link zu deinem Originalwerk',
+    originalWorkUrlHelp: 'Wo das Original zu sehen ist, falls es online ist.',
+    sectionYou: 'Über dich',
+    signedInHelp:
+      'Dein Name und deine E-Mail-Adresse stammen aus deinem Oxy-Konto. Du kannst sie für diese Meldung ändern.',
+    name: 'Vollständiger Name',
+    email: 'E-Mail',
+    emailHelp:
+      'Die Bestätigung und alle Rückfragen zu dieser Meldung schicken wir an diese Adresse.',
+    organization: 'Organisation',
+    relationship: 'Deine Beziehung zum Inhalt',
+    relationshipRightsHolder: 'Ich bin der Rechteinhaber',
+    relationshipAgent: 'Ich bin berechtigt, im Namen des Rechteinhabers zu handeln',
+    relationshipAffected: 'Ich bin die betroffene Person',
+    relationshipOther: 'Sonstiges',
+    sectionStatements: 'Erklärungen',
+    goodFaithRights:
+      'Ich bin nach Treu und Glauben der Überzeugung, dass die Nutzung des oben beschriebenen Inhalts weder vom Rechteinhaber noch von seinem Vertreter noch durch das Gesetz gestattet ist.',
+    goodFaithPrivacy:
+      'Ich bin nach Treu und Glauben der Überzeugung, dass dieser Inhalt meine personenbezogenen Daten oder die der von mir vertretenen Person enthält und entfernt werden sollte.',
+    goodFaithIllegal:
+      'Ich bin nach Treu und Glauben der Überzeugung, dass dieser Inhalt rechtswidrig ist.',
+    goodFaithOther:
+      'Ich bin nach Treu und Glauben der Überzeugung, dass dieser Inhalt aus den von mir beschriebenen Gründen entfernt werden sollte.',
+    accurateRights:
+      'Ich erkläre unter Strafandrohung für Meineid, dass die Angaben in dieser Meldung zutreffend sind und dass ich der Rechteinhaber bin oder berechtigt bin, in seinem Namen zu handeln.',
+    accurateGeneral:
+      'Die Angaben in dieser Meldung sind nach bestem Wissen und Gewissen zutreffend und vollständig.',
+    rightsWarning:
+      'Wer wissentlich falsch behauptet, dass Inhalte seine Rechte verletzen, kann für den entstandenen Schaden haftbar gemacht werden.',
+    signature: 'Elektronische Unterschrift',
+    signatureHelp:
+      'Gib deinen vollständigen Namen ein. Er gilt als deine Unterschrift unter dieser Meldung.',
+    privacyNotice:
+      'Wir verwenden deine Angaben nur, um diese Meldung zu prüfen und zu bearbeiten. Wenn wir Inhalte entfernen, informieren wir die Person, die sie veröffentlicht hat. Sie kann darauf unter Umständen reagieren.',
+    privacyLink: 'Datenschutzerklärung',
+    submit: 'Meldung absenden',
+    submitting: 'Wird gesendet…',
+    errorSummaryTitle: 'Prüfe diese Felder vor dem Absenden',
+    errorTitle: 'Wir konnten deine Meldung nicht absenden',
+    errorBody:
+      'Nichts von dem, was du eingegeben hast, ist verloren. Versuch es noch einmal oder schreib an {email}, wenn es weiterhin fehlschlägt.',
+    rateLimitedTitle: 'Zu viele Meldungen in kurzer Zeit',
+    rateLimitedBodyAt:
+      'Du kannst ab {time} wieder absenden. Deine Meldung ist unten noch ausgefüllt.',
+    rateLimitedBody:
+      'Warte ein paar Minuten und sende sie dann erneut ab. Deine Meldung ist unten noch ausgefüllt.',
+    retry: 'Erneut versuchen',
+    successTitle: 'Meldung eingegangen',
+    successReference: 'Deine Referenznummer lautet {reference}.',
+    successEmail: 'Wir haben eine Bestätigung an {email} geschickt.',
+    successNext:
+      'Eine Person aus unserem Team prüft deine Meldung. Gib die Referenznummer an, wenn du uns dazu schreibst.',
+    successAnother: 'Etwas anderes melden',
+    successBack: 'Alle rechtlichen Dokumente',
+    errors: {
+      kind: 'Wähle aus, was du meldest',
+      contentUrlsRequired: 'Füge mindestens einen Link zum Inhalt hinzu',
+      contentUrlsTooMany: 'Füge höchstens {maxUrls} Links hinzu',
+      contentUrlInvalid: 'Jeder Link muss eine vollständige Adresse sein, die mit https:// beginnt',
+      descriptionShort: 'Beschreibe den Inhalt in mindestens {minDescription} Zeichen',
+      descriptionLong: 'Die Beschreibung darf höchstens {maxDescription} Zeichen lang sein',
+      originalWorkUrl: 'Gib eine vollständige Adresse ein, die mit https:// beginnt',
+      name: 'Gib deinen vollständigen Namen ein',
+      email: 'Gib eine E-Mail-Adresse ein, an die wir antworten können',
+      organization: 'Der Name der Organisation darf höchstens {maxOrganization} Zeichen lang sein',
+      relationship: 'Wähle deine Beziehung zum Inhalt',
+      goodFaith: 'Bestätige die Erklärung nach Treu und Glauben',
+      accurate: 'Bestätige, dass die Angaben zutreffend sind',
+      signature: 'Gib deinen vollständigen Namen als Unterschrift ein',
     },
   },
 };

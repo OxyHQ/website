@@ -402,6 +402,7 @@ const pt: Translations = {
     accessibility: 'Acessibilidade',
     termsAndConditions: 'Termos e condições',
     llms: 'LLMs',
+    reportContent: 'Denunciar conteúdo',
     settings: 'Definições',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
@@ -1230,6 +1231,110 @@ const pt: Translations = {
       products: 'O que posso fazer com o Oxy?',
       developers: 'Como construo no Oxy como programador?',
       apps: 'Qual app do Oxy é o melhor para mim?',
+    },
+  },
+  // ── Report content / rights claim (/transparency/legal/report-content) ──
+  contentClaim: {
+    seoTitle: 'Denunciar conteúdo ou reclamar direitos',
+    seoDescription:
+      'Pede à Oxy que remova conteúdo que viola os teus direitos de autor ou a tua marca, expõe os teus dados pessoais ou infringe a lei.',
+    eyebrow: 'Legal',
+    title: 'Denunciar conteúdo',
+    intro:
+      'Indica-nos o conteúdo num serviço da Oxy que viola os teus direitos, expõe os teus dados pessoais ou infringe a lei. Cada denúncia é analisada por uma pessoa.',
+    optional: 'opcional',
+    sectionKind: 'O que queres denunciar?',
+    kindCopyright: 'Direitos de autor',
+    kindCopyrightHelp:
+      'Alguém usou sem autorização uma fotografia, um texto, um vídeo ou outra obra que te pertence ou cujo titular representas.',
+    kindTrademark: 'Marca',
+    kindTrademarkHelp:
+      'O conteúdo usa o nome da tua marca, o teu logótipo ou outra marca de uma forma que induz as pessoas em erro.',
+    kindPrivacy: 'Privacidade ou dados pessoais',
+    kindPrivacyHelp:
+      'O conteúdo mostra os teus dados pessoais, como a tua imagem, os teus contactos ou outras informações sobre ti. Usa também esta opção para nos pedires que apaguemos os teus próprios dados pessoais ao abrigo do RGPD.',
+    kindIllegal: 'Conteúdo ilegal',
+    kindIllegalHelp:
+      'Conteúdo que consideras ilegal, como fraude, ameaças ou a venda de produtos proibidos.',
+    kindOther: 'Outra coisa',
+    kindOtherHelp:
+      'Outro motivo pelo qual consideras que o conteúdo deve ser removido de um serviço da Oxy.',
+    emergencyNotice:
+      'Se alguém estiver em perigo imediato, contacta primeiro os serviços de emergência locais.',
+    sectionContent: 'O conteúdo',
+    contentUrls: 'Links para o conteúdo',
+    contentUrlsHelp:
+      'Um link por linha, até {maxUrls}. Usa o endereço da imagem ou do ficheiro, ou o da página que o mostra em qualquer app da Oxy.',
+    description: 'O que é e porque deve ser removido?',
+    descriptionHelp:
+      'Pelo menos {minDescription} caracteres. Descreve o conteúdo e explica o problema.',
+    originalWorkUrl: 'Link para a tua obra original',
+    originalWorkUrlHelp: 'Onde se pode ver o original, se estiver online.',
+    sectionYou: 'Sobre ti',
+    signedInHelp: 'O teu nome e e-mail vêm da tua conta Oxy. Podes alterá-los para esta denúncia.',
+    name: 'Nome completo',
+    email: 'E-mail',
+    emailHelp:
+      'Enviamos a confirmação, e quaisquer perguntas sobre esta denúncia, para este endereço.',
+    organization: 'Organização',
+    relationship: 'A tua relação com o conteúdo',
+    relationshipRightsHolder: 'Sou o titular dos direitos',
+    relationshipAgent: 'Estou autorizado a agir em nome do titular dos direitos',
+    relationshipAffected: 'Sou a pessoa afetada',
+    relationshipOther: 'Outra',
+    sectionStatements: 'Declarações',
+    goodFaithRights:
+      'Acredito de boa-fé que a utilização do conteúdo acima descrito não está autorizada pelo titular dos direitos, pelo seu representante ou pela lei.',
+    goodFaithPrivacy:
+      'Acredito de boa-fé que este conteúdo contém os meus dados pessoais, ou os da pessoa que represento, e que deve ser removido.',
+    goodFaithIllegal: 'Acredito de boa-fé que este conteúdo é ilegal.',
+    goodFaithOther:
+      'Acredito de boa-fé que este conteúdo deve ser removido pelos motivos que descrevi.',
+    accurateRights:
+      'Declaro, sob pena de perjúrio, que as informações desta denúncia são exatas e que sou o titular dos direitos ou estou autorizado a agir em seu nome.',
+    accurateGeneral:
+      'Tanto quanto é do meu conhecimento, as informações desta denúncia são exatas e completas.',
+    rightsWarning:
+      'Declarar falsamente e com conhecimento de causa que um conteúdo viola os teus direitos pode tornar-te responsável por danos.',
+    signature: 'Assinatura eletrónica',
+    signatureHelp: 'Escreve o teu nome completo. Conta como a tua assinatura nesta denúncia.',
+    privacyNotice:
+      'Só usamos o que nos envias para analisar esta denúncia e agir em conformidade. Se removermos conteúdo, informamos quem o publicou, que poderá ter a possibilidade de responder.',
+    privacyLink: 'Política de privacidade',
+    submit: 'Enviar denúncia',
+    submitting: 'A enviar…',
+    errorSummaryTitle: 'Verifica estes campos antes de enviar',
+    errorTitle: 'Não conseguimos enviar a tua denúncia',
+    errorBody:
+      'Não se perdeu nada do que escreveste. Tenta novamente, ou escreve para {email} se continuar a falhar.',
+    rateLimitedTitle: 'Demasiadas denúncias em pouco tempo',
+    rateLimitedBodyAt:
+      'Podes voltar a enviar depois de {time}. A tua denúncia continua preenchida abaixo.',
+    rateLimitedBody:
+      'Aguarda alguns minutos e volta a enviar. A tua denúncia continua preenchida abaixo.',
+    retry: 'Tentar novamente',
+    successTitle: 'Denúncia recebida',
+    successReference: 'A tua referência é {reference}.',
+    successEmail: 'Enviámos uma confirmação para {email}.',
+    successNext:
+      'Uma pessoa da nossa equipa vai analisar a tua denúncia. Indica a referência se nos escreveres sobre ela.',
+    successAnother: 'Denunciar outra coisa',
+    successBack: 'Todos os documentos legais',
+    errors: {
+      kind: 'Escolhe o que queres denunciar',
+      contentUrlsRequired: 'Adiciona pelo menos um link para o conteúdo',
+      contentUrlsTooMany: 'Adiciona no máximo {maxUrls} links',
+      contentUrlInvalid: 'Cada link tem de ser um endereço completo que comece por https://',
+      descriptionShort: 'Descreve o conteúdo em pelo menos {minDescription} caracteres',
+      descriptionLong: 'A descrição não pode ter mais de {maxDescription} caracteres',
+      originalWorkUrl: 'Introduz um endereço completo que comece por https://',
+      name: 'Introduz o teu nome completo',
+      email: 'Introduz um e-mail para o qual possamos responder',
+      organization: 'O nome da organização não pode ter mais de {maxOrganization} caracteres',
+      relationship: 'Escolhe a tua relação com o conteúdo',
+      goodFaith: 'Confirma a declaração de boa-fé',
+      accurate: 'Confirma que as informações são exatas',
+      signature: 'Escreve o teu nome completo como assinatura',
     },
   },
 };

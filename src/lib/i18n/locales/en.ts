@@ -424,6 +424,7 @@ const en = {
     accessibility: 'Accessibility',
     termsAndConditions: 'Terms & Conditions',
     llms: 'LLMs',
+    reportContent: 'Report content',
     settings: 'Settings',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
@@ -1483,6 +1484,106 @@ const en = {
       products: 'What can I do with Oxy?',
       developers: 'How do I build on Oxy as a developer?',
       apps: 'Which Oxy app is right for me?',
+    },
+  },
+  // ── Report content / rights claim (/transparency/legal/report-content) ──
+  contentClaim: {
+    seoTitle: 'Report content or a rights claim',
+    seoDescription:
+      'Ask Oxy to remove content that infringes your copyright or trademark, exposes your personal data or breaks the law.',
+    eyebrow: 'Legal',
+    title: 'Report content',
+    intro:
+      'Tell us about content on an Oxy service that infringes your rights, exposes your personal data or breaks the law. A person reviews every report.',
+    optional: 'optional',
+    sectionKind: 'What are you reporting?',
+    kindCopyright: 'Copyright',
+    kindCopyrightHelp:
+      'Someone used a photo, text, video or other work that you own, or that you represent, without permission.',
+    kindTrademark: 'Trademark',
+    kindTrademarkHelp:
+      'Content uses your brand name, logo or another trademark in a way that misleads people.',
+    kindPrivacy: 'Privacy or personal data',
+    kindPrivacyHelp:
+      'Content shows your personal data, such as your image, contact details or other information about you. Use this too to ask us to erase your own personal data under the GDPR.',
+    kindIllegal: 'Illegal content',
+    kindIllegalHelp:
+      'Content you believe is illegal, such as fraud, threats or the sale of prohibited goods.',
+    kindOther: 'Something else',
+    kindOtherHelp: 'Another reason you believe content should be removed from an Oxy service.',
+    emergencyNotice:
+      'If someone is in immediate danger, contact your local emergency services first.',
+    sectionContent: 'The content',
+    contentUrls: 'Links to the content',
+    contentUrlsHelp:
+      'One link per line, up to {maxUrls}. Use the address of the image or file, or of the page that shows it on any Oxy app.',
+    description: 'What is it, and why should it be removed?',
+    descriptionHelp:
+      'At least {minDescription} characters. Describe the content and explain the problem.',
+    originalWorkUrl: 'Link to your original work',
+    originalWorkUrlHelp: 'Where the original can be seen, if it is online.',
+    sectionYou: 'About you',
+    signedInHelp:
+      'Your name and email come from your Oxy account. You can change them for this report.',
+    name: 'Full name',
+    email: 'Email',
+    emailHelp: 'We send the confirmation, and any questions about this report, to this address.',
+    organization: 'Organization',
+    relationship: 'Your relationship to the content',
+    relationshipRightsHolder: 'I own the rights',
+    relationshipAgent: 'I am authorized to act for the rights holder',
+    relationshipAffected: 'I am the person affected',
+    relationshipOther: 'Other',
+    sectionStatements: 'Statements',
+    goodFaithRights:
+      'I have a good-faith belief that the use of the content described above is not authorized by the rights holder, its agent or the law.',
+    goodFaithPrivacy:
+      'I have a good-faith belief that this content contains my personal data, or that of the person I represent, and should be removed.',
+    goodFaithIllegal: 'I have a good-faith belief that this content is illegal.',
+    goodFaithOther:
+      'I have a good-faith belief that this content should be removed for the reasons I have described.',
+    accurateRights:
+      'Under penalty of perjury, I state that the information in this report is accurate and that I am the rights holder or authorized to act on their behalf.',
+    accurateGeneral:
+      'The information in this report is accurate and complete to the best of my knowledge.',
+    rightsWarning:
+      'Knowingly misrepresenting that content infringes your rights can make you liable for damages.',
+    signature: 'Electronic signature',
+    signatureHelp: 'Type your full name. It counts as your signature on this report.',
+    privacyNotice:
+      'We use what you send only to review and act on this report. If we remove content, we tell the person who posted it, who may be able to respond.',
+    privacyLink: 'Privacy Policy',
+    submit: 'Submit report',
+    submitting: 'Submitting…',
+    errorSummaryTitle: 'Check these fields before you submit',
+    errorTitle: 'We could not submit your report',
+    errorBody: 'Nothing you typed was lost. Try again, or email {email} if it keeps failing.',
+    rateLimitedTitle: 'Too many reports in a short time',
+    rateLimitedBodyAt: 'You can submit again after {time}. Your report is still filled in below.',
+    rateLimitedBody: 'Wait a few minutes, then submit again. Your report is still filled in below.',
+    retry: 'Try again',
+    successTitle: 'Report received',
+    successReference: 'Your reference is {reference}.',
+    successEmail: 'We sent a confirmation to {email}.',
+    successNext:
+      'A person on our team will review your report. Quote the reference if you write to us about it.',
+    successAnother: 'Report something else',
+    successBack: 'All legal documents',
+    errors: {
+      kind: 'Choose what you are reporting',
+      contentUrlsRequired: 'Add at least one link to the content',
+      contentUrlsTooMany: 'Add no more than {maxUrls} links',
+      contentUrlInvalid: 'Each link must be a full address that starts with https://',
+      descriptionShort: 'Describe the content in at least {minDescription} characters',
+      descriptionLong: 'Keep the description to {maxDescription} characters or fewer',
+      originalWorkUrl: 'Enter a full address that starts with https://',
+      name: 'Enter your full name',
+      email: 'Enter an email we can reply to',
+      organization: 'Keep the organization name to {maxOrganization} characters or fewer',
+      relationship: 'Choose your relationship to the content',
+      goodFaith: 'Confirm the good-faith statement',
+      accurate: 'Confirm that the information is accurate',
+      signature: 'Type your full name as your signature',
     },
   },
 };

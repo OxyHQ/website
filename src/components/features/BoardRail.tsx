@@ -17,6 +17,7 @@ const FOOTER_LINKS = [
   { label: 'Privacy', to: '/transparency/legal/privacy' },
   { label: 'Terms', to: '/transparency/legal/terms' },
   { label: 'Cookies', to: '/transparency/legal/cookies' },
+  { label: 'Report content', to: '/transparency/legal/report-content' },
 ] as const;
 
 interface BoardRailProps {

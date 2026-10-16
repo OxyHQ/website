@@ -404,6 +404,7 @@ const ca: Translations = {
     accessibility: 'Accessibilitat',
     termsAndConditions: 'Termes i condicions',
     llms: 'LLMs',
+    reportContent: 'Denunciar contingut',
     settings: 'Configuració',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
@@ -1231,6 +1232,111 @@ const ca: Translations = {
       products: 'Què puc fer amb Oxy?',
       developers: 'Com construeixo sobre Oxy com a desenvolupador?',
       apps: "Quina app d'Oxy és la millor per a mi?",
+    },
+  },
+  // ── Report content / rights claim (/transparency/legal/report-content) ──
+  contentClaim: {
+    seoTitle: 'Denuncia contingut o fes una reclamació de drets',
+    seoDescription:
+      "Demana a Oxy que retiri contingut que infringeix els teus drets d'autor o la teva marca, exposa les teves dades personals o incompleix la llei.",
+    eyebrow: 'Legal',
+    title: 'Denuncia contingut',
+    intro:
+      "Explica'ns quin contingut d'un servei d'Oxy infringeix els teus drets, exposa les teves dades personals o incompleix la llei. Una persona revisa cada denúncia.",
+    optional: 'opcional',
+    sectionKind: 'Què vols denunciar?',
+    kindCopyright: "Drets d'autor",
+    kindCopyrightHelp:
+      'Algú ha fet servir una foto, un text, un vídeo o una altra obra de la qual ets titular, o que representes, sense permís.',
+    kindTrademark: 'Marca registrada',
+    kindTrademarkHelp:
+      "El contingut fa servir el nom de la teva marca, el teu logotip o una altra marca registrada d'una manera que enganya la gent.",
+    kindPrivacy: 'Privadesa o dades personals',
+    kindPrivacyHelp:
+      "El contingut mostra dades personals teves, com ara la teva imatge, les teves dades de contacte o altra informació sobre tu. Fes-ho servir també per demanar-nos que suprimim les teves pròpies dades personals d'acord amb el RGPD.",
+    kindIllegal: 'Contingut il·legal',
+    kindIllegalHelp:
+      'Contingut que creus que és il·legal, com ara frau, amenaces o la venda de productes prohibits.',
+    kindOther: 'Una altra cosa',
+    kindOtherHelp:
+      "Un altre motiu pel qual creus que s'hauria de retirar contingut d'un servei d'Oxy.",
+    emergencyNotice:
+      "Si algú està en perill immediat, contacta primer amb els serveis d'emergència locals.",
+    sectionContent: 'El contingut',
+    contentUrls: 'Enllaços al contingut',
+    contentUrlsHelp:
+      "Un enllaç per línia, fins a {maxUrls}. Fes servir l'adreça de la imatge o del fitxer, o de la pàgina que el mostra en qualsevol app d'Oxy.",
+    description: "Què és i per què s'hauria de retirar?",
+    descriptionHelp:
+      'Com a mínim {minDescription} caràcters. Descriu el contingut i explica el problema.',
+    originalWorkUrl: 'Enllaç a la teva obra original',
+    originalWorkUrlHelp: "On es pot veure l'original, si és en línia.",
+    sectionYou: 'Sobre tu',
+    signedInHelp:
+      "El teu nom i el teu correu provenen del teu compte d'Oxy. Els pots canviar per a aquesta denúncia.",
+    name: 'Nom complet',
+    email: 'Correu electrònic',
+    emailHelp:
+      'Enviem la confirmació, i qualsevol pregunta sobre aquesta denúncia, a aquesta adreça.',
+    organization: 'Organització',
+    relationship: 'La teva relació amb el contingut',
+    relationshipRightsHolder: 'Soc el titular dels drets',
+    relationshipAgent: 'Estic autoritzat a actuar en nom del titular dels drets',
+    relationshipAffected: 'Soc la persona afectada',
+    relationshipOther: 'Altres',
+    sectionStatements: 'Declaracions',
+    goodFaithRights:
+      "Crec de bona fe que l'ús del contingut descrit no està autoritzat pel titular dels drets, pel seu agent ni per la llei.",
+    goodFaithPrivacy:
+      "Crec de bona fe que aquest contingut conté dades personals meves, o de la persona que represento, i que s'hauria de retirar.",
+    goodFaithIllegal: 'Crec de bona fe que aquest contingut és il·legal.',
+    goodFaithOther:
+      "Crec de bona fe que aquest contingut s'hauria de retirar pels motius que he descrit.",
+    accurateRights:
+      "Declaro, sota pena de perjuri, que la informació d'aquesta denúncia és exacta i que soc el titular dels drets o estic autoritzat a actuar en el seu nom.",
+    accurateGeneral:
+      "La informació d'aquesta denúncia és exacta i completa segons el meu leal saber i entendre.",
+    rightsWarning:
+      'Afirmar falsament i a sabendes que un contingut infringeix els teus drets et pot fer responsable dels danys i perjudicis.',
+    signature: 'Signatura electrònica',
+    signatureHelp: "Escriu el teu nom complet. Compta com a signatura d'aquesta denúncia.",
+    privacyNotice:
+      'Només fem servir el que ens envies per revisar aquesta denúncia i actuar-hi. Si retirem contingut, ho comuniquem a la persona que el va publicar, que potser hi podrà respondre.',
+    privacyLink: 'Política de privadesa',
+    submit: 'Envia la denúncia',
+    submitting: 'Enviant…',
+    errorSummaryTitle: "Revisa aquests camps abans d'enviar",
+    errorTitle: 'No hem pogut enviar la teva denúncia',
+    errorBody:
+      "No s'ha perdut res del que has escrit. Torna-ho a provar, o escriu a {email} si continua fallant.",
+    rateLimitedTitle: 'Massa denúncies en poc temps',
+    rateLimitedBodyAt:
+      'Podràs tornar a enviar a partir de {time}. La teva denúncia continua emplenada a sota.',
+    rateLimitedBody:
+      'Espera uns minuts i torna a enviar. La teva denúncia continua emplenada a sota.',
+    retry: 'Torna-ho a provar',
+    successTitle: 'Denúncia rebuda',
+    successReference: 'La teva referència és {reference}.',
+    successEmail: 'Hem enviat una confirmació a {email}.',
+    successNext:
+      'Una persona del nostre equip revisarà la teva denúncia. Indica la referència si ens escrius sobre aquest tema.',
+    successAnother: 'Denuncia una altra cosa',
+    successBack: 'Tots els documents legals',
+    errors: {
+      kind: 'Tria què vols denunciar',
+      contentUrlsRequired: 'Afegeix almenys un enllaç al contingut',
+      contentUrlsTooMany: 'No afegeixis més de {maxUrls} enllaços',
+      contentUrlInvalid: 'Cada enllaç ha de ser una adreça completa que comenci per https://',
+      descriptionShort: 'Descriu el contingut amb almenys {minDescription} caràcters',
+      descriptionLong: 'La descripció no pot superar els {maxDescription} caràcters',
+      originalWorkUrl: 'Introdueix una adreça completa que comenci per https://',
+      name: 'Introdueix el teu nom complet',
+      email: 'Introdueix un correu on et puguem respondre',
+      organization: "El nom de l'organització no pot superar els {maxOrganization} caràcters",
+      relationship: 'Tria la teva relació amb el contingut',
+      goodFaith: 'Confirma la declaració de bona fe',
+      accurate: 'Confirma que la informació és exacta',
+      signature: 'Escriu el teu nom complet com a signatura',
     },
   },
 };

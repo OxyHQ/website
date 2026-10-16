@@ -34,6 +34,20 @@ export const LEGAL_DOCUMENTS = [
   { slug: 'llms', title: 'LLMs', description: 'How Oxy uses large language models.' },
 ] as const;
 
+/**
+ * The public "Report content / rights claim" form (ADR 0041 D10 in Oxy core).
+ * A real page beside the legal collection, not a CMS document: it is not in
+ * `LEGAL_DOCUMENTS`, so `LegalPage` never asks the CMS for it and no `/legal/…`
+ * migration redirect is invented for a URL that never existed.
+ */
+export const REPORT_CONTENT_PAGE = {
+  slug: 'report-content',
+  path: '/transparency/legal/report-content',
+  title: 'Report content or a rights claim',
+  description:
+    'Ask Oxy to remove content that infringes your copyright or trademark, exposes your personal data or breaks the law.',
+} as const;
+
 export const TRANSPARENCY_DOCUMENTS = [
   {
     slug: 'manifesto',
