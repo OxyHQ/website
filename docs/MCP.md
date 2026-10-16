@@ -122,15 +122,18 @@ it is acting as.
   default-changing operation is one transaction under an advisory lock, and
   exactly one enabled default always remains. Other tasks see a change within
   the locale cache TTL (10 s).
-- **Media** (`server/services/media.ts`, shared with REST delete): uploads are
-  validated from the bytes (JPEG, PNG, GIF, WebP, AVIF; no SVG; 25 MiB, 40 MP),
-  reuse an identical existing object, and attach to their target in the same
-  transaction as the media row; a failure compensates only the objects that call
-  uploaded. An object key can be shared by several rows, so nothing deletes a key
-  still in use. A delete refuses media still referenced unless `force`, and a
-  storage delete that fails is recorded in `storage_cleanups` and swept.
+- **Media** (`server/services/media.ts`, shared with REST; `docs/OXY-FILES.md`):
+  images are files of the Oxy Website application in Oxy Files. The upload
+  tools have Oxy import the URL, then read the stored bytes back and validate
+  them (JPEG, PNG, GIF, WebP, AVIF; no SVG; 40 MiB, 40 MP), reuse an identical
+  existing row, register the row's reference and attach to their target in the
+  same transaction as the media row; a failure leaves a file nothing uses,
+  which Oxy collects. Several rows can share one file, each with its own
+  reference. A delete refuses media still referenced unless `force`, withdraws
+  the reference (queued in `oxy_file_reference_removals` and swept if Oxy is
+  away) and deletes the file once no row uses it.
 - **Diagnostics.** `debug_upload_test` exists only with
-  `MCP_ENABLE_DIAGNOSTICS=true`, and cleans up its row and object in `finally`.
+  `MCP_ENABLE_DIAGNOSTICS=true`, and deletes the row it wrote in `finally`.
 
 ## Limits, protocol and telemetry
 
@@ -156,8 +159,8 @@ it is acting as.
 
 `bun run test:server` runs the server suite against a real PostgreSQL
 (`TEST_DATABASE_URL`, local host, database name containing `test` — it is wiped
-between tests). Object storage and remote downloads are in-memory doubles
-(`server/test/setup.ts`). `server/mcp/http.test.ts` drives the real Express app
+between tests). Oxy Files, the legacy object storage and remote downloads are
+in-memory doubles (`server/test/setup.ts`). `server/mcp/http.test.ts` drives the real Express app
 with a fake Oxy introspection endpoint: CORS, host, body limit, revoked/expired/
 wrong-resource tokens, scopes and the active account. CI runs it in
 `.github/workflows/checks.yml` (job `server`) for any change under `server/`.
