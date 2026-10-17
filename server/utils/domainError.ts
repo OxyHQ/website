@@ -13,7 +13,9 @@ export type DomainErrorKind =
   | 'not_found'
   | 'conflict'
   | 'too_large'
-  | 'precondition_failed';
+  | 'precondition_failed'
+  /** A service the operation depends on (Oxy Files) is unreachable; the same call may succeed later. */
+  | 'unavailable';
 
 export class DomainError extends Error {
   constructor(
@@ -32,4 +34,5 @@ export const DOMAIN_ERROR_HTTP_STATUS: Record<DomainErrorKind, number> = {
   conflict: 409,
   too_large: 413,
   precondition_failed: 412,
+  unavailable: 503,
 };

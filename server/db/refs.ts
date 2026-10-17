@@ -1,6 +1,7 @@
-import { inArray } from 'drizzle-orm';
+import { and, inArray, isNull } from 'drizzle-orm';
 import type { PgTable } from 'drizzle-orm/pg-core';
 import { db } from './postgres.js';
+import { media } from './schema/content.js';
 
 /* ──────────────────────────────────────────────
  * Reference expansion: a row hands over the referenced ROW, not its id.
@@ -39,7 +40,14 @@ export async function populate<T extends Row>(
     }
 
     const idColumn = (table as unknown as Record<string, never>)._id;
-    const referenced = await db.select().from(table).where(inArray(idColumn, ids));
+    // A media row whose file Oxy reported unavailable (taken down, trashed,
+    // deleted) reads as missing everywhere it is shown, exactly like a
+    // dangling id: the site renders no image rather than a broken one.
+    const where =
+      table === media
+        ? and(inArray(idColumn, ids), isNull(media.unavailableAt))
+        : inArray(idColumn, ids);
+    const referenced = await db.select().from(table).where(where);
     const byId = new Map(referenced.map((doc) => [(doc as Row)._id as string, doc]));
 
     for (const row of rows) {

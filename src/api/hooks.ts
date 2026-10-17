@@ -858,7 +858,10 @@ export interface MediaItem {
   url: string;
   thumbnails: { sm: string; md: string; lg: string };
   filename: string;
-  key: string;
+  /** The legacy storage key; null for a file stored only in Oxy Files. */
+  key: string | null;
+  /** The Oxy file holding the bytes (ADR 0043); null while the item is on the legacy storage. */
+  oxyFileId?: string | null;
   mimeType: string;
   size: number;
   width?: number;
@@ -866,6 +869,12 @@ export interface MediaItem {
   alt: string;
   tags: string[];
   folder: string;
+  /** The account that uploaded the item. */
+  uploadedBy?: string;
+  /** Set when Oxy reported the file can no longer be shown; the site then hides the item everywhere. */
+  unavailableAt?: string | null;
+  /** The Oxy event that hid it: `file.blocked`, `file.trashed`, `file.deleted`… */
+  unavailableReason?: string | null;
   createdAt: string;
 }
 

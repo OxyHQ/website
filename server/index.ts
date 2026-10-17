@@ -18,6 +18,7 @@ import { oxyService } from './services/oxyService.js';
 import { createApp } from './app.js';
 import { startIdempotencyPurge } from './mcp/idempotency.js';
 import { startStorageCleanupSweep } from './services/media.js';
+import { startReferenceReconciliation } from './services/oxyFilesReconcile.js';
 import {
   createMcpCatalogRegistration,
   disabledMcpCatalogRegistrationStatus,
@@ -135,6 +136,7 @@ async function connectWithRetry(): Promise<void> {
       startStatusSnapshotInterval();
       startInquiryRetentionSweep();
       startStorageCleanupSweep();
+      startReferenceReconciliation();
       startIdempotencyPurge();
       markBootstrapComplete();
       return;

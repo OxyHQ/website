@@ -35,6 +35,7 @@ import localesRouter from './routes/locales.js';
 import translationsRouter from './routes/translations.js';
 import backupRouter from './routes/backup.js';
 import uploadRouter from './routes/upload.js';
+import oxyFileEventsRouter from './routes/oxyFileEvents.js';
 import likesRouter from './routes/likes.js';
 import gamesRouter from './routes/games.js';
 import commentsRouter from './routes/comments.js';
@@ -87,6 +88,12 @@ export function createApp(options: AppOptions): express.Express {
    * Mounted before express.json() too — the transport reads the raw body itself.
    */
   mountMcp(app);
+
+  /**
+   * Oxy's file events: server to server (no browser origin), and verified over
+   * the raw body, so mounted before the site's CORS gate and `express.json()`.
+   */
+  app.use('/api/oxy/file-events', oxyFileEventsRouter);
 
   function isAllowedSiteOrigin(origin: string): boolean {
     if (ALWAYS_ALLOWED_ORIGINS.has(origin)) return true;

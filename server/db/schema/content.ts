@@ -1,5 +1,7 @@
+import { sql } from 'drizzle-orm';
 import {
   boolean,
+  check,
   doublePrecision,
   index,
   integer,
@@ -30,26 +32,58 @@ export const categories = pgTable('categories', {
   ...timestamps,
 });
 
-export const media = pgTable('media', {
-  _id: objectId(),
-  url: text().notNull(),
-  /** `{ sm, md, lg }` — always present, empty strings when a size is missing. */
-  thumbnails: jsonb()
-    .$type<{ sm: string; md: string; lg: string }>()
-    .notNull()
-    .default({ sm: '', md: '', lg: '' }),
-  filename: text().notNull(),
-  key: text().notNull(),
-  mimeType: text().notNull(),
-  size: integer().notNull().default(0),
-  width: integer(),
-  height: integer(),
-  alt: text().notNull().default(''),
-  tags: text().array().notNull().default([]),
-  folder: text().notNull().default('images'),
-  uploadedBy: text().notNull().default(''),
-  ...timestamps,
-});
+/**
+ * The media library: one row per image or video an editor can pick. A row's
+ * bytes live in exactly one place:
+ *
+ * - `oxyFileId`: a file the Oxy Website application owns in Oxy Files (ADR
+ *   0043). The row's own reference (`media`, `_id`) is what keeps the file
+ *   alive; `url` and `thumbnails` are its public URL and renditions.
+ * - `key` alone: an object in the legacy storage (`services/s3.ts`), or, for a
+ *   seeded row, a path the site itself serves. A migrated row keeps its legacy
+ *   `key` until the bucket is retired, so a delete can still remove the copy.
+ */
+export const media = pgTable(
+  'media',
+  {
+    _id: objectId(),
+    url: text().notNull(),
+    /** `{ sm, md, lg }` — always present, empty strings when a size is missing. */
+    thumbnails: jsonb()
+      .$type<{ sm: string; md: string; lg: string }>()
+      .notNull()
+      .default({ sm: '', md: '', lg: '' }),
+    filename: text().notNull(),
+    key: text(),
+    oxyFileId: text(),
+    /** Hex SHA-256 of the bytes, as Oxy stores them; null until the row is in Oxy Files. */
+    sha256: text(),
+    mimeType: text().notNull(),
+    size: integer().notNull().default(0),
+    width: integer(),
+    height: integer(),
+    alt: text().notNull().default(''),
+    tags: text().array().notNull().default([]),
+    folder: text().notNull().default('images'),
+    /** The account that added the row — an audit field, never the file's owner. */
+    uploadedBy: text().notNull().default(''),
+    /**
+     * Set when Oxy reported the file can no longer be shown (blocked after a
+     * content claim, moved to trash, deleted). Every public read treats the row
+     * as missing while it is set; `unavailableReason` is the event type.
+     */
+    unavailableAt: timestamp({ withTimezone: true }),
+    unavailableReason: text(),
+    /** When the last file event applied here happened: events arrive at least once, in any order. */
+    fileEventAt: timestamp({ withTimezone: true }),
+    ...timestamps,
+  },
+  (table) => [
+    index('media_oxy_file_id_idx').on(table.oxyFileId),
+    index('media_sha256_idx').on(table.sha256),
+    check('media_storage_check', sql`${table.oxyFileId} is not null or ${table.key} is not null`),
+  ],
+);
 
 export const products = pgTable(
   'products',
@@ -339,11 +373,13 @@ export const locales = pgTable('locales', {
 });
 
 /**
- * Object-storage deletions still owed. A media row is removed in the same
+ * LEGACY-storage deletions still owed (Oxy Files objects go through
+ * `oxy_file_reference_removals` instead). A media row is removed in the same
  * transaction that records its objects here, so a storage outage after the
  * commit leaves a durable to-do rather than an object nobody knows about. A
  * row is deleted once its object is gone, or once another media row turns out
  * to use the same key (the upload key is content-addressed, so two rows can).
+ * Dropped with the legacy storage (`docs/OXY-FILES.md`).
  */
 export const storageCleanups = pgTable(
   'storage_cleanups',

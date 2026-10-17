@@ -4,11 +4,9 @@ import { db } from '../../db/postgres.js';
 import { populateOne } from '../../db/refs.js';
 import { media, newsroomPosts, teamMembers } from '../../db/schema/index.js';
 import { NEWSROOM_REFS } from '../../services/newsroom.js';
-import { deleteFromSpaces, keyFromPublicUrl, uploadToSpaces } from '../../services/s3.js';
-import { downloadRemote } from '../../services/remoteDownload.js';
 import {
   deleteMedia,
-  ingestImage,
+  ingestRemoteImage,
   previewMediaDelete,
   type MediaRow,
 } from '../../services/media.js';
@@ -133,7 +131,7 @@ export function registerMediaTools(server: ToolRegistrar): void {
 
   server.tool(
     'delete_media',
-    'Delete a media item and the stored objects only it owns. Media still referenced (a post cover, a product logo, the hero…) is refused with the list of references unless force is true, which clears them. dryRun: true lists the references and the objects that would be deleted or kept. A storage delete that fails is queued and retried; the result says whether cleanup is complete or pending.',
+    'Delete a media item and the stored file only it uses. Media still referenced (a post cover, a product logo, the hero…) is refused with the list of references unless force is true, which clears them. dryRun: true lists the references and what would be deleted or kept: a file another media item holds (the same bytes) is kept. A storage step that fails is queued and retried; the result says whether cleanup is complete or pending.',
     {
       id: objectIdInput.describe('The _id of the media item'),
       force: z.boolean().optional().describe('Delete even if referenced, clearing the references'),
@@ -154,7 +152,7 @@ export function registerMediaTools(server: ToolRegistrar): void {
 
   server.tool(
     'upload_image',
-    'Download an image from a URL and add it to the media library. The bytes must be a JPEG, PNG, GIF, WebP or AVIF (checked from the file itself, not the declared type; SVG is refused), at most 25 MiB and 40 megapixels. Identical bytes already in the same folder under the same name are reused instead of uploaded again (`reused: true`). `warnings` reports thumbnails that could not be generated.',
+    'Import an image from a public https URL into the media library, stored in Oxy Files (which fetches it). The bytes must be a JPEG, PNG, GIF, WebP or AVIF (checked from the file itself, not the declared type; SVG is refused), at most 40 MiB and 40 megapixels. Identical bytes already in the same folder under the same name are reused instead of stored again (`reused: true`). Thumbnails are Oxy renditions; `warnings` reports dimensions that could not be read.',
     {
       url: sourceUrlInput.describe('Source URL of the image to download'),
       filename: z
@@ -172,9 +170,9 @@ export function registerMediaTools(server: ToolRegistrar): void {
     },
     async (params, context) => {
       try {
-        const { buffer } = await downloadRemote(params.url, { signal: context.signal });
-        const result = await ingestImage({
-          buffer,
+        const result = await ingestRemoteImage({
+          sourceUrl: params.url,
+          signal: context.signal,
           filename: params.filename ?? filenameFromUrl(params.url),
           folder: params.folder ?? 'images',
           alt: params.alt,
@@ -195,7 +193,7 @@ export function registerMediaTools(server: ToolRegistrar): void {
 
   server.tool(
     'upload_and_set_post_cover',
-    "Download an image, add it to the media library and set it as a newsroom post's coverImage, in one step. The post is checked before anything is downloaded; the media row and the post update commit together, and if the post disappears meanwhile nothing is left behind.",
+    "Import an image, add it to the media library and set it as a newsroom post's coverImage, in one step. The post is checked before anything is imported; the media row and the post update commit together, and if the post disappears meanwhile nothing is left behind.",
     {
       postSlug: z.string().min(1).describe('Slug of the post to update'),
       imageUrl: sourceUrlInput.describe('Source URL of the image to download'),
@@ -215,10 +213,10 @@ export function registerMediaTools(server: ToolRegistrar): void {
           .limit(1);
         if (!target) throw notFound('Post', { slug: params.postSlug });
 
-        const { buffer } = await downloadRemote(params.imageUrl, { signal: context.signal });
-        const result = await ingestImage(
+        const result = await ingestRemoteImage(
           {
-            buffer,
+            sourceUrl: params.imageUrl,
+            signal: context.signal,
             filename: params.filename ?? filenameFromUrl(params.imageUrl) ?? 'cover',
             folder: 'newsroom',
             alt: params.alt,
@@ -250,7 +248,7 @@ export function registerMediaTools(server: ToolRegistrar): void {
 
   server.tool(
     'upload_and_set_team_avatar',
-    "Download an image, add it to the media library and set it as a team member's avatar, in one step. The member is checked before anything is downloaded; the media row and the member update commit together.",
+    "Import an image, add it to the media library and set it as a team member's avatar, in one step. The member is checked before anything is imported; the media row and the member update commit together.",
     {
       memberSlug: z.string().min(1).describe('Slug of the team member to update'),
       imageUrl: sourceUrlInput.describe('Source URL of the image to download'),
@@ -266,10 +264,10 @@ export function registerMediaTools(server: ToolRegistrar): void {
           .limit(1);
         if (!target) throw notFound('Team member', { slug: params.memberSlug });
 
-        const { buffer } = await downloadRemote(params.imageUrl, { signal: context.signal });
-        const result = await ingestImage(
+        const result = await ingestRemoteImage(
           {
-            buffer,
+            sourceUrl: params.imageUrl,
+            signal: context.signal,
             filename: params.filename ?? filenameFromUrl(params.imageUrl) ?? 'avatar',
             folder: 'team',
             alt: params.alt,
@@ -317,7 +315,7 @@ export function registerMediaTools(server: ToolRegistrar): void {
 
   server.tool(
     'bulk_upload_post_covers',
-    `Set cover images for up to ${MAX_BULK_ITEMS} newsroom posts in one call, one post at a time. Every item gets its own status: "ok" (cover set), "unchanged" (the post already had exactly this image), "error" (with a code and message) or "skipped" (not started: the call ran out of time or was cancelled). Re-running the same list is safe: finished items come back "unchanged" and are not uploaded again.`,
+    `Set cover images for up to ${MAX_BULK_ITEMS} newsroom posts in one call, one post at a time. Every item gets its own status: "ok" (cover set), "unchanged" (the post already had exactly this image), "error" (with a code and message) or "skipped" (not started: the call ran out of time or was cancelled). Re-running the same list is safe: finished items come back "unchanged" and are not stored again.`,
     {
       posts: z
         .array(
@@ -364,10 +362,10 @@ export function registerMediaTools(server: ToolRegistrar): void {
             continue;
           }
           try {
-            const { buffer } = await downloadRemote(item.imageUrl, { signal: context.signal });
-            const result = await ingestImage(
+            const result = await ingestRemoteImage(
               {
-                buffer,
+                sourceUrl: item.imageUrl,
+                signal: context.signal,
                 filename: filenameFromUrl(item.imageUrl) ?? 'cover',
                 folder: 'newsroom',
                 alt: item.alt,
@@ -425,42 +423,24 @@ export function registerMediaTools(server: ToolRegistrar): void {
 
   server.tool(
     'debug_upload_test',
-    'Maintenance only (enabled with MCP_ENABLE_DIAGNOSTICS). Downloads a URL, stores it under a diagnostics prefix, writes and removes a media row, and deletes the stored object again, reporting which step failed.',
+    "Maintenance only (enabled with MCP_ENABLE_DIAGNOSTICS). Has Oxy Files import an image URL as one of the site's files, writes a media row holding it, then deletes that row again (withdrawing its reference, and deleting the file unless another row uses it), reporting which step failed.",
     {
-      url: sourceUrlInput.describe('URL to test downloading'),
+      url: sourceUrlInput.describe('URL of an image to test importing'),
     },
     async ({ url }, context) => {
       const steps: { step: string; ok: boolean }[] = [];
-      let storedKey: string | null = null;
       let mediaId: string | null = null;
       try {
-        const { buffer } = await downloadRemote(url, { signal: context.signal });
-        steps.push({ step: `download (${buffer.length} bytes)`, ok: true });
-        const cdnUrl = await uploadToSpaces(
-          buffer,
-          'debug-test.bin',
-          'application/octet-stream',
-          'oxy-website/debug',
-        );
-        storedKey = keyFromPublicUrl(cdnUrl);
-        steps.push({ step: 'storage upload', ok: true });
-        const [row] = await db
-          .insert(media)
-          .values({
-            url: cdnUrl,
-            thumbnails: { sm: '', md: '', lg: '' },
-            filename: 'debug-test.bin',
-            key: storedKey ?? '',
-            mimeType: 'application/octet-stream',
-            size: buffer.length,
-            alt: '',
-            tags: ['debug'],
-            folder: 'debug',
-            uploadedBy: context.actorId,
-          })
-          .returning({ id: media._id });
-        mediaId = row.id;
-        steps.push({ step: 'media insert', ok: true });
+        const result = await ingestRemoteImage({
+          sourceUrl: url,
+          signal: context.signal,
+          filename: 'debug-test',
+          folder: 'debug',
+          tags: ['debug'],
+          uploadedBy: context.actorId,
+        });
+        if (!result.reused) mediaId = result.media._id;
+        steps.push({ step: `import and media insert (${result.media.size} bytes)`, ok: true });
         return ok({ success: true, steps });
       } catch (e) {
         const failure = toolError(e);
@@ -468,15 +448,10 @@ export function registerMediaTools(server: ToolRegistrar): void {
         return { ...failure, structuredContent: { ...failure.structuredContent, steps } };
       } finally {
         // Cleanup runs whatever happened above, and its own failure is logged, not
-        // swallowed into a success.
+        // swallowed into a success. A reused row was not this call's to delete.
         if (mediaId)
-          await db
-            .delete(media)
-            .where(eq(media._id, mediaId))
-            .catch((e) => console.error('[mcp] debug_upload_test: media cleanup failed', e));
-        if (storedKey)
-          await deleteFromSpaces(storedKey).catch((e) =>
-            console.error('[mcp] debug_upload_test: storage cleanup failed', e),
+          await deleteMedia(mediaId, { force: true }).catch((e) =>
+            console.error('[mcp] debug_upload_test: media cleanup failed', e),
           );
       }
     },

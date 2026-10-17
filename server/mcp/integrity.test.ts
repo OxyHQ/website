@@ -23,12 +23,14 @@ import {
   data,
   errorCode,
   omit,
+  oxy,
   png,
   remote,
   resetDatabase,
   storage,
 } from '../test/helpers.js';
-import { retryStorageCleanups } from '../services/media.js';
+import { retryReferenceRemovals, retryStorageCleanups } from '../services/media.js';
+import { oxyFileReferenceRemovals } from '../db/schema/index.js';
 
 /* Issue #108, phase A: every scenario here failed, or could not be observed, on
    the code this replaced. */
@@ -335,7 +337,7 @@ describe('F05 · composite uploads succeed completely or leave nothing', () => {
     );
     expect(errorCode(result)).toBe('not_found');
     expect(remote.requested).toEqual([]);
-    expect(storage.objects.size).toBe(0);
+    expect(oxy.files.size).toBe(0);
     expect(await countRows('media')).toBe(0);
   });
 
@@ -347,15 +349,23 @@ describe('F05 · composite uploads succeed completely or leave nothing', () => {
       admin,
     );
     expect(errorCode(result)).toBe('not_found');
-    expect(storage.objects.size).toBe(0);
+    expect(oxy.files.size).toBe(0);
   });
 
-  test('the cover is set, and the media row records the acting account', async () => {
+  test('the cover is set as a file of the application, and the media row records the acting account', async () => {
     const post = await seedPost();
     remote.files.set('https://img.test/cover.png', await png(900, 500));
     const result = data<{
       post: { coverImage: { _id: string } };
-      media: { _id: string; uploadedBy: string; mimeType: string };
+      media: {
+        _id: string;
+        uploadedBy: string;
+        mimeType: string;
+        oxyFileId: string;
+        url: string;
+        thumbnails: { sm: string; md: string; lg: string };
+        width: number;
+      };
     }>(
       await invokeTool(
         'upload_and_set_post_cover',
@@ -366,7 +376,16 @@ describe('F05 · composite uploads succeed completely or leave nothing', () => {
     expect(result.post.coverImage._id).toBe(result.media._id);
     expect(result.media.uploadedBy).toBe('admin-account');
     expect(result.media.mimeType).toBe('image/png');
-    expect(storage.objects.size).toBeGreaterThan(1); // original + thumbnails
+    expect(result.media.width).toBe(900);
+    // Oxy fetched the source; the site wrote nothing to the legacy storage.
+    expect(storage.objects.size).toBe(0);
+    expect(result.media.url).toBe(`https://cloud.test/${result.media.oxyFileId}`);
+    expect(result.media.thumbnails.md).toBe(
+      `https://cloud.test/${result.media.oxyFileId}?variant=w640`,
+    );
+    expect(oxy.referencesOf(result.media.oxyFileId)).toEqual([
+      `${result.media.oxyFileId}|media|${result.media._id}`,
+    ]);
   });
 
   test('a post deleted between the check and the save leaves no row and no object', async () => {
@@ -385,8 +404,10 @@ describe('F05 · composite uploads succeed completely or leave nothing', () => {
     expect(errorCode(result)).toBe('not_found');
     expect(remote.requested).toEqual(['https://img.test/race.png']);
     expect(await countRows('media')).toBe(0);
+    // The stored file is used by nothing — Oxy collects it — and nothing is owed.
+    expect(oxy.references.size).toBe(0);
+    expect(await countRows('oxy_file_reference_removals')).toBe(0);
     expect(storage.objects.size).toBe(0);
-    expect(await countRows('storage_cleanups')).toBe(0);
   });
 
   test('the attach step failing inside the transaction rolls back the row and compensates the objects', async () => {
@@ -407,13 +428,38 @@ describe('F05 · composite uploads succeed completely or leave nothing', () => {
     );
     await expect(failure).rejects.toThrow('target vanished');
     expect(await countRows('media')).toBe(0);
-    expect(storage.objects.size).toBe(0);
+    expect(oxy.files.size).toBe(1);
+    expect(oxy.references.size).toBe(0);
+    expect(await countRows('oxy_file_reference_removals')).toBe(0);
   });
 
-  test('a failed storage upload leaves no media row', async () => {
+  test('a reference Oxy will not take leaves no media row', async () => {
+    const post = await seedPost();
+    remote.files.set('https://img.test/r.png', await png(80, 80, 4));
+    oxy.failReferenceAdds = 1;
+    const result = await invokeTool(
+      'upload_and_set_post_cover',
+      { postSlug: post.slug, imageUrl: 'https://img.test/r.png' },
+      admin,
+    );
+    expect(errorCode(result)).toBe('service_unavailable');
+    expect(await countRows('media')).toBe(0);
+    const [row] = await db.select().from(newsroomPosts);
+    expect(row.coverImage).toBeNull();
+  });
+
+  test('a source that is not an image is refused and leaves nothing used', async () => {
+    remote.files.set('https://img.test/page.png', Buffer.from('<html>not an image</html>'));
+    const result = await invokeTool('upload_image', { url: 'https://img.test/page.png' }, admin);
+    expect(errorCode(result)).toBe('invalid_request');
+    expect(await countRows('media')).toBe(0);
+    expect(oxy.references.size).toBe(0);
+  });
+
+  test('a failed store leaves no media row', async () => {
     const post = await seedPost();
     remote.files.set('https://img.test/y.png', await png());
-    storage.failPuts = 1;
+    oxy.failUploads = 1;
     const result = await invokeTool(
       'upload_and_set_post_cover',
       { postSlug: post.slug, imageUrl: 'https://img.test/y.png' },
@@ -477,7 +523,7 @@ describe('F05 · composite uploads succeed completely or leave nothing', () => {
 describe('F06 · deleting media accounts for every object', () => {
   async function uploaded(seed = 1, name = 'pic.png') {
     remote.files.set(`https://img.test/${seed}/${name}`, await png(900, 600, seed));
-    return data<{ _id: string; key: string }>(
+    return data<{ _id: string; oxyFileId: string }>(
       await invokeTool(
         'upload_image',
         { url: `https://img.test/${seed}/${name}`, folder: 'images' },
@@ -486,37 +532,96 @@ describe('F06 · deleting media accounts for every object', () => {
     );
   }
 
-  test('a clean delete removes the row and every object', async () => {
+  /** A row written before Oxy Files: an original and a thumbnail in the legacy storage. */
+  async function legacyRow(seed = 1) {
+    const buffer = await png(400, 300, seed);
+    const key = `oxy-website/images/legacy-${seed}.png`;
+    const thumbKey = `oxy-website/images/thumbs/legacy-${seed}-sm.jpg`;
+    storage.objects.set(key, { size: buffer.length, contentType: 'image/png', buffer });
+    storage.objects.set(thumbKey, { size: 1, contentType: 'image/jpeg', buffer: Buffer.from([1]) });
+    const [row] = await db
+      .insert(media)
+      .values({
+        url: `https://cdn.test/${key}`,
+        key,
+        thumbnails: { sm: `https://cdn.test/${thumbKey}`, md: '', lg: '' },
+        filename: `legacy-${seed}.png`,
+        mimeType: 'image/png',
+        size: buffer.length,
+      })
+      .returning();
+    return row;
+  }
+
+  test('a clean delete withdraws the reference and deletes the file', async () => {
     const row = await uploaded();
-    const result = data<{ storage: { status: string; pendingKeys: string[] } }>(
+    const result = data<{ storage: { status: string; oxyFile: { file: string } } }>(
       await invokeTool('delete_media', { id: row._id }, admin),
     );
     expect(result.storage.status).toBe('complete');
-    expect(storage.objects.size).toBe(0);
+    expect(result.storage.oxyFile.file).toBe('deleted');
+    expect(oxy.references.size).toBe(0);
+    expect(oxy.files.get(row.oxyFileId)?.status).toBe('deleted');
     expect(await countRows('media')).toBe(0);
   });
 
-  test('a storage failure is reported as pending and retried later', async () => {
+  test('an Oxy outage is reported as pending and retried later', async () => {
     const row = await uploaded();
-    storage.failAllDeletes = true;
-    const result = data<{ deleted: boolean; storage: { status: string; pendingKeys: string[] } }>(
-      await invokeTool('delete_media', { id: row._id }, admin),
-    );
+    oxy.failReferenceRemovals = true;
+    const result = data<{
+      deleted: boolean;
+      storage: { status: string; oxyFile: { reference: string; file: string } };
+    }>(await invokeTool('delete_media', { id: row._id }, admin));
     expect(result.deleted).toBe(true);
     expect(result.storage.status).toBe('pending');
-    expect(result.storage.pendingKeys.length).toBeGreaterThan(0);
-    expect(await countRows('storage_cleanups')).toBe(result.storage.pendingKeys.length);
+    expect(result.storage.oxyFile).toMatchObject({ reference: 'pending', file: 'pending' });
+    expect(await countRows('oxy_file_reference_removals')).toBe(1);
+    expect(oxy.references.size).toBe(1);
 
+    oxy.failReferenceRemovals = false;
+    await db.update(oxyFileReferenceRemovals).set({ nextAttemptAt: new Date(0) });
+    expect(await retryReferenceRemovals()).toEqual({ removed: 1, pending: 0 });
+    expect(await countRows('oxy_file_reference_removals')).toBe(0);
+    expect(oxy.references.size).toBe(0);
+    expect(oxy.files.get(row.oxyFileId)?.status).toBe('deleted');
+  });
+
+  test('a file another media row holds is kept, with the other row reference', async () => {
+    const row = await uploaded();
+    const twin = data<{ _id: string; oxyFileId: string }>(
+      await invokeTool(
+        'upload_image',
+        { url: 'https://img.test/1/pic.png', folder: 'team', filename: 'copy' },
+        admin,
+      ),
+    );
+    expect(twin.oxyFileId).toBe(row.oxyFileId);
+    const result = data<{ storage: { oxyFile: { file: string } } }>(
+      await invokeTool('delete_media', { id: row._id }, admin),
+    );
+    expect(result.storage.oxyFile.file).toBe('shared');
+    expect(oxy.files.get(row.oxyFileId)?.status).toBe('active');
+    expect(oxy.referencesOf(row.oxyFileId)).toEqual([`${row.oxyFileId}|media|${twin._id}`]);
+  });
+
+  test('a legacy row still deletes its objects, and a failure is queued and retried', async () => {
+    const row = await legacyRow();
+    storage.failAllDeletes = true;
+    const result = data<{ storage: { status: string; pendingKeys: string[] } }>(
+      await invokeTool('delete_media', { id: row._id }, admin),
+    );
+    expect(result.storage.status).toBe('pending');
+    expect(result.storage.pendingKeys.sort()).toEqual(
+      ['oxy-website/images/legacy-1.png', 'oxy-website/images/thumbs/legacy-1-sm.jpg'].sort(),
+    );
     storage.failAllDeletes = false;
     await db.update(storageCleanups).set({ nextAttemptAt: new Date(0) });
-    const sweep = await retryStorageCleanups();
-    expect(sweep.deleted).toBe(result.storage.pendingKeys.length);
-    expect(await countRows('storage_cleanups')).toBe(0);
+    expect((await retryStorageCleanups()).deleted).toBe(2);
     expect(storage.objects.size).toBe(0);
   });
 
-  test('an object shared with another media row is kept', async () => {
-    const row = await uploaded();
+  test('a legacy object shared with another media row is kept', async () => {
+    const row = await legacyRow();
     const [twin] = await db.select().from(media).where(eq(media._id, row._id));
     await db.insert(media).values(omit(twin, '_id'));
     const result = data<{ storage: { sharedKeys: string[]; deletedKeys: string[] } }>(
@@ -524,7 +629,24 @@ describe('F06 · deleting media accounts for every object', () => {
     );
     expect(result.storage.sharedKeys).toContain(row.key);
     expect(result.storage.deletedKeys).toEqual([]);
-    expect(storage.objects.has(row.key)).toBe(true);
+    expect(storage.objects.has(row.key ?? '')).toBe(true);
+  });
+
+  test('a seeded row naming a path the site serves owes no storage delete', async () => {
+    const [row] = await db
+      .insert(media)
+      .values({
+        url: '/images/apps/mention.png',
+        key: 'images/apps/mention.png',
+        filename: 'mention.png',
+        mimeType: 'image/png',
+      })
+      .returning();
+    const result = data<{
+      storage: { status: string; deletedKeys: string[]; pendingKeys: string[] };
+    }>(await invokeTool('delete_media', { id: row._id }, admin));
+    expect(result.storage).toMatchObject({ status: 'complete', deletedKeys: [], pendingKeys: [] });
+    expect(await countRows('storage_cleanups')).toBe(0);
   });
 
   test('media in use is refused with its references unless forced', async () => {
@@ -759,6 +881,7 @@ async function tableCounts(): Promise<Record<string, number>> {
     'pricing_plans',
     'resources',
     'storage_cleanups',
+    'oxy_file_reference_removals',
     'team_members',
     'testimonials',
     'translations',

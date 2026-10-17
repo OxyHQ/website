@@ -49,6 +49,7 @@
     "generate:bloom-live-scope": "bun scripts/generate-bloom-live-scope.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "bun server/db/migrate.ts",
+    "oxy-files": "bun server/scripts/oxy-files.ts",
     "test:links": "bun scripts/internal-links.test.ts",
     "test:ai": "bun test scripts/ai-catalog.test.ts scripts/ai-claims.test.ts scripts/ai-quickstart.test.ts scripts/sales-inquiry.test.ts",
     "test:ai:dist": "bun scripts/ai-dist-guard.ts",

@@ -1,4 +1,4 @@
-import { inArray } from 'drizzle-orm';
+import { and, inArray, isNull } from 'drizzle-orm';
 import { db } from '../db/postgres.js';
 import { media, newsroomPosts, products } from '../db/schema/index.js';
 
@@ -90,7 +90,7 @@ export async function attachSummaryCoverImages(
   const rows = await db
     .select({ _id: media._id, url: media.url, thumbnails: media.thumbnails })
     .from(media)
-    .where(inArray(media._id, ids));
+    .where(and(inArray(media._id, ids), isNull(media.unavailableAt)));
   const byId = new Map(rows.map((row) => [row._id, row]));
 
   for (const post of posts) {

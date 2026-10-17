@@ -20,6 +20,14 @@ function formatBytes(bytes: number): string {
 }
 
 /** A segmented control reads '' as "nothing selected", so "All" has a value of its own here. */
+/** What each Oxy file event that hides an item means, for the editor. */
+const UNAVAILABLE_REASONS: Record<string, string> = {
+  'file.blocked': 'that this file was taken down after a content claim',
+  'file.trashed': 'that this file was moved to trash',
+  'file.deleted': 'that this file was deleted',
+  'file.visibility_changed': 'that this file is no longer public',
+};
+
 const ALL_TYPES = 'all';
 
 const TYPE_FILTERS = [
@@ -114,7 +122,16 @@ export default function MediaAdmin() {
               )}
               <p>
                 <strong>Uploaded:</strong> {formatShortDate(editing.createdAt)}
+                {editing.uploadedBy ? ` by ${editing.uploadedBy}` : ''}
               </p>
+              {editing.unavailableAt && (
+                <p className="text-error-text">
+                  <strong>Hidden on the site:</strong> Oxy reported{' '}
+                  {UNAVAILABLE_REASONS[editing.unavailableReason ?? ''] ??
+                    'that this file is unavailable'}
+                  .
+                </p>
+              )}
               <p>
                 <strong>URL:</strong>{' '}
                 <a
@@ -228,7 +245,7 @@ export default function MediaAdmin() {
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
           {items.map((item) => {
             const thumb = item.thumbnails?.md || item.thumbnails?.sm || item.url;
-            const isImage = item.mimeType?.startsWith('image/');
+            const isImage = item.mimeType?.startsWith('image/') && !item.unavailableAt;
             return (
               <button
                 type="button"
