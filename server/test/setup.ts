@@ -131,6 +131,8 @@ export const oxy = {
   /** What reached the large upload (`uploadAppFileLarge`): its type and name. */
   largeUploads: [] as { mime: string; filename: string }[],
   failUploads: 0,
+  /** The next uploads answer 429, as Oxy's per-minute budget does. */
+  rateLimitUploads: 0,
   failReferenceAdds: 0,
   failReferenceRemovals: false,
   failDeletes: false,
@@ -152,6 +154,7 @@ export const oxy = {
     this.references.clear();
     this.largeUploads = [];
     this.failUploads = 0;
+    this.rateLimitUploads = 0;
     this.failReferenceAdds = 0;
     this.failReferenceRemovals = false;
     this.failDeletes = false;
@@ -226,6 +229,10 @@ mock.module('../services/oxyFilesApi.js', () => ({
     publicUrl: (fileId: string, variant?: string) =>
       `https://cloud.test/${fileId}${variant ? `?variant=${variant}` : ''}`,
     uploadAppFile: async (bytes: Uint8Array, mime: string) => {
+      if (oxy.rateLimitUploads > 0) {
+        oxy.rateLimitUploads -= 1;
+        throw oxyError(429, 'RATE_LIMITED');
+      }
       if (oxy.failUploads > 0) {
         oxy.failUploads -= 1;
         throw oxyError(503, 'SERVICE_UNAVAILABLE');

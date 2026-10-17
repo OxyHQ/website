@@ -1,3 +1,4 @@
+import { DomainError } from '../utils/domainError.js';
 import path from 'node:path';
 import { and, asc, count, eq, gt, isNotNull, isNull, sql } from 'drizzle-orm';
 import { config } from '../config.js';
@@ -351,6 +352,36 @@ async function adoptOrphans(apply: boolean): Promise<MigrationReport['orphans']>
   return result;
 }
 
+/** Oxy meters an application's writes per minute; a 429 is waited out this long. */
+export const RATE_LIMIT_WAIT_MS = 61_000;
+/** Consecutive 429s one call waits out before it is the row's failure. */
+const RATE_LIMIT_ATTEMPTS = 10;
+
+let pause = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/** Tests replace the wait; production waits the full minute. */
+export function setRateLimitPauseForTests(next: (ms: number) => Promise<void>): void {
+  pause = next;
+}
+
+/**
+ * Run an Oxy Files call, waiting out Oxy's per-minute budget: a 429 waits a
+ * minute and makes the SAME call again, so a rate limit is never a row's
+ * outcome (it was reported `unavailable`, and a run moved 30 rows a minute and
+ * failed the rest).
+ */
+async function waitingOutRateLimits<T>(call: () => Promise<T>): Promise<T> {
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      return await call();
+    } catch (error) {
+      const limited = error instanceof DomainError && error.kind === 'rate_limited';
+      if (!limited || attempt >= RATE_LIMIT_ATTEMPTS) throw error;
+      await pause(RATE_LIMIT_WAIT_MS);
+    }
+  }
+}
+
 /** Phase 2 for one row. Never throws: the outcome is the item. */
 async function migrateRow(row: typeof media.$inferSelect, apply: boolean): Promise<MigrationItem> {
   const item: MigrationItem = { mediaId: row._id, status: 'failed' };
@@ -381,7 +412,7 @@ async function migrateRow(row: typeof media.$inferSelect, apply: boolean): Promi
     const isMedia = Boolean(sniffImageType(object.buffer) ?? sniffVideoType(object.buffer));
     let file: StoredFile;
     if (svg) {
-      const stored = await uploadSvgFile(object.buffer, filename);
+      const stored = await waitingOutRateLimits(() => uploadSvgFile(object.buffer, filename));
       if (stored === SVG_NOT_ACCEPTED) {
         // The Oxy API predates stage 4c: the row stays on the legacy storage,
         // recorded as the SVG it is, and the next run carries it over.
@@ -395,8 +426,9 @@ async function migrateRow(row: typeof media.$inferSelect, apply: boolean): Promi
         return await record(row, item, apply);
       }
       file = stored;
-    } else if (isMedia) file = await uploadFile(object.buffer, type, filename);
-    else file = await uploadLargeFile(object.buffer, type, filename);
+    } else if (isMedia)
+      file = await waitingOutRateLimits(() => uploadFile(object.buffer, type, filename));
+    else file = await waitingOutRateLimits(() => uploadLargeFile(object.buffer, type, filename));
     item.oxySha256 = file.sha256;
     item.oxyFileId = file.fileId;
     // Oxy stores an SVG as its sanitized document, whose hash is Oxy's to
@@ -404,7 +436,7 @@ async function migrateRow(row: typeof media.$inferSelect, apply: boolean): Promi
     if (svg) await readBackSvg(file);
     else if (file.sha256 !== item.legacySha256)
       throw new Error('integrity: the SHA-256 values differ');
-    await addMediaReference(file.fileId, row._id);
+    await waitingOutRateLimits(() => addMediaReference(file.fileId, row._id));
     const switched = await db.transaction(async (tx) => {
       const [updated] = await tx
         .update(media)

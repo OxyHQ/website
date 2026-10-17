@@ -15,7 +15,9 @@ export type DomainErrorKind =
   | 'too_large'
   | 'precondition_failed'
   /** A service the operation depends on (Oxy Files) is unreachable; the same call may succeed later. */
-  | 'unavailable';
+  | 'unavailable'
+  /** A service the operation depends on (Oxy Files) refused the rate; the same call succeeds after a wait. */
+  | 'rate_limited';
 
 export class DomainError extends Error {
   constructor(
@@ -35,4 +37,5 @@ export const DOMAIN_ERROR_HTTP_STATUS: Record<DomainErrorKind, number> = {
   too_large: 413,
   precondition_failed: 412,
   unavailable: 503,
+  rate_limited: 429,
 };

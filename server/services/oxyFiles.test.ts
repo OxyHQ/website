@@ -12,7 +12,12 @@ import {
 import { countRows, oxy, png, resetDatabase, storage } from '../test/helpers.js';
 import { ingestUpload } from './media.js';
 import { deleteLegacyObject } from './oxyFiles.js';
-import { legacyStorageCensus, migrateLegacyStorage } from './oxyFilesMigration.js';
+import {
+  legacyStorageCensus,
+  migrateLegacyStorage,
+  RATE_LIMIT_WAIT_MS,
+  setRateLimitPauseForTests,
+} from './oxyFilesMigration.js';
 import { reconcileMediaFiles } from './oxyFilesReconcile.js';
 
 beforeEach(resetDatabase);
@@ -384,6 +389,22 @@ describe('the migration', () => {
     expect(retry.media.migrated).toBe(1);
     const [retried] = await db.select().from(mediaStorageMigrations);
     expect(retried).toMatchObject({ status: 'migrated', attempts: 2 });
+  });
+
+  test("waits out Oxy's per-minute budget and moves the same row, never failing it", async () => {
+    const row = await legacyRow('a.png', await png(300, 200, 1));
+    const waits: number[] = [];
+    setRateLimitPauseForTests(async (ms) => {
+      waits.push(ms);
+    });
+    oxy.rateLimitUploads = 2;
+
+    const report = await migrateLegacyStorage({ apply: true });
+
+    expect(report.media).toEqual({ migrated: 1, would_migrate: 0, deferred: 0, failed: 0 });
+    expect(waits).toEqual([RATE_LIMIT_WAIT_MS, RATE_LIMIT_WAIT_MS]);
+    const [after] = await db.select().from(media).where(eq(media._id, row._id));
+    expect(after.oxyFileId).toBeTruthy();
   });
 
   test('each row takes the type its bytes prove: misrecorded images, documents and SVGs', async () => {

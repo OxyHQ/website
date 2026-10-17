@@ -35,6 +35,7 @@ export interface TestOxy {
   references: Set<string>;
   largeUploads: { mime: string; filename: string }[];
   failUploads: number;
+  rateLimitUploads: number;
   failReferenceAdds: number;
   failReferenceRemovals: boolean;
   failDeletes: boolean;
