@@ -1,5 +1,6 @@
 import { afterAll, afterEach, describe, expect, test } from 'bun:test';
-import { readFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
@@ -240,4 +241,51 @@ describe('migrateUnderLock', () => {
     expect(run.waitedMs).toBeLessThan(500);
     expect((await journal(url)).length).toBe(1);
   });
+
+  test('commits each migration on its own and retries one whose lock is held', async () => {
+    const url = await freshDatabase();
+    const folder = mkdtempSync(path.join(tmpdir(), 'website-migration-lock-'));
+    try {
+      const files = [
+        { tag: '0000_cold', when: 1_000, sql: 'create table cold (id int);' },
+        { tag: '0001_hot', when: 2_000, sql: 'alter table hot add column note text;' },
+      ];
+      mkdirSync(path.join(folder, 'meta'));
+      writeFileSync(
+        path.join(folder, 'meta', '_journal.json'),
+        JSON.stringify({
+          version: '7',
+          dialect: 'postgresql',
+          entries: files.map(({ tag, when }, idx) => ({ idx, tag, when, breakpoints: true })),
+        }),
+      );
+      for (const file of files) writeFileSync(path.join(folder, `${file.tag}.sql`), file.sql);
+
+      // A reader holds ACCESS SHARE on the table 0001 alters, past lock_timeout.
+      const holder = connect(url);
+      await holder`create table hot (id int)`;
+      const reserved = await holder.reserve();
+      await reserved`begin`;
+      await reserved`lock table hot in access share mode`;
+      const released = new Promise((resolve) => setTimeout(resolve, 4_000)).then(async () => {
+        // 0000 committed on its own while 0001 waited.
+        expect((await journal(url)).map((row) => row.created_at)).toEqual(['1000']);
+        await reserved`rollback`;
+        reserved.release();
+      });
+
+      const logs: string[] = [];
+      await migrateUnderLock({
+        connectionString: url,
+        migrationsFolder: folder,
+        log: (line) => logs.push(line),
+      });
+      await released;
+
+      expect((await journal(url)).map((row) => row.created_at)).toEqual(['1000', '2000']);
+      expect(logs.some((line) => line.includes('0001_hot: lock not available'))).toBe(true);
+    } finally {
+      rmSync(folder, { recursive: true, force: true });
+    }
+  }, 60_000);
 });

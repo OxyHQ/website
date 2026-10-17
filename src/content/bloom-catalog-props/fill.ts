@@ -11,8 +11,18 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
       ],
     },
+    'SurfaceFadeProps': {
+      props: [
+        { name: 'edge', type: "'bottom' | 'top' | 'start' | 'end'", options: ['bottom', 'top', 'start', 'end'], optional: true, description: 'The edge that ends in the surface colour. Defaults to `bottom`.' },
+        { name: 'size', type: 'number', optional: true, description: 'How far the fade reaches from that edge: a fraction of the container (`0.5`, the default) when 1 or less, else points.' },
+        { name: 'color', type: 'string', optional: true, description: 'The colour to end in. Defaults to the surface it sits on (`useSurfaceFill()`).' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'Fill', propsType: 'Fill' },
+    { name: 'SurfaceFade', propsType: 'SurfaceFadeProps' },
   ],
 }

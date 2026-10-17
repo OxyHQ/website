@@ -64,7 +64,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
         { name: 'navigationPlacement', type: 'AppShellNavigationPlacement', options: ['auto', 'bottom', 'rail', 'sidebar'], optional: true },
         { name: 'bottomActionBehavior', type: "'hide' | 'visible'", options: ['hide', 'visible'], optional: true, description: 'Bottom action follows scroll collapse by hiding (default), or remains visible.' },
-        { name: 'scroll', type: "AppShellScroll | 'auto' | 'external'", options: ['auto', 'container', 'document', 'fixed', 'external'], optional: true, description: 'Web defaults to document; native to auto. Explicit auto owns a ScrollView. external: the child list owns scrolling; avoids nested virtualized lists.' },
+        { name: 'scroll', type: "AppShellScroll | 'auto' | 'external'", options: ['auto', 'page', 'container', 'document', 'fixed', 'external'], optional: true, description: 'Web defaults to document; native to auto. Explicit auto owns a ScrollView. external: the child list owns scrolling; avoids nested virtualized lists.' },
         { name: 'primaryAction', type: "import('../fab/types').FabProps", optional: true },
       ],
     },

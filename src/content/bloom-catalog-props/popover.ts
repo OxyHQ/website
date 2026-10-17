@@ -10,8 +10,9 @@ export const props: BloomSurfaceProps = {
         { name: 'open', type: 'boolean', optional: true, description: 'Controlled open state. Omit for an uncontrolled surface.' },
         { name: 'defaultOpen', type: 'boolean', optional: true, description: 'Initial open state when uncontrolled. Defaults to `false`.' },
         { name: 'onOpenChange', type: '(open: boolean) => void', optional: true, description: 'Called whenever the surface opens or closes, from any cause.' },
+        { name: 'modal', type: 'boolean', optional: true, description: 'Whether an outside press is CAUGHT or passed through. Defaults to `true`.' },
       ],
-      inheritsFrom: ['React.PropsWithChildren<OverlayOpenProps>'],
+      inheritsFrom: ['React.PropsWithChildren<OverlayOpenProps & { modal?: boolean; }>'],
     },
     'OverlayTriggerProps': {
       props: [

@@ -21,6 +21,9 @@ export const props: BloomSurfaceProps = {
     },
     'ScreenScrollViewProps': {
       props: [
+        { name: 'contentContainerClassName', type: 'string', optional: true, description: "Utilities for the content container, resolved by Bloom's own interop." },
+        { name: 'onEndReached', type: '() => void', optional: true, description: 'Called once each time the end of the content comes within `onEndReachedThreshold` viewports — on native from the scroll view, in a web `Screen documentScroll` from the window. Re-arms when the user scrolls back out of range or the content changes length, so a page that arrives still short of the viewport asks for the next one. Guard on your own in-flight flag.' },
+        { name: 'onEndReachedThreshold', type: 'number', optional: true, description: 'Viewport-relative distance from the end that fires `onEndReached`. Default 2, as `FlatList`.' },
         { name: 'active', type: 'boolean', optional: true, description: 'Only the focused screen/list may drive chrome.' },
         { name: 'restoration', type: 'ScrollRestorationBinding', optional: true, description: 'Existing restoration binding for this same scroll ref.' },
         { name: 'handler', type: 'ScrollHandlerProcessed | null', optional: true },
