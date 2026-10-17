@@ -1,5 +1,18 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import {
+  DEFAULT_LOCK_ATTEMPTS,
+  DEFAULT_LOCK_RETRY_BASE_DELAY_MS,
+  DEFAULT_LOCK_RETRY_MAX_DELAY_MS,
+  DEFAULT_LOCK_TIMEOUT_MS,
+  DEFAULT_STATEMENT_TIMEOUT_MS,
+  isLockContention,
+  lockRetryDelayMs,
+  readMigrationStatementTimeouts,
+} from '@oxy.so/db/migrate';
+import { sql } from 'drizzle-orm';
+import { readMigrationFiles } from 'drizzle-orm/migrator';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 
 /* ──────────────────────────────────────────────
@@ -23,6 +36,14 @@ import postgres from 'postgres';
  * `DATABASE_URL` is the RDS instance directly (postgres.internal.oxy.so is a
  * CNAME to it), not a transaction-mode pooler, so a session lock means what it
  * says.
+ *
+ * Under the lock, each pending migration commits in its OWN transaction, with
+ * a short lock_timeout and a bounded statement_timeout, and is retried with
+ * backoff when its locks do not come — the contract `@oxy.so/db` gives every
+ * Oxy backend (oxy#1778). drizzle's `migrate()` applies every pending
+ * migration in ONE transaction, so the first migration's ACCESS EXCLUSIVE lock
+ * would be held, and every reader of that table queued behind it, until the
+ * last one committed: the 2026-10-16 outage on the shared RDS.
  * ──────────────────────────────────────────── */
 
 /**
@@ -161,7 +182,7 @@ export async function migrateUnderLock(options: MigrateUnderLockOptions): Promis
     if (lockedAt - started > pollMs)
       log(`[db] migration lock acquired after ${Math.round((lockedAt - started) / 1000)}s`);
 
-    await migrate(drizzle(client), { migrationsFolder });
+    await applyPendingMigrations(client, migrationsFolder, log);
     const migratedAt = Date.now();
 
     // Belt and braces for the connection-loss guard above: the migrations just
@@ -198,4 +219,88 @@ export async function migrateUnderLock(options: MigrateUnderLockOptions): Promis
       // Best effort: nothing to do if the connection is already gone.
     });
   }
+}
+
+const LEDGER = sql`"drizzle"."__drizzle_migrations"`;
+
+/**
+ * drizzle's `migrate()`, one migration per transaction.
+ *
+ * Pending is decided exactly as drizzle decides it — every journal entry whose
+ * `when` is newer than the ledger's newest `created_at` when the run starts —
+ * and each is applied as drizzle applies one: its statements, then its ledger
+ * row (same hash, same `created_at`), so the ledger is indistinguishable from
+ * a drizzle run's. Runs on `client`, the session that holds the advisory lock.
+ */
+export async function applyPendingMigrations(
+  client: postgres.Sql,
+  migrationsFolder: string,
+  log: (line: string) => void,
+): Promise<string[]> {
+  const journal = JSON.parse(
+    readFileSync(path.join(migrationsFolder, 'meta', '_journal.json'), 'utf8'),
+  ) as { entries: { tag: string; when: number }[] };
+  const tags = journal.entries.map((entry) => entry.tag);
+  const timeouts = readMigrationStatementTimeouts(tags, migrationsFolder);
+  if (timeouts.problems.length > 0) {
+    throw new Error(`[db] illegible statement-timeout marker(s): ${timeouts.problems.join('; ')}`);
+  }
+  const files = readMigrationFiles({ migrationsFolder });
+
+  const db = drizzle(client);
+  await db.execute(sql`CREATE SCHEMA IF NOT EXISTS "drizzle"`);
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS ${LEDGER} (
+      id SERIAL PRIMARY KEY,
+      hash text NOT NULL,
+      created_at bigint
+    )
+  `);
+  const [last] = await client<{ created_at: string }[]>`
+    select created_at::text from "drizzle"."__drizzle_migrations" order by created_at desc limit 1`;
+  const newest = last ? Number(last.created_at) : Number.NEGATIVE_INFINITY;
+
+  const applied: string[] = [];
+  for (const [index, migration] of files.entries()) {
+    if (migration.folderMillis <= newest) continue;
+    const tag = tags[index] ?? String(migration.folderMillis);
+    const statementTimeoutMs =
+      timeouts.statementTimeoutsMs.get(tag) ?? DEFAULT_STATEMENT_TIMEOUT_MS;
+    for (let attempt = 1; ; attempt += 1) {
+      const startedAt = Date.now();
+      try {
+        await client.unsafe(`set lock_timeout = '${DEFAULT_LOCK_TIMEOUT_MS}ms'`);
+        await client.unsafe(`set statement_timeout = '${statementTimeoutMs}ms'`);
+        await db.transaction(async (tx) => {
+          for (const statement of migration.sql) await tx.execute(sql.raw(statement));
+          await tx.execute(
+            sql`insert into ${LEDGER} ("hash", "created_at") values (${migration.hash}, ${migration.folderMillis})`,
+          );
+        });
+        log(`[db] applied ${tag} in ${Date.now() - startedAt}ms`);
+        break;
+      } catch (error) {
+        if (!isLockContention(error)) throw error;
+        if (attempt >= DEFAULT_LOCK_ATTEMPTS) {
+          throw new Error(
+            `[db] ${tag} could not take its locks within ${DEFAULT_LOCK_TIMEOUT_MS}ms on any of ${DEFAULT_LOCK_ATTEMPTS} attempts; nothing of it was applied`,
+            { cause: error },
+          );
+        }
+        const delayMs = lockRetryDelayMs(
+          attempt,
+          DEFAULT_LOCK_RETRY_BASE_DELAY_MS,
+          DEFAULT_LOCK_RETRY_MAX_DELAY_MS,
+        );
+        log(
+          `[db] ${tag}: lock not available (attempt ${attempt}); rolled back, retrying in ${delayMs}ms`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+    }
+    applied.push(tag);
+  }
+  await client.unsafe('reset lock_timeout');
+  await client.unsafe('reset statement_timeout');
+  return applied;
 }

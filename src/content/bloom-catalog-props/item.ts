@@ -14,6 +14,8 @@ export const props: BloomSurfaceProps = {
         { name: 'trailing', type: 'React.ReactNode', optional: true, description: 'Trailing slot (chevron, switch, badge, value text, etc.).' },
         { name: 'onPress', type: '() => void', optional: true, description: 'Makes the row pressable.' },
         { name: 'onLongPress', type: '() => void', optional: true, description: 'Long-press handler. Only honored when the row is pressable.' },
+        { name: 'onHoverIn', type: '(event: NativeMouseEvent) => void', optional: true, description: 'The pointer came to rest on a pressable row. A keyboard-driven list (a command palette, a combobox) moves its `highlighted` row here, so pointer and keyboard share one cursor. Only a platform with a real pointer calls it, and a disabled row does not.' },
+        { name: 'onHoverOut', type: '(event: NativeMouseEvent) => void', optional: true, description: 'The pointer left a pressable row. See ItemProps.onHoverIn.' },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'destructive', type: 'boolean', optional: true, description: "Render the title in the theme's negative/error color." },
         { name: 'selected', type: 'boolean', optional: true, description: 'Selected state — applies a subtle highlighted background. Useful when `Item` is used as an option inside an overlay (combobox, command, menu).' },

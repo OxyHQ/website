@@ -12,6 +12,7 @@ export const props: BloomSurfaceProps = {
         { name: 'overlayOpacity', type: 'number', optional: true, description: 'How hard the image is dimmed, `0`–`1`. Default `0.55` in light, `0.62` in dark. This is what keeps an unknown photo from swallowing a bubble, so lowering it is a legibility decision, not a taste one.' },
         { name: 'tint', type: 'string', optional: true, description: "Overrides the pattern's ink. Default: a faint step off the neutral ramp." },
         { name: 'patternOpacity', type: 'number', optional: true, description: "The pattern's opacity. Default `0.5`." },
+        { name: 'patternImage', type: 'ChatBackgroundPatternImage | null', optional: true, description: "`pattern` only: the caller's own tile, drawn instead of Bloom's glyphs." },
         { name: 'colors', type: 'string[]', optional: true, description: 'Overrides the gradient stops. 2+ colours.' },
         { name: 'children', type: 'ReactNode', optional: true, description: 'The transcript. Drawn above the wallpaper.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

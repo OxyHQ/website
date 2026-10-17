@@ -15,6 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'description', type: 'string', optional: true, description: 'Optional description shown below the label.' },
         { name: 'size', type: 'CheckboxSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Size preset.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Whether the checkbox is disabled.' },
+        { name: 'readOnly', type: 'boolean', optional: true, description: 'Shows the state without taking input: the box and label at full strength (not dimmed like `disabled`), no press, hover or keyboard focus, and announced as a read-only checkbox. For a checkmark in a published, read-only page. `onCheckedChange` is never called.' },
         { name: 'indeterminate', type: 'boolean', optional: true, description: 'Whether the checkbox is in an indeterminate state.' },
         { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true, description: 'Semantic color when checked. Uses theme primary by default.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

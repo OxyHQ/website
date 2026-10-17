@@ -147,7 +147,8 @@ export const props: BloomSurfaceProps = {
     'CloseButtonProps': {
       props: [
         { name: 'className', type: 'string', optional: true, description: 'Utility classes applied to the control laid out by its parent.' },
-        { name: 'onPress', type: '() => void', optional: true },
+        { name: 'onPress', type: '(event: GestureResponderEvent) => void', optional: true, description: 'Called on press, with the press event.' },
+        { name: 'stopPropagation', type: 'boolean', optional: true, description: "Keep the press from also activating a pressable parent: the dismiss X on a pressable card or row. Default false, like `Button`'s." },
         { name: 'size', type: "'2xs' | 'xs' | 'sm' | 'md' | 'lg'", options: ['2xs', 'xs', 'sm', 'md', 'lg'], optional: true, description: '`2xs` 16 · `xs` 20 (default) · `sm` 24 · `md` 32.' },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: false, description: 'Required — the control draws no text.' },
