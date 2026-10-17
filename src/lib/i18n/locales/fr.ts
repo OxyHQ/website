@@ -1341,6 +1341,112 @@ const fr: Translations = {
       accurate: 'Confirmez que les informations sont exactes',
       signature: 'Saisissez votre nom complet en guise de signature',
     },
+    counterNoticePrompt: 'Votre propre contenu a été retiré après un signalement ?',
+    counterNoticeLink: 'Envoyer une contre-notification',
+    counterNotice: {
+      title: 'Envoyer une contre-notification',
+      intro:
+        'Si nous avons retiré un contenu que vous avez publié sur un service Oxy à la suite d’une réclamation et que vous pensez qu’il s’agit d’une erreur ou d’une mauvaise identification, vous pouvez nous demander de le rétablir. Une personne examine chaque contre-notification.',
+      signInRequired:
+        'Connectez-vous avec le compte Oxy qui a publié le contenu. Seul ce compte peut contester son retrait.',
+      signIn: 'Se connecter',
+      signedInAs:
+        'Connecté en tant que @{handle}. Seul un contenu publié par ce compte peut être contesté ici.',
+      signedInAsAccount:
+        'Seul un contenu publié par le compte avec lequel vous êtes connecté peut être contesté ici.',
+      sectionClaim: 'Quel retrait contestez-vous ?',
+      reference: 'Référence de la réclamation',
+      referenceHelp:
+        'La référence figurant dans l’e-mail que nous vous avons envoyé, par exemple OXY-7K3M-9Q2D.',
+      fileIds: 'Identifiants des fichiers retirés',
+      fileIdsHelp:
+        'Un par ligne, jusqu’à {maxFileIds}. Utilisez-les si vous n’avez pas de référence, ou pour ne contester que certains fichiers.',
+      sectionMaterial: 'Le contenu',
+      materialDescription: 'Qu’est-ce qui a été retiré ?',
+      materialDescriptionHelp:
+        'Au moins {minMaterial} caractères. Décrivez la photo, la vidéo, le texte ou tout autre élément.',
+      materialLocation: 'Où apparaissait-il avant d’être retiré ?',
+      materialLocationHelp:
+        'Un lien, ou l’endroit où il se trouvait dans l’application, par exemple une publication de votre profil.',
+      explanation: 'Pourquoi ce retrait est-il une erreur ?',
+      explanationHelp:
+        'Au moins {minExplanation} caractères. Expliquez pourquoi l’élément a été retiré par erreur ou mal identifié, par exemple parce qu’il vous appartient ou que vous avez l’autorisation de l’utiliser.',
+      sectionYou: 'Vous concernant',
+      youHelp:
+        'La loi exige votre nom complet, votre adresse postale et votre numéro de téléphone dans une contre-notification.',
+      name: 'Nom légal complet',
+      phone: 'Téléphone',
+      address: 'Adresse postale',
+      statementsEnglish:
+        'Les déclarations sont enregistrées dans leur version anglaise, affichée sous chacune d’elles.',
+      statementPerjury:
+        'Je jure, sous peine de parjure, croire de bonne foi que l’élément identifié ci-dessus a été retiré ou désactivé à la suite d’une erreur ou d’une mauvaise identification de l’élément à retirer ou à désactiver.',
+      statementJurisdiction:
+        'J’accepte la compétence du tribunal fédéral de district du district judiciaire où se trouve mon adresse ou, si mon adresse est située hors des États-Unis, de tout district judiciaire où Oxy peut être trouvée.',
+      statementServiceOfProcess:
+        'J’accepterai la signification des actes de procédure de la part de la personne qui a envoyé la notification de la contrefaçon alléguée, ou d’un mandataire de cette personne.',
+      statementDisclosure:
+        'Je comprends qu’Oxy envoie une copie de cette contre-notification, avec mon nom et mes coordonnées, à la personne qui a fait la réclamation, comme la loi l’exige.',
+      warning:
+        'Affirmer sciemment et faussement qu’un élément a été retiré par erreur peut engager votre responsabilité.',
+      signatureHelp:
+        'Saisissez votre nom légal complet. Il vaut signature de cette contre-notification.',
+      privacyNotice:
+        'Nous utilisons ce que vous envoyez pour examiner cette contre-notification. Pour une réclamation de droit d’auteur, nous en envoyons une copie, avec votre nom et vos coordonnées, à la personne qui a fait la réclamation.',
+      submit: 'Envoyer la contre-notification',
+      submitSignIn: 'Se connecter pour envoyer',
+      submitting: 'Envoi…',
+      ambiguous:
+        'Ces fichiers ont été retirés à la suite de plusieurs réclamations. Saisissez la référence de celle que vous contestez.',
+      errorTitle: 'Nous n’avons pas pu envoyer votre contre-notification',
+      errorBody:
+        'Rien de ce que vous avez saisi n’a été perdu. Réessayez, ou écrivez à {email} si le problème persiste.',
+      rateLimitedTitle: 'Trop de contre-notifications en peu de temps',
+      rateLimitedBody:
+        'Patientez un moment, puis renvoyez-la. Votre contre-notification est toujours remplie ci-dessous.',
+      rateLimitedBodyAt:
+        'Vous pourrez la renvoyer après {time}. Votre contre-notification est toujours remplie ci-dessous.',
+      notFoundTitle: 'Aucun retrait à contester',
+      notFoundBody:
+        'Aucune réclamation n’a retiré de contenu du compte avec lequel vous êtes connecté sous cette référence ou pour ces fichiers. Vérifiez la référence de notre e-mail et que vous êtes connecté avec le compte qui a publié le contenu, ou écrivez à {email}.',
+      alreadySentTitle: 'Vous avez déjà envoyé une contre-notification',
+      alreadySentBody:
+        'Ce compte a déjà contesté cette réclamation et une personne l’examine. Écrivez à {email} en citant la référence pour ajouter quelque chose.',
+      notDisputableTitle: 'Cette réclamation ne peut pas être contestée pour le moment',
+      notDisputableBody:
+        'Une contre-notification ne peut être envoyée qu’une fois le contenu retiré et tant que la réclamation est ouverte. Écrivez à {email} en citant la référence si vous pensez qu’il s’agit d’une erreur.',
+      signedOutTitle: 'Connectez-vous pour envoyer votre contre-notification',
+      signedOutBody:
+        'Votre session a expiré. Reconnectez-vous avec le compte qui a publié le contenu ; votre contre-notification est toujours remplie ci-dessous.',
+      successTitle: 'Contre-notification reçue',
+      successReference: 'Elle répond à la réclamation {reference}.',
+      successFilesOne: 'Elle couvre 1 fichier retiré.',
+      successFilesMany: 'Elle couvre {count} fichiers retirés.',
+      successEmail: 'Nous avons envoyé une confirmation à {email}.',
+      successNext:
+        'Une personne de notre équipe va l’examiner. Pour une réclamation de droit d’auteur, nous pouvons rétablir l’élément 10 à 14 jours ouvrés après réception de votre contre-notification, sauf si la personne qui a fait la réclamation nous indique avoir saisi la justice.',
+      errors: {
+        claim: 'Saisissez la référence de la réclamation ou les identifiants des fichiers retirés',
+        reference:
+          'Saisissez la référence telle qu’elle figure dans notre e-mail, par exemple OXY-7K3M-9Q2D',
+        claimId: 'Cette réclamation n’est pas valide',
+        fileIds: 'Saisissez entre 1 et {maxFileIds} identifiants de fichier, un par ligne',
+        name: 'Saisissez votre nom légal complet',
+        address: 'Saisissez votre adresse postale',
+        phone: 'Saisissez un numéro de téléphone où vous joindre',
+        email: 'Saisissez un e-mail auquel nous pouvons répondre',
+        materialDescription: 'Décrivez ce qui a été retiré en au moins {minMaterial} caractères',
+        materialLocation: 'Indiquez où l’élément apparaissait',
+        explanation:
+          'Expliquez pourquoi le retrait est une erreur en au moins {minExplanation} caractères',
+        perjury: 'Confirmez la déclaration faite sous peine de parjure',
+        jurisdiction: 'Confirmez votre acceptation de la compétence du tribunal',
+        serviceOfProcess: 'Confirmez que vous accepterez la signification des actes de procédure',
+        disclosure:
+          'Confirmez que vous comprenez que la personne qui a fait la réclamation en reçoit une copie',
+        signature: 'Saisissez votre nom légal complet comme signature',
+      },
+    },
   },
 };
 

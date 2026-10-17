@@ -35,7 +35,7 @@ export const LEGAL_DOCUMENTS = [
 ] as const;
 
 /**
- * The public "Report content / rights claim" form (ADR 0041 D10 in Oxy core).
+ * The public "Report content / rights claim" form (ADR 0043 D10 in Oxy core).
  * A real page beside the legal collection, not a CMS document: it is not in
  * `LEGAL_DOCUMENTS`, so `LegalPage` never asks the CMS for it and no `/legal/…`
  * migration redirect is invented for a URL that never existed.
@@ -46,6 +46,20 @@ export const REPORT_CONTENT_PAGE = {
   title: 'Report content or a rights claim',
   description:
     'Ask Oxy to remove content that infringes your copyright or trademark, exposes your personal data or breaks the law.',
+} as const;
+
+/**
+ * The owner's counter-notice to a takedown (ADR 0043 D10 in Oxy core): the
+ * signed-in owner of content a claim removed disputes it. A form like
+ * {@link REPORT_CONTENT_PAGE}, outside the CMS collection for the same reason.
+ * `?reference=OXY-XXXX-XXXX` fills in the claim the owner was emailed about.
+ */
+export const COUNTER_NOTICE_PAGE = {
+  slug: 'counter-notice',
+  path: '/transparency/legal/counter-notice',
+  title: 'Send a counter-notice',
+  description:
+    'If Oxy removed your content after a claim and you believe that was a mistake, ask for it to be restored.',
 } as const;
 
 export const TRANSPARENCY_DOCUMENTS = [

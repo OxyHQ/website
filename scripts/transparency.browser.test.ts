@@ -131,9 +131,13 @@ try {
   assert.equal(await page.locator('#documents a[href="/transparency/manifesto/"]').count(), 1);
   await page.screenshot({ path: '/tmp/transparency-desktop.png' });
   await visit('/transparency/legal/', 'Legal documents');
-  assert.equal(await page.locator('#documents ul li').count(), 9);
+  assert.equal(await page.locator('#documents ul li').count(), 10);
   assert.equal(
     await page.locator('#documents a[href="/transparency/legal/report-content/"]').count(),
+    1,
+  );
+  assert.equal(
+    await page.locator('#documents a[href="/transparency/legal/counter-notice/"]').count(),
     1,
   );
   await page.locator('#documents a[href="/transparency/legal/privacy/"]').click();

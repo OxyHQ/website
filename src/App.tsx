@@ -104,6 +104,7 @@ const DevelopersPage = lazy(() => import('./pages/DevelopersPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const LegalPage = lazy(() => import('./pages/LegalPage'));
 const ReportContentPage = lazy(() => import('./pages/ReportContentPage'));
+const CounterNoticePage = lazy(() => import('./pages/CounterNoticePage'));
 const AccountDeletionPage = lazy(() => import('./pages/AccountDeletionPage'));
 const UserProfilePage = lazy(() => import('./pages/UserProfilePage'));
 const UserFollowersPage = lazy(() => import('./pages/UserFollowersPage'));
@@ -476,6 +477,7 @@ function PublicRoutes() {
       {/* A form, not a CMS document; declared before `:section` for readability
           (react-router ranks the static segment first either way). */}
       <Route path="transparency/legal/report-content" element={<ReportContentPage />} />
+      <Route path="transparency/legal/counter-notice" element={<CounterNoticePage />} />
       <Route path="transparency/legal/:section" element={<LegalPage />} />
       <Route path="u/:username" element={<UserProfilePage />} />
       <Route path="u/:username/followers" element={<UserFollowersPage />} />

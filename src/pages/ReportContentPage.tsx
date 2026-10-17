@@ -12,7 +12,7 @@ import Button from '../components/ui/Button';
 import { Link } from '../lib/navigation';
 import { useTranslation } from '../lib/i18n';
 import { OXY_API } from '../lib/oxyApi';
-import { REPORT_CONTENT_PAGE } from '../lib/transparency';
+import { COUNTER_NOTICE_PAGE, REPORT_CONTENT_PAGE } from '../lib/transparency';
 import {
   CLAIMANT_RELATIONSHIPS,
   CONTENT_CLAIM_KINDS,
@@ -29,7 +29,7 @@ import {
 
 /**
  * `/transparency/legal/report-content` — the public intake for rights claims
- * and removal requests (ADR 0041 D10 in Oxy core). Claims are posted to the
+ * and removal requests (ADR 0043 D10 in Oxy core). Claims are posted to the
  * Oxy API's `POST /content-claims` and land in the staff review queue in the
  * console; this page owns only the form.
  *
@@ -562,6 +562,12 @@ export default function ReportContentPage() {
                     {submitting ? t('contentClaim.submitting') : t('contentClaim.submit')}
                   </Button>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  {t('contentClaim.counterNoticePrompt')}{' '}
+                  <Link to={COUNTER_NOTICE_PAGE.path} className="underline underline-offset-4">
+                    {t('contentClaim.counterNoticeLink')}
+                  </Link>
+                </p>
               </div>
             </form>
           </>

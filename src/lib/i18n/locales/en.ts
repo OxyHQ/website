@@ -1585,6 +1585,106 @@ const en = {
       accurate: 'Confirm that the information is accurate',
       signature: 'Type your full name as your signature',
     },
+    counterNoticePrompt: 'Was your own content removed after a report?',
+    counterNoticeLink: 'Send a counter-notice',
+    counterNotice: {
+      title: 'Send a counter-notice',
+      intro:
+        'If we removed content you posted on an Oxy service after a claim, and you believe that was a mistake or a misidentification, you can ask us to restore it. A person reviews every counter-notice.',
+      signInRequired:
+        'Sign in with the Oxy account that posted the content. Only that account can dispute its removal.',
+      signIn: 'Sign in',
+      signedInAs: 'Signed in as @{handle}. Only content this account posted can be disputed here.',
+      signedInAsAccount:
+        'Only content the account you are signed in with posted can be disputed here.',
+      sectionClaim: 'Which removal are you disputing?',
+      reference: 'Claim reference',
+      referenceHelp: 'The reference in the email we sent you, such as OXY-7K3M-9Q2D.',
+      fileIds: 'Removed file IDs',
+      fileIdsHelp:
+        'One per line, up to {maxFileIds}. Use them if you have no reference, or to dispute only some of the files.',
+      sectionMaterial: 'The content',
+      materialDescription: 'What was removed?',
+      materialDescriptionHelp:
+        'At least {minMaterial} characters. Describe the photo, video, text or other material.',
+      materialLocation: 'Where did it appear before it was removed?',
+      materialLocationHelp: 'A link, or where in the app it was, such as a post on your profile.',
+      explanation: 'Why was the removal a mistake?',
+      explanationHelp:
+        'At least {minExplanation} characters. Explain why the material was removed by mistake or misidentified, for example because you own it or have permission to use it.',
+      sectionYou: 'About you',
+      youHelp:
+        'The law requires your full name, postal address and telephone number on a counter-notice.',
+      name: 'Full legal name',
+      phone: 'Telephone',
+      address: 'Postal address',
+      statementsEnglish:
+        'The statements are recorded in their English wording, which is shown under each one.',
+      statementPerjury:
+        'I swear, under penalty of perjury, that I have a good faith belief that the material identified above was removed or disabled as a result of a mistake or misidentification of the material to be removed or disabled.',
+      statementJurisdiction:
+        'I consent to the jurisdiction of the Federal District Court for the judicial district in which my address is located or, if my address is outside of the United States, any judicial district in which Oxy may be found.',
+      statementServiceOfProcess:
+        'I will accept service of process from the person who provided the notification of the claimed infringement, or an agent of such person.',
+      statementDisclosure:
+        'I understand that Oxy sends a copy of this counter-notice, including my name and contact details, to the person who made the claim, as the law requires.',
+      warning:
+        'Knowingly misrepresenting that material was removed by mistake can make you liable for damages.',
+      signatureHelp:
+        'Type your full legal name. It counts as your signature on this counter-notice.',
+      privacyNotice:
+        'We use what you send to review this counter-notice. For a copyright claim we send a copy, including your name and contact details, to the person who made the claim.',
+      submit: 'Send counter-notice',
+      submitSignIn: 'Sign in to send',
+      submitting: 'Sending…',
+      ambiguous:
+        'These files were removed after more than one claim. Enter the reference of the claim you are disputing.',
+      errorTitle: 'We could not send your counter-notice',
+      errorBody: 'Nothing you typed was lost. Try again, or email {email} if it keeps failing.',
+      rateLimitedTitle: 'Too many counter-notices in a short time',
+      rateLimitedBody:
+        'Wait a while, then send again. Your counter-notice is still filled in below.',
+      rateLimitedBodyAt:
+        'You can send again after {time}. Your counter-notice is still filled in below.',
+      notFoundTitle: 'We found no removal to dispute',
+      notFoundBody:
+        'No claim removed content of the account you are signed in with under that reference or those files. Check the reference in our email and that you are signed in with the account that posted the content, or write to {email}.',
+      alreadySentTitle: 'You already sent a counter-notice',
+      alreadySentBody:
+        'This account has already disputed this claim, and a person is reviewing it. Write to {email}, quoting the reference, to add anything.',
+      notDisputableTitle: 'This claim cannot be disputed now',
+      notDisputableBody:
+        'A counter-notice can be sent only once content has been removed and the claim is still open. Write to {email}, quoting the reference, if you think this is wrong.',
+      signedOutTitle: 'Sign in to send your counter-notice',
+      signedOutBody:
+        'Your session has ended. Sign in again with the account that posted the content; your counter-notice is still filled in below.',
+      successTitle: 'Counter-notice received',
+      successReference: 'It answers the claim {reference}.',
+      successFilesOne: 'It covers 1 removed file.',
+      successFilesMany: 'It covers {count} removed files.',
+      successEmail: 'We sent a confirmation to {email}.',
+      successNext:
+        'A person on our team will review it. For a copyright claim, we may restore the material 10 to 14 business days after receiving your counter-notice, unless the person who made the claim tells us they have gone to court.',
+      errors: {
+        claim: 'Enter the claim reference or the IDs of the removed files',
+        reference: 'Enter the reference as it appears in our email, such as OXY-7K3M-9Q2D',
+        claimId: 'This claim is not valid',
+        fileIds: 'Enter between 1 and {maxFileIds} file IDs, one per line',
+        name: 'Enter your full legal name',
+        address: 'Enter your postal address',
+        phone: 'Enter a telephone number we can reach you on',
+        email: 'Enter an email we can reply to',
+        materialDescription: 'Describe what was removed in at least {minMaterial} characters',
+        materialLocation: 'Say where the material appeared',
+        explanation:
+          'Explain why the removal was a mistake in at least {minExplanation} characters',
+        perjury: 'Confirm the statement made under penalty of perjury',
+        jurisdiction: 'Confirm your consent to jurisdiction',
+        serviceOfProcess: 'Confirm that you will accept service of process',
+        disclosure: 'Confirm that you understand the person who made the claim receives a copy',
+        signature: 'Type your full legal name as your signature',
+      },
+    },
   },
 };
 
