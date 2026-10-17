@@ -148,6 +148,8 @@ export function fromOxyFilesError(error: unknown): Error {
     );
   if (status === 413)
     return new DomainError('too_large', 'The file is larger than Oxy Files accepts');
+  if (status === 429 || code === 'RATE_LIMITED')
+    return new DomainError('rate_limited', 'Oxy Files is busy; try again in a minute');
   console.error('[oxy-files] request failed:', status ?? 'no status', code ?? '', error);
   return new DomainError('unavailable', 'Oxy Files is unavailable; try again shortly');
 }
