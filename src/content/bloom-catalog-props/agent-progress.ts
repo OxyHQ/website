@@ -43,7 +43,7 @@ export const props: BloomSurfaceProps = {
         { name: 'loading', type: 'boolean', optional: true, description: 'A decision is being sent: both buttons block and the one pressed shows a spinner.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Card style (width, margins…). Default card is 341 wide, `max-width: 100%`, like `AgentProgress`.' },
         { name: 'testID', type: 'string', optional: true },
-        { name: 'ref', type: 'Ref<View>', optional: true },
+        { name: 'ref', type: 'Ref<ComponentRef<typeof View>>', optional: true },
       ],
     },
   },

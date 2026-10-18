@@ -33,6 +33,7 @@ export const props: BloomSurfaceProps = {
         { name: 'trailing', type: 'React.ReactNode', optional: true, description: "A node after the label and count, inside the tab's chrome (the pill and the underline span it), that is NOT part of the tab's press target: a settings or close icon button. It is the tab's sibling, never its child, so pressing it does not select the tab and no button nests in another. It keeps its own interactivity; the caller disables it with the tab." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true, description: 'Identifier on the interactive tab.' },
       ],
     },
     'TabsContentProps': {

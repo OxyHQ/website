@@ -32,7 +32,7 @@ export const props: BloomSurfaceProps = {
         { name: 'fieldClassName', type: 'string', optional: true },
         { name: 'inputClassName', type: 'string', optional: true },
         { name: 'fieldStyle', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'inputRef', type: 'React.RefObject<TextInput | null> | React.ForwardedRef<TextInput>', optional: true },
+        { name: 'inputRef', type: 'React.RefObject<ComponentRef<typeof TextInput> | null> | React.ForwardedRef<ComponentRef<typeof TextInput>>', optional: true },
       ],
       inheritsFrom: ['Omit<…>'],
     },

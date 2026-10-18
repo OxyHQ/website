@@ -45,7 +45,7 @@ export const props: BloomSurfaceProps = {
     },
     'StatBarProps': {
       props: [
-        { name: 'variant', type: "'progress'", options: ['split', 'progress'], optional: true },
+        { name: 'variant', type: "'progress'", options: ['progress', 'split'], optional: true },
         { name: 'label', type: 'string', optional: false, description: 'Label shown at the top-left of the bar.' },
         { name: 'fillColor', type: 'string', optional: true, description: 'Fill color of the (active portion of the) track.' },
         { name: 'trackColor', type: 'string', optional: true, description: 'Color of the empty/track portion.' },

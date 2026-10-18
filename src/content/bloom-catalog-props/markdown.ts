@@ -15,7 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'className', type: 'string', optional: true },
         { name: 'testID', type: 'string', optional: true },
-        { name: 'ref', type: 'Ref<View>', optional: true },
+        { name: 'ref', type: 'Ref<ComponentRef<typeof View>>', optional: true },
       ],
     },
   },

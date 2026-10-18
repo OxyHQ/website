@@ -11,7 +11,7 @@ export const props: BloomSurfaceProps = {
         { name: 'size', type: 'number', optional: false },
         { name: 'source', type: 'ImageSource', optional: false },
         { name: 'alt', type: 'string', optional: true },
-        { name: 'onError', type: "NativeImageProps['onError']", optional: true },
+        { name: 'onError', type: '(info: BloomImageErrorInfo) => void', optional: true, description: "The image failed to load. Receives `{ error }` — the renderer's message — whichever renderer drew it (expo-image on a device, react-native's `Image` on web)." },
       ],
     },
     'FillProps': {

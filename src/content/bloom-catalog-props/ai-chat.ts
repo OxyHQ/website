@@ -171,6 +171,13 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'AiChatHeaderProps': {
+      props: [
+        { name: 'children', type: 'ReactNode', optional: false, description: "The title, drawn as is and centred: the conversation's participants, say." },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
     'AiChatMobileHeaderProps': {
       props: [
         { name: 'title', type: 'string', optional: false, description: 'The chat\'s name beside the menu button ("Agentic chat").' },
@@ -222,6 +229,7 @@ export const props: BloomSurfaceProps = {
     { name: 'AiChatMessageLine', propsType: 'AiChatMessageLineProps' },
     { name: 'AiChatStrong', propsType: 'AiChatStrongProps' },
     { name: 'AiChatResizeHandle', propsType: 'AiChatResizeHandleProps' },
+    { name: 'AiChatHeader', propsType: 'AiChatHeaderProps' },
     { name: 'AiChatMobileHeader', propsType: 'AiChatMobileHeaderProps' },
     { name: 'AiChatShell', propsType: 'AiChatShellProps' },
   ],

@@ -27,9 +27,17 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'TypographyScopeProps': {
+      props: [
+        { name: 'mode', type: 'TypographyMode', options: ['default', 'system'], optional: true, description: "Change only font family; Bloom's semantic size/weight/spacing scales remain intact." },
+      ],
+      inheritsFrom: ['PropsWithChildren'],
+    },
   },
   components: [
     { name: 'Text', propsType: 'Text' },
+    { name: 'Title', propsType: 'TextProps' },
+    { name: 'Subtitle', propsType: 'TextProps' },
     { name: 'Span', propsType: 'Text' },
     { name: 'H1', propsType: 'TextProps' },
     { name: 'H2', propsType: 'TextProps' },
@@ -43,5 +51,6 @@ export const props: BloomSurfaceProps = {
     { name: 'Small', propsType: 'TextProps' },
     { name: 'Muted', propsType: 'TextProps' },
     { name: 'Blockquote', propsType: 'BlockquoteProps' },
+    { name: 'TypographyScope', propsType: 'TypographyScopeProps' },
   ],
 }

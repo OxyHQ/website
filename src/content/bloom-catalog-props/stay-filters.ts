@@ -186,16 +186,6 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true, description: 'Derives `-<value>` per tile.' },
       ],
     },
-    'SegmentedFilterProps<T>': {
-      props: [
-        { name: 'options', type: 'FilterOption<T>[]', optional: false, description: 'The segments, in order ("Any type", "Room", "Entire home").' },
-        { name: 'value', type: 'T', optional: false },
-        { name: 'onValueChange', type: '(value: T) => void', optional: false },
-        { name: 'accessibilityLabel', type: 'string', optional: false, description: 'Names the radio group. Required: segments name themselves, not the choice.' },
-        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'testID', type: 'string', optional: true },
-      ],
-    },
     'SwitchFilterRowProps': {
       props: [
         { name: 'title', type: 'ReactNode', optional: false },
@@ -234,7 +224,6 @@ export const props: BloomSurfaceProps = {
     { name: 'PriceHistogram', propsType: 'PriceHistogramProps' },
     { name: 'PriceRangeFilter', propsType: 'PriceRangeFilterProps' },
     { name: 'PropertyTypeFilter', propsType: 'PropertyTypeFilterProps<T>' },
-    { name: 'SegmentedFilter', propsType: 'SegmentedFilterProps<T>' },
     { name: 'SwitchFilterRow', propsType: 'SwitchFilterRowProps' },
     { name: 'ToggleChipGroup', propsType: 'ToggleChipGroupProps<T>' },
   ],
