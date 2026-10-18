@@ -64,7 +64,7 @@ export const props: BloomSurfaceProps = {
     'ListingCardGridProps': {
       props: [
         { name: 'children', type: 'ReactNode', optional: false, description: 'The cards. Each child becomes one cell.' },
-        { name: 'columns', type: 'number', optional: true, description: 'A fixed column count. Without it the grid measures its OWN width: 1 column below 640, 2 below 950, 3 below 1280, 4 from there.' },
+        { name: 'columns', type: 'number', optional: true, description: 'A fixed column count. Without it the grid measures its OWN width: 1 column below 500, 2 below 950, 3 below 1280, 4 from there.' },
         { name: 'columnGap', type: 'number', optional: true, description: 'Horizontal gap between cells. Default `24`.' },
         { name: 'rowGap', type: 'number', optional: true, description: 'Vertical gap between rows. Default `40`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

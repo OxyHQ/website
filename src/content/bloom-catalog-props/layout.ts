@@ -27,7 +27,7 @@ export const props: BloomSurfaceProps = {
     },
     'ScrollBarProps': {
       props: [
-        { name: 'target', type: "RefObject<Pick<ScrollView, 'getScrollableNode'> | null>", optional: false, description: 'The scroller this bar belongs to: a `ScrollView` ref (a reanimated one works).' },
+        { name: 'target', type: "RefObject<Pick<ComponentRef<typeof ScrollView>, 'getScrollableNode'> | null>", optional: false, description: 'The scroller this bar belongs to: a `ScrollView` ref (a reanimated one works).' },
         { name: 'scrollbar', type: "Exclude<ScrollAreaScrollbar, 'never'>", options: ['hover', 'scroll', 'always'], optional: true, description: "When the bar shows. Default `'scroll'`." },
         { name: 'size', type: "'sm' | 'md'", options: ['sm', 'md'], optional: true, description: "The bar's thickness: `sm` 4px (default) or `md` 6px." },
         { name: 'horizontal', type: 'boolean', optional: true, description: 'The bar lies along the bottom edge instead of the inline end.' },

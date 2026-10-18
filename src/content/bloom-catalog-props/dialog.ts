@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'DialogProps': {
       props: [
+        { name: 'frame', type: 'DialogScreenFrame', optional: true, description: 'Screen mode: shared header and animated in-place navigation, independent of the router.' },
         { name: 'material', type: "'surface' | 'flat'", options: ['surface', 'flat'], optional: true, description: 'Standard optical surface, or a plain fill without blur/sheen. Default surface.' },
         { name: 'backdrop', type: 'BackdropAppearance', optional: true, description: 'Backdrop paint; the surface continues to own dismissal and layering.' },
         { name: 'transition', type: 'SurfaceTransition', optional: true, description: 'Opt-in timing for panel and backdrop. Live reduced motion settles immediately.' },

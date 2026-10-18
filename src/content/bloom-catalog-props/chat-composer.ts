@@ -42,7 +42,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onEscape', type: '() => void', optional: true, description: "Escape on web (and a suggestion list's dismissal)." },
         { name: 'onEditLast', type: '() => void', optional: true, description: 'Up arrow on an empty draft, on web.' },
         { name: 'showKeyboardHint', type: 'boolean', optional: true, description: 'Draws the keyboard hint line under the bar (web only). Default `false`.' },
-        { name: 'inputRef', type: 'RefObject<TextInput | null>', optional: true, description: 'The field, for focusing it from a reply action.' },
+        { name: 'inputRef', type: 'RefObject<ComponentRef<typeof TextInput> | null>', optional: true, description: 'The field, for focusing it from a reply action.' },
         { name: 'onFocus', type: '() => void', optional: true },
         { name: 'onBlur', type: '() => void', optional: true },
         { name: 'labels', type: 'Partial<ChatComposerLabels>', optional: true },

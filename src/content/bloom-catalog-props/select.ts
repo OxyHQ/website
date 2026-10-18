@@ -54,7 +54,7 @@ export const props: BloomSurfaceProps = {
     },
     'SelectItemProps': {
       props: [
-        { name: 'ref', type: 'React.Ref<View>', optional: true },
+        { name: 'ref', type: 'React.Ref<React.ComponentRef<typeof View>>', optional: true },
         { name: 'value', type: 'string', optional: false },
         { name: 'label', type: 'string', optional: false },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Not choosable: `text-disabled`, `cursor-not-allowed`, no press.' },

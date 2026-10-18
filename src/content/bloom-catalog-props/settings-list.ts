@@ -5,7 +5,7 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'settings-list',
   propTypes: {
-    'SettingsListItemProps': {
+    'GroupedSectionItemProps': {
       props: [
         { name: 'icon', type: 'React.ReactNode', optional: true, description: 'Icon element (e.g. SVG icon component) or Ionicons-style string' },
         { name: 'title', type: 'string', optional: false, description: 'Primary label' },
@@ -17,30 +17,34 @@ export const props: BloomSurfaceProps = {
         { name: 'destructive', type: 'boolean', optional: true, description: 'Destructive action styling (red text)' },
         { name: 'onPress', type: '() => void', optional: true, description: 'Press handler' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Disabled state' },
+        { name: 'accessibilityState', type: 'AccessibilityState', optional: true, description: 'State of the row. Disabled combines with the disabled prop.' },
+        { name: 'testID', type: 'string', optional: true, description: 'Identifier on the interactive row (or static row when no handler is provided).' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Accessibility label override' },
         { name: 'accessibilityHint', type: 'string', optional: true, description: 'Accessibility hint override' },
         { name: 'accessibilityRole', type: "'button' | 'link' | 'none'", options: ['button', 'link', 'none'], optional: true, description: 'Accessibility role override (defaults to button when pressable)' },
         { name: 'leftInset', type: 'number', optional: true, description: 'Left inset to align text when no icon is provided' },
       ],
     },
-    'SettingsListGroupProps': {
+    'GroupedSectionProps': {
       props: [
+        { name: 'radius', type: "CardProps['radius']", options: ['panel', 'radius-0', 'radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max'], optional: true, description: 'Outer corner radius of the clipped group. Defaults to radius-28.' },
+        { name: 'separator', type: "'space' | 'line' | 'none'", options: ['space', 'line', 'none'], optional: true, description: 'Space between rounded rows (default), legacy divider lines, or no separation.' },
         { name: 'title', type: 'string', optional: true, description: 'Optional section header text' },
         { name: 'footer', type: 'string', optional: true, description: 'Optional section footer text' },
         { name: 'children', type: 'React.ReactNode', optional: false, description: 'Group items' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Override group container style' },
-        { name: 'variant', type: 'SettingsListGroupVariant', options: ['plain', 'filled'], optional: true, description: "The surface the group's card paints, named after `Card`'s own variants. `plain` is the `card` colour, which reads as a raised card on a page painted in `background`; `filled` is `backgroundSecondary`." },
+        { name: 'variant', type: 'GroupedSectionVariant', options: ['plain', 'filled'], optional: true, description: 'Explicit legacy fill override. Unset uses the same neutral material as Card/UsageCard.' },
       ],
     },
-    'SettingsListDividerProps': {
+    'GroupedSectionDividerProps': {
       props: [
         { name: 'inset', type: 'number', optional: true, description: 'Inset from left edge to align with text (default: 52)' },
       ],
     },
   },
   components: [
-    { name: 'SettingsListItem', propsType: 'SettingsListItemProps' },
-    { name: 'SettingsListGroup', propsType: 'SettingsListGroupProps' },
-    { name: 'SettingsListDivider', propsType: 'SettingsListDividerProps' },
+    { name: 'SettingsListItem', propsType: 'GroupedSectionItemProps' },
+    { name: 'SettingsListGroup', propsType: 'GroupedSectionProps' },
+    { name: 'SettingsListDivider', propsType: 'GroupedSectionDividerProps' },
   ],
 }

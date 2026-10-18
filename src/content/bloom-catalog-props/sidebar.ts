@@ -85,7 +85,7 @@ export const props: BloomSurfaceProps = {
         { name: 'className', type: 'string', optional: true },
         { name: 'labelClassName', type: 'string', optional: true },
         { name: 'descriptionClassName', type: 'string', optional: true },
-        { name: 'ref', type: 'Ref<View>', optional: true },
+        { name: 'ref', type: 'Ref<ComponentRef<typeof View>>', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'nativeID', type: 'string', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true },
