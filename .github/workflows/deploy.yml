@@ -68,6 +68,9 @@ jobs:
       - run: bun run build
         env:
           VITE_API_URL: https://website-api.oxy.so
+          # prebuild's sync-changelog: an authenticated quota instead of the
+          # runner IP's shared anonymous 60/hour (see checks.yml's review job).
+          GITHUB_TOKEN: ${{ github.token }}
           # The website's PRODUCTION Oxy client id. `App.tsx` falls back to a
           # committed id when this is unset, so a local build works with no
           # configuration — which is exactly why it has to be injected here:
