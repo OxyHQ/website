@@ -12,9 +12,8 @@
  * requires the gate to fail with the words that name the right rule.
  *
  * The cases that must PASS carry as much weight. A gate that fired on a
- * type-only import would put surfaces into the entry-preloaded `vendor-oxy`
- * chunk for types Sucrase erases — the exact cost the derived scope exists to
- * avoid — and a gate that fired on a side-effect import would refuse a
+ * type-only import would ship surfaces for types Sucrase erases — the exact
+ * cost the derived scope exists to avoid — and a gate that fired on a side-effect import would refuse a
  * legitimate one. Each is the only input that tells the real rule from a
  * plausible wrong one.
  *
