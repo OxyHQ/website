@@ -5,13 +5,25 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'layout',
   propTypes: {
-    'BottomEdgeProvider': {
+    'PropsWithChildren<{ inherit?: boolean | undefined; }>': {
+      props: [
+        { name: 'inherit', type: 'boolean', optional: true },
+      ],
+      inheritsFrom: ['PropsWithChildren<{ inherit?: boolean; }>'],
+    },
+    'TopEdgeProvider': {
       props: [],
       inheritsFrom: ['PropsWithChildren'],
     },
     'ProviderProps<SharedValue<number> | null>': {
       props: [],
       inheritsFrom: ['ProviderProps<SharedValue<number> | null>'],
+    },
+    'PropsWithChildren<{ inheritBottomEdge?: boolean | undefined; }>': {
+      props: [
+        { name: 'inheritBottomEdge', type: 'boolean', optional: true },
+      ],
+      inheritsFrom: ['PropsWithChildren<{ inheritBottomEdge?: boolean; }>'],
     },
     'PropsWithChildren<{ scrollY?: SharedValue<number> | undefined; }>': {
       props: [
@@ -27,7 +39,8 @@ export const props: BloomSurfaceProps = {
     },
     'ScrollBarProps': {
       props: [
-        { name: 'target', type: "RefObject<Pick<ComponentRef<typeof ScrollView>, 'getScrollableNode'> | null>", optional: false, description: 'The scroller this bar belongs to: a `ScrollView` ref (a reanimated one works).' },
+        { name: 'target', type: "RefObject<unknown> | 'document'", optional: false, description: 'Existing scroll owner: DOM element, ScrollView or virtualized list ref. No extra viewport is created.' },
+        { name: 'offset', type: 'number', optional: true, description: 'Cross-axis clearance for persistent viewport chrome (document bars).' },
         { name: 'scrollbar', type: "Exclude<ScrollAreaScrollbar, 'never'>", options: ['hover', 'scroll', 'always'], optional: true, description: "When the bar shows. Default `'scroll'`." },
         { name: 'size', type: "'sm' | 'md'", options: ['sm', 'md'], optional: true, description: "The bar's thickness: `sm` 4px (default) or `md` 6px." },
         { name: 'horizontal', type: 'boolean', optional: true, description: 'The bar lies along the bottom edge instead of the inline end.' },
@@ -36,13 +49,13 @@ export const props: BloomSurfaceProps = {
     },
   },
   components: [
-    { name: 'BottomEdgeProvider', propsType: 'BottomEdgeProvider' },
-    { name: 'TopEdgeProvider', propsType: 'BottomEdgeProvider' },
+    { name: 'BottomEdgeProvider', propsType: 'PropsWithChildren<{ inherit?: boolean | undefined; }>' },
+    { name: 'TopEdgeProvider', propsType: 'TopEdgeProvider' },
     { name: 'ScrollOffsetProvider', propsType: 'ProviderProps<SharedValue<number> | null>' },
-    { name: 'ScreenScope', propsType: 'BottomEdgeProvider' },
+    { name: 'ScreenScope', propsType: 'PropsWithChildren<{ inheritBottomEdge?: boolean | undefined; }>' },
     { name: 'HeaderDockProvider', propsType: 'PropsWithChildren<{ scrollY?: SharedValue<number> | undefined; }>' },
     { name: 'StickySection', propsType: 'StickySectionProps' },
-    { name: 'ScrollMetricsProvider', propsType: 'BottomEdgeProvider' },
+    { name: 'ScrollMetricsProvider', propsType: 'TopEdgeProvider' },
     { name: 'ScrollBar', propsType: 'ScrollBarProps' },
   ],
 }

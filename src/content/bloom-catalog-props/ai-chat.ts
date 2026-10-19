@@ -162,8 +162,9 @@ export const props: BloomSurfaceProps = {
     },
     'AiChatResizeHandleProps': {
       props: [
+        { name: 'orientation', type: "'vertical' | 'horizontal'", options: ['vertical', 'horizontal'], optional: true, description: 'Separator orientation; horizontal separators resize panel heights.' },
         { name: 'onResizeStart', type: '() => void', optional: true, description: 'Pointer went down on the grip.' },
-        { name: 'onResize', type: '(dx: number) => void', optional: false, description: 'Horizontal distance from where the drag started, px.' },
+        { name: 'onResize', type: '(dx: number) => void', optional: false, description: 'Distance along the resize axis from the drag start, px.' },
         { name: 'onResizeEnd', type: '() => void', optional: true },
         { name: 'label', type: 'string', optional: true, description: "Names the separator. `'Resize panels'` in English." },
         { name: 'onNudge', type: '(dx: number) => void', optional: true, description: 'Keyboard nudge (web: ←/→ move by 16).' },

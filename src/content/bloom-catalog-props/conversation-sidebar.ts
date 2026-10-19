@@ -52,6 +52,7 @@ export const props: BloomSurfaceProps = {
         { name: 'collapsed', type: 'boolean', optional: true, description: 'Controlled collapsed state.' },
         { name: 'defaultCollapsed', type: 'boolean', optional: true },
         { name: 'onCollapsedChange', type: '(collapsed: boolean) => void', optional: true },
+        { name: 'collapseDisabled', type: 'boolean', optional: true, description: 'Disable the collapse control while the containing layout requires its current size.' },
         { name: 'collapseLabel', type: 'string', optional: true, description: 'Names the collapse control while expanded (`"Collapse sidebar"` in English).' },
         { name: 'expandLabel', type: 'string', optional: true, description: 'Names the same control while collapsed (`"Expand sidebar"` in English).' },
         { name: 'closeLabel', type: 'string', optional: true, description: 'Names the `mobile` close button (`"Close sidebar"` in English).' },

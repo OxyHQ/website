@@ -8,6 +8,8 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
     'A sidebar of conversations needs the account’s chats and agents. See Sidebar for the live panel it is built on.',
   voice:
     'Voice mode drives a live audio session (levels, transcript, mute). Pass it the state of your own voice session.',
+  'app-shell/hooks':
+    'Lightweight readers of the surrounding App Shell and its panels, for lists and route screens. They need a shell around them; see App Shell for the layout they read.',
   appearance:
     'Appearance scope inherited by the live component examples. Configure it around your app or a component subtree.',
   'color-presets': 'Colour preset definitions. See the colour recipes page for rendered palettes.',
@@ -17,6 +19,8 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
   fonts:
     'Font loading infrastructure. It supplies typography rather than rendering a standalone control.',
   hooks: 'Behaviour hooks and haptic configuration for use inside your app.',
+  'markdown/inline':
+    'React-free inline Markdown parsing, visible-length counting and truncation for server and data pipelines. See Markdown for the rendered output.',
   'image-aspect-ratio-cache': 'Image measurement cache with no standalone visual output.',
   'image-resolver':
     'Image resolution provider. Wrap image components with your application’s resolver.',
@@ -26,6 +30,10 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
     'Overlay hosts, backdrops and inert boundaries. See Dialog and Popover for interactive compositions.',
   portal:
     'Portal hosts render content supplied by other components. See Dialog for a complete example.',
+  'panel-routing':
+    'Route matching and slots that let an App Shell panel host its own routes. It needs an application router and a panel layout; see App Shell for the panels it fills.',
+  'panel-routing/expo-router':
+    'Panel routing adapter for an Expo Router application. This documentation uses React Router.',
   'preset-vars': 'Resolved preset variables for styling and server rendering.',
   provider: 'The app-level provider used by these live examples.',
   scroll: 'Scroll restoration requires a router adapter and navigation history.',

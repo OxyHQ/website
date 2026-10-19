@@ -18,8 +18,20 @@ export const props: BloomSurfaceProps = {
         { name: 'ref', type: 'Ref<ComponentRef<typeof View>>', optional: true },
       ],
     },
+    'InlineMarkdownProps': {
+      props: [
+        { name: 'source', type: 'string', optional: true },
+        { name: 'nodes', type: 'never', optional: true },
+        { name: 'streaming', type: 'boolean', optional: true, description: 'Close unfinished trailing Markdown while text is arriving. Ignored with nodes.' },
+        { name: 'onLinkPress', type: '(url: string) => void', optional: true },
+        { name: 'renderText', type: '(text: string) => ReactNode', optional: true, description: 'Enhance plain runs, including inside emphasis; not called inside links or code.' },
+        { name: 'renderLink', type: '(link: InlineMarkdownLink) => ReactNode', optional: true, description: "Custom inline link, or undefined to retain Bloom's default link." },
+        { name: 'suffix', type: 'ReactNode', optional: true, description: 'Inline content after the parsed runs, for example a Read more action.' },
+      ],
+    },
   },
   components: [
     { name: 'Markdown', propsType: 'MarkdownProps' },
+    { name: 'InlineMarkdown', propsType: 'InlineMarkdownProps' },
   ],
 }
