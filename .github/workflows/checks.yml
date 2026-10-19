@@ -303,6 +303,12 @@ jobs:
         run: bun run build
         env:
           VITE_API_URL: https://website-api.oxy.so
+          # prebuild's sync-changelog reads public release lists from the REST
+          # API. Anonymous, that is 60 requests an hour shared by everyone on
+          # the runner's IP, and an exhausted quota fails the build. The script
+          # proves each repo public over anonymous git before it uses a token;
+          # this job's token is read-only.
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Review brand interactions and landing layouts
         run: bun scripts/website-review.browser.test.ts
       # /one against synthetic SDK catalogues only: unconfigured, priced,
