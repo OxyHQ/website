@@ -31,6 +31,7 @@ export const props: BloomSurfaceProps = {
         { name: 'collapsed', type: 'boolean', optional: true, description: 'Controlled collapsed state.' },
         { name: 'defaultCollapsed', type: 'boolean', optional: true },
         { name: 'onCollapsedChange', type: '(collapsed: boolean) => void', optional: true },
+        { name: 'collapseDisabled', type: 'boolean', optional: true, description: 'Disable the collapse control while the containing layout requires its current size.' },
         { name: 'mobile', type: 'boolean', optional: true, description: 'Rendered inside a mobile drawer: always expanded, close button instead of collapse.' },
         { name: 'onClose', type: '() => void', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'The landmark\'s accessible name (`"Sidebar"` in English).' },

@@ -19,9 +19,21 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'ViewStyle | ViewStyle[]', optional: true },
       ],
     },
+    'ResponsiveGridProps': {
+      props: [
+        { name: 'children', type: 'ReactNode', optional: false },
+        { name: 'minItemWidth', type: 'number', optional: true, description: 'Preferred minimum width of a cell. A narrower container uses one full-width cell. Default 320.' },
+        { name: 'maxColumns', type: 'number', optional: true, description: 'Maximum number of columns. Default 2.' },
+        { name: 'gap', type: 'number', optional: true, description: 'Horizontal and vertical space between cells. Default 16.' },
+        { name: 'stretchItems', type: 'boolean', optional: true, description: 'Let participating chart surfaces fill the tallest cell in each multi-column row. Default false.' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Outer container style; padding is excluded from the measured available width.' },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'Row', propsType: 'Row' },
     { name: 'Col', propsType: 'Col' },
+    { name: 'ResponsiveGrid', propsType: 'ResponsiveGridProps' },
   ],
 }

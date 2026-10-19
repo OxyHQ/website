@@ -28,7 +28,7 @@ export const props: BloomSurfaceProps = {
         { name: 'pressed', type: 'boolean', optional: true, description: 'Toggle state, announced on web and native. Omit for ordinary actions.' },
         { name: 'stopPropagation', type: 'boolean', optional: true, description: 'Keep an embedded action from also activating its parent. Default false.' },
         { name: 'appearance', type: 'BloomAppearance', options: ['solid', 'subtle', 'outline', 'plain'], optional: true },
-        { name: 'material', type: "'surface' | 'flat'", options: ['surface', 'flat'], optional: true, description: 'Shared surface paint (default), or a flat semantic fill without sheen, rim or blur.' },
+        { name: 'material', type: "'surface' | 'flat' | 'shared'", options: ['surface', 'flat', 'shared'], optional: true, description: 'Own surface (default), flat fill, or shared material painted by an enclosing control group.' },
         { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'onPress', type: '(event: GestureResponderEvent) => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },

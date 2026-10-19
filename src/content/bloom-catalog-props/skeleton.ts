@@ -5,6 +5,15 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'skeleton',
   propTypes: {
+    'SkeletonRegionProps': {
+      props: [
+        { name: 'children', type: 'ReactNode', optional: true },
+        { name: 'label', type: 'string', optional: true, description: 'Accessible loading description; defaults to the localized Loading message.' },
+        { name: 'testID', type: 'string', optional: true },
+        { name: 'className', type: 'string', optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+      ],
+    },
     'Text': {
       props: [
         { name: 'style', type: 'TextStyle | TextStyle[]', optional: true },
@@ -43,6 +52,7 @@ export const props: BloomSurfaceProps = {
     },
   },
   components: [
+    { name: 'Region', propsType: 'SkeletonRegionProps' },
     { name: 'Text', propsType: 'Text' },
     { name: 'Circle', propsType: 'Circle' },
     { name: 'Pill', propsType: 'Pill' },

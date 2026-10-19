@@ -7,7 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'CountryFlagProps': {
       props: [
-        { name: 'iso2', type: 'string', optional: false, description: 'ISO 3166-1 alpha-2. An unknown code renders nothing.' },
+        { name: 'iso2', type: 'string', optional: false, description: 'Country or supported subdivision flag identifier (`US`, `ES-CT`). Unknown codes render nothing.' },
         { name: 'size', type: 'number', optional: true, description: 'Width in px; the flag is 3:2, so height is two thirds of it. Default `18` (`w-[18px] h-3`).' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Name the flag for assistive tech. Omitted (the default) the flag is DECORATIVE and hidden — right wherever the country name or dial code is written beside it.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

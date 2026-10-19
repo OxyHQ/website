@@ -9,6 +9,9 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'children', type: 'ReactNode', optional: false },
         { name: 'adapter', type: 'ScrollRouterAdapter', optional: false, description: 'Binds the store to a router. Must be referentially stable — see ScrollRouterAdapter.' },
+        { name: 'scopeKey', type: 'string', optional: true, description: 'Change only when replacing a workspace/account, to remount this scroll scope.' },
+        { name: 'initialSnapshot', type: 'ScrollRestorationSnapshot', optional: true, description: 'Read once before descendants render. Remount the scope to load another workspace.' },
+        { name: 'onSnapshotChange', type: '(snapshot: ScrollRestorationSnapshot) => void', optional: true, description: 'Coalesced after scrolling; flushed on navigation, pagehide and unmount. Host owns storage.' },
       ],
     },
   },

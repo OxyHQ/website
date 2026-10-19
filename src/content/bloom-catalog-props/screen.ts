@@ -7,7 +7,10 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'ScreenProps': {
       props: [
+        { name: 'colorPreset', type: 'AppColorName', options: ['teal', 'blue', 'green', 'yellow', 'red', 'purple', 'pink', 'sky', 'orange', 'mint', 'oxy', 'faircoin', 'pumpkin', 'gray', 'brown', 'peach', 'rose', 'mono', 'grove', 'ember', 'merlot', 'cobalt', 'jade', 'pine', 'olive', 'lagoon', 'navy', 'azure', 'violet', 'lavender', 'plum', 'cherry', 'chocolate', 'graphite', 'forest-fire', 'malachite-rush', 'moss-voltage', 'viridian-orbit', 'acid-canopy', 'pacific-flare', 'reef-pulse', 'electric-tide', 'arctic-signal', 'ultramarine-gold', 'midnight-citrus', 'persimmon-wave', 'solar-flux', 'paprika-current', 'crimson-spark', 'flamenco-sun', 'saffron-depth', 'clay-current', 'bronze-neon', 'copper-field', 'umber-signal', 'amethyst-current', 'ruby-current', 'orchid-flare', 'garnet-acid', 'indigo-ember', 'raspberry-gold', 'ink-orange', 'charcoal-lime', 'pewter-current'], optional: true, description: 'Local screen recipe, including its enclosing panel surface. Restored on departure.' },
         { name: 'header', type: 'ReactNode', optional: true },
+        { name: 'scroll', type: "'auto' | 'content'", options: ['auto', 'content'], optional: true, description: "auto uses the host's document/column viewport on web. Native content keeps its own list." },
+        { name: 'headerPlacement', type: "'inset' | 'overlay'", options: ['inset', 'overlay'], optional: true, description: 'Overlay chrome paints above content without reserving its height.' },
         { name: 'active', type: 'boolean', optional: true, description: 'Disable all descendant scroll writers when a navigator retains this screen.' },
         { name: 'navigationScope', type: "'inherit' | 'shared' | 'isolated'", options: ['inherit', 'shared', 'isolated'], optional: true, description: 'inherit shell navigation motion; shared establishes a shell; isolated resets it for a modal.' },
         { name: 'documentScroll', type: 'boolean', optional: true, description: 'Web document flow: bind window scrolling automatically, reserve chrome clearance, and keep chrome sticky within this column. Explicit list bindings take priority.' },
@@ -30,9 +33,24 @@ export const props: BloomSurfaceProps = {
       ],
       inheritsFrom: ["Omit<ScrollViewProps, 'onScroll'>", 'RefAttributes<ScrollView>'],
     },
+    'ScreenPagerProps<Item>': {
+      props: [
+        { name: 'data', type: 'readonly Item[]', optional: false },
+        { name: 'keyExtractor', type: '(item: Item, index: number) => string', optional: false },
+        { name: 'renderItem', type: '(info: { item: Item; index: number; viewportHeight: number; }) => ReactNode', optional: false },
+        { name: 'onIndexChange', type: '((index: number) => void) | undefined', optional: true },
+        { name: 'onEndReached', type: '(() => void) | undefined', optional: true },
+        { name: 'onEndReachedThreshold', type: 'number', optional: true, description: 'Number of useful viewports before the end.' },
+        { name: 'renderRadius', type: 'number', optional: true, description: 'Keep distant items as correctly sized placeholders on web.' },
+        { name: 'ref', type: 'Ref<ScreenPagerHandle>', optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'Screen', propsType: 'ScreenProps' },
     { name: 'ScreenScrollView', propsType: 'ScreenScrollViewProps' },
+    { name: 'ScreenPager', propsType: 'ScreenPagerProps<Item>' },
   ],
 }
