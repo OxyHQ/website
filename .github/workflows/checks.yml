@@ -488,7 +488,10 @@ jobs:
           echo "GET /api/ready -> $ready"
           echo "$health" | grep -q '"ready":true'
           echo "$ready" | grep -q '"db":"connected"'
-          docker logs website-api-smoke 2>&1 | grep -q 'migrations applied under the migration lock'
+          # Not `grep -q`: it exits at the first match while `docker logs` is
+          # still writing, and under pipefail the writer's SIGPIPE fails the
+          # step with 141 on a boot that passed. grep reading to EOF cannot.
+          docker logs website-api-smoke 2>&1 | grep -F 'migrations applied under the migration lock' >/dev/null
           docker stop -t 20 website-api-smoke >/dev/null
           test "$(docker inspect -f '{{.State.ExitCode}}' website-api-smoke)" = 0
           docker logs website-api-smoke 2>&1 | tail -n 20
