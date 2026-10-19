@@ -93,6 +93,49 @@ function mdxExceptRaw(options: Parameters<typeof mdx>[0]): Plugin {
   };
 }
 
+/**
+ * The vendor chunk a `node_modules` module belongs to, by package. See
+ * `codeSplitting` below for how the names are used.
+ */
+function vendorChunk(id: string): string | undefined {
+  if (!id.includes('node_modules')) return undefined;
+  const inPkg = (...names: string[]) => names.some((name) => id.includes(`node_modules/${name}/`));
+
+  // Wallet stack — only ever needed on FairCoin routes. Keeping it in
+  // one chunk means oxy.so never fetches any of it.
+  if (inPkg('wagmi', '@wagmi', 'viem', '@walletconnect', '@coinbase', 'ox', 'abitype')) {
+    return 'vendor-wallet';
+  }
+  // 3D globe — one lazy component on /ai uses it.
+  if (inPkg('three', '@react-three')) return 'vendor-three';
+  // The app shell: the Oxy SDK, Bloom, and the react-native-web stack
+  // they are built on. One chunk because it is one unit in practice —
+  // every route mounts OxyProvider + BloomThemeProvider, and rolldown
+  // merges the rnw modules in here anyway since Bloom is their only
+  // consumer. Confirmed with `bun run analyze`.
+  if (
+    inPkg(
+      '@oxy.so',
+      'react-native-web',
+      'react-native-reanimated',
+      'react-native-gesture-handler',
+      'react-native-svg',
+      '@expo/vector-icons',
+      'expo-modules-core',
+    )
+  ) {
+    return 'vendor-oxy';
+  }
+  if (inPkg('framer-motion', 'motion-dom', 'motion-utils')) return 'vendor-motion';
+  if (inPkg('swiper')) return 'vendor-carousel';
+  if (inPkg('@scalar')) return 'vendor-scalar';
+  if (inPkg('react', 'react-dom', 'react-router', 'react-router-dom', 'scheduler')) {
+    return 'vendor-react';
+  }
+  if (inPkg('@tanstack')) return 'vendor-query';
+  return undefined;
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
@@ -279,45 +322,34 @@ export default defineConfig(({ mode }) => ({
          * are needed together belong in one cacheable file. Each group is
          * matched on a `node_modules/<pkg>/` path so a package that merely
          * mentions another one's name can't fall into the wrong bucket.
+         * (`codeSplitting` rather than the deprecated `manualChunks`, which
+         * cannot tell a statically imported module from a lazy one.)
          */
-        manualChunks(id: string) {
-          if (!id.includes('node_modules')) return undefined;
-          const inPkg = (...names: string[]) =>
-            names.some((name) => id.includes(`node_modules/${name}/`));
-
-          // Wallet stack — only ever needed on FairCoin routes. Keeping it in
-          // one chunk means oxy.so never fetches any of it.
-          if (inPkg('wagmi', '@wagmi', 'viem', '@walletconnect', '@coinbase', 'ox', 'abitype')) {
-            return 'vendor-wallet';
-          }
-          // 3D globe — one lazy component on /ai uses it.
-          if (inPkg('three', '@react-three')) return 'vendor-three';
-          // The app shell: the Oxy SDK, Bloom, and the react-native-web stack
-          // they are built on. One chunk because it is one unit in practice —
-          // every route mounts OxyProvider + BloomThemeProvider, and rolldown
-          // merges the rnw modules in here anyway since Bloom is their only
-          // consumer. Confirmed with `bun run analyze`.
-          if (
-            inPkg(
-              '@oxy.so',
-              'react-native-web',
-              'react-native-reanimated',
-              'react-native-gesture-handler',
-              'react-native-svg',
-              '@expo/vector-icons',
-              'expo-modules-core',
-            )
-          ) {
-            return 'vendor-oxy';
-          }
-          if (inPkg('framer-motion', 'motion-dom', 'motion-utils')) return 'vendor-motion';
-          if (inPkg('swiper')) return 'vendor-carousel';
-          if (inPkg('@scalar')) return 'vendor-scalar';
-          if (inPkg('react', 'react-dom', 'react-router', 'react-router-dom', 'scheduler')) {
-            return 'vendor-react';
-          }
-          if (inPkg('@tanstack')) return 'vendor-query';
-          return undefined;
+        codeSplitting: {
+          groups: [
+            {
+              name: (id: string) => {
+                const chunk = vendorChunk(id);
+                return chunk === 'vendor-oxy' ? null : chunk;
+              },
+            },
+            /**
+             * The app shell, but only what an entry imports statically
+             * (`$initial`). A name match alone moves a module here even when
+             * it is reached only through `import()`, and every route preloads
+             * this chunk: that put @oxy.so/services' account screens (which
+             * OxyProvider loads with `import()` since 12.2.0) and the Bloom
+             * parts only they use in every page's first paint. What the shell
+             * loads lazily now stays in lazy chunks. Measured on the homepage:
+             * this chunk 7.29 MB → 2.11 MB raw, first-paint JS 2.98 MB → 1.41 MB
+             * gzip, with the same 32 preloads.
+             */
+            {
+              name: 'vendor-oxy',
+              test: (id: string) => vendorChunk(id) === 'vendor-oxy',
+              tags: ['$initial'],
+            },
+          ],
         },
       },
     },

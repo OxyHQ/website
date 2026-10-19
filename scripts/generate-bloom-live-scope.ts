@@ -8,15 +8,15 @@
  *
  * The playground compiles the reader's snippet in the browser and answers its
  * `require` calls from a fixed map of specifier → module namespace. That map
- * cannot be the whole of `@oxy.so/bloom`: `vite.config.ts` sends every
- * `node_modules/@oxy.so/*` module to the `vendor-oxy` chunk, the entry HTML
- * preloads that chunk on every route, and chunk assignment is static — so even
- * a lazy `import('@oxy.so/bloom')` reached only from that page lands there.
- * Measured, importing the barrel added 260.90 kB (75.82 kB gzipped) to the
- * first paint of every page of the site, to serve one docs page.
+ * is not the whole of `@oxy.so/bloom`: measured when `vite.config.ts` sent
+ * every `node_modules/@oxy.so/*` module to the entry-preloaded `vendor-oxy`
+ * chunk, importing the barrel added 260.90 kB (75.82 kB gzipped) to the first
+ * paint of every page of the site, to serve one docs page. `vendor-oxy` now
+ * takes only what an entry imports statically, so the barrel would cost that
+ * page alone — still bytes no demo needs.
  *
  * What it can be for free is the set the demos already import, because those
- * bytes are in `vendor-oxy` either way. Written by hand that is a list nobody
+ * bytes ship with the demos either way. Written by hand that is a list nobody
  * maintains: a seventeenth demo importing a surface the map lacks does not
  * compile, and the only thing that says so is a reader opening the page. So it
  * is derived from the demos themselves and there is no list to fall behind.
@@ -25,8 +25,8 @@
  *
  * The TypeScript parser, not a regex — `import type` and per-specifier `type`
  * modifiers have to be told from value imports exactly, because Sucrase elides
- * them and a type-only import that reached the map would put a surface in
- * `vendor-oxy` for nothing. `import './x'` with no clause is a value import: it
+ * them and a type-only import that reached the map would ship a surface for
+ * nothing. `import './x'` with no clause is a value import: it
  * has no bindings but the module still runs.
  *
  * A RELATIVE value import throws. It is site-internal by construction — no
