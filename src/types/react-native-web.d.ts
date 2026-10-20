@@ -27,7 +27,6 @@ declare module 'react-native-web' {
   export const I18nManager: unknown;
   export const Image: unknown;
   export const ImageBackground: unknown;
-  export const InteractionManager: unknown;
   export const Keyboard: unknown;
   export const KeyboardAvoidingView: unknown;
   export const LayoutAnimation: unknown;
@@ -52,7 +51,6 @@ declare module 'react-native-web' {
   export const Switch: unknown;
   export const Text: unknown;
   export const TextInput: unknown;
-  export const Touchable: unknown;
   export const TouchableHighlight: unknown;
   export const TouchableNativeFeedback: unknown;
   export const TouchableOpacity: unknown;

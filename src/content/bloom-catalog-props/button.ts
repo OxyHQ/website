@@ -73,7 +73,7 @@ export const props: BloomSurfaceProps = {
         { name: 'tabIndex', type: 'number', optional: true, description: '`tabIndex` override (web only).' },
         { name: 'fullWidth', type: 'boolean', optional: true, description: 'Stretch the button to fill its container\'s main axis (web only). Equivalent to passing `className="w-full"`; provided as a prop for ergonomics.' },
       ],
-      inheritsFrom: ['RefAttributes<View>'],
+      inheritsFrom: ['RefAttributes<ReactNativeElement>'],
     },
     'PrimaryButton': {
       props: [
@@ -186,7 +186,7 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
-      inheritsFrom: ['RefAttributes<View>'],
+      inheritsFrom: ['RefAttributes<ReactNativeElement>'],
     },
   },
   components: [

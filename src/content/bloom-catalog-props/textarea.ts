@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'TextareaProps': {
       props: [
+        { name: 'rows', type: 'number', optional: true, description: 'Sets the number of rows for a `TextInput`. Use it with multiline set to `true` to be able to fill the lines. Resting height in lines, default `3`. Also the floor when `autoResize` is on.' },
         { name: 'style', type: 'ViewStyle | ViewStyle[]', optional: true },
         { name: 'label', type: 'string', optional: true, description: "Visible label above the field, and the input's accessible name. When omitted, pass `accessibilityLabel` (or at least a `placeholder`, which is used as the fallback name)." },
         { name: 'hint', type: 'string', optional: true, description: 'Caption under the field; painted in the error colour when invalid.' },
@@ -16,7 +17,6 @@ export const props: BloomSurfaceProps = {
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
         { name: 'onChangeText', type: '(value: string) => void', optional: true },
         { name: 'size', type: 'TextFieldSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Two insets: `md` (default) or `sm`.' },
-        { name: 'rows', type: 'number', optional: true, description: 'Resting height in lines, default `3`. Also the floor when `autoResize` is on.' },
         { name: 'autoResize', type: 'boolean', optional: true, description: 'Grow with the content instead of scrolling at `rows`.' },
         { name: 'maxRows', type: 'number', optional: true, description: 'Ceiling for `autoResize`, in lines. Past it the field scrolls.' },
         { name: 'resize', type: 'TextareaResize', options: ['none', 'vertical'], optional: true, description: "Web's native grab handle, default `vertical`. Forced `none` under `autoResize`." },

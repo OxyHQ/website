@@ -82,7 +82,7 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
-      inheritsFrom: ['RefAttributes<View>'],
+      inheritsFrom: ['RefAttributes<ReactNativeElement>'],
     },
     'TrackRowSkeletonProps': {
       props: [
@@ -145,9 +145,9 @@ export const props: BloomSurfaceProps = {
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Default `"Episodes"` in English.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
+        { name: 'width', type: 'number', optional: true, description: 'Below 560 the cover shrinks and the description is dropped. Default: the window width.' },
         { name: 'onPress', type: '(episode: Episode) => void', optional: true, description: 'Opens the episode.' },
         { name: 'labels', type: 'EpisodeRowLabels', optional: true },
-        { name: 'width', type: 'number', optional: true, description: 'Below 560 the cover shrinks and the description is dropped. Default: the window width.' },
         { name: 'onPlay', type: '(episode: Episode) => void', optional: true },
         { name: 'onPause', type: '(episode: Episode) => void', optional: true },
         { name: 'menuItems', type: '(episode: Episode) => TrackMenuItem[]', optional: true },

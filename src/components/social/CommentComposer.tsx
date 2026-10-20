@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native';
+import type { TextInputKeyPressEvent } from 'react-native';
 import { Button } from '@oxy.so/bloom/button';
 import { Textarea } from '@oxy.so/bloom/textarea';
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine';
@@ -46,8 +46,8 @@ export default function CommentComposer({
   }
 
   // On web the native event is the DOM KeyboardEvent, which carries the modifiers.
-  function handleKeyPress(e: NativeSyntheticEvent<TextInputKeyPressEventData>) {
-    const { key, metaKey, ctrlKey } = e.nativeEvent as TextInputKeyPressEventData &
+  function handleKeyPress(e: TextInputKeyPressEvent) {
+    const { key, metaKey, ctrlKey } = e.nativeEvent as TextInputKeyPressEvent['nativeEvent'] &
       Partial<Pick<KeyboardEvent, 'metaKey' | 'ctrlKey'>>;
     if (key === 'Enter' && (metaKey || ctrlKey)) {
       e.preventDefault();

@@ -99,7 +99,7 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
-      inheritsFrom: ['RefAttributes<View>'],
+      inheritsFrom: ['RefAttributes<ReactNativeElement>'],
     },
     'SuggestionListProps': {
       props: [

@@ -29,7 +29,7 @@ export const props: BloomSurfaceProps = {
         { name: 'containerClassName', type: 'string', optional: true, description: 'Classes on the outer layout box, including the clear control.' },
         { name: 'containerStyle', type: 'StyleProp<ViewStyle>', optional: true },
       ],
-      inheritsFrom: ['Omit<TextFieldInputProps, "label">', 'RefAttributes<TextInput>'],
+      inheritsFrom: ['Omit<TextFieldInputProps, "label">', 'RefAttributes<_TextInputInstance>'],
     },
   },
   components: [
