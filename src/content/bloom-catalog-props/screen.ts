@@ -31,7 +31,7 @@ export const props: BloomSurfaceProps = {
         { name: 'restoration', type: 'ScrollRestorationBinding', optional: true, description: 'Existing restoration binding for this same scroll ref.' },
         { name: 'handler', type: 'ScrollHandlerProcessed | null', optional: true },
       ],
-      inheritsFrom: ["Omit<ScrollViewProps, 'onScroll'>", 'RefAttributes<ScrollView>'],
+      inheritsFrom: ["Omit<ScrollViewProps, 'onScroll'>", 'RefAttributes<ScrollViewInstance>'],
     },
     'ScreenPagerProps<Item>': {
       props: [

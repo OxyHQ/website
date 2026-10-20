@@ -4,7 +4,7 @@
 // table and its shipped .d.ts files.
 // 239 surfaces, 1353 components, 764 distinct
 // props types carrying 9141 props
-// (88785 more reach them from outside Bloom and are named
+// (102982 more reach them from outside Bloom and are named
 // per component as `inheritsFrom` rather than listed).
 //
 // Upstream drift, reported rather than enforced:

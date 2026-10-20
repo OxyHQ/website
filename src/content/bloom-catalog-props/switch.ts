@@ -18,7 +18,7 @@ export const props: BloomSurfaceProps = {
         { name: 'nativeID', type: 'string', optional: true, description: "The switch's id. Inside a `Field` the field supplies one, so the label's `htmlFor` points at the control on web." },
         { name: 'testID', type: 'string', optional: true },
       ],
-      inheritsFrom: ['RefAttributes<View>'],
+      inheritsFrom: ['RefAttributes<ReactNativeElement>'],
     },
   },
   components: [

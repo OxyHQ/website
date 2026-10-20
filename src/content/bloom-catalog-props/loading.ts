@@ -7,7 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'LoadingProps': {
       props: [
-        { name: 'variant', type: "'spinner'", options: ['inline', 'top', 'spinner'], optional: true, description: 'Variant type' },
+        { name: 'variant', type: "'spinner'", options: ['top', 'inline', 'spinner'], optional: true, description: 'Variant type' },
         { name: 'spinnerIcon', type: 'ReactNode', optional: true, description: 'Custom spinner icon (defaults to ActivityIndicator)' },
         { name: 'size', type: 'LoadingSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Size of the loading indicator' },
         { name: 'color', type: 'string', optional: true, description: 'Custom color (defaults to theme primary)' },

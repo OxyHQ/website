@@ -13,10 +13,10 @@ export const props: BloomSurfaceProps = {
         { name: 'cornerCurve', type: 'CornerCurve', options: ['round', 'smooth'], optional: true, description: 'Platform-adaptive corners shared by the host and material.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'className', type: 'string', optional: true },
-        { name: 'accessibilityLabel', type: 'string', optional: true, description: "Overrides the text that's read by the screen reader when the user interacts with the element. By default, the label is constructed by traversing all the children and accumulating all the Text nodes separated by space." },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: "Overrides the text that's read by the screen reader when the user interacts with the element. By default, the label is constructed by traversing all the children and accumulating all the `Text` nodes separated by space." },
         { name: 'testID', type: 'string', optional: true, description: 'Used to locate this view in end-to-end tests.' },
       ],
-      inheritsFrom: ["Omit<ViewProps, 'style' | 'children'>", 'RefAttributes<View>'],
+      inheritsFrom: ["Omit<ViewProps, 'style' | 'children'>", 'RefAttributes<ReactNativeElement>'],
     },
   },
   components: [

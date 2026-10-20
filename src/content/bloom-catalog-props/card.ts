@@ -25,7 +25,7 @@ export const props: BloomSurfaceProps = {
         { name: 'accessibilityLabel', type: 'string', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
-      inheritsFrom: ['RefAttributes<View>'],
+      inheritsFrom: ['RefAttributes<ReactNativeElement>'],
     },
     'CardHeaderProps': {
       props: [

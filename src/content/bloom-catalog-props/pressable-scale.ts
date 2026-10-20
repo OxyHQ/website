@@ -11,7 +11,7 @@ export const props: BloomSurfaceProps = {
         { name: 'className', type: 'string', optional: true, description: 'Utility classes for the pressable itself — the node that scales, so a layout class and the transform cannot land on different boxes.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style applied to the pressable itself — the node that scales.' },
       ],
-      inheritsFrom: ["Omit<PressableProps, 'style'>", 'RefAttributes<View>'],
+      inheritsFrom: ["Omit<PressableProps, 'style'>", 'RefAttributes<ReactNativeElement>'],
     },
   },
   components: [

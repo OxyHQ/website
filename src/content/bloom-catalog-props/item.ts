@@ -27,7 +27,7 @@ export const props: BloomSurfaceProps = {
         { name: 'subtitleStyle', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true },
         { name: 'accessibilityHint', type: 'string', optional: true },
-        { name: 'accessibilityRole', type: 'AccessibilityRole', options: ['none', 'button', 'togglebutton', 'link', 'search', 'image', 'keyboardkey', 'text', 'adjustable', 'imagebutton', 'header', 'summary', 'alert', 'checkbox', 'combobox', 'menu', 'menubar', 'menuitem', 'progressbar', 'radio', 'radiogroup', 'scrollbar', 'spinbutton', 'switch', 'tab', 'tabbar', 'tablist', 'timer', 'list', 'toolbar'], optional: true },
+        { name: 'accessibilityRole', type: 'AccessibilityRole', optional: true },
         { name: 'role', type: "'option' | 'radio' | 'checkbox' | 'menuitem' | 'listitem'", options: ['option', 'radio', 'checkbox', 'menuitem', 'listitem'], optional: true, description: "Web ARIA role override. Use `'option'` for combobox/listbox items (RN's `accessibilityRole` has no `'option'`), and `'radio'` / `'checkbox'` for a single- or multi-choice list. Each role scopes which state ARIA allows, and `Item` spells the matching one — see the `selectedAria` branch in `Item.tsx`." },
         { name: 'expanded', type: 'boolean', optional: true, description: 'Whether the row DISCLOSES something (a sub-menu, an accordion section). Emitted as `aria-expanded`, which React Native folds back into `accessibilityState` — so, unlike `accessibilityState.expanded` alone, it reaches web as well.' },
         { name: 'testID', type: 'string', optional: true },
