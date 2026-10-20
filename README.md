@@ -19,6 +19,12 @@
   and <code>src/lib/faircoin-chrome.tsx</code> swaps the chrome around it.
 </p>
 
+## Operating company
+
+Oxy Platforms, Inc. is being incorporated in Delaware as the intended operating
+company for Oxy services. The website's software licence, copyright and trademark
+attributions remain separate from this operating-company transition.
+
 ---
 
 <table>
