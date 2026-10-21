@@ -151,6 +151,20 @@ const onRequest: PagesFunction<Env> = async (context) => {
           el.setAttribute('href', meta.canonical);
         },
       })
+      // The prerendered home is Oxy's: its hero sits inside #root until the
+      // bundle replaces it, and index.html preloads that image for every host.
+      // On a FairCoin host both are someone else's page, so they never leave
+      // the edge — a client-side hide would still download and flash them.
+      .on('div.home-prerender-visual', {
+        element(el) {
+          el.remove();
+        },
+      })
+      .on('link[rel="preload"][as="image"]', {
+        element(el) {
+          el.remove();
+        },
+      })
       .transform(response);
     return response;
   } catch (err) {
