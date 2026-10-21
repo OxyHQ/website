@@ -23,23 +23,15 @@ export function isLegacyStorageKey(key: string): boolean {
   return key.startsWith(LEGACY_KEY_PREFIX) && !key.includes('..');
 }
 
-// R2's bucket token when R2 is the store (OxyHQ/oxy ADR 0047); otherwise no
-// `credentials`, so the SDK's default chain reads AWS_ACCESS_KEY_ID /
-// AWS_SECRET_ACCESS_KEY locally and the ECS task role in production.
+// The legacy bucket's own R2 token (OxyHQ/oxy ADR 0047).
 const s3 = new S3Client({
   endpoint: config.s3.endpoint,
   region: config.s3.region,
-  ...(config.s3.credentials ? { credentials: config.s3.credentials } : {}),
+  credentials: config.s3.credentials,
   forcePathStyle: false,
   requestChecksumCalculation: 'WHEN_REQUIRED',
   responseChecksumValidation: 'WHEN_REQUIRED',
 });
-
-// The S3 bucket the objects were copied from, while it still holds them: a
-// delete reaches the old copy too (task role).
-const legacy = config.s3.legacy
-  ? { client: new S3Client({ region: config.s3.legacy.region }), bucket: config.s3.legacy.bucket }
-  : null;
 
 const MIME_EXT: Record<string, string> = {
   'image/jpeg': '.jpg',
@@ -132,11 +124,6 @@ export async function deleteFromSpaces(key: string): Promise<void> {
       Key: `${config.s3.keyPrefix}${key}`,
     }),
   );
-  if (legacy) {
-    await legacy.client.send(
-      new DeleteObjectCommand({ Bucket: legacy.bucket, Key: `${config.s3.keyPrefix}${key}` }),
-    );
-  }
 }
 
 /** Read a legacy object's bytes by its logical key; `null` when there is no such object. */

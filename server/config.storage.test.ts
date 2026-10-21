@@ -1,7 +1,7 @@
 /**
- * The website's legacy images move into their own R2 bucket (OxyHQ/oxy ADR
- * 0047). `config.s3` is chosen from the environment when the module loads, so
- * each case reads it in a fresh process.
+ * The website's legacy images live in their own R2 bucket (OxyHQ/oxy ADR 0047)
+ * and nowhere else. `config.s3` is read when the module loads, so each case
+ * reads it in a fresh process.
  */
 import { describe, expect, it } from 'bun:test';
 import path from 'node:path';
@@ -26,32 +26,23 @@ const R2 = {
 };
 
 describe('the legacy images store', () => {
-  it('before the cutover: the S3 bucket, with the task role', () => {
-    expect(storage({ AWS_S3_BUCKET: 'old' })).toMatchObject({
-      bucket: 'old',
-      region: 'us-west-2',
-      legacy: null,
-      hasCredentials: false,
-      keyPrefix: 'public/',
-    });
-  });
-
-  it('during the migration: its own R2 bucket, the S3 bucket kept for deletes', () => {
-    expect(storage({ ...R2, AWS_S3_BUCKET: 'old' })).toMatchObject({
-      bucket: 'oxy-website-legacy-media',
-      region: 'auto',
+  it('is its own R2 bucket, served from cloud.oxy.so under public/', () => {
+    expect(storage(R2)).toEqual({
       endpoint: R2.R2_ENDPOINT,
-      hasCredentials: true,
-      legacy: { bucket: 'old', region: 'us-west-2' },
+      region: 'auto',
+      bucket: 'oxy-website-legacy-media',
       keyPrefix: 'public/',
       cdnBaseUrl: 'https://cloud.oxy.so',
+      hasCredentials: true,
     });
   });
 
-  it('never reads AWS_ENDPOINT_URL for R2', () => {
-    expect(storage({ ...R2, AWS_ENDPOINT_URL: 'https://elsewhere' })).toMatchObject({
+  it('never reads AWS_ENDPOINT_URL or an S3 bucket', () => {
+    expect(
+      storage({ ...R2, AWS_ENDPOINT_URL: 'https://elsewhere', AWS_S3_BUCKET: 'old' }),
+    ).toMatchObject({
       endpoint: R2.R2_ENDPOINT,
-      legacy: null,
+      bucket: 'oxy-website-legacy-media',
     });
   });
 
