@@ -64,7 +64,7 @@ bun run dev / build / server / sync-docs / sync-changelog
 
 ## Deploy
 
-Frontend: Cloudflare Pages project `oxy-website` from `dist/`. Backend: ECS Fargate at `website-api.oxy.so` / `api.website.oxy.so`, `oven/bun` image running TypeScript directly (no compile step).
+Frontend: Cloudflare Pages project `oxy-website` from `dist/`. Backend: ECS Fargate at `website-api.oxy.so`, `oven/bun` image running TypeScript directly (no compile step).
 
 - **A green deploy job is not a deploy** — the circuit breaker rolls back and `ecs wait services-stable` exits 0 on the OLD image. Confirm the PRIMARY deployment's `rolloutState` or the running tasks' image digest.
 - **Editing `.github/workflows/` can block every subsequent run** — GitHub rescans a changed workflow and can hold runs at `action_required` until someone clicks approve in the UI; there is no API for it. The scan is per file version, so reverting to bytes that already ran gets deploys moving again.
