@@ -9,8 +9,8 @@ import crypto from 'node:crypto';
 import path from 'node:path';
 
 /* ──────────────────────────────────────────────
- * The LEGACY storage: objects under `oxy-website/` in Oxy's media bucket,
- * served from `config.s3.cdnBaseUrl`. Only `services/oxyFiles.ts` and the
+ * The LEGACY storage: objects under `oxy-website/`, in their own R2 bucket
+ * (`config.s3`), served from `config.s3.cdnBaseUrl`. Only `services/oxyFiles.ts` and the
  * migration write, read or delete through this module; new images and videos
  * go to Oxy Files. Retired with the bucket prefix (docs/OXY-FILES.md).
  * ──────────────────────────────────────────── */
@@ -23,13 +23,23 @@ export function isLegacyStorageKey(key: string): boolean {
   return key.startsWith(LEGACY_KEY_PREFIX) && !key.includes('..');
 }
 
-// No `credentials`: the SDK's default chain reads AWS_ACCESS_KEY_ID/
+// R2's bucket token when R2 is the store (OxyHQ/oxy ADR 0047); otherwise no
+// `credentials`, so the SDK's default chain reads AWS_ACCESS_KEY_ID /
 // AWS_SECRET_ACCESS_KEY locally and the ECS task role in production.
 const s3 = new S3Client({
   endpoint: config.s3.endpoint,
   region: config.s3.region,
+  ...(config.s3.credentials ? { credentials: config.s3.credentials } : {}),
   forcePathStyle: false,
+  requestChecksumCalculation: 'WHEN_REQUIRED',
+  responseChecksumValidation: 'WHEN_REQUIRED',
 });
+
+// The S3 bucket the objects were copied from, while it still holds them: a
+// delete reaches the old copy too (task role).
+const legacy = config.s3.legacy
+  ? { client: new S3Client({ region: config.s3.legacy.region }), bucket: config.s3.legacy.bucket }
+  : null;
 
 const MIME_EXT: Record<string, string> = {
   'image/jpeg': '.jpg',
@@ -90,7 +100,7 @@ export function keyFromPublicUrl(url: string): string | null {
  *
  * The logical key (`folder/file`) is what callers persist and pass back to
  * `deleteFromSpaces`; the physical object is stored under `config.s3.keyPrefix`
- * (e.g. `public/`), which CloudFront's origin path strips off when serving.
+ * (e.g. `public/`), which the CDN prepends when serving.
  */
 export async function uploadToSpaces(
   buffer: Buffer,
@@ -122,6 +132,11 @@ export async function deleteFromSpaces(key: string): Promise<void> {
       Key: `${config.s3.keyPrefix}${key}`,
     }),
   );
+  if (legacy) {
+    await legacy.client.send(
+      new DeleteObjectCommand({ Bucket: legacy.bucket, Key: `${config.s3.keyPrefix}${key}` }),
+    );
+  }
 }
 
 /** Read a legacy object's bytes by its logical key; `null` when there is no such object. */
