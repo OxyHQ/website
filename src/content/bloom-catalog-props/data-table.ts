@@ -67,6 +67,7 @@ export const props: BloomSurfaceProps = {
         { name: 'trailing', type: 'ReactNode', optional: true },
         { name: 'onPress', type: '(event: GestureResponderEvent) => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'density', type: 'BloomControlDensity', options: ['default', 'compact'], optional: true, description: "Explicit override of the nearest BloomScope's contextual action geometry." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'iconSize', type: 'number', optional: true, description: 'Explicit glyph dimensions; otherwise follows the button size.' },

@@ -7,8 +7,17 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'CoverHeaderProps': {
       props: [
-        { name: 'coverSource', type: 'string | ImageSourcePropType | null', optional: true, description: 'Photo across the cover band. Without one the band shows `background-tertiary`.' },
-        { name: 'coverPosition', type: '{ x: number; y: number; }', optional: true, description: 'Where the photo\'s crop sits, as fractions (`object-position`). Default `{ x: 0.5, y: 0.5 }` — centred, as `resizeMode="cover"`.' },
+        { name: 'coverSource', type: 'BloomImageSource | null', optional: true, description: 'Photo across the cover band. Without one the band shows `background-tertiary`.' },
+        { name: 'coverSourceKey', type: 'string | number', optional: true, description: 'Stable asset identity, preserving an edit when only its signed URL changes.' },
+        { name: 'coverPosition', type: 'CoverPosition', optional: true, description: 'Where the photo\'s crop sits, as fractions (`object-position`). Default `{ x: 0.5, y: 0.5 }` — centred, as `resizeMode="cover"`.' },
+        { name: 'coverFit', type: "'cover' | 'contain'", options: ['cover', 'contain'], optional: true, description: 'Defaults to cover. Contained images cannot be repositioned.' },
+        { name: 'repositionable', type: 'boolean', optional: true, description: 'Enables the shared editor when an image and commit callback are present.' },
+        { name: 'repositionAxes', type: "'vertical' | 'both'", options: ['vertical', 'both'], optional: true, description: 'Which crop axes can change. Default both.' },
+        { name: 'onCoverPositionCommit', type: '(position: CoverPosition) => void | Promise<void>', optional: true, description: 'Called only by Save, never on drag release. Rejection keeps the editor open.' },
+        { name: 'onCoverPositionChange', type: '(position: CoverPosition) => void', optional: true, description: 'Draft notifications; persistence belongs in onCoverPositionCommit.' },
+        { name: 'actions', type: 'ReactNode', optional: true, description: 'Additional controls, such as choosing or removing a cover. Hidden during editing.' },
+        { name: 'onChangeCover', type: '() => void', optional: true, description: 'Shows the standard shared Change cover action. Omit for read-only covers.' },
+        { name: 'labels', type: 'Partial<CoverHeaderLabels>', optional: true },
         { name: 'cover', type: 'ReactNode', optional: true, description: 'Drawn in the band instead of the photo (an editor, a gradient, a video poster).' },
         { name: 'coverHeight', type: 'number', optional: true, description: 'Height of the cover band. Default `170`.' },
         { name: 'overlap', type: 'number', optional: true, description: 'How far the content rises into the cover band. Default `45` — half a 90px avatar. Clamped to `0..coverHeight`.' },
@@ -19,8 +28,30 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true, description: 'Also names the parts: `-cover`, `-cover-image`, `-content`.' },
       ],
     },
+    'CoverImageProps': {
+      props: [
+        { name: 'source', type: 'BloomImageSource', optional: false },
+        { name: 'sourceKey', type: 'string | number', optional: true, description: 'Stable asset identity across signed URL renewal. Defaults to source.cacheKey, then the source descriptor.' },
+        { name: 'position', type: 'CoverPosition', optional: true },
+        { name: 'contentFit', type: "'cover' | 'contain'", options: ['cover', 'contain'], optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'accessibilityLabel', type: 'string', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+        { name: 'onGeometryChange', type: '(geometry: CoverImageGeometry | null) => void', optional: true, description: 'Reports the actual rendered overflow after loading and container layout.' },
+      ],
+    },
+    'CoverFillProps': {
+      props: [
+        { name: 'color', type: 'string', optional: true },
+        { name: 'gradient', type: '{ from: string; to: string; angle?: number; }', optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'CoverHeader', propsType: 'CoverHeaderProps' },
+    { name: 'CoverImage', propsType: 'CoverImageProps' },
+    { name: 'CoverFill', propsType: 'CoverFillProps' },
   ],
 }

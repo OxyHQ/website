@@ -8,6 +8,8 @@ export const props: BloomSurfaceProps = {
     'ActivityFeedProps': {
       props: [
         { name: 'entries', type: 'readonly ActivityFeedEntry[]', optional: false },
+        { name: 'density', type: "'comfortable' | 'compact'", options: ['comfortable', 'compact'], optional: true, description: 'Content rhythm, independent of the inherited control size. Default comfortable.' },
+        { name: 'grouping', type: "'day' | 'none'", options: ['day', 'none'], optional: true, description: 'Default day headings; none preserves input order with separators between entries.' },
         { name: 'bodyLines', type: 'number', optional: true, description: 'Lines a `body` clamps to before the reveal is offered. Default 3. `0` never clamps, and never draws a reveal.' },
         { name: 'moreLabel', type: 'string', optional: true, description: 'Default `"Show more"`.' },
         { name: 'lessLabel', type: 'string', optional: true, description: 'Default `"Show less"`.' },

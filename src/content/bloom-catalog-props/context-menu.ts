@@ -24,6 +24,8 @@ export const props: BloomSurfaceProps = {
     },
     'OverlaySurfaceProps': {
       props: [
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Overrides the nearest BloomScope size for this surface and its descendants.' },
+        { name: 'maxHeight', type: 'number', optional: true, description: 'Optional ceiling; the surface always stays inside the viewport and owns scrolling.' },
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'label', type: 'string', optional: true, description: 'Accessible name of the surface.' },
         { name: 'dismissible', type: 'boolean', optional: true, description: 'Dismiss on outside press and Escape. Defaults to `true`.' },

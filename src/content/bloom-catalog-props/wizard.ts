@@ -15,7 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'nextDisabled', type: 'boolean', optional: true },
         { name: 'loading', type: 'boolean', optional: true, description: "The primary action's own loading state: spinner, width kept, presses ignored." },
         { name: 'status', type: 'string', optional: true, description: 'A short line between the actions ("Saved a minute ago"). Hidden below 480 wide.' },
-        { name: 'sticky', type: 'boolean', optional: true, description: 'Pins the bar to the bottom of its scroll container on web (`position: sticky`). Native has no sticky positioning: render the footer after the `ScrollView`, outside it, and it stays put. Default `true`.' },
+        { name: 'sticky', type: 'boolean', optional: true, description: 'PageFooter sticky positioning on web; inline placement on native. False keeps normal flow on both platforms. Screen.bottomBar owns placement when the footer is used in that slot. Default true.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

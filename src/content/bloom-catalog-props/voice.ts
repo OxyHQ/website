@@ -28,7 +28,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onEnd', type: '() => void', optional: true, description: 'Shows the end button.' },
         { name: 'onTypeInstead', type: '() => void', optional: true, description: 'Shows the "type instead" action (the keyboard).' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Disables every control.' },
-        { name: 'size', type: 'VoiceSize', options: ['sm', 'md', 'lg'], optional: true, description: 'Button size. Default `lg`.' },
+        { name: 'size', type: 'VoiceSize', options: ['sm', 'md', 'lg'], optional: true, description: 'Explicit size overrides BloomScope; standalone default `lg`. Inherited `xs` uses `sm`.' },
         { name: 'leading', type: 'ReactNode', optional: true, description: "Before the controls, at the row's start." },
         { name: 'trailing', type: 'ReactNode', optional: true, description: "After the controls, at the row's end." },
         { name: 'className', type: 'string', optional: true },

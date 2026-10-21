@@ -27,6 +27,8 @@ export const props: BloomSurfaceProps = {
     },
     'PopoverContentProps': {
       props: [
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Overrides the nearest BloomScope size for this surface and its descendants.' },
+        { name: 'maxHeight', type: 'number', optional: true, description: 'Optional ceiling; the surface always stays inside the viewport and owns scrolling.' },
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'label', type: 'string', optional: true, description: 'Accessible name of the surface.' },
         { name: 'dismissible', type: 'boolean', optional: true, description: 'Dismiss on outside press and Escape. Defaults to `true`.' },
@@ -85,6 +87,25 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'PopoverItemProps': {
+      props: [
+        { name: 'onPress', type: '() => void', optional: false },
+        { name: 'title', type: 'string', optional: false },
+        { name: 'destructive', type: 'boolean', optional: true },
+        { name: 'inset', type: 'boolean', optional: true, description: 'Indent to line up with the rows that carry a checkbox or radio indicator.' },
+        { name: 'tone', type: "'neutral' | 'danger'", options: ['neutral', 'danger'], optional: true },
+        { name: 'leading', type: 'React.ReactNode', optional: true, description: "Leading slot (icon, avatar). A Bloom addition over shadcn's children-only row." },
+        { name: 'trailing', type: 'React.ReactNode', optional: true, description: 'Trailing slot (shortcut, badge).' },
+        { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'href', type: 'string', optional: true, description: 'Real anchor on web; native opens the URL unless onPress handles navigation.' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: "The row's accessible name." },
+        { name: 'testID', type: 'string', optional: true },
+        { name: 'className', type: 'string', optional: true, description: "Utility classes APPENDED to the row's own — never substituted for them, so a single layout class cannot strip the chrome. Two utilities for one property are then resolved by Tailwind's own emission order, exactly as they are in any shadcn consumer; `style` remains the unambiguous override." },
+        { name: 'variant', type: "'default' | 'destructive'", options: ['default', 'destructive'], optional: true, description: "`'destructive'` paints the row in the theme's negative colour." },
+        { name: 'current', type: 'boolean', optional: true, description: 'Current navigation destination: shared selection paint and aria-current="page".' },
+      ],
+    },
   },
   components: [
     { name: 'Popover', propsType: 'PopoverProps' },
@@ -95,5 +116,6 @@ export const props: BloomSurfaceProps = {
     { name: 'PopoverDescription', propsType: 'PopoverDescriptionProps' },
     { name: 'PopoverFooter', propsType: 'PopoverPartProps' },
     { name: 'PopoverSeparator', propsType: 'PopoverSeparatorProps' },
+    { name: 'PopoverItem', propsType: 'PopoverItemProps' },
   ],
 }

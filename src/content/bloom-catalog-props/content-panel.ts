@@ -15,6 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'chrome', type: 'ContentPanelChrome', options: ['elevated', 'border', 'none'], optional: true, description: "The panel's EDGE, when it is framed." },
         { name: 'shadow', type: 'string', optional: true, description: 'Overrides the shadow `chrome="elevated"` draws (any `box-shadow` string). For an app that wants its own elevation without giving up the hairline.' },
         { name: 'fill', type: 'boolean', optional: true, description: 'The panel is the HEIGHT OF THE SPACE IT IS GIVEN, and its content scrolls inside it — instead of the panel growing with its content while the page scrolls underneath.' },
+        { name: 'scrollable', type: 'boolean', optional: true, description: 'Whether the filled web content wrapper owns scrolling. Defaults to `fill`. Set false when a Screen or list inside owns the viewport, as with Dialog.' },
         { name: 'surfaceClassName', type: 'string', optional: true, description: 'Override the surface background utility (defaults to `bg-card`).' },
         { name: 'surfaceStyle', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'surfaceColor', type: 'string', optional: true, description: 'The colour this panel paints, when `surfaceClassName`/`surfaceStyle` has repainted it.' },

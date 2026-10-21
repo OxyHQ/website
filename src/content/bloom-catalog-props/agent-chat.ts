@@ -7,13 +7,14 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'AgentChatProps': {
       props: [
+        { name: 'disabled', type: 'boolean', optional: true, description: 'Blocks draft editing and submission; stopping an active turn remains available.' },
         { name: 'messages', type: 'ReadonlyArray<AgentChatMessageData>', optional: false },
         { name: 'status', type: 'AgentChatStatus', options: ['ready', 'submitted', 'streaming', 'error'], optional: true, description: 'Default `\'ready\'`. `submitted`/`streaming` are "busy".' },
         { name: 'error', type: 'boolean', optional: true, description: "Shows the error line under the transcript. Default: `status === 'error'`." },
         { name: 'title', type: 'string', optional: true, description: "Header title. Default: the active thread's title, else `labels.newChat`." },
         { name: 'value', type: 'string', optional: true, description: 'Composer text, controlled. Uncontrolled when omitted (cleared on submit).' },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
-        { name: 'onSubmit', type: '(text: string) => void', optional: true, description: 'A trimmed, non-empty message while not busy — from the composer or a suggestion.' },
+        { name: 'onSubmit', type: '(text: string) => void', optional: true, description: 'A trimmed message while not busy; attachment-only turns may pass empty text.' },
         { name: 'onStop', type: '() => void', optional: true },
         { name: 'onAttach', type: '() => void', optional: true },
         { name: 'model', type: 'string | null', optional: true },
@@ -21,6 +22,9 @@ export const props: BloomSurfaceProps = {
         { name: 'suggestions', type: 'ReadonlyArray<string>', optional: true, description: 'Suggestion pills in the empty state. Default three (localised). `[]` hides them.' },
         { name: 'emptyState', type: 'ReactNode', optional: true, description: 'Replaces the whole empty state (e.g. an "Add an API key" notice).' },
         { name: 'headerLeading', type: 'ReactNode', optional: true, description: 'Leading header slot — a phone nav toggle mounts here.' },
+        { name: 'headerIdentity', type: 'ReactNode', optional: true, description: "Avatar/name composition in PageHeader's title slot. Owns its accessible semantics." },
+        { name: 'headerTitleAlign', type: "import('../page-header/types').PageHeaderTitleAlign", options: ['start', 'center'], optional: true, description: 'Defaults to center when headerIdentity is supplied, otherwise start.' },
+        { name: 'composerProps', type: "AgentChatComposerProps['composerProps']", optional: true, description: 'Shared ComposerPill integrations; draft, submit and generation state are owned by AgentChat.' },
         { name: 'onShare', type: "AgentChatActionsProps['onShare']", optional: true },
         { name: 'onExport', type: '() => void', optional: true, description: 'Also shown in the history rail footer.' },
         { name: 'onCopyMessage', type: "AgentChatMessageProps['onCopy']", optional: true },
@@ -58,13 +62,14 @@ export const props: BloomSurfaceProps = {
     },
     'AgentChatComposerProps': {
       props: [
+        { name: 'composerProps', type: "Omit<import('../composer-panel/types').ComposerPillProps, 'value' | 'defaultValue' | 'onValueChange' | 'onSubmit' | 'onStop' | 'busy'>", optional: true, description: 'Shared pill API: attachments, models, permissions, voice and keyboard integration.' },
         { name: 'value', type: 'string', optional: true },
         { name: 'defaultValue', type: 'string', optional: true },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
         { name: 'onSubmit', type: '(text: string) => void', optional: true, description: 'Enter or the send disc. Receives the current text.' },
         { name: 'onStop', type: '() => void', optional: true },
         { name: 'busy', type: 'boolean', optional: true, description: 'Shows the stop disc and lights the `ComposerLoader` band.' },
-        { name: 'onAttach', type: '() => void', optional: true, description: 'Pressing the paperclip. The disc is always drawn.' },
+        { name: 'onAttach', type: '() => void', optional: true, description: "Enables the shared add menu's attachment action." },
         { name: 'model', type: 'string | null', optional: true, description: 'Model id, e.g. `"openai/gpt-5-nano"` — shown as `gpt-5-nano` with a sparkle.' },
         { name: 'provider', type: 'string | null', optional: true, description: 'Provider shown in the status row ("Anthropic", "Demo mode").' },
         { name: 'messageCount', type: 'number', optional: true },

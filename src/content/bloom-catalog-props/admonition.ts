@@ -41,6 +41,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onPress', type: '(event: GestureResponderEvent) => void', optional: true },
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'density', type: 'BloomControlDensity', options: ['default', 'compact'], optional: true, description: "Explicit override of the nearest BloomScope's contextual action geometry." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'icon', type: 'React.ReactNode | ButtonIconComponent', optional: true, description: 'An icon ELEMENT rendered as-is, or an icon COMPONENT (`icon={RiMore2Line}`), which the button sizes and colours like `leadingIcon`.' },
