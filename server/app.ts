@@ -5,6 +5,7 @@ import express, {
   type Response,
 } from 'express';
 import cors from 'cors';
+import { oxyTrustProxy } from '@oxy.so/core/server';
 import { config } from './config.js';
 import { ValidationError } from './utils/validate.js';
 import { sql as pgClient } from './db/postgres.js';
@@ -64,6 +65,16 @@ export interface AppOptions {
 
 export function createApp(options: AppOptions): express.Express {
   const app = express();
+  /**
+   * Before every middleware, so nothing reads `req.ip` under another rule (the
+   * help feedback and sales limiters key on it). The socket peer is the ALB,
+   * which appends the address it saw; behind the Cloudflare proxy that address is
+   * Cloudflare's edge, trusted only when it is a published Cloudflare address.
+   * `req.ip` is the real client whether or not the hostname is proxied — with no
+   * setting it was the ALB, one bucket for every visitor — and a forged
+   * X-Forwarded-For is never believed.
+   */
+  app.set('trust proxy', oxyTrustProxy);
   if (options.activityMiddleware) app.use(options.activityMiddleware);
 
   const ALWAYS_ALLOWED_ORIGINS = new Set([
