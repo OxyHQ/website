@@ -11,7 +11,7 @@
  * preset is ignored and Bloom's `'faircoin'` preset is used as the floor. The
  * personal user color only applies on Oxy. This keeps the FairCoin brand
  * stable for visitors who happen to have an Oxy account with a different
- * color set elsewhere.
+ * color set elsewhere (`App.tsx` withholds the account colour there).
  */
 
 import {
@@ -19,7 +19,6 @@ import {
   APP_COLOR_NAMES,
   FREE_COLOR_NAMES,
   applyPresetVarsToDocument,
-  hexToAppColorName,
   type AppColorName,
 } from '@oxy.so/bloom/theme';
 import { isFairCoinHost } from '../lib/host';
@@ -27,7 +26,7 @@ import { isFairCoinHost } from '../lib/host';
 // cannot boot on one palette and hydrate into another.
 import { FAIRCOIN_PRESET, SITE_PRESET } from './brands';
 
-export { APP_COLOR_PRESETS, APP_COLOR_NAMES, hexToAppColorName };
+export { APP_COLOR_PRESETS, APP_COLOR_NAMES };
 export type { AppColorName };
 
 export type ThemeMode = 'light' | 'dark';
@@ -79,20 +78,6 @@ function applyPreset(preset: AppColorName, mode: ThemeMode) {
   // base palette and the extended (card/chart/sidebar) tokens onto :root, so
   // `var(--x)` — the form Tailwind v4 @theme compiles to — resolves directly.
   applyPresetVarsToDocument(preset, mode);
-}
-
-/**
- * Apply user's color as the theme preset (like Mention does).
- * Called when auth state changes. Falls back to saved preset if no user color.
- *
- * No-op on the FairCoin apex — the FairCoin brand always wins there.
- */
-export function applyUserColor(userColorHex?: string | null) {
-  if (isFairCoinHost()) return;
-  if (userColorHex) {
-    const presetName = hexToAppColorName(userColorHex);
-    saveColorPresetPreference(presetName);
-  }
 }
 
 /* ── Initialise on import (called once from main.tsx) ── */
