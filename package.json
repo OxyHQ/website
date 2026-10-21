@@ -170,7 +170,6 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "github-slugger": "^2.0.0",
     "pagefind": "^1.5.2",
-    "playwright": "^1.61.1",
     "remark-mdx-frontmatter": "^5.2.0",
     "rollup-plugin-visualizer": "^7.0.1",
     "satori": "^0.28.0",
