@@ -7,7 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'PageFooterProps': {
       props: [
-        { name: 'position', type: "'absolute' | 'document'", options: ['absolute', 'document'], optional: true, description: "Absolute inside a bounded frame (default), or pinned to the document viewport while aligned to this footer's in-flow column on web. Native always uses absolute positioning inside its bounded frame." },
+        { name: 'position', type: "'absolute' | 'document' | 'inline' | 'sticky'", options: ['absolute', 'document', 'inline', 'sticky'], optional: true, description: "Absolute inside a bounded frame (default), document-anchored on web, in normal flow (`inline`), or in flow pinned to the scroll container's bottom on web (`sticky`). Native sticky falls back to inline placement. A Screen bottomBar slot owns placement for every position." },
         { name: 'children', type: 'ReactNode', optional: true, description: 'Optional content before the actions, for example a selection summary.' },
         { name: 'actions', type: 'ReactNode', optional: true, description: 'Controls grouped by the caller; inherits the surrounding Bloom size.' },
         { name: 'bottomInset', type: 'number', optional: true, description: "Distance from the containing frame's bottom. Defaults to the occupied bottom edge (for example AppShell's measured bottom bar). Pass 0 when the frame already ends above navigation, or the footer is in a desktop pane." },
@@ -15,6 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'scrim', type: "'auto' | 'always' | 'none'", options: ['auto', 'always', 'none'], optional: true, description: 'Mirrored PageHeader gradient. Default always preserves existing behavior. auto follows ScrollMetricsProvider: hidden at the bottom or for short / unmeasured content, fading in over scrollThreshold of remaining content.' },
         { name: 'scrollThreshold', type: 'number', optional: true, description: 'Distance from the bottom over which the automatic scrim fades. Default 20.' },
         { name: 'scrimColor', type: 'string', optional: true, description: "Opaque gradient color; defaults to the containing surface's fill." },
+        { name: 'contentContainerStyle', type: 'StyleProp<ViewStyle>', optional: true, description: 'Layout of the controls row; use matching padding longhands to override its insets.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

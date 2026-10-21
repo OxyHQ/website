@@ -9,9 +9,10 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true },
         { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
+        { name: 'controlDensity', type: 'BloomControlDensity', options: ['default', 'compact'], optional: true, description: 'Contextual Button geometry. Navigation headers set compact; overlays reset it.' },
         { name: 'panelRadius', type: 'number', optional: true, description: 'Shared corner radius for framed content panels and card sidebars. Defaults to 28.' },
       ],
-      inheritsFrom: ['PropsWithChildren<BloomAppearanceProps & { panelRadius?: number; }>'],
+      inheritsFrom: ['PropsWithChildren<…>'],
     },
   },
   components: [

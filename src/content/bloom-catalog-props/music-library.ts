@@ -39,7 +39,7 @@ export const props: BloomSurfaceProps = {
     'LibraryItemProps': {
       props: [
         { name: 'item', type: 'LibraryEntry', optional: false },
-        { name: 'variant', type: 'LibraryItemVariant', options: ['list', 'compact', 'grid', 'rail'], optional: true, description: 'Default `list`.' },
+        { name: 'variant', type: 'LibraryItemVariant', options: ['compact', 'list', 'grid', 'rail'], optional: true, description: 'Default `list`.' },
         { name: 'selected', type: 'boolean', optional: true, description: 'The open page: a neutral fill and `aria-current="page"`.' },
         { name: 'nowPlaying', type: 'boolean', optional: true, description: 'This entry is the playing context: accent title and the now-playing bars.' },
         { name: 'paused', type: 'boolean', optional: true, description: 'With `nowPlaying`: the bars stand still.' },

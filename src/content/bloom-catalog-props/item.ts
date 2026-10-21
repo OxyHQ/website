@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'ItemProps': {
       props: [
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Inherits BloomScope; md is the normal row.' },
         { name: 'title', type: 'React.ReactNode', optional: true, description: 'Primary title text.' },
         { name: 'subtitle', type: 'React.ReactNode', optional: true, description: 'Secondary text rendered below the title.' },
         { name: 'children', type: 'React.ReactNode', optional: true, description: 'Arbitrary body content. When provided it replaces the `title`/`subtitle` text column — use it for fully custom rows.' },
@@ -21,7 +22,7 @@ export const props: BloomSurfaceProps = {
         { name: 'selected', type: 'boolean', optional: true, description: 'Selected state — applies a subtle highlighted background. Useful when `Item` is used as an option inside an overlay (combobox, command, menu).' },
         { name: 'active', type: 'boolean', optional: true, description: 'The "you are here" state: the current route in a navigation list.' },
         { name: 'highlighted', type: 'boolean', optional: true, description: "The keyboard's cursor in a list the field above it drives (arrow keys over a combobox or a composer's suggestions). Paints the hover wash, since it is the same claim as the pointer resting on the row, and announces nothing: the row is neither chosen (`selected`) nor current (`active`)." },
-        { name: 'density', type: "'comfortable' | 'compact'", options: ['comfortable', 'compact'], optional: true, description: "Vertical density. Defaults to `'comfortable'`." },
+        { name: 'density', type: "'comfortable' | 'compact'", options: ['comfortable', 'compact'], optional: true, description: 'Legacy explicit geometry. Prefer size for new composition; omitted density inherits BloomScope.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'titleStyle', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'subtitleStyle', type: 'StyleProp<TextStyle>', optional: true },

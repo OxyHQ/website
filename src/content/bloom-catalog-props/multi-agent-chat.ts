@@ -8,7 +8,8 @@ export const props: BloomSurfaceProps = {
     'MultiAgentChatProps': {
       props: [
         { name: 'providers', type: "ReadonlyArray<import('../composer-panel/types').ModelPickerProvider>", optional: true, description: "Model catalogue passed to Bloom's shared composer picker." },
-        { name: 'onRespond', type: '(agent: Agent, messages: Message[], signal: AbortSignal) => Promise<string>', optional: true },
+        { name: 'onRespond', type: '(agent: Agent, messages: Message[], signal: AbortSignal, request: MultiAgentChatRequest) => Promise<string>', optional: true },
+        { name: 'composerProps', type: "Omit<ComposerPanelProps, 'value' | 'defaultValue' | 'onValueChange' | 'onSubmit' | 'busy' | 'onStop' | 'providers'>", optional: true, description: 'Shared ComposerPanel API for models, permissions, voice, attachments and labels.' },
         { name: 'initialWorkspace', type: 'Workspace', optional: true },
         { name: 'defaultEditorId', type: 'string | null', optional: true },
         { name: 'storageKey', type: 'string | null', optional: true, description: 'Web persistence; null disables storage. Native retains session state.' },

@@ -8,7 +8,7 @@ export const props: BloomSurfaceProps = {
     'SelectProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
-        { name: 'size', type: 'SelectSize', options: ['sm', 'md'], optional: true, description: "`md` (default) or `sm` for compact contexts — the trigger's padding, type and chevron, and the option rows' padding and type." },
+        { name: 'size', type: 'SelectSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Explicit trigger size, otherwise inherited from BloomScope (default md). Option rows independently inherit the menu recipe.' },
         { name: 'value', type: 'string', optional: true },
         { name: 'defaultValue', type: 'string', optional: true, description: 'Initial selection when value is uncontrolled.' },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
@@ -43,6 +43,7 @@ export const props: BloomSurfaceProps = {
     },
     'SelectContentProps<T>': {
       props: [
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Option density; otherwise inherits the nearest BloomScope. Trigger size is independent.' },
         { name: 'label', type: 'string', optional: true, description: 'Label displayed at the top of the selection sheet (native) or used as an ARIA label (web).' },
         { name: 'items', type: 'readonly T[]', optional: false, description: 'The array of items to choose from.' },
         { name: 'renderItem', type: '(item: T, index: number, selectedValue?: string | null) => React.ReactElement', optional: false, description: 'Renders a single item. Use `SelectItem` inside this callback.' },

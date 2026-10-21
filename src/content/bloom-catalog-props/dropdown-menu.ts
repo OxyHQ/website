@@ -10,10 +10,13 @@ export const props: BloomSurfaceProps = {
         { name: 'open', type: 'boolean', optional: true, description: 'Controlled open state. Omit for an uncontrolled surface.' },
         { name: 'defaultOpen', type: 'boolean', optional: true, description: 'Initial open state when uncontrolled. Defaults to `false`.' },
         { name: 'onOpenChange', type: '(open: boolean) => void', optional: true, description: 'Called whenever the surface opens or closes, from any cause.' },
+        { name: 'activation', type: "'click' | 'hover'", options: ['click', 'hover'], optional: true, description: "Hover/focus previews preserve the trigger's primary click; arrows enter the menu. Native uses long press." },
+        { name: 'openDelay', type: 'number', optional: true },
+        { name: 'closeDelay', type: 'number', optional: true },
       ],
-      inheritsFrom: ['React.PropsWithChildren<OverlayOpenProps>'],
+      inheritsFrom: ['React.PropsWithChildren<…>'],
     },
-    'OverlayTriggerProps': {
+    'DropdownMenuTriggerProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'asChild', type: 'boolean', optional: true, description: "Render the single element child AS the trigger, merging the open handler and a11y props into it (Radix's composition escape hatch). Without it the children render inside Bloom's own `Pressable`." },
@@ -22,10 +25,13 @@ export const props: BloomSurfaceProps = {
         { name: 'className', type: 'string', optional: true, description: 'Bare triggers apply this to the measured anchor wrapper; families whose trigger owns chrome append it to that chrome instead.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
+        { name: 'pressTrigger', type: 'React.ReactElement<OverlayTriggerProps>', optional: true, description: 'An independent primary press surface, composed around the same control after menu handlers.' },
       ],
     },
     'OverlaySurfaceProps': {
       props: [
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Overrides the nearest BloomScope size for this surface and its descendants.' },
+        { name: 'maxHeight', type: 'number', optional: true, description: 'Optional ceiling; the surface always stays inside the viewport and owns scrolling.' },
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'label', type: 'string', optional: true, description: 'Accessible name of the surface.' },
         { name: 'dismissible', type: 'boolean', optional: true, description: 'Dismiss on outside press and Escape. Defaults to `true`.' },
@@ -43,7 +49,7 @@ export const props: BloomSurfaceProps = {
   },
   components: [
     { name: 'DropdownMenu', propsType: 'DropdownMenuProps' },
-    { name: 'DropdownMenuTrigger', propsType: 'OverlayTriggerProps' },
+    { name: 'DropdownMenuTrigger', propsType: 'DropdownMenuTriggerProps' },
     { name: 'DropdownMenuContent', propsType: 'OverlaySurfaceProps' },
   ],
 }

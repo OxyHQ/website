@@ -174,6 +174,7 @@ export const props: BloomSurfaceProps = {
         { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'onPress', type: '(event: GestureResponderEvent) => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'density', type: 'BloomControlDensity', options: ['default', 'compact'], optional: true, description: "Explicit override of the nearest BloomScope's contextual action geometry." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'iconSize', type: 'number', optional: true, description: "Glyph dimensions in points; defaults to the selected size's icon scale." },

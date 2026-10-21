@@ -7,7 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'PageHeaderProps': {
       props: [
-        { name: 'title', type: 'ReactNode', optional: true, description: 'A string renders as the heading; a node renders as-is (and owns its own semantics).' },
+        { name: 'title', type: 'ReactNode', optional: true, description: "A string renders as the heading; a node renders as-is and determines the header's height, including when centered. Nodes own their accessible semantics." },
         { name: 'subtitle', type: 'ReactNode', optional: true, description: 'A string renders as a secondary line under the title; a node renders as-is.' },
         { name: 'titleAlign', type: 'PageHeaderTitleAlign', options: ['start', 'center'], optional: true, description: 'Default `start`.' },
         { name: 'headingLevel', type: '1 | 2 | 3 | 4 | 5 | 6', optional: true, description: "The title's heading level. Default 1." },
@@ -15,12 +15,14 @@ export const props: BloomSurfaceProps = {
         { name: 'titleRevealOffset', type: 'number | SharedValue<number>', optional: true, description: 'Scroll distance before title and subtitle begin revealing. Supplying an offset pairs a content heading with this header; auto mode fades after it.' },
         { name: 'titleRevealDistance', type: 'number | SharedValue<number>', optional: true, description: 'Fade distance for the title, independently of the scrim. Defaults to scrollThreshold.' },
         { name: 'tone', type: "'default' | 'onImage'", options: ['default', 'onImage'], optional: true, description: 'Light title and supporting text over media; controls keep their own island material.' },
-        { name: 'presentation', type: 'PageHeaderPresentation', options: ['floating', 'bar'], optional: true, description: 'Default `floating`.' },
+        { name: 'presentation', type: 'PageHeaderPresentation', options: ['floating', 'bar', 'navigation'], optional: true, description: 'Default `floating`.' },
         { name: 'placement', type: 'PageHeaderPlacement', options: ['inline', 'overlay', 'overlap'], optional: true, description: 'Default `inline`.' },
+        { name: 'density', type: "'default' | 'compact'", options: ['default', 'compact'], optional: true, description: 'Compact panel chrome: a 32pt minimum row with 12pt side insets. Controls and content may grow it.' },
         { name: 'onBack', type: '() => void', optional: true, description: "Renders the back button and is called when it is pressed. The header is router-agnostic: pass `router.back`, or your app's safe-back helper." },
         { name: 'backLabel', type: 'string', optional: true, description: 'The back button\'s accessible name. Default "Back".' },
         { name: 'leading', type: 'ReactNode', optional: true, description: 'Rendered after the back button, before the title (an avatar, a logo).' },
-        { name: 'actions', type: 'ReactNode', optional: true, description: 'Rendered at the end of the bar. In the floating presentation this slot is wrapped in a `BloomScope` with shared control defaults, so a `ButtonGroup` inside it becomes one island with no prop written on it. Declare the grouping yourself — the header never infers it by reading children.' },
+        { name: 'actions', type: 'ReactNode | ((state: PageHeaderActionsState) => ReactNode)', optional: true, description: "Rendered at the end of the bar. In the floating presentation this slot is wrapped in a `BloomScope` with shared control defaults, so a `ButtonGroup` inside it becomes one island with no prop written on it. Declare the grouping yourself — the header never infers it by reading children. A render function can adapt action labels/visibility to the header's own compact width. Keep component types and keys stable to preserve open dialogs." },
+        { name: 'accessory', type: 'ReactNode', optional: true, description: "Full-width chrome below the title/actions row, for tabs or a toolbar. Its measured height joins Screen's header clearance and scroll effects." },
         { name: 'border', type: 'PageHeaderBorder', options: ['auto', 'always', 'none'], optional: true, description: '`presentation="bar"` only. Default `auto`.' },
         { name: 'transparent', type: 'boolean', optional: true, description: '`presentation="bar"` only: the bar\'s background and shadow fade in with scroll instead of showing at rest.' },
         { name: 'scrim', type: 'PageHeaderScrim', options: ['auto', 'always', 'none'], optional: true, description: '`presentation="floating"` only. Default `auto`.' },
@@ -40,9 +42,20 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'PageHeaderTitleInputProps': {
+      props: [
+        { name: 'multiline', type: 'boolean', optional: true, description: 'Wrap and grow with the title (default true); false uses a single-line input.' },
+        { name: 'numberOfLines', type: 'number', optional: true, description: 'Minimum native line count / fallback web rows. Default 1.' },
+        { name: 'label', type: 'string', optional: false },
+        { name: 'aria-describedby', type: 'string', optional: true },
+        { name: 'disabled', type: 'boolean', optional: true },
+      ],
+      inheritsFrom: ['TextInputProps'],
+    },
   },
   components: [
     { name: 'PageHeader', propsType: 'PageHeaderProps' },
     { name: 'EdgeScrim', propsType: 'EdgeScrimProps' },
+    { name: 'PageHeaderTitleInput', propsType: 'PageHeaderTitleInputProps' },
   ],
 }

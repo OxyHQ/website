@@ -19,11 +19,12 @@ export const props: BloomSurfaceProps = {
       props: [],
       inheritsFrom: ['ProviderProps<SharedValue<number> | null>'],
     },
-    'PropsWithChildren<{ inheritBottomEdge?: boolean | undefined; }>': {
+    'PropsWithChildren<…>': {
       props: [
         { name: 'inheritBottomEdge', type: 'boolean', optional: true },
+        { name: 'sizing', type: "'content' | 'fill'", options: ['content', 'fill'], optional: true },
       ],
-      inheritsFrom: ['PropsWithChildren<{ inheritBottomEdge?: boolean; }>'],
+      inheritsFrom: ["PropsWithChildren<{ inheritBottomEdge?: boolean; sizing?: 'content' | 'fill'; }>"],
     },
     'PropsWithChildren<{ scrollY?: SharedValue<number> | undefined; }>': {
       props: [
@@ -47,15 +48,62 @@ export const props: BloomSurfaceProps = {
         { name: 'insets', type: '{ start?: number; end?: number; }', optional: true, description: "Room kept free at the track's ends, for chrome that floats over the scroller." },
       ],
     },
+    'ResizeHandleProps': {
+      props: [
+        { name: 'orientation', type: "'vertical' | 'horizontal'", options: ['vertical', 'horizontal'], optional: true, description: 'Separator orientation; horizontal separators resize panel heights.' },
+        { name: 'onResizeStart', type: '() => void', optional: true, description: 'Pointer went down on the grip.' },
+        { name: 'onResize', type: '(dx: number) => void', optional: false, description: 'Distance along the resize axis from the drag start, px.' },
+        { name: 'onResizeEnd', type: '() => void', optional: true },
+        { name: 'label', type: 'string', optional: true, description: "Names the separator. `'Resize panels'` in English." },
+        { name: 'onNudge', type: '(dx: number) => void', optional: true, description: 'Keyboard nudge (web: ←/→ move by 16).' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'ScrollSurfaceProps': {
+      props: [
+        { name: 'hostStyle', type: 'StyleProp<ViewStyle>', optional: true, description: 'Layout of the outer host. `style` continues to size its inner ScrollArea.' },
+        { name: 'fadeColor', type: 'string', optional: true, description: 'Actual backing fill when the semantic surface is composited by a parent.' },
+        { name: 'fadeHeight', type: 'number', optional: true, description: 'Depth of each scroll-edge fade, in pixels. Defaults to 24.' },
+        { name: 'contentClassName', type: 'string', optional: true },
+        { name: 'surface', type: "'primary' | 'secondary' | 'full'", options: ['primary', 'secondary', 'full'], optional: true },
+        { name: 'scrollRef', type: 'Ref<ComponentRef<typeof ScrollView>>', optional: true },
+        { name: 'label', type: 'string', optional: true },
+        { name: 'fadeBottom', type: 'boolean', optional: true },
+        { name: 'chatId', type: 'string', optional: true },
+        { name: 'animatedHandler', type: 'ScrollHandlerProcessed<Record<string, unknown>>', optional: true, description: 'Reanimated scroll handler, composed on the UI thread with Bloom metrics. onScroll remains a plain JS observer.' },
+        { name: 'className', type: 'string', optional: true, description: "Utilities for the scrolling viewport, resolved by Bloom's own interop." },
+        { name: 'containerClassName', type: 'string', optional: true, description: 'Utilities for the outer sized area on web; shares the viewport on native.' },
+        { name: 'contentContainerClassName', type: 'string', optional: true, description: 'Utilities for the inner content container.' },
+        { name: 'scrollbar', type: 'ScrollAreaScrollbar', options: ['scroll', 'hover', 'always', 'never'], optional: true, description: "When the scrollbar shows. Default `'scroll'`." },
+        { name: 'size', type: "'sm' | 'md'", options: ['sm', 'md'], optional: true, description: "The bar's thickness: `sm` 4px (default) or `md` 6px, each growing 2px under the pointer." },
+        { name: 'ref', type: 'Ref<ComponentRef<typeof ScrollView>>', optional: true, description: 'The underlying `ScrollView`: `scrollTo`, `scrollToEnd` and the rest work on it.' },
+      ],
+      inheritsFrom: ['ScrollViewProps'],
+    },
+    'ToolbarProps': {
+      props: [
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'App-scale spacing; omitted size inherits BloomScope.' },
+        { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'actions', type: 'React.ReactNode', optional: true },
+        { name: 'accessory', type: 'React.ReactNode', optional: true, description: 'A summary or secondary row below the tools.' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'className', type: 'string', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'BottomEdgeProvider', propsType: 'PropsWithChildren<{ inherit?: boolean | undefined; }>' },
     { name: 'TopEdgeProvider', propsType: 'TopEdgeProvider' },
     { name: 'ScrollOffsetProvider', propsType: 'ProviderProps<SharedValue<number> | null>' },
-    { name: 'ScreenScope', propsType: 'PropsWithChildren<{ inheritBottomEdge?: boolean | undefined; }>' },
+    { name: 'ScreenScope', propsType: 'PropsWithChildren<…>' },
     { name: 'HeaderDockProvider', propsType: 'PropsWithChildren<{ scrollY?: SharedValue<number> | undefined; }>' },
     { name: 'StickySection', propsType: 'StickySectionProps' },
     { name: 'ScrollMetricsProvider', propsType: 'TopEdgeProvider' },
     { name: 'ScrollBar', propsType: 'ScrollBarProps' },
+    { name: 'ResizeHandle', propsType: 'ResizeHandleProps' },
+    { name: 'ScrollSurface', propsType: 'ScrollSurfaceProps' },
+    { name: 'Toolbar', propsType: 'ToolbarProps' },
   ],
 }

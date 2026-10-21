@@ -7,8 +7,11 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'BreadcrumbProps': {
       props: [
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Explicit size, nearest BloomScope, then normal md.' },
+        { name: 'overflow', type: "'scroll' | 'collapse'", options: ['scroll', 'collapse'], optional: true, description: 'Scroll by default. Collapse keeps the final item visible and menus hidden ancestors. Custom-node labels fall back to scroll.' },
+        { name: 'overflowLabel', type: 'string', optional: true, description: 'Accessible name for the hidden-ancestor menu. Defaults to localized "Show more".' },
         { name: 'children', type: 'ReactNode', optional: false, description: '`BreadcrumbItem` children. Chevron separators are inserted between them.' },
-        { name: 'separator', type: 'ReactNode', optional: true, description: 'Replaces the chevron between items — e.g. `"/"` as a `Text`, or an icon. Hidden from assistive technology. The default chevron points the reading direction (it mirrors in a right-to-left layout); a custom separator is rendered as given.' },
+        { name: 'separator', type: 'ReactNode', optional: true, description: 'Replaces the chevron between items — e.g. `"/"` directly, a `Text`, or an icon. Hidden from assistive technology. The default chevron points the reading direction (it mirrors in a right-to-left layout); a custom separator is rendered as given.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the navigation landmark; `"Breadcrumb"` in English.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
@@ -16,17 +19,24 @@ export const props: BloomSurfaceProps = {
     },
     'BreadcrumbItemProps': {
       props: [
+        { name: 'trigger', type: 'ReactElement<OverlayTriggerProps>', optional: true, description: 'Wraps the existing Button, e.g. <PopoverTrigger asChild />. Keep this item a direct child for collapse fitting.' },
+        { name: 'hoverMenu', type: 'BreadcrumbHoverMenu', optional: true, description: 'Related navigation on hover/focus or native long press, without replacing the primary action.' },
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Explicit size overrides the enclosing Breadcrumb/BloomScope.' },
         { name: 'children', type: 'ReactNode', optional: true, description: 'The label.' },
-        { name: 'icon', type: 'ButtonIconComponent', optional: true, description: 'Leading icon component (16px), coloured with the item.' },
+        { name: 'icon', type: 'ButtonIconComponent', optional: true, description: 'Leading icon component (14/16/16/20px at xs/sm/md/lg), coloured with the item.' },
         { name: 'leading', type: 'ReactNode', optional: true, description: 'A node before the icon and label, 6px from them — e.g. a 20px `Avatar` for a workspace or member crumb. Not recoloured on hover.' },
-        { name: 'href', type: 'string', optional: true, description: 'Makes the item a link. On web it renders a real `<a href>`; with `onPress` as well, the default navigation is prevented and `onPress` runs instead (router links). On native, pressing opens the URL unless `onPress` is set.' },
+        { name: 'href', type: 'string', optional: true, description: 'Makes the item a link. On web it renders a real `<a href>`; with `onPress` as well, ordinary unmodified navigation is prevented and `onPress` runs instead (router links). On native, pressing opens the URL unless `onPress` is set.' },
         { name: 'onPress', type: '() => void', optional: true, description: 'Makes the item a button.' },
-        { name: 'current', type: 'boolean', optional: true, description: 'The active page: not interactive, darker text, `aria-current="page"`.' },
+        { name: 'current', type: 'boolean', optional: true, description: 'The active page: darker text and aria-current. A label unless onPress, href or trigger supplies an action.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Accessible name; defaults to a string `children`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
+        { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'aria-expanded', type: 'boolean', optional: true, description: 'Whether the surface this button controls is open.' },
+        { name: 'aria-haspopup', type: "WebAriaProps['aria-haspopup']", options: ['menu', 'listbox', 'tree', 'grid', 'dialog'], optional: true, description: "What the surface this button opens IS. Forwarded for the same reason as ['aria-expanded']; the value comes from the family." },
       ],
+      inheritsFrom: ['RefAttributes<ReactNativeElement>'],
     },
   },
   components: [
