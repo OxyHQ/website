@@ -129,21 +129,63 @@ export const config = {
   },
   /**
    * The storage the site wrote to before Oxy Files: objects under
-   * `oxy-website/` in Oxy's media bucket, served from `cdnBaseUrl`. Read by the
+   * `public/oxy-website/`, served from `cdnBaseUrl/oxy-website/…`. Read by the
    * migration and by deletes of rows not yet migrated, and written only for an
    * SVG an Oxy API without ADR 0043 stage 4c refuses (`services/oxyFiles.ts`).
    * Retired by `docs/OXY-FILES.md`.
+   *
+   * They live in their own Cloudflare R2 bucket, `oxy-website-legacy-media`
+   * (OxyHQ/oxy ADR 0047), through a token scoped to that one bucket — the S3
+   * bucket they came from is Oxy Files' own, and no token can be limited to a
+   * prefix of it: R2_BUCKET, R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY.
+   * `AWS_S3_BUCKET` then names that S3 bucket only so a delete reaches the old
+   * copy too, until it is retired; without `R2_BUCKET` it is still the store.
+   * Never through AWS_ENDPOINT_URL / AWS_ACCESS_KEY_ID: the CloudWatch and
+   * activity clients read those too.
    */
-  s3: {
-    // Leave endpoint unset for native AWS S3; set AWS_ENDPOINT_URL for an S3-compatible
-    // provider.
-    endpoint: process.env.AWS_ENDPOINT_URL || undefined,
-    region: process.env.AWS_REGION || 'us-west-2',
-    bucket: process.env.AWS_S3_BUCKET || 'oxy-oxy-api-media-usw2-237343248947',
-    // Objects are written under this prefix; CloudFront origin path "/public" strips it back
-    // off when serving.
-    keyPrefix: process.env.AWS_S3_KEY_PREFIX || 'public/',
-    // Public base URL fronting the bucket (AWS CloudFront: cloud.oxy.so).
-    cdnBaseUrl: process.env.CDN_BASE_URL || 'https://cloud.oxy.so',
-  },
+  s3: storageConfig(),
 };
+
+function storageConfig() {
+  const awsBucket = process.env.AWS_S3_BUCKET || 'oxy-oxy-api-media-usw2-237343248947';
+  const region = process.env.AWS_REGION || 'us-west-2';
+  const shared = {
+    // Objects are written under this prefix; the CDN prepends it when serving.
+    keyPrefix: process.env.AWS_S3_KEY_PREFIX || 'public/',
+    cdnBaseUrl: process.env.CDN_BASE_URL || 'https://cloud.oxy.so',
+  };
+  const r2Bucket = process.env.R2_BUCKET?.trim();
+  if (!r2Bucket) {
+    return {
+      ...shared,
+      // Leave endpoint unset for native AWS S3; set AWS_ENDPOINT_URL for an
+      // S3-compatible provider (local MinIO).
+      endpoint: process.env.AWS_ENDPOINT_URL || undefined,
+      region,
+      bucket: awsBucket,
+      credentials: undefined as { accessKeyId: string; secretAccessKey: string } | undefined,
+      legacy: null as { bucket: string; region: string } | null,
+    };
+  }
+  const endpoint = process.env.R2_ENDPOINT?.trim() ?? '';
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID?.trim() ?? '';
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY?.trim() ?? '';
+  if (!endpoint || !accessKeyId || !secretAccessKey) {
+    throw new Error(
+      'R2_BUCKET is set but R2_ENDPOINT, R2_ACCESS_KEY_ID or R2_SECRET_ACCESS_KEY is not',
+    );
+  }
+  return {
+    ...shared,
+    endpoint,
+    // R2 has one region; `auto` is what its S3 API expects.
+    region: 'auto',
+    bucket: r2Bucket,
+    credentials: { accessKeyId, secretAccessKey } as
+      | { accessKeyId: string; secretAccessKey: string }
+      | undefined,
+    legacy: process.env.AWS_S3_BUCKET
+      ? ({ bucket: awsBucket, region } as { bucket: string; region: string } | null)
+      : null,
+  };
+}
