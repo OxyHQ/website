@@ -58,12 +58,16 @@ if [ "$SERVICE" = "website-api" ] && ! jq -e --arg name "INTERCOM_MESSENGER_SECR
   ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
   SECRET_ARN="arn:aws:ssm:$AWS_REGION:$ACCOUNT_ID:parameter/oxy/$SERVICE/INTERCOM_MESSENGER_SECRET"
 fi
-jq --arg container "$SERVICE" --arg image "$EXPECTED_IMAGE" --arg secret "$SECRET_ARN" '
+jq --arg container "$SERVICE" --arg image "$EXPECTED_IMAGE" --arg secret "$SECRET_ARN" \
+  --argjson retired '["AWS_S3_BUCKET","AWS_S3_KEY_PREFIX"]' '
   del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
       .compatibilities, .registeredAt, .registeredBy, .tags)
   | .containerDefinitions |= map(
       if .name == $container then
         .image = $image
+        # The media store is R2 only (OxyHQ/oxy ADR 0047): the S3 variables
+        # the running revision still carries are dropped, never carried on.
+        | .environment = ((.environment // []) | map(select(.name as $n | $retired | index($n) | not)))
         | if $secret != "" then
             .secrets = ((.secrets // []) + [{name: "INTERCOM_MESSENGER_SECRET", valueFrom: $secret}])
           else . end
