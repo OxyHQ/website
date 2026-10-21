@@ -51,6 +51,11 @@ process.env.OXY_API_BASE = `http://localhost:${process.env.TEST_FAKE_OXY_PORT}`;
 process.env.MCP_RESOURCE_URL = `http://localhost:${process.env.PORT}/mcp`;
 process.env.CORS_ORIGIN = 'https://site.test';
 process.env.CDN_BASE_URL = 'https://cdn.test';
+// The legacy media store (R2): a local endpoint no test reaches; `services/s3.js` is mocked below.
+process.env.R2_BUCKET ??= 'website-legacy-test';
+process.env.R2_ENDPOINT ??= 'http://127.0.0.1:9000';
+process.env.R2_ACCESS_KEY_ID ??= 'test';
+process.env.R2_SECRET_ACCESS_KEY ??= 'test';
 process.env.OXY_CLOUD_URL = 'https://cloud.test';
 process.env.OXY_FILES_WEBHOOK_SECRET = 'whsec_test';
 process.env.OXY_ADMIN_USER_IDS = 'admin-account';
