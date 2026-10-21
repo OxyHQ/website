@@ -15,7 +15,12 @@ const original = {
     {
       name: 'website-api',
       image: `registry/oxy/website-api@sha256:${'a'.repeat(64)}`,
-      environment: [{ name: 'PORT', value: '8080' }],
+      environment: [
+        { name: 'PORT', value: '8080' },
+        // Retired with S3 (OxyHQ/oxy ADR 0047): a deploy drops them.
+        { name: 'AWS_S3_BUCKET', value: 'oxy-oxy-api-media-usw2-237343248947' },
+        { name: 'AWS_S3_KEY_PREFIX', value: 'public/' },
+      ],
       secrets: [{ name: 'INTERCOM_MESSENGER_SECRET', valueFrom: 'existing-secret' }],
     },
     { name: 'sidecar', image: 'unchanged-sidecar' },
@@ -23,7 +28,7 @@ const original = {
 };
 
 for (const wrongDigest of [false, true])
-  test(`pinned deployment ${wrongDigest ? 'rejects stale running image' : 'replaces only the app image and verifies the running digest'}`, async () => {
+  test(`pinned deployment ${wrongDigest ? 'rejects stale running image' : 'replaces only the app image, drops the retired S3 variables and verifies the running digest'}`, async () => {
     const dir = await mkdtemp(join(tmpdir(), 'website-deploy-test-'));
     try {
       await writeFile(join(dir, 'original.json'), JSON.stringify(original));
@@ -79,7 +84,11 @@ else: raise Exception(args)
       expect(registered).toEqual({
         ...expected,
         containerDefinitions: [
-          { ...original.containerDefinitions[0], image: `registry/oxy/website-api@${digest}` },
+          {
+            ...original.containerDefinitions[0],
+            image: `registry/oxy/website-api@${digest}`,
+            environment: [{ name: 'PORT', value: '8080' }],
+          },
           original.containerDefinitions[1],
         ],
       });
