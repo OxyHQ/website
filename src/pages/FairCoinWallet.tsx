@@ -17,13 +17,13 @@ import {
 
 const SEO_TITLE = 'FAIRWallet, your FairCoin wallet';
 const SEO_DESCRIPTION =
-  'FAIRWallet is the official non-custodial wallet for FairCoin. Send, receive, stake and explore the FairCoin network from one app on Android, iOS, Windows, macOS and Linux.';
+  'FAIRWallet is the official non-custodial wallet for FairCoin. Send, receive and manage FairCoin with your own keys on Android, macOS, Windows and Linux.';
 
 /**
  * `/wallet` (or `/faircoin/wallet` on oxy.so) — marketing landing for the
  * FAIRWallet app. Renders the shared Navbar/Footer chrome around
- * `WalletLandingContent`, which composes hero, features, downloads,
- * screenshots, trust narrative and a final CTA.
+ * `WalletLandingContent`, which composes the send gallery, security, common
+ * questions, related features and live network statistics.
  */
 export default function FairCoinWalletPage() {
   const [darkHeader, setDarkHeader] = useState(false);

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { animate, motion, useInView, useMotionValue, useTransform } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
+import { RiQrCodeLine } from '@oxy.so/bloom/icons/RiQrCodeLine';
+import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine';
 import { RiLockLine } from '@oxy.so/bloom/icons/RiLockLine';
 import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine';
 import { RiKey2Line } from '@oxy.so/bloom/icons/RiKey2Line';
@@ -155,14 +157,14 @@ export default function WalletScenes({
           <div className="faircoin-editorial-green absolute left-1/2 top-[5.5%] aspect-[.462] w-[41%] -translate-x-1/2 overflow-hidden rounded-[14%/6.5%] bg-ring text-primary-foreground [container-type:inline-size] lg:w-[31.4%]">
             <StatusBar />
             <div className="mt-[9%] flex items-center justify-between px-[8%] text-[7cqw]">
-              <span>⌗</span>
-              <span className="ml-auto mr-[8%]">⌕</span>
+              <RiQrCodeLine fill="currentColor" className="size-[7cqw]" />
+              <RiSearchLine fill="currentColor" className="ml-auto mr-[8%] size-[7cqw]" />
               <Avatar person={0} className="size-[11cqw]" />
             </div>
             <p className="mt-[13%] text-center text-[28cqw] leading-none tracking-[-.06em]">
               ⊜<motion.span>{sendAmount}</motion.span>
             </p>
-            <div className="mt-[22%] grid grid-cols-3 gap-y-[10cqw] px-[4%] text-center text-[7cqw]">
+            <div className="mt-[16%] grid grid-cols-3 gap-y-[8cqw] px-[4%] text-center text-[7cqw]">
               {['1', '2', '3', '4', '5', '6', '7', '8', '9', '·', '0', '‹'].map((n) => (
                 <span key={n}>{n}</span>
               ))}
@@ -355,7 +357,7 @@ export default function WalletScenes({
               preserveAspectRatio="xMidYMid slice"
             >
               <g fill="none" stroke="currentColor" strokeWidth="2">
-                {Array.from({ length: 11 }, (_, i) => (
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
                   <path
                     key={`street-${i * 54}`}
                     d={`M${i * 54 - 100} -20 L${i * 54 + 100} 420 M-20 ${i * 55 - 130} L420 ${i * 55 + 130}`}

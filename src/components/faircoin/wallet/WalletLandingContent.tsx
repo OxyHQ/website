@@ -14,7 +14,7 @@ import { useWalletReducedMotion } from './useWalletReducedMotion';
 
 const DOWNLOAD = 'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest';
 const GUTTER = 'px-[5px] lg:px-5';
-const INNER = 'mx-auto w-full lg:w-[74.86%]';
+const INNER = 'mx-auto w-full lg:w-[calc(75%_-_.175vw)]';
 const HEADING =
   'text-[calc(var(--wallet-type)*2)] leading-[1.1] tracking-[-.02em] lg:text-[calc(var(--wallet-type)*2.43)]';
 const FEATURES: { title: string; copy: string; scene: WalletScene }[] = [
@@ -82,7 +82,7 @@ function WalletFaq() {
   return (
     <section
       id="wallet-questions"
-      className={`${GUTTER} scroll-mt-24 py-[58px] lg:py-[100px]`}
+      className={`${GUTTER} scroll-mt-24 py-[15vw] lg:py-[7vw]`}
       aria-labelledby={`${id}-title`}
     >
       <h2 id={`${id}-title`} className={`${HEADING} mb-6 lg:mb-8`}>
@@ -162,15 +162,14 @@ export default function WalletLandingContent({
   return (
     <div
       data-wallet-landing
-      className="faircoin-editorial mx-auto max-w-[2600px] bg-card [&_.bloom-btn]:!bg-none [&_.bloom-btn::after]:!bg-none [&_.bloom-btn::after]:!shadow-none pt-[96px] lg:pt-[86px] text-foreground [font-family:'FairCoin_Editorial',sans-serif] [--wallet-type:clamp(12px,3.59vw,20px)] lg:[--wallet-type:clamp(14px,calc(-1.31714px+1.46246vw),36.7069px)]"
+      className="faircoin-editorial mx-auto max-w-[2600px] bg-card [&_.bloom-btn]:!bg-none [&_.bloom-btn::after]:!bg-none [&_.bloom-btn::after]:!shadow-none pt-[96px] lg:pt-[86px] text-foreground [font-family:'FairCoin_Editorial',sans-serif] [--wallet-type:clamp(11.94px,calc(2.522864px+2.94286vw),14px)] min-[391px]:[--wallet-type:clamp(14px,calc(8.475008px+1.41304vw),19.2px)] min-[760px]:[--wallet-type:clamp(16px,calc(3.343072px+1.66538vw),20.33px)] lg:[--wallet-type:clamp(13.6px,calc(-1.31714px+1.46246vw),36.7069px)]"
     >
-      <section className={GUTTER} aria-labelledby="wallet-title">
+      <section className={`${GUTTER} relative lg:pb-2`} aria-labelledby="wallet-title">
         <h1
           id="wallet-title"
-          className="mb-3 text-[calc(var(--wallet-type)*2.57143)] leading-[.95] tracking-[-.03em] lg:mb-9 lg:text-[calc(var(--wallet-type)*3.25)]"
+          className="mb-[calc(2.57143px+2.32143vw)] text-balance text-[calc(var(--wallet-type)*2.57143)] leading-[.95] tracking-[-.03em] lg:max-w-[calc(62.5%_-_.2625vw)] lg:text-[calc(var(--wallet-type)*3.25)]"
         >
-          Send FairCoin with
-          <br />
+          Send FairCoin with <br className="hidden lg:block" />
           FAIRWallet
         </h1>
         <img
@@ -179,9 +178,9 @@ export default function WalletLandingContent({
           fetchPriority="high"
           width={1774}
           height={887}
-          className="h-[500px] w-full rounded-[12px] object-cover object-[72%_center] lg:h-auto lg:aspect-[2.047] lg:rounded-[20px] lg:object-center"
+          className="aspect-[.7616] w-full rounded-[calc(var(--wallet-type)*.75)] object-cover object-[72%_center] lg:aspect-[2.0467] lg:rounded-[clamp(18px,var(--wallet-type),22px)] lg:object-center"
         />
-        <p className="mt-2 max-w-[700px] lg:min-h-[70px] text-[calc(var(--wallet-type)*.85)] leading-[1.2] tracking-[-.02em] text-muted-foreground lg:text-[calc(var(--wallet-type)*.75)]">
+        <p className="mt-2 max-w-[700px] lg:absolute lg:top-full lg:max-w-[calc(50%_-_20px)] text-[calc(var(--wallet-type)*.85)] leading-[1.2] tracking-[-.02em] text-muted-foreground lg:text-[calc(var(--wallet-type)*.75)]">
           FAIRWallet is a self-custody wallet for FairCoin. Network fees apply to on-chain payments.
           App screens and balances shown are illustrative. Download the latest release for Android,
           macOS, Windows or Linux.
@@ -189,13 +188,13 @@ export default function WalletLandingContent({
       </section>
       <div className={GUTTER}>
         <section
-          className={`${INNER} py-[58px] lg:pb-[100px] lg:pt-9`}
+          className={`${INNER} py-[15vw] min-[760px]:max-lg:w-[calc(60%_-_1.1vw)] lg:py-[7vw]`}
           aria-labelledby="wallet-quick-hits"
         >
           <h2 id="wallet-quick-hits" className={`${HEADING} mb-6 text-balance`}>
             Send and receive FairCoin with family and friends
           </h2>
-          <div className="grid gap-[calc(17.1429px+2.14286vw)] rounded-[12px] border border-border px-[calc(16px+1.25vw)] py-[calc(5.71429px+4.46429vw)] min-[600px]:grid-cols-2 lg:rounded-[20px]">
+          <div className="grid gap-[calc(17.1429px+2.14286vw)] rounded-[12px] border border-border px-[calc(16px+1.25vw)] py-[calc(5.71429px+4.46429vw)] min-[760px]:grid-cols-2 lg:rounded-[20px]">
             {[
               {
                 icon: RiArrowUpLine,
@@ -211,32 +210,59 @@ export default function WalletLandingContent({
                 text: 'Keep your coins in your own wallet, with your own keys',
               },
             ].map(({ icon: Icon, text }) => (
-              <div key={text} className="flex items-start gap-3 lg:gap-5">
+              <div
+                key={text}
+                className="flex items-start gap-[calc(8.28571px+.535714vw)] min-[760px]:mr-[calc(14.2857px+1.78571vw)]"
+              >
                 <Icon
                   fill="currentColor"
-                  className="faircoin-editorial-green mt-1 size-5 shrink-0 text-ring lg:size-10"
+                  className="faircoin-editorial-green mt-1 size-[calc(12px+2.5vw)] shrink-0 text-ring"
                 />
                 <p className="text-[length:var(--wallet-type)] leading-[1.4]">{text}</p>
               </div>
             ))}
           </div>
         </section>
-        <div className={`${INNER} space-y-[58px] lg:space-y-[50px]`}>
+        <div className={`${INNER} space-y-[15vw] lg:space-y-[50px]`}>
           {FEATURES.map(({ title, copy, scene }, i) => (
             <section
               key={scene}
               data-wallet-feature={scene}
-              className={`grid w-[79.5%] items-center gap-y-6 lg:w-full lg:gap-x-[6.6%] ${i % 2 === 0 ? 'ml-auto lg:grid-cols-[1fr_1.8fr]' : 'mr-auto lg:grid-cols-[60%_1fr] lg:gap-x-[7.3%]'}`}
+              className={`grid w-[calc(80%_-_.55vw)] items-center gap-y-6 lg:w-full lg:grid-cols-6 ${i % 2 === 0 ? 'ml-auto' : 'mr-auto lg:gap-x-[.7vw]'}`}
             >
-              <div className={i % 2 ? 'lg:col-start-2 lg:row-start-1' : ''}>
-                <h2 className="mb-2 text-[length:var(--wallet-type)] leading-[1.2] text-muted-foreground lg:mb-4 lg:text-[calc(var(--wallet-type)*.75)]">
+              <div
+                className={i % 2 ? 'lg:col-start-5 lg:col-span-2 lg:row-start-1' : 'lg:col-span-2'}
+              >
+                <h2 className="mb-[calc(.571429px+1.07143vw)] text-[length:var(--wallet-type)] leading-[1.2] text-muted-foreground lg:text-[calc(var(--wallet-type)*.75)]">
                   {title}
                 </h2>
                 <p className="text-[calc(var(--wallet-type)*1.28571)] leading-[1.1] tracking-[-.02em]">
                   {copy}
                 </p>
+                {scene === 'pockets' && (
+                  <>
+                    <Button
+                      href="#wallet-download"
+                      className="mt-6 hidden lg:inline-flex lg:!min-h-[70px] lg:!px-7 lg:!text-base"
+                    >
+                      Explore pockets
+                    </Button>
+                    <a
+                      href="#wallet-download"
+                      className="mt-2 block text-sm font-semibold lg:hidden"
+                    >
+                      Explore pockets →
+                    </a>
+                  </>
+                )}
               </div>
-              <div className={i % 2 ? 'lg:col-start-1 lg:row-start-1' : ''}>
+              <div
+                className={
+                  i % 2
+                    ? 'lg:col-start-1 lg:col-span-4 lg:row-start-1 lg:mr-[calc(67.56px+.1vw)]'
+                    : 'lg:col-span-4 lg:ml-[calc(67.56px+.1vw)]'
+                }
+              >
                 <WalletScenes scene={scene} />
               </div>
             </section>
@@ -245,7 +271,7 @@ export default function WalletLandingContent({
       </div>
       <section
         id="wallet-security"
-        className={`${GUTTER} mt-[58px] scroll-mt-24 bg-background py-[28px] lg:mt-[100px] lg:py-20`}
+        className={`${GUTTER} mt-[15vw] scroll-mt-24 bg-background py-[28px] lg:mt-[7vw] lg:py-20`}
         aria-labelledby="wallet-security-title"
       >
         <div className="grid gap-[10px] lg:grid-cols-4">
