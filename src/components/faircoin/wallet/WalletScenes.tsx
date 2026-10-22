@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { animate, motion, useInView, useMotionValue, useTransform } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import { RiQrCodeLine } from '@oxy.so/bloom/icons/RiQrCodeLine';
@@ -59,13 +59,14 @@ function StatusBar() {
 }
 /** The reference uses soft, grainy fields of colour, not hard diagonal stripes. */
 function SoftBackdrop() {
+  const grainId = useId();
   return (
     <div className="faircoin-editorial-green absolute inset-0 overflow-hidden bg-ring">
       <div className="absolute -left-[14%] -top-[30%] h-[80%] w-[90%] -rotate-45 rounded-full bg-[color-mix(in_srgb,var(--ring)_30%,var(--primary-foreground))] blur-[7cqw]" />
       <div className="faircoin-editorial absolute -right-[20%] -top-[25%] h-[95%] w-[100%] -rotate-45 rounded-full bg-card/75 blur-[10cqw]" />
       <div className="absolute -bottom-[40%] -left-[30%] h-[90%] w-[115%] -rotate-45 rounded-full bg-[color-mix(in_srgb,var(--ring)_35%,var(--primary-foreground))] blur-[10cqw]" />
       <svg aria-hidden="true" className="absolute size-full opacity-[.12] mix-blend-soft-light">
-        <filter id="wallet-media-grain">
+        <filter id={grainId}>
           <feTurbulence
             type="fractalNoise"
             baseFrequency=".8"
@@ -73,7 +74,7 @@ function SoftBackdrop() {
             stitchTiles="stitch"
           />
         </filter>
-        <rect width="100%" height="100%" filter="url(#wallet-media-grain)" />
+        <rect width="100%" height="100%" filter={`url(#${grainId})`} />
       </svg>
     </div>
   );
@@ -121,7 +122,11 @@ export default function WalletScenes({
   const contribution = useTransform(time, (t): string =>
     t < 1 ? '+125' : t < 1.8 ? '+95' : t < 2.6 ? '+170' : t < 3.4 ? '+20' : '+90',
   );
-  const ringLength = useTransform(amount, (n) => n / 500);
+  const ringLength = useTransform(
+    time,
+    [0, 0.5, 1, 1.5, 1.8, 2.3, 2.6, 3.1, 3.4, 3.9, 7.5, 8],
+    [0.1, 0.25, 0.25, 0.44, 0.44, 0.78, 0.78, 0.82, 0.82, 1, 1, 0.1],
+  );
   const ringScale = useTransform(time, [0, 4.8, 5.8, 6.2, 7.2, 8], [1, 1, 0.8, 0.8, 1, 1]);
   const portraitOpacity = useTransform(time, [0, 5.7, 6.1, 6.8, 7.4, 8], [0, 0, 1, 1, 0, 0]);
   const portraitScale = useTransform(time, [0, 5.7, 6.4, 7.4, 8], [0.15, 0.15, 1, 1, 0.15]);
@@ -437,9 +442,9 @@ export default function WalletScenes({
         {scene === 'bridge' && (
           <motion.div
             style={{ y: stackY }}
-            className="absolute -top-[27%] inset-x-[17%] space-y-[3cqw]"
+            className="absolute -top-[27%] inset-x-[17%] space-y-[3cqw] pb-[3cqw]"
           >
-            {[0, 1, 2, 3, 4, 5, 6, 7].map((n) => (
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((n) => (
               <div
                 key={n}
                 className={`${n % 3 === 0 ? 'faircoin-editorial bg-card text-foreground' : n % 3 === 1 ? 'faircoin-editorial-green bg-ring text-primary-foreground' : 'faircoin-editorial-dark border border-border bg-primary-foreground text-foreground'} relative aspect-[1.75] overflow-hidden rounded-[3cqw] px-[7%] py-[5%]`}
