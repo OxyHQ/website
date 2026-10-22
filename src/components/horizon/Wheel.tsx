@@ -82,7 +82,6 @@ export default function Wheel({
   const [dragging, setDragging] = useState(false);
   const [transitionDuration, setTransitionDuration] = useState(3000);
   const rotationRef = useRef<SVGGElement>(null);
-  const rotationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const suppressClick = useRef(false);
   const gesture = useRef<{
     pointerId: number;
@@ -94,7 +93,7 @@ export default function Wheel({
     moved: boolean;
   } | null>(null);
   const reducedMotion = useReducedMotion();
-  const previousSelection = useRef(selected);
+  const [selectionState, setSelectionState] = useState({ selected, reducedMotion, map });
   const prefix = useId().replaceAll(':', '');
   const activeCategory = map.categories.find((category) => category.categoryId === selected);
   const outer = inner + 26;
@@ -131,32 +130,37 @@ export default function Wheel({
     return () => animation.stop();
   }, [exploring, mobile, reducedMotion, introRadius, exploreRadius]);
 
-  useEffect(() => {
-    if (rotationTimer.current) clearTimeout(rotationTimer.current);
-    const category = map.categories.find((item) => item.categoryId === selected);
-    const changed = previousSelection.current !== selected;
-    previousSelection.current = selected;
+  // Reset selection-derived state before painting the new selection. Keeping
+  // this guarded update in render avoids an extra effect-driven render and
+  // leaves pointer-driven rotation in control while a drag is active.
+  if (
+    selectionState.selected !== selected ||
+    selectionState.reducedMotion !== reducedMotion ||
+    selectionState.map !== map
+  ) {
+    const changed = selectionState.selected !== selected;
+    setSelectionState({ selected, reducedMotion, map });
     setHovered(null);
-    if (gesture.current?.moved) return;
-    setTransitionDuration(3000);
-    if (!category) {
-      setRotation(0);
-      setRotating(false);
-      return;
+    if (!dragging) {
+      setTransitionDuration(3000);
+      setRotation(
+        activeCategory
+          ? sectorRotation(
+              rotation,
+              activeCategory.categoryStartAngleDegree,
+              activeCategory.categoryEndAngleDegree,
+            )
+          : 0,
+      );
+      setRotating(Boolean(activeCategory) && changed && !reducedMotion);
     }
-    setRotation((current) =>
-      sectorRotation(current, category.categoryStartAngleDegree, category.categoryEndAngleDegree),
-    );
-    if (!changed || reducedMotion) {
-      setRotating(false);
-      return;
-    }
-    setRotating(true);
-    rotationTimer.current = setTimeout(() => setRotating(false), 3000);
-    return () => {
-      if (rotationTimer.current) clearTimeout(rotationTimer.current);
-    };
-  }, [selected, reducedMotion, map]);
+  }
+
+  useEffect(() => {
+    if (!rotating || selected === null) return;
+    const timer = setTimeout(() => setRotating(false), transitionDuration);
+    return () => clearTimeout(timer);
+  }, [rotating, transitionDuration, selected]);
 
   const nearestCategory = (angle: number) =>
     map.categories.reduce((closest, category) => {
@@ -166,13 +170,6 @@ export default function Wheel({
         );
       return distance(category) < distance(closest) ? category : closest;
     });
-
-  useEffect(
-    () => () => {
-      if (rotationTimer.current) clearTimeout(rotationTimer.current);
-    },
-    [],
-  );
 
   const pointerAngle = (event: PointerEvent<SVGSVGElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -209,7 +206,6 @@ export default function Wheel({
       }
       current.moved = true;
       event.currentTarget.setPointerCapture(event.pointerId);
-      if (rotationTimer.current) clearTimeout(rotationTimer.current);
       setDragging(true);
       setRotating(false);
       setHovered(null);
@@ -235,8 +231,6 @@ export default function Wheel({
     setDragging(false);
     setTransitionDuration(450);
     setRotating(!reducedMotion);
-    if (rotationTimer.current) clearTimeout(rotationTimer.current);
-    rotationTimer.current = setTimeout(() => setRotating(false), reducedMotion ? 0 : 450);
     const nearest = nearestCategory(current.rotation);
     setRotation(
       sectorRotation(

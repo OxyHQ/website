@@ -1,1 +1,5 @@
-{"tool":"image_gen built-in","use_case":"photorealistic-natural","prompt":"Create an original precise 3-column by 2-row contact sheet of six separate square tightly cropped candid portraits, no gutters. Fictional adult friends ages24–40: Black man green sweatshirt outdoors; East Asian woman park; Latino man curly brown hair warm evening; Black woman laughing orange top; white woman short dark hair sunny café; South Asian man glasses. Natural lifestyle photos, realistic skin, each centered in its cell, chest-up, distinct natural backgrounds. No text, logos, UI or watermarks. Landscape3:2."}
+{
+  "tool": "image_gen built-in",
+  "use_case": "photorealistic-natural",
+  "prompt": "Create an original precise 3-column by 2-row contact sheet of six separate square tightly cropped candid portraits, no gutters. Fictional adult friends ages24–40: Black man green sweatshirt outdoors; East Asian woman park; Latino man curly brown hair warm evening; Black woman laughing orange top; white woman short dark hair sunny café; South Asian man glasses. Natural lifestyle photos, realistic skin, each centered in its cell, chest-up, distinct natural backgrounds. No text, logos, UI or watermarks. Landscape3:2."
+}
