@@ -25,6 +25,7 @@ import { AskAliaProvider } from './lib/ask-alia';
 import { setOxyServices } from './api/client';
 import { setPlatformStatsOxyServices } from './api/platformStatsStore';
 import { isFairCoinHost } from './lib/host';
+import { marketingCanvasClass } from './lib/marketingCanvas';
 import ErrorBoundary from './components/ErrorBoundary';
 import IntercomMessenger from './components/integrations/IntercomMessenger';
 import NewsroomRouteFallback from './components/newsroom/NewsroomRouteFallback';
@@ -554,7 +555,14 @@ function AppProviders() {
               <AppSetup>
                 <ScrollToTop />
                 <IntercomMessenger />
-                <Suspense fallback={<div className="min-h-screen" />}>
+                <Suspense
+                  fallback={
+                    <div
+                      data-route-loading
+                      className={`min-h-screen ${marketingCanvasClass(location.pathname, isFairCoinHost())}`}
+                    />
+                  }
+                >
                   <Routes>
                     {/* Guarded: /admin/* is a top-level route with no shared
                             layout, so an unhandled render error here would blank the

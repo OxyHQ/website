@@ -258,8 +258,37 @@ try {
         `${routePath} prepaint is not full height`,
       );
       await page.unroute('**/*');
-      await page.reload({ waitUntil: 'domcontentloaded' });
+      let releaseChunk: () => void = () => undefined;
+      const chunkGate = new Promise<void>((resolve) => {
+        releaseChunk = resolve;
+      });
+      await page.route('**/*', async (route) => {
+        if (
+          /\/(FairCoinLanding|FairCoinWallet|HorizonPage)-[^/]+\.js(?:\?|$)/.test(
+            route.request().url(),
+          )
+        ) {
+          await chunkGate;
+        }
+        await route.continue();
+      });
+      try {
+        await page.reload({ waitUntil: 'domcontentloaded' });
+        const loading = page.locator('[data-route-loading]');
+        await loading.waitFor();
+        const loadingBackground = await loading.evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        );
+        invariant(
+          normalizeColor(prepaint.background) === normalizeColor(loadingBackground),
+          `${routePath} lazy route flashed at ${width}px: ${prepaint.background} -> ${loadingBackground}`,
+        );
+      } finally {
+        releaseChunk();
+      }
       await canvas.waitFor({ state: 'detached' });
+      await page.locator('[data-route-loading]').waitFor({ state: 'detached' });
+      await page.unroute('**/*');
       const mountedSurface = page.locator(surface).first();
       await mountedSurface.waitFor();
       const mountedBackground = await mountedSurface.evaluate(

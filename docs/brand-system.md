@@ -104,7 +104,9 @@ The FairCoin landing, wallet and Horizon prerenders include only their opening
 canvas, which React replaces when it mounts. The production prepaint browser gate
 checks that visible canvas with application scripts blocked, then compares the
 mounted surface at mobile and desktop widths. It also checks the generated scope
-tokens and aliases before and after React. This prevents a saved Oxy palette from
+tokens and aliases before and after React, and deliberately holds the route chunk
+to verify the intermediate Suspense surface. `src/lib/marketingCanvas.ts` is shared
+by prerender and that fallback. This prevents a saved Oxy palette from
 flashing before the product surface, without claiming the interactive scene is
 server-rendered or attaching a persistent page theme to the document body.
 

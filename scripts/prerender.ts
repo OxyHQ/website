@@ -73,6 +73,7 @@ import {
 } from '../src/lib/i18n/types';
 import en from '../src/lib/i18n/locales/en';
 import { HORIZON_SEO } from '../src/data/ecosystem/map';
+import { marketingCanvasClass } from '../src/lib/marketingCanvas';
 import { BLOOM_SEO } from '../src/content/bloom-landing';
 import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest';
 import { ACADEMY_COURSES } from '../src/content/academy-courses';
@@ -1529,15 +1530,6 @@ const HOME_PRERENDER_VISUAL = [
   '</div>',
 ].join('');
 
-// Marketing scenes are mounted by createRoot. Paint their actual opening
-// surface while the bundle loads, without persisting a page theme on <body>
-// after a client-side navigation. No duplicate prose or loading animation.
-const MARKETING_PRERENDER_CANVASES: Record<string, string> = {
-  '/faircoin': 'faircoin-editorial bg-card',
-  '/faircoin/wallet': 'faircoin-editorial bg-card',
-  '/horizon': 'oxy-ecosystem bg-background',
-};
-
 function injectBody(
   shell: string,
   body: PageBody,
@@ -1704,7 +1696,9 @@ async function writeRoute(
       console.warn(`[prerender] empty head for ${job.url}`);
     }
     const localized = job.locale ? applyHtmlLang(shell, job.locale) : shell;
-    const marketingCanvas = MARKETING_PRERENDER_CANVASES[job.seo.canonicalPath.replace(/\/$/, '')];
+    // Keep the opening surface through static HTML and the lazy route fallback,
+    // without leaving a page theme on <body> after client-side navigation.
+    const marketingCanvas = marketingCanvasClass(job.seo.canonicalPath);
     const withHomeVisual =
       job.seo.canonicalPath === '/'
         ? injectRootTemplate(localized, HOME_PRERENDER_VISUAL)
