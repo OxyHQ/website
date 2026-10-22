@@ -1529,6 +1529,15 @@ const HOME_PRERENDER_VISUAL = [
   '</div>',
 ].join('');
 
+// Marketing scenes are mounted by createRoot. Paint their actual opening
+// surface while the bundle loads, without persisting a page theme on <body>
+// after a client-side navigation. No duplicate prose or loading animation.
+const MARKETING_PRERENDER_CANVASES: Record<string, string> = {
+  '/faircoin': 'faircoin-editorial bg-card',
+  '/faircoin/wallet': 'faircoin-editorial bg-card',
+  '/horizon': 'oxy-ecosystem bg-background',
+};
+
 function injectBody(
   shell: string,
   body: PageBody,
@@ -1695,10 +1704,16 @@ async function writeRoute(
       console.warn(`[prerender] empty head for ${job.url}`);
     }
     const localized = job.locale ? applyHtmlLang(shell, job.locale) : shell;
+    const marketingCanvas = MARKETING_PRERENDER_CANVASES[job.seo.canonicalPath.replace(/\/$/, '')];
     const withHomeVisual =
       job.seo.canonicalPath === '/'
         ? injectRootTemplate(localized, HOME_PRERENDER_VISUAL)
-        : localized;
+        : marketingCanvas
+          ? injectRootTemplate(
+              localized,
+              `<div data-prerender-canvas class="${marketingCanvas} min-h-screen" aria-hidden="true"></div>`,
+            )
+          : localized;
     const withIndexBootstrap = job.newsroomIndexPosts
       ? injectRootTemplate(
           withHomeVisual,

@@ -1,24 +1,24 @@
 @import "./fonts.css";
 
-/* Climate Tech Map public CSS, retrieved 2026-10-22.
- * Reference colors are isolated to this explicitly requested faithful clone.
- * Source: https://climatetechmap.com/_next/static/css/98bd1908b6acc2ff.css
+/* Reference layout vocabulary, backed by Horizon's generated Bloom surface.
+ * The captured wheel artwork keeps its original sector swatches in map.json;
+ * page surfaces and controls use Bloom rather than a second hand-written palette.
  * Do not import the upstream Tailwind reset into the Oxy application. */
 
 .horizon-page,
 .oxy-ecosystem {
-  --color-sns-grey-1: #5d5d5d;
-  --color-sns-grey-2: #a0a0a0;
-  --color-sns-off-white: #f3f3f3;
-  --color-sns-white: #fff;
-  --color-sns-black: #242424;
-  --color-sns-grey-3: #909090;
-  --color-sns-grey-5: #f8f8f8;
-  --color-sns-grey-7: #b0b0b0;
-  --color-sns-grey-9: #828282;
-  --color-sns-blue-1: #0e2d4c;
-  --color-sns-blue-2: #223d59;
-  --color-sns-blue-3: #6ac0f9;
+  --color-sns-grey-1: color-mix(in srgb, var(--muted-foreground) 85%, var(--muted));
+  --color-sns-grey-2: color-mix(in srgb, var(--muted-foreground) 40%, var(--background));
+  --color-sns-off-white: var(--background);
+  --color-sns-white: var(--card);
+  --color-sns-black: color-mix(in srgb, var(--foreground) 95%, var(--background));
+  --color-sns-grey-3: color-mix(in srgb, var(--muted-foreground) 50%, var(--background));
+  --color-sns-grey-5: color-mix(in srgb, var(--background), var(--card));
+  --color-sns-grey-7: color-mix(in srgb, var(--muted-foreground) 40%, var(--card));
+  --color-sns-grey-9: color-mix(in srgb, var(--muted-foreground) 65%, var(--background));
+  --color-sns-blue-1: color-mix(in srgb, var(--foreground) 75%, var(--secondary));
+  --color-sns-blue-2: color-mix(in srgb, var(--foreground) 60%, var(--secondary));
+  --color-sns-blue-3: color-mix(in srgb, var(--tertiary) 60%, var(--card));
 }
 
 @font-face {

@@ -1,6 +1,7 @@
 import { join } from 'node:path';
 import { chromium } from 'playwright';
-import { getPresetVars } from '@oxy.so/bloom/design-tokens';
+import { buildSeedScopeVars, getPresetVars } from '@oxy.so/bloom/design-tokens';
+import { BRAND_SURFACES } from '../src/theme/brands';
 
 const ROOT = join(import.meta.dir, '..');
 const TOKENS = ['--background', '--card', '--primary', '--secondary', '--tertiary'] as const;
@@ -108,6 +109,51 @@ try {
     );
   }
 
+  // Marketing pages prerender their head and shell, not the interactive scene.
+  // Probe the generated scope in the real stylesheet with app scripts blocked;
+  // a late React-only palette or missing scoped aliases must not pass this gate.
+  const scopeClasses = ['oxy-ecosystem', 'faircoin-editorial', 'faircoin-editorial-green'];
+  const readScopes = () =>
+    page.evaluate(
+      ({ names, tokens }) =>
+        Object.fromEntries(
+          names.map((name) => {
+            const probe = document.createElement('div');
+            probe.className = name;
+            document.body.appendChild(probe);
+            const styles = getComputedStyle(probe);
+            const values = Object.fromEntries(
+              tokens
+                .flatMap((token) => [token, `--color-${token.slice(2)}`])
+                .map((token) => [token, styles.getPropertyValue(token).trim()]),
+            );
+            probe.remove();
+            return [name, values];
+          }),
+        ),
+      { names: scopeClasses, tokens: TOKENS },
+    );
+  const scopesBeforeReact = await readScopes();
+  for (const name of scopeClasses) {
+    const surface = BRAND_SURFACES.find((entry) => entry.selector.split(', ').includes(`.${name}`));
+    invariant(surface && surface.mode !== 'auto', `Missing fixed marketing surface ${name}`);
+    const scopeExpected = buildSeedScopeVars({
+      seed: surface.seed,
+      secondarySeed: surface.secondarySeed,
+      tertiarySeed: surface.tertiarySeed,
+      mode: surface.mode,
+    });
+    for (const token of TOKENS) {
+      for (const key of [token, `--color-${token.slice(2)}`]) {
+        invariant(
+          normalizeColor(scopesBeforeReact[name]?.[key] ?? '') ===
+            normalizeColor(scopeExpected[token] ?? ''),
+          `${name} prepaint ${key} does not match its Bloom surface`,
+        );
+      }
+    }
+  }
+
   await page.unroute('**/*');
   await page.reload({ waitUntil: 'load' });
   await page.waitForFunction(
@@ -124,6 +170,13 @@ try {
     invariant(
       normalizeColor(preReact.values[token] ?? '') === normalizeColor(postReact[token] ?? ''),
       `cobalt ${token} changed between prepaint and React`,
+    );
+  }
+  const scopesAfterReact = await readScopes();
+  for (const name of scopeClasses) {
+    invariant(
+      JSON.stringify(scopesBeforeReact[name]) === JSON.stringify(scopesAfterReact[name]),
+      `${name} palette changed between prepaint and React`,
     );
   }
 
@@ -180,10 +233,48 @@ try {
     (await page.evaluate(() => localStorage.getItem('colorPreset'))) === 'cobalt',
     'the isolated demo route changed saved preset',
   );
+
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const [routePath, surface] of [
+      ['/faircoin/', '.faircoin-editorial'],
+      ['/faircoin/wallet/', '.faircoin-editorial'],
+      ['/horizon/', '.oxy-ecosystem'],
+    ]) {
+      await page.route('**/*', async (route) => {
+        if (route.request().resourceType() === 'script') await route.abort();
+        else await route.continue();
+      });
+      await page.goto(`${origin}${routePath}`, { waitUntil: 'load' });
+      const canvas = page.locator('[data-prerender-canvas]');
+      invariant((await canvas.count()) === 1, `${routePath} lacks its opening canvas`);
+      const prepaint = await canvas.evaluate((el) => ({
+        background: getComputedStyle(el).backgroundColor,
+        height: el.getBoundingClientRect().height,
+        viewportHeight: innerHeight,
+      }));
+      invariant(
+        prepaint.height >= prepaint.viewportHeight,
+        `${routePath} prepaint is not full height`,
+      );
+      await page.unroute('**/*');
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await canvas.waitFor({ state: 'detached' });
+      const mountedSurface = page.locator(surface).first();
+      await mountedSurface.waitFor();
+      const mountedBackground = await mountedSurface.evaluate(
+        (el) => getComputedStyle(el).backgroundColor,
+      );
+      invariant(
+        normalizeColor(prepaint.background) === normalizeColor(mountedBackground),
+        `${routePath} opening surface flashed at ${width}px: ${prepaint.background} -> ${mountedBackground}`,
+      );
+    }
+  }
   invariant(pageErrors.length === 0, `browser page errors: ${pageErrors.join('; ')}`);
 
   console.log(
-    '[theme-prepaint] cobalt prepaint matches React; the isolated demo route restores light mode',
+    '[theme-prepaint] root and marketing scopes match React; opening canvases match at mobile/desktop; isolated demo restores light mode',
   );
 } finally {
   await context.close();

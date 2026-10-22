@@ -1,5 +1,5 @@
 /* Dimensions and typography adapted from the reference Tailwind v4 classes.
- * All reference colors live in reference.css or the captured diagram data;
+ * Surface colors resolve through Bloom; original wheel artwork lives in the captured diagram data;
  * every selector is scoped so the reference cannot restyle another Oxy page. */
 .horizon-page {
   position: relative;
