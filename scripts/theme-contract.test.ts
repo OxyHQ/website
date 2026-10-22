@@ -13,7 +13,6 @@ import {
 } from '@oxy.so/bloom/color-presets';
 import { getPresetVars } from '@oxy.so/bloom/design-tokens';
 import { FAIRCOIN_PRESET, SITE_PRESET } from '../src/theme/brands';
-import { PUBLIC_COLOR_PRESET_GROUPS } from '../src/theme/preset-catalog';
 import { resolveLabPalette } from '../src/theme/color-lab-palette';
 
 const PREVIEW_ROLES = [
@@ -71,16 +70,6 @@ describe('Bloom theme contract', () => {
     expect(groupedNames).toEqual(expect.arrayContaining(APP_COLOR_NAMES));
     expect(new Set(groupedNames)).toEqual(new Set(APP_COLOR_NAMES));
     expect(APP_COLOR_PRESETS.cobalt.tertiaryHex).toBe('#ffd000');
-  });
-
-  test('offers only free recipes without inventing entitlement state', () => {
-    const publicNames = PUBLIC_COLOR_PRESET_GROUPS.flatMap((group) =>
-      group.presets.map((preset) => preset.name),
-    );
-    expect(new Set(publicNames)).toEqual(new Set(FREE_COLOR_NAMES));
-    for (const gated of [...HANDLE_COLOR_NAMES, ...PREMIUM_COLOR_NAMES]) {
-      expect(publicNames).not.toContain(gated);
-    }
   });
 
   test('generates prepaint selectors for exactly the public presets', () => {

@@ -1,17 +1,28 @@
-import { useBloomTheme, useTheme } from '@oxy.so/bloom/theme';
+import { COLOR_PRESET_REGISTRY, useBloomTheme, useTheme } from '@oxy.so/bloom/theme';
+import { useAccountColorSave, useAuth } from '@oxy.so/services/ui/client';
+import {
+  Select,
+  SelectContent,
+  SelectIcon,
+  SelectItem,
+  SelectItemIndicator,
+  SelectItemText,
+  SelectTrigger,
+  SelectValue,
+} from '@oxy.so/bloom/select';
+import { toast } from '@oxy.so/bloom/toast';
 import {
   SegmentedControl,
   SegmentedControlItem,
   SegmentedControlItemText,
 } from '@oxy.so/bloom/segmented-control';
 import { getPresetVars } from '@oxy.so/bloom/design-tokens';
-import type { ColorPresetRecipe } from '@oxy.so/bloom/color-presets';
 import type { AppColorName } from '../../theme';
-import { PUBLIC_COLOR_PRESET_GROUPS } from '../../theme/preset-catalog';
 import { AnimatedTitle } from '../ui/AnimatedTitle';
 
 export default function SettingsAppearance() {
-  const { colorPreset: currentPreset, setMode, setColorPreset } = useBloomTheme();
+  const { colorPreset: currentPreset, setMode } = useBloomTheme();
+  const { isAuthenticated } = useAuth();
   // The mode on screen: a `system` mode still resolves to one of the two.
   const previewMode = useTheme().isDark ? 'dark' : 'light';
 
@@ -30,7 +41,7 @@ export default function SettingsAppearance() {
         <section className="mt-12">
           <h2 className="text-lg font-semibold text-foreground">Appearance</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Choose your preferred theme mode and accent color.
+            Choose your preferred theme mode and account color.
           </p>
 
           {/* Mode toggle: the choice is Bloom's segmented control; the two
@@ -64,38 +75,18 @@ export default function SettingsAppearance() {
             </div>
           </div>
 
-          {/* Color presets */}
+          {/* Account colour: the one every Oxy app wears. */}
           <div className="mt-10">
-            <h3 className="text-sm font-medium text-foreground">Accent color</h3>
+            <h3 className="text-sm font-medium text-foreground">Account color</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Each recipe resolves its own surfaces and supporting action colors in light and dark
-              mode.
+              Your account color, shared by every Oxy app.
             </p>
-            <div className="mt-6 space-y-8">
-              {PUBLIC_COLOR_PRESET_GROUPS.map((group) => (
-                <section key={group.name} aria-labelledby={`preset-family-${group.name}`}>
-                  <div className="mb-3">
-                    <h4
-                      id={`preset-family-${group.name}`}
-                      className="text-sm font-semibold text-foreground"
-                    >
-                      {group.displayName}
-                    </h4>
-                    <p className="text-body-xs text-muted-foreground">{group.description}</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                    {group.presets.map((recipe) => (
-                      <PresetChoice
-                        key={recipe.name}
-                        recipe={recipe}
-                        mode={previewMode}
-                        active={currentPreset === recipe.name}
-                        onClick={() => setColorPreset(recipe.name)}
-                      />
-                    ))}
-                  </div>
-                </section>
-              ))}
+            <div className="mt-3 max-w-xs">
+              {isAuthenticated ? (
+                <AccountColorSelect />
+              ) : (
+                <p className="text-sm text-muted-foreground">Sign in to choose your color.</p>
+              )}
             </div>
           </div>
         </section>
@@ -104,55 +95,44 @@ export default function SettingsAppearance() {
   );
 }
 
-function PresetChoice({
-  recipe,
-  mode,
-  active,
-  onClick,
-}: {
-  recipe: ColorPresetRecipe;
-  mode: 'light' | 'dark';
-  active: boolean;
-  onClick: () => void;
-}) {
-  const tokens = getPresetVars(recipe.name, mode);
+function AccountColorSelect() {
+  const { colors, value, saveColor, saving } = useAccountColorSave();
+  const items = COLOR_PRESET_REGISTRY.filter(({ name }) => colors.includes(name));
+
   return (
-    <button
-      type="button"
-      data-color-preset={recipe.name}
-      onClick={onClick}
-      className={`group flex min-w-0 items-center gap-3 rounded-2xl p-2.5 text-left transition-colors duration-200 ${
-        active ? 'bg-surface ring-2 ring-primary' : 'hover:bg-surface'
-      }`}
-      title={`${recipe.displayName}: ${recipe.description}`}
-      aria-pressed={active}
+    <Select
+      value={value}
+      disabled={saving}
+      onValueChange={(name) => {
+        const item = items.find((item) => item.name === name);
+        if (!item) return;
+        saveColor(item.name).catch(() => toast.error('Could not save your color.'));
+      }}
     >
-      <span
-        className="relative size-10 shrink-0 overflow-hidden rounded-xl shadow-s"
-        aria-hidden="true"
-      >
-        <span
-          className="absolute inset-y-0 left-0 w-1/2"
-          style={{ backgroundColor: tokens['--primary'] }}
-        />
-        <span
-          className="absolute top-0 right-0 h-1/2 w-1/2"
-          style={{ backgroundColor: tokens['--secondary'] }}
-        />
-        <span
-          className="absolute right-0 bottom-0 h-1/2 w-1/2"
-          style={{ backgroundColor: tokens['--tertiary'] }}
-        />
-      </span>
-      <span className="min-w-0">
-        <span className="block text-sm font-medium leading-tight text-foreground">
-          {recipe.displayName}
-        </span>
-        <span className="mt-0.5 block text-body-xs leading-tight text-muted-foreground">
-          {recipe.pairing === 'curated' ? 'Curated pairing' : 'Dynamic pairing'}
-        </span>
-      </span>
-    </button>
+      <SelectTrigger label="Account color">
+        <SelectValue>
+          {(selected) => {
+            const key =
+              typeof selected === 'object' && selected !== null && 'value' in selected
+                ? selected.value
+                : selected;
+            return items.find((item) => item.name === key)?.displayName ?? String(key);
+          }}
+        </SelectValue>
+        <SelectIcon />
+      </SelectTrigger>
+      <SelectContent
+        label="Account color"
+        items={items}
+        valueExtractor={(item) => item.name}
+        renderItem={(item) => (
+          <SelectItem value={item.name} label={item.displayName}>
+            <SelectItemIndicator />
+            <SelectItemText>{item.displayName}</SelectItemText>
+          </SelectItem>
+        )}
+      />
+    </Select>
   );
 }
 

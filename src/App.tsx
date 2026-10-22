@@ -5,8 +5,7 @@ import { Navigate } from './lib/navigation';
 import { TRANSPARENCY_REDIRECTS } from './lib/transparency';
 import TransparencyPage from './pages/TransparencyPage';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { OxyProvider, useOxy } from '@oxy.so/services/ui/client';
-import type { User } from '@oxy.so/core';
+import { OxyProvider, useAccountColor, useOxy } from '@oxy.so/services/ui/client';
 import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxy.so/bloom/theme';
 import { ImageResolverProvider } from '@oxy.so/bloom/image-resolver';
 import { BloomScope } from '@oxy.so/bloom/appearance';
@@ -18,7 +17,6 @@ import {
   getSavedPreset,
   saveModePreference,
   saveColorPresetPreference,
-  applyUserColor,
   type ThemeMode,
   type AppColorName,
 } from './theme';
@@ -171,8 +169,15 @@ function ScrollToTop() {
   return null;
 }
 
+// The FairCoin apex keeps its own brand, so no account colour is applied there.
+const canWearAccountColor = () => !isFairCoinHost();
+
 function AppSetup({ children }: { children: React.ReactNode }) {
   const { oxyServices } = useOxy();
+
+  // The account colour is the one every Oxy app wears. Mounted once, below both
+  // the Oxy and Bloom providers; a signed-out visitor keeps the default.
+  useAccountColor({ canUse: canWearAccountColor });
 
   // Wire the website's own-backend fetch client to the SDK session so every
   // /api call carries the current bearer token without manual token plumbing.
@@ -507,12 +512,6 @@ function AppProviders() {
   // brand (green Bloom theme + dedicated nav/footer) only takes over on
   // fairco.in itself.
   const [preset, setThemePreset] = useState<AppColorName>(getSavedPreset);
-  // `applyUserColor()` is also host-aware (no-op on FairCoin), but we forward
-  // it through here so the auth event still fires for any future hooks.
-  const handleAuthChange = useCallback((user: unknown) => {
-    applyUserColor((user as User | null)?.color);
-    setThemePreset(getSavedPreset());
-  }, []);
   const handleModeChange = useCallback((next: BloomThemeMode) => {
     if (next !== 'light' && next !== 'dark') return;
     saveModePreference(next);
@@ -551,12 +550,7 @@ function AppProviders() {
             its own; change it here and every Bloom control moves together. */}
         <AgentAvatarProvider runtimeUrl={BLOOM_CHARACTER_RUNTIME_URL}>
           <BloomScope size="md">
-            <OxyProvider
-              baseURL={OXY_API}
-              clientId={OXY_CLIENT_ID}
-              queryClient={queryClient}
-              onAuthStateChange={handleAuthChange}
-            >
+            <OxyProvider baseURL={OXY_API} clientId={OXY_CLIENT_ID} queryClient={queryClient}>
               <AppSetup>
                 <ScrollToTop />
                 <IntercomMessenger />
