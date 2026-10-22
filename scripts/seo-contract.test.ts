@@ -61,8 +61,13 @@ describe('internal links point at the canonical URL', () => {
 });
 
 describe('locale mirrors only where a translation exists', () => {
-  test('marketing and content routes are mirrored', () => {
+  test('Horizon has no locale mirror; the restored homepage and archive keep their translations', () => {
     expect(hasLocalizedVariants('/')).toBe(true);
+    expect(hasLocalizedVariants('/horizon/')).toBe(false);
+    expect(hasLocalizedVariants('/old/')).toBe(true);
+  });
+
+  test('translated marketing and content routes are mirrored', () => {
     expect(hasLocalizedVariants('/pricing')).toBe(true);
     expect(hasLocalizedVariants('/help/auth/2fa-setup')).toBe(true);
   });

@@ -72,6 +72,7 @@ import {
   type Locale,
 } from '../src/lib/i18n/types';
 import en from '../src/lib/i18n/locales/en';
+import { HORIZON_SEO } from '../src/data/ecosystem/map';
 import { BLOOM_SEO } from '../src/content/bloom-landing';
 import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest';
 import { ACADEMY_COURSES } from '../src/content/academy-courses';
@@ -270,11 +271,12 @@ async function buildSsrBundle(): Promise<SsrRenderers> {
  */
 const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   '/bloom': BLOOM_SEO,
-  '/': {
-    title: 'Oxy, an open-source ecosystem of ethical technology',
-    description:
-      'One identity you hold yourself, and a family of open apps built on it: social, messaging, housing, payments, AI and an operating system. No ads, no data sales.',
-    canonicalPath: '/',
+  '/': { title: en.home.seoTitle, description: en.home.seoDescription, canonicalPath: '/' },
+  '/old': {
+    title: 'Oxy — Previous homepage',
+    description: 'The previous Oxy homepage, preserved for reference.',
+    canonicalPath: '/old/',
+    noIndex: true,
   },
   '/pricing': {
     title: en.pricingHub.seoTitle,
@@ -474,6 +476,7 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'How to support the work: sponsorship, contribution and the programs that keep open infrastructure maintained.',
     canonicalPath: '/sustain',
   },
+  '/horizon': HORIZON_SEO,
   '/company': {
     title: 'Company',
     description:
@@ -588,9 +591,9 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     canonicalPath: '/account-deletion',
   },
   '/faircoin': {
-    title: 'FairCoin, community run cryptocurrency',
+    title: 'FairCoin — ethical, community-run currency',
     description:
-      'A community run cryptocurrency: decentralized, fair and free of speculation. Hybrid PoW and PoS, capped at 33M coins.',
+      'An ethical currency for everyday exchange, local communities and shared projects. Explore FairCoin and manage your own coins with FAIRWallet.',
     canonicalPath: '/faircoin',
   },
   '/faircoin/buy': {

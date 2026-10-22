@@ -121,6 +121,8 @@ const StatusHistoryPage = lazy(() => import('./pages/StatusHistoryPage'));
 const ReferralsPage = lazy(() => import('./pages/ReferralsPage'));
 const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'));
 const SustainPage = lazy(() => import('./pages/SustainPage'));
+const OldHomePage = lazy(() => import('./pages/OldHomePage'));
+const HorizonPage = lazy(() => import('./pages/HorizonPage'));
 
 // Registered Oxy OAuth client id for the public website, read from the site's
 // standard `VITE_*` env convention. The deploy workflow injects the PRODUCTION
@@ -252,6 +254,7 @@ function PublicRoutes() {
   return (
     <>
       <Route index element={<HomePage />} />
+      <Route path="old" element={<OldHomePage />} />
       <Route path="faircoin" element={<FairCoinLanding />} />
       <Route path="faircoin/buy" element={<FairCoinBuyPage />} />
       <Route path="faircoin/unwrap" element={<FairCoinUnwrapPage />} />
@@ -487,6 +490,7 @@ function PublicRoutes() {
       <Route path="features" element={<FeatureBoardPage />} />
       <Route path="features/:owner/:repo/:number" element={<FeatureRequestPage />} />
       <Route path="sustain" element={<SustainPage />} />
+      <Route path="horizon" element={<HorizonPage />} />
     </>
   );
 }

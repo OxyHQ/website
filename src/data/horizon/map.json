@@ -1,0 +1,1862 @@
+{
+  "source": "https://climatetechmap.com/",
+  "capturedAt": "2026-10-22",
+  "categories": [
+    {
+      "categoryId": "Electricity",
+      "categoryName": "Electricity",
+      "categorySpanAngleDegree": 47.5,
+      "categoryStartAngleDegree": 0,
+      "categoryEndAngleDegree": 47.5,
+      "categoryArcStartAngleDegree": 5,
+      "categoryArcEndAngleDegree": 42.5,
+      "categoryArcSpanAngleDegree": 37.5,
+      "categoryColor": "#FFB323",
+      "categoryColorPalette": ["#FFB323", "#FFC947", "#FFDF6B"],
+      "categoryValue": 13.3
+    },
+    {
+      "categoryId": "Food, Ag & Nature",
+      "categoryName": "Food, Ag & Nature",
+      "categorySpanAngleDegree": 85,
+      "categoryStartAngleDegree": 47.5,
+      "categoryEndAngleDegree": 132.5,
+      "categoryArcStartAngleDegree": 52.5,
+      "categoryArcEndAngleDegree": 127.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#6D9C44",
+      "categoryColorPalette": ["#6D9C44", "#83AB53", "#98BA60", "#AECA6D", "#C3D97B", "#D9E889"],
+      "categoryValue": 10.9
+    },
+    {
+      "categoryId": "Buildings",
+      "categoryName": "Buildings",
+      "categorySpanAngleDegree": 35,
+      "categoryStartAngleDegree": 132.5,
+      "categoryEndAngleDegree": 167.5,
+      "categoryArcStartAngleDegree": 137.5,
+      "categoryArcEndAngleDegree": 162.5,
+      "categoryArcSpanAngleDegree": 25,
+      "categoryColor": "#056BE9",
+      "categoryColorPalette": ["#056BE9", "#3696F3", "#67C1FC"],
+      "categoryValue": 3.7
+    },
+    {
+      "categoryId": "Manufacturing",
+      "categoryName": "Manufacturing",
+      "categorySpanAngleDegree": 85,
+      "categoryStartAngleDegree": 167.5,
+      "categoryEndAngleDegree": 252.5,
+      "categoryArcStartAngleDegree": 172.5,
+      "categoryArcEndAngleDegree": 247.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#FF5F2E",
+      "categoryColorPalette": ["#FF5F2E", "#FF753F", "#FF8B51", "#FFA162", "#FFB774", "#FFCD85"],
+      "categoryValue": 26.7
+    },
+    {
+      "categoryId": "GHG Removal",
+      "categoryName": "GHG Removal",
+      "categorySpanAngleDegree": 60,
+      "categoryStartAngleDegree": 252.5,
+      "categoryEndAngleDegree": 312.5,
+      "categoryArcStartAngleDegree": 257.5,
+      "categoryArcEndAngleDegree": 307.5,
+      "categoryArcSpanAngleDegree": 50,
+      "categoryColor": "#FFA4CB",
+      "categoryColorPalette": ["#FFA4CB", "#FEB8DB", "#FDCBEB", "#FCDFFB"],
+      "categoryValue": null
+    },
+    {
+      "categoryId": "Transportation",
+      "categoryName": "Transportation",
+      "categorySpanAngleDegree": 47.5,
+      "categoryStartAngleDegree": 312.5,
+      "categoryEndAngleDegree": 360,
+      "categoryArcStartAngleDegree": 317.5,
+      "categoryArcEndAngleDegree": 355,
+      "categoryArcSpanAngleDegree": 37.5,
+      "categoryColor": "#D8D41C",
+      "categoryColorPalette": ["#D8D41C", "#E1E149", "#EAEE75"],
+      "categoryValue": 9.4
+    }
+  ],
+  "axes": [
+    {
+      "axisId": "sustainable-construction-and-design-page-v2",
+      "axisName": "Sustainable Construction & Design",
+      "axisValue": 4,
+      "axisAngleDegree": 143.75,
+      "axisStartAngleDegree": 137.5,
+      "axisEndAngleDegree": 150,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Buildings",
+      "categoryName": "Buildings",
+      "categoryStartAngleDegree": 132.5,
+      "categoryEndAngleDegree": 167.5,
+      "categorySpanAngleDegree": 35,
+      "categoryArcStartAngleDegree": 137.5,
+      "categoryArcEndAngleDegree": 162.5,
+      "categoryArcSpanAngleDegree": 25,
+      "categoryColor": "#056BE9",
+      "categoryColorPalette": ["#056BE9", "#3696F3", "#67C1FC"],
+      "categoryValue": 3.7,
+      "axisIdsOfSameCategory": [
+        "sustainable-construction-and-design-page-v2",
+        "operational-efficiency-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Design Optimization",
+          "name": "Design Optimization",
+          "type": "imperative"
+        },
+        {
+          "id": "High-Performance Envelope Retrofits:",
+          "name": "High-Performance Envelope Retrofits:",
+          "type": "imperative"
+        },
+        {
+          "id": "Passive Cooling",
+          "name": "Passive Cooling",
+          "type": "imperative"
+        },
+        {
+          "id": "Industrialized Construction",
+          "name": "Industrialized Construction",
+          "type": "imperative"
+        },
+        {
+          "id": "Circular Building Systems",
+          "name": "Circular Building Systems",
+          "type": "imperative"
+        },
+        {
+          "id": "Extending Building and Infrastructure Lifetimes",
+          "name": "Extending Building and Infrastructure Lifetimes",
+          "type": "imperative"
+        },
+        {
+          "id": "Carbon-Removing Building Materials:",
+          "name": "Carbon-Removing Building Materials:",
+          "type": "moonshot"
+        },
+        {
+          "id": "Superior Structural Materials",
+          "name": "Superior Structural Materials",
+          "type": "moonshot"
+        },
+        {
+          "id": "Green Materials",
+          "name": "Green Materials",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Construction",
+          "name": "Construction",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Deconstruction",
+          "name": "Deconstruction",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Disposal & Reuse",
+          "name": "Disposal & Reuse",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "operational-efficiency-page-v2",
+      "axisName": "Operational Efficiency",
+      "axisValue": 3.7,
+      "axisAngleDegree": 156.25,
+      "axisStartAngleDegree": 150,
+      "axisEndAngleDegree": 162.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Buildings",
+      "categoryName": "Buildings",
+      "categoryStartAngleDegree": 132.5,
+      "categoryEndAngleDegree": 167.5,
+      "categorySpanAngleDegree": 35,
+      "categoryArcStartAngleDegree": 137.5,
+      "categoryArcEndAngleDegree": 162.5,
+      "categoryArcSpanAngleDegree": 25,
+      "categoryColor": "#056BE9",
+      "categoryColorPalette": ["#056BE9", "#3696F3", "#67C1FC"],
+      "categoryValue": 3.7,
+      "axisIdsOfSameCategory": [
+        "sustainable-construction-and-design-page-v2",
+        "operational-efficiency-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "High-Efficiency HVAC",
+          "name": "High-Efficiency HVAC",
+          "type": "imperative"
+        },
+        {
+          "id": "Smart Electric Appliances",
+          "name": "Smart Electric Appliances",
+          "type": "imperative"
+        },
+        {
+          "id": "Grid-Integrated Storage",
+          "name": "Grid-Integrated Storage",
+          "type": "imperative"
+        },
+        {
+          "id": "Heating Grid",
+          "name": "Heating Grid",
+          "type": "imperative"
+        },
+        {
+          "id": "Advanced Air Management",
+          "name": "Advanced Air Management",
+          "type": "moonshot"
+        },
+        {
+          "id": "Cooling Refrigerants",
+          "name": "Cooling Refrigerants",
+          "type": "moonshot"
+        },
+        {
+          "id": "DC Building Systems",
+          "name": "DC Building Systems",
+          "type": "moonshot"
+        },
+        {
+          "id": "Heating & Cooling",
+          "name": "Heating & Cooling",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Smart Buildings",
+          "name": "Smart Buildings",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Appliances",
+          "name": "Appliances",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "low-emissions-generation-page-v2",
+      "axisName": "Low-Emissions Generation",
+      "axisValue": 13.3,
+      "axisAngleDegree": 11.25,
+      "axisStartAngleDegree": 5,
+      "axisEndAngleDegree": 17.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Electricity",
+      "categoryName": "Electricity",
+      "categoryStartAngleDegree": 0,
+      "categoryEndAngleDegree": 47.5,
+      "categorySpanAngleDegree": 47.5,
+      "categoryArcStartAngleDegree": 5,
+      "categoryArcEndAngleDegree": 42.5,
+      "categoryArcSpanAngleDegree": 37.5,
+      "categoryColor": "#FFB323",
+      "categoryColorPalette": ["#FFB323", "#FFC947", "#FFDF6B"],
+      "categoryValue": 13.3,
+      "axisIdsOfSameCategory": [
+        "low-emissions-generation-page-v2",
+        "energy-storage-demand-flexibility-page-v2",
+        "enhanced-transmission-and-distribution-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Easier-to-Deploy Renewables",
+          "name": "Easier-to-Deploy Renewables",
+          "type": "imperative"
+        },
+        {
+          "id": "Clean Peakers",
+          "name": "Clean Peakers",
+          "type": "imperative"
+        },
+        {
+          "id": "24/7 Carbon-Free Power Generation",
+          "name": "24/7 Carbon-Free Power Generation",
+          "type": "imperative"
+        },
+        {
+          "id": "Commercial Fusion",
+          "name": "Commercial Fusion",
+          "type": "moonshot"
+        },
+        {
+          "id": "Deep Geothermal",
+          "name": "Deep Geothermal",
+          "type": "moonshot"
+        },
+        {
+          "id": "Ultra-High-Efficiency Solar Cells",
+          "name": "Ultra-High-Efficiency Solar Cells",
+          "type": "moonshot"
+        },
+        {
+          "id": "Carbon Fuel Cells",
+          "name": "Carbon Fuel Cells",
+          "type": "moonshot"
+        },
+        {
+          "id": "Direct Nuclear Conversion",
+          "name": "Direct Nuclear Conversion",
+          "type": "moonshot"
+        },
+        {
+          "id": "Mobile Clean Power",
+          "name": "Mobile Clean Power",
+          "type": "moonshot"
+        },
+        {
+          "id": "Space-Based Solar",
+          "name": "Space-Based Solar",
+          "type": "moonshot"
+        },
+        {
+          "id": "Novel Generation Sources",
+          "name": "Novel Generation Sources",
+          "type": "moonshot"
+        },
+        {
+          "id": "Alternative Fuels",
+          "name": "Alternative Fuels",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Fission",
+          "name": "Fission",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Fossil Fuels with CCUS",
+          "name": "Fossil Fuels with CCUS",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Fusion",
+          "name": "Fusion",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Geothermal",
+          "name": "Geothermal",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Geothermal",
+          "name": "Geothermal",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Hydro",
+          "name": "Hydro",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Marine",
+          "name": "Marine",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Solar",
+          "name": "Solar",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Wind",
+          "name": "Wind",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "energy-storage-demand-flexibility-page-v2",
+      "axisName": "Energy Storage & Demand Flexibility",
+      "axisValue": 13.3,
+      "axisAngleDegree": 23.75,
+      "axisStartAngleDegree": 17.5,
+      "axisEndAngleDegree": 30,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Electricity",
+      "categoryName": "Electricity",
+      "categoryStartAngleDegree": 0,
+      "categoryEndAngleDegree": 47.5,
+      "categorySpanAngleDegree": 47.5,
+      "categoryArcStartAngleDegree": 5,
+      "categoryArcEndAngleDegree": 42.5,
+      "categoryArcSpanAngleDegree": 37.5,
+      "categoryColor": "#FFB323",
+      "categoryColorPalette": ["#FFB323", "#FFC947", "#FFDF6B"],
+      "categoryValue": 13.3,
+      "axisIdsOfSameCategory": [
+        "low-emissions-generation-page-v2",
+        "energy-storage-demand-flexibility-page-v2",
+        "enhanced-transmission-and-distribution-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Demand Response",
+          "name": "Demand Response",
+          "type": "imperative"
+        },
+        {
+          "id": "Distributed Storage",
+          "name": "Distributed Storage",
+          "type": "imperative"
+        },
+        {
+          "id": "Long-Duration Storage",
+          "name": "Long-Duration Storage",
+          "type": "imperative"
+        },
+        {
+          "id": "Your Moonshot Here",
+          "name": "Your Moonshot Here",
+          "type": "moonshot"
+        },
+        {
+          "id": "Alternative Flexibility Solutions",
+          "name": "Alternative Flexibility Solutions",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Chemical",
+          "name": "Chemical",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Electrochemical",
+          "name": "Electrochemical",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Magnetic",
+          "name": "Magnetic",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Mechanical",
+          "name": "Mechanical",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Thermal",
+          "name": "Thermal",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "enhanced-transmission-and-distribution-page-v2",
+      "axisName": "Enhanced Transmission & Distribution",
+      "axisValue": 13.3,
+      "axisAngleDegree": 36.25,
+      "axisStartAngleDegree": 30,
+      "axisEndAngleDegree": 42.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Electricity",
+      "categoryName": "Electricity",
+      "categoryStartAngleDegree": 0,
+      "categoryEndAngleDegree": 47.5,
+      "categorySpanAngleDegree": 47.5,
+      "categoryArcStartAngleDegree": 5,
+      "categoryArcEndAngleDegree": 42.5,
+      "categoryArcSpanAngleDegree": 37.5,
+      "categoryColor": "#FFB323",
+      "categoryColorPalette": ["#FFB323", "#FFC947", "#FFDF6B"],
+      "categoryValue": 13.3,
+      "axisIdsOfSameCategory": [
+        "low-emissions-generation-page-v2",
+        "energy-storage-demand-flexibility-page-v2",
+        "enhanced-transmission-and-distribution-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Advanced Conductors",
+          "name": "Advanced Conductors",
+          "type": "imperative"
+        },
+        {
+          "id": "Dynamic Grid Control",
+          "name": "Dynamic Grid Control",
+          "type": "imperative"
+        },
+        {
+          "id": "Grid Reliability and Resilience",
+          "name": "Grid Reliability and Resilience",
+          "type": "imperative"
+        },
+        {
+          "id": "Interconnection Acceleration",
+          "name": "Interconnection Acceleration",
+          "type": "imperative"
+        },
+        {
+          "id": "On-Site Clean Power",
+          "name": "On-Site Clean Power",
+          "type": "imperative"
+        },
+        {
+          "id": "Underground Transmission",
+          "name": "Underground Transmission",
+          "type": "imperative"
+        },
+        {
+          "id": "Regional Supergrids",
+          "name": "Regional Supergrids",
+          "type": "imperative"
+        },
+        {
+          "id": "A Global Grid",
+          "name": "A Global Grid",
+          "type": "moonshot"
+        },
+        {
+          "id": "Alternative Electricity Carriers",
+          "name": "Alternative Electricity Carriers",
+          "type": "moonshot"
+        },
+        {
+          "id": "Room-Temperature Superconducting Grid",
+          "name": "Room-Temperature Superconducting Grid",
+          "type": "moonshot"
+        },
+        {
+          "id": "Wireless Power",
+          "name": "Wireless Power",
+          "type": "moonshot"
+        },
+        {
+          "id": "Advanced Components",
+          "name": "Advanced Components",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "System Monitoring & Optimization",
+          "name": "System Monitoring & Optimization",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "sustainable-crops-page-v2",
+      "axisName": "Sustainable Crops",
+      "axisValue": 4.5,
+      "axisAngleDegree": 58.75,
+      "axisStartAngleDegree": 52.5,
+      "axisEndAngleDegree": 65,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Food, Ag & Nature",
+      "categoryName": "Food, Ag & Nature",
+      "categoryStartAngleDegree": 47.5,
+      "categoryEndAngleDegree": 132.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 52.5,
+      "categoryArcEndAngleDegree": 127.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#6D9C44",
+      "categoryColorPalette": ["#6D9C44", "#83AB53", "#98BA60", "#AECA6D", "#C3D97B", "#D9E889"],
+      "categoryValue": 10.9,
+      "axisIdsOfSameCategory": [
+        "sustainable-crops-page-v2",
+        "sustainable-animal-fish-production-page-v2",
+        "alternative-proteins-fats-page-v2",
+        "reduced-food-waste-page-v2",
+        "fire-mitigation-page-v2",
+        "protecting-nature-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Yield Maximization",
+          "name": "Yield Maximization",
+          "type": "imperative"
+        },
+        {
+          "id": "Nitrogen Innovation",
+          "name": "Nitrogen Innovation",
+          "type": "imperative"
+        },
+        {
+          "id": "Soil Carbon Enhancement",
+          "name": "Soil Carbon Enhancement",
+          "type": "imperative"
+        },
+        {
+          "id": "Low-Methane Rice",
+          "name": "Low-Methane Rice",
+          "type": "imperative"
+        },
+        {
+          "id": "Climate Resilient Crops",
+          "name": "Climate Resilient Crops",
+          "type": "imperative"
+        },
+        {
+          "id": "Enhanced Photosynthesis",
+          "name": "Enhanced Photosynthesis",
+          "type": "moonshot"
+        },
+        {
+          "id": "Next-Gen Crops",
+          "name": "Next-Gen Crops",
+          "type": "moonshot"
+        },
+        {
+          "id": "Fertilizers & Nutrients",
+          "name": "Fertilizers & Nutrients",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Precision Agriculture",
+          "name": "Precision Agriculture",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Regenerative Agriculture",
+          "name": "Regenerative Agriculture",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Seed Editing & Breeding",
+          "name": "Seed Editing & Breeding",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "sustainable-animal-fish-production-page-v2",
+      "axisName": "Sustainable Animal & Fish Production",
+      "axisValue": 5.7,
+      "axisAngleDegree": 71.25,
+      "axisStartAngleDegree": 65,
+      "axisEndAngleDegree": 77.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Food, Ag & Nature",
+      "categoryName": "Food, Ag & Nature",
+      "categoryStartAngleDegree": 47.5,
+      "categoryEndAngleDegree": 132.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 52.5,
+      "categoryArcEndAngleDegree": 127.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#6D9C44",
+      "categoryColorPalette": ["#6D9C44", "#83AB53", "#98BA60", "#AECA6D", "#C3D97B", "#D9E889"],
+      "categoryValue": 10.9,
+      "axisIdsOfSameCategory": [
+        "sustainable-crops-page-v2",
+        "sustainable-animal-fish-production-page-v2",
+        "alternative-proteins-fats-page-v2",
+        "reduced-food-waste-page-v2",
+        "fire-mitigation-page-v2",
+        "protecting-nature-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Enteric Emissions Elimination on Pasture",
+          "name": "Enteric Emissions Elimination on Pasture",
+          "type": "imperative"
+        },
+        {
+          "id": "Low-Emissions Aquaculture",
+          "name": "Low-Emissions Aquaculture",
+          "type": "imperative"
+        },
+        {
+          "id": "Post-Agricultural Animal Feed",
+          "name": "Post-Agricultural Animal Feed",
+          "type": "moonshot"
+        },
+        {
+          "id": "Aquaculture & Fishing",
+          "name": "Aquaculture & Fishing",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Burp Mitigation",
+          "name": "Burp Mitigation",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Manure Management",
+          "name": "Manure Management",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "alternative-proteins-fats-page-v2",
+      "axisName": "Alternative Proteins & Fats",
+      "axisValue": 5.7,
+      "axisAngleDegree": 83.75,
+      "axisStartAngleDegree": 77.5,
+      "axisEndAngleDegree": 90,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Food, Ag & Nature",
+      "categoryName": "Food, Ag & Nature",
+      "categoryStartAngleDegree": 47.5,
+      "categoryEndAngleDegree": 132.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 52.5,
+      "categoryArcEndAngleDegree": 127.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#6D9C44",
+      "categoryColorPalette": ["#6D9C44", "#83AB53", "#98BA60", "#AECA6D", "#C3D97B", "#D9E889"],
+      "categoryValue": 10.9,
+      "axisIdsOfSameCategory": [
+        "sustainable-crops-page-v2",
+        "sustainable-animal-fish-production-page-v2",
+        "alternative-proteins-fats-page-v2",
+        "reduced-food-waste-page-v2",
+        "fire-mitigation-page-v2",
+        "protecting-nature-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Cell Cultivation",
+          "name": "Cell Cultivation",
+          "type": "imperative"
+        },
+        {
+          "id": "Industrial Fat Production",
+          "name": "Industrial Fat Production",
+          "type": "imperative"
+        },
+        {
+          "id": "Appealing Protein Alternatives",
+          "name": "Appealing Protein Alternatives",
+          "type": "imperative"
+        },
+        {
+          "id": "Cultivated",
+          "name": "Cultivated",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Fermented",
+          "name": "Fermented",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Insect-Based",
+          "name": "Insect-Based",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Plant-Based",
+          "name": "Plant-Based",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "reduced-food-waste-page-v2",
+      "axisName": "Reduced Food Waste",
+      "axisValue": 2.2,
+      "axisAngleDegree": 96.25,
+      "axisStartAngleDegree": 90,
+      "axisEndAngleDegree": 102.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Food, Ag & Nature",
+      "categoryName": "Food, Ag & Nature",
+      "categoryStartAngleDegree": 47.5,
+      "categoryEndAngleDegree": 132.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 52.5,
+      "categoryArcEndAngleDegree": 127.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#6D9C44",
+      "categoryColorPalette": ["#6D9C44", "#83AB53", "#98BA60", "#AECA6D", "#C3D97B", "#D9E889"],
+      "categoryValue": 10.9,
+      "axisIdsOfSameCategory": [
+        "sustainable-crops-page-v2",
+        "sustainable-animal-fish-production-page-v2",
+        "alternative-proteins-fats-page-v2",
+        "reduced-food-waste-page-v2",
+        "fire-mitigation-page-v2",
+        "protecting-nature-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Circularity",
+          "name": "Circularity",
+          "type": "imperative"
+        },
+        {
+          "id": "Zero Emissions Landfills",
+          "name": "Zero Emissions Landfills",
+          "type": "imperative"
+        },
+        {
+          "id": "Zero Spoilage Food Systems",
+          "name": "Zero Spoilage Food Systems",
+          "type": "imperative"
+        },
+        {
+          "id": "Circularity",
+          "name": "Circularity",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Harvest",
+          "name": "Harvest",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Lifespan",
+          "name": "Lifespan",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Supply Chain",
+          "name": "Supply Chain",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "fire-mitigation-page-v2",
+      "axisName": "Fire Mitigation",
+      "axisValue": 2.2,
+      "axisAngleDegree": 108.75,
+      "axisStartAngleDegree": 102.5,
+      "axisEndAngleDegree": 115,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Food, Ag & Nature",
+      "categoryName": "Food, Ag & Nature",
+      "categoryStartAngleDegree": 47.5,
+      "categoryEndAngleDegree": 132.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 52.5,
+      "categoryArcEndAngleDegree": 127.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#6D9C44",
+      "categoryColorPalette": ["#6D9C44", "#83AB53", "#98BA60", "#AECA6D", "#C3D97B", "#D9E889"],
+      "categoryValue": 10.9,
+      "axisIdsOfSameCategory": [
+        "sustainable-crops-page-v2",
+        "sustainable-animal-fish-production-page-v2",
+        "alternative-proteins-fats-page-v2",
+        "reduced-food-waste-page-v2",
+        "fire-mitigation-page-v2",
+        "protecting-nature-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Accurate Risk Pricing",
+          "name": "Accurate Risk Pricing",
+          "type": "imperative"
+        },
+        {
+          "id": "Asset Hardening",
+          "name": "Asset Hardening",
+          "type": "imperative"
+        },
+        {
+          "id": "Automated Fuel Reduction",
+          "name": "Automated Fuel Reduction",
+          "type": "imperative"
+        },
+        {
+          "id": "Real-Time Detection and Response",
+          "name": "Real-Time Detection and Response",
+          "type": "imperative"
+        },
+        {
+          "id": "Autonomous Firefighting",
+          "name": "Autonomous Firefighting",
+          "type": "moonshot"
+        },
+        {
+          "id": "Monitoring",
+          "name": "Monitoring",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Prevention",
+          "name": "Prevention",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Response",
+          "name": "Response",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "protecting-nature-page-v2",
+      "axisName": "Protecting Nature",
+      "axisValue": null,
+      "axisAngleDegree": 121.25,
+      "axisStartAngleDegree": 115,
+      "axisEndAngleDegree": 127.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Food, Ag & Nature",
+      "categoryName": "Food, Ag & Nature",
+      "categoryStartAngleDegree": 47.5,
+      "categoryEndAngleDegree": 132.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 52.5,
+      "categoryArcEndAngleDegree": 127.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#6D9C44",
+      "categoryColorPalette": ["#6D9C44", "#83AB53", "#98BA60", "#AECA6D", "#C3D97B", "#D9E889"],
+      "categoryValue": 10.9,
+      "axisIdsOfSameCategory": [
+        "sustainable-crops-page-v2",
+        "sustainable-animal-fish-production-page-v2",
+        "alternative-proteins-fats-page-v2",
+        "reduced-food-waste-page-v2",
+        "fire-mitigation-page-v2",
+        "protecting-nature-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Earth Observation",
+          "name": "Earth Observation",
+          "type": "imperative"
+        },
+        {
+          "id": "Natural Emissions Control",
+          "name": "Natural Emissions Control",
+          "type": "imperative"
+        },
+        {
+          "id": "Automated Ecosystem Restoration",
+          "name": "Automated Ecosystem Restoration",
+          "type": "imperative"
+        },
+        {
+          "id": "Ecosystem Monitoring",
+          "name": "Ecosystem Monitoring",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Restoration & Conservation",
+          "name": "Restoration & Conservation",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "biological-carbon-removal-page-v2",
+      "axisName": "Biological Carbon Removal",
+      "axisValue": null,
+      "axisAngleDegree": 263.75,
+      "axisStartAngleDegree": 257.5,
+      "axisEndAngleDegree": 270,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "GHG Removal",
+      "categoryName": "GHG Removal",
+      "categoryStartAngleDegree": 252.5,
+      "categoryEndAngleDegree": 312.5,
+      "categorySpanAngleDegree": 60,
+      "categoryArcStartAngleDegree": 257.5,
+      "categoryArcEndAngleDegree": 307.5,
+      "categoryArcSpanAngleDegree": 50,
+      "categoryColor": "#FFA4CB",
+      "categoryColorPalette": ["#FFA4CB", "#FEB8DB", "#FDCBEB", "#FCDFFB"],
+      "categoryValue": null,
+      "axisIdsOfSameCategory": [
+        "biological-carbon-removal-page-v2",
+        "mineral-carbon-removal-page-v2",
+        "engineered-carbon-removal-page-v2",
+        "methane-nitrous-oxide-removal-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Enhanced Biological Systems",
+          "name": "Enhanced Biological Systems",
+          "type": "imperative"
+        },
+        {
+          "id": "Biomass Preservation",
+          "name": "Biomass Preservation",
+          "type": "imperative"
+        },
+        {
+          "id": "Self-Replicating Engineered Biological Systems",
+          "name": "Self-Replicating Engineered Biological Systems",
+          "type": "moonshot"
+        },
+        {
+          "id": "Reforestation & Afforestation",
+          "name": "Reforestation & Afforestation",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Biomass Utilization and Storage",
+          "name": "Biomass Utilization and Storage",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Bio Energy- BECCS",
+          "name": "Bio Energy- BECCS",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Plant MRV",
+          "name": "Plant MRV",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "mineral-carbon-removal-page-v2",
+      "axisName": "Mineral Carbon Removal",
+      "axisValue": null,
+      "axisAngleDegree": 276.25,
+      "axisStartAngleDegree": 270,
+      "axisEndAngleDegree": 282.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "GHG Removal",
+      "categoryName": "GHG Removal",
+      "categoryStartAngleDegree": 252.5,
+      "categoryEndAngleDegree": 312.5,
+      "categorySpanAngleDegree": 60,
+      "categoryArcStartAngleDegree": 257.5,
+      "categoryArcEndAngleDegree": 307.5,
+      "categoryArcSpanAngleDegree": 50,
+      "categoryColor": "#FFA4CB",
+      "categoryColorPalette": ["#FFA4CB", "#FEB8DB", "#FDCBEB", "#FCDFFB"],
+      "categoryValue": null,
+      "axisIdsOfSameCategory": [
+        "biological-carbon-removal-page-v2",
+        "mineral-carbon-removal-page-v2",
+        "engineered-carbon-removal-page-v2",
+        "methane-nitrous-oxide-removal-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Geological Alkalinity",
+          "name": "Geological Alkalinity",
+          "type": "imperative"
+        },
+        {
+          "id": "Verification Systems",
+          "name": "Verification Systems",
+          "type": "imperative"
+        },
+        {
+          "id": "Catalyzed Super-Weathering",
+          "name": "Catalyzed Super-Weathering",
+          "type": "moonshot"
+        },
+        {
+          "id": "Alkalinity Enhancement",
+          "name": "Alkalinity Enhancement",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Carbon Mineralization",
+          "name": "Carbon Mineralization",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Mineral MRV",
+          "name": "Mineral MRV",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "engineered-carbon-removal-page-v2",
+      "axisName": "Engineered Carbon Removal",
+      "axisValue": null,
+      "axisAngleDegree": 288.75,
+      "axisStartAngleDegree": 282.5,
+      "axisEndAngleDegree": 295,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "GHG Removal",
+      "categoryName": "GHG Removal",
+      "categoryStartAngleDegree": 252.5,
+      "categoryEndAngleDegree": 312.5,
+      "categorySpanAngleDegree": 60,
+      "categoryArcStartAngleDegree": 257.5,
+      "categoryArcEndAngleDegree": 307.5,
+      "categoryArcSpanAngleDegree": 50,
+      "categoryColor": "#FFA4CB",
+      "categoryColorPalette": ["#FFA4CB", "#FEB8DB", "#FDCBEB", "#FCDFFB"],
+      "categoryValue": null,
+      "axisIdsOfSameCategory": [
+        "biological-carbon-removal-page-v2",
+        "mineral-carbon-removal-page-v2",
+        "engineered-carbon-removal-page-v2",
+        "methane-nitrous-oxide-removal-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "CO₂ Sequestration",
+          "name": "CO₂ Sequestration",
+          "type": "imperative"
+        },
+        {
+          "id": "Efficient Direct Air Capture (DAC)",
+          "name": "Efficient Direct Air Capture (DAC)",
+          "type": "imperative"
+        },
+        {
+          "id": "Passive Removal Integration",
+          "name": "Passive Removal Integration",
+          "type": "moonshot"
+        },
+        {
+          "id": "Direct Air Capture (DAC)",
+          "name": "Direct Air Capture (DAC)",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Ocean Capture",
+          "name": "Ocean Capture",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Carbon Storage",
+          "name": "Carbon Storage",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "methane-nitrous-oxide-removal-page-v2",
+      "axisName": "Methane & Nitrous Oxide Removal",
+      "axisValue": null,
+      "axisAngleDegree": 301.25,
+      "axisStartAngleDegree": 295,
+      "axisEndAngleDegree": 307.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "GHG Removal",
+      "categoryName": "GHG Removal",
+      "categoryStartAngleDegree": 252.5,
+      "categoryEndAngleDegree": 312.5,
+      "categorySpanAngleDegree": 60,
+      "categoryArcStartAngleDegree": 257.5,
+      "categoryArcEndAngleDegree": 307.5,
+      "categoryArcSpanAngleDegree": 50,
+      "categoryColor": "#FFA4CB",
+      "categoryColorPalette": ["#FFA4CB", "#FEB8DB", "#FDCBEB", "#FCDFFB"],
+      "categoryValue": null,
+      "axisIdsOfSameCategory": [
+        "biological-carbon-removal-page-v2",
+        "mineral-carbon-removal-page-v2",
+        "engineered-carbon-removal-page-v2",
+        "methane-nitrous-oxide-removal-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Methane Capture and Valorization",
+          "name": "Methane Capture and Valorization",
+          "type": "imperative"
+        },
+        {
+          "id": "Methane Emissions Destruction",
+          "name": "Methane Emissions Destruction",
+          "type": "imperative"
+        },
+        {
+          "id": "Atmospheric Oxidation Enhancement",
+          "name": "Atmospheric Oxidation Enhancement",
+          "type": "moonshot"
+        },
+        {
+          "id": "High-GWP GHG Removal",
+          "name": "High-GWP GHG Removal",
+          "type": "moonshot"
+        },
+        {
+          "id": "Atmospheric Oxidation Enhancement",
+          "name": "Atmospheric Oxidation Enhancement",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Methane (CH₄) Removal",
+          "name": "Methane (CH₄) Removal",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Nitrous Oxide (N₂O) Removal",
+          "name": "Nitrous Oxide (N₂O) Removal",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "mining-page-v2",
+      "axisName": "Mining",
+      "axisValue": null,
+      "axisAngleDegree": 178.75,
+      "axisStartAngleDegree": 172.5,
+      "axisEndAngleDegree": 185,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Manufacturing",
+      "categoryName": "Manufacturing",
+      "categoryStartAngleDegree": 167.5,
+      "categoryEndAngleDegree": 252.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 172.5,
+      "categoryArcEndAngleDegree": 247.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#FF5F2E",
+      "categoryColorPalette": ["#FF5F2E", "#FF753F", "#FF8B51", "#FFA162", "#FFB774", "#FFCD85"],
+      "categoryValue": 26.7,
+      "axisIdsOfSameCategory": [
+        "mining-page-v2",
+        "industrial-heat-page-v2",
+        "clean-cement-concrete-page-v2",
+        "clean-steel-page-v2",
+        "low-emissions-chemicals-and-plastics-page-v2",
+        "fashion-and-textiles-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Mineral Discovery & Resource Access:",
+          "name": "Mineral Discovery & Resource Access:",
+          "type": "imperative"
+        },
+        {
+          "id": "Energy-Efficient Mineral Processing",
+          "name": "Energy-Efficient Mineral Processing",
+          "type": "imperative"
+        },
+        {
+          "id": "Mining Circularity",
+          "name": "Mining Circularity",
+          "type": "imperative"
+        },
+        {
+          "id": "Carbon-Negative Mining",
+          "name": "Carbon-Negative Mining",
+          "type": "moonshot"
+        },
+        {
+          "id": "High-Efficiency Resource Extraction",
+          "name": "High-Efficiency Resource Extraction",
+          "type": "moonshot"
+        },
+        {
+          "id": "Mineral Discovery",
+          "name": "Mineral Discovery",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Extraction",
+          "name": "Extraction",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Electrification and alternative fuels for mining equipment",
+          "name": "Electrification and alternative fuels for mining equipment",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Clean Mineral Processing",
+          "name": "Clean Mineral Processing",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Mineral Recovery & Circular Mining",
+          "name": "Mineral Recovery & Circular Mining",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Methane & Fugitive Emissions Mitigation",
+          "name": "Methane & Fugitive Emissions Mitigation",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "industrial-heat-page-v2",
+      "axisName": "Industrial Heat",
+      "axisValue": null,
+      "axisAngleDegree": 191.25,
+      "axisStartAngleDegree": 185,
+      "axisEndAngleDegree": 197.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Manufacturing",
+      "categoryName": "Manufacturing",
+      "categoryStartAngleDegree": 167.5,
+      "categoryEndAngleDegree": 252.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 172.5,
+      "categoryArcEndAngleDegree": 247.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#FF5F2E",
+      "categoryColorPalette": ["#FF5F2E", "#FF753F", "#FF8B51", "#FFA162", "#FFB774", "#FFCD85"],
+      "categoryValue": 26.7,
+      "axisIdsOfSameCategory": [
+        "mining-page-v2",
+        "industrial-heat-page-v2",
+        "clean-cement-concrete-page-v2",
+        "clean-steel-page-v2",
+        "low-emissions-chemicals-and-plastics-page-v2",
+        "fashion-and-textiles-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Industrial Heat Pumps",
+          "name": "Industrial Heat Pumps",
+          "type": "imperative"
+        },
+        {
+          "id": "Thermal Batteries",
+          "name": "Thermal Batteries",
+          "type": "imperative"
+        },
+        {
+          "id": "Enhanced Geothermal",
+          "name": "Enhanced Geothermal",
+          "type": "imperative"
+        },
+        {
+          "id": "Industrial Nuclear",
+          "name": "Industrial Nuclear",
+          "type": "moonshot"
+        },
+        {
+          "id": "Direct Electrification",
+          "name": "Direct Electrification",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Industrial Heat Pumps",
+          "name": "Industrial Heat Pumps",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Industrial Thermal Energy Storage",
+          "name": "Industrial Thermal Energy Storage",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Industrial Nuclear",
+          "name": "Industrial Nuclear",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Waste Heat Recovery",
+          "name": "Waste Heat Recovery",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Geothermal",
+          "name": "Geothermal",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Geothermal",
+          "name": "Geothermal",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "clean-cement-concrete-page-v2",
+      "axisName": "Clean Cement & Concrete",
+      "axisValue": 3.5,
+      "axisAngleDegree": 203.75,
+      "axisStartAngleDegree": 197.5,
+      "axisEndAngleDegree": 210,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Manufacturing",
+      "categoryName": "Manufacturing",
+      "categoryStartAngleDegree": 167.5,
+      "categoryEndAngleDegree": 252.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 172.5,
+      "categoryArcEndAngleDegree": 247.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#FF5F2E",
+      "categoryColorPalette": ["#FF5F2E", "#FF753F", "#FF8B51", "#FFA162", "#FFB774", "#FFCD85"],
+      "categoryValue": 26.7,
+      "axisIdsOfSameCategory": [
+        "mining-page-v2",
+        "industrial-heat-page-v2",
+        "clean-cement-concrete-page-v2",
+        "clean-steel-page-v2",
+        "low-emissions-chemicals-and-plastics-page-v2",
+        "fashion-and-textiles-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Emissions-Free Ordinary Portland Cement (OPC)",
+          "name": "Emissions-Free Ordinary Portland Cement (OPC)",
+          "type": "imperative"
+        },
+        {
+          "id": "Low-Clinker Concrete",
+          "name": "Low-Clinker Concrete",
+          "type": "imperative"
+        },
+        {
+          "id": "Novel Cement",
+          "name": "Novel Cement",
+          "type": "imperative"
+        },
+        {
+          "id": "Carbon-Negative Concrete",
+          "name": "Carbon-Negative Concrete",
+          "type": "moonshot"
+        },
+        {
+          "id": "Alternative Feedstocks & Binders",
+          "name": "Alternative Feedstocks & Binders",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Electrification",
+          "name": "Electrification",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Novel Production Processes",
+          "name": "Novel Production Processes",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Recycled Concrete",
+          "name": "Recycled Concrete",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "clean-steel-page-v2",
+      "axisName": "Clean Steel",
+      "axisValue": 3.3,
+      "axisAngleDegree": 216.25,
+      "axisStartAngleDegree": 210,
+      "axisEndAngleDegree": 222.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Manufacturing",
+      "categoryName": "Manufacturing",
+      "categoryStartAngleDegree": 167.5,
+      "categoryEndAngleDegree": 252.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 172.5,
+      "categoryArcEndAngleDegree": 247.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#FF5F2E",
+      "categoryColorPalette": ["#FF5F2E", "#FF753F", "#FF8B51", "#FFA162", "#FFB774", "#FFCD85"],
+      "categoryValue": 26.7,
+      "axisIdsOfSameCategory": [
+        "mining-page-v2",
+        "industrial-heat-page-v2",
+        "clean-cement-concrete-page-v2",
+        "clean-steel-page-v2",
+        "low-emissions-chemicals-and-plastics-page-v2",
+        "fashion-and-textiles-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Decarbonized Iron Reducing Agents",
+          "name": "Decarbonized Iron Reducing Agents",
+          "type": "imperative"
+        },
+        {
+          "id": "New Steelmaking Methods",
+          "name": "New Steelmaking Methods",
+          "type": "imperative"
+        },
+        {
+          "id": "Infinite Steel Recycling",
+          "name": "Infinite Steel Recycling",
+          "type": "moonshot"
+        },
+        {
+          "id": "Alternative Iron Reduction",
+          "name": "Alternative Iron Reduction",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "H2-Based Iron Reduction",
+          "name": "H2-Based Iron Reduction",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Scrap-Based EAF",
+          "name": "Scrap-Based EAF",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "low-emissions-chemicals-and-plastics-page-v2",
+      "axisName": "Low-Emissions Chemicals & Plastics",
+      "axisValue": 1.9,
+      "axisAngleDegree": 228.75,
+      "axisStartAngleDegree": 222.5,
+      "axisEndAngleDegree": 235,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Manufacturing",
+      "categoryName": "Manufacturing",
+      "categoryStartAngleDegree": 167.5,
+      "categoryEndAngleDegree": 252.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 172.5,
+      "categoryArcEndAngleDegree": 247.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#FF5F2E",
+      "categoryColorPalette": ["#FF5F2E", "#FF753F", "#FF8B51", "#FFA162", "#FFB774", "#FFCD85"],
+      "categoryValue": 26.7,
+      "axisIdsOfSameCategory": [
+        "mining-page-v2",
+        "industrial-heat-page-v2",
+        "clean-cement-concrete-page-v2",
+        "clean-steel-page-v2",
+        "low-emissions-chemicals-and-plastics-page-v2",
+        "fashion-and-textiles-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Alternative Production Pathways",
+          "name": "Alternative Production Pathways",
+          "type": "imperative"
+        },
+        {
+          "id": "Distillation and Separation Alternatives",
+          "name": "Distillation and Separation Alternatives",
+          "type": "imperative"
+        },
+        {
+          "id": "Low-Cost, Low-Carbon Hydrogen",
+          "name": "Low-Cost, Low-Carbon Hydrogen",
+          "type": "imperative"
+        },
+        {
+          "id": "Plastic Circularity",
+          "name": "Plastic Circularity",
+          "type": "imperative"
+        },
+        {
+          "id": "NextGen Plastics",
+          "name": "NextGen Plastics",
+          "type": "imperative"
+        },
+        {
+          "id": "Scalable Geologic Hydrogen",
+          "name": "Scalable Geologic Hydrogen",
+          "type": "moonshot"
+        },
+        {
+          "id": "Direct Electrochemical Chemical Production",
+          "name": "Direct Electrochemical Chemical Production",
+          "type": "moonshot"
+        },
+        {
+          "id": "Catalytic Leapfrog",
+          "name": "Catalytic Leapfrog",
+          "type": "moonshot"
+        },
+        {
+          "id": "Alternative Refrigerants",
+          "name": "Alternative Refrigerants",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Biomass-Based Production",
+          "name": "Biomass-Based Production",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Hydrogen-Based Production",
+          "name": "Hydrogen-Based Production",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Waste-Based Production",
+          "name": "Waste-Based Production",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Energy Efficiency & Process Optimization",
+          "name": "Energy Efficiency & Process Optimization",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Carbon Capture, Utilization, & Storage",
+          "name": "Carbon Capture, Utilization, & Storage",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "fashion-and-textiles-page-v2",
+      "axisName": "Fashion & Textiles",
+      "axisValue": null,
+      "axisAngleDegree": 241.25,
+      "axisStartAngleDegree": 235,
+      "axisEndAngleDegree": 247.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Manufacturing",
+      "categoryName": "Manufacturing",
+      "categoryStartAngleDegree": 167.5,
+      "categoryEndAngleDegree": 252.5,
+      "categorySpanAngleDegree": 85,
+      "categoryArcStartAngleDegree": 172.5,
+      "categoryArcEndAngleDegree": 247.5,
+      "categoryArcSpanAngleDegree": 75,
+      "categoryColor": "#FF5F2E",
+      "categoryColorPalette": ["#FF5F2E", "#FF753F", "#FF8B51", "#FFA162", "#FFB774", "#FFCD85"],
+      "categoryValue": 26.7,
+      "axisIdsOfSameCategory": [
+        "mining-page-v2",
+        "industrial-heat-page-v2",
+        "clean-cement-concrete-page-v2",
+        "clean-steel-page-v2",
+        "low-emissions-chemicals-and-plastics-page-v2",
+        "fashion-and-textiles-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Circular Textiles",
+          "name": "Circular Textiles",
+          "type": "imperative"
+        },
+        {
+          "id": "Low-Carbon Materials",
+          "name": "Low-Carbon Materials",
+          "type": "imperative"
+        },
+        {
+          "id": "Alternative Fibers",
+          "name": "Alternative Fibers",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Production & Process Efficiency",
+          "name": "Production & Process Efficiency",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Textile Circularity",
+          "name": "Textile Circularity",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "vehicle-electrification-page-v2",
+      "axisName": "Vehicle Electrification",
+      "axisValue": 9.4,
+      "axisAngleDegree": 323.75,
+      "axisStartAngleDegree": 317.5,
+      "axisEndAngleDegree": 330,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Transportation",
+      "categoryName": "Transportation",
+      "categoryStartAngleDegree": 312.5,
+      "categoryEndAngleDegree": 360,
+      "categorySpanAngleDegree": 47.5,
+      "categoryArcStartAngleDegree": 317.5,
+      "categoryArcEndAngleDegree": 355,
+      "categoryArcSpanAngleDegree": 37.5,
+      "categoryColor": "#D8D41C",
+      "categoryColorPalette": ["#D8D41C", "#E1E149", "#EAEE75"],
+      "categoryValue": 9.4,
+      "axisIdsOfSameCategory": [
+        "vehicle-electrification-page-v2",
+        "sustainable-fuels-page-v2",
+        "efficiency-and-reduced-demand-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Flexible EV Charging",
+          "name": "Flexible EV Charging",
+          "type": "imperative"
+        },
+        {
+          "id": "Battery Performance",
+          "name": "Battery Performance",
+          "type": "imperative"
+        },
+        {
+          "id": "Onboard Power Generation",
+          "name": "Onboard Power Generation",
+          "type": "moonshot"
+        },
+        {
+          "id": "Remote Power",
+          "name": "Remote Power",
+          "type": "moonshot"
+        },
+        {
+          "id": "Ultra-High-Density Energy Storage",
+          "name": "Ultra-High-Density Energy Storage",
+          "type": "moonshot"
+        },
+        {
+          "id": "Advanced Battery Technologies",
+          "name": "Advanced Battery Technologies",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Battery Electric Vehicles",
+          "name": "Battery Electric Vehicles",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Charging Infrastructure",
+          "name": "Charging Infrastructure",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Hybrids",
+          "name": "Hybrids",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Low-Emission Powertrain Vehicles",
+          "name": "Low-Emission Powertrain Vehicles",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "sustainable-fuels-page-v2",
+      "axisName": "Sustainable Fuels",
+      "axisValue": 9.4,
+      "axisAngleDegree": 336.25,
+      "axisStartAngleDegree": 330,
+      "axisEndAngleDegree": 342.5,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Transportation",
+      "categoryName": "Transportation",
+      "categoryStartAngleDegree": 312.5,
+      "categoryEndAngleDegree": 360,
+      "categorySpanAngleDegree": 47.5,
+      "categoryArcStartAngleDegree": 317.5,
+      "categoryArcEndAngleDegree": 355,
+      "categoryArcSpanAngleDegree": 37.5,
+      "categoryColor": "#D8D41C",
+      "categoryColorPalette": ["#D8D41C", "#E1E149", "#EAEE75"],
+      "categoryValue": 9.4,
+      "axisIdsOfSameCategory": [
+        "vehicle-electrification-page-v2",
+        "sustainable-fuels-page-v2",
+        "efficiency-and-reduced-demand-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Alternative Fuel Production",
+          "name": "Alternative Fuel Production",
+          "type": "imperative"
+        },
+        {
+          "id": "Low-Cost Carbon and Hydrogen",
+          "name": "Low-Cost Carbon and Hydrogen",
+          "type": "imperative"
+        },
+        {
+          "id": "Scalable Biofuels",
+          "name": "Scalable Biofuels",
+          "type": "imperative"
+        },
+        {
+          "id": "Waste-to-Value",
+          "name": "Waste-to-Value",
+          "type": "imperative"
+        },
+        {
+          "id": "Alternative Fuel Infrastructure",
+          "name": "Alternative Fuel Infrastructure",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Biofuels",
+          "name": "Biofuels",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Hydrogen & Derivatives",
+          "name": "Hydrogen & Derivatives",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Synthetic E-fuels",
+          "name": "Synthetic E-fuels",
+          "type": "tech-cluster"
+        }
+      ]
+    },
+    {
+      "axisId": "efficiency-and-reduced-demand-page-v2",
+      "axisName": "Efficiency & Reduced Demand",
+      "axisValue": 9.4,
+      "axisAngleDegree": 348.75,
+      "axisStartAngleDegree": 342.5,
+      "axisEndAngleDegree": 355,
+      "axisSpanAngleDegree": 12.5,
+      "categoryId": "Transportation",
+      "categoryName": "Transportation",
+      "categoryStartAngleDegree": 312.5,
+      "categoryEndAngleDegree": 360,
+      "categorySpanAngleDegree": 47.5,
+      "categoryArcStartAngleDegree": 317.5,
+      "categoryArcEndAngleDegree": 355,
+      "categoryArcSpanAngleDegree": 37.5,
+      "categoryColor": "#D8D41C",
+      "categoryColorPalette": ["#D8D41C", "#E1E149", "#EAEE75"],
+      "categoryValue": 9.4,
+      "axisIdsOfSameCategory": [
+        "vehicle-electrification-page-v2",
+        "sustainable-fuels-page-v2",
+        "efficiency-and-reduced-demand-page-v2"
+      ],
+      "symbols": [
+        {
+          "id": "Contrail Management",
+          "name": "Contrail Management",
+          "type": "imperative"
+        },
+        {
+          "id": "Advanced Airframe & Ship Design",
+          "name": "Advanced Airframe & Ship Design",
+          "type": "imperative"
+        },
+        {
+          "id": "Travel Alternatives",
+          "name": "Travel Alternatives",
+          "type": "imperative"
+        },
+        {
+          "id": "Ultra-High-Speed Ground Transport",
+          "name": "Ultra-High-Speed Ground Transport",
+          "type": "moonshot"
+        },
+        {
+          "id": "Lightweight Materials, Engines & Aerodynamic Designs",
+          "name": "Lightweight Materials, Engines & Aerodynamic Designs",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Route & Logistics Optimization",
+          "name": "Route & Logistics Optimization",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Public & Shared Transit Systems",
+          "name": "Public & Shared Transit Systems",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Reducing Contrail Formation",
+          "name": "Reducing Contrail Formation",
+          "type": "tech-cluster"
+        },
+        {
+          "id": "Teleworking & Digital Solutions",
+          "name": "Teleworking & Digital Solutions",
+          "type": "tech-cluster"
+        }
+      ]
+    }
+  ]
+}

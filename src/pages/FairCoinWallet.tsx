@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
@@ -25,6 +26,7 @@ const SEO_DESCRIPTION =
  * screenshots, trust narrative and a final CTA.
  */
 export default function FairCoinWalletPage() {
+  const [darkHeader, setDarkHeader] = useState(false);
   const onFairCoinHost = isFairCoinHost();
   const navbarBrand = useFairCoinNavbarBrand();
   const dropdowns = useFairCoinDropdowns();
@@ -35,16 +37,16 @@ export default function FairCoinWalletPage() {
   const footerLegalLinks = useFairCoinFooterLegalLinks();
   const footerCopyright = useFairCoinFooterCopyright();
 
-  // Same dual-mount story as the other FairCoin pages — Bloom/CSS theme is
-  // host-gated so /faircoin/wallet on oxy.so reads as an Oxy subpage.
-  const rootClass = onFairCoinHost
-    ? 'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
-    : 'faircoin-surface flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background';
+  const rootClass =
+    'faircoin-editorial flex min-h-screen max-w-screen flex-col overflow-x-clip pb-24 lg:pb-0 bg-card text-foreground';
 
   return (
     <div className={rootClass}>
       <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin/wallet" />
       <Navbar
+        transparent
+        transparentOnScroll
+        transparentOn={darkHeader ? 'dark' : 'light'}
         brand={navbarBrand}
         customDropdowns={dropdowns}
         customNavLinks={simpleNavLinks}
@@ -54,7 +56,7 @@ export default function FairCoinWalletPage() {
         hideLocalePicker={onFairCoinHost}
       />
       <main className="flex-1">
-        <WalletLandingContent />
+        <WalletLandingContent onToneChange={setDarkHeader} />
       </main>
       <Footer
         brand={footerBrand}

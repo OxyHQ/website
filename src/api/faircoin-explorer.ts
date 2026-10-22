@@ -5,11 +5,35 @@
  * lightweight cached endpoints at https://explorer.fairco.in/api — these are
  * suitable for client-side polling at 15-30s cadence. We do not authenticate.
  */
-const DEFAULT_EXPLORER_BASE = 'https://explorer.fairco.in';
+import { z } from 'zod';
+
+export const FAIRCOIN_EXPLORER_URL = 'https://explorer.fairco.in';
 
 function getExplorerBase(): string {
-  const override = (import.meta.env.VITE_FAIRCOIN_EXPLORER_URL as string | undefined) ?? '';
-  return override.length > 0 ? override : DEFAULT_EXPLORER_BASE;
+  const override = (import.meta.env?.VITE_FAIRCOIN_EXPLORER_URL as string | undefined) ?? '';
+  return override.length > 0 ? override.replace(/\/$/, '') : FAIRCOIN_EXPLORER_URL;
+}
+
+const optionalAmount = z.number().finite().nonnegative().nullable().default(null);
+export const explorerPriceSchema = z.object({
+  price: z.number().finite().nonnegative().nullable(),
+  change24h: z.number().finite().nullable().default(null),
+  liquidityUsd: optionalAmount,
+  volume24h: optionalAmount,
+  marketCapUsd: optionalAmount,
+  source: z.string().nullable().default(null),
+  updatedAt: z.iso.datetime().nullable().default(null),
+});
+export type ExplorerPrice = z.infer<typeof explorerPriceSchema>;
+
+export async function fetchExplorerPrice(signal?: AbortSignal): Promise<ExplorerPrice> {
+  const response = await fetch(`${getExplorerBase()}/api/price`, {
+    signal: signal
+      ? AbortSignal.any([signal, AbortSignal.timeout(10_000)])
+      : AbortSignal.timeout(10_000),
+  });
+  if (!response.ok) throw new Error(`Explorer price request failed: ${response.status}`);
+  return explorerPriceSchema.parse(await response.json());
 }
 
 export interface ExplorerStats {
@@ -63,10 +87,22 @@ function num(v: unknown, fallback = 0): number {
 }
 
 export async function fetchExplorerStats(): Promise<ExplorerStats> {
-  const res = await fetch(`${getExplorerBase()}/api/stats`);
+  const res = await fetch(`${getExplorerBase()}/api/stats?network=mainnet`, {
+    signal: AbortSignal.timeout(10_000),
+  });
   if (!res.ok) throw new Error(`Explorer stats request failed: ${res.status}`);
   const body = (await res.json()) as ExplorerStatsBody;
-  const s = body.stats ?? {};
+  const s = body.stats;
+  if (
+    !s ||
+    !Number.isSafeInteger(s.blockHeight) ||
+    (s.blockHeight ?? 0) <= 0 ||
+    typeof s.circulatingSupply !== 'number' ||
+    !Number.isFinite(s.circulatingSupply) ||
+    s.circulatingSupply < 0
+  ) {
+    throw new Error('Explorer returned an incomplete network snapshot');
+  }
   const last = s.lastBlock ?? {};
   return {
     blockHeight: num(s.blockHeight),
