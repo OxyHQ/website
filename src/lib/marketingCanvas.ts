@@ -8,7 +8,8 @@ export function marketingCanvasClass(pathname: string, faircoinHost = false): st
   if (
     path === '/faircoin' ||
     path === '/faircoin/wallet' ||
-    (faircoinHost && (path === '/' || path === '/wallet'))
+    path === '/faircoin/buy' ||
+    (faircoinHost && (path === '/' || path === '/wallet' || path === '/buy'))
   ) {
     return 'faircoin-editorial bg-card';
   }

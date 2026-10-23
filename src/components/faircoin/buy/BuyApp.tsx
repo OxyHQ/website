@@ -1,7 +1,7 @@
 /**
  * BuyApp — app-style FAIR purchase flow.
  *
- * Renders an `AppShell`-wrapped wizard with three logical steps:
+ * Renders an editorial BuyShell-wrapped wizard with three logical steps:
  *   1. AMOUNT  — large amount input + payment method + destination address
  *   2. PAY     — QR + address + countdown + live status timeline
  *   3. DONE    — success screen with tx link + buy-more action
@@ -13,6 +13,7 @@
  * right; back navigation reverses the direction).
  */
 import { useCallback, useMemo, useState } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import { useCopyToClipboard } from '../../../lib/useCopyToClipboard';
 import { QRCodeSVG } from 'qrcode.react';
 import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine';
@@ -28,7 +29,8 @@ import { RiLoader4Line } from '@oxy.so/bloom/icons/RiLoader4Line';
 import { RiResetLeftLine } from '@oxy.so/bloom/icons/RiResetLeftLine';
 import { RiErrorWarningLine } from '@oxy.so/bloom/icons/RiErrorWarningLine';
 import { RiWallet3Line } from '@oxy.so/bloom/icons/RiWallet3Line';
-import AppShell from '../app/AppShell';
+import BuyShell from './BuyShell';
+import Button from '../../ui/Button';
 import StepTransition from '../app/StepTransition';
 import {
   BuyApiError,
@@ -50,11 +52,12 @@ const BASESCAN_BASE = 'https://basescan.org';
 const BUY_BOUNDS = { min: 1, max: 1000 } as const;
 
 const PRESET_AMOUNTS = ['10', '25', '50', '100'] as const;
-// Coarse USD/FAIR estimate just for the inline conversion display below the
-// amount input. Live pricing is server-side; this is purely cosmetic.
-const COARSE_USD_PER_FAIR = 1.0;
 
 const COPY_FLASH_MS = 1_500;
+
+// Bloom keeps interaction semantics; scoped tokens keep every state in FairCoin's palette.
+const PRIMARY_ACTION_CLASS =
+  '!min-h-14 w-full !rounded-full !bg-primary !text-primary-foreground !text-base !font-normal !shadow-none ![font-family:inherit] [&::before]:!hidden [&::after]:!bg-primary hover:[&::after]:!bg-primary/90 disabled:!bg-muted disabled:!text-muted-foreground disabled:[&::after]:!bg-muted';
 
 const STEPS = [
   { id: 'amount', label: 'Amount' },
@@ -85,7 +88,6 @@ type Stage =
   | { kind: 'failed'; message: string | null };
 
 interface ShellCopy {
-  eyebrow: string;
   title: string;
   subtitle?: string;
   currentStep: number;
@@ -94,9 +96,8 @@ interface ShellCopy {
 
 const SHELL_COPY: Record<StageKind, ShellCopy> = {
   amount: {
-    eyebrow: 'Buy FAIR',
-    title: 'Buy native FairCoin',
-    subtitle: 'Pay in USDC on Base. Get FAIR delivered straight to your wallet.',
+    title: 'Buy FairCoin.',
+    subtitle: 'Pay with USDC on Base. Receive native FAIR directly in your wallet.',
     currentStep: 0,
     footnote: (
       <>
@@ -114,19 +115,16 @@ const SHELL_COPY: Record<StageKind, ShellCopy> = {
     ),
   },
   pay: {
-    eyebrow: 'Send payment',
     title: 'Send USDC to receive FAIR',
     subtitle: 'Your FAIR will arrive automatically once payment is detected.',
     currentStep: 1,
   },
   done: {
-    eyebrow: 'Done',
     title: 'FAIR delivered',
     subtitle: 'Your wallet should reflect the new balance shortly.',
     currentStep: 2,
   },
   failed: {
-    eyebrow: 'Order failed',
     title: 'Something went wrong',
     subtitle: 'The bridge could not complete the transfer.',
     currentStep: 1,
@@ -134,6 +132,7 @@ const SHELL_COPY: Record<StageKind, ShellCopy> = {
 };
 
 export default function BuyApp() {
+  const reducedMotion = useReducedMotion();
   const [stage, setStage] = useState<Stage>({ kind: 'amount' });
   const [direction, setDirection] = useState<1 | -1>(1);
   const quoteMutation = useFaircoinBuyQuote();
@@ -150,27 +149,33 @@ export default function BuyApp() {
   }, [quoteMutation]);
 
   const copy = SHELL_COPY[stage.kind];
+  const content = (
+    <BuyStage
+      stage={stage}
+      setStage={setStage}
+      setDirection={setDirection}
+      quoteMutation={quoteMutation}
+      onQuoteIssued={handleQuoteIssued}
+      onReset={handleReset}
+    />
+  );
 
   return (
-    <AppShell
-      eyebrow={copy.eyebrow}
+    <BuyShell
       title={copy.title}
       subtitle={copy.subtitle}
       steps={STEPS}
       currentStep={copy.currentStep}
       footnote={copy.footnote}
     >
-      <StepTransition stepKey={stage.kind} direction={direction}>
-        <BuyStage
-          stage={stage}
-          setStage={setStage}
-          setDirection={setDirection}
-          quoteMutation={quoteMutation}
-          onQuoteIssued={handleQuoteIssued}
-          onReset={handleReset}
-        />
-      </StepTransition>
-    </AppShell>
+      {reducedMotion ? (
+        content
+      ) : (
+        <StepTransition stepKey={stage.kind} direction={direction}>
+          {content}
+        </StepTransition>
+      )}
+    </BuyShell>
   );
 }
 
@@ -236,18 +241,8 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
     !amountCheck.ok && touched.amount ? describeAmountError(amountCheck.reason) : null;
   const addressError =
     touched.address && address.trim().length > 0 && !addressLooksValid
-      ? 'FairCoin addresses start with F and have 26–35 base58 characters.'
+      ? 'Enter a valid native FairCoin address (20–64 base58 characters, starting with F, T or M).'
       : null;
-
-  const usdEstimate = useMemo(() => {
-    if (!amountCheck.ok) return null;
-    const usd = amountCheck.value * COARSE_USD_PER_FAIR;
-    return usd.toLocaleString(undefined, {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 2,
-    });
-  }, [amountCheck]);
 
   const canSubmit =
     amountCheck.ok && addressLooksValid && currency === 'USDC_BASE' && !mutation.isPending;
@@ -272,12 +267,11 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
   );
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       {/* You pay (FAIR) — hero amount input */}
-      <div className="rounded-2xl border border-border bg-background/60 p-4">
-        <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
+      <div className="rounded-[16px] bg-background p-4 sm:p-5">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>You buy</span>
-          {usdEstimate ? <span className="text-muted-foreground/80">≈ {usdEstimate}</span> : null}
         </div>
         <div className="mt-2.5 flex items-baseline justify-between gap-3">
           <input
@@ -290,19 +284,19 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
             onChange={(e) => setAmount(e.target.value)}
             onBlur={() => setTouched((t) => ({ ...t, amount: true }))}
             aria-label="Amount of FAIR to buy"
-            className="w-full bg-transparent text-[44px] font-semibold leading-[1.05] tracking-tight text-foreground placeholder:text-muted-foreground/40 focus:outline-none sm:text-[52px]"
+            className="min-w-0 w-full bg-transparent text-[56px] font-normal leading-[1.08] tracking-[-.03em] text-foreground placeholder:text-muted-foreground/40 focus:outline-none sm:text-[64px]"
           />
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
             <span
               aria-hidden
               className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-body-xs font-bold text-primary-foreground"
             >
-              F
+              <span className="size-4 bg-current [mask-image:url('/images/apps/faircoin.svg')] [mask-size:contain] [mask-repeat:no-repeat]" />
             </span>
             <span className="text-sm font-semibold text-foreground">FAIR</span>
           </div>
         </div>
-        <div className="mt-2.5 flex items-center justify-between text-xs">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-y-3 text-xs">
           <div className="flex flex-wrap gap-1.5">
             {PRESET_AMOUNTS.map((preset) => {
               const active = amount === preset;
@@ -312,7 +306,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
                   type="button"
                   onClick={() => setAmount(preset)}
                   className={[
-                    'rounded-full px-2.5 py-1 text-body-xs font-semibold transition-colors',
+                    'rounded-full px-3 py-1.5 text-sm transition-colors',
                     active
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground',
@@ -340,11 +334,9 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
       </div>
 
       {/* You pay with — payment method picker */}
-      <div className="rounded-2xl border border-border bg-background/60 p-4">
-        <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          You pay with
-        </div>
-        <div className="mt-2.5 flex flex-wrap gap-2">
+      <div className="rounded-[16px] bg-background p-4 sm:p-5">
+        <div className="text-sm text-muted-foreground">You pay with</div>
+        <div className="mt-3 grid grid-cols-2 gap-2">
           {PAYMENT_OPTIONS.map((option) => {
             const active = option.currency === currency;
             const disabled = option.comingSoon === true;
@@ -355,16 +347,16 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
                 disabled={disabled}
                 onClick={() => setCurrency(option.currency)}
                 className={[
-                  'flex flex-1 min-w-[110px] flex-col items-start gap-0.5 rounded-xl border px-3 py-2 text-left transition-all duration-150',
+                  'flex min-w-0 flex-col items-start gap-1 rounded-xl border px-3 py-2.5 text-left transition-colors',
                   active
-                    ? 'border-primary bg-primary/10 ring-2 ring-primary/30'
+                    ? 'border-primary bg-card ring-1 ring-primary'
                     : disabled
                       ? 'cursor-not-allowed border-border bg-background/40 opacity-50'
                       : 'border-border bg-background/40 hover:border-primary/40 hover:bg-background/80',
                 ].join(' ')}
               >
                 <span className="text-sm font-semibold text-foreground">{option.label}</span>
-                <span className="text-body-xs text-muted-foreground">{option.hint}</span>
+                <span className="text-xs text-muted-foreground">{option.hint}</span>
               </button>
             );
           })}
@@ -372,11 +364,8 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
       </div>
 
       {/* Destination */}
-      <div className="rounded-2xl border border-border bg-background/60 p-4">
-        <label
-          htmlFor="buy-address"
-          className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
-        >
+      <div className="rounded-[16px] bg-background p-4 sm:p-5">
+        <label htmlFor="buy-address" className="text-sm text-muted-foreground">
           Send FAIR to
         </label>
         <div className="mt-2.5 flex items-center gap-2 rounded-xl border border-border bg-popover/60 px-3 py-2.5 transition-colors focus-within:border-primary">
@@ -392,10 +381,10 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             onBlur={() => setTouched((t) => ({ ...t, address: true }))}
-            className="w-full bg-transparent font-mono text-body-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+            className="min-w-0 w-full bg-transparent font-mono text-body-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
           />
         </div>
-        <div className="mt-2 flex items-center justify-between gap-2 text-body-xs text-muted-foreground">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
           <span>
             No wallet?{' '}
             <a
@@ -414,14 +403,15 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
       </div>
 
       {/* CTA */}
-      <button
+      <Button
         type="submit"
         disabled={!canSubmit}
-        className="group flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-base font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground sm:h-14"
+        aria-busy={mutation.isPending}
+        className={`group ${PRIMARY_ACTION_CLASS}`}
       >
         {mutation.isPending ? (
           <>
-            <span aria-hidden="true" className="inline-flex animate-spin">
+            <span aria-hidden="true" className="inline-flex motion-safe:animate-spin">
               <RiLoader4Line width={16} height={16} fill="currentColor" />
             </span>
             Generating quote…
@@ -437,7 +427,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
             </span>
           </>
         )}
-      </button>
+      </Button>
 
       {submissionError ? (
         <div className="flex items-start gap-2 rounded-xl border border-error/40 bg-error-subtle px-3 py-2.5 text-xs text-error-text">
@@ -482,47 +472,45 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
   useDerivedStageTransition(effectiveStatus, status, onAdvance, onFail);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       {/* Amount + countdown header */}
-      <div className="rounded-2xl border border-border bg-background/60 p-4">
-        <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
+      <div className="rounded-[16px] bg-background p-4 sm:p-5">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>Send exactly</span>
           {paymentNotStarted && !quoteExpired ? (
             <Countdown secondsRemaining={secondsRemaining} />
           ) : null}
         </div>
-        <div className="mt-2.5 flex items-baseline justify-between gap-3">
-          <span className="text-[36px] font-semibold leading-[1.05] tracking-tight text-foreground sm:text-[44px]">
+        <div className="mt-2.5 flex flex-wrap items-baseline justify-between gap-3">
+          <span className="min-w-0 break-all text-[36px] font-normal leading-[1.08] tracking-tight text-foreground sm:text-[44px]">
             {quote.paymentAmountFormatted}
           </span>
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
             <span
               aria-hidden
-              className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-label-sm font-bold text-white"
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-label-sm font-bold text-primary-foreground"
             >
               $
             </span>
             <span className="text-sm font-semibold text-foreground">{quote.paymentSymbol}</span>
           </div>
         </div>
-        <p className="mt-2 text-body-xs text-muted-foreground">
+        <p className="mt-2 text-xs text-muted-foreground">
           On {quote.paymentNetworkLabel}. Other networks will be lost.
         </p>
       </div>
 
       {/* QR + address */}
       {quote.paymentAddress ? (
-        <div className="rounded-2xl border border-border bg-background/60 p-4">
-          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Or scan the QR
-          </div>
+        <div className="rounded-[16px] bg-background p-4 sm:p-5">
+          <div className="text-sm text-muted-foreground">Or scan the QR</div>
           <div className="mt-3 flex flex-col items-center gap-3">
-            <div className="rounded-2xl bg-white p-2.5 shadow-sm">
+            <div className="faircoin-editorial rounded-2xl bg-card p-3">
               <QRCodeSVG
                 value={quote.paymentAddress}
                 size={180}
-                bgColor="#ffffff"
-                fgColor="#0a0a0a"
+                bgColor="var(--card)"
+                fgColor="var(--foreground)"
                 level="M"
                 marginSize={0}
                 className="h-[180px] w-[180px] sm:h-[220px] sm:w-[220px]"
@@ -546,8 +534,8 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
       </div>
 
       {/* Status timeline */}
-      <div className="rounded-2xl border border-border bg-background/60 p-4">
-        <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
+      <div className="rounded-[16px] bg-background p-4 sm:p-5">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>Bridge status</span>
           <LiveDot active={!quoteExpired} />
         </div>
@@ -581,7 +569,7 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
 
       {statusQuery.isError && statusQuery.failureCount > 2 ? (
         <p className="text-center text-xs text-muted-foreground">
-          <span aria-hidden="true" className="inline-flex mr-1 animate-spin">
+          <span aria-hidden="true" className="inline-flex mr-1 motion-safe:animate-spin">
             <RiLoader4Line width={12} height={12} fill="currentColor" />
           </span>
           Reconnecting to bridge…
@@ -613,7 +601,7 @@ function SuccessStep({
       <SuccessCheckmark />
 
       <div className="flex flex-col items-center gap-1">
-        <p className="text-[40px] font-semibold leading-[1.05] text-foreground sm:text-[48px]">
+        <p className="break-all text-[40px] font-normal leading-[1.08] text-foreground sm:text-[48px]">
           {fairAmount}
         </p>
         <p className="text-sm font-medium uppercase tracking-wider text-primary">FAIR delivered</p>
@@ -662,13 +650,9 @@ function SuccessStep({
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={onStartOver}
-        className="h-12 w-full rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
-      >
+      <Button type="button" onClick={onStartOver} className={PRIMARY_ACTION_CLASS}>
         Buy more FAIR
-      </button>
+      </Button>
     </div>
   );
 }
@@ -677,21 +661,17 @@ function SuccessStep({
 
 function FailedStep({ message, onStartOver }: { message: string | null; onStartOver: () => void }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <div className="flex items-start gap-2.5 rounded-2xl border border-error/40 bg-error-subtle p-3.5 text-sm text-error-text">
         <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0">
           <RiErrorWarningLine width={20} height={20} fill="currentColor" />
         </span>
         <span>{message ?? 'No further detail was provided. Try a fresh quote.'}</span>
       </div>
-      <button
-        type="button"
-        onClick={onStartOver}
-        className="flex h-12 items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
-      >
+      <Button type="button" onClick={onStartOver} className={PRIMARY_ACTION_CLASS}>
         <RiResetLeftLine aria-hidden width={16} height={16} fill="currentColor" />
         Start a new order
-      </button>
+      </Button>
     </div>
   );
 }
@@ -833,7 +813,7 @@ function StatusTimeline({
                   <RiCheckLine width={10} height={10} fill="currentColor" />
                 </span>
               ) : active ? (
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
+                <span className="h-1.5 w-1.5 motion-safe:animate-pulse rounded-full bg-primary" />
               ) : null}
             </span>
             <div className={future ? 'opacity-50' : 'opacity-100'}>
@@ -865,7 +845,7 @@ function TxHashLink({ hash, chain }: { hash: string; chain: 'base' | 'fair' }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="mt-1 inline-flex items-center gap-1 font-mono text-body-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+      className="mt-1 inline-flex items-center gap-1 font-mono text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
     >
       {shortHash(hash)}
       <RiExternalLinkLine aria-hidden width={10} height={10} fill="currentColor" />
