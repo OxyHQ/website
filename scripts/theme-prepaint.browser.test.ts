@@ -3,6 +3,7 @@ import { chromium } from 'playwright';
 import { buildSeedScopeVars, getPresetVars } from '@oxy.so/bloom/design-tokens';
 import { BRAND_SURFACES } from '../src/theme/brands';
 import { fontFamilies } from '@oxy.so/bloom/fonts';
+import { normalizeColor } from './theme-test-color';
 
 const ROOT = join(import.meta.dir, '..');
 // Cover the complete canonical recipe, including accent foregrounds, status and chart roles.
@@ -10,23 +11,6 @@ const TOKENS = Object.keys(getPresetVars('faircoin', 'light'));
 
 function invariant(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
-}
-
-function normalizeColor(value: string): string {
-  const normalized = value.trim().toLowerCase();
-  const shortHex = normalized.match(/^#([0-9a-f]{3})$/);
-  if (shortHex?.[1]) {
-    return [...shortHex[1]].map((digit) => Number.parseInt(`${digit}${digit}`, 16)).join(',');
-  }
-  const hex = normalized.match(/^#([0-9a-f]{6})$/);
-  if (hex?.[1]) {
-    return [0, 2, 4]
-      .map((offset) => Number.parseInt(hex[1]!.slice(offset, offset + 2), 16))
-      .join(',');
-  }
-  // Vite may minify the generated value to hex, while browsers may serialize
-  // modern `rgb(1 2 3)` syntax as legacy `rgb(1, 2, 3)`.
-  return [...normalized.matchAll(/[\d.]+/g)].map((match) => match[0]).join(',');
 }
 
 // Ask the OS for a free port, then let Vite preview serve the built app. This
