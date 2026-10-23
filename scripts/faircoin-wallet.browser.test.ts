@@ -27,10 +27,13 @@ try {
       const headerElement = document.querySelector('header');
       if (!heroElement || !headerElement) throw new Error('Missing hero or header');
       const hero = heroElement.getBoundingClientRect();
+      const heroImage = heroElement.closest('section')?.querySelector('img');
+      if (!heroImage) throw new Error('Missing hero image');
       const header = headerElement.getBoundingClientRect();
       return {
         overflow: document.documentElement.scrollWidth > innerWidth,
         heroTop: hero.top,
+        heroMediaBottom: heroImage.getBoundingClientRect().bottom,
         headerBottom: header.bottom,
         headerBackground: getComputedStyle(headerElement).backgroundColor,
         features: [...document.querySelectorAll<HTMLElement>('[data-wallet-feature]')].map(
@@ -53,7 +56,10 @@ try {
       };
     });
     assert(!geometry.overflow, `${width}: horizontal overflow`);
-    assert(geometry.heroTop >= geometry.headerBottom - 3, `${width}: title behind header`);
+    assert(
+      geometry.heroTop >= geometry.headerBottom + 24,
+      `${width}: hero needs breathing room below the header`,
+    );
     assert.equal(geometry.headerBackground, 'rgba(0, 0, 0, 0)');
     assert.equal(geometry.features.length, 5);
     for (const [index, media] of geometry.features.entries()) {
@@ -78,7 +84,7 @@ try {
       const first = geometry.features[0];
       assert(first);
       assert(
-        Math.abs(first.x - 614) < 3 && Math.abs(first.y - 1515) < 8,
+        Math.abs(first.x - 614) < 3 && Math.abs(first.y - geometry.heroMediaBottom - 587) < 8,
         'Reference desktop composition drifted',
       );
     }
