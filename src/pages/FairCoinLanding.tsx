@@ -1,7 +1,9 @@
+import { useCallback, useRef, useState } from 'react';
+import CashLandingContent from '../components/faircoin/cash/CashLandingContent';
+import FairCoinIntro from '../components/faircoin/cash/FairCoinIntro';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
-import FairCoinLandingContent from '../components/faircoin/FairCoinLandingContent';
 import { isFairCoinHost } from '../lib/host';
 import {
   useFairCoinDropdowns,
@@ -14,11 +16,20 @@ import {
   useFairCoinSimpleNavLinks,
 } from '../lib/faircoin-chrome';
 
-const SEO_TITLE = 'FairCoin — community-run cryptocurrency';
+const SEO_TITLE = 'FairCoin — ethical, community-run currency';
 const SEO_DESCRIPTION =
-  'FairCoin is a community-run cryptocurrency. Decentralized, fair, free of speculation. Hybrid PoW/PoS, capped at 33M coins. Wallets, masternodes, explorer and an optional Base bridge.';
+  'An ethical currency for everyday exchange, local communities and shared projects. Explore FairCoin and manage your own coins with FAIRWallet.';
 
 export default function FairCoinLanding() {
+  const [darkHeader, setDarkHeader] = useState(false);
+  const phoneRef = useRef<HTMLDivElement>(null);
+  const [introActive, setIntroActive] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+      !window.location.hash,
+  );
+  const finishIntro = useCallback(() => setIntroActive(false), []);
   const onFairCoinHost = isFairCoinHost();
   const navbarBrand = useFairCoinNavbarBrand();
   const dropdowns = useFairCoinDropdowns();
@@ -33,30 +44,40 @@ export default function FairCoinLanding() {
   // chrome changes on fairco.in, but the content surface always follows the
   // FairCoin Bloom recipe instead of inheriting Oxy's saved preset.
   const rootClass =
-    'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background';
+    'faircoin-editorial flex min-h-screen max-w-screen flex-col overflow-x-clip bg-card';
 
   return (
     <div className={rootClass}>
       <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin" />
-      <Navbar
-        brand={navbarBrand}
-        customDropdowns={dropdowns}
-        customNavLinks={simpleNavLinks}
-        ctaButtons={ctaButtons}
-        hideAuth={onFairCoinHost}
-        hideBanner={onFairCoinHost}
-        hideLocalePicker={onFairCoinHost}
-      />
-      <main className="flex-1">
-        <FairCoinLandingContent />
-      </main>
-      <Footer
-        brand={footerBrand}
-        columns={footerColumns}
-        socialLinks={onFairCoinHost ? [] : undefined}
-        legalLinks={footerLegalLinks}
-        copyright={footerCopyright}
-      />
+      <div inert={introActive}>
+        <Navbar
+          transparent
+          transparentOnScroll
+          transparentOn={darkHeader ? 'dark' : 'light'}
+          brand={navbarBrand}
+          customDropdowns={dropdowns}
+          customNavLinks={simpleNavLinks}
+          ctaButtons={ctaButtons}
+          hideAuth={onFairCoinHost}
+          hideBanner={onFairCoinHost}
+          hideLocalePicker={onFairCoinHost}
+        />
+        <main className="flex-1">
+          <CashLandingContent
+            phoneRef={phoneRef}
+            ready={!introActive}
+            onToneChange={setDarkHeader}
+          />
+        </main>
+        <Footer
+          brand={footerBrand}
+          columns={footerColumns}
+          socialLinks={onFairCoinHost ? [] : undefined}
+          legalLinks={footerLegalLinks}
+          copyright={footerCopyright}
+        />
+      </div>
+      {introActive && <FairCoinIntro target={phoneRef} onComplete={finishIntro} />}
     </div>
   );
 }

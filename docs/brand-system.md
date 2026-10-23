@@ -47,6 +47,69 @@ Do not animate a whole pinned section's transform while a nested element is
 using sticky positioning. Animate the contents or an independent visual layer.
 Never hide essential text behind a JS-only reveal.
 
+### Reproducing a reference landing
+
+For a requested clone, compare the actual reference in a browser before changing
+the composition. Matching the section names or passing responsive checks does
+not establish visual fidelity. Keep the website's global navigation and footer
+when the request is for its page content.
+
+1. Capture the source and local page at the same viewport, font-loading state,
+   scroll position and animation time. For the FairCoin pages, use 1440 × 1000
+   and 390 × 844 as the primary comparisons, then inspect 320, 768, 1024 and
+   1920 px widths for wrapping and overflow.
+2. Record the hero's top edge, media crop and ratio, title size and line breaks,
+   section boundaries, alternating media positions, card sizes and gaps. Compare
+   every section; a hero screenshot cannot validate the remainder of a page.
+3. Sample scroll transitions in both directions and the intro handoff frame by
+   frame. Verify that the last intro object reaches the real hero element with
+   the same bounds, and that neither element disappears between frames. Check
+   wheel, touch and keyboard interaction separately; verify that free-scrolling
+   content and the footer remain reachable after pinned sections.
+4. Compare motion while visible, paused and with reduced motion enabled. Confirm
+   that controls stop and resume the actual moving layers and that the static
+   fallback contains all essential content.
+5. Adapt branded media and text to the actual product while retaining measured
+   composition. FAIRWallet examples come from its app; network fees, custody and
+   download availability must remain accurate. The Explorer price is the WFAIR
+   market quote on Base, with its source timestamp, rather than an invented native
+   exchange price. A missing quote stays unavailable; zero is a valid quote.
+
+Current source references are `https://cash.app/new` for the FairCoin intro,
+`https://cash.app/` for its landing, and `https://cash.app/send` for the wallet.
+The regression commands are:
+
+```bash
+bunx tsc -b
+bun test scripts/faircoin-explorer.test.ts scripts/horizon.test.ts scripts/ecosystem-map.test.ts
+FAIRCOIN_TEST_ORIGIN=http://localhost:5173 bun scripts/faircoin-motion.browser.test.ts
+FAIRCOIN_TEST_ORIGIN=http://localhost:5173 bun scripts/faircoin-wallet.browser.test.ts
+WEBSITE_TEST_ORIGIN=http://localhost:5173 bun scripts/horizon.browser.test.ts
+```
+
+The browser checks cover measurable geometry, transition continuity, responsive
+overflow, interaction and data states. Their success is not a claim that the
+imagery, typography or animation matches the reference: retain and inspect the
+paired screenshots or frames for that acceptance. Run the normal build separately
+and report any content-sync or upstream dependency blocker explicitly.
+
+Horizon uses a generated neutral Bloom surface with navy and sky accents for its
+canvas, copy and controls. The eight wheel sectors retain the captured reference
+illustration's swatches in `src/data/horizon/map.json`, as requested; those data
+values are not a page theme. The canvas migration was compared at 1440 × 1000:
+its background remains `rgb(243, 243, 243)`, and the wheel geometry and sector
+colours remain unchanged.
+
+The FairCoin landing, wallet and Horizon prerenders include only their opening
+canvas, which React replaces when it mounts. The production prepaint browser gate
+checks that visible canvas with application scripts blocked, then compares the
+mounted surface at mobile and desktop widths. It also checks the generated scope
+tokens and aliases before and after React, and deliberately holds the route chunk
+to verify the intermediate Suspense surface. `src/lib/marketingCanvas.ts` is shared
+by prerender and that fallback. This prevents a saved Oxy palette from
+flashing before the product surface, without claiming the interactive scene is
+server-rendered or attaching a persistent page theme to the document body.
+
 ## Identity
 
 Use the existing Oxy symbol and wordmark from the same services components as

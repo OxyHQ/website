@@ -1,0 +1,499 @@
+/* Dimensions and typography adapted from the reference Tailwind v4 classes.
+ * Surface colors resolve through Bloom; original wheel artwork lives in the captured diagram data;
+ * every selector is scoped so the reference cannot restyle another Oxy page. */
+.horizon-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-sns-off-white);
+  color: var(--color-sns-black);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+}
+.horizon-page button,
+.horizon-page a {
+  cursor: pointer;
+}
+.horizon-page button:not(.horizon-cta) {
+  font: inherit;
+}
+.horizon-page button:not(.horizon-cta):focus-visible,
+.horizon-page a:focus-visible,
+.horizon-page .horizon-sector:focus-visible {
+  outline: 2px solid var(--color-sns-blue-3);
+  outline-offset: 4px;
+}
+.horizon-page .horizon-main {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  height: max(800px, 100svh);
+  flex: none;
+}
+.horizon-page .horizon-wheel {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.horizon-page .horizon-wheel > svg {
+  display: block;
+}
+.horizon-page .horizon-wheel-rotation {
+  transition: transform 3000ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.horizon-page .horizon-grid path,
+.horizon-page .horizon-axis-line {
+  fill: none;
+  stroke: var(--color-sns-black);
+  stroke-opacity: 0.1;
+  stroke-width: 1;
+}
+.horizon-page .horizon-divider,
+.horizon-page .horizon-sector-outline,
+.horizon-page .horizon-axis-underline {
+  fill: none;
+  stroke: var(--color-sns-black);
+  stroke-width: 0.7;
+}
+.horizon-page .horizon-sector-hit {
+  cursor: pointer;
+  transition: fill-opacity 250ms;
+}
+.horizon-page .horizon-ring {
+  cursor: pointer;
+}
+.horizon-page .horizon-ring > path:first-child {
+  stroke: var(--color-sns-black);
+  stroke-width: 0.7;
+}
+.horizon-page .horizon-ring text {
+  font:
+    12px ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
+  pointer-events: none;
+}
+.horizon-page .horizon-axis text {
+  fill: var(--color-sns-black);
+  font:
+    15px "Horizon Otto",
+    Georgia,
+    serif;
+}
+.horizon-page .horizon-axis > g {
+  fill: var(--color-sns-black);
+}
+.horizon-page .horizon-axis a:hover text {
+  text-decoration: underline;
+}
+.horizon-page .horizon-wheel-center {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-sns-off-white);
+}
+.horizon-page .horizon-intro {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0 56px;
+  gap: 23px;
+  text-align: center;
+}
+.horizon-page .horizon-intro-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+.horizon-page .horizon-intro h1 {
+  margin: 0;
+  padding: 0 24px;
+  color: var(--color-sns-blue-1);
+  font:
+    48px / 0.9 "Horizon Otto",
+    Georgia,
+    serif;
+  letter-spacing: 0;
+}
+.horizon-page .horizon-intro-copy > p {
+  margin: 0;
+  padding: 0 24px;
+  font:
+    18px / 1.55 "Horizon Otto",
+    Georgia,
+    serif;
+}
+.horizon-page .horizon-title-space {
+  display: none;
+}
+.horizon-page .horizon-intro > hr {
+  margin: 0;
+  width: 100%;
+  border: 0;
+  border-top: 1px solid var(--color-sns-grey-1);
+}
+.horizon-page .horizon-legend {
+  margin: 0;
+  display: flex;
+  gap: 12px;
+  padding: 0 24px;
+}
+.horizon-page .horizon-legend > div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.horizon-page .horizon-legend dt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.horizon-page .horizon-legend dt > svg {
+  color: var(--color-sns-blue-1);
+  flex-shrink: 0;
+}
+.horizon-page .horizon-legend dt > span {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font:
+    18px / 1.5 "Horizon Otto",
+    Georgia,
+    serif;
+}
+.horizon-page .horizon-legend dd {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+}
+.horizon-page .horizon-center-detail {
+  display: flex;
+  height: 100%;
+  padding: 32px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.horizon-page .horizon-center-detail h2 {
+  font:
+    24px / 1.2 "Horizon Otto",
+    Georgia,
+    serif;
+  margin: 0 0 10px;
+}
+.horizon-page .horizon-center-detail hr {
+  width: 112px;
+  border: 0;
+  border-top: 1px solid var(--color-sns-grey-2);
+  margin: 0 0 6px;
+}
+.horizon-page .horizon-center-detail p {
+  font:
+    20px / 1.5 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
+  margin: 0;
+}
+.horizon-page .horizon-center-detail span {
+  font:
+    9px ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
+  color: var(--color-sns-grey-3);
+}
+.horizon-page .horizon-map-info {
+  position: absolute;
+  z-index: 4;
+  left: 24px;
+  top: calc(var(--site-header-occlusion-bottom, 100px) + 24px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.horizon-page .horizon-map-info:hover {
+  opacity: 0.6;
+}
+.horizon-page .horizon-intro-animation {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+.horizon-page .horizon-intro-animation > svg {
+  width: 100%;
+  height: 100%;
+}
+.horizon-page .horizon-info {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  padding: calc(var(--site-header-occlusion-bottom, 100px) + 36px) 60px 70px 24px;
+  border-bottom: 1px solid var(--color-sns-black);
+  background: var(--color-sns-white);
+}
+.horizon-page .horizon-info h2 {
+  font:
+    36px / 1.2 "Horizon Otto",
+    Georgia,
+    serif;
+  color: var(--color-sns-blue-1);
+  margin-bottom: 24px;
+}
+.horizon-page .horizon-info p {
+  font-size: 18px;
+  line-height: 1.5;
+}
+.horizon-page .horizon-info .horizon-legend {
+  flex-direction: column;
+  padding: 0;
+  gap: 12px;
+}
+.horizon-page .horizon-info .horizon-legend > div {
+  align-items: flex-start;
+  padding-left: 40px;
+  gap: 2px;
+}
+.horizon-page .horizon-info .horizon-legend dt {
+  position: relative;
+  flex-direction: row;
+}
+.horizon-page .horizon-info .horizon-legend dt svg {
+  position: absolute;
+  left: -36px;
+}
+.horizon-page .horizon-info .horizon-legend dt span {
+  height: auto;
+  color: var(--color-sns-blue-1);
+}
+.horizon-page .horizon-info .horizon-legend dd {
+  font-size: 16px;
+  line-height: 1.4;
+}
+.horizon-page .horizon-close {
+  position: absolute;
+  right: 30px;
+  top: calc(var(--site-header-occlusion-bottom, 100px) + 20px);
+  font-size: 28px;
+}
+
+@media (max-width: 1023px) {
+  .horizon-page .horizon-main {
+    overflow-y: auto;
+  }
+  .horizon-page .horizon-mobile-intro {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    min-height: 720px;
+    padding: 40px 20px;
+  }
+  .horizon-page .horizon-intro {
+    border-radius: 0;
+    padding: 0;
+    height: auto;
+    gap: 36px;
+  }
+  .horizon-page .horizon-intro h1 {
+    font-size: 24px;
+    line-height: 0.9;
+    padding: 0 24px;
+  }
+  .horizon-page .horizon-title-break {
+    display: none;
+  }
+  .horizon-page .horizon-title-space {
+    display: inline;
+  }
+  .horizon-page .horizon-intro-copy {
+    gap: 20px;
+  }
+  .horizon-page .horizon-intro-copy > p {
+    font:
+      18px / 1.4 ui-sans-serif,
+      system-ui,
+      sans-serif;
+    padding: 0 24px;
+  }
+  .horizon-page .horizon-intro > hr {
+    display: none;
+  }
+  .horizon-page .horizon-intro .horizon-cta {
+    order: 1;
+    margin-top: -20px;
+  }
+  .horizon-page .horizon-intro .horizon-legend {
+    order: 2;
+  }
+  .horizon-page .horizon-legend {
+    flex-direction: column;
+    gap: 24px;
+    padding: 0 24px;
+  }
+  .horizon-page .horizon-legend > div {
+    gap: 12px;
+  }
+  .horizon-page .horizon-legend dt {
+    flex-direction: row;
+    gap: 18px;
+  }
+  .horizon-page .horizon-legend dt > span {
+    height: auto;
+  }
+  .horizon-page .horizon-legend dd {
+    line-height: 20px;
+  }
+  .horizon-page .horizon-intro-animation {
+    width: 200%;
+    transform: translateX(-50%);
+  }
+  .horizon-page .horizon-info {
+    position: absolute;
+    top: 68px;
+    bottom: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    padding: calc(var(--site-header-occlusion-bottom, 100px) + 36px) 60px 70px 24px;
+  }
+  .horizon-page .horizon-info h2 {
+    font-size: 28px;
+  }
+  .horizon-page .horizon-mobile-sector-title,
+  .horizon-page .horizon-mobile-sector-nav {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-sns-black);
+    background: var(--color-sns-off-white);
+  }
+  .horizon-page .horizon-mobile-sector-title > span,
+  .horizon-page .horizon-mobile-sector-nav > span {
+    font:
+      20px "Horizon Otto",
+      Georgia,
+      serif;
+    text-align: center;
+  }
+  .horizon-page .horizon-mobile-sector-nav {
+    border-bottom: 0;
+    border-top: 1px solid var(--color-sns-black);
+  }
+  .horizon-page .horizon-mobile-sector-nav button {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .horizon-page .horizon-wheel {
+    min-height: 360px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .horizon-page *,
+  .horizon-page *::before,
+  .horizon-page *::after {
+    transition: none;
+    animation: none;
+  }
+}
+
+.horizon-page .horizon-reset {
+  position: absolute;
+  top: calc(var(--site-header-occlusion-bottom, 100px) + 24px);
+  right: 24px;
+  z-index: 4;
+  font-size: 12px;
+}
+@media (max-width: 1023px) {
+  .horizon-page .horizon-mobile-intro {
+    padding-top: calc(var(--site-header-occlusion-bottom, 100px) + 40px);
+  }
+  .horizon-page .horizon-main:has(.horizon-mobile-sector-title) {
+    padding-top: var(--site-header-occlusion-bottom, 100px);
+  }
+  .horizon-page .horizon-info {
+    top: 0;
+    padding: calc(var(--site-header-occlusion-bottom, 100px) + 40px) 24px 40px;
+  }
+}
+
+.horizon-page .horizon-axis-graphics,
+.horizon-page .horizon-sector-color,
+.horizon-page .horizon-axis-color,
+.horizon-page .horizon-sector-outline,
+.horizon-page .horizon-divider {
+  pointer-events: none;
+}
+.horizon-page .horizon-axis-hit {
+  cursor: pointer;
+}
+.horizon-page .horizon-sector:focus:not(:focus-visible) {
+  outline: none;
+}
+.horizon-page .horizon-sector-color,
+.horizon-page .horizon-axis-color {
+  transition:
+    fill 500ms,
+    fill-opacity 500ms;
+}
+.horizon-page .horizon-wheel.is-rotating .horizon-map-interaction {
+  pointer-events: none;
+}
+.horizon-page .horizon-center-detail .horizon-no-estimate {
+  max-width: 112px;
+  font-size: 9px;
+  line-height: 1.2;
+}
+@keyframes horizon-map-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .horizon-page .horizon-axis,
+  .horizon-page .horizon-axis-color,
+  .horizon-page .horizon-center-detail {
+    animation: horizon-map-reveal 500ms ease-out;
+  }
+}

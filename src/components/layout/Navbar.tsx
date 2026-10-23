@@ -401,6 +401,8 @@ interface NavbarProps {
   rightActions?: React.ReactNode;
   /** Make navbar fully transparent with no border */
   transparent?: boolean;
+  /** Keep a transparent page surface visible while scrolling, until its owner disables it. */
+  transparentOnScroll?: boolean;
   /** Extend one shared backdrop behind the pricing subheader when it docks. */
   mergePricingSubheader?: boolean;
   /**
@@ -422,6 +424,7 @@ export default function Navbar({
   hideLocalePicker,
   rightActions,
   transparent,
+  transparentOnScroll = false,
   mergePricingSubheader = false,
   transparentOn = 'dark',
 }: NavbarProps = {}) {
@@ -964,7 +967,8 @@ export default function Navbar({
       );
     }
   }, [bannerOffset]);
-  const isTransparent = transparent && !scrolled && !isOpen && !mobileOpen && !searchOpen;
+  const isTransparent =
+    transparent && (transparentOnScroll || !scrolled) && !isOpen && !mobileOpen && !searchOpen;
   const headerSurface = mobileOpen
     ? 'var(--background)'
     : 'color-mix(in srgb, var(--background) 80%, transparent)';

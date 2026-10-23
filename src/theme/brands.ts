@@ -67,6 +67,32 @@ const COMMONS_PRESET = APP_COLOR_PRESETS['pacific-flare'];
 
 export const BRAND_SURFACES: readonly BrandSurface[] = [
   {
+    selector: '.horizon-page, .oxy-ecosystem',
+    seed: '#242424',
+    secondarySeed: '#0e2d4c',
+    tertiarySeed: '#6ac0f9',
+    mode: 'light',
+    label: 'Horizon — neutral canvas with navy and sky accents',
+  },
+  {
+    selector: '.faircoin-editorial',
+    seed: '#000000',
+    mode: 'light',
+    label: 'FairCoin editorial — neutral light canvas',
+  },
+  {
+    selector: '.faircoin-editorial-dark',
+    seed: '#000000',
+    mode: 'dark',
+    label: 'FairCoin editorial — neutral dark canvas',
+  },
+  {
+    selector: '.faircoin-editorial-green',
+    seed: '#00e013',
+    mode: 'dark',
+    label: 'FairCoin editorial — reference green, resolved by Bloom',
+  },
+  {
     selector: '.commons-theme',
     seed: COMMONS_PRESET.hex,
     secondarySeed: COMMONS_PRESET.secondaryHex,

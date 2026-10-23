@@ -1,0 +1,38 @@
+@import "./fonts.css";
+
+/* Reference layout vocabulary, backed by Horizon's generated Bloom surface.
+ * The captured wheel artwork keeps its original sector swatches in map.json;
+ * page surfaces and controls use Bloom rather than a second hand-written palette.
+ * Do not import the upstream Tailwind reset into the Oxy application. */
+
+.horizon-page,
+.oxy-ecosystem {
+  --color-sns-grey-1: color-mix(in srgb, var(--muted-foreground) 85%, var(--muted));
+  --color-sns-grey-2: color-mix(in srgb, var(--muted-foreground) 40%, var(--background));
+  --color-sns-off-white: var(--background);
+  --color-sns-white: var(--card);
+  --color-sns-black: color-mix(in srgb, var(--foreground) 95%, var(--background));
+  --color-sns-grey-3: color-mix(in srgb, var(--muted-foreground) 50%, var(--background));
+  --color-sns-grey-5: color-mix(in srgb, var(--background), var(--card));
+  --color-sns-grey-7: color-mix(in srgb, var(--muted-foreground) 40%, var(--card));
+  --color-sns-grey-9: color-mix(in srgb, var(--muted-foreground) 65%, var(--background));
+  --color-sns-blue-1: color-mix(in srgb, var(--foreground) 75%, var(--secondary));
+  --color-sns-blue-2: color-mix(in srgb, var(--foreground) 60%, var(--secondary));
+  --color-sns-blue-3: color-mix(in srgb, var(--tertiary) 60%, var(--card));
+}
+
+@font-face {
+  font-family: "Horizon Geist";
+  src: url("/horizon/geist.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Horizon Mono";
+  src: url("/horizon/geist-mono.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}

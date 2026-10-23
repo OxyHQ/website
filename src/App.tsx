@@ -25,6 +25,7 @@ import { AskAliaProvider } from './lib/ask-alia';
 import { setOxyServices } from './api/client';
 import { setPlatformStatsOxyServices } from './api/platformStatsStore';
 import { isFairCoinHost } from './lib/host';
+import { marketingCanvasClass } from './lib/marketingCanvas';
 import ErrorBoundary from './components/ErrorBoundary';
 import IntercomMessenger from './components/integrations/IntercomMessenger';
 import NewsroomRouteFallback from './components/newsroom/NewsroomRouteFallback';
@@ -119,6 +120,8 @@ const StatusHistoryPage = lazy(() => import('./pages/StatusHistoryPage'));
 const ReferralsPage = lazy(() => import('./pages/ReferralsPage'));
 const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'));
 const SustainPage = lazy(() => import('./pages/SustainPage'));
+const OldHomePage = lazy(() => import('./pages/OldHomePage'));
+const HorizonPage = lazy(() => import('./pages/HorizonPage'));
 
 // Registered Oxy OAuth client id for the public website, read from the site's
 // standard `VITE_*` env convention. The deploy workflow injects the PRODUCTION
@@ -257,6 +260,7 @@ function PublicRoutes() {
   return (
     <>
       <Route index element={<HomePage />} />
+      <Route path="old" element={<OldHomePage />} />
       <Route path="faircoin" element={<FairCoinLanding />} />
       <Route path="faircoin/buy" element={<FairCoinBuyPage />} />
       <Route path="faircoin/unwrap" element={<FairCoinUnwrapPage />} />
@@ -492,6 +496,7 @@ function PublicRoutes() {
       <Route path="features" element={<FeatureBoardPage />} />
       <Route path="features/:owner/:repo/:number" element={<FeatureRequestPage />} />
       <Route path="sustain" element={<SustainPage />} />
+      <Route path="horizon" element={<HorizonPage />} />
     </>
   );
 }
@@ -550,7 +555,14 @@ function AppProviders() {
               <AppSetup>
                 <ScrollToTop />
                 <IntercomMessenger />
-                <Suspense fallback={<div className="min-h-screen" />}>
+                <Suspense
+                  fallback={
+                    <div
+                      data-route-loading
+                      className={`min-h-screen ${marketingCanvasClass(location.pathname, isFairCoinHost())}`}
+                    />
+                  }
+                >
                   <Routes>
                     {/* Guarded: /admin/* is a top-level route with no shared
                             layout, so an unhandled render error here would blank the

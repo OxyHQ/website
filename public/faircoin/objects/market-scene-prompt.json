@@ -1,0 +1,6 @@
+{
+  "tool": "built-in image_gen",
+  "asset": "market-scene.webp",
+  "reference": "market-tote.webp",
+  "prompt": "Use case: compositing. Edit the supplied FairCoin grocery tote product photograph into an editorial full-bleed lifestyle product photograph for a portrait website card (aspect ratio about 0.8634 width/height). Preserve exactly the oatmeal canvas tote identity, believable cotton texture, tomatoes, pear, leafy chard and small sourdough loaf. Place this same tote upright on a slim sage-green metal kitchen stool in front of a lightly textured warm grey concrete wall, contemporary local market/store setting. Crop close: the bag and vegetables fill roughly 85 percent of image width and most height, stool seat and upper legs visible near bottom, soft natural side light from upper left, realistic contact shadows. Photo fills the entire canvas with wall and stool, no transparency, no white border or graphic frame. Refined real photography, no CGI, no illustration, no words, logos, branding or additional objects. This replaces a floating cutout with a complete photograph while retaining the object."
+}

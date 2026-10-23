@@ -28,6 +28,8 @@ export const UNTRANSLATED_PREFIXES: readonly string[] = [
   // Courses and lessons are English MDX with no `.es.mdx`/`.ca.mdx` siblings;
   // the chrome is translated, the teaching is not. Drop this once lessons are.
   '/academy',
+  // Horizon's life-area map has English editorial copy until translations are ready.
+  '/horizon',
 ];
 
 /**
