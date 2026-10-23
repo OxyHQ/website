@@ -1,7 +1,8 @@
 /// <reference types="@cloudflare/workers-types" />
-import { brandForHost, resolveSeoOrDefault, type SeoData } from '../src/lib/seo';
+import { brandForHost, buildSiteIdentity, resolveSeoOrDefault, type SeoData } from '../src/lib/seo';
+import { serializeStructuredData } from '../src/lib/structuredData';
 import { hasPrerenderedNewsroomPost, matchNewsroomPostPath } from './newsroom-status';
-import { isSpaFallbackPath } from '../src/lib/spaFallback';
+import { isSpaFallbackPath, localizedFallbackDocument } from '../src/lib/spaFallback';
 
 /**
  * Cloudflare Pages edge middleware: per-host SEO at request time.
@@ -90,7 +91,17 @@ const onRequest: PagesFunction<Env> = async (context) => {
   // `/newsroom/*` rule shadowed every prerendered Newsroom document. Upgrading
   // the 404 here cannot: by the time this runs, Cloudflare has already looked
   // for a document and not found one.
-  if (response.status === 404 && isSpaFallbackPath(url.pathname)) {
+  let needsShell = response.status === 404 && isSpaFallbackPath(url.pathname);
+  if (response.status === 404 && !needsShell) {
+    const fallbackDocument = localizedFallbackDocument(url.pathname);
+    if (fallbackDocument) {
+      const document = await next(new Request(new URL(fallbackDocument, url), request));
+      needsShell =
+        document.status === 200 &&
+        (document.headers.get('content-type') ?? '').includes('text/html');
+    }
+  }
+  if (needsShell) {
     const shell = await next(new Request(new URL('/app-shell', url).toString(), request));
     if (shell.status === 200) {
       const headers = new Headers(shell.headers);
@@ -142,10 +153,24 @@ const onRequest: PagesFunction<Env> = async (context) => {
       .on('meta[property="og:description"]', setContent(meta.description))
       .on('meta[property="og:url"]', setContent(meta.canonical))
       .on('meta[property="og:image"]', setContent(meta.ogImage))
+      .on('meta[property="og:image:alt"]', setContent(meta.title))
       .on('meta[property="og:site_name"]', setContent(meta.siteName))
       .on('meta[name="twitter:title"]', setContent(meta.title))
       .on('meta[name="twitter:description"]', setContent(meta.description))
       .on('meta[name="twitter:image"]', setContent(meta.ogImage))
+      .on('meta[name="twitter:image:alt"]', setContent(meta.title))
+      .on('meta[name="twitter:site"], link[hreflang], meta[property="og:locale:alternate"]', {
+        element(el) {
+          el.remove();
+        },
+      })
+      .on('script#site-identity', {
+        element(el) {
+          el.setInnerContent(serializeStructuredData(buildSiteIdentity(url.hostname)), {
+            html: true,
+          });
+        },
+      })
       .on('link[rel="canonical"]', {
         element(el) {
           el.setAttribute('href', meta.canonical);

@@ -42,6 +42,7 @@
  * apex, the forced-dark region, and every brand scope. Generated; see the file
  * header and `scripts/generate-theme-css.ts`. */
 @import "./styles/theme.generated.css";
+@import "./styles/fonts.generated.css";
 
 @import "./styles/cursor-theme.css";
 @import "./styles/oxyos-theme.css";
@@ -109,10 +110,10 @@
    * behind those aliases come from `styles/theme.generated.css`. */
 
   /* Typography — powered by @oxy.so/bloom fonts.
-   * Bloom's <BloomThemeProvider> injects --bloom-font-display / --bloom-font-sans /
-   * --bloom-font-mono onto :root at startup. The display family is BlomusModernus
-   * (Oxy's MIT custom font), sans is Inter Variable, mono is Geist Mono Variable.
-   * All three font files ship inside @oxy.so/bloom — no separate font assets needed. */
+   * fonts.generated.css captures Bloom's own faces and variables for first paint;
+   * BloomThemeProvider applies those same definitions at startup.
+   * Display is BlomusModernus, sans is Inter Variable, mono is JetBrains Mono.
+   * All three font families ship inside @oxy.so/bloom — no separate font assets needed. */
   --font-sans: var(--bloom-font-sans);
   --font-display: var(--bloom-font-display);
   --font-serif: var(--bloom-font-display);

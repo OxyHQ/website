@@ -144,10 +144,10 @@ export function buildRedirectsFile(opts: RedirectsOptions): string {
   if (!opts.localeReadinessKnown) {
     push(
       '# `/api/locales` did not answer during this build, so which locales have pages',
-      '# is unknown. Hand every prefix to the SPA, as the old blanket fallback did:',
-      '# wrong-but-harmless beats 301-ing a live translated URL away on a timeout.',
+      '# is unknown. Preserve existing documents; the edge middleware can serve',
+      '# the SPA for a localized URL only after checking its default-locale page.',
+      '# Never rewrite a locale prefix: that would shadow its static documents.',
     );
-    for (const code of prefixed) push(...rule(`/${code}/*`, '/app-shell.html', 200));
     push('');
   }
 

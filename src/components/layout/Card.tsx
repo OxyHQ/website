@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { canonicalHref } from '../../lib/canonicalPath';
 
 /* ──────────────────────────────────────────────
  * Card
@@ -53,7 +54,7 @@ export default function Card({
 
   if (href) {
     return (
-      <a className={classes} href={href} target={target} rel={rel} id={id}>
+      <a className={classes} href={canonicalHref(href)} target={target} rel={rel} id={id}>
         {children}
       </a>
     );

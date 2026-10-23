@@ -203,7 +203,12 @@ export function renderSEO(
   // React 18 path: helmet captures into context.
   const helmet = helmetContext.helmet;
   if (helmet) {
-    const head = [helmet.title.toString(), helmet.meta.toString(), helmet.link.toString()]
+    const head = [
+      helmet.title.toString(),
+      helmet.meta.toString(),
+      helmet.link.toString(),
+      helmet.script.toString(),
+    ]
       .filter((part) => part.trim().length > 0)
       .join('\n    ');
     if (head.length > 0) return { head };
@@ -226,6 +231,7 @@ function extractHeadFromBody(body: string): string {
     /<title[^>]*>[\s\S]*?<\/title>/gi,
     /<meta\s[^>]*\/?>/gi,
     /<link\s[^>]*\/?>/gi,
+    /<script\b[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/gi,
   ];
   const collected: string[] = [];
   for (const pattern of tagPatterns) {

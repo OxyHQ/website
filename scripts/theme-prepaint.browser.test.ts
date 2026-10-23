@@ -2,6 +2,7 @@ import { join } from 'node:path';
 import { chromium } from 'playwright';
 import { buildSeedScopeVars, getPresetVars } from '@oxy.so/bloom/design-tokens';
 import { BRAND_SURFACES } from '../src/theme/brands';
+import { fontFamilies } from '@oxy.so/bloom/fonts';
 
 const ROOT = join(import.meta.dir, '..');
 const TOKENS = ['--background', '--card', '--primary', '--secondary', '--tertiary'] as const;
@@ -109,6 +110,28 @@ try {
     );
   }
 
+  // A family name alone can hide a system-font fallback. Load the actual faces
+  // while app scripts are blocked, then compare their metrics after Bloom mounts.
+  const readFonts = () =>
+    page.evaluate(async (families) => {
+      const result: Record<string, { family: string; width: number; faces: number }> = {};
+      for (const [role, expected] of Object.entries(families)) {
+        const probe = document.createElement('span');
+        probe.textContent = 'Oxy Bloom — 0123456789';
+        probe.style.cssText = `font-family:var(--bloom-font-${role});font-size:32px;display:inline-block;white-space:nowrap`;
+        document.body.appendChild(probe);
+        const family = getComputedStyle(probe).fontFamily;
+        const faces = await document.fonts.load(`32px ${expected}`, probe.textContent);
+        result[role] = { family, width: probe.getBoundingClientRect().width, faces: faces.length };
+        probe.remove();
+      }
+      return result;
+    }, fontFamilies);
+  const fontsBeforeReact = await readFonts();
+  for (const [role, value] of Object.entries(fontsBeforeReact)) {
+    invariant(value.faces > 0, `${role} brand font did not load before app JavaScript`);
+  }
+
   // Marketing pages prerender their head and shell, not the interactive scene.
   // Probe the generated scope in the real stylesheet with app scripts blocked;
   // a late React-only palette or missing scoped aliases must not pass this gate.
@@ -173,6 +196,17 @@ try {
     );
   }
   const scopesAfterReact = await readScopes();
+  const fontsAfterReact = await readFonts();
+  for (const role of Object.keys(fontsBeforeReact)) {
+    invariant(
+      fontsBeforeReact[role].family === fontsAfterReact[role].family,
+      `${role} font family changed after React`,
+    );
+    invariant(
+      Math.abs(fontsBeforeReact[role].width - fontsAfterReact[role].width) < 0.1,
+      `${role} font metrics changed after React`,
+    );
+  }
   for (const name of scopeClasses) {
     invariant(
       JSON.stringify(scopesBeforeReact[name]) === JSON.stringify(scopesAfterReact[name]),
@@ -303,7 +337,7 @@ try {
   invariant(pageErrors.length === 0, `browser page errors: ${pageErrors.join('; ')}`);
 
   console.log(
-    '[theme-prepaint] root and marketing scopes match React; opening canvases match at mobile/desktop; isolated demo restores light mode',
+    '[theme-prepaint] loaded Bloom fonts, text metrics and palettes match before/after React; mobile/desktop canvases match; isolated demo restores light mode',
   );
 } finally {
   await context.close();

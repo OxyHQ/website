@@ -1,3 +1,7 @@
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from './i18n/types';
+import { hasLocalizedVariants } from './localizedRoute';
+import { withDocumentTrailingSlash } from './seoUrl';
+
 /**
  * Paths the SPA must answer itself, because no document for them exists in the
  * build.
@@ -54,6 +58,19 @@ export function isSpaFallbackPath(pathname: string): boolean {
   const trimmed = pathname.replace(/\/+$/, '') || '/';
   const bare = trimmed.replace(LOCALE_PREFIX, '') || '/';
   return SPA_FALLBACK_PATTERNS.some((p) => p.test(trimmed) || p.test(bare));
+}
+
+/**
+ * A locale-readiness outage must not hide an existing translation or turn an
+ * arbitrary localized typo into a 200. The edge probes this default-locale
+ * document before falling back to the SPA, and only after the requested asset
+ * returned 404. English-only collections are never candidates.
+ */
+export function localizedFallbackDocument(pathname: string): string | null {
+  const [code, ...segments] = pathname.split('/').filter(Boolean);
+  if (code === DEFAULT_LOCALE || !SUPPORTED_LOCALES.some((locale) => locale === code)) return null;
+  const bare = `/${segments.join('/')}`;
+  return hasLocalizedVariants(bare) ? withDocumentTrailingSlash(bare) : null;
 }
 
 export { SPA_FALLBACK_PATTERNS };

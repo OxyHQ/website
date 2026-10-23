@@ -209,8 +209,7 @@ describe('_redirects', () => {
       .filter((line) => line.trim() && !line.startsWith('#'))
       .map((line) => line.trim().split(/\s+/));
 
-    expect(blindRules).toContainEqual(['/es/*', '/app-shell.html', '200']);
-    expect(blindRules).toContainEqual(['/fr/*', '/app-shell.html', '200']);
+    expect(blindRules.some(([, , status]) => status === '200')).toBe(false);
     expect(blindRules).not.toContainEqual(['/es/*', '/:splat', '301']);
     // The default locale's prefix is a static fact, not a CMS one.
     expect(blindRules).toContainEqual(['/en/*', '/:splat', '301']);

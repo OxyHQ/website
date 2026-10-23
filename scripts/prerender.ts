@@ -46,6 +46,7 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { build as viteBuild } from 'vite';
 import { fetchPrerender } from './prerender-fetch';
+import { localizedSeoCopy } from './localized-seo';
 import {
   assertDeploymentFileBudget,
   countDeploymentFiles,
@@ -1320,11 +1321,15 @@ async function fetchTranslationReadyLocales(): Promise<{
 
 /**
  * Mirror every base route under each translation-ready locale. The base
- * (default-locale) routes keep their bare paths; `seo` is shared untouched
- * because `canonicalPath` must stay bare — `<SEO>` derives the localized
+ * (default-locale) routes keep their bare paths; translated marketing metadata
+ * uses the same dictionary keys as the mounted pages. `canonicalPath` stays
+ * bare — `<SEO>` derives the localized
  * canonical, hreflang and x-default from it plus the active locale.
  */
-function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): RenderJob[] {
+async function expandRoutesForLocales(
+  base: RenderJob[],
+  locales: readonly Locale[],
+): Promise<RenderJob[]> {
   if (locales.length === 0) return base;
   const expanded: RenderJob[] = [...base];
   // A route is mirrored only where a mirror would say something new. Synced
@@ -1336,13 +1341,14 @@ function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): 
       hasLocalizedVariants(job.url) && job.seo.canonicalPath === job.url && !job.seo.canonicalUrl,
   );
   for (const locale of locales) {
+    const { default: dictionary } = await import(`../src/lib/i18n/locales/${locale}.ts`);
     for (const job of mirrorable) {
       expanded.push({
         // No `body`: the markdown behind it is the default locale's text, and a
         // `/es/` URL serving English prose reads worse to a crawler than one
         // serving none.
         url: job.url === '/' ? `/${locale}` : `/${locale}${job.url}`,
-        seo: job.seo,
+        seo: { ...job.seo, ...localizedSeoCopy(job.seo.canonicalPath, dictionary) },
         locale,
         prerenderKind: job.prerenderKind,
       });
@@ -1444,7 +1450,6 @@ const STRIP_PATTERNS: ReadonlyArray<RegExp> = [
   /<meta\b[^>]*\sname=["']twitter:[^"']*["'][^>]*>\s*/gi,
   /<link\b[^>]*\srel=["']canonical["'][^>]*>\s*/gi,
   /<link\b[^>]*\srel=["']alternate["'][^>]*hreflang=[^>]*>\s*/gi,
-  /<meta\b[^>]*\sname=["']theme-color["'][^>]*>\s*/gi,
   /<meta\b[^>]*\sproperty=["']article:[^"']*["'][^>]*>\s*/gi,
   /<meta\b[^>]*\sname=["']robots["'][^>]*>\s*/gi,
 ];
@@ -1520,6 +1525,9 @@ function injectRootTemplate(shell: string, template: string): string {
   if (idx < 0) throw new Error('[prerender] shell missing an empty #root container');
   return `${shell.slice(0, idx)}<div id="root">${template}</div>${shell.slice(idx + root.length)}`;
 }
+
+const HOME_IMAGE_PRELOAD =
+  '<link rel="preload" as="image" href="/images/landing/hero-bg-800.avif" imagesrcset="/images/landing/hero-bg-800.avif 800w, /images/landing/hero-bg-1200.avif 1200w, /images/landing/hero-bg.avif 1600w" imagesizes="(max-width: 1023px) 100vw, 70vw" fetchpriority="high">';
 
 const HOME_PRERENDER_VISUAL = [
   '<div class="home-prerender-visual" aria-hidden="true">',
@@ -1640,7 +1648,7 @@ interface RouteEntry {
   url: string;
   seo: SEOProps;
   body?: PageBody;
-  /** Route-specific JSON-LD. The global Organization schema stays in the shell. */
+  /** Route-specific JSON-LD. Site identity is emitted by the shared SEO component. */
   structuredData?: Record<string, unknown>;
   /** Default-locale list data used before the client can fetch the CMS. */
   newsroomIndexPosts?: NewsroomPostSummary[];
@@ -1730,7 +1738,14 @@ async function writeRoute(
       : '';
     const html = injectHead(
       stripped,
-      [head, structuredData, prerenderMarker, newsroomFeed, newsroomImagePreload]
+      [
+        head,
+        structuredData,
+        prerenderMarker,
+        newsroomFeed,
+        newsroomImagePreload,
+        job.seo.canonicalPath === '/' ? HOME_IMAGE_PRELOAD : '',
+      ]
         .filter(Boolean)
         .join('\n    '),
     );
@@ -1933,7 +1948,7 @@ async function main(): Promise<void> {
     }),
   ]);
 
-  const jobs = expandRoutesForLocales(baseRoutes, localeInfo.locales);
+  const jobs = await expandRoutesForLocales(baseRoutes, localeInfo.locales);
 
   if (localeInfo.locales.length === 0) {
     console.log(

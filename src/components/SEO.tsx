@@ -1,6 +1,13 @@
 import { Helmet } from 'react-helmet-async';
 import { useLocaleContext, DEFAULT_LOCALE, type Locale } from '../lib/i18n';
-import { brandConfig, normalizeSeoTitle, resolveSeo } from '../lib/seo';
+import {
+  brandConfig,
+  buildSiteIdentity,
+  normalizeSeoTitle,
+  resolvePageSeoCopy,
+  resolveSeo,
+} from '../lib/seo';
+import { serializeStructuredData } from '../lib/structuredData';
 import { useSeo } from '../api/hooks';
 import { buildLocalizedSeoUrl } from '../lib/seoUrl';
 import { hasLocalizedVariants } from '../lib/localizedRoute';
@@ -86,8 +93,11 @@ export default function SEO({
   // its own, and never overwrites the page's title, description or OG image.
   const cmsRoute = cms?.matchedRoute ? cms : null;
 
-  const metaTitle = cmsRoute?.title ?? title;
-  const metaDescription = cmsRoute?.description ?? description;
+  const { title: metaTitle, description: metaDescription } = resolvePageSeoCopy(
+    { title, description },
+    cmsRoute,
+    locale === DEFAULT_LOCALE,
+  );
   // A page hands over a site-relative path (the same artwork its card shows);
   // og:image has to be absolute.
   const pageImage = cmsRoute?.ogImage ?? ogImage ?? cms?.ogImage;
@@ -116,7 +126,7 @@ export default function SEO({
   // set whose members serve the same English bytes tells Google the URLs are
   // equivalent translations when they are plain duplicates, and it answers by
   // picking its own canonical.
-  const localized = !externalCanonicalUrl && hasLocalizedVariants(canonicalPath);
+  const localized = !noIndex && !externalCanonicalUrl && hasLocalizedVariants(canonicalPath);
   const alternateCodes: readonly Locale[] = localized
     ? locales.filter((l) => l.translationReady).map((l) => l.code)
     : [];
@@ -165,10 +175,11 @@ export default function SEO({
       <meta property="og:description" content={metaDescription} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:image" content={image} />
+      <meta property="og:image:alt" content={fullTitle} />
       <meta property="og:type" content={ogType} />
       <meta property="og:site_name" content={siteName} />
       <meta property="og:locale" content={OG_LOCALES[locale]} />
-      {alternateCodes
+      {hreflangCodes
         .filter((code) => code !== locale)
         .map((code) => (
           <meta key={`og-alt-${code}`} property="og:locale:alternate" content={OG_LOCALES[code]} />
@@ -180,12 +191,18 @@ export default function SEO({
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content="@oxyhqinc" />
+      {brand === 'oxy' && <meta name="twitter:site" content="@oxyhqinc" />}
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={metaDescription} />
       <meta name="twitter:image" content={image} />
+      <meta name="twitter:image:alt" content={fullTitle} />
 
-      {noIndex && <meta name="robots" content="noindex, nofollow" />}
+      <meta name="robots" content={noIndex ? 'noindex, nofollow' : 'max-image-preview:large'} />
+      {!noIndex && (
+        <script id="site-identity" type="application/ld+json">
+          {serializeStructuredData(buildSiteIdentity(host))}
+        </script>
+      )}
     </Helmet>
   );
 }
