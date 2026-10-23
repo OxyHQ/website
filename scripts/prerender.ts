@@ -1326,7 +1326,10 @@ async function fetchTranslationReadyLocales(): Promise<{
  * bare — `<SEO>` derives the localized
  * canonical, hreflang and x-default from it plus the active locale.
  */
-async function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): Promise<RenderJob[]> {
+async function expandRoutesForLocales(
+  base: RenderJob[],
+  locales: readonly Locale[],
+): Promise<RenderJob[]> {
   if (locales.length === 0) return base;
   const expanded: RenderJob[] = [...base];
   // A route is mirrored only where a mirror would say something new. Synced
