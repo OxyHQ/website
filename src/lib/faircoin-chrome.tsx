@@ -40,7 +40,7 @@ export function useFairCoinNavbarBrand(): NavbarBrand | undefined {
             ariaLabel: 'FairCoin homepage',
             logo: (
               <img
-                src={FAIRCOIN_LOGO_URL}
+                src="/images/apps/faircoin.svg"
                 alt=""
                 width={28}
                 height={28}

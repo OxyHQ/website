@@ -273,7 +273,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>You buy</span>
         </div>
-        <div className="mt-2.5 flex flex-wrap items-baseline justify-between gap-3">
+        <div className="mt-2.5 flex items-baseline justify-between gap-3">
           <input
             id="buy-amount"
             type="text"
