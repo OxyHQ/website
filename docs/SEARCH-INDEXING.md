@@ -117,3 +117,47 @@ way the SPA does.
 Search Console is the slow half. Redirect and duplicate buckets drain as Google
 re-crawls; "Discovered – currently not indexed" only moves once the crawl budget
 stops going to URLs that were never worth crawling.
+
+## Metadata and first paint
+
+`SEO` owns site identity JSON-LD as well as page metadata. The `WebSite` and
+Oxy `Organization` nodes use stable IDs from `buildSiteIdentity`; the SSR head
+serializes the same output as React. The FairCoin edge rewrite replaces this
+identity and removes Oxy's social handle and locale alternates. Never put an
+unmanaged Oxy organization back into `index.html`: that shell is also served
+on FairCoin hosts and client-only routes.
+
+The SEO CMS currently stores default-language text. Its route entries override
+copy only in the default locale; translated routes retain their translated
+props. `scripts/localized-seo.ts` maps translated marketing routes to the same
+dictionary keys their mounted pages read, so locale mirrors do not reuse the
+English build-time props. Empty editorial fields fall back to the page's own text. Pages marked
+`noIndex` do not advertise hreflang alternates, while indexable pages allow large
+image previews. Social image alt text follows the normalized page title.
+
+If locale readiness is unavailable, `_redirects` still emits **no 200 rewrite**.
+After a localized request actually returns 404, edge middleware checks that its
+supported default-locale HTML document exists before serving the application
+shell. Existing translated documents pass through untouched, and unknown paths
+retain their 404. English-only collections are excluded by `localizedRoute`.
+
+Home artwork is preloaded only in prerendered home documents. Unrelated routes
+and fallback shells must not download it ahead of their own content. Keep the
+shell's `site-theme-color` tag: its host-aware bootstrap owns browser chrome.
+
+Bloom's font faces and CSS variables are captured at build time by
+`scripts/generate-font-css.ts`, alongside generated palette CSS. Vite emits the
+same hashed font assets used by Bloom at runtime. This gives prerendered text
+its actual brand typography before the application loads, without maintaining
+a separate list of font families or weights.
+
+Regression checks:
+
+- `bun test scripts/seo-metadata.test.ts scripts/pages-middleware.test.ts scripts/seo-contract.test.ts`
+- `bun run test:theme:browser` after build/prerender. It checks loaded font faces
+  and text metrics as well as colors before and after app JavaScript.
+
+Google's [JavaScript SEO guidance](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics)
+explains why initial HTML, stable canonicals and descriptive metadata matter.
+These implementation checks do not measure rankings; use Search Console after
+deployment to assess indexing, impressions and clicks.

@@ -80,6 +80,59 @@ export function normalizeSeoTitle(title: string, siteName: string): string {
   return normalized || original;
 }
 
+/** Empty CMS fields are not editorial overrides. Localized pages own their
+ * translated copy: the SEO endpoint currently stores only default-locale text. */
+export function resolvePageSeoCopy(
+  fallback: { title: string; description: string },
+  cms: ResolvedSeo | null,
+  useDefaultLocaleCopy: boolean,
+): { title: string; description: string } {
+  if (!cms?.matchedRoute || !useDefaultLocaleCopy) return fallback;
+  return {
+    title: cms.title.trim() || fallback.title,
+    description: cms.description.trim() || fallback.description,
+  };
+}
+
+/** Shared by the prerender, React, and host rewriting at the edge. */
+export function buildSiteIdentity(host?: string | null): Record<string, unknown> {
+  const brand = brandForHost(host);
+  const { origin, siteName } = BRANDS[brand];
+  const url = `${origin}/`;
+  const website = {
+    '@type': 'WebSite',
+    '@id': `${url}#website`,
+    name: siteName,
+    url,
+    ...(brand === 'oxy' ? { publisher: { '@id': `${url}#organization` } } : {}),
+  };
+  // FairCoin is a community-run currency; do not invent a legal organization
+  // or inherit Oxy's social accounts just because both hosts share a build.
+  return {
+    '@context': 'https://schema.org',
+    '@graph':
+      brand === 'oxy'
+        ? [
+            {
+              '@type': 'Organization',
+              '@id': `${url}#organization`,
+              name: siteName,
+              url,
+              logo: `${origin}/favicon.svg`,
+              sameAs: [
+                'https://www.linkedin.com/company/oxyhq/',
+                'https://x.com/oxyhqinc',
+                'https://x.com/oxyhqes',
+                'https://www.facebook.com/OxyHQInc',
+                'https://mention.earth/@oxy',
+              ],
+            },
+            website,
+          ]
+        : [website],
+  };
+}
+
 /** Which brand a hostname belongs to. Defaults to Oxy off-browser / unknown hosts. */
 export function brandForHost(host?: string | null): SeoBrand {
   return host && FAIRCOIN_HOSTS.has(host.toLowerCase()) ? 'faircoin' : 'oxy';
