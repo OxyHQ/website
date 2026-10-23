@@ -1,5 +1,12 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { animate, motion, useInView, useMotionValue, useTransform } from 'framer-motion';
+import {
+  animate,
+  motion,
+  useInView,
+  useMotionValue,
+  useTransform,
+  type MotionValue,
+} from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import { RiQrCodeLine } from '@oxy.so/bloom/icons/RiQrCodeLine';
 import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine';
@@ -80,6 +87,139 @@ function SoftBackdrop() {
   );
 }
 
+const SCENE_DURATION: Partial<Record<WalletScene, number>> = {
+  send: 20,
+  pockets: 10.133333,
+  review: 4.033333,
+  unlock: 4.666667,
+  bridge: 5,
+};
+
+function PocketPortrait({ time, index }: { time: MotionValue<number>; index: number }) {
+  const positions = [
+    [38.5, 32, 28],
+    [21, 12, 22],
+    [43, 6, 15],
+    [65, 31, 12],
+    [21.5, 42, 15],
+    [56, 64, 22],
+    [34, 69, 15],
+    [58, 24, 7],
+    [35, 64, 7],
+  ];
+  const [left, top, width] = positions[index];
+  const start = 5.9 + index * 0.11;
+  const scale = useTransform(
+    time,
+    [0, start, start + 0.7, start + 0.95, 9.35, 9.85, 10.133333],
+    [0, 0, 1.04, 1, 1, 0, 0],
+  );
+  const opacity = useTransform(
+    time,
+    [0, start, start + 0.15, 9.5, 9.85, 10.133333],
+    [0, 0, 1, 1, 0, 0],
+  );
+  return (
+    <motion.div
+      data-pocket-portrait
+      style={{ left: `${left}%`, top: `${top}%`, width: `${width}%`, scale, opacity }}
+      className="absolute aspect-square overflow-hidden rounded-full"
+    >
+      {index === 6 ? (
+        <span className="faircoin-editorial-green flex size-full items-center justify-center bg-ring text-[6cqw] text-primary-foreground">
+          FAIR
+        </span>
+      ) : (
+        <Avatar person={index % 6} className="size-full" />
+      )}
+    </motion.div>
+  );
+}
+
+/** Each card wraps only outside the crop, with perspective around the vertical track. */
+function BridgeCard({ time, index }: { time: MotionValue<number>; index: number }) {
+  const phase = useTransform(time, (t) => (((t / 5 + index / 6) % 1) + 1) % 1);
+  const y = useTransform(phase, (p) => `${(p - 0.5) * 240}cqw`);
+  const rotateX = useTransform(phase, [0, 0.5, 1], [-80, 0, 80]);
+  const scale = useTransform(phase, [0, 0.5, 1], [0.84, 1, 0.84]);
+  const opacity = useTransform(phase, [0, 0.12, 0.88, 1], [0, 1, 1, 0]);
+  return (
+    <motion.div
+      data-bridge-card
+      style={{ y, rotateX, scale, opacity }}
+      className={`${index % 3 === 0 ? 'faircoin-editorial bg-card text-foreground' : index % 3 === 1 ? 'faircoin-editorial-green bg-ring text-primary-foreground' : 'faircoin-editorial-dark border border-border bg-primary-foreground text-foreground'} absolute left-[19%] top-1/2 aspect-[1.6] w-[62%] -translate-y-1/2 overflow-hidden rounded-[3cqw] px-[4.3%] py-[3.1%] [backface-visibility:hidden]`}
+    >
+      <div
+        className={`absolute inset-0 opacity-30 ${index % 2 ? 'bg-[repeating-radial-gradient(ellipse_at_70%_40%,transparent_0_7%,currentColor_7.5%_8%,transparent_8.5%_14%)]' : 'bg-[repeating-linear-gradient(25deg,transparent_0_9%,currentColor_10%_10.5%,transparent_11%_18%)]'}`}
+      />
+      <div className="relative flex items-center justify-between">
+        <span className="text-[4.5cqw] font-semibold">{index % 2 ? 'WFAIR' : 'FAIR'}</span>
+        <CoinMark className="size-[6cqw]" />
+      </div>
+      <p className="relative mt-[24%] text-[3cqw]">
+        {index % 2 ? 'Wrapped FAIR · Base' : 'FairCoin · Mainnet'}
+      </p>
+    </motion.div>
+  );
+}
+
+function PaymentNotice({ time, index }: { time: MotionValue<number>; index: number }) {
+  // Four arrivals per source clip: hold, advance the stack, then hold again.
+  // The outgoing card fades below the stack; it never makes the foreground translucent.
+  const frame = useTransform(time, (t) => {
+    const phase = ((((t / 4.033333) * 4 + 4 - index) % 4) + 4) % 4;
+    const slot = Math.floor(phase);
+    const local = phase - slot;
+    const p = Math.max(0, Math.min(1, (local - 0.2) / 0.55));
+    const progress = p * p * (3 - 2 * p);
+    const incoming = Math.max(0, Math.min(1, (local - 0.25) / 0.5));
+    const incomingProgress = 1 - (1 - incoming) ** 2;
+    const positions = [0, 44, -13.5, -7.5, 0];
+    const scales = [1, 1, 0.68, 0.82, 1];
+    const tween = slot === 3 ? incomingProgress : progress;
+    let opacity =
+      slot === 0
+        ? local < 0.35
+          ? 1
+          : 1 - progress
+        : slot === 1
+          ? 0.3 * Math.max(0, (local - 0.65) / 0.35)
+          : slot === 2
+            ? 0.3 + 0.4 * progress
+            : local <= 0.25
+              ? 0.7
+              : 1;
+    opacity = Math.max(0, Math.min(1, opacity));
+    return {
+      y: slot === 1 ? -13.5 : positions[slot] + (positions[slot + 1] - positions[slot]) * tween,
+      scale: scales[slot] + (scales[slot + 1] - scales[slot]) * tween,
+      opacity,
+      layer: slot === 0 ? 3 : slot === 3 ? (local > 0.25 ? 4 : 2) : slot === 2 ? 1 : 0,
+    };
+  });
+  const y = useTransform(frame, (f) => `${f.y}cqw`);
+  const scale = useTransform(frame, (f) => f.scale);
+  const opacity = useTransform(frame, (f) => f.opacity);
+  const zIndex = useTransform(frame, (f) => f.layer);
+  return (
+    <motion.div
+      data-payment-notice
+      style={{ y, scale, opacity, zIndex }}
+      className="faircoin-editorial absolute inset-x-[8%] top-[43.5%] flex items-center gap-[4%] rounded-[4cqw] bg-card px-[4.2%] py-[5%] text-foreground"
+    >
+      <span className="faircoin-editorial-green flex size-[10cqw] shrink-0 items-center justify-center rounded-full bg-ring text-[6cqw] text-primary-foreground">
+        !
+      </span>
+      <span className="text-[4.7cqw] font-semibold leading-tight">
+        Review your payment
+        <span className="mt-[1%] block text-[4.2cqw] font-normal text-muted-foreground">
+          Send ⊜{['12.50', '65.00', '31.21', '20.00'][index]}
+        </span>
+      </span>
+    </motion.div>
+  );
+}
+
 /** Original FairCoin artwork with the source page's framing and timed sequences.
  * Decorative balances, addresses and people are examples, never connected wallets.
  */
@@ -96,25 +236,32 @@ export default function WalletScenes({
   const [paused, setPaused] = useState(false);
   const time = useMotionValue(0);
   const controls = useRef<ReturnType<typeof animate> | null>(null);
-  const animated = !['activity', 'receive', 'lock', 'balance', 'recovery'].includes(scene);
+  const duration = SCENE_DURATION[scene] ?? 1;
+  const animated = scene in SCENE_DURATION;
   useEffect(() => {
-    const clock = animate(time, [0, 8], { duration: 8, repeat: Infinity, ease: 'linear' });
+    const clock = animate(time, [0, duration], { duration, repeat: Infinity, ease: 'linear' });
     clock.pause();
     controls.current = clock;
     return () => clock.stop();
-  }, [time]);
+  }, [time, duration]);
   useEffect(() => {
     if (visible && !paused && !reduce && animated) controls.current?.play();
     else controls.current?.pause();
-    if (reduce) time.set(0);
+    if (reduce) {
+      if (controls.current) controls.current.time = 0;
+      time.set(0);
+    }
   }, [visible, paused, reduce, animated, time]);
-  const sendAmount = useTransform(time, (t): string => (t < 1.2 ? '0' : t < 1.7 ? '6' : '65'));
+  const sendAmount = useTransform(time, (t): string =>
+    t < 1.2 || t >= 19 ? '0' : t < 1.7 ? '6' : '65',
+  );
   const sheetY = useTransform(
     time,
-    [0, 2.6, 3.2, 7.2, 7.8, 8],
+    [0, 2.6, 3.2, 18.1, 18.8, 20],
     ['105%', '105%', '0%', '0%', '105%', '105%'],
   );
-  const confirmation = useTransform(time, [0, 4.7, 5.2, 7.2, 7.8, 8], [0, 0, 1, 1, 0, 0]);
+  const confirmation = useTransform(time, [0, 5, 5.5, 19, 19.2, 20], [0, 0, 1, 1, 0, 0]);
+  const sent = useTransform(time, [0, 10, 10.5, 19, 19.2, 20], [0, 0, 1, 1, 0, 0]);
   const amount = useTransform(time, (t) =>
     t < 1 ? 125 : t < 1.8 ? 220 : t < 2.6 ? 390 : t < 3.4 ? 410 : 500,
   );
@@ -124,26 +271,22 @@ export default function WalletScenes({
   );
   const ringLength = useTransform(
     time,
-    [0, 0.5, 1, 1.5, 1.8, 2.3, 2.6, 3.1, 3.4, 3.9, 7.5, 8],
-    [0.1, 0.25, 0.25, 0.44, 0.44, 0.78, 0.78, 0.82, 0.82, 1, 1, 0.1],
+    [0, 0.5, 1, 1.5, 1.8, 2.3, 2.6, 3.1, 3.4, 3.9, 10.133333],
+    [0.05, 0.25, 0.25, 0.44, 0.44, 0.78, 0.78, 0.82, 0.82, 1, 1],
   );
-  const ringScale = useTransform(time, [0, 4.8, 5.8, 6.2, 7.2, 8], [1, 1, 0.8, 0.8, 1, 1]);
-  const portraitOpacity = useTransform(time, [0, 5.7, 6.1, 6.8, 7.4, 8], [0, 0, 1, 1, 0, 0]);
-  const portraitScale = useTransform(time, [0, 5.7, 6.4, 7.4, 8], [0.15, 0.15, 1, 1, 0.15]);
+  const ringScale = useTransform(time, [0, 5.5, 6.3, 10.133333], [1, 1, 0.75, 0.75]);
+  const ringOpacity = useTransform(time, [0, 5.5, 6.3, 10.133333], [1, 1, 0, 0]);
+  const contributionOpacity = useTransform(time, [0, 4.4, 4.8, 10.133333], [1, 1, 0, 0]);
+  const communityOpacity = useTransform(
+    time,
+    [0, 5.5, 6.5, 9.5, 10.05, 10.133333],
+    [0, 0, 1, 1, 0, 0],
+  );
   const toggled = useTransform(
     time,
-    [0, 1.2, 1.6, 4.8, 5.2, 8],
+    [0, 1.2, 1.6, 3.5, 3.9, 4.666667],
     ['0%', '0%', '77%', '77%', '0%', '0%'],
   );
-  const noticeY = useTransform(
-    time,
-    [0, 1, 1.5, 3.5, 4, 6, 6.5, 8],
-    ['0%', '0%', '7%', '7%', '0%', '0%', '7%', '7%'],
-  );
-  const spend = useTransform(time, (t): string =>
-    t < 2 ? '12.50' : t < 4 ? '65.00' : t < 6 ? '31.21' : '20.00',
-  );
-  const stackY = useTransform(time, [0, 8], ['0%', '-50%']);
   const theme = ['activity', 'unlock', 'balance', 'bridge'].includes(scene)
     ? 'faircoin-editorial-dark bg-primary-foreground text-foreground'
     : scene === 'review'
@@ -222,6 +365,17 @@ export default function WalletScenes({
                   Review payment
                 </span>
               </motion.div>
+              <motion.div
+                data-send-complete
+                style={{ opacity: sent }}
+                className="absolute inset-0 flex flex-col items-center justify-center rounded-t-[10cqw] bg-card text-foreground"
+              >
+                <span className="faircoin-editorial-green flex size-[25cqw] items-center justify-center rounded-full bg-ring text-[16cqw] text-primary-foreground">
+                  <RiCheckLine fill="currentColor" />
+                </span>
+                <p className="mt-[9%] text-[8cqw] font-semibold">Payment sent</p>
+                <p className="mt-[5%] text-[5cqw] text-muted-foreground">⊜65.00 to Alex Morgan</p>
+              </motion.div>
             </motion.div>
           </div>
         )}
@@ -280,7 +434,8 @@ export default function WalletScenes({
         {scene === 'pockets' && (
           <>
             <motion.div
-              style={{ scale: ringScale }}
+              data-pocket-balance
+              style={{ scale: ringScale, opacity: ringOpacity }}
               className="absolute inset-x-[12%] top-1/2 aspect-square -translate-y-1/2 lg:inset-x-[21%]"
             >
               <svg
@@ -309,7 +464,10 @@ export default function WalletScenes({
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <motion.span className="mb-[4%] rounded-full bg-muted/50 px-[5%] py-[2%] text-[4cqw] lg:text-[3cqw]">
+                <motion.span
+                  style={{ opacity: contributionOpacity }}
+                  className="mb-[4%] rounded-full bg-muted/50 px-[5%] py-[2%] text-[4cqw] lg:text-[3cqw]"
+                >
                   {contribution}
                 </motion.span>
                 <motion.span className="text-[16cqw] font-semibold leading-none tracking-[-.065em] lg:text-[12.3cqw]">
@@ -321,11 +479,13 @@ export default function WalletScenes({
               </div>
             </motion.div>
             <motion.div
-              style={{ opacity: portraitOpacity, scale: portraitScale }}
-              className="absolute left-[42%] top-[39%] size-[16%]"
-            >
-              <Avatar person={1} className="size-full" />
-            </motion.div>
+              data-pocket-completion
+              style={{ opacity: communityOpacity }}
+              className="faircoin-editorial-dark absolute inset-0 bg-primary-foreground"
+            />
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
+              <PocketPortrait key={index} time={time} index={index} />
+            ))}
           </>
         )}
         {scene === 'lock' && (
@@ -336,23 +496,8 @@ export default function WalletScenes({
             </div>
           </div>
         )}
-        {scene === 'review' && (
-          <motion.div style={{ y: noticeY }} className="absolute inset-x-[8%] top-[43.5%]">
-            <div className="faircoin-editorial absolute -top-[13.5cqw] inset-x-[16%] h-[19cqw] rounded-[3cqw] bg-card/30" />
-            <div className="faircoin-editorial absolute -top-[7.5cqw] inset-x-[10%] h-[20cqw] rounded-[3cqw] bg-card/70" />
-            <div className="faircoin-editorial relative flex items-center gap-[4%] rounded-[4cqw] bg-card px-[5%] py-[6%] text-foreground">
-              <span className="faircoin-editorial-green flex size-[10cqw] shrink-0 items-center justify-center rounded-full bg-ring text-[6cqw] text-primary-foreground">
-                !
-              </span>
-              <span className="text-[4.7cqw] font-semibold leading-tight">
-                Review your payment
-                <span className="mt-[1%] block text-[4.2cqw] font-normal text-muted-foreground">
-                  Send ⊜<motion.span>{spend}</motion.span>
-                </span>
-              </span>
-            </div>
-          </motion.div>
-        )}
+        {scene === 'review' &&
+          [0, 1, 2, 3].map((index) => <PaymentNotice key={index} time={time} index={index} />)}
         {scene === 'recovery' && (
           <>
             <svg
@@ -440,28 +585,11 @@ export default function WalletScenes({
           </div>
         )}
         {scene === 'bridge' && (
-          <motion.div
-            style={{ y: stackY }}
-            className="absolute -top-[27%] inset-x-[17%] space-y-[3cqw] pb-[3cqw]"
-          >
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((n) => (
-              <div
-                key={n}
-                className={`${n % 3 === 0 ? 'faircoin-editorial bg-card text-foreground' : n % 3 === 1 ? 'faircoin-editorial-green bg-ring text-primary-foreground' : 'faircoin-editorial-dark border border-border bg-primary-foreground text-foreground'} relative aspect-[1.75] overflow-hidden rounded-[3cqw] px-[7%] py-[5%]`}
-              >
-                <div
-                  className={`absolute inset-0 opacity-30 ${n % 2 ? 'bg-[repeating-radial-gradient(ellipse_at_70%_40%,transparent_0_7%,currentColor_7.5%_8%,transparent_8.5%_14%)]' : 'bg-[repeating-linear-gradient(25deg,transparent_0_9%,currentColor_10%_10.5%,transparent_11%_18%)]'}`}
-                />
-                <div className="relative flex items-center justify-between">
-                  <span className="text-[4.5cqw] font-semibold">{n % 2 ? 'WFAIR' : 'FAIR'}</span>
-                  <CoinMark className="size-[6cqw]" />
-                </div>
-                <p className="relative mt-[24%] text-[3cqw]">
-                  {n % 2 ? 'Wrapped FAIR · Base' : 'FairCoin · Mainnet'}
-                </p>
-              </div>
+          <div className="absolute inset-0 [perspective:180cqw] [transform-style:preserve-3d]">
+            {[0, 1, 2, 3, 4, 5].map((index) => (
+              <BridgeCard key={index} time={time} index={index} />
             ))}
-          </motion.div>
+          </div>
         )}
       </div>
       {animated && !reduce && (
