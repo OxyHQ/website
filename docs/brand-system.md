@@ -66,10 +66,19 @@ when the request is for its page content.
    the same bounds, and that neither element disappears between frames. Check
    wheel, touch and keyboard interaction separately; verify that free-scrolling
    content and the footer remain reachable after pinned sections.
-4. Compare motion while visible, paused and with reduced motion enabled. Confirm
-   that controls stop and resume the actual moving layers and that the static
-   fallback contains all essential content.
-5. Adapt branded media and text to the actual product while retaining measured
+4. Capture a complete cycle of each actual source animation and its local
+   counterpart, including the reset into the next cycle. Inspect paired frames
+   at the start, intermediate states and loop seam. Match the movement itself:
+   translation cannot stand in for a reference object's 3D rotation. Give
+   independent scenes their own measured timing; a shared duration must not
+   force unrelated sequences to jump at their resets. Check every intermediate
+   overlap so moving portraits and cards never obscure an amount or essential
+   label that should remain readable.
+5. Pause and resume mid-cycle, leave the scene offscreen and return, then toggle
+   reduced motion while the scene is running. Confirm that controls affect the
+   actual moving layers, resume continues coherently, and the static fallback
+   contains all essential content. Recheck the loop seam after resuming.
+6. Adapt branded media and text to the actual product while retaining measured
    composition. FAIRWallet examples come from its app; network fees, custody and
    download availability must remain accurate. The Explorer price is the WFAIR
    market quote on Base, with its source timestamp, rather than an invented native
@@ -88,10 +97,12 @@ WEBSITE_TEST_ORIGIN=http://localhost:5173 bun scripts/horizon.browser.test.ts
 ```
 
 The browser checks cover measurable geometry, transition continuity, responsive
-overflow, interaction and data states. Their success is not a claim that the
-imagery, typography or animation matches the reference: retain and inspect the
-paired screenshots or frames for that acceptance. Run the normal build separately
-and report any content-sync or upstream dependency blocker explicitly.
+overflow, interaction and data states. Correct bounds and a changing transform
+that stops on pause do not establish coherent motion or reference fidelity.
+Retain and inspect the paired full-cycle captures, including intermediate frames
+and resets, alongside screenshots for imagery and typography. Run the normal
+build separately and report any content-sync or upstream dependency blocker
+explicitly.
 
 Horizon uses a generated neutral Bloom surface with navy and sky accents for its
 canvas, copy and controls. The eight wheel sectors retain the captured reference
