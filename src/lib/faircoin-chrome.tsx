@@ -39,17 +39,14 @@ export function useFairCoinNavbarBrand(): NavbarBrand | undefined {
             homeHref: fc('/'),
             ariaLabel: 'FairCoin homepage',
             logo: (
-              <span className="flex items-center gap-2">
-                <img
-                  src={FAIRCOIN_LOGO_URL}
-                  alt=""
-                  width={28}
-                  height={28}
-                  className="h-7 w-7 rounded-full"
-                  draggable={false}
-                />
-                <span className="text-base font-semibold text-foreground">{FAIRCOIN_NAME}</span>
-              </span>
+              <img
+                src={FAIRCOIN_LOGO_URL}
+                alt=""
+                width={28}
+                height={28}
+                className="h-7 w-7 rounded-full"
+                draggable={false}
+              />
             ),
           }
         : undefined,
