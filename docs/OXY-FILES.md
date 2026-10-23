@@ -80,7 +80,7 @@ suite replaces.
 
 | Setting | Where | Notes |
 |---|---|---|
-| `OXY_SERVICE_API_KEY` / `OXY_SERVICE_API_SECRET` | SSM `/oxy/website-api/` (existing) | the Oxy Website application's service credential |
+| Registered website workload | Oxy workload registry + ECS task role | Temporary role credentials; local IAM SSO requires its own registered binding |
 | `OXY_FILES_WEBHOOK_SECRET` | SSM `/oxy/website-api/OXY_FILES_WEBHOOK_SECRET` (SecureString) + the `secrets` list of `module "website_api"` in oxy-infra `terraform-uswest2/app-services.tf` | shown once when the endpoint is set; without it events get 503 and Oxy retries. The task definition ignores Terraform changes, so the revision carrying it is rolled out by hand (oxy-infra runbook 46) |
 | `OXY_CLOUD_URL` | optional | default `https://cloud.oxy.so` |
 | `OXY_FILES_RECONCILE_HOURS` | optional | default 24 |
@@ -91,9 +91,8 @@ code refuses a legacy delete outside `oxy-website/` (`deleteLegacyObject`):
 a URL like `https://cloud.oxy.so/<fileId>` parses to a key that is not the
 site's.
 
-The Oxy Website application (Oxy seed, `first_party`) needs the staff-granted
-scopes `files:app:write`, `files:app:delete` and `files:references:write`, and
-its file-events endpoint set to `https://website-api.oxy.so/api/oxy/file-events`
+The Oxy Website application uses its verified workload identity without app
+scopes or consent. Its file-events endpoint must be set to `https://website-api.oxy.so/api/oxy/file-events`
 (console → Webhooks → File events, or `oxy.apps.setFilesWebhook`). Oxy's own
 applications are not metered (ADR 0043 D2).
 
@@ -101,7 +100,7 @@ applications are not metered (ADR 0043 D2).
 
 `bun run oxy-files` talks to the database in `DATABASE_URL`, the bucket
 through the AWS default credential chain (it needs `s3:GetObject` on
-`public/oxy-website/*`) and Oxy with the service credential. Its output
+`public/oxy-website/*`) and Oxy with the registered workload identity. Its output
 carries ids, SHA-256s and counts, never a URL.
 
 Run it once the Oxy API with ADR 0043 stage 4c (OxyHQ/oxy#1774) is deployed,

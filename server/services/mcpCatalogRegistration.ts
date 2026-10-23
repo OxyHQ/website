@@ -1,6 +1,5 @@
 import { createHash } from 'node:crypto';
 import type { AppCapabilityCatalog } from '@oxy.so/contracts';
-import type { OxyServer } from '@oxy.so/core/server';
 
 /**
  * Register the MCP catalog with Oxy, which is what makes Oxy recognise
@@ -19,11 +18,11 @@ import type { OxyServer } from '@oxy.so/core/server';
  *   does not retry in lockstep.
  * - `Retry-After` on a 429 or 503 is honoured (seconds or an HTTP date) when it
  *   asks for longer than the computed delay.
- * - 401 invalidates the cached service token and retries: a rotated credential
- *   heals on its own.
+ * - The shared Oxy transport refreshes a rejected workload credential once.
+ *   A remaining 401 is retried with the same bounded outage backoff.
  * - Any other 4xx except 408 and 429 is a configuration refusal (the
- *   credential lacks `catalogs:write` or `catalog:website`, the schema was
- *   rejected). Retrying cannot fix it, so it stops, logs once and reports
+ *   workload is not registered or the schema was rejected). Retrying cannot
+ *   fix it, so it stops, logs once and reports
  *   `refused` until someone fixes the configuration and redeploys.
  * - Once registered it stops. There is no periodic re-registration: that would
  *   be an overwrite loop between task versions during a deploy.
@@ -69,7 +68,6 @@ export interface McpCatalogRegistrationStatus {
 }
 
 export interface McpCatalogRegistrationDeps {
-  fetch: (url: string, init: RequestInit) => Promise<Response>;
   now: () => number;
   /** Resolves after `ms`, or early when `signal` aborts. Must not keep the process alive. */
   sleep: (ms: number, signal: AbortSignal) => Promise<void>;
@@ -84,8 +82,6 @@ export interface McpCatalogRegistration {
   stop(): void;
   status(): McpCatalogRegistrationStatus;
 }
-
-type OxyTokenSource = Pick<OxyServer, 'serviceToken' | 'invalidateServiceToken'>;
 
 function unrefSleep(ms: number, signal: AbortSignal): Promise<void> {
   return new Promise((resolve) => {
@@ -104,7 +100,6 @@ function unrefSleep(ms: number, signal: AbortSignal): Promise<void> {
 }
 
 const defaultDeps: McpCatalogRegistrationDeps = {
-  fetch: (url, init) => fetch(url, init),
   now: () => Date.now(),
   sleep: unrefSleep,
   random: Math.random,
@@ -164,7 +159,7 @@ function isPermanentRefusal(status: number): boolean {
 
 export function createMcpCatalogRegistration(input: {
   catalog: AppCapabilityCatalog;
-  oxy: OxyTokenSource;
+  transport: { fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> };
   oxyApiBase: string;
   deps?: Partial<McpCatalogRegistrationDeps>;
 }): McpCatalogRegistration {
@@ -174,7 +169,6 @@ export function createMcpCatalogRegistration(input: {
   // still the same deployment.
   const deployedAt = new Date(deps.now()).toISOString();
   const stopController = new AbortController();
-  const knownTokens = new Set<string>();
   let running: Promise<void> | null = null;
 
   const current: McpCatalogRegistrationStatus = {
@@ -191,7 +185,7 @@ export function createMcpCatalogRegistration(input: {
 
   const iso = (ms: number) => new Date(ms).toISOString();
   const recordError = (status: number | null, raw: string) => {
-    current.lastError = { status, message: sanitizeErrorMessage(raw, [...knownTokens]) };
+    current.lastError = { status, message: sanitizeErrorMessage(raw) };
   };
 
   const backoffDelay = (attempt: number) => {
@@ -207,17 +201,17 @@ export function createMcpCatalogRegistration(input: {
     current.lastAttemptAt = iso(deps.now());
     current.nextAttemptAt = null;
     try {
-      const token = await input.oxy.serviceToken();
-      if (token) knownTokens.add(token);
-      const response = await deps.fetch(`${input.oxyApiBase}/capabilities/catalogs/register`, {
-        method: 'POST',
-        headers: {
-          authorization: `Bearer ${token}`,
-          'content-type': 'application/json',
+      const response = await input.transport.fetch(
+        `${input.oxyApiBase}/capabilities/catalogs/register`,
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ catalog: input.catalog, deployedAt, catalogHash: hash }),
+          signal: AbortSignal.any([AbortSignal.timeout(REQUEST_TIMEOUT_MS), stopController.signal]),
         },
-        body: JSON.stringify({ catalog: input.catalog, deployedAt, catalogHash: hash }),
-        signal: AbortSignal.any([AbortSignal.timeout(REQUEST_TIMEOUT_MS), stopController.signal]),
-      });
+      );
       if (response.ok) {
         current.state = 'registered';
         current.lastSuccessAt = iso(deps.now());
@@ -227,11 +221,10 @@ export function createMcpCatalogRegistration(input: {
         );
         return null;
       }
-      // The body names the refusal (a scope the credential lacks, a schema the
+      // The body names the refusal (an unregistered workload, a schema the
       // API rejected); it is logged and kept, sanitized and short.
       const detail = await response.text().catch(() => '');
       recordError(response.status, detail || response.statusText || `HTTP ${response.status}`);
-      if (response.status === 401) input.oxy.invalidateServiceToken();
       if (isPermanentRefusal(response.status)) {
         current.state = 'refused';
         deps.error(
@@ -295,7 +288,7 @@ export function createMcpCatalogRegistration(input: {
   };
 }
 
-/** What `/api/mcp/status` reports for a process that does not register (local runs, missing credentials). */
+/** What `/api/mcp/status` reports for a process that does not register (local runs). */
 export function disabledMcpCatalogRegistrationStatus(
   catalog?: AppCapabilityCatalog,
 ): McpCatalogRegistrationStatus {

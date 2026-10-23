@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, setSystemTime, spyOn, test } from 'bun:test';
 import type { JobPosting } from '@clarity.surf/sdk';
-import { getCareerJob, listCareerJobs } from './careers.js';
+import { getCareerJob, listCareerJobs, closeCareerJobsClient } from './careers.js';
 import { oxyService } from './oxyService.js';
 
 /* The careers page's only source is Clarity. These pin what the site asks for,
@@ -51,7 +51,18 @@ const start = new Date('2026-09-17T10:00:00Z');
 
 beforeAll(() => {
   setSystemTime(start);
-  spyOn(oxyService, 'serviceToken').mockResolvedValue('service-token');
+  spyOn(oxyService, 'createServiceClient').mockImplementation(() => ({
+    fetch: Object.assign(
+      (input: RequestInfo | URL, init?: RequestInit) => {
+        const headers = new Headers(init?.headers);
+        headers.set('authorization', 'Bearer service-token');
+        return fetch(input, { ...init, headers });
+      },
+      { preconnect: fetch.preconnect },
+    ),
+    getAccessToken: async () => 'service-token',
+    dispose: () => undefined,
+  }));
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = new URL(String(input));
     const body = init?.body
@@ -68,6 +79,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
+  closeCareerJobsClient();
   globalThis.fetch = realFetch;
   setSystemTime();
 });

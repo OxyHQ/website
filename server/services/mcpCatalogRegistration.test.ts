@@ -33,27 +33,19 @@ function harness(steps: Step[], options: { random?: () => number } = {}) {
   const sleeps: number[] = [];
   const requests: Array<{ url: string; init: RequestInit }> = [];
   const logs: string[] = [];
-  let invalidations = 0;
-  let token = SERVICE_TOKEN;
-  const oxy = {
-    serviceToken: async () => token,
-    invalidateServiceToken: () => {
-      invalidations += 1;
-      token = `${SERVICE_TOKEN}-rotated`;
-    },
-  };
   const registration = createMcpCatalogRegistration({
     catalog,
-    oxy: oxy as never,
     oxyApiBase: 'https://api.oxy.test',
-    deps: {
+    transport: {
       fetch: async (url, init) => {
-        requests.push({ url, init });
+        requests.push({ url: String(url), init: init ?? {} });
         const step = steps.shift();
         if (!step) throw new Error('unexpected extra registration attempt');
         if (step instanceof Error) throw step;
         return new Response(step.body ?? '', { status: step.status, headers: step.headers });
       },
+    },
+    deps: {
       now: () => clock,
       sleep: async (ms) => {
         sleeps.push(ms);
@@ -69,7 +61,6 @@ function harness(steps: Step[], options: { random?: () => number } = {}) {
     sleeps,
     requests,
     logs,
-    invalidations: () => invalidations,
     remaining: () => steps.length,
   };
 }
@@ -104,10 +95,9 @@ describe('mcp catalog registration', () => {
     let release: () => void = ignore;
     const registration = createMcpCatalogRegistration({
       catalog,
-      oxy: { serviceToken: async () => SERVICE_TOKEN, invalidateServiceToken: ignore } as never,
       oxyApiBase: 'https://api.oxy.test',
+      transport: { fetch: async () => new Response('unavailable', { status: 500 }) },
       deps: {
-        fetch: async () => new Response('unavailable', { status: 500 }),
         now: () => clock,
         sleep: (ms) =>
           new Promise<void>((resolve) => {
@@ -132,16 +122,15 @@ describe('mcp catalog registration', () => {
     expect(registration.status().nextAttemptAt).toBeNull();
   });
 
-  test('a 401 invalidates the service token and the next attempt succeeds', async () => {
+  test('a remaining 401 uses bounded recovery after the shared transport has refreshed', async () => {
     const h = harness([{ status: 401, body: '{"error":"invalid_token"}' }, { status: 201 }]);
     await h.registration.start();
 
-    expect(h.invalidations()).toBe(1);
     expect(h.registration.status().state).toBe('registered');
-    const headers = h.requests.map(
-      (request) => (request.init.headers as Record<string, string>).authorization,
+    expect(h.sleeps.length).toBe(1);
+    expect(h.requests.every(({ init }) => !new Headers(init.headers).has('authorization'))).toBe(
+      true,
     );
-    expect(headers).toEqual([`Bearer ${SERVICE_TOKEN}`, `Bearer ${SERVICE_TOKEN}-rotated`]);
   });
 
   test('a 429 with Retry-After in seconds waits at least that long', async () => {
@@ -231,13 +220,14 @@ describe('mcp catalog registration', () => {
     const newerRequests: string[] = [];
     const newer = createMcpCatalogRegistration({
       catalog: newerCatalog,
-      oxy: { serviceToken: async () => SERVICE_TOKEN, invalidateServiceToken: ignore } as never,
       oxyApiBase: 'https://api.oxy.test',
-      deps: {
+      transport: {
         fetch: async (url) => {
-          newerRequests.push(url);
+          newerRequests.push(String(url));
           return new Response('', { status: 201 });
         },
+      },
+      deps: {
         sleep: async () => undefined,
         log: ignore,
         error: ignore,
@@ -256,12 +246,11 @@ describe('mcp catalog registration', () => {
     let clock = 0;
     const registration = createMcpCatalogRegistration({
       catalog,
-      oxy: {
-        serviceToken: async () => {
+      transport: {
+        fetch: async () => {
           throw new Error('credentials unavailable');
         },
-        invalidateServiceToken: ignore,
-      } as never,
+      },
       oxyApiBase: 'https://api.oxy.test',
       deps: {
         now: () => clock,

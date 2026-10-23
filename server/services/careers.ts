@@ -1,4 +1,5 @@
-import { ClarityClient, ClarityError, type JobPosting } from '@clarity.surf/sdk';
+import { clarityForOxyService } from '@clarity.surf/sdk/server';
+import { type ClarityClient, ClarityError, type JobPosting } from '@clarity.surf/sdk';
 import { config } from '../config.js';
 import { oxyService } from './oxyService.js';
 
@@ -43,9 +44,8 @@ let cached: { jobs: CareerJob[]; expiresAt: number } | undefined;
 let inflight: Promise<CareerJob[]> | undefined;
 
 function clarity(): ClarityClient {
-  client ??= new ClarityClient({
+  client ??= clarityForOxyService(oxyService, {
     baseUrl: config.clarity.apiUrl,
-    getAccessToken: () => oxyService.serviceToken(),
   });
   return client;
 }
@@ -134,4 +134,10 @@ export async function getCareerJob(id: string): Promise<CareerJob | null> {
     if (error instanceof ClarityError && error.status === 404) return null;
     throw error;
   }
+}
+
+/** Release the product transport during process shutdown. */
+export function closeCareerJobsClient(): void {
+  client?.dispose();
+  client = undefined;
 }

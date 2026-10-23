@@ -167,10 +167,6 @@ let timer: ReturnType<typeof setInterval> | null = null;
  */
 export function startReferenceReconciliation(): void {
   if (timer) return;
-  if (!config.oxyServiceApiKey || !config.oxyServiceApiSecret) {
-    console.warn('[oxy-files] no Oxy service credential: references are not reconciled');
-    return;
-  }
   const run = () => {
     reconcileMediaFiles()
       .then(async (outcome) => {

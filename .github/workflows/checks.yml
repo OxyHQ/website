@@ -281,6 +281,8 @@ jobs:
         run: bun run typecheck:server
       - name: Lint the server
         run: bunx biome ci server
+      - name: Shared session and workload transports (real HTTP)
+        run: bun test scripts/website-activity.test.ts scripts/website-session-transport.test.ts scripts/website-workload-transport.test.ts
       - name: Server and MCP integration suite (real PostgreSQL)
         run: bun run test:server
 
