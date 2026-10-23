@@ -93,12 +93,13 @@ const faqItems: readonly FaqEntry[] = [
     question: 'Where are the direct downloads?',
     answer: (
       <>
-        All images are available on our downloads page and via GitHub Releases.{' '}
+        Every image is listed on our downloads page, with its MD5 checksum at the same URL plus{' '}
+        <code>.md5</code>.{' '}
         <a
-          href="https://github.com/OxyHQ/OxyOS/releases"
+          href="/os/downloads/"
           className="font-medium text-primary-text underline decoration-primary/30 underline-offset-4 transition-colors hover:text-primary"
         >
-          GitHub Releases &rarr;
+          Downloads &rarr;
         </a>
       </>
     ),
@@ -183,7 +184,7 @@ export default function OxyOSContent() {
                 <Button href="/os/downloads">Download ISO</Button>
               </div>
               <div className="block md:hidden">
-                <Button href="https://github.com/OxyHQ/OxyOS/releases">All Downloads</Button>
+                <Button href="/os/downloads">All Downloads</Button>
               </div>
             </div>
           </div>
@@ -497,7 +498,7 @@ export default function OxyOSContent() {
                 <Button href="/os/downloads">Download ISO</Button>
               </div>
               <div className="block md:hidden">
-                <Button href="https://github.com/OxyHQ/OxyOS/releases">All Downloads</Button>
+                <Button href="/os/downloads">All Downloads</Button>
               </div>
             </div>
           </div>
