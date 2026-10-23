@@ -111,14 +111,10 @@ function PocketPortrait({ time, index }: { time: MotionValue<number>; index: num
   const start = 5.9 + index * 0.11;
   const scale = useTransform(
     time,
-    [0, start, start + 0.7, start + 0.95, 9.35, 9.85, 10.133333],
-    [0, 0, 1.04, 1, 1, 0, 0],
+    [0, start, start + 0.7, start + 0.95, 10.133333],
+    [0, 0, 1.04, 1, 1],
   );
-  const opacity = useTransform(
-    time,
-    [0, start, start + 0.15, 9.5, 9.85, 10.133333],
-    [0, 0, 1, 1, 0, 0],
-  );
+  const opacity = useTransform(time, [0, start, start + 0.15, 10.133333], [0, 0, 1, 1]);
   return (
     <motion.div
       data-pocket-portrait
@@ -279,9 +275,15 @@ export default function WalletScenes({
   const contributionOpacity = useTransform(time, [0, 4.4, 4.8, 10.133333], [1, 1, 0, 0]);
   const communityOpacity = useTransform(
     time,
-    [0, 5.5, 6.5, 9.5, 10.05, 10.133333],
-    [0, 0, 1, 1, 0, 0],
+    [0, 5.5, 6.5, 9.83, 10, 10.1, 10.133333],
+    [0, 0, 1, 1, 0.68, 0, 0],
   );
+  const clusterScale = useTransform(
+    time,
+    [0, 9.75, 9.8, 10, 10.1, 10.133333],
+    [1, 1, 0.95, 0.12, 0, 0],
+  );
+  const clusterOpacity = useTransform(time, [0, 10, 10.1, 10.133333], [1, 1, 0, 0]);
   const toggled = useTransform(
     time,
     [0, 1.2, 1.6, 3.5, 3.9, 4.666667],
@@ -483,9 +485,15 @@ export default function WalletScenes({
               style={{ opacity: communityOpacity }}
               className="faircoin-editorial-dark absolute inset-0 bg-primary-foreground"
             />
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
-              <PocketPortrait key={index} time={time} index={index} />
-            ))}
+            <motion.div
+              data-pocket-portraits
+              style={{ scale: clusterScale, opacity: clusterOpacity }}
+              className="absolute inset-0 origin-[50%_52%]"
+            >
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
+                <PocketPortrait key={index} time={time} index={index} />
+              ))}
+            </motion.div>
           </>
         )}
         {scene === 'lock' && (
