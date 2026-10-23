@@ -162,12 +162,12 @@ export default function WalletLandingContent({
   return (
     <div
       data-wallet-landing
-      className="faircoin-editorial mx-auto max-w-[2600px] bg-card [&_.bloom-btn]:!bg-none [&_.bloom-btn::after]:!bg-none [&_.bloom-btn::after]:!shadow-none pt-[96px] lg:pt-[86px] text-foreground [font-family:'FairCoin_Editorial',sans-serif] [--wallet-type:clamp(11.94px,calc(2.522864px+2.94286vw),14px)] min-[391px]:[--wallet-type:clamp(14px,calc(8.475008px+1.41304vw),19.2px)] min-[760px]:[--wallet-type:clamp(16px,calc(3.343072px+1.66538vw),20.33px)] lg:[--wallet-type:clamp(13.6px,calc(-1.31714px+1.46246vw),36.7069px)]"
+      className="faircoin-editorial mx-auto max-w-[2600px] bg-card [&_.bloom-btn]:!bg-none [&_.bloom-btn::after]:!bg-none [&_.bloom-btn::after]:!shadow-none [--wallet-banner-height:0px] [body:has(.site-banner)_&]:[--wallet-banner-height:var(--site-header-banner-visible-height)] pt-[calc(var(--site-header-height)+var(--wallet-banner-height)+32px)] min-[760px]:pt-[calc(var(--site-header-height)+var(--wallet-banner-height)+48px)] lg:pt-[calc(var(--site-header-height)+var(--wallet-banner-height)+64px)] text-foreground [font-family:'FairCoin_Editorial',sans-serif] [--wallet-type:clamp(11.94px,calc(2.522864px+2.94286vw),14px)] min-[391px]:[--wallet-type:clamp(14px,calc(8.475008px+1.41304vw),19.2px)] min-[760px]:[--wallet-type:clamp(16px,calc(3.343072px+1.66538vw),20.33px)] lg:[--wallet-type:clamp(13.6px,calc(-1.31714px+1.46246vw),36.7069px)]"
     >
       <section className={`${GUTTER} relative lg:pb-2`} aria-labelledby="wallet-title">
         <h1
           id="wallet-title"
-          className="mb-[calc(2.57143px+2.32143vw)] text-balance text-[calc(var(--wallet-type)*2.57143)] leading-[.95] tracking-[-.03em] lg:max-w-[calc(62.5%_-_.2625vw)] lg:text-[calc(var(--wallet-type)*3.25)]"
+          className="mb-6 text-balance text-[calc(var(--wallet-type)*2.57143)] leading-[1.08] tracking-[-.015em] min-[760px]:mb-8 lg:mb-[clamp(32px,3vw,56px)] lg:max-w-[calc(62.5%_-_.2625vw)] lg:text-[calc(var(--wallet-type)*3.25)]"
         >
           Send FairCoin with <br className="hidden lg:block" />
           FAIRWallet

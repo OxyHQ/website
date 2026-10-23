@@ -54,6 +54,11 @@ the composition. Matching the section names or passing responsive checks does
 not establish visual fidelity. Keep the website's global navigation and footer
 when the request is for its page content.
 
+A reference hero must also fit the shared header: reserve the measured nav height
+and any present announcement banner, then leave breathing room before its title.
+Use stable header/banner heights for flow padding, not the scroll-dependent
+header occlusion token; otherwise the page shifts as the banner scrolls away.
+
 1. Capture the source and local page at the same viewport, font-loading state,
    scroll position and animation time. For the FairCoin pages, use 1440 × 1000
    and 390 × 844 as the primary comparisons, then inspect 320, 768, 1024 and
