@@ -91,6 +91,13 @@ header occlusion token; otherwise the page shifts as the banner scrolls away.
 
 Current source references are `https://cash.app/new` for the FairCoin intro,
 `https://cash.app/` for its landing, and `https://cash.app/send` for the wallet.
+The FairCoin buy flow uses the same editorial type, white canvas and green
+surface, with its purchase form immediately after the title. Keep the shared
+header transparent and its brand symbol accessible without a visible wordmark;
+the footer retains its full identity. Use Bloom controls with scoped tokens for
+every interaction state. Only the server quote establishes the payment price;
+do not display an estimated conversion before a quote exists.
+
 The regression commands are:
 
 ```bash

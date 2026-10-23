@@ -18,14 +18,7 @@ const SEO_TITLE = 'Buy FairCoin — fairco.in';
 const SEO_DESCRIPTION =
   'Buy native FAIR with USDC on Base. Pay from any wallet, the bridge swaps and delivers FAIR straight to your FairCoin address.';
 
-/**
- * `/buy` (or `/faircoin/buy` on oxy.so) — app-style purchase flow.
- *
- * Renders the shared Navbar/Footer chrome around `BuyApp`, which handles the
- * full wizard (amount → pay → done) inside a focused, centered card.
- * Marketing content has been removed in favour of an app-feel experience —
- * users land here with intent and get a single focused action.
- */
+/** Editorial purchase page; BuyApp owns the existing amount → pay → done flow. */
 export default function FairCoinBuyPage() {
   const onFairCoinHost = isFairCoinHost();
   const navbarBrand = useFairCoinNavbarBrand();
@@ -37,16 +30,16 @@ export default function FairCoinBuyPage() {
   const footerLegalLinks = useFairCoinFooterLegalLinks();
   const footerCopyright = useFairCoinFooterCopyright();
 
-  // Same dual-mount story as the other FairCoin pages — Bloom/CSS theme is
-  // host-gated so /faircoin/buy on oxy.so reads as an Oxy subpage.
-  const rootClass = onFairCoinHost
-    ? 'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
-    : 'faircoin-surface flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background';
+  const rootClass =
+    'faircoin-editorial flex min-h-screen max-w-screen flex-col overflow-x-clip bg-card text-foreground';
 
   return (
     <div className={rootClass}>
       <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin/buy" />
       <Navbar
+        transparent
+        transparentOnScroll
+        transparentOn="light"
         brand={navbarBrand}
         customDropdowns={dropdowns}
         customNavLinks={simpleNavLinks}
