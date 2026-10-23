@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { marketingCanvasClass } from '../src/lib/marketingCanvas';
 
 describe('marketing opening surfaces', () => {
-  test('keeps FairCoin white on both host route trees and locale mirrors', () => {
+  test('keeps matching FairCoin opening canvases on both host route trees and locale mirrors', () => {
     for (const path of [
       '/faircoin',
       '/faircoin/',
