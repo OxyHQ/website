@@ -46,11 +46,12 @@ export function oxyosReleaseTag(release: OxyOSRelease): string {
  * Where a release's image is downloaded from — the one place that decides it.
  * `{tag}`, `{version}` and `{architecture}` are filled in per row.
  *
- * No ISO host exists today, so every version links to its GitHub release page.
- * Once images are hosted, this becomes the file URL (for example
- * `https://<host>/oxyos-{version}-{architecture}.iso`) and nothing else changes.
+ * The images live in the public R2 bucket `oxy-downloads`, served at
+ * downloads.oxy.so (oxy-infra runbook 61). Each ISO has its checksum beside it,
+ * at the same URL plus `.md5`. The GitHub releases carry no image.
  */
-export const OXYOS_DOWNLOAD_URL_TEMPLATE = 'https://github.com/OxyHQ/OxyOS/releases/tag/{tag}';
+export const OXYOS_DOWNLOAD_URL_TEMPLATE =
+  'https://downloads.oxy.so/oxyos/oxyos-{version}-{architecture}.iso';
 
 export function oxyosDownloadUrl(release: OxyOSRelease, architecture: OxyOSArchitecture): string {
   return OXYOS_DOWNLOAD_URL_TEMPLATE.replaceAll('{tag}', oxyosReleaseTag(release))
