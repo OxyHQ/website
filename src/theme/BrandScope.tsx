@@ -1,5 +1,5 @@
 import { useSyncExternalStore, type ReactNode } from 'react';
-import { BloomSeedScope, useTheme } from '@oxy.so/bloom/theme';
+import { BloomColorScope, BloomSeedScope, useTheme } from '@oxy.so/bloom/theme';
 import { BRAND_SURFACES, type BrandSurface } from './brands';
 
 /**
@@ -25,19 +25,20 @@ const subscribeNever = () => () => {
  * The generated CSS already paints a `.docs-theme` or `.astro-theme` subtree,
  * but Bloom's components colour themselves from the JS theme on context, not
  * from CSS variables — so without this a Bloom dialog or code block on the
- * Astro page is Oxy purple. `BloomSeedScope` publishes the surface's seed as
- * that theme (context reaches portalled dialogs and menus too).
+ * Astro page is Oxy purple. Named recipes use `BloomColorScope`; custom seeds
+ * use `BloomSeedScope` (context reaches portalled dialogs and menus too).
  *
  * Client-only, on purpose: the scope also writes the palette inline for the
  * CURRENT mode, and the prerendered HTML cannot know the visitor's mode — an
  * inline light palette would outrank the `.dark` block until the app booted.
  * The app mounts with `createRoot`, so there is no hydration to mismatch.
- * `BloomSeedScope` builds its theme in the PARENT's mode, so a surface is
+ * Named recipes support an explicit local mode, including fixed dark surfaces.
+ * `BloomSeedScope` builds its theme in the PARENT's mode, so a seed surface is
  * scoped only where that mode is the surface's own: an `auto` surface always,
  * and a `light` one while the site is light. In dark mode a light surface is
  * left unscoped rather than handed a dark JS theme (and a dark inline palette
  * that would outrank its generated light block). `dark` surfaces keep their
- * old rule and are never scoped.
+ * old rule and are never scoped through the seed path.
  */
 export function BrandScope({ className, children }: { className: string; children: ReactNode }) {
   const onClient = useSyncExternalStore(
@@ -47,8 +48,19 @@ export function BrandScope({ className, children }: { className: string; childre
   );
   const { isDark } = useTheme();
   const surface = brandSurfaceFor(className);
+  if (onClient && surface?.preset) {
+    return (
+      <BloomColorScope
+        colorPreset={surface.preset}
+        mode={surface.mode === 'auto' ? undefined : surface.mode}
+        style={{ display: 'contents' }}
+      >
+        {children}
+      </BloomColorScope>
+    );
+  }
   const scoped = surface?.mode === 'auto' || (surface?.mode === 'light' && !isDark);
-  if (!onClient || !surface || !scoped) return children;
+  if (!onClient || !surface || surface.preset || !scoped) return children;
   return (
     <BloomSeedScope
       seed={surface.seed}

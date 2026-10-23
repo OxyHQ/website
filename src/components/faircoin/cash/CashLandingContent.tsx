@@ -60,7 +60,7 @@ function Stage({
       data-phone-stage
       data-phone-exit={exit}
       data-section-tone={dark ? 'dark' : 'light'}
-      className={`${dark ? 'faircoin-editorial-dark bg-primary-foreground' : 'faircoin-editorial bg-card'} ${GUTTER} relative py-[60px] text-foreground lg:h-svh lg:min-h-[600px] lg:py-[10svh]`}
+      className={`${dark ? 'faircoin-editorial-dark bg-background' : 'faircoin-editorial bg-card'} ${GUTTER} relative py-[60px] text-foreground lg:h-svh lg:min-h-[600px] lg:py-[10svh]`}
     >
       <div className="grid items-center gap-x-5 lg:mx-0.5 lg:h-full lg:grid-cols-12 lg:gap-x-6">
         <div className="relative order-first mb-[clamp(24px,7vh,54px)] flex h-[50svh] items-center justify-center lg:order-none lg:col-span-4 lg:col-start-5 lg:row-start-1 lg:mb-0 lg:h-full">
@@ -106,12 +106,12 @@ function CardFan({ paused }: { paused: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 1 });
   const colors = [
-    'bg-ring',
-    'bg-secondary',
-    'bg-card',
-    'bg-chart-5',
-    'bg-ring',
-    'bg-primary-foreground',
+    'bg-primary text-primary-foreground',
+    'bg-secondary text-secondary-foreground',
+    'bg-card text-card-foreground',
+    'bg-tertiary text-tertiary-foreground',
+    'bg-primary text-primary-foreground',
+    'bg-background text-foreground',
   ];
   return (
     <div
@@ -122,7 +122,7 @@ function CardFan({ paused }: { paused: boolean }) {
       {colors.map((color, i) => (
         <motion.div
           key={['green', 'pink', 'paper', 'yellow', 'lime', 'cover'][i]}
-          className={`absolute left-1/2 top-1/2 aspect-[1.58] w-full overflow-hidden rounded-[5%] border border-foreground/10 p-[5%] text-primary-foreground shadow-xl ${color}`}
+          className={`absolute left-1/2 top-1/2 aspect-[1.58] w-full overflow-hidden rounded-[5%] border border-foreground/10 p-[5%] shadow-xl ${color}`}
           initial={false}
           animate={{
             rotate: paused || inView ? [-82.5, -75, -60, -45, -30, -15][i] : -90,
@@ -169,7 +169,7 @@ function ObjectFilm({ paused }: { paused: boolean }) {
   return (
     <div
       ref={ref}
-      className="faircoin-editorial-dark relative flex size-full items-center justify-center overflow-hidden bg-primary-foreground"
+      className="faircoin-editorial-dark relative flex size-full items-center justify-center overflow-hidden bg-background"
       aria-hidden="true"
     >
       <motion.img
@@ -251,7 +251,7 @@ function EverydayGrid({ paused }: { paused: boolean }) {
       id="everyday"
       data-section-tone="dark"
       data-parallax-grid
-      className={`faircoin-editorial-dark ${GUTTER} relative overflow-hidden bg-primary-foreground py-[60px] text-foreground lg:h-svh lg:min-h-[700px] lg:py-[10svh]`}
+      className={`faircoin-editorial-dark ${GUTTER} relative overflow-hidden bg-background py-[60px] text-foreground lg:h-svh lg:min-h-[700px] lg:py-[10svh]`}
     >
       <div className="lg:flex lg:h-full lg:flex-col lg:justify-center lg:pt-10">
         <div className="mb-12 flex flex-col items-start justify-between gap-7 lg:mb-[clamp(32px,9vh,84px)] lg:flex-row lg:items-end">
@@ -276,7 +276,7 @@ function EverydayGrid({ paused }: { paused: boolean }) {
               >
                 <div
                   aria-hidden="true"
-                  className={`relative flex aspect-[.863402] items-center justify-center overflow-hidden rounded-[15.9%/13%] [container-type:inline-size] ${item.type === 'keys' ? 'faircoin-editorial bg-card text-foreground' : 'faircoin-editorial-green bg-ring text-primary-foreground'}`}
+                  className={`relative flex aspect-[.863402] items-center justify-center overflow-hidden rounded-[15.9%/13%] [container-type:inline-size] ${item.type === 'keys' ? 'faircoin-editorial bg-card text-foreground' : 'faircoin-editorial-green bg-primary text-primary-foreground'}`}
                 >
                   {item.type === 'amount' && (
                     <TransferAmount paused={paused || transferPaused || !visible} />
@@ -307,11 +307,11 @@ function EverydayGrid({ paused }: { paused: boolean }) {
                         className="faircoin-editorial absolute -inset-[15%] rotate-[-20deg] scale-125 bg-card blur-[8cqw]"
                         aria-hidden="true"
                       >
-                        <div className="faircoin-editorial-green absolute -left-[5%] -top-[10%] h-[70%] w-[40%] rotate-[-25deg] rounded-full bg-ring" />
-                        <div className="faircoin-editorial-green absolute -right-[10%] top-[10%] h-[90%] w-[45%] rotate-[-25deg] rounded-full bg-ring" />
+                        <div className="faircoin-editorial-green absolute -left-[5%] -top-[10%] h-[70%] w-[40%] rotate-[-25deg] rounded-full bg-primary" />
+                        <div className="faircoin-editorial-green absolute -right-[10%] top-[10%] h-[90%] w-[45%] rotate-[-25deg] rounded-full bg-primary" />
                       </div>
                       <div className="faircoin-editorial relative mx-[7%] flex w-full items-center gap-[3cqw] rounded-[5cqw] bg-card px-[4%] py-[7%] text-foreground shadow-sm">
-                        <span className="faircoin-editorial-green flex size-[15cqw] shrink-0 items-center justify-center rounded-full bg-ring text-[6cqw] text-primary-foreground">
+                        <span className="faircoin-editorial-green flex size-[15cqw] shrink-0 items-center justify-center rounded-full bg-primary text-[6cqw] text-primary-foreground">
                           ↓
                         </span>
                         <span className="text-[4.8cqw] leading-tight">
@@ -375,7 +375,7 @@ export default function CashLandingContent({
         data-section-tone="light"
         className={`faircoin-editorial-green ${GUTTER} relative overflow-hidden pb-[70px] pt-[max(120px,calc(var(--site-header-occlusion-bottom,90px)+32px))] text-primary-foreground lg:h-svh lg:min-h-[600px] lg:overflow-visible lg:pb-0 lg:pt-20`}
       >
-        <div data-hero-background className="pointer-events-none absolute inset-0 bg-ring" />
+        <div data-hero-background className="pointer-events-none absolute inset-0 bg-primary" />
         <div
           data-hero-content
           className="relative grid items-center gap-x-5 min-[760px]:text-center lg:h-full lg:grid-cols-12 lg:text-left"
@@ -524,7 +524,7 @@ export default function CashLandingContent({
       <section
         id="get-started"
         data-section-tone="dark"
-        className={`faircoin-editorial-dark ${GUTTER} relative bg-primary-foreground py-[60px] text-foreground lg:flex lg:h-svh lg:min-h-[650px] lg:flex-col lg:justify-center lg:py-[10svh]`}
+        className={`faircoin-editorial-dark ${GUTTER} relative bg-background py-[60px] text-foreground lg:flex lg:h-svh lg:min-h-[650px] lg:flex-col lg:justify-center lg:py-[10svh]`}
       >
         <h2 className={`${HERO_TITLE} mb-12 max-w-[600px] lg:mb-[18svh]`}>
           FairCoin makes

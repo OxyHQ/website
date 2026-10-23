@@ -58,7 +58,7 @@ export function useLandingMotion(
             ink: light.getPropertyValue('--foreground').trim(),
           },
           dark: {
-            background: dark.getPropertyValue('--primary-foreground').trim(),
+            background: dark.getPropertyValue('--background').trim(),
             ink: dark.getPropertyValue('--foreground').trim(),
           },
         };

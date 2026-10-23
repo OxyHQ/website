@@ -40,7 +40,7 @@ export default function BuyShell({
             </p>
           )}
         </div>
-        <div className="faircoin-editorial-green relative isolate overflow-hidden rounded-[12px] bg-ring px-3 py-5 text-primary-foreground sm:px-6 sm:py-8 lg:rounded-[20px] lg:py-12">
+        <div className="faircoin-editorial-green relative isolate overflow-hidden rounded-[12px] bg-primary px-3 py-5 text-primary-foreground sm:px-6 sm:py-8 lg:rounded-[20px] lg:py-12">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -left-[8%] top-[14%] hidden size-[36%] -rotate-12 bg-primary-foreground/5 [mask-image:url('/images/apps/faircoin.svg')] [mask-size:contain] [mask-repeat:no-repeat] lg:block"

@@ -1,3 +1,5 @@
+import { BloomColorScope } from '@oxy.so/bloom/theme';
+import { FAIRCOIN_PRESET } from '../theme/brands';
 import { useCallback, useRef, useState } from 'react';
 import CashLandingContent from '../components/faircoin/cash/CashLandingContent';
 import FairCoinIntro from '../components/faircoin/cash/FairCoinIntro';
@@ -62,13 +64,15 @@ export default function FairCoinLanding() {
           hideBanner={onFairCoinHost}
           hideLocalePicker={onFairCoinHost}
         />
-        <main className="flex-1">
-          <CashLandingContent
-            phoneRef={phoneRef}
-            ready={!introActive}
-            onToneChange={setDarkHeader}
-          />
-        </main>
+        <BloomColorScope colorPreset={FAIRCOIN_PRESET} mode="light" asChild>
+          <main className="flex-1">
+            <CashLandingContent
+              phoneRef={phoneRef}
+              ready={!introActive}
+              onToneChange={setDarkHeader}
+            />
+          </main>
+        </BloomColorScope>
         <Footer
           brand={footerBrand}
           columns={footerColumns}

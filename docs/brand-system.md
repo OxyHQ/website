@@ -91,8 +91,14 @@ header occlusion token; otherwise the page shifts as the banner scrolls away.
 
 Current source references are `https://cash.app/new` for the FairCoin intro,
 `https://cash.app/` for its landing, and `https://cash.app/send` for the wallet.
-The FairCoin buy flow uses the same editorial type, white canvas and green
-surface, with its purchase form immediately after the title. Keep the shared
+FairCoin uses Bloom’s complete `faircoin` recipe for its landing, wallet and
+purchase pages, including the generated light/dark surfaces and paired accents.
+Do not reconstruct that recipe from a reference green or a neutral seed. Use
+`primary` with `primary-foreground` for lime fills, `background` with `foreground`
+for dark scenes, and reserve `ring` for focus indicators. Scoped CSS and Bloom
+component context must resolve the same named recipe before and after JavaScript.
+
+The FairCoin buy flow uses the same editorial type and recipe surfaces, with its purchase form immediately after the title. Keep the shared
 header transparent and its brand symbol accessible without a visible wordmark;
 the footer retains its full identity. Use Bloom controls with scoped tokens for
 every interaction state. Only the server quote establishes the payment price;

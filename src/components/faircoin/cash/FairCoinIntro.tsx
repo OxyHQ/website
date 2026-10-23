@@ -247,7 +247,7 @@ export default function FairCoinIntro({
       <div
         data-intro-phone
         aria-hidden="true"
-        className="faircoin-editorial-green pointer-events-none absolute left-0 top-0 overflow-hidden bg-ring will-change-transform"
+        className="faircoin-editorial-green pointer-events-none absolute left-0 top-0 overflow-hidden bg-primary will-change-transform"
       >
         <div
           data-intro-screen

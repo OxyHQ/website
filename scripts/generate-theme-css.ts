@@ -17,7 +17,8 @@
  *   - Document root (`:root`, `.dark`, and the host-stamped `[data-brand]`
  *     apex): `getPresetVars`, canonical tokens only. The alias layer is already
  *     declared at `:root` by Bloom's `theme.css`, and resolves against these.
- *   - Scoped blocks (a brand page, a forced-dark region): `buildSeedScopeVars`,
+ *   - Scoped blocks: `getPresetVars` for complete recipes, `buildSeedScopeVars`
+ *     for custom seeds. Both receive Bloom's own alias vocabulary,
  *     which also emits the `--color-x` aliases. A scope needs them because an
  *     alias substitutes where it is DECLARED — overriding `--background` inside
  *     `.tnp-theme` does not move a `--color-background` declared at `:root`.
@@ -33,6 +34,8 @@ import { join } from 'node:path';
 
 import { APP_COLOR_PRESETS, FREE_COLOR_NAMES } from '@oxy.so/bloom/color-presets';
 import { getPresetVars, buildSeedScopeVars } from '@oxy.so/bloom/design-tokens';
+
+import { presetScopeVars } from './preset-scope-vars';
 
 import { BRAND_SURFACES, HOST_BRANDS, SITE_PRESET, type BrandSurface } from '../src/theme/brands';
 
@@ -106,6 +109,17 @@ function mediaScopeBlock(query: string, selector: string, seed: string, extra?: 
 }
 
 function brandBlocks(surface: BrandSurface): string[] {
+  if (surface.preset) {
+    const render = (selector: string, mode: 'light' | 'dark', extra?: string) =>
+      block(selector, withLogoLetterColor(presetScopeVars(surface.preset, mode)), extra);
+    const heading = `/* ${surface.label} — preset ${surface.preset} */`;
+    return surface.mode === 'auto'
+      ? [
+          `${heading}\n${render(surface.selector, 'light')}`,
+          render(`${surface.selector}:is(.dark, .dark *)`, 'dark'),
+        ]
+      : [`${heading}\n${render(surface.selector, surface.mode, `color-scheme: ${surface.mode};`)}`];
+  }
   const heading = `/* ${surface.label} — seed ${surface.seed} */`;
   const accents = {
     secondarySeed: surface.secondarySeed,
