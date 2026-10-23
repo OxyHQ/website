@@ -93,6 +93,7 @@ bunx tsc -b
 bun test scripts/faircoin-explorer.test.ts scripts/horizon.test.ts scripts/ecosystem-map.test.ts
 FAIRCOIN_TEST_ORIGIN=http://localhost:5173 bun scripts/faircoin-motion.browser.test.ts
 FAIRCOIN_TEST_ORIGIN=http://localhost:5173 bun scripts/faircoin-wallet.browser.test.ts
+FAIRCOIN_TEST_ORIGIN=http://localhost:5173 bun scripts/faircoin-wallet-motion.browser.test.ts
 WEBSITE_TEST_ORIGIN=http://localhost:5173 bun scripts/horizon.browser.test.ts
 ```
 
