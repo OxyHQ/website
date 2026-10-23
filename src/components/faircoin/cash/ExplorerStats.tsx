@@ -97,7 +97,7 @@ export default function ExplorerStats({
         ))}
         <Link
           to={ctaHref}
-          className="faircoin-editorial-green flex aspect-square flex-col justify-between rounded-[16%] bg-ring p-[9%] text-primary-foreground [container-type:inline-size] transition-transform hover:scale-[.98] motion-reduce:transform-none"
+          className="faircoin-editorial-green flex aspect-square flex-col justify-between rounded-[16%] bg-primary p-[9%] text-primary-foreground [container-type:inline-size] transition-transform hover:scale-[.98] motion-reduce:transform-none"
         >
           <span className="text-[clamp(22px,17cqw,40px)] leading-tight tracking-[-.03em]">
             {ctaLabel}

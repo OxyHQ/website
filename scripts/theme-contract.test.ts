@@ -12,7 +12,8 @@ import {
   PREMIUM_COLOR_NAMES,
 } from '@oxy.so/bloom/color-presets';
 import { getPresetVars } from '@oxy.so/bloom/design-tokens';
-import { FAIRCOIN_PRESET, SITE_PRESET } from '../src/theme/brands';
+import { BRAND_SURFACES, FAIRCOIN_PRESET, SITE_PRESET } from '../src/theme/brands';
+import { presetScopeVars } from './preset-scope-vars';
 import { resolveLabPalette } from '../src/theme/color-lab-palette';
 
 const PREVIEW_ROLES = [
@@ -186,5 +187,45 @@ describe('Bloom theme contract', () => {
         workflow,
       ),
     ).toBe(false);
+  });
+});
+
+describe('complete Bloom recipe scopes', () => {
+  test('keeps every canonical value and semantic alias, including authored recipe overrides', () => {
+    // Oxy contains authored token overrides; a seed-only approximation fails here.
+    for (const preset of ['faircoin', 'oxy'] as const) {
+      for (const mode of ['light', 'dark'] as const) {
+        const expected = getPresetVars(preset, mode);
+        const scope = presetScopeVars(preset, mode);
+        for (const [token, value] of Object.entries(expected)) {
+          expect(scope[token]).toBe(value);
+          expect(scope[`--color-${token.slice(2)}`]).toBe(value);
+        }
+        expect(scope['--color-text-primary']).toBe(expected['--foreground']);
+        expect(scope['--color-background-primary-default']).toBe(expected['--card']);
+        expect(scope['--color-accent-600']).toBe(expected['--primary-text']);
+        expect(scope['--color-divider']).toBe(expected['--border']);
+      }
+    }
+  });
+
+  test('publishes the complete FairCoin recipe for all five existing scopes', () => {
+    const css = readFileSync(new URL('../src/styles/theme.generated.css', import.meta.url), 'utf8');
+    const surfaces = BRAND_SURFACES.filter((surface) => surface.preset === FAIRCOIN_PRESET);
+    expect(surfaces).toHaveLength(5);
+    for (const surface of surfaces) {
+      const modes = surface.mode === 'auto' ? (['light', 'dark'] as const) : [surface.mode];
+      for (const mode of modes) {
+        const selector =
+          surface.mode === 'auto' && mode === 'dark'
+            ? `${surface.selector}:is(.dark, .dark *)`
+            : surface.selector;
+        const body = css.split(`${selector} {\n`)[1]?.split('\n}')[0];
+        expect(body).toBeDefined();
+        for (const [token, value] of Object.entries(presetScopeVars(FAIRCOIN_PRESET, mode))) {
+          expect(body).toContain(`  ${token}: ${value};`);
+        }
+      }
+    }
   });
 });

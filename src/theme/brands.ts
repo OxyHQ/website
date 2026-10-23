@@ -1,7 +1,8 @@
 /**
- * Every colour this site paints, as a seed.
+ * Every colour this site paints, as a Bloom recipe or seed.
  *
- * A surface is one colour. Bloom's engine derives the rest of the ramp from it —
+ * A named surface uses its complete Bloom recipe; a custom surface uses a seed.
+ * Bloom owns the rest of the ramp —
  * surface, card, border, muted, the status and chart families — and
  * `scripts/generate-theme-css.ts` writes the result into
  * `src/styles/theme.generated.css`. Nothing else may hardcode a colour for these
@@ -39,18 +40,20 @@ export type BrandMode =
   /** Stays light whatever the toggle says — a fixed light illustration. */
   | 'light';
 
-export interface BrandSurface {
+interface BrandSurfaceBase {
   /** The class the page's root element carries. */
   selector: string;
-  /** The brand colour, `#rrggbb`. */
-  seed: string;
-  /** Optional Bloom accent seeds for curated multi-colour presets. */
-  secondarySeed?: string;
-  tertiarySeed?: string;
   mode: BrandMode;
   /** What the surface is, for whoever reads the generated file. */
   label: string;
 }
+
+/** A complete named recipe, or an explicitly authored seed surface. */
+export type BrandSurface = BrandSurfaceBase &
+  (
+    | { preset: AppColorName; seed?: never; secondarySeed?: never; tertiarySeed?: never }
+    | { preset?: never; seed: string; secondarySeed?: string; tertiarySeed?: string }
+  );
 
 /**
  * Order matters, and `.cursor-theme` must stay first.
@@ -76,21 +79,21 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
   },
   {
     selector: '.faircoin-editorial',
-    seed: '#000000',
+    preset: FAIRCOIN_PRESET,
     mode: 'light',
-    label: 'FairCoin editorial — neutral light canvas',
+    label: 'FairCoin editorial — Bloom faircoin light recipe',
   },
   {
     selector: '.faircoin-editorial-dark',
-    seed: '#000000',
+    preset: FAIRCOIN_PRESET,
     mode: 'dark',
-    label: 'FairCoin editorial — neutral dark canvas',
+    label: 'FairCoin editorial — Bloom faircoin dark recipe',
   },
   {
     selector: '.faircoin-editorial-green',
-    seed: '#00e013',
+    preset: FAIRCOIN_PRESET,
     mode: 'dark',
-    label: 'FairCoin editorial — reference green, resolved by Bloom',
+    label: 'FairCoin editorial accents — Bloom faircoin dark recipe',
   },
   {
     selector: '.commons-theme',
@@ -198,7 +201,7 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
   },
   {
     selector: '.faircoin-theme',
-    seed: APP_COLOR_PRESETS[FAIRCOIN_PRESET].hex,
+    preset: FAIRCOIN_PRESET,
     mode: 'auto',
     label: 'FairCoin sections on oxy.so',
   },
@@ -362,7 +365,7 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     // screen, and the real app is always dark — so it stays dark whatever the
     // site's toggle says, rather than following the page around it.
     selector: '.phone-mockup-dark',
-    seed: APP_COLOR_PRESETS[FAIRCOIN_PRESET].hex,
+    preset: FAIRCOIN_PRESET,
     mode: 'dark',
     label: 'FAIRWallet phone mockup',
   },
