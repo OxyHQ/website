@@ -6,6 +6,7 @@ import {
   useMotionValue,
   useReducedMotion,
   useTransform,
+  type MotionValue,
 } from 'framer-motion';
 import Button from './FairCoinButton';
 import { fc } from '../../../lib/faircoin-links';
@@ -13,6 +14,7 @@ import { Link } from '../../../lib/navigation';
 import LandingPhone from './LandingPhone';
 import ExplorerStats from './ExplorerStats';
 import { useLandingMotion } from './useLandingMotion';
+import { usePausableLoop } from './usePausableLoop';
 import './fonts.css';
 
 // The reference caps its twelve content columns at 1440px; backgrounds stay full width.
@@ -105,6 +107,21 @@ function Stage({
 function CardFan({ paused }: { paused: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 1 });
+  const reduce = useReducedMotion();
+  const spread = useMotionValue(reduce ? 1 : 0);
+  const playback = useRef<ReturnType<typeof animate> | null>(null);
+  const pausedRef = useRef(paused);
+  useEffect(() => {
+    pausedRef.current = paused;
+    if (paused) playback.current?.pause();
+    else playback.current?.play();
+  }, [paused]);
+  useEffect(() => {
+    const animation = animate(spread, inView ? 1 : 0, { duration: 0.4, ease: 'easeInOut' });
+    if (pausedRef.current) animation.pause();
+    playback.current = animation;
+    return () => animation.stop();
+  }, [inView, spread]);
   const colors = [
     'bg-ring',
     'bg-secondary',
@@ -120,20 +137,11 @@ function CardFan({ paused }: { paused: boolean }) {
       className="faircoin-editorial-green relative aspect-[1.67] w-full max-w-[480px]"
     >
       {colors.map((color, i) => (
-        <motion.div
+        <FanCard
           key={['green', 'pink', 'paper', 'yellow', 'lime', 'cover'][i]}
           className={`absolute left-1/2 top-1/2 aspect-[1.58] w-full overflow-hidden rounded-[5%] border border-foreground/10 p-[5%] text-primary-foreground shadow-xl ${color}`}
-          initial={false}
-          animate={{
-            rotate: paused || inView ? [-82.5, -75, -60, -45, -30, -15][i] : -90,
-            x: '-50%',
-            y: '-50%',
-          }}
-          transition={{
-            duration: paused ? 0 : 0.4,
-            ease: 'easeInOut',
-          }}
-          style={{ transformOrigin: '50% 50%' }}
+          spread={spread}
+          angle={[-82.5, -75, -60, -45, -30, -15][i]}
         >
           {i === 5 ? (
             <>
@@ -157,15 +165,52 @@ function CardFan({ paused }: { paused: boolean }) {
           ) : (
             <span className="float-right text-[clamp(12px,1.4vw,22px)]">FairCoin</span>
           )}
-        </motion.div>
+        </FanCard>
       ))}
     </div>
   );
 }
 
+function FanCard({
+  spread,
+  angle,
+  className,
+  children,
+}: {
+  spread: MotionValue<number>;
+  angle: number;
+  className: string;
+  children: ReactNode;
+}) {
+  const rotate = useTransform(spread, [0, 1], [-90, angle]);
+  return (
+    <motion.div
+      className={className}
+      style={{ rotate, x: '-50%', y: '-50%', transformOrigin: '50% 50%' }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+const KEY_ROTATION = [-12, 12, -12];
+const KEY_SCALE = [1, 0.9, 1];
+const KEY_Y = [0, 12, 0];
+const TOTE_ROTATION = [5, -5, 5];
+const TOTE_Y = [0, -25, 0];
+const TRANSFER_AMOUNTS = [0, 75, 75, 150, 150, 200, 200, 0];
+const TRANSFER_TIMES = [0, 0.125, 0.25, 0.375, 0.5, 0.75, 0.95, 1];
+
 function ObjectFilm({ paused }: { paused: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const visible = useInView(ref, { amount: 0.5 });
+  const stopped = paused || !visible;
+  const rotate = usePausableLoop(0, KEY_ROTATION, 12, stopped);
+  const scale = usePausableLoop(1, KEY_SCALE, 12, stopped);
+  const keyY = usePausableLoop(0, KEY_Y, 12, stopped);
+  const y = useTransform(keyY, (value) => `${value}%`);
+  const toteRotate = usePausableLoop(0, TOTE_ROTATION, 9, stopped);
+  const toteY = usePausableLoop(0, TOTE_Y, 9, stopped);
   return (
     <div
       ref={ref}
@@ -179,12 +224,7 @@ function ObjectFilm({ paused }: { paused: boolean }) {
         alt=""
         loading="lazy"
         className="absolute top-[8%] w-[125%] max-w-none"
-        animate={
-          paused || !visible
-            ? { rotate: 0, scale: 1, y: 0 }
-            : { rotate: [-12, 12, -12], scale: [1, 0.9, 1], y: ['0%', '12%', '0%'] }
-        }
-        transition={{ duration: paused ? 0 : 12, repeat: paused ? 0 : Infinity, ease: 'easeInOut' }}
+        style={{ rotate, scale, y }}
       />
       <motion.img
         src="/faircoin/objects/market-tote.webp"
@@ -193,30 +233,16 @@ function ObjectFilm({ paused }: { paused: boolean }) {
         alt=""
         loading="lazy"
         className="absolute bottom-[6%] right-[-8%] w-[78%]"
-        animate={paused || !visible ? { rotate: 0, y: 0 } : { rotate: [5, -5, 5], y: [0, -25, 0] }}
-        transition={{ duration: paused ? 0 : 9, repeat: paused ? 0 : Infinity, ease: 'easeInOut' }}
+        style={{ rotate: toteRotate, y: toteY }}
       />
     </div>
   );
 }
 
 function TransferAmount({ paused }: { paused: boolean }) {
-  const value = useMotionValue(200);
+  const value = usePausableLoop(200, TRANSFER_AMOUNTS, 4, paused, 0, TRANSFER_TIMES);
   const formatted = useTransform(value, (amount) => String(Math.round(amount)));
   const width = useTransform(value, [0, 200], ['32%', '80%']);
-  useEffect(() => {
-    if (paused) {
-      value.set(200);
-      return;
-    }
-    const playback = animate(value, [0, 75, 75, 150, 150, 200, 200, 0], {
-      duration: 4,
-      times: [0, 0.125, 0.25, 0.375, 0.5, 0.75, 0.95, 1],
-      repeat: Infinity,
-      ease: 'easeInOut',
-    });
-    return () => playback.stop();
-  }, [paused, value]);
   return (
     <div
       aria-hidden="true"

@@ -11,8 +11,20 @@ import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine';
 import { RiUserLine } from '@oxy.so/bloom/icons/RiUserLine';
 import { RiQrCodeLine } from '@oxy.so/bloom/icons/RiQrCodeLine';
 import '../../../styles/faircoin-theme.css';
+import { usePausableLoop } from './usePausableLoop';
 
 export type PhoneScreen = 'wallet' | 'send' | 'pockets' | 'security';
+const PIN_OPACITY = [0.2, 0.2, 1, 1, 0.2];
+
+function SecurityDot({ index, paused }: { index: number; paused: boolean }) {
+  const opacity = usePausableLoop(index < 3 ? 1 : 0.2, PIN_OPACITY, 5, paused, index * 0.25);
+  return (
+    <motion.span
+      className="size-[3cqw] rounded-full border border-primary bg-primary"
+      style={{ opacity }}
+    />
+  );
+}
 
 /** FAIRWallet's current home and Send/Receive sheet, with illustrative data.
  * Source: FAIRWallet/app/(tabs)/index.tsx and src/ui/sheets/SendReceiveSheet.tsx.
@@ -241,14 +253,7 @@ export default function LandingPhone({
             <p className="mt-[8%] text-[5cqw] font-semibold">Unlock your wallet</p>
             <div className="mt-[9%] flex gap-[3cqw]">
               {[0, 1, 2, 3, 4, 5].map((n) => (
-                <motion.span
-                  key={n}
-                  className="size-[3cqw] rounded-full border border-primary bg-primary"
-                  animate={
-                    paused ? { opacity: n < 3 ? 1 : 0.2 } : { opacity: [0.2, 0.2, 1, 1, 0.2] }
-                  }
-                  transition={{ duration: 5, delay: n * 0.25, repeat: paused ? 0 : Infinity }}
-                />
+                <SecurityDot key={n} index={n} paused={paused || !!reduce || !visible} />
               ))}
             </div>
             <div className="mt-[20%] grid w-full grid-cols-3 gap-y-[8cqw] text-center text-[8cqw]">

@@ -34,14 +34,9 @@ export function useLandingMotion(
       syncHeader();
       return () => window.removeEventListener('scroll', syncHeader);
     });
-    if (paused) {
-      window.addEventListener('scroll', syncHeader, { passive: true });
-      syncHeader();
-      return () => {
-        media.revert();
-        window.removeEventListener('scroll', syncHeader);
-      };
-    }
+    // Pause controls ambient playback and magnetic input below. The structural
+    // masks keep their geometry: reverting them here moves fixed phones back
+    // into document flow, visibly jumping by the current section scroll offset.
     // The intro reveals this already-rendered hero. Do not replay its entrance
     // or rebuild the scroll timelines when the transparent overlay unmounts.
     media.add(
@@ -215,7 +210,7 @@ export function useLandingMotion(
       active = false;
       media.revert();
     };
-  }, [root, paused, onToneChange]);
+  }, [root, onToneChange]);
 
   // Input becomes available after the intro, independently of the visual state.
   useLayoutEffect(() => {
