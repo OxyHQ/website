@@ -172,7 +172,25 @@ try {
         }),
       );
     const start = await cards();
-    await page.clock.runFor(2500);
+    const sceneBounds = await bridge.boundingBox();
+    assert(sceneBounds);
+    const sceneCenter = sceneBounds.y + sceneBounds.height / 2;
+    const centralCard = start
+      .map((card, index) => ({ ...card, index }))
+      .filter((card) => Math.abs(card.y + card.h / 2 - sceneCenter) < sceneBounds.height * 0.2)
+      .sort((a, b) => b.w * b.h - a.w * a.h)[0];
+    assert(centralCard, `${width}: a front card must be visible near the scene center`);
+    // Follow the largest central face briefly, before it can wrap outside the crop.
+    await page.clock.runFor(400);
+    const advancing = await cards();
+    const nextCard = advancing[centralCard.index];
+    const upwardTravel =
+      (centralCard.y + centralCard.h / 2 - (nextCard.y + nextCard.h / 2)) / sceneBounds.height;
+    assert(
+      upwardTravel > 0.07 && upwardTravel < 0.13,
+      `${width}: central card must move upward at the source cadence; moved ${upwardTravel}`,
+    );
+    await page.clock.runFor(2100);
     const middle = await cards();
     assert(
       middle.some((card) => card.transform.startsWith('matrix3d(')),
@@ -213,6 +231,8 @@ try {
         document.querySelector('[data-wallet-scene="bridge"]')?.getAttribute('data-paused') ===
         'true',
     );
+    // Flush the last scheduled paint after the visibility effect pauses its clock.
+    await page.clock.runFor(32);
     const offscreen = await frameSnapshot();
     await page.clock.runFor(2500);
     assert.equal(await frameSnapshot(), offscreen, `${width}: hidden scene must stop its clock`);
