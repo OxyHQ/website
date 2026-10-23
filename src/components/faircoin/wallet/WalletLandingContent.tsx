@@ -216,7 +216,7 @@ export default function WalletLandingContent({
               >
                 <Icon
                   fill="currentColor"
-                  className="faircoin-editorial-green mt-1 size-[calc(12px+2.5vw)] shrink-0 text-ring"
+                  className="faircoin-editorial-green mt-1 size-[calc(12px+2.5vw)] shrink-0 text-primary"
                 />
                 <p className="text-[length:var(--wallet-type)] leading-[1.4]">{text}</p>
               </div>
@@ -342,9 +342,9 @@ export default function WalletLandingContent({
               },
             ].map(({ href, label, cta, art }) => (
               <div key={art} className="grid grid-cols-[40%_1fr] items-start gap-x-2 lg:block">
-                <div className="faircoin-editorial-dark relative block row-span-2 aspect-square overflow-hidden rounded-[12px] bg-primary-foreground text-foreground lg:rounded-[20px]">
+                <div className="faircoin-editorial-dark relative block row-span-2 aspect-square overflow-hidden rounded-[12px] bg-background text-foreground lg:rounded-[20px]">
                   {art === 'coin' ? (
-                    <div className="faircoin-editorial-green absolute inset-[28%] bg-ring [mask-image:url('/images/apps/faircoin.svg')] [mask-size:contain] [mask-repeat:no-repeat] [mask-position:center]" />
+                    <div className="faircoin-editorial-green absolute inset-[28%] bg-primary [mask-image:url('/images/apps/faircoin.svg')] [mask-size:contain] [mask-repeat:no-repeat] [mask-position:center]" />
                   ) : (
                     <WalletScenes scene={art === 'wallet' ? 'balance' : 'bridge'} square />
                   )}
@@ -369,7 +369,7 @@ export default function WalletLandingContent({
       <section
         ref={finalSection}
         id="wallet-download"
-        className={`faircoin-editorial-dark ${GUTTER} bg-primary-foreground pb-20 pt-[100px] text-foreground lg:pt-[180px]`}
+        className={`faircoin-editorial-dark ${GUTTER} bg-background pb-20 pt-[100px] text-foreground lg:pt-[180px]`}
       >
         <h2 className="mb-[100px] text-[calc(var(--wallet-type)*2.57143)] leading-[.95] tracking-[-.03em] lg:mb-[200px] lg:text-[calc(var(--wallet-type)*2.75)]">
           FairCoin makes

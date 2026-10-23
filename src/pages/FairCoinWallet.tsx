@@ -1,3 +1,5 @@
+import { BloomColorScope } from '@oxy.so/bloom/theme';
+import { FAIRCOIN_PRESET } from '../theme/brands';
 import { useState } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -55,9 +57,11 @@ export default function FairCoinWalletPage() {
         hideBanner={onFairCoinHost}
         hideLocalePicker={onFairCoinHost}
       />
-      <main className="flex-1">
-        <WalletLandingContent onToneChange={setDarkHeader} />
-      </main>
+      <BloomColorScope colorPreset={FAIRCOIN_PRESET} mode="light" asChild>
+        <main className="flex-1">
+          <WalletLandingContent onToneChange={setDarkHeader} />
+        </main>
+      </BloomColorScope>
       <Footer
         brand={footerBrand}
         columns={footerColumns}

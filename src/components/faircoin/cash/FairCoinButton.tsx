@@ -9,7 +9,7 @@ export default function FairCoinButton({
 }: ComponentProps<typeof Button>) {
   const palette =
     variant === 'inverse'
-      ? '!bg-transparent !text-ring !border-transparent [&::after]:!bg-primary-foreground'
+      ? '!bg-transparent !text-primary !border-transparent [&::after]:!bg-primary-foreground'
       : variant === 'ghost'
         ? '!bg-transparent !text-inherit !border-transparent [&::after]:!bg-transparent'
         : '!bg-transparent !text-inherit !border-current [&::after]:!bg-transparent';

@@ -68,10 +68,10 @@ function StatusBar() {
 function SoftBackdrop() {
   const grainId = useId();
   return (
-    <div className="faircoin-editorial-green absolute inset-0 overflow-hidden bg-ring">
-      <div className="absolute -left-[14%] -top-[30%] h-[80%] w-[90%] -rotate-45 rounded-full bg-[color-mix(in_srgb,var(--ring)_30%,var(--primary-foreground))] blur-[7cqw]" />
+    <div className="faircoin-editorial-green absolute inset-0 overflow-hidden bg-primary">
+      <div className="absolute -left-[14%] -top-[30%] h-[80%] w-[90%] -rotate-45 rounded-full bg-[color-mix(in_srgb,var(--primary)_30%,var(--primary-foreground))] blur-[7cqw]" />
       <div className="faircoin-editorial absolute -right-[20%] -top-[25%] h-[95%] w-[100%] -rotate-45 rounded-full bg-card/75 blur-[10cqw]" />
-      <div className="absolute -bottom-[40%] -left-[30%] h-[90%] w-[115%] -rotate-45 rounded-full bg-[color-mix(in_srgb,var(--ring)_35%,var(--primary-foreground))] blur-[10cqw]" />
+      <div className="absolute -bottom-[40%] -left-[30%] h-[90%] w-[115%] -rotate-45 rounded-full bg-[color-mix(in_srgb,var(--primary)_35%,var(--primary-foreground))] blur-[10cqw]" />
       <svg aria-hidden="true" className="absolute size-full opacity-[.12] mix-blend-soft-light">
         <filter id={grainId}>
           <feTurbulence
@@ -122,7 +122,7 @@ function PocketPortrait({ time, index }: { time: MotionValue<number>; index: num
       className="absolute aspect-square overflow-hidden rounded-full"
     >
       {index === 6 ? (
-        <span className="faircoin-editorial-green flex size-full items-center justify-center bg-ring text-[6cqw] text-primary-foreground">
+        <span className="faircoin-editorial-green flex size-full items-center justify-center bg-primary text-[6cqw] text-primary-foreground">
           FAIR
         </span>
       ) : (
@@ -145,9 +145,9 @@ function BridgeCard({ time, index }: { time: MotionValue<number>; index: number 
   const rotateX = useTransform(position, (value) => (-value * 360) / 125);
   const theme =
     design === 1
-      ? 'faircoin-editorial-dark bg-primary-foreground text-foreground'
+      ? 'faircoin-editorial-dark bg-background text-foreground'
       : design === 2
-        ? 'faircoin-editorial-green bg-ring text-primary-foreground'
+        ? 'faircoin-editorial-green bg-primary text-primary-foreground'
         : 'faircoin-editorial bg-card text-foreground';
   return (
     <motion.div
@@ -230,7 +230,7 @@ function PaymentNotice({ time, index }: { time: MotionValue<number>; index: numb
       style={{ y, scale, opacity, zIndex }}
       className="faircoin-editorial absolute inset-x-[8%] top-[43.5%] flex items-center gap-[4%] rounded-[4cqw] bg-card px-[4.2%] py-[5%] text-foreground"
     >
-      <span className="faircoin-editorial-green flex size-[10cqw] shrink-0 items-center justify-center rounded-full bg-ring text-[6cqw] text-primary-foreground">
+      <span className="faircoin-editorial-green flex size-[10cqw] shrink-0 items-center justify-center rounded-full bg-primary text-[6cqw] text-primary-foreground">
         !
       </span>
       <span className="text-[4.7cqw] font-semibold leading-tight">
@@ -317,9 +317,9 @@ export default function WalletScenes({
     ['0%', '0%', '77%', '77%', '0%', '0%'],
   );
   const theme = ['activity', 'unlock', 'balance', 'bridge'].includes(scene)
-    ? 'faircoin-editorial-dark bg-primary-foreground text-foreground'
+    ? 'faircoin-editorial-dark bg-background text-foreground'
     : scene === 'review'
-      ? 'faircoin-editorial-green bg-ring text-primary-foreground'
+      ? 'faircoin-editorial-green bg-primary text-primary-foreground'
       : 'faircoin-editorial bg-background text-foreground';
   return (
     <div
@@ -331,7 +331,7 @@ export default function WalletScenes({
       <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
         {(scene === 'receive' || scene === 'lock') && <SoftBackdrop />}
         {scene === 'send' && (
-          <div className="faircoin-editorial-green absolute left-1/2 top-[5.5%] aspect-[.462] w-[41%] -translate-x-1/2 overflow-hidden rounded-[14%/6.5%] bg-ring text-primary-foreground [container-type:inline-size] lg:w-[31.4%]">
+          <div className="faircoin-editorial-green absolute left-1/2 top-[5.5%] aspect-[.462] w-[41%] -translate-x-1/2 overflow-hidden rounded-[14%/6.5%] bg-primary text-primary-foreground [container-type:inline-size] lg:w-[31.4%]">
             <StatusBar />
             <div className="mt-[9%] flex items-center justify-between px-[8%] text-[7cqw]">
               <RiQrCodeLine fill="currentColor" className="size-[7cqw]" />
@@ -399,7 +399,7 @@ export default function WalletScenes({
                 style={{ opacity: sent }}
                 className="absolute inset-0 flex flex-col items-center justify-center rounded-t-[10cqw] bg-card text-foreground"
               >
-                <span className="faircoin-editorial-green flex size-[25cqw] items-center justify-center rounded-full bg-ring text-[16cqw] text-primary-foreground">
+                <span className="faircoin-editorial-green flex size-[25cqw] items-center justify-center rounded-full bg-primary text-[16cqw] text-primary-foreground">
                   <RiCheckLine fill="currentColor" />
                 </span>
                 <p className="mt-[9%] text-[8cqw] font-semibold">Payment sent</p>
@@ -485,7 +485,7 @@ export default function WalletScenes({
                   cy="200"
                   r="193"
                   fill="none"
-                  stroke="var(--ring)"
+                  stroke="var(--primary)"
                   strokeWidth="15"
                   strokeLinecap="round"
                   style={{ pathLength: ringLength }}
@@ -510,7 +510,7 @@ export default function WalletScenes({
             <motion.div
               data-pocket-completion
               style={{ opacity: communityOpacity }}
-              className="faircoin-editorial-dark absolute inset-0 bg-primary-foreground"
+              className="faircoin-editorial-dark absolute inset-0 bg-background"
             />
             <motion.div
               data-pocket-portraits
@@ -527,7 +527,7 @@ export default function WalletScenes({
           <div className="absolute left-1/2 top-1/2 h-[32%] w-[24%] -translate-x-1/2 -translate-y-1/2 lg:w-[18%]">
             <div className="absolute inset-x-[20%] top-0 h-[60%] rounded-t-full border-[2cqw] border-primary" />
             <div className="absolute inset-x-0 bottom-0 flex h-[68%] items-center justify-center rounded-[4cqw] bg-primary">
-              <CoinMark className="faircoin-editorial-green h-[66%] w-[50%] text-ring" />
+              <CoinMark className="faircoin-editorial-green h-[66%] w-[50%] text-primary" />
             </div>
           </div>
         )}
@@ -560,7 +560,7 @@ export default function WalletScenes({
               </g>
             </svg>
             <div className="faircoin-editorial absolute inset-x-[16%] top-[20%] rounded-[4cqw] bg-card p-[4%] text-foreground">
-              <span className="faircoin-editorial-green flex size-[8cqw] items-center justify-center rounded-full bg-ring text-[5cqw] text-primary-foreground">
+              <span className="faircoin-editorial-green flex size-[8cqw] items-center justify-center rounded-full bg-primary text-[5cqw] text-primary-foreground">
                 <RiKey2Line fill="currentColor" />
               </span>
               <p className="mt-[4%] text-[5.5cqw] font-semibold leading-tight">
@@ -579,7 +579,7 @@ export default function WalletScenes({
         )}
         {scene === 'unlock' && (
           <div className="absolute inset-x-0 top-[39.5%] flex flex-col items-center">
-            <div className="faircoin-editorial-green w-[35%] rounded-full bg-ring p-[1.5%]">
+            <div className="faircoin-editorial-green w-[35%] rounded-full bg-primary p-[1.5%]">
               <motion.div
                 style={{ x: toggled }}
                 className="faircoin-editorial flex aspect-square w-[56%] items-center justify-center rounded-full bg-card text-[7cqw] text-foreground"
@@ -592,7 +592,7 @@ export default function WalletScenes({
         )}
         {scene === 'balance' && (
           <div className="absolute inset-x-[13.5%] top-[17%]">
-            <div className="faircoin-editorial-green absolute -top-[13%] inset-x-0 h-[45%] overflow-hidden rounded-[4cqw] bg-ring text-primary-foreground">
+            <div className="faircoin-editorial-green absolute -top-[13%] inset-x-0 h-[45%] overflow-hidden rounded-[4cqw] bg-primary text-primary-foreground">
               <div className="absolute inset-0 opacity-40 bg-[repeating-radial-gradient(ellipse_at_10%_10%,transparent_0_8%,var(--primary-foreground)_9%_10%,transparent_11%_15%)]" />
               <p className="relative px-[8%] pt-[8%] text-[3cqw]">FAIR · My wallet</p>
             </div>
@@ -611,7 +611,10 @@ export default function WalletScenes({
               </div>
               <div className="mt-[11%] flex items-center justify-between text-[3cqw]">
                 <span className="flex items-center gap-[1cqw]">
-                  <RiCheckLine fill="currentColor" className="faircoin-editorial-green text-ring" />{' '}
+                  <RiCheckLine
+                    fill="currentColor"
+                    className="faircoin-editorial-green text-primary"
+                  />{' '}
                   My wallet
                 </span>
                 <span className="text-muted-foreground">FairCoin ›</span>

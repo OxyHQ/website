@@ -5,7 +5,8 @@ import { BRAND_SURFACES } from '../src/theme/brands';
 import { fontFamilies } from '@oxy.so/bloom/fonts';
 
 const ROOT = join(import.meta.dir, '..');
-const TOKENS = ['--background', '--card', '--primary', '--secondary', '--tertiary'] as const;
+// Cover the complete canonical recipe, including accent foregrounds, status and chart roles.
+const TOKENS = Object.keys(getPresetVars('faircoin', 'light'));
 
 function invariant(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -135,7 +136,13 @@ try {
   // Marketing pages prerender their head and shell, not the interactive scene.
   // Probe the generated scope in the real stylesheet with app scripts blocked;
   // a late React-only palette or missing scoped aliases must not pass this gate.
-  const scopeClasses = ['oxy-ecosystem', 'faircoin-editorial', 'faircoin-editorial-green'];
+  const scopeClasses = [
+    'oxy-ecosystem',
+    'faircoin-editorial',
+    'faircoin-editorial-dark',
+    'faircoin-editorial-green',
+    'phone-mockup-dark',
+  ];
   const readScopes = () =>
     page.evaluate(
       ({ names, tokens }) =>
@@ -160,12 +167,18 @@ try {
   for (const name of scopeClasses) {
     const surface = BRAND_SURFACES.find((entry) => entry.selector.split(', ').includes(`.${name}`));
     invariant(surface && surface.mode !== 'auto', `Missing fixed marketing surface ${name}`);
-    const scopeExpected = buildSeedScopeVars({
-      seed: surface.seed,
-      secondarySeed: surface.secondarySeed,
-      tertiarySeed: surface.tertiarySeed,
-      mode: surface.mode,
-    });
+    let scopeExpected: Record<string, string>;
+    if (surface.preset) {
+      scopeExpected = getPresetVars(surface.preset, surface.mode);
+    } else {
+      invariant(surface.seed, `Missing seed for marketing surface ${name}`);
+      scopeExpected = buildSeedScopeVars({
+        seed: surface.seed,
+        secondarySeed: surface.secondarySeed,
+        tertiarySeed: surface.tertiarySeed,
+        mode: surface.mode,
+      });
+    }
     for (const token of TOKENS) {
       for (const key of [token, `--color-${token.slice(2)}`]) {
         invariant(
@@ -273,6 +286,7 @@ try {
     for (const [routePath, surface] of [
       ['/faircoin/', '.faircoin-editorial'],
       ['/faircoin/wallet/', '.faircoin-editorial'],
+      ['/faircoin/buy/', '.faircoin-editorial'],
       ['/horizon/', '.oxy-ecosystem'],
     ]) {
       await page.route('**/*', async (route) => {
@@ -298,7 +312,7 @@ try {
       });
       await page.route('**/*', async (route) => {
         if (
-          /\/(FairCoinLanding|FairCoinWallet|HorizonPage)-[^/]+\.js(?:\?|$)/.test(
+          /\/(FairCoinLanding|FairCoinWallet|FairCoinBuy|HorizonPage)-[^/]+\.js(?:\?|$)/.test(
             route.request().url(),
           )
         ) {

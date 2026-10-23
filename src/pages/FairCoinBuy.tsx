@@ -1,3 +1,5 @@
+import { BloomColorScope } from '@oxy.so/bloom/theme';
+import { FAIRCOIN_PRESET } from '../theme/brands';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
@@ -48,9 +50,11 @@ export default function FairCoinBuyPage() {
         hideBanner={onFairCoinHost}
         hideLocalePicker={onFairCoinHost}
       />
-      <main className="flex-1">
-        <BuyApp />
-      </main>
+      <BloomColorScope colorPreset={FAIRCOIN_PRESET} mode="light" asChild>
+        <main className="flex-1">
+          <BuyApp />
+        </main>
+      </BloomColorScope>
       <Footer
         brand={footerBrand}
         columns={footerColumns}
