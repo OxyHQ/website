@@ -132,29 +132,56 @@ function PocketPortrait({ time, index }: { time: MotionValue<number>; index: num
   );
 }
 
-/** Each card wraps only outside the crop, with perspective around the vertical track. */
+/** Source track: four designs, 31.25cqw apart, one upward pass and full flip per five seconds.
+ * A second copy covers the cropped top/bottom while a card wraps; both faces stay continuous.
+ */
 function BridgeCard({ time, index }: { time: MotionValue<number>; index: number }) {
-  const phase = useTransform(time, (t) => (((t / 5 + index / 6) % 1) + 1) % 1);
-  const y = useTransform(phase, (p) => `${(p - 0.5) * 240}cqw`);
-  const rotateX = useTransform(phase, [0, 0.5, 1], [-80, 0, 80]);
-  const scale = useTransform(phase, [0, 0.5, 1], [0.84, 1, 0.84]);
-  const opacity = useTransform(phase, [0, 0.12, 0.88, 1], [0, 1, 1, 0]);
+  const design = index % 4;
+  const position = useTransform(time, (t) => {
+    const wrapped = ((((design * 31.25 - t * 25 + 62.5) % 125) + 125) % 125) - 62.5;
+    return index < 4 ? wrapped : wrapped + (wrapped >= 0 ? -125 : 125);
+  });
+  const y = useTransform(position, (value) => `${value}cqw`);
+  const rotateX = useTransform(position, (value) => (-value * 360) / 125);
+  const theme =
+    design === 1
+      ? 'faircoin-editorial-dark bg-primary-foreground text-foreground'
+      : design === 2
+        ? 'faircoin-editorial-green bg-ring text-primary-foreground'
+        : 'faircoin-editorial bg-card text-foreground';
   return (
     <motion.div
       data-bridge-card
-      style={{ y, rotateX, scale, opacity }}
-      className={`${index % 3 === 0 ? 'faircoin-editorial bg-card text-foreground' : index % 3 === 1 ? 'faircoin-editorial-green bg-ring text-primary-foreground' : 'faircoin-editorial-dark border border-border bg-primary-foreground text-foreground'} absolute left-[19%] top-1/2 aspect-[1.6] w-[62%] -translate-y-1/2 overflow-hidden rounded-[3cqw] px-[4.3%] py-[3.1%] [backface-visibility:hidden]`}
+      data-bridge-design={design}
+      style={{ y, rotateX }}
+      className="absolute left-[19%] top-1/2 aspect-[1.6] w-[62%] -translate-y-1/2 [transform-style:preserve-3d]"
     >
       <div
-        className={`absolute inset-0 opacity-30 ${index % 2 ? 'bg-[repeating-radial-gradient(ellipse_at_70%_40%,transparent_0_7%,currentColor_7.5%_8%,transparent_8.5%_14%)]' : 'bg-[repeating-linear-gradient(25deg,transparent_0_9%,currentColor_10%_10.5%,transparent_11%_18%)]'}`}
-      />
-      <div className="relative flex items-center justify-between">
-        <span className="text-[4.5cqw] font-semibold">{index % 2 ? 'WFAIR' : 'FAIR'}</span>
-        <CoinMark className="size-[6cqw]" />
+        data-bridge-front
+        className={`${theme} absolute inset-0 overflow-hidden rounded-[2.3cqw] px-[7%] py-[5%] [backface-visibility:hidden]`}
+      >
+        <div
+          className={`absolute inset-0 opacity-30 ${design % 2 ? 'bg-[repeating-linear-gradient(25deg,transparent_0_9%,currentColor_10%_10.5%,transparent_11%_18%)]' : 'bg-[repeating-radial-gradient(ellipse_at_70%_40%,transparent_0_7%,currentColor_7.5%_8%,transparent_8.5%_14%)]'}`}
+        />
+        <div className="relative flex items-center justify-between">
+          <span className="text-[4.5cqw] font-semibold">{design % 2 ? 'WFAIR' : 'FAIR'}</span>
+          <CoinMark className="size-[6cqw]" />
+        </div>
+        <p className="relative mt-[24%] text-[3cqw]">
+          {design % 2 ? 'Wrapped FAIR · Base' : 'FairCoin · Mainnet'}
+        </p>
       </div>
-      <p className="relative mt-[24%] text-[3cqw]">
-        {index % 2 ? 'Wrapped FAIR · Base' : 'FairCoin · Mainnet'}
-      </p>
+      <div
+        data-bridge-back
+        className="faircoin-editorial absolute inset-0 overflow-hidden rounded-[2.3cqw] bg-muted text-foreground [backface-visibility:hidden] [transform:rotateY(180deg)]"
+      >
+        <div className="mt-[8%] h-[20%] bg-primary/85" />
+        <div className="px-[7%] pt-[8%] text-right text-[2.8cqw]">
+          <p>{design % 2 ? 'Wrapped FAIR · Base' : 'FairCoin · Mainnet'}</p>
+          <p className="mt-[5%] text-[2.3cqw] text-muted-foreground">Your money. Your keys.</p>
+        </div>
+        <CoinMark className="absolute bottom-[9%] left-[7%] size-[6cqw]" />
+      </div>
     </motion.div>
   );
 }
@@ -594,7 +621,7 @@ export default function WalletScenes({
         )}
         {scene === 'bridge' && (
           <div className="absolute inset-0 [perspective:180cqw] [transform-style:preserve-3d]">
-            {[0, 1, 2, 3, 4, 5].map((index) => (
+            {[0, 1, 2, 3, 4, 5, 6, 7].map((index) => (
               <BridgeCard key={index} time={time} index={index} />
             ))}
           </div>
