@@ -43,10 +43,17 @@ export async function apiFetch<T>(
   options?: RequestInit & { locale?: string },
 ): Promise<T> {
   const { locale, ...init } = options ?? {};
+  // apiFetch is the JSON adapter used by the website hooks. Raw fetch does not
+  // infer JSON from a serialized string; retain explicit caller content types
+  // and let fetch supply the boundary for FormData uploads.
+  const headers = new Headers(init.headers);
+  if (typeof init.body === 'string' && !headers.has('content-type')) {
+    headers.set('content-type', 'application/json');
+  }
   let url = `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
   if (locale) url += `${url.includes('?') ? '&' : '?'}locale=${encodeURIComponent(locale)}`;
   try {
-    const response = await backendClient().fetchOptional(url, init);
+    const response = await backendClient().fetchOptional(url, { ...init, headers });
     const text = await response.text();
     let body: unknown;
     try {

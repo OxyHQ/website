@@ -1,5 +1,6 @@
 import { test, expect } from 'bun:test';
 import { createServer } from 'node:http';
+import express from 'express';
 import { OxyServices } from '@oxy.so/core';
 
 const token = (account: string, generation = 0) =>
@@ -9,7 +10,20 @@ test('website public reads, private bodies and account changes share the Oxy tra
   const calls: { path: string; auth?: string; body: string }[] = [];
   let arrived: (() => void) | undefined;
   let release: (() => void) | undefined;
-  const server = createServer(async (req, res) => {
+  const app = express();
+  app.post(
+    '/api/json-write',
+    express.json(),
+    express.text(),
+    express.raw({ type: 'multipart/form-data' }),
+    (req, res) => {
+      res.json({
+        body: Buffer.isBuffer(req.body) ? req.body.toString() : req.body,
+        contentType: req.headers['content-type'],
+      });
+    },
+  );
+  app.use(async (req, res) => {
     let body = '';
     for await (const chunk of req) body += chunk;
     expect(req.headers.cookie).toBeUndefined();
@@ -31,6 +45,7 @@ test('website public reads, private bodies and account changes share the Oxy tra
     res.setHeader('content-type', 'application/json');
     res.end(JSON.stringify({ data: { title: 'Public' }, auth: req.headers.authorization ?? null }));
   });
+  const server = createServer(app);
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('No test server');
@@ -47,6 +62,24 @@ test('website public reads, private bodies and account changes share the Oxy tra
       auth: null,
     });
     expect(calls[0]?.path).toBe('/api/public?locale=en%20US');
+    expect(
+      await apiFetch('/json-write', { method: 'POST', body: JSON.stringify({ title: 'Saved' }) }),
+    ).toEqual({ body: { title: 'Saved' }, contentType: 'application/json' });
+    expect(
+      await apiFetch('/json-write', {
+        method: 'POST',
+        headers: new Headers({ 'content-type': 'text/plain' }),
+        body: 'Explicit text',
+      }),
+    ).toEqual({ body: 'Explicit text', contentType: 'text/plain' });
+    const multipart = new FormData();
+    multipart.append('file', new Blob(['picture']), 'picture.png');
+    const upload = await apiFetch<{ body: string; contentType: string }>('/json-write', {
+      method: 'POST',
+      body: multipart,
+    });
+    expect(upload.contentType).toMatch(/^multipart\/form-data; boundary=/);
+    expect(upload.body).toContain('picture.png');
     await expect(apiResponse(`${origin}/api/backup`)).rejects.toMatchObject({
       code: 'AUTH_REQUIRED',
     });
