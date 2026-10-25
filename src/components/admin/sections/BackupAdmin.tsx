@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Button } from '@oxy.so/bloom/button';
-import { API_BASE, getAuthHeaders } from '../../../api/client';
+import { API_BASE, apiResponse } from '../../../api/client';
 import ConfirmDialog from '../ConfirmDialog';
 import { useConfirmAction } from '../useConfirmAction';
 
@@ -32,10 +32,9 @@ export default function BackupAdmin() {
           throw new Error('Invalid backup file: missing required fields (version, collections)');
         }
 
-        const headers = await getAuthHeaders();
-        const res = await fetch(`${API_BASE}/backup`, {
+        const res = await apiResponse(`${API_BASE}/backup`, {
           method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json' },
           body: text,
         });
 
@@ -63,8 +62,7 @@ export default function BackupAdmin() {
     setExporting(true);
     setStatus(null);
     try {
-      const headers = await getAuthHeaders();
-      const res = await fetch(`${API_BASE}/backup`, { headers });
+      const res = await apiResponse(`${API_BASE}/backup`);
       if (!res.ok) {
         const body = await res.json().catch(() => ({ error: `Export failed (${res.status})` }));
         throw new Error(body.error ?? `Export failed (${res.status})`);

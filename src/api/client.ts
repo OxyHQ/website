@@ -1,155 +1,80 @@
-import { getBrowserTelemetryHeaders } from '@oxy.so/telemetry/browser';
 import type { OxyServices, LinkedHttpClient } from '@oxy.so/core';
 
 export const API_BASE = `${import.meta.env.VITE_API_URL || ''}/api`;
-
 let oxyServices: OxyServices | null = null;
-
-/**
- * Session-linked HTTP client for the website's own backend.
- *
- * Built once per OxyServices instance via `oxyServices.createLinkedClient`. The
- * linked client keeps its bearer token in lockstep with the SDK session, and
- * its 401 path delegates refresh back to the session owner (and invalidates the
- * owner when a linked 401 can't be refreshed). We do NOT hand-roll
- * `Authorization` headers or read `getAccessToken()` per request anymore.
- */
 let linked: LinkedHttpClient | null = null;
 
+/** Bind the shared session; the linked transport is acquired only when a request needs it. */
 export function setOxyServices(oxy: OxyServices) {
-  if (oxyServices === oxy && linked) return;
-  // Tear down the previous linked client before re-linking to a new session
-  // owner so its token subscription / refresh handler don't leak.
+  if (oxyServices === oxy) return;
   linked?.dispose();
+  linked = null;
   oxyServices = oxy;
-  linked = oxy.createLinkedClient({ baseURL: API_BASE });
 }
 
-/**
- * Auth headers for the few raw `fetch`/upload/download call sites that bypass
- * `apiFetch` (media upload, backup download). They read the SDK session token —
- * not a hand-rolled credential.
- */
-export async function getAuthHeaders(): Promise<Record<string, string>> {
-  const telemetry = await getBrowserTelemetryHeaders();
-  const token = oxyServices ? oxyServices.session.accessToken : null;
-  return token ? { ...telemetry, Authorization: `Bearer ${token}` } : telemetry;
+export function releaseOxyServices(oxy: OxyServices) {
+  if (oxyServices !== oxy) return;
+  linked?.dispose();
+  linked = null;
+  oxyServices = null;
 }
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-
-function normalizeMethod(method: RequestInit['method']): HttpMethod {
-  const m = (method ?? 'GET').toUpperCase();
-  if (m === 'POST' || m === 'PUT' || m === 'PATCH' || m === 'DELETE') return m;
-  return 'GET';
+function backendClient(): LinkedHttpClient {
+  if (!oxyServices)
+    throw new Error('API client not initialized: setOxyServices() must run before apiFetch()');
+  linked ??= oxyServices.createLinkedClient({ baseURL: API_BASE });
+  return linked;
 }
 
-/**
- * Parse a `RequestInit.body` back into the structured payload the linked
- * client's `request({ data })` expects. Call sites pass `JSON.stringify(data)`,
- * so a string body is parsed back to its object; non-string bodies (FormData,
- * Blob, …) and `undefined` pass through unchanged.
- */
-function toRequestData(body: RequestInit['body']): unknown {
-  if (body == null) return undefined;
-  if (typeof body === 'string') {
-    if (body.length === 0) return undefined;
-    try {
-      return JSON.parse(body);
-    } catch {
-      // Not JSON — send the raw string through as-is.
-      return body;
-    }
-  }
-  return body;
+/** Private uploads/downloads use the same origin, session and refresh boundary as JSON calls. */
+export function apiResponse(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  return backendClient().fetch(input, init);
 }
 
-/**
- * Fetch the website's own backend through the session-linked SDK client.
- *
- * Preserves the original `apiFetch` contract exactly:
- * - same `?locale=` query-param injection,
- * - same `body.error || 'API error <status>'` thrown-Error message,
- * - same raw JSON return shape (the website backend never wraps in `{ data }`),
- * - no SDK-level timeout / retry / dedup (React Query owns retries) — matching
- *   the prior bare-`fetch` behavior.
- *
- * The only thing that changes is the transport: token lockstep and 401-refresh
- * are now owned by the SDK linked client instead of a per-call `getAccessToken()`
- * + hand-rolled `Authorization` header.
- */
-/**
- * HTTP status behind an error thrown by {@link apiFetch}, when there is one.
- *
- * `apiFetch` rethrows the SDK's `ApiError` wrapped in a real `Error` so callers
- * get a readable `message`, which puts the status one level down on `cause`.
- * Reading it here rather than in each page keeps that shape in the file that
- * creates it: a caller that needs to tell "this does not exist" from "the
- * backend is unwell" should not have to know how the wrapping works.
- */
 export function errorStatus(error: unknown): number | undefined {
   const cause = (error as { cause?: unknown } | null)?.cause;
   const status = (cause as { status?: unknown } | null)?.status;
   return typeof status === 'number' ? status : undefined;
 }
 
+/** Public website reads remain anonymous when signed out; the server enforces private writes. */
 export async function apiFetch<T>(
   path: string,
   options?: RequestInit & { locale?: string },
 ): Promise<T> {
-  if (!linked) {
-    throw new Error('API client not initialized: setOxyServices() must run before apiFetch()');
+  const { locale, ...init } = options ?? {};
+  // apiFetch is the JSON adapter used by the website hooks. Raw fetch does not
+  // infer JSON from a serialized string; retain explicit caller content types
+  // and let fetch supply the boundary for FormData uploads.
+  const headers = new Headers(init.headers);
+  if (typeof init.body === 'string' && !headers.has('content-type')) {
+    headers.set('content-type', 'application/json');
   }
-
-  let url = path;
-  if (options?.locale) {
-    const separator = url.includes('?') ? '&' : '?';
-    url += `${separator}locale=${options.locale}`;
-  }
-
-  const method = normalizeMethod(options?.method);
-  const data = toRequestData(options?.body);
-
-  let result: T;
+  let url = `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
+  if (locale) url += `${url.includes('?') ? '&' : '?'}locale=${encodeURIComponent(locale)}`;
   try {
-    result = await linked.client.request<T>({
-      method,
-      url,
-      data,
-      headers: options?.headers as Record<string, string> | undefined,
-      signal: options?.signal ?? undefined,
-      // Match the original bare-fetch behavior: no client-side timeout, no SDK
-      // retry (React Query owns retry policy per hook), no request dedup.
-      timeout: 0,
-      retry: false,
-      deduplicate: false,
-    });
-  } catch (err) {
-    // Preserve the original error contract: `body.error || 'API error <status>'`,
-    // thrown as an `Error`. The SDK normalizes HTTP failures into an `ApiError`
-    // ({ message, code, status }) — a plain object, not an `Error` — whose
-    // `message` is the backend's `{ error }` text when present, or a generic
-    // `HTTP <status>: …` fallback when the error body carried no JSON `error`.
-    // We rewrite only that generic fallback back to the website's historical
-    // `API error <status>` wording; a real `{ error }` message passes through
-    // unchanged. (The website backend always sends `{ error }`, so the rewrite
-    // is a safety net for the no-JSON-body edge.)
-    const status = (err as { status?: number } | null)?.status;
-    const message =
-      err instanceof Error
-        ? err.message
-        : ((err as { message?: string } | null)?.message ?? String(err));
-    if (typeof status === 'number' && message.startsWith(`HTTP ${status}:`)) {
-      throw new Error(`API error ${status}`, { cause: err });
+    const response = await backendClient().fetchOptional(url, { ...init, headers });
+    const text = await response.text();
+    let body: unknown;
+    try {
+      body = text ? JSON.parse(text) : undefined;
+    } catch {
+      if (response.ok) throw new Error(`API error: ${url} answered with a non-JSON body`);
     }
-    throw err instanceof Error ? err : new Error(message, { cause: err });
+    if (!response.ok) {
+      const message =
+        typeof body === 'object' &&
+        body !== null &&
+        'error' in body &&
+        typeof body.error === 'string'
+          ? body.error
+          : `API error ${response.status}`;
+      throw new Error(message, { cause: { status: response.status } });
+    }
+    return body as T;
+  } catch (error) {
+    if (error instanceof Error) throw error;
+    const message = (error as { message?: string } | null)?.message ?? String(error);
+    throw new Error(message, { cause: error });
   }
-  // The website backend answers JSON (or nothing, for a 204). Markup here is a
-  // page — a proxy's or the static host's HTML fallback for an /api path it
-  // doesn't route — and handing it on as data puts `.map` on a string in
-  // whatever renders it, which blanks the page.
-  if (typeof result === 'string' && result.trimStart().startsWith('<')) {
-    throw new Error(`API error: ${url} answered with a non-JSON body`);
-  }
-  return result;
 }

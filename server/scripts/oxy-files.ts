@@ -7,7 +7,7 @@
  *   bun run oxy-files reconcile [--dry-run]   reconcile references with Oxy now
  *
  * Talks to the database in `DATABASE_URL`, the legacy bucket through the AWS
- * default credential chain, and Oxy with `OXY_SERVICE_API_KEY`/`_SECRET`.
+ * default credential chain, and Oxy with its registered temporary workload identity.
  * Output is JSON with ids, hashes and counts — never a URL.
  */
 import { writeFile } from 'node:fs/promises';

@@ -1,14 +1,13 @@
 import {
-  OxyServer,
   createOxyAuthMiddleware,
   createOptionalOxyAuth,
   type OxyRequestUser,
 } from '@oxy.so/core/server';
-import { config } from '../config.js';
+import { oxyService } from '../services/oxyService.js';
 
 // Single shared OxyServer instance for the whole backend — constructed once.
 // Routes that need to call the Oxy API import this rather than building their own.
-export const oxy = new OxyServer({ baseURL: config.oxyApiBase });
+export const oxy = oxyService;
 
 declare global {
   // The Express namespace is the canonical augmentation point for

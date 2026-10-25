@@ -4,11 +4,10 @@ The world map consumes the central API's public aggregate stream and live
 infrastructure snapshots. Opening the dashboard does not start collection.
 
 The website API installs the shared `@oxy.so/core/server` publisher once during
-boot, activated purely by the presence of the server-only `OXY_SERVICE_API_KEY`
-/ `OXY_SERVICE_API_SECRET` pair — there is no separate enable flag. Set
-`AWS_REGION` alongside them before setting the credentials. A credential set
-that is present but incomplete (missing `AWS_REGION`) fails before the
-listener starts. Leave both credential variables empty in local environments.
+boot with the registered website workload and temporary AWS credentials. ECS
+provides the task role; local development uses a registered IAM SSO/assume-role
+identity through the shared credential provider. No customer key or ECS-only
+environment check controls collection. Configure `AWS_REGION` for the instance.
 Infrastructure readiness follows database bootstrap, and graceful shutdown
 removes the instance registration.
 

@@ -28,8 +28,6 @@ export const config = {
    * introspection and the MCP catalog registration, and it is what activates
    * ecosystem activity (`services/ecosystemActivity.ts` reads the same pair).
    */
-  oxyServiceApiKey: process.env.OXY_SERVICE_API_KEY?.trim() || '',
-  oxyServiceApiSecret: process.env.OXY_SERVICE_API_SECRET?.trim() || '',
   /**
    * Clarity Jobs, the only source of the careers page. Oxy's openings are
    * authored in Mention and indexed by Clarity; this site stores none of them.

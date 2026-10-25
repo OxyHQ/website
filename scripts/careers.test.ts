@@ -54,7 +54,11 @@ describe('careers presentation', () => {
     );
     expect(careerSalaryLabel({ min: 50, currency: 'USD', interval: 'hour' })).toBe('$50 / hour');
     expect(careerSalaryLabel({ currency: 'EUR', interval: 'year' })).toBeUndefined();
-    expect(careerSalaryLabel({ min: 1, currency: 'NOPE!', interval: 'year' })).toBeUndefined();
+    expect(
+      careerSalaryLabel({ min: 1, currency: 'NOPE!', interval: 'year' } as unknown as Parameters<
+        typeof careerSalaryLabel
+      >[0]),
+    ).toBeUndefined();
     expect(careerSalaryLabel(undefined)).toBeUndefined();
   });
 

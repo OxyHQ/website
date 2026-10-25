@@ -6,7 +6,7 @@ import { newsroomPosts } from '../db/schema/index.js';
 import { ensureApp } from '../test/app.js';
 import { config } from '../config.js';
 import { invokeTool } from '../mcp.js';
-import { oxyService } from '../services/oxyService.js';
+import { oxyTransport } from '../services/oxyService.js';
 import { countRows, errorCode, reader, resetDatabase } from '../test/helpers.js';
 
 /* The MCP endpoint through the real Express composition: site CORS, the SDK's
@@ -76,8 +76,14 @@ beforeAll(async () => {
     fakeOxy.listen(Number(process.env.TEST_FAKE_OXY_PORT), 'localhost', resolve),
   );
 
-  oxyService.serviceToken = async () => 'service-token';
-  oxyService.invalidateServiceToken = () => undefined;
+  oxyTransport.fetch = Object.assign(
+    (input: RequestInfo | URL, init?: RequestInit) => {
+      const headers = new Headers(init?.headers);
+      headers.set('authorization', 'Bearer service-token');
+      return fetch(input, { ...init, headers });
+    },
+    { preconnect: fetch.preconnect },
+  );
 
   // All interfaces, as in production: the public-read bridge calls 127.0.0.1,
   // while `localhost` may resolve to ::1 on the runner.

@@ -1,3 +1,4 @@
+import { closeCareerJobsClient } from './services/careers.js';
 import { startWebsiteActivity } from './services/ecosystemActivity.js';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,7 +15,7 @@ import { getPriorityTiers } from './constants/featurePriority.js';
 import { isBootstrapComplete, markBootstrapComplete } from './services/startupState.js';
 import { purgeExpiredInquiries } from './routes/sales.js';
 import { WEBSITE_MCP_CATALOG } from './mcp.js';
-import { oxyService } from './services/oxyService.js';
+import { oxyService, oxyTransport } from './services/oxyService.js';
 import { createApp } from './app.js';
 import { startIdempotencyPurge } from './mcp/idempotency.js';
 import { startStorageCleanupSweep } from './services/media.js';
@@ -34,10 +35,10 @@ const MIGRATIONS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '
  * and started after `listen()`.
  */
 const mcpCatalogRegistration: McpCatalogRegistration | null =
-  process.env.NODE_ENV === 'production' && config.oxyServiceApiKey && config.oxyServiceApiSecret
+  process.env.NODE_ENV === 'production'
     ? createMcpCatalogRegistration({
         catalog: WEBSITE_MCP_CATALOG,
-        oxy: oxyService,
+        transport: oxyTransport,
         oxyApiBase: config.oxyApiBase,
       })
     : null;
@@ -211,6 +212,9 @@ async function shutdown() {
   mcpCatalogRegistration?.stop();
   await new Promise<void>((resolve) => server.close(() => resolve()));
   await activity?.stop();
+  closeCareerJobsClient();
+  oxyTransport.dispose();
+  oxyService.dispose();
   await pgClient.end({ timeout: 2 });
   clearTimeout(deadline);
   process.exit(0);

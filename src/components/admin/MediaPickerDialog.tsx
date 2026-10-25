@@ -14,7 +14,7 @@ import {
 import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs';
 import { useTheme } from '@oxy.so/bloom/theme';
 import { LabeledTextField } from './LabeledTextField';
-import { API_BASE, getAuthHeaders } from '../../api/client';
+import { API_BASE, apiResponse } from '../../api/client';
 import { useQueryClient } from '@tanstack/react-query';
 
 type MediaTab = 'library' | 'upload';
@@ -65,12 +65,9 @@ export default function MediaPickerDialog({
         const formData = new FormData();
         formData.append('file', file);
         formData.append('folder', folder);
-        const authHeaders = await getAuthHeaders();
-        const res = await fetch(`${API_BASE}/upload`, {
+        const res = await apiResponse(`${API_BASE}/upload`, {
           method: 'POST',
           body: formData,
-          headers: authHeaders,
-          credentials: 'include',
         });
         if (!res.ok) throw new Error('Upload failed');
         const media: MediaItem = await res.json();

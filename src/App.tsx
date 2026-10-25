@@ -1,5 +1,5 @@
 import { MotionConfig } from 'framer-motion';
-import { useState, useCallback, lazy, Suspense } from 'react';
+import { useState, useCallback, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import { Navigate } from './lib/navigation';
 import { TRANSPARENCY_REDIRECTS } from './lib/transparency';
@@ -22,7 +22,7 @@ import {
 } from './theme';
 import { LocaleProvider, DEFAULT_LOCALE, SUPPORTED_LOCALES } from './lib/i18n';
 import { AskAliaProvider } from './lib/ask-alia';
-import { setOxyServices } from './api/client';
+import { setOxyServices, releaseOxyServices } from './api/client';
 import { setPlatformStatsOxyServices } from './api/platformStatsStore';
 import { isFairCoinHost } from './lib/host';
 import { marketingCanvasClass } from './lib/marketingCanvas';
@@ -183,6 +183,10 @@ function AppSetup({ children }: { children: React.ReactNode }) {
   // Wire the website's own-backend fetch client to the SDK session so every
   // /api call carries the current bearer token without manual token plumbing.
   setOxyServices(oxyServices);
+  useEffect(() => {
+    setOxyServices(oxyServices);
+    return () => releaseOxyServices(oxyServices);
+  }, [oxyServices]);
   setPlatformStatsOxyServices(oxyServices);
 
   // Resolve Bloom image file IDs to download URLs. The optional `variant`
