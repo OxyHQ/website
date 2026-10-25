@@ -24,11 +24,6 @@ export const config = {
   databaseUrl: process.env.DATABASE_URL || '',
   oxyApiBase: process.env.OXY_API_BASE || 'https://api.oxy.so',
   /**
-   * This backend's Oxy service credential. It authenticates MCP token
-   * introspection and the MCP catalog registration, and it is what activates
-   * ecosystem activity (`services/ecosystemActivity.ts` reads the same pair).
-   */
-  /**
    * Clarity Jobs, the only source of the careers page. Oxy's openings are
    * authored in Mention and indexed by Clarity; this site stores none of them.
    */
@@ -109,8 +104,9 @@ export const config = {
   },
   /**
    * Oxy Files (ADR 0043): every image and video the site stores is a file the
-   * Oxy Website APPLICATION owns, written with the service credential above
-   * (`files:app:write`, `files:app:delete`, `files:references:write`).
+   * Oxy Website application owns. `services/oxyService.ts` authenticates the
+   * workload through Oxy's shared AWS provider; own calls need no OAuth scopes.
+   * File ownership and reference authorization remain enforced.
    * `docs/OXY-FILES.md` is the procedure.
    */
   oxyFiles: {
