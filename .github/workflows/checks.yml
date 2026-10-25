@@ -474,8 +474,8 @@ jobs:
             --entrypoint bun "$IMAGE" \
             /checks/check-server-imports.mjs /app/server/index.ts /app/server/db/migrate.ts
 
-      # The task definition sets NODE_ENV, PORT and DATABASE_URL; nothing else
-      # is needed to boot. `/api/health` turns 200 only once the migrations ran
+      # Match the task's infrastructure region for shared ecosystem activity.
+      # `/api/health` turns 200 only once the migrations ran
       # (under the migration lock) and the start-up data fixes finished, so it
       # proves the runtime user can apply the schema (the four R2 variables are
       # the media store a production boot requires; nothing is read from it); `/api/ready` adds a live
@@ -484,7 +484,7 @@ jobs:
         run: |
           set -euo pipefail
           docker run -d --name website-api-smoke --network host \
-            -e NODE_ENV=production -e PORT=8080 -e DATABASE_URL \
+            -e NODE_ENV=production -e PORT=8080 -e DATABASE_URL -e AWS_REGION=us-west-2 \
             -e R2_BUCKET=ci-smoke -e R2_ENDPOINT=https://ci-smoke.invalid \
             -e R2_ACCESS_KEY_ID=ci-smoke -e R2_SECRET_ACCESS_KEY=ci-smoke-secret \
             "$IMAGE"
