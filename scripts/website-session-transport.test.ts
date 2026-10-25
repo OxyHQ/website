@@ -63,7 +63,10 @@ test('website public reads, private bodies and account changes share the Oxy tra
     });
     expect(calls[0]?.path).toBe('/api/public?locale=en%20US');
     expect(
-      await apiFetch<unknown>('/json-write', { method: 'POST', body: JSON.stringify({ title: 'Saved' }) }),
+      await apiFetch<unknown>('/json-write', {
+        method: 'POST',
+        body: JSON.stringify({ title: 'Saved' }),
+      }),
     ).toEqual({ body: { title: 'Saved' }, contentType: 'application/json' });
     expect(
       await apiFetch<unknown>('/json-write', {
