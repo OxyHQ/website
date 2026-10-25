@@ -60,6 +60,9 @@ beforeAll(() => {
       },
       { preconnect: fetch.preconnect },
     ),
+    fetchReplayable: async () => {
+      throw new Error('Read-only careers must not upload a replayable body');
+    },
     getAccessToken: async () => 'service-token',
     dispose: () => undefined,
   }));
