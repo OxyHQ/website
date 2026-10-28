@@ -1,3 +1,4 @@
+import { BrandScope } from '../theme/BrandScope';
 import { useCallback, useRef, useState } from 'react';
 import CashLandingContent from '../components/faircoin/cash/CashLandingContent';
 import FairCoinIntro from '../components/faircoin/cash/FairCoinIntro';
@@ -47,37 +48,39 @@ export default function FairCoinLanding() {
     'faircoin-editorial flex min-h-screen max-w-screen flex-col overflow-x-clip bg-card';
 
   return (
-    <div className={rootClass}>
-      <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin" />
-      <div inert={introActive}>
-        <Navbar
-          transparent
-          transparentOnScroll
-          transparentOn={darkHeader ? 'dark' : 'light'}
-          brand={navbarBrand}
-          customDropdowns={dropdowns}
-          customNavLinks={simpleNavLinks}
-          ctaButtons={ctaButtons}
-          hideAuth={onFairCoinHost}
-          hideBanner={onFairCoinHost}
-          hideLocalePicker={onFairCoinHost}
-        />
-        <main className="flex-1">
-          <CashLandingContent
-            phoneRef={phoneRef}
-            ready={!introActive}
-            onToneChange={setDarkHeader}
+    <BrandScope className={rootClass}>
+      <div className={rootClass}>
+        <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin" />
+        <div inert={introActive}>
+          <Navbar
+            transparent
+            transparentOnScroll
+            transparentOn={darkHeader ? 'dark' : 'light'}
+            brand={navbarBrand}
+            customDropdowns={dropdowns}
+            customNavLinks={simpleNavLinks}
+            ctaButtons={ctaButtons}
+            hideAuth={onFairCoinHost}
+            hideBanner={onFairCoinHost}
+            hideLocalePicker={onFairCoinHost}
           />
-        </main>
-        <Footer
-          brand={footerBrand}
-          columns={footerColumns}
-          socialLinks={onFairCoinHost ? [] : undefined}
-          legalLinks={footerLegalLinks}
-          copyright={footerCopyright}
-        />
+          <main className="flex-1">
+            <CashLandingContent
+              phoneRef={phoneRef}
+              ready={!introActive}
+              onToneChange={setDarkHeader}
+            />
+          </main>
+          <Footer
+            brand={footerBrand}
+            columns={footerColumns}
+            socialLinks={onFairCoinHost ? [] : undefined}
+            legalLinks={footerLegalLinks}
+            copyright={footerCopyright}
+          />
+        </div>
+        {introActive && <FairCoinIntro target={phoneRef} onComplete={finishIntro} />}
       </div>
-      {introActive && <FairCoinIntro target={phoneRef} onComplete={finishIntro} />}
-    </div>
+    </BrandScope>
   );
 }

@@ -1,5 +1,5 @@
 import { useSyncExternalStore, type ReactNode } from 'react';
-import { BloomSeedScope, useTheme } from '@oxy.so/bloom/theme';
+import { BloomColorScope, BloomSeedScope, useTheme } from '@oxy.so/bloom/theme';
 import { BRAND_SURFACES, type BrandSurface } from './brands';
 
 /**
@@ -32,6 +32,8 @@ const subscribeNever = () => () => {
  * CURRENT mode, and the prerendered HTML cannot know the visitor's mode — an
  * inline light palette would outrank the `.dark` block until the app booted.
  * The app mounts with `createRoot`, so there is no hydration to mismatch.
+ * Named recipes use `BloomColorScope`, including its explicit fixed mode.
+ * Seed-only surfaces retain the compatibility behavior below.
  * `BloomSeedScope` builds its theme in the PARENT's mode, so a surface is
  * scoped only where that mode is the surface's own: an `auto` surface always,
  * and a `light` one while the site is light. In dark mode a light surface is
@@ -48,7 +50,19 @@ export function BrandScope({ className, children }: { className: string; childre
   const { isDark } = useTheme();
   const surface = brandSurfaceFor(className);
   const scoped = surface?.mode === 'auto' || (surface?.mode === 'light' && !isDark);
-  if (!onClient || !surface || !scoped) return children;
+  if (!onClient || !surface) return children;
+  if (surface.preset) {
+    return (
+      <BloomColorScope
+        colorPreset={surface.preset}
+        mode={surface.mode === 'auto' ? undefined : surface.mode}
+        style={{ display: 'contents' }}
+      >
+        {children}
+      </BloomColorScope>
+    );
+  }
+  if (!scoped) return children;
   return (
     <BloomSeedScope
       seed={surface.seed}

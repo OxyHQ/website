@@ -31,10 +31,19 @@
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { buildSeedScopeVars as buildWalletScopeVars } from '@fairwallet/bloom/design-tokens';
+import { APP_COLOR_PRESETS as WALLET_PRESETS } from '@fairwallet/bloom/color-presets';
+
 import { APP_COLOR_PRESETS, FREE_COLOR_NAMES } from '@oxy.so/bloom/color-presets';
 import { getPresetVars, buildSeedScopeVars } from '@oxy.so/bloom/design-tokens';
 
-import { BRAND_SURFACES, HOST_BRANDS, SITE_PRESET, type BrandSurface } from '../src/theme/brands';
+import {
+  BRAND_SURFACES,
+  FAIRCOIN_PRESET,
+  HOST_BRANDS,
+  SITE_PRESET,
+  type BrandSurface,
+} from '../src/theme/brands';
 
 const OUTPUT = join(import.meta.dir, '..', 'src', 'styles', 'theme.generated.css');
 
@@ -80,11 +89,23 @@ function scopeBlock(
   seed: string,
   mode: 'light' | 'dark',
   extra?: string,
-  accents?: Pick<BrandSurface, 'secondarySeed' | 'tertiarySeed'>,
+  accents?: Pick<BrandSurface, 'secondarySeed' | 'tertiarySeed' | 'preset'>,
 ): string {
   return block(
     selector,
-    withLogoLetterColor(buildSeedScopeVars({ seed, mode, ...accents })),
+    withLogoLetterColor(
+      buildSeedScopeVars({
+        seed: accents?.preset ? APP_COLOR_PRESETS[accents.preset].hex : seed,
+        mode,
+        variant: accents?.preset ? APP_COLOR_PRESETS[accents.preset].variant : undefined,
+        secondarySeed:
+          accents?.secondarySeed ??
+          (accents?.preset ? APP_COLOR_PRESETS[accents.preset].secondaryHex : undefined),
+        tertiarySeed:
+          accents?.tertiarySeed ??
+          (accents?.preset ? APP_COLOR_PRESETS[accents.preset].tertiaryHex : undefined),
+      }),
+    ),
     extra,
   );
 }
@@ -108,6 +129,7 @@ function mediaScopeBlock(query: string, selector: string, seed: string, extra?: 
 function brandBlocks(surface: BrandSurface): string[] {
   const heading = `/* ${surface.label} — seed ${surface.seed} */`;
   const accents = {
+    preset: surface.preset,
     secondarySeed: surface.secondarySeed,
     tertiarySeed: surface.tertiarySeed,
   };
@@ -181,6 +203,17 @@ sections.push(
 );
 
 for (const surface of BRAND_SURFACES) sections.push(...brandBlocks(surface));
+
+// The decorative app replica uses the exact Bloom version pinned by FAIRWallet.
+// Build-time only: no second React provider or hand-maintained app palette.
+sections.push(
+  '/* FAIRWallet app replica — Bloom 1.3.0 faircoin, as shipped by the app. */\n' +
+    block(
+      '.fairwallet-app-demo',
+      buildWalletScopeVars({ seed: WALLET_PRESETS[FAIRCOIN_PRESET].hex, mode: 'dark' }),
+      'color-scheme: dark;',
+    ),
+);
 
 writeFileSync(OUTPUT, `${sections.join('\n\n')}\n`);
 console.log(`[generate-theme-css] wrote ${OUTPUT}`);

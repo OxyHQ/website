@@ -1,3 +1,4 @@
+import { BrandScope } from '../theme/BrandScope';
 import { useState } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -41,30 +42,32 @@ export default function FairCoinWalletPage() {
     'faircoin-editorial flex min-h-screen max-w-screen flex-col overflow-x-clip pb-24 lg:pb-0 bg-card text-foreground';
 
   return (
-    <div className={rootClass}>
-      <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin/wallet" />
-      <Navbar
-        transparent
-        transparentOnScroll
-        transparentOn={darkHeader ? 'dark' : 'light'}
-        brand={navbarBrand}
-        customDropdowns={dropdowns}
-        customNavLinks={simpleNavLinks}
-        ctaButtons={ctaButtons}
-        hideAuth={onFairCoinHost}
-        hideBanner={onFairCoinHost}
-        hideLocalePicker={onFairCoinHost}
-      />
-      <main className="flex-1">
-        <WalletLandingContent onToneChange={setDarkHeader} />
-      </main>
-      <Footer
-        brand={footerBrand}
-        columns={footerColumns}
-        socialLinks={onFairCoinHost ? [] : undefined}
-        legalLinks={footerLegalLinks}
-        copyright={footerCopyright}
-      />
-    </div>
+    <BrandScope className={rootClass}>
+      <div className={rootClass}>
+        <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin/wallet" />
+        <Navbar
+          transparent
+          transparentOnScroll
+          transparentOn={darkHeader ? 'dark' : 'light'}
+          brand={navbarBrand}
+          customDropdowns={dropdowns}
+          customNavLinks={simpleNavLinks}
+          ctaButtons={ctaButtons}
+          hideAuth={onFairCoinHost}
+          hideBanner={onFairCoinHost}
+          hideLocalePicker={onFairCoinHost}
+        />
+        <main className="flex-1">
+          <WalletLandingContent onToneChange={setDarkHeader} />
+        </main>
+        <Footer
+          brand={footerBrand}
+          columns={footerColumns}
+          socialLinks={onFairCoinHost ? [] : undefined}
+          legalLinks={footerLegalLinks}
+          copyright={footerCopyright}
+        />
+      </div>
+    </BrandScope>
   );
 }

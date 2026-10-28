@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, type RefObject } from 'react';
 import { gsap } from 'gsap';
 import { CustomEase } from 'gsap/CustomEase';
-import Button from './FairCoinButton';
+import { Button } from '@oxy.so/bloom/button';
 import LandingPhone from './LandingPhone';
 
 gsap.registerPlugin(CustomEase);
@@ -257,7 +257,7 @@ export default function FairCoinIntro({
         </div>
       </div>
       <div data-intro-skip className="absolute right-5 top-5">
-        <Button variant="ghost" onClick={onComplete}>
+        <Button appearance="plain" tone="neutral" onClick={onComplete}>
           Skip intro →
         </Button>
       </div>

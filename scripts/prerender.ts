@@ -323,6 +323,18 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'Payments across the Oxy ecosystem, with every fee shown before you confirm. In development: nothing is open for deposits yet.',
     canonicalPath: '/peable',
   },
+  '/peable/payments': {
+    title: 'Peable Payments',
+    description:
+      'Explore the payment experience Peable is building for individuals, businesses and developers. In development; payments and deposits are not open yet.',
+    canonicalPath: '/peable/payments/',
+  },
+  '/payments': {
+    title: 'Peable Payments',
+    description:
+      'Explore the payment experience Peable is building for individuals, businesses and developers. In development; payments and deposits are not open yet.',
+    canonicalPath: '/peable/payments/',
+  },
   '/mention': {
     title: 'Mention, an open social network',
     description:

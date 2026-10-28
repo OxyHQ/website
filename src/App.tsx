@@ -67,6 +67,7 @@ const TNPInstallPage = lazy(() => import('./pages/TNPInstallPage'));
 const HomiioPage = lazy(() => import('./pages/HomiioPage'));
 const MentionPage = lazy(() => import('./pages/MentionPage'));
 const PeablePage = lazy(() => import('./pages/PeablePage'));
+const PeablePaymentsPage = lazy(() => import('./pages/PeablePaymentsPage'));
 const CommonsPage = lazy(() => import('./pages/CommonsPage'));
 const AppsPage = lazy(() => import('./pages/AppsPage'));
 const AppDetailPage = lazy(() => import('./pages/AppDetailPage'));
@@ -471,6 +472,8 @@ function PublicRoutes() {
       <Route path="homiio" element={<HomiioPage />} />
       <Route path="mention" element={<MentionPage />} />
       <Route path="peable" element={<PeablePage />} />
+      <Route path="peable/payments" element={<PeablePaymentsPage />} />
+      <Route path="payments" element={<PeablePaymentsPage />} />
       {/* Peable previously lived at /pay, which remains linked externally,
           so the legacy URL redirects rather than returning a 404. */}
       <Route path="pay" element={<Navigate to="/peable" replace />} />
