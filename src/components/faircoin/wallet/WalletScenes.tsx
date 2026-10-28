@@ -1,3 +1,4 @@
+import { Button } from '@oxy.so/bloom/button';
 import { useEffect, useId, useRef, useState } from 'react';
 import {
   animate,
@@ -628,19 +629,21 @@ export default function WalletScenes({
         )}
       </div>
       {animated && !reduce && (
-        <button
-          type="button"
-          aria-label={`${paused ? 'Play' : 'Pause'} ${scene} animation`}
-          aria-pressed={paused}
-          onClick={() => setPaused(!paused)}
-          className="faircoin-editorial absolute bottom-[2.5%] left-[2%] z-10 flex size-6 items-center justify-center rounded-full bg-card text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring lg:size-[24px]"
-        >
-          {paused ? (
-            <RiPlayFill fill="currentColor" className="size-3" />
-          ) : (
-            <RiPauseFill fill="currentColor" className="size-3" />
-          )}
-        </button>
+        <Button asChild appearance="outline" tone="neutral" iconOnly size="sm">
+          <button
+            type="button"
+            aria-label={`${paused ? 'Play' : 'Pause'} ${scene} animation`}
+            aria-pressed={paused}
+            onClick={() => setPaused(!paused)}
+            className="absolute bottom-[2.5%] left-[2%] z-10"
+          >
+            {paused ? (
+              <RiPlayFill fill="currentColor" className="size-3" />
+            ) : (
+              <RiPauseFill fill="currentColor" className="size-3" />
+            )}
+          </button>
+        </Button>
       )}
     </div>
   );

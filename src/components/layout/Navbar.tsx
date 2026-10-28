@@ -51,7 +51,6 @@ import NavDropdownItem from '../ui/NavDropdownItem';
 import NavbarSearchResults from './NavbarSearchResults';
 import { RiLoginBoxLine } from '@oxy.so/bloom/icons/RiLoginBoxLine';
 import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine';
-import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine';
 import { useAskAlia } from '../../lib/ask-alia-context';
 import { RiSettings3Line } from '@oxy.so/bloom/icons/RiSettings3Line';
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine';
@@ -1412,9 +1411,11 @@ export default function Navbar({
               </div>
 
               {/* Right controls (mobile + desktop) */}
-              <div className={`ms-auto flex items-stretch ${searchOpen ? 'lg:hidden' : ''}`}>
+              <div
+                className={`ms-auto flex shrink-0 items-center ${searchOpen ? 'lg:hidden' : ''}`}
+              >
                 {/* Mobile controls */}
-                <div className="flex items-stretch gap-2 lg:hidden">
+                <div className="flex items-center gap-0 lg:hidden">
                   <NavBarButton ink={barInk} square>
                     <button
                       type="button"
@@ -1424,7 +1425,13 @@ export default function Navbar({
                       }}
                       aria-label={t('askAlia.label')}
                     >
-                      <RiSparklingLine aria-hidden width={18} height={18} fill="currentColor" />
+                      <img
+                        src="/images/apps/alia-header.svg"
+                        alt=""
+                        aria-hidden="true"
+                        width={18}
+                        height={18}
+                      />
                     </button>
                   </NavBarButton>
                   {settingsButton}
@@ -1451,7 +1458,7 @@ export default function Navbar({
                 </div>
 
                 {/* Desktop buttons */}
-                <div className="hidden items-stretch gap-3 lg:flex">
+                <div className="hidden items-center gap-0 lg:flex">
                   <NavBarButton ink={barInk} square open={searchOpen}>
                     <button
                       type="button"
@@ -1476,7 +1483,13 @@ export default function Navbar({
                       }}
                       aria-label={t('askAlia.label')}
                     >
-                      <RiSparklingLine aria-hidden width={18} height={18} fill="currentColor" />
+                      <img
+                        src="/images/apps/alia-header.svg"
+                        alt=""
+                        aria-hidden="true"
+                        width={18}
+                        height={18}
+                      />
                     </button>
                   </NavBarButton>
                   {settingsButton}

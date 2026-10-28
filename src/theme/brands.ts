@@ -44,6 +44,8 @@ export interface BrandSurface {
   selector: string;
   /** The brand colour, `#rrggbb`. */
   seed: string;
+  /** Named Bloom recipe, also passed to component context. */
+  preset?: AppColorName;
   /** Optional Bloom accent seeds for curated multi-colour presets. */
   secondarySeed?: string;
   tertiarySeed?: string;
@@ -62,10 +64,37 @@ export interface BrandSurface {
  * makes the sibling's palette take, and what leaves Codea's in place on the page
  * that uses `.cursor-theme` alone.
  */
+export const PEABLE_PRESET: AppColorName = 'pacific-flare';
+const PEABLE_PALETTE = APP_COLOR_PRESETS[PEABLE_PRESET];
+
 const HELP_PRESET = APP_COLOR_PRESETS['arctic-signal'];
 const COMMONS_PRESET = APP_COLOR_PRESETS['pacific-flare'];
 
 export const BRAND_SURFACES: readonly BrandSurface[] = [
+  {
+    selector: '.peable-theme',
+    seed: PEABLE_PALETTE.hex,
+    secondarySeed: PEABLE_PALETTE.secondaryHex,
+    tertiarySeed: PEABLE_PALETTE.tertiaryHex,
+    mode: 'auto',
+    label: 'Peable — Pacific Flare page theme',
+  },
+  {
+    selector: '.peable-light',
+    seed: PEABLE_PALETTE.hex,
+    secondarySeed: PEABLE_PALETTE.secondaryHex,
+    tertiarySeed: PEABLE_PALETTE.tertiaryHex,
+    mode: 'light',
+    label: 'Peable — Pacific Flare editorial canvas',
+  },
+  {
+    selector: '.peable-dark',
+    seed: PEABLE_PALETTE.hex,
+    secondarySeed: PEABLE_PALETTE.secondaryHex,
+    tertiarySeed: PEABLE_PALETTE.tertiaryHex,
+    mode: 'dark',
+    label: 'Peable — cinematic dark sections',
+  },
   {
     selector: '.horizon-page, .oxy-ecosystem',
     seed: '#242424',
@@ -76,21 +105,24 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
   },
   {
     selector: '.faircoin-editorial',
-    seed: '#000000',
+    seed: APP_COLOR_PRESETS[FAIRCOIN_PRESET].hex,
+    preset: FAIRCOIN_PRESET,
     mode: 'light',
-    label: 'FairCoin editorial — neutral light canvas',
+    label: 'FairCoin — Bloom faircoin light',
   },
   {
     selector: '.faircoin-editorial-dark',
-    seed: '#000000',
+    seed: APP_COLOR_PRESETS[FAIRCOIN_PRESET].hex,
+    preset: FAIRCOIN_PRESET,
     mode: 'dark',
-    label: 'FairCoin editorial — neutral dark canvas',
+    label: 'FairCoin — Bloom faircoin dark',
   },
   {
     selector: '.faircoin-editorial-green',
-    seed: '#00e013',
+    seed: APP_COLOR_PRESETS[FAIRCOIN_PRESET].hex,
+    preset: FAIRCOIN_PRESET,
     mode: 'dark',
-    label: 'FairCoin editorial — reference green, resolved by Bloom',
+    label: 'FairCoin — Bloom faircoin accent surface',
   },
   {
     selector: '.commons-theme',

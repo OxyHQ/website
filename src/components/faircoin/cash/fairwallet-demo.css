@@ -1,0 +1,23 @@
+/* FAIRWallet uses these same MaterialCommunityIcons glyphs through Expo. */
+@font-face {
+  font-family: "FairWallet Icons";
+  src: url("/fonts/fairwallet/MaterialCommunityIcons.woff2") format("woff2");
+  font-display: block;
+}
+.fairwallet-demo {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.fairwallet-demo .fairwallet-glyph {
+  display: inline-block;
+  font-family: "FairWallet Icons", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  -webkit-font-smoothing: antialiased;
+}
+.fairwallet-demo .fairwallet-amount {
+  font-family: "Phudu", sans-serif;
+}
