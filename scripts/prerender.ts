@@ -329,6 +329,12 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'Explore the payment experience Peable is building for individuals, businesses and developers. In development; payments and deposits are not open yet.',
     canonicalPath: '/peable/payments/',
   },
+  '/payments': {
+    title: 'Peable Payments',
+    description:
+      'Explore the payment experience Peable is building for individuals, businesses and developers. In development; payments and deposits are not open yet.',
+    canonicalPath: '/peable/payments/',
+  },
   '/mention': {
     title: 'Mention, an open social network',
     description:

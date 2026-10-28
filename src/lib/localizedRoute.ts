@@ -23,6 +23,7 @@
 export const UNTRANSLATED_PREFIXES: readonly string[] = [
   // Peable's new product pages have English copy until translations are ready.
   '/peable',
+  '/payments',
   '/developers/docs',
   // This document collection currently has English copy only. Add translated
   // sources before advertising locale mirrors or reciprocal hreflang.
