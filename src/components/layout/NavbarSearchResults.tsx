@@ -12,6 +12,8 @@ const SEARCH_APP_ICONS: Record<string, string> = {
   '/astro': '/images/apps/astro.svg',
   '/os': '/images/apps/oxyos.png',
   '/apps/allo': '/images/apps/allo.png',
+  '/apps/atlas': '/images/apps/atlas.png',
+  '/apps/stash': '/images/apps/stash.png',
 };
 
 function searchAppIcon(url: string): string | undefined {
