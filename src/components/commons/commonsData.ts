@@ -12,8 +12,8 @@ export const COMMONS_APPS = [
   { name: 'GoWay', image: '/images/apps/goway.svg' },
 ] as const;
 
-// Real app captures: Mention and Mercaria supplied by the user; Alia and Homiio
-// captured from their public web apps. Keep screenshots separate from app marks.
+// Production captures reviewed in Windows Chrome. Sources and the refresh
+// procedure are documented in docs/APP-SCREENSHOTS.md.
 export const COMMONS_APP_PREVIEWS = [
   { name: 'Mention', image: '/images/commons/apps/mention.webp' },
   { name: 'Mercaria', image: '/images/commons/apps/mercaria.webp' },

@@ -31,6 +31,8 @@ const SCREENSHOTS: Record<string, string[]> = {
   mention: ['/images/screenshots/mention-app.png'],
   alia: ['/images/screenshots/alia-app.png'],
   inbox: ['/images/screenshots/inbox-app.png'],
+  homiio: ['/images/screenshots/homiio-app.png'],
+  mercaria: ['/images/screenshots/mercaria-app.png'],
 };
 
 /**
@@ -215,6 +217,11 @@ export default function AppDetailContent() {
                   decoding="async"
                 />
               ))}
+              {product.productId === 'inbox' && (
+                <p className="px-4 py-3 text-body-xs text-muted-foreground">
+                  Production interface with example messages.
+                </p>
+              )}
             </div>
           )}
 
