@@ -7,14 +7,14 @@
  * someone sees on the page is what a link preview shows.
  */
 export const APP_CARD_IMAGES: Record<string, string> = {
-  '/mention': '/images/landing/mention-laptop.png',
+  '/mention': '/images/landing/mention-laptop.png?v=20261030',
   '/apps/allo': '/images/landing/hero-photo-02.avif',
   '/apps/faircoin': '/images/landing/faircoin-phone.png',
-  '/homiio': '/images/landing/homiio-phone.png',
-  '/inbox': '/images/landing/inbox-phone.png',
+  '/homiio': '/images/landing/homiio-phone.png?v=20261030',
+  '/inbox': '/images/landing/inbox-phone.png?v=20261030',
   '/astro': '/images/landing/astro-desktop.png',
-  '/mercaria': '/images/landing/mercaria-card.png',
-  '/ai': '/images/landing/alia-card.png',
+  '/mercaria': '/images/landing/mercaria-card.png?v=20261030',
+  '/ai': '/images/landing/alia-card.png?v=20261030',
   '/os': '/images/landing/oxyos-laptop.png',
   '/commons': '/images/landing/identity-app.webp',
 };

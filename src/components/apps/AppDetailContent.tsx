@@ -28,11 +28,11 @@ import AppCard, { AppIcon, categoryLabel } from './AppCard';
 
 /** Screenshots we actually have, by product. No entry means no gallery. */
 const SCREENSHOTS: Record<string, string[]> = {
-  mention: ['/images/screenshots/mention-app.png'],
-  alia: ['/images/screenshots/alia-app.png'],
-  inbox: ['/images/screenshots/inbox-app.png'],
-  homiio: ['/images/screenshots/homiio-app.png'],
-  mercaria: ['/images/screenshots/mercaria-app.png'],
+  mention: ['/images/screenshots/mention-app.png?v=20261030'],
+  alia: ['/images/screenshots/alia-app.png?v=20261030'],
+  inbox: ['/images/screenshots/inbox-app.png?v=20261030'],
+  homiio: ['/images/screenshots/homiio-app.png?v=20261030'],
+  mercaria: ['/images/screenshots/mercaria-app.png?v=20261030'],
 };
 
 /**
