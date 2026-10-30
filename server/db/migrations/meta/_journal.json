@@ -197,6 +197,13 @@
       "when": 1792152070981,
       "tag": "0027_oxy_files",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1793370000000,
+      "tag": "0028_stash_atlas_products",
+      "breakpoints": true
     }
   ]
 }
