@@ -534,7 +534,7 @@ export default function BrandPage() {
           <figure className="brand-product-figure" style={recipeStyle('cobalt', 'light')}>
             <div>
               <img
-                src="/images/screenshots/mention-app.png"
+                src="/images/screenshots/mention-app.png?v=20261030"
                 alt="Mention product interface"
                 loading="lazy"
               />

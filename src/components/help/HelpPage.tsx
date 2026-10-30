@@ -20,7 +20,7 @@ const panels: { id: HelpCategoryId; image: string; position?: string; wide?: boo
     position: 'object-[center_40%]',
     wide: true,
   },
-  { id: 'inbox', image: '/images/landing/inbox-phone.png', wide: true },
+  { id: 'inbox', image: '/images/landing/inbox-phone.png?v=20261030', wide: true },
   { id: 'console', image: '/images/landing/video-thumb-in-house-ops.webp' },
   { id: 'getting-started', image: '/images/landing/hero-photo-03.avif' },
   { id: 'auth', image: '/images/landing/hero-photo-02.avif', wide: true },

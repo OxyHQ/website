@@ -15,10 +15,10 @@ export const COMMONS_APPS = [
 // Production captures reviewed in Windows Chrome. Sources and the refresh
 // procedure are documented in docs/APP-SCREENSHOTS.md.
 export const COMMONS_APP_PREVIEWS = [
-  { name: 'Mention', image: '/images/commons/apps/mention.webp' },
-  { name: 'Mercaria', image: '/images/commons/apps/mercaria.webp' },
-  { name: 'Alia', image: '/images/commons/apps/alia.webp' },
-  { name: 'Homiio', image: '/images/commons/apps/homiio.webp' },
+  { name: 'Mention', image: '/images/commons/apps/mention.webp?v=20261030' },
+  { name: 'Mercaria', image: '/images/commons/apps/mercaria.webp?v=20261030' },
+  { name: 'Alia', image: '/images/commons/apps/alia.webp?v=20261030' },
+  { name: 'Homiio', image: '/images/commons/apps/homiio.webp?v=20261030' },
 ] as const;
 
 // Rotating hero prompts link to the corresponding Commons feature.

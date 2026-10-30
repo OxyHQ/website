@@ -40,7 +40,10 @@ Homiio and Mercaria now have app-listing galleries as well.
    result against both inputs, checking device edges, screen perspective,
    typography, reflections and the untouched scene. Keep the original canvas
    dimensions and filenames. Never replace the photograph with a new flat frame.
-5. Review the app listings, cards, Commons and brand guide at desktop and mobile
+5. Increment the `?v=` revision on every reference to a replaced image. The
+   public image cache lasts 30 days; clearing the CDN does not clear visitors'
+   browser caches. Keep card and Open Graph references on the same revision.
+6. Review the app listings, cards, Commons and brand guide at desktop and mobile
    widths. Confirm images load and there is no horizontal overflow. Run
    `bunx tsc -b` and the production frontend build.
 
