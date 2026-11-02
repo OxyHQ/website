@@ -1,11 +1,11 @@
 -- Two Oxy apps join the catalogue: Atlas, the Oxy app store at atlas.oxy.so,
--- and Stash, photos and files by Oxy, which has no public app yet and links to
--- its repository. Their icons are local brand marks (`src/api/hooks.ts`), so no
+-- and Dropsea, photos and files by Oxy, whose web app is to live at
+-- dropsea.net. Their icons are local brand marks (`src/api/hooks.ts`), so no
 -- media row is needed.
 --
 -- Neither is on the status page: Atlas has no service of its own (the store
--- lives in oxy-api, which is already watched) and Stash is not deployed. Stash
--- stays out of the menu until it has somewhere to open.
+-- lives in oxy-api, which is already watched) and Dropsea is not deployed.
+-- Dropsea stays out of the menu until dropsea.net serves it.
 --
 -- DO NOTHING on conflict: a row an editor has made or changed since is theirs,
 -- and a rerun changes nothing.
@@ -23,9 +23,9 @@ VALUES
     true, false, true, 5
   ),
   (
-    '09283021366d6c530805d74c', 'stash', 'Stash', 'Photos and files by Oxy',
+    '09283021366d6c530805d74c', 'dropsea', 'Dropsea', 'Photos and files by Oxy',
     'Your photos and files in one place, kept in Oxy Files and organised into albums.',
-    'https://github.com/OxyHQ/Stash', NULL, true, 'View on GitHub', '#ff5722', 'S',
+    'https://dropsea.net', NULL, true, 'Open Dropsea', '#0a62e0', 'D',
     (SELECT "_id" FROM "categories" WHERE "slug" = 'apps'), 'apps', 'in-development',
     true, false, false, 5
   )

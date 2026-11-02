@@ -9,6 +9,7 @@ export const BRAND_MARKS: Readonly<Record<string, string>> = {
   bloom: '/images/apps/bloom.png',
   clarity: '/images/apps/clarity.png',
   console: '/images/apps/console.svg',
+  dropsea: '/images/apps/dropsea.png',
   faircoin: '/images/apps/faircoin.svg',
   homiio: '/images/apps/homiio.png',
   inbox: '/images/apps/inbox.png',
@@ -17,7 +18,6 @@ export const BRAND_MARKS: Readonly<Record<string, string>> = {
   moovo: '/images/apps/moovo.png',
   noted: '/images/apps/noted.png',
   schedio: '/images/apps/schedio.png',
-  stash: '/images/apps/stash.png',
   oxyos: '/images/apps/oxyos.png',
   tnp: '/images/apps/tnp.png',
 };

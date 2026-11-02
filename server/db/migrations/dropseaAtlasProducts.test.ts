@@ -7,13 +7,13 @@ import { config } from '../../config.js'
 import { ensureApp } from '../../test/app.js'
 import { resetDatabase } from '../../test/helpers.js'
 
-const migration = readFileSync(new URL('./0028_stash_atlas_products.sql', import.meta.url), 'utf8')
+const migration = readFileSync(new URL('./0028_dropsea_atlas_products.sql', import.meta.url), 'utf8')
 const applyMigration = () => db.execute(sql.raw(migration))
 
 beforeAll(ensureApp)
 beforeEach(resetDatabase)
 
-test('adds Atlas to the directory and the menu, and Stash to the directory alone', async () => {
+test('adds Atlas to the directory and the menu, and Dropsea to the directory alone', async () => {
   const [apps] = await db
     .insert(categories)
     .values({ slug: 'apps', label: 'Apps', scope: 'apps', order: 2 })
@@ -31,8 +31,9 @@ test('adds Atlas to the directory and the menu, and Stash to the directory alone
     showOnStatus: false,
     showInNav: true,
   }))
-  expect(rows.find(row => row.productId === 'stash')).toEqual(expect.objectContaining({
-    name: 'Stash',
+  expect(rows.find(row => row.productId === 'dropsea')).toEqual(expect.objectContaining({
+    name: 'Dropsea',
+    href: 'https://dropsea.net',
     category: apps!._id,
     lifecycle: 'in-development',
     showOnProducts: true,
@@ -65,7 +66,7 @@ test('keeps a row an editor already made', async () => {
   await applyMigration()
   const rows = await db.select().from(products)
   expect(rows.find(row => row.productId === 'atlas')).toEqual(edited)
-  expect(rows.some(row => row.productId === 'stash')).toBe(true)
+  expect(rows.some(row => row.productId === 'dropsea')).toBe(true)
 })
 
 test('files the apps under no category when the category does not exist', async () => {

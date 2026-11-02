@@ -263,6 +263,7 @@ export function useProduct(productId: string) {
 const LOCAL_PRODUCT_LOGOS: Readonly<Record<string, string>> = {
   allo: BRAND_MARKS.allo,
   atlas: BRAND_MARKS.atlas,
+  dropsea: BRAND_MARKS.dropsea,
   homiio: BRAND_MARKS.homiio,
   i: BRAND_MARKS.inbox,
   inbox: BRAND_MARKS.inbox,
@@ -271,7 +272,6 @@ const LOCAL_PRODUCT_LOGOS: Readonly<Record<string, string>> = {
   mercaria: BRAND_MARKS.mercaria,
   moovo: BRAND_MARKS.moovo,
   noted: BRAND_MARKS.noted,
-  stash: BRAND_MARKS.stash,
   faircoin: '/images/apps/faircoin.svg',
   'faircoin-wallet': '/images/apps/faircoin-wallet.svg',
   fairwallet: '/images/apps/faircoin-wallet.svg',
