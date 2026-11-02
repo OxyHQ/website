@@ -16,6 +16,7 @@ export const props: BloomSurfaceProps = {
         { name: 'actionPlacement', type: "'auto' | 'beside' | 'above'", options: ['auto', 'beside', 'above'], optional: true, description: 'Auto places the action above navigation when side-by-side targets would be cramped.' },
         { name: 'actionBehavior', type: "'hide' | 'visible'", options: ['hide', 'visible'], optional: true, description: 'Hide the accessory while minimizing, returning on upward scroll. Default hide; standalone actions remain visible.' },
         { name: 'minimizeProgress', type: 'SharedValue<number>', optional: true },
+        { name: 'hideProgress', type: 'SharedValue<number>', optional: true, description: "The bar's presence, 0 (shown) to 1 (gone), on the UI thread. The bar fades and slides off its edge continuously, so a swipe onto a page without a bar item takes the bar away under the finger; past halfway it leaves hit testing and the accessibility tree." },
         { name: 'blur', type: 'boolean', optional: true, description: 'Optional screen-edge blur band; disabled by default.' },
         { name: 'maxWidth', type: 'number', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

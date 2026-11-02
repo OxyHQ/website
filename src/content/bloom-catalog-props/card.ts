@@ -10,7 +10,7 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'appearance', type: 'BloomAppearance', options: ['solid', 'subtle', 'outline', 'plain'], optional: true, description: 'Preset background + border + elevation. Default `solid` with small elevation.' },
         { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
-        { name: 'radius', type: 'CardRadius', options: ['panel', 'radius-0', 'radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max'], optional: true, description: 'Corner rung, or panel to inherit BloomScope.panelRadius and the shared circular curve. Default radius-20.' },
+        { name: 'radius', type: 'CardRadius', options: ['panel', 'radius-0', 'radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max', 'concentric'], optional: true, description: 'Corner rung, or panel to inherit BloomScope.panelRadius and the shared circular curve. Default radius-20.' },
         { name: 'cornerCurve', type: 'CornerCurve', options: ['round', 'smooth'], optional: true, description: 'Circular by default; smooth opts into platform-adaptive curves. radius-max remains circular.' },
         { name: 'clipContent', type: 'boolean', optional: true, description: 'Clip children in an inner layer, preserving outer shadows and focus.' },
         { name: 'contentStyle', type: 'StyleProp<CardStyle>', optional: true, description: 'Child layout and padding when clipContent is enabled.' },
@@ -50,6 +50,7 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'style', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'numberOfLines', type: 'number', optional: true },
+        { name: 'className', type: 'string', optional: true, description: "Utilities for the text (`font-display` sets it in BlomusModernus). A utility replaces only the default it names: the colour paired with the card's fill stays unless the className sets one." },
       ],
     },
     'CardDescriptionProps': {
@@ -57,6 +58,7 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'style', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'numberOfLines', type: 'number', optional: true },
+        { name: 'className', type: 'string', optional: true, description: "Utilities for the text (`font-display` sets it in BlomusModernus). A utility replaces only the default it names: the colour paired with the card's fill stays unless the className sets one." },
       ],
     },
     'SelectionCardProps': {

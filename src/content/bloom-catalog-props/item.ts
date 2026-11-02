@@ -26,6 +26,8 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'titleStyle', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'subtitleStyle', type: 'StyleProp<TextStyle>', optional: true },
+        { name: 'titleNumberOfLines', type: 'number', optional: true, description: 'Lines a string `title` may take before it truncates. Default `1`; `0` never truncates. For a row whose title is long in some languages, where cutting it off loses what the row is.' },
+        { name: 'subtitleNumberOfLines', type: 'number', optional: true, description: 'Lines a string `subtitle` may take before it truncates. Default `2`; `0` never truncates: an explanatory row whose sentence must be read whole.' },
         { name: 'accessibilityLabel', type: 'string', optional: true },
         { name: 'accessibilityHint', type: 'string', optional: true },
         { name: 'accessibilityRole', type: 'AccessibilityRole', optional: true },

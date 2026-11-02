@@ -169,6 +169,7 @@ export const props: BloomSurfaceProps = {
         { name: 'subtitle', type: 'string', optional: true, description: '"3 years on the platform", "Lisbon, Portugal".' },
         { name: 'rating', type: 'number', optional: true, description: '1..5, rounded to whole stars.' },
         { name: 'date', type: 'string', optional: true, description: 'Pre-formatted ("March 2026", "2 weeks ago").' },
+        { name: 'heading', type: 'string', optional: true, description: "The review's own title, drawn above its text in `headline-semibold`." },
         { name: 'text', type: 'string', optional: false },
         { name: 'numberOfLines', type: 'number', optional: true, description: 'Clamp the text to this many lines until expanded. Default `4`; `0` never clamps.' },
         { name: 'showMoreLabel', type: 'string', optional: true, description: '`"Show more"` in English.' },

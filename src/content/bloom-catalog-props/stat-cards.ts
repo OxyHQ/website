@@ -10,7 +10,7 @@ export const props: BloomSurfaceProps = {
         { name: 'stats', type: 'readonly StatCardsItem[]', optional: false, description: 'The KPI cards, in order.' },
         { name: 'variant', type: 'StatCardsVariant', options: ['plain', 'footer'], optional: true, description: "Defaults to `'plain'`." },
         { name: 'count', type: 'number', optional: true, description: 'Render only the first `count` stats.' },
-        { name: 'columns', type: '1 | 2 | 4', optional: true, description: 'Columns at the widest breakpoint. The grid, by WINDOW width:' },
+        { name: 'columns', type: '1 | 2 | 3 | 4', optional: true, description: 'Columns at the widest breakpoint. The grid, by WINDOW width:' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

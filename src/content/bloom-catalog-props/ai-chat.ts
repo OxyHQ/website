@@ -191,6 +191,8 @@ export const props: BloomSurfaceProps = {
     'ResizeHandleProps': {
       props: [
         { name: 'orientation', type: "'vertical' | 'horizontal'", options: ['vertical', 'horizontal'], optional: true, description: 'Separator orientation; horizontal separators resize panel heights.' },
+        { name: 'variant', type: 'ResizeHandleVariant', options: ['grip', 'pill'], optional: true, description: 'How the handle draws. Default `grip`.' },
+        { name: 'thickness', type: 'number', optional: true, description: 'Depth of the hit strip across the separator, centred on it, px. Default 20 for `grip` and 11 for `pill` (a 7px gap and 2px of each pane).' },
         { name: 'onResizeStart', type: '() => void', optional: true, description: 'Pointer went down on the grip.' },
         { name: 'onResize', type: '(dx: number) => void', optional: false, description: 'Distance along the resize axis from the drag start, px.' },
         { name: 'onResizeEnd', type: '() => void', optional: true },

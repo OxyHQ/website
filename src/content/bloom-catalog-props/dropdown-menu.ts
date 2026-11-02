@@ -13,6 +13,7 @@ export const props: BloomSurfaceProps = {
         { name: 'activation', type: "'click' | 'hover'", options: ['click', 'hover'], optional: true, description: "Hover/focus previews preserve the trigger's primary click; arrows enter the menu. Native uses long press." },
         { name: 'openDelay', type: 'number', optional: true },
         { name: 'closeDelay', type: 'number', optional: true },
+        { name: 'openFocus', type: "'first' | 'last'", options: ['first', 'last'], optional: true, description: "Where an open the OWNER makes from its own keys lands, as a desktop menu opened from the keyboard does: `'first'` (or `'last'`) makes that enabled row active (web: focuses it). Read on each open; omit it for an open by a pointer, which starts with no row active. The menu's own trigger keys (web) need none: they ask for it themselves." },
       ],
       inheritsFrom: ['React.PropsWithChildren<…>'],
     },
@@ -28,8 +29,9 @@ export const props: BloomSurfaceProps = {
         { name: 'pressTrigger', type: 'React.ReactElement<OverlayTriggerProps>', optional: true, description: 'An independent primary press surface, composed around the same control after menu handlers.' },
       ],
     },
-    'OverlaySurfaceProps': {
+    'MenuSurfaceProps': {
       props: [
+        { name: 'alignRows', type: 'boolean', optional: true, description: 'Line rows up the way a desktop menu does: when any row draws a check / radio indicator, every row takes the indicator gutter; when any row has a `leading` icon, every row without one keeps an empty slot that wide. Off by default, which keeps per-row `inset`.' },
         { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Overrides the nearest BloomScope size for this surface and its descendants.' },
         { name: 'maxHeight', type: 'number', optional: true, description: 'Optional ceiling; the surface always stays inside the viewport and owns scrolling.' },
         { name: 'children', type: 'React.ReactNode', optional: true },
@@ -50,6 +52,6 @@ export const props: BloomSurfaceProps = {
   components: [
     { name: 'DropdownMenu', propsType: 'DropdownMenuProps' },
     { name: 'DropdownMenuTrigger', propsType: 'DropdownMenuTriggerProps' },
-    { name: 'DropdownMenuContent', propsType: 'OverlaySurfaceProps' },
+    { name: 'DropdownMenuContent', propsType: 'MenuSurfaceProps' },
   ],
 }

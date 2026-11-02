@@ -21,6 +21,23 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'SettingsLayoutProps': {
+      props: [
+        { name: 'onClose', type: '() => void', optional: true, description: 'The close request. Without it there is no close button (a window closes itself).' },
+        { name: 'onBeforeLeave', type: "(reason: 'close' | 'navigation' | 'page') => boolean", optional: true, description: 'Veto an internal leave intention before it changes content.' },
+        { name: 'groups', type: 'SettingsNavGroup[]', optional: false },
+        { name: 'pages', type: 'Record<string, SettingsModalPage>', optional: false },
+        { name: 'page', type: 'string', optional: true, description: 'Controlled current page.' },
+        { name: 'defaultPage', type: 'string', optional: true, description: 'The page shown first. Defaults to the first navigable row.' },
+        { name: 'onPageChange', type: '(page: string) => void', optional: true },
+        { name: 'initialView', type: "'navigation' | 'page'", options: ['navigation', 'page'], optional: true, description: 'Compact layout: start at the section list (default) or on the selected page.' },
+        { name: 'layout', type: 'SettingsModalLayout', options: ['compact', 'medium', 'regular'], optional: true, description: "The layout, when the host decides it. Default: from the layout's own MEASURED width (the window's until the first layout), never the window's." },
+        { name: 'windowControls', type: "'auto' | 'none'", options: ['auto', 'none'], optional: true, description: "`auto` (default): where the platform has windows (`@oxy.so/bloom/window`), the layout is the window's content — the window's controls sit at the rail's top, which keeps their room and moves the window; narrow, the header keeps their room at its leading edge. `none`: the layout is a panel inside an application, away from the window's corner." },
+        { name: 'labels', type: 'SettingsModalLabels', optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
     'SettingsCardProps': {
       props: [
         { name: 'className', type: 'string', optional: true },
@@ -181,6 +198,7 @@ export const props: BloomSurfaceProps = {
   },
   components: [
     { name: 'SettingsModal', propsType: 'SettingsModalProps' },
+    { name: 'SettingsLayout', propsType: 'SettingsLayoutProps' },
     { name: 'SettingsCard', propsType: 'SettingsCardProps' },
     { name: 'SettingsRow', propsType: 'SettingsRowProps' },
     { name: 'SettingsSection', propsType: 'SettingsSectionProps' },

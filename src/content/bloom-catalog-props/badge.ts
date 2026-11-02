@@ -19,6 +19,7 @@ export const props: BloomSurfaceProps = {
         { name: 'invisible', type: 'boolean', optional: true, description: 'If true, the badge is hidden.' },
         { name: 'placement', type: 'BadgePlacement', options: ['top-right', 'top-left', 'bottom-right', 'bottom-left'], optional: true, description: 'Where to position the badge relative to its child.' },
         { name: 'children', type: 'React.ReactNode', optional: true, description: 'The element the badge is attached to.' },
+        { name: 'material', type: "'surface' | 'flat'", options: ['surface', 'flat'], optional: true, description: "The pill's paint: the shared surface material (default) or a flat fill. A badge inside a layer that fades with `opacity` (a tab glyph's crossfade) is flat, since that layer would be the material's backdrop root." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },

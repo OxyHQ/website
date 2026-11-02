@@ -11,6 +11,7 @@ export const props: BloomSurfaceProps = {
         { name: 'title', type: 'string', optional: false, description: 'Primary label' },
         { name: 'titleNumberOfLines', type: 'number', optional: true, description: 'How many lines the title may take before it truncates. Default `1`.' },
         { name: 'description', type: 'string', optional: true, description: 'Secondary description text below title' },
+        { name: 'descriptionLines', type: 'number', optional: true, description: 'Lines the description may take before it truncates. Defaults to `2`; `0` never truncates (a help text or a policy that has to be read whole).' },
         { name: 'value', type: 'string', optional: true, description: 'Right-side value text (e.g. "English", "On")' },
         { name: 'rightElement', type: 'React.ReactNode', optional: true, description: 'Custom right-side element (toggle, badge, etc.)' },
         { name: 'showChevron', type: 'boolean', optional: true, description: 'Show trailing chevron (default: true when onPress is set)' },
@@ -27,7 +28,7 @@ export const props: BloomSurfaceProps = {
     },
     'GroupedSectionProps': {
       props: [
-        { name: 'radius', type: "CardProps['radius']", options: ['panel', 'radius-0', 'radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max'], optional: true, description: 'Outer corner radius of the clipped group. Defaults to radius-28.' },
+        { name: 'radius', type: "CardProps['radius']", options: ['panel', 'radius-0', 'radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max', 'concentric'], optional: true, description: 'Outer corner radius of the clipped group. Defaults to radius-28.' },
         { name: 'separator', type: "'space' | 'line' | 'none'", options: ['space', 'line', 'none'], optional: true, description: 'Space between rounded rows (default), legacy divider lines, or no separation.' },
         { name: 'title', type: 'string', optional: true, description: 'Optional section header text' },
         { name: 'footer', type: 'string', optional: true, description: 'Optional section footer text' },

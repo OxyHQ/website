@@ -7,7 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'UsageCardProps': {
       props: [
-        { name: 'radius', type: "CardProps['radius']", options: ['panel', 'radius-0', 'radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max'], optional: true, description: 'Outer radius; defaults to radius-28.' },
+        { name: 'radius', type: "CardProps['radius']", options: ['panel', 'radius-0', 'radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max', 'concentric'], optional: true, description: 'Outer radius; defaults to radius-28.' },
         { name: 'title', type: 'string', optional: true, description: 'Usage section heading. Overrides labels.usage.' },
         { name: 'fallback', type: 'ReactNode', optional: true, description: 'Content shown when usage is unavailable; no meter or fabricated zero is rendered.' },
         { name: 'footer', type: 'ReactNode', optional: true, description: 'Actions or supporting content below the usage and plan sections.' },

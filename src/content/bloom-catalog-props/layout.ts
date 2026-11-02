@@ -5,11 +5,12 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'layout',
   propTypes: {
-    'PropsWithChildren<{ inherit?: boolean | undefined; }>': {
+    'PropsWithChildren<…>': {
       props: [
         { name: 'inherit', type: 'boolean', optional: true },
+        { name: 'consume', type: 'number', optional: true, description: "Space already occupied by an in-flow slot above this viewport's edge." },
       ],
-      inheritsFrom: ['PropsWithChildren<{ inherit?: boolean; }>'],
+      inheritsFrom: ['PropsWithChildren<{ inherit?: boolean; consume?: number; }>'],
     },
     'TopEdgeProvider': {
       props: [],
@@ -19,12 +20,13 @@ export const props: BloomSurfaceProps = {
       props: [],
       inheritsFrom: ['ProviderProps<SharedValue<number> | null>'],
     },
-    'PropsWithChildren<…>': {
+    'ScreenScope': {
       props: [
         { name: 'inheritBottomEdge', type: 'boolean', optional: true },
+        { name: 'inheritNavigation', type: 'boolean', optional: true, description: "Keep the enclosing navigation motion (a panel the shell's bottom bar follows)." },
         { name: 'sizing', type: "'content' | 'fill'", options: ['content', 'fill'], optional: true },
       ],
-      inheritsFrom: ["PropsWithChildren<{ inheritBottomEdge?: boolean; sizing?: 'content' | 'fill'; }>"],
+      inheritsFrom: ['PropsWithChildren<…>'],
     },
     'PropsWithChildren<{ scrollY?: SharedValue<number> | undefined; }>': {
       props: [
@@ -51,6 +53,8 @@ export const props: BloomSurfaceProps = {
     'ResizeHandleProps': {
       props: [
         { name: 'orientation', type: "'vertical' | 'horizontal'", options: ['vertical', 'horizontal'], optional: true, description: 'Separator orientation; horizontal separators resize panel heights.' },
+        { name: 'variant', type: 'ResizeHandleVariant', options: ['grip', 'pill'], optional: true, description: 'How the handle draws. Default `grip`.' },
+        { name: 'thickness', type: 'number', optional: true, description: 'Depth of the hit strip across the separator, centred on it, px. Default 20 for `grip` and 11 for `pill` (a 7px gap and 2px of each pane).' },
         { name: 'onResizeStart', type: '() => void', optional: true, description: 'Pointer went down on the grip.' },
         { name: 'onResize', type: '(dx: number) => void', optional: false, description: 'Distance along the resize axis from the drag start, px.' },
         { name: 'onResizeEnd', type: '() => void', optional: true },
@@ -92,12 +96,52 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'AutoHideBarProps': {
+      props: [
+        { name: 'bar', type: 'ReactNode', optional: false, description: "The full bar (a `Toolbar`, a browser's address row). Drawn at `height`." },
+        { name: 'summary', type: 'ReactNode', optional: true, description: "What the collapsed strip shows: a page's host, a document's name. Strings are drawn muted." },
+        { name: 'collapsed', type: 'boolean', optional: false, description: "The owner's decision that the bar should step aside (a page scrolled down, a reader mode). Hovering only peeks it; pressing the strip calls `onReveal`, and the owner clears this to bring it back." },
+        { name: 'height', type: 'number', optional: true, description: "The bar's height. Default 41." },
+        { name: 'collapsedHeight', type: 'number', optional: true, description: 'The strip left while collapsed. Default 20.' },
+        { name: 'onReveal', type: '() => void', optional: true, description: 'The collapsed strip was pressed.' },
+        { name: 'peek', type: 'boolean', optional: true, description: 'Hovering the strip shows the whole bar over the body for a while. Default true.' },
+        { name: 'peekDelay', type: 'number', optional: true, description: 'How long the pointer rests on the strip before the bar peeks, ms. Default 150.' },
+        { name: 'unpeekDelay', type: 'number', optional: true, description: 'How long after the pointer leaves a peeked bar it collapses again, ms. Default 250.' },
+        { name: 'motion', type: 'AutoHideBarMotion', optional: true },
+        { name: 'background', type: 'string', optional: true, description: 'The band behind the bar. Default: the fill of the surface it sits on.' },
+        { name: 'revealLabel', type: 'string', optional: true, description: 'Names the strip\'s button. `"Show toolbar"` in English.' },
+        { name: 'children', type: 'ReactNode', optional: true, description: 'The body under the bar: laid out once per change, never per frame.' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'AutoHideBarBand': {
+      props: [
+        { name: 'controller', type: 'AutoHideBarController', optional: false },
+      ],
+    },
+    'AutoHideBarBody': {
+      props: [
+        { name: 'controller', type: 'AutoHideBarController', optional: false },
+        { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'AutoHideBarRegion': {
+      props: [
+        { name: 'controller', type: 'AutoHideBarController', optional: false },
+        { name: 'bar', type: 'React.ReactNode', optional: false },
+        { name: 'summary', type: 'React.ReactNode', optional: true },
+        { name: 'band', type: 'boolean', optional: true, description: 'Paint the band behind the bar. Default true.' },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
-    { name: 'BottomEdgeProvider', propsType: 'PropsWithChildren<{ inherit?: boolean | undefined; }>' },
+    { name: 'BottomEdgeProvider', propsType: 'PropsWithChildren<…>' },
     { name: 'TopEdgeProvider', propsType: 'TopEdgeProvider' },
     { name: 'ScrollOffsetProvider', propsType: 'ProviderProps<SharedValue<number> | null>' },
-    { name: 'ScreenScope', propsType: 'PropsWithChildren<…>' },
+    { name: 'ScreenScope', propsType: 'ScreenScope' },
     { name: 'HeaderDockProvider', propsType: 'PropsWithChildren<{ scrollY?: SharedValue<number> | undefined; }>' },
     { name: 'StickySection', propsType: 'StickySectionProps' },
     { name: 'ScrollMetricsProvider', propsType: 'TopEdgeProvider' },
@@ -105,5 +149,9 @@ export const props: BloomSurfaceProps = {
     { name: 'ResizeHandle', propsType: 'ResizeHandleProps' },
     { name: 'ScrollSurface', propsType: 'ScrollSurfaceProps' },
     { name: 'Toolbar', propsType: 'ToolbarProps' },
+    { name: 'AutoHideBar', propsType: 'AutoHideBarProps' },
+    { name: 'AutoHideBarBand', propsType: 'AutoHideBarBand' },
+    { name: 'AutoHideBarBody', propsType: 'AutoHideBarBody' },
+    { name: 'AutoHideBarRegion', propsType: 'AutoHideBarRegion' },
   ],
 }

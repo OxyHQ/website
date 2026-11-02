@@ -4,7 +4,7 @@ export default function ScreenExample() {
   return (
     <div className="w-full max-w-lg space-y-4 text-foreground">
       <div className="h-48">
-        <Screen>
+        <Screen scroll="content">
           <p className="p-6">Your next screen starts here.</p>
         </Screen>
       </div>

@@ -10,6 +10,7 @@ export const props: BloomSurfaceProps = {
         { name: 'interactive', type: 'boolean', optional: true, description: '`false` draws the disc without making it a control: no `role="button"`, no focus stop, hidden from assistive tech unless `accessibilityLabel` names it. For a play glyph that sits INSIDE a pressable poster frame or row — a button inside a button is invalid HTML and a second stop for one action.' },
         { name: 'playing', type: 'boolean', optional: false, description: 'Whether the media is playing: draws the pause glyph and is named "Pause".' },
         { name: 'onPress', type: '() => void', optional: true, description: 'Called on press. The button does not toggle anything itself.' },
+        { name: 'onLongPress', type: '() => void', optional: true, description: "Called on a long press: a voice note's play button hands on its bubble's menu." },
         { name: 'size', type: 'PlayButtonSize', options: ['sm', 'md', 'lg'], optional: true, description: 'Default `md`.' },
         { name: 'variant', type: 'PlayButtonVariant', options: ['accent', 'inverse', 'plain'], optional: true, description: 'Default `accent`.' },
         { name: 'loading', type: 'boolean', optional: true, description: 'Replaces the glyph with a spinning ring and sets `aria-busy`. Still pressable.' },

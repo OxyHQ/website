@@ -9,6 +9,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'value', type: 'string', optional: true, description: 'The currently selected tab value — the CONTROLLED path, where the bar owns the underline and reports presses through TabsProps.onValueChange.' },
         { name: 'onValueChange', type: '(value: string) => void', optional: true, description: 'Called when a tab is selected. Controlled path only.' },
+        { name: 'pressOpenTab', type: "'report' | 'reselect'", options: ['report', 'reselect'], optional: true, description: "What pressing the open tab again does. `report` (the default) calls `onValueChange` with it like any press; `reselect` reselects the screen instead — back to its top, and a reload once it is there — as every social app's inner tabs do. Controlled path only." },
         { name: 'onReorder', type: '(fromValue: string, toValue: string) => void', optional: true, description: 'Web drag or Ctrl+Shift+Arrow requests a move. The owner persists and renders the new order.' },
         { name: 'hasSelection', type: 'boolean', optional: true, description: 'Focus-driven path only: whether ANY trigger is currently focused.' },
         { name: 'variant', type: 'TabsVariant', options: ['underline', 'pill', 'filled'], optional: true, description: 'Visual variant for the tab bar.' },
@@ -23,7 +24,8 @@ export const props: BloomSurfaceProps = {
     'TabsTriggerProps': {
       props: [
         { name: 'value', type: 'string', optional: false, description: 'Unique value identifying this tab.' },
-        { name: 'label', type: 'string', optional: false, description: 'Tab label text.' },
+        { name: 'label', type: 'string', optional: false, description: 'Tab label text, retained as the accessible name in icon-only presentation.' },
+        { name: 'iconOnly', type: 'boolean', optional: true, description: 'Hide the visible label when an icon is supplied; keep the same tab interaction.' },
         { name: 'leading', type: 'React.ReactNode', optional: true, description: 'A pre-rendered node before the label. The caller sizes and colours it; prefer TabsTriggerProps.leadingIcon, which follows the selection.' },
         { name: 'leadingIcon', type: 'TabsIconComponent', optional: true, description: "Icon component before the label — 16px on `underline`, 20px on the pill variants — painted in the label's colour for the current state. Wins over `icon`." },
         { name: 'count', type: 'number', optional: true, description: "Optional tally rendered as a small count badge beside the label (accent when the tab is selected, muted otherwise). Omitted (or `0`) renders nothing. The underline tracks the trigger's measured width, so a count never changes where it sits." },

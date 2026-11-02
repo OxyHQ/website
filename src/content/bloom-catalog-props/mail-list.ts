@@ -62,6 +62,8 @@ export const props: BloomSurfaceProps = {
         { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: true },
         { name: 'showAvatar', type: 'boolean', optional: true, description: 'Show sender avatars. Selection checkboxes remain visible when enabled.' },
         { name: 'density', type: 'MailDensity', options: ['comfortable', 'cozy', 'compact'], optional: true },
+        { name: 'footer', type: 'ReactNode', optional: true, description: 'Secondary content below the header, aligned with the sender text column. May contain interactive attachments or other controls: it stays outside the row link and retains its own accessibility. The whole row grows with it (including compact density), selection paint and swipe actions.' },
+        { name: 'attachments', type: 'ReactNode', optional: true, description: 'Attachment chips in a horizontal rail spanning the entire row. Bloom owns the scroller: pass chips directly, not a ChipRow. Initial content aligns with the sender; scrolling can use the space beneath the avatar.' },
         { name: 'onPress', type: '() => void', optional: true },
         { name: 'onLongPress', type: '() => void', optional: true },
         { name: 'href', type: 'string', optional: true, description: 'A real href on web, so the row is a link and opens in a new tab.' },

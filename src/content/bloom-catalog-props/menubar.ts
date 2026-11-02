@@ -11,6 +11,8 @@ export const props: BloomSurfaceProps = {
         { name: 'value', type: 'string', optional: true, description: 'The `value` of the open menu. Controlled when supplied; `undefined` closes every menu. shadcn spells the same state the same way.' },
         { name: 'defaultValue', type: 'string', optional: true, description: 'Initial open menu when uncontrolled. Defaults to none open.' },
         { name: 'onValueChange', type: '(value: string | undefined) => void', optional: true },
+        { name: 'focusValue', type: 'string', optional: true, description: "The `value` of the menu whose title has the keyboard, the bar driven from it as a Mac's after Control-F2 (OxyOS's Super+F2); `undefined` when the keyboard is elsewhere. Controlled when supplied: the owner puts the keyboard on the bar by setting it (to the first menu's value, as a Mac does)." },
+        { name: 'onFocusValueChange', type: '(value: string | undefined) => void', optional: true, description: 'The keyboard moved across the bar, or left it (`undefined`).' },
         { name: 'label', type: 'string', optional: true, description: 'Accessible name for the bar.' },
         { name: 'className', type: 'string', optional: true, description: "Appended to the bar's own classes — never substituted for them." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
@@ -21,6 +23,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'value', type: 'string', optional: false, description: 'Identifies this menu within the bar. Required — it IS the open state.' },
+        { name: 'openFocus', type: "'first' | 'last'", options: ['first', 'last'], optional: true, description: "Where the menu starts when it opens: its first or last enabled row active, as a Mac's menu opened from the keyboard does (`DropdownMenu`'s `openFocus`). Omitted, an open by a press starts with none. The bar's own keys (`focusValue`) ask for the first row themselves." },
       ],
     },
     'OverlayTriggerProps': {
@@ -34,29 +37,10 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
-    'OverlaySurfaceProps': {
-      props: [
-        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Overrides the nearest BloomScope size for this surface and its descendants.' },
-        { name: 'maxHeight', type: 'number', optional: true, description: 'Optional ceiling; the surface always stays inside the viewport and owns scrolling.' },
-        { name: 'children', type: 'React.ReactNode', optional: true },
-        { name: 'label', type: 'string', optional: true, description: 'Accessible name of the surface.' },
-        { name: 'dismissible', type: 'boolean', optional: true, description: 'Dismiss on outside press and Escape. Defaults to `true`.' },
-        { name: 'minWidth', type: 'number', optional: true },
-        { name: 'maxWidth', type: 'number', optional: true },
-        { name: 'className', type: 'string', optional: true, description: "Appended to the surface's own chrome — see FloatingPanelProps.className." },
-        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'testID', type: 'string', optional: true },
-        { name: 'side', type: 'FloatingSide', options: ['top', 'bottom', 'left', 'right'], optional: true, description: "Preferred side of the anchor. Defaults to `'bottom'`." },
-        { name: 'align', type: 'FloatingAlign', options: ['start', 'center', 'end'], optional: true, description: 'Horizontal alignment against the anchor. Defaults per component.' },
-        { name: 'sideOffset', type: 'number', optional: true, description: 'Gap between the anchor and the surface, on the `side` axis.' },
-        { name: 'alignOffset', type: 'number', optional: true, description: 'Shift along the `align` axis, applied before the viewport clamp.' },
-      ],
-    },
   },
   components: [
     { name: 'Menubar', propsType: 'MenubarProps' },
     { name: 'MenubarMenu', propsType: 'MenubarMenuProps' },
     { name: 'MenubarTrigger', propsType: 'OverlayTriggerProps' },
-    { name: 'MenubarContent', propsType: 'OverlaySurfaceProps' },
   ],
 }

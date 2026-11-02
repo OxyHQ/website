@@ -17,6 +17,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onAnswersChange', type: '(answers: QuestionnaireAnswers) => void', optional: true },
         { name: 'onComplete', type: '(answers: QuestionnaireAnswers) => void', optional: true, description: 'Fires with every answer once the last question is answered.' },
         { name: 'onDismiss', type: '() => void', optional: true, description: 'Shows the dismiss control in the corner and receives its press.' },
+        { name: 'footer', type: 'boolean', optional: true, description: 'Draw the step pills and Previous / Next. Default `true`. `false` is for a lone `single` question that is answered by picking a row (an approval: Allow, Always Allow, Don\'t Allow): its footer has nothing left to do. A `multiple` question or an "Other" row still needs Next, so keep it there.' },
         { name: 'advanceDelay', type: 'number', optional: true, description: 'How long a single-select pick stays visible before the next question slides in (ms). Default `180`.' },
         { name: 'labels', type: 'QuestionnaireLabels', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

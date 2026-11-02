@@ -56,10 +56,24 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true, description: 'Derives `-star-<n>` for each star.' },
       ],
     },
+    'RatingSummaryProps': {
+      props: [
+        { name: 'average', type: 'number | null', optional: false, description: 'The average on a 5 scale, or `null` when nobody has rated it — never 0. A `null` average draws `noRatingsLabel` and no distribution: an unrated product has no rating, not a zero-star one.' },
+        { name: 'count', type: 'number', optional: false, description: 'How many ratings the average and the distribution are made of.' },
+        { name: 'distribution', type: 'Readonly<Partial<Record<number, number>>>', optional: false, description: "How many ratings gave each whole star, keyed 1 to 5. Absent keys are zero. Each bar is its key's share of `count`." },
+        { name: 'countLabel', type: 'string', optional: true, description: 'The count\'s words under the bars. Default: the locale\'s "128 reviews".' },
+        { name: 'outOfLabel', type: 'string', optional: true, description: 'The scale under the average (`"out of 5"` in English).' },
+        { name: 'noRatingsLabel', type: 'string', optional: true, description: 'Drawn with no ratings (`"No ratings yet"` in English).' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'The summary\'s accessible name. Default: the locale\'s "Rated 4.5 out of 5, 128 reviews".' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'Rating', propsType: 'RatingProps' },
     { name: 'RatingBar', propsType: 'RatingBarProps' },
     { name: 'RatingInput', propsType: 'RatingInputProps' },
+    { name: 'RatingSummary', propsType: 'RatingSummaryProps' },
   ],
 }

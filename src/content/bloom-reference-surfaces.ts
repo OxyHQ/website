@@ -55,4 +55,31 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
     'Inline video surface backed by the optional expo-video peer and an application-owned player. See Media Surface for the surrounding media composition.',
   viewport:
     'Visibility hooks and viewport bindings for application scroll containers. They coordinate offscreen rendering without a standalone visual.',
+  'ambient-photo':
+    'Web fork of the cross-fading ambient photo layer. It needs a stream of photos from your own source and a full-screen ambient screen to sit behind.',
+  concentric:
+    'Concentric radius helpers for nesting rounded shapes. They return values for your own layout rather than rendering a standalone control.',
+  'drop-zone':
+    'A drop target that takes what a user drags in. Pass it your own handlers for the files or items it should accept.',
+  'engagement-bar':
+    'A post action bar (reply, repost, like, vote) bound to your own counts and handlers. See Item for the rows it usually sits under.',
+  'expandable-text':
+    'Collapsible long text that measures its own clamp on a real screen. Give it the content and a line limit from your own feed.',
+  'fact-strip':
+    'A strip of key facts for a detail screen. It renders the values your own data supplies.',
+  'icons/shared':
+    'Shared icon building blocks used by the icon sets. See Icons for the rendered icons.',
+  lockup: 'Brand lockup composition for a product header. It takes your own mark and wordmark.',
+  'platform-surface':
+    'Platform surface context that BloomProvider mounts from its platform prop. Set it on the provider rather than rendering it.',
+  'share-sheet':
+    'The share sheet drives the system share or a host-supplied target list. It needs an app host to hand the shared content to.',
+  'tab-pager':
+    'Pager navigation for an app shell, bound to a tab pager provider. It needs your destinations and an app layout; see App Shell for the layout it drives.',
+  'tab-pager/expo-router':
+    'Tab pager adapter for an Expo Router application. This documentation uses React Router.',
+  'video-playback':
+    'The app-wide authority that decides which video may play. It needs players and a scrolling list or pager in your own screens.',
+  window:
+    'Window chrome (controls and drag region) for a desktop-style app shell. It needs a real window host; see App Shell for the shell that mounts it.',
 };
