@@ -29,14 +29,16 @@ export const props: BloomSurfaceProps = {
       ],
       inheritsFrom: ['PressableProps'],
     },
-    'TabBarMinimizeProvider': {
-      props: [],
-      inheritsFrom: ['PropsWithChildren'],
+    'PropsWithChildren<{ state?: MinimizeState | undefined; }>': {
+      props: [
+        { name: 'state', type: 'MinimizeState', optional: true },
+      ],
+      inheritsFrom: ['PropsWithChildren<{ state?: MinimizeState; }>'],
     },
   },
   components: [
     { name: 'TabBar', propsType: 'TabBarProps' },
     { name: 'TabBarButton', propsType: 'TabBarButtonProps' },
-    { name: 'TabBarMinimizeProvider', propsType: 'TabBarMinimizeProvider' },
+    { name: 'TabBarMinimizeProvider', propsType: 'PropsWithChildren<{ state?: MinimizeState | undefined; }>' },
   ],
 }

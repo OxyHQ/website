@@ -48,8 +48,9 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true, description: 'The pills.' },
         { name: 'gap', type: 'number', optional: true, description: 'Between pills. Default 8.' },
-        { name: 'contentInset', type: 'number', optional: true, description: 'Side padding inside the scroller, so the first and last pill clear the edge.' },
+        { name: 'contentInset', type: 'number | { start: number; end: number; }', optional: true, description: 'Padding inside the scrolling content. A number applies to both ends; logical start/end insets align initial content without narrowing the viewport.' },
         { name: 'fadeColor', type: 'string', optional: true, description: 'The colour the web edge fades blend into — the surface behind the row. Default the page background.' },
+        { name: 'fadeMode', type: "'overlay' | 'mask'", options: ['overlay', 'mask'], optional: true, description: 'Web edge treatment. A mask fades alpha over dynamic surfaces; default overlay.' },
         { name: 'ringInset', type: 'number', optional: true, description: "Room kept on every side for a pill's focus ring, taken back out again with negative margins so the row still lines up with what is above it. Default 4." },
         { name: 'role', type: "'group' | 'radiogroup' | 'tablist'", options: ['group', 'radiogroup', 'tablist'], optional: true, description: 'What the row is: a `group` of toggles, a `radiogroup`, or a `tablist`. Default `group`.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the row. Required for anything but a plain `group` of self-naming pills.' },

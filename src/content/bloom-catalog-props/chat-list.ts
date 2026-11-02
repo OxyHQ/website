@@ -220,7 +220,7 @@ export const props: BloomSurfaceProps = {
     'StoriesRowProps': {
       props: [
         { name: 'stories', type: 'readonly StoryEntry[]', optional: false },
-        { name: 'own', type: "Omit<StoryEntry, 'id' | 'name'> & { name?: string; }", optional: true, description: 'Your own entry, drawn first with a `+` badge. Omit it and the row starts at the first story.' },
+        { name: 'own', type: "Omit<StoryEntry, 'id' | 'name'> & { name?: string; }", optional: true, description: "Your own entry, drawn first with a `+` badge. Omit it and the row starts at the first story. `name` and `avatar` are the ACCOUNT's (its display name and picture) and draw only the avatar — its initial and tint, or the image; the caption is `labels.own`. With neither, the avatar is the placeholder." },
         { name: 'onStoryPress', type: '(id: string) => void', optional: true },
         { name: 'onOwnPress', type: '() => void', optional: true },
         { name: 'size', type: 'number', optional: true, description: 'Avatar diameter. The ring sits outside it. Default `60`.' },
@@ -230,7 +230,7 @@ export const props: BloomSurfaceProps = {
         { name: 'accessibilityLabel', type: 'string', optional: true, description: "Names the strip. `'Stories'` in English (localised)." },
         { name: 'labels', type: 'StoriesRowLabels', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'testID', type: 'string', optional: true, description: 'Entries get `<testID>-story-<id>`, your own `<testID>-own`.' },
+        { name: 'testID', type: 'string', optional: true, description: 'Entries get `<testID>-story-<id>`, your own `<testID>-own` (its caption `<testID>-own-caption`).' },
       ],
     },
   },

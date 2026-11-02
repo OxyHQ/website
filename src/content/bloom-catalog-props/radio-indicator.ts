@@ -13,6 +13,7 @@ export const props: BloomSurfaceProps = {
         { name: 'selectedColor', type: 'string', optional: true, description: 'Accent the selected gradient is built around (defaults to theme.colors.primary)' },
         { name: 'selectedForeground', type: 'string', optional: true, description: 'Foreground paired with selectedColor; shared tonal controls pass this with the fill.' },
         { name: 'borderColor', type: 'string', optional: true, description: 'Border color when unselected (defaults to the semantic border)' },
+        { name: 'disabled', type: 'boolean', optional: true, description: "The control it belongs to is disabled. The disc is then flat rather than on the surface material, because the row or card around it dims with `opacity`, which would make it the material's backdrop root." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Custom style' },
         { name: 'testID', type: 'string', optional: true },
       ],

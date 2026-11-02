@@ -9,14 +9,16 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'colorPreset', type: 'AppColorName', options: ['teal', 'blue', 'green', 'yellow', 'red', 'purple', 'pink', 'sky', 'orange', 'mint', 'oxy', 'faircoin', 'pumpkin', 'gray', 'brown', 'peach', 'rose', 'mono', 'grove', 'ember', 'merlot', 'cobalt', 'jade', 'pine', 'olive', 'lagoon', 'navy', 'azure', 'violet', 'lavender', 'plum', 'cherry', 'chocolate', 'graphite', 'forest-fire', 'malachite-rush', 'moss-voltage', 'viridian-orbit', 'acid-canopy', 'pacific-flare', 'reef-pulse', 'electric-tide', 'arctic-signal', 'ultramarine-gold', 'midnight-citrus', 'persimmon-wave', 'solar-flux', 'paprika-current', 'crimson-spark', 'flamenco-sun', 'saffron-depth', 'clay-current', 'bronze-neon', 'copper-field', 'umber-signal', 'amethyst-current', 'ruby-current', 'orchid-flare', 'garnet-acid', 'indigo-ember', 'raspberry-gold', 'ink-orange', 'charcoal-lime', 'pewter-current'], optional: true, description: 'Local screen recipe, including its enclosing panel surface. Restored on departure.' },
         { name: 'header', type: 'ReactNode', optional: true },
-        { name: 'scroll', type: "'auto' | 'content' | 'none'", options: ['auto', 'content', 'none'], optional: true, description: "auto uses the host's document/column viewport. content lets an explicit list bind the scroll/inset contract. none reserves chrome around a bounded canvas (board, map or editor) without adding a scrolling viewport." },
+        { name: 'scroll', type: "'auto' | 'content' | 'none'", options: ['auto', 'content', 'none'], optional: true, description: "auto (the default) uses the host's document/column viewport. content lets an explicit list bind the scroll/inset contract. none reserves chrome around a bounded canvas (board, map or editor) without adding a scrolling viewport." },
         { name: 'headerPlacement', type: "'inset' | 'overlay'", options: ['inset', 'overlay'], optional: true, description: 'Overlay chrome paints above content without reserving its height.' },
+        { name: 'bottomBarPlacement', type: "'inset' | 'overlay'", options: ['inset', 'overlay'], optional: true, description: '`overlay` floats `bottomBar` over the content, whose scroller pads its end clear of it (a reply prompt under a thread). `inset` (default) keeps the content above it (a chat composer the thread is anchored to).' },
         { name: 'active', type: 'boolean', optional: true, description: 'Disable all descendant scroll writers when a navigator retains this screen.' },
         { name: 'navigationScope', type: "'inherit' | 'shared' | 'isolated'", options: ['inherit', 'shared', 'isolated'], optional: true, description: 'inherit shell navigation motion; shared establishes a shell; isolated resets it for a modal.' },
         { name: 'documentScroll', type: 'boolean', optional: true, description: 'Web document flow: bind window scrolling automatically, reserve chrome clearance, and keep chrome sticky within this column. Explicit list bindings take priority.' },
         { name: 'bottomBar', type: 'ReactNode', optional: true },
         { name: 'bottomBarKeyboardBehavior', type: "'hide' | 'visible' | 'follow'", options: ['hide', 'visible', 'follow'], optional: true, description: 'Navigation hides by default; `visible` keeps its position while typing. Native `follow` moves bottom chrome with the keyboard and makes ScreenScrollView keep the focused input above it. Requires react-native-keyboard-controller and its root KeyboardProvider. Web retains the ordinary Screen viewport.' },
-        { name: 'primaryAction', type: 'ReactNode', optional: true, description: 'Standalone action; with navigation use BottomBar.action instead.' },
+        { name: 'primaryAction', type: 'ReactNode', optional: true, description: 'The page\'s own floating action (a "new folder"). It floats over the content, which scrolls under it and pads its end clear of it, and the shell\'s floating action steps aside while this screen is in front.' },
+        { name: 'reselect', type: "import('./reselect').ScreenReselectHandler", optional: true, description: 'What reselecting this screen means — pressing the place the reader is already on: usually `{ refresh }`. Answered only while the screen is active. Content inside the screen can declare it with `useScreenReselectHandler`.' },
         { name: 'headerHeight', type: 'number', optional: true, description: 'Initial footprint before layout; include any safe area in custom values.' },
         { name: 'bottomBarHeight', type: 'number', optional: true },
         { name: 'contentClearance', type: 'number', optional: true, description: 'Extra visual clearance beyond the measured bottom chrome.' },
@@ -34,6 +36,17 @@ export const props: BloomSurfaceProps = {
         { name: 'handler', type: 'ScrollHandlerProcessed | null', optional: true },
       ],
       inheritsFrom: ["Omit<ScrollViewProps, 'onScroll'>", 'RefAttributes<ScrollViewInstance>'],
+    },
+    'ScreenActivity': {
+      props: [
+        { name: 'active', type: 'boolean', optional: false },
+        { name: 'children', type: 'ReactNode', optional: false },
+      ],
+    },
+    'ScreenReselectScope': {
+      props: [
+        { name: 'children', type: 'ReactNode', optional: false },
+      ],
     },
     'ScreenPagerProps<Item>': {
       props: [
@@ -53,6 +66,8 @@ export const props: BloomSurfaceProps = {
   components: [
     { name: 'Screen', propsType: 'ScreenProps' },
     { name: 'ScreenScrollView', propsType: 'ScreenScrollViewProps' },
+    { name: 'ScreenActivity', propsType: 'ScreenActivity' },
+    { name: 'ScreenReselectScope', propsType: 'ScreenReselectScope' },
     { name: 'ScreenPager', propsType: 'ScreenPagerProps<Item>' },
   ],
 }

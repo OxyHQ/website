@@ -38,9 +38,12 @@ export const props: BloomSurfaceProps = {
         { name: 'accessibilityLabel', type: 'string', optional: false, description: 'What the ring measures. Required, for the reason `Meter` states.' },
         { name: 'valueText', type: 'string', optional: true, description: '`aria-valuetext`.' },
         { name: 'transitionMs', type: 'number', optional: true, description: 'Milliseconds the arc eases over, on WEB only — native snaps. Ignored under `prefers-reduced-motion`.' },
+        { name: 'indeterminate', type: 'boolean', optional: true, description: 'The amount is not known yet — a download that has not started, a step that reports none: a quarter of the ring turns around it, and the progressbar reports no value (`aria-valuenow` absent, `aria-busy`), which is what makes it indeterminate to assistive technology. `value` is not drawn meanwhile.' },
         { name: 'children', type: 'ReactNode', optional: true, description: 'Centred content — the score, a glyph. Hidden from assistive technology.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Container style override.' },
         { name: 'testID', type: 'string', optional: true },
+        { name: 'onStop', type: 'undefined', optional: true },
+        { name: 'stopLabel', type: 'undefined', optional: true },
       ],
     },
     'StatBarProps': {

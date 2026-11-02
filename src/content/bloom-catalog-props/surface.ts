@@ -8,8 +8,8 @@ export const props: BloomSurfaceProps = {
     'SurfaceProps': {
       props: [
         { name: 'children', type: 'ReactNode', optional: true },
-        { name: 'fill', type: 'string', optional: true, description: 'Tint source. Opaque colours use 90% opacity; supplied alpha is preserved.' },
-        { name: 'radius', type: 'number', optional: true, description: 'Radius shared by host and paint. Explicit prop wins over style.borderRadius, then default 20.' },
+        { name: 'fill', type: 'string', optional: true, description: 'Tint source. On the web opaque colours paint at 72% over the frosted backdrop; native keeps them opaque. Supplied alpha is preserved.' },
+        { name: 'radius', type: "number | 'concentric'", optional: true, description: 'Radius shared by host and paint. Explicit prop wins over style.borderRadius, then default 20.' },
         { name: 'cornerCurve', type: 'CornerCurve', options: ['round', 'smooth'], optional: true, description: 'Platform-adaptive corners shared by the host and material.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'className', type: 'string', optional: true },

@@ -8,12 +8,18 @@ export const props: BloomSurfaceProps = {
     'FontLoaderProps': {
       props: [
         { name: 'enabled', type: 'boolean', optional: false, description: 'Whether to load and inject the Bloom font system. When false, this component is a pass-through. Default true (set by `BloomThemeProvider`).' },
-        { name: 'fallback', type: 'React.ReactNode', optional: true, description: 'Rendered while native fonts load. Ignored on web — the web variant applies CSS `@font-face` rules synchronously and uses `font-display: swap` to handle the FOUT period.' },
+        { name: 'fallback', type: 'React.ReactNode', optional: true, description: 'Rendered while native fonts load. Ignored on web — the web variant publishes CSS `@font-face` rules and uses `font-display: swap` to handle the FOUT period.' },
         { name: 'children', type: 'React.ReactNode', optional: false },
+      ],
+    },
+    'BloomFontHeadProps': {
+      props: [
+        { name: 'families', type: 'readonly FontFamilyName[]', optional: true, description: 'Families used by the first screen. Defaults to sans and display; mono is opt-in.' },
       ],
     },
   },
   components: [
     { name: 'FontLoader', propsType: 'FontLoaderProps' },
+    { name: 'BloomFontHead', propsType: 'BloomFontHeadProps' },
   ],
 }

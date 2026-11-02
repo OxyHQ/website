@@ -5,8 +5,14 @@ import type { BloomSurfaceProps } from '../../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'panel-routing/expo-router',
   propTypes: {
+    'StackScene': {
+      props: [
+        { name: 'children', type: 'ReactNode', optional: false },
+      ],
+    },
   },
   components: [
     { name: 'Redirect' },
+    { name: 'StackScene', propsType: 'StackScene' },
   ],
 }

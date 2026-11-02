@@ -33,6 +33,7 @@ export const props: BloomSurfaceProps = {
         { name: 'showSizeToggle', type: 'boolean', optional: true, description: 'Shows the Normal / Compact segmented control under the table. Defaults to `false`.' },
         { name: 'sizeToggleLabels', type: '{ md: string; sm: string; }', optional: true, description: "Labels of the density control (`{ md: 'Normal', sm: 'Compact' }` in English)." },
         { name: 'sizeToggleAccessibilityLabel', type: 'string', optional: true, description: 'Accessible name of the density control (`"Table density"` in English).' },
+        { name: 'bordered', type: 'boolean', optional: true, description: "Draws the table's own 1px border, 16px radius and 8px top inset. Defaults to `true`. Pass `false` inside a surface that already owns the frame (a dialog, a sheet, a card) so the table does not read as a second, nested border." },
         { name: 'emptyState', type: 'ReactNode', optional: true, description: 'Shown in the 160px empty band when `rows` is empty.' },
         { name: 'minWidth', type: 'number', optional: true, description: 'Minimum table width; narrower containers scroll the table horizontally.' },
         { name: 'layout', type: 'DataTableLayout', options: ['table', 'inset'], optional: true, description: "Row recipe. Defaults to `'table'`." },
