@@ -385,11 +385,23 @@ try {
       }),
       'loader light follows an ellipse instead of the composer rim',
     );
+    // A CSS animation's computed value moves only when the page renders a
+    // frame, so "animating" is the offset changing on a later frame, not after
+    // a fixed wall-clock sleep: the cold avatars' shader compiles can hold the
+    // main thread for longer than any such sleep. A stopped loader never
+    // changes and still fails.
     const phase = await orbit.evaluate((node) => getComputedStyle(node).strokeDashoffset);
-    await page.waitForTimeout(180);
-    invariant(
-      (await orbit.evaluate((node) => getComputedStyle(node).strokeDashoffset)) !== phase,
-      'visible composer loader is not animating',
+    const orbitNode = await orbit.elementHandle();
+    invariant(orbitNode, 'composer loader rim is unavailable');
+    await renderStage(
+      page,
+      `${mode} composer loader animating`,
+      () =>
+        page.waitForFunction(
+          ([node, before]) => getComputedStyle(node as Element).strokeDashoffset !== before,
+          [orbitNode, phase] as const,
+        ),
+      orbit,
     );
     invariant(
       await composer.evaluate((node) => {
@@ -470,19 +482,26 @@ try {
       await progress.boundingBox(),
       await models.boundingBox(),
     ];
+    invariant(before.every(Boolean), 'mosaic geometry is unavailable');
+    const [sidebarNode, progressNode, modelsNode] = await Promise.all(
+      [sidebar, progress, models].map((locator) => locator.elementHandle()),
+    );
+    invariant(sidebarNode && progressNode && modelsNode, 'mosaic geometry is unavailable');
     await sidebar.getByRole('button', { name: 'Collapse sidebar', exact: true }).click();
-    await page.waitForTimeout(350);
-    const after = [
-      await sidebar.boundingBox(),
-      await progress.boundingBox(),
-      await models.boundingBox(),
-    ];
-    invariant(before.every(Boolean) && after.every(Boolean), 'mosaic geometry is unavailable');
-    invariant(
-      after[0]!.width === 60 &&
-        after[1]!.x === before[1]!.x - 200 &&
-        after[2]!.x === before[2]!.x - 200,
-      'sidebar collapse does not move the adjacent cards with the reference layout',
+    // The collapse is a transition: check the layout it ends in, on whichever
+    // frame it lands, rather than wherever it is after a fixed sleep.
+    await renderStage(
+      page,
+      `${mode} sidebar collapse moves the adjacent cards`,
+      () =>
+        page.waitForFunction(
+          ([side, left, right, progressX, modelsX]) =>
+            (side as Element).getBoundingClientRect().width === 60 &&
+            (left as Element).getBoundingClientRect().x === (progressX as number) - 200 &&
+            (right as Element).getBoundingClientRect().x === (modelsX as number) - 200,
+          [sidebarNode, progressNode, modelsNode, before[1]?.x, before[2]?.x] as const,
+        ),
+      sidebar,
     );
     await sidebar.getByRole('button', { name: 'Expand sidebar', exact: true }).click();
     await page.waitForTimeout(350);
