@@ -1,4 +1,3 @@
-import { safeFetch } from '@oxy.so/core/server';
 import { and, asc, eq, isNull, or } from 'drizzle-orm';
 import { db } from '../db/postgres.js';
 import { categories, incidents, media, products } from '../db/schema/index.js';
@@ -6,7 +5,9 @@ import { populate } from '../db/refs.js';
 import {
   applyFunctionalSignals,
   authoritativeProbeUrl,
+  probeEndpoint,
   readFunctionalSignals,
+  type ProbeResult,
   type PublicServiceStatus,
 } from './functionalStatus.js';
 
@@ -48,8 +49,6 @@ export interface CachedStatusPayload {
   services: CachedServiceResult[];
 }
 
-const PROBE_TIMEOUT_MS = 5_000;
-const SLOW_LATENCY_MS = 1_500;
 const CACHE_TTL_MS = 60_000;
 
 /** A product row with its logo already resolved, which is what a probe reads. */
@@ -93,47 +92,11 @@ async function probeService(product: ProductRow): Promise<CachedServiceResult> {
     mark: product.mark,
     logoUrl: resolveLogoUrl(product.logo),
   };
-  if (target === null) {
-    return {
-      ...base,
-      status: 'unknown',
-      latencyMs: null,
-      httpStatus: null,
-      lastChecked: new Date().toISOString(),
-    };
-  }
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
-  const start = Date.now();
-  try {
-    // Targets are audited above, and safeFetch remains the SSRF boundary.
-    const result = await safeFetch(target, {
-      method: 'GET',
-      signal: controller.signal,
-      headers: { 'User-Agent': 'OxyStatusBot/1.0 (+https://oxy.so/status)' },
-    });
-    const latencyMs = Date.now() - start;
-    const httpStatus = result.status;
-    // Only the status line matters for a health probe — discard the body.
-    result.response.destroy();
-    const status: ServiceStatus =
-      httpStatus >= 200 && httpStatus < 400
-        ? latencyMs > SLOW_LATENCY_MS
-          ? 'degraded'
-          : 'operational'
-        : 'down';
-    return { ...base, status, latencyMs, httpStatus, lastChecked: new Date().toISOString() };
-  } catch {
-    return {
-      ...base,
-      status: 'down',
-      latencyMs: null,
-      httpStatus: null,
-      lastChecked: new Date().toISOString(),
-    };
-  } finally {
-    clearTimeout(timer);
-  }
+  const probe: ProbeResult =
+    target === null
+      ? { status: 'unknown', latencyMs: null, httpStatus: null }
+      : await probeEndpoint(target);
+  return { ...base, ...probe, lastChecked: new Date().toISOString() };
 }
 
 function worse(a: ServiceStatus, b: ServiceStatus): ServiceStatus {

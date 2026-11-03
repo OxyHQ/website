@@ -46,7 +46,6 @@ import badgesRouter from './routes/badges.js';
 import teamRouter from './routes/team.js';
 import mediaRouter from './routes/media.js';
 import referralsRouter from './routes/referrals.js';
-import fundingRouter from './routes/funding.js';
 import adminAccessRouter from './routes/adminAccess.js';
 import intercomRouter from './routes/intercom.js';
 import salesRouter from './routes/sales.js';
@@ -174,7 +173,6 @@ export function createApp(options: AppOptions): express.Express {
   app.use('/api/profiles', profilesRouter);
   app.use('/api/badges', badgesRouter);
   app.use('/api/referrals', referralsRouter);
-  app.use('/api/funding-progress', fundingRouter);
 
   // Sales and private-evaluation requests from /contact/sales.
   app.use('/api/sales-inquiries', salesRouter);

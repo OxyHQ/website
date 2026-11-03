@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { describe, it } from 'node:test';
+import { after, before, describe, it } from 'node:test';
 import {
   applyFunctionalSignals,
   authoritativeProbeUrl,
+  probeEndpoint,
   statusFromAlarm,
   type FunctionalSignal,
 } from './functionalStatus.js';
@@ -111,5 +112,61 @@ describe('public functional status', () => {
       migration,
       /RAISE EXCEPTION 'public status inventory has % canonical rows, expected 28'/,
     );
+  });
+});
+
+describe('probing an audited endpoint', () => {
+  // A loopback listener stands in for the internal ALB: both are private
+  // addresses, which is exactly what safeFetch refused and the probe must reach.
+  let server: ReturnType<typeof Bun.serve>;
+  let origin: string;
+
+  before(() => {
+    server = Bun.serve({
+      hostname: '127.0.0.1',
+      port: 0,
+      fetch(request) {
+        const path = new URL(request.url).pathname;
+        if (path === '/health') return new Response('ok');
+        if (path === '/moved') return Response.redirect('https://oxy.so/', 302);
+        return new Response('unavailable', { status: 503 });
+      },
+    });
+    origin = `http://127.0.0.1:${server.port}`;
+  });
+
+  after(() => {
+    server.stop(true);
+  });
+
+  it('reaches a private address, as api.oxy.so is inside the VPC', async () => {
+    const result = await probeEndpoint(`${origin}/health`);
+    assert.equal(result.status, 'operational');
+    assert.equal(result.httpStatus, 200);
+    assert.equal(typeof result.latencyMs, 'number');
+  });
+
+  it('reads a non-2xx answer as down and keeps its status code', async () => {
+    assert.deepEqual(
+      { ...(await probeEndpoint(`${origin}/ready`)), latencyMs: null },
+      { status: 'down', latencyMs: null, httpStatus: 503 },
+    );
+  });
+
+  it('does not follow a redirect into a green state', async () => {
+    const result = await probeEndpoint(`${origin}/moved`);
+    assert.equal(result.status, 'down');
+    assert.equal(result.httpStatus, 302);
+  });
+
+  it('reads an unreachable endpoint as down with no status', async () => {
+    const closed = Bun.serve({ hostname: '127.0.0.1', port: 0, fetch: () => new Response() });
+    const url = `http://127.0.0.1:${closed.port}/health`;
+    closed.stop(true);
+    assert.deepEqual(await probeEndpoint(url), {
+      status: 'down',
+      latencyMs: null,
+      httpStatus: null,
+    });
   });
 });

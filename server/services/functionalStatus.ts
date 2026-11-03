@@ -89,6 +89,62 @@ export function authoritativeProbeUrl(serviceId: string): string | null {
   return AUTHORITATIVE_PROBES[serviceId] ?? null;
 }
 
+const PROBE_TIMEOUT_MS = 5_000;
+const SLOW_LATENCY_MS = 1_500;
+
+export interface ProbeResult {
+  readonly status: PublicServiceStatus;
+  readonly latencyMs: number | null;
+  readonly httpStatus: number | null;
+}
+
+/**
+ * One GET of an audited endpoint from `AUTHORITATIVE_PROBES`.
+ *
+ * Plain `fetch`, never `safeFetch`. `safeFetch` is the SSRF boundary for
+ * URLs a caller influences, and it refuses private addresses by design; these
+ * targets are a fixed, reviewed list, and inside the VPC `api.oxy.so`
+ * resolves to the internal ALB (split-horizon private zone, oxy-infra
+ * `terraform-uswest2/alb-internal.tf`). Under `safeFetch` that probe was
+ * refused, `oxy-api` read as down, and the dependency map took every service
+ * that needs it down with it.
+ *
+ * What it measures is whatever this task's resolver answers, on purpose:
+ * `api.oxy.so` is the internal ALB in front of the same oxy-api tasks and the
+ * same `/health` contract as the public target group, and every other host
+ * resolves publicly through Cloudflare. Forcing public resolution for one
+ * name would mean overriding DNS in this process. An edge-only fault on
+ * `api.oxy.so` (Cloudflare or the public ALB) is therefore not seen here; it
+ * is the incident list that reports one.
+ *
+ * Only a 2xx is healthy. Redirects are not followed: an audited endpoint that
+ * starts redirecting has moved its contract, and following it could turn a
+ * landing page green.
+ */
+export async function probeEndpoint(target: string): Promise<ProbeResult> {
+  const start = Date.now();
+  try {
+    const response = await fetch(target, {
+      method: 'GET',
+      redirect: 'manual',
+      signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
+      headers: { 'User-Agent': 'OxyStatusBot/1.0 (+https://oxy.so/status)' },
+    });
+    const latencyMs = Date.now() - start;
+    // Only the status line matters for a health probe.
+    await response.body?.cancel();
+    const healthy = response.status >= 200 && response.status < 300;
+    const status: PublicServiceStatus = !healthy
+      ? 'down'
+      : latencyMs > SLOW_LATENCY_MS
+        ? 'degraded'
+        : 'operational';
+    return { status, latencyMs, httpStatus: response.status };
+  } catch {
+    return { status: 'down', latencyMs: null, httpStatus: null };
+  }
+}
+
 export async function readFunctionalSignals(): Promise<ReadonlyMap<string, FunctionalSignal>> {
   const names = Object.values(SERVICE_ALARMS);
   try {
