@@ -81,6 +81,13 @@
       "skipIfNoLocal": true
     },
     {
+      "name": "Peable",
+      "localPath": "/home/nate/Oxy/Peable",
+      "git": "https://github.com/OxyHQ/Peable.git",
+      "ref": "main",
+      "configPaths": ["packages/sdk"]
+    },
+    {
       "name": "Website (MCP)",
       "localPath": "/home/nate/Oxy/website",
       "git": "https://github.com/OxyHQ/website.git",
