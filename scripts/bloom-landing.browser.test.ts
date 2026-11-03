@@ -64,7 +64,10 @@ async function renderStage(
     const focused = focus
       ? await focus
           .evaluate((node) => ({
-            text: (node as HTMLElement).innerText.replace(/\s+/g, ' ').slice(0, 600),
+            // An SVG element (the loader's rim) has no innerText.
+            text: ((node as HTMLElement).innerText ?? node.textContent ?? '')
+              .replace(/\s+/g, ' ')
+              .slice(0, 600),
             html: node.outerHTML.slice(0, 6000),
             bounds: node.getBoundingClientRect().toJSON(),
           }))
