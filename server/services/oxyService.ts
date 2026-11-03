@@ -7,6 +7,9 @@ export const oxyService = new OxyServer({
   baseURL: config.oxyApiBase,
   cloudURL: config.oxyFiles.cloudUrl,
   workloadCredentials: createAwsWorkloadCredentialProvider(),
+  // Session-less reads carry the workload token: anonymous traffic is charged
+  // to the NAT address the whole fleet shares, and slowed past its budget.
+  serviceIdentity: 'when-anonymous',
 });
 
 export const oxyTransport = oxyService.createServiceClient({

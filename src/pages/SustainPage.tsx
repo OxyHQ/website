@@ -1,14 +1,13 @@
 import { RiMegaphoneLine } from '@oxy.so/bloom/icons/RiMegaphoneLine';
 import { RiMoneyDollarCircleLine } from '@oxy.so/bloom/icons/RiMoneyDollarCircleLine';
 import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine';
-import * as Skeleton from '@oxy.so/bloom/skeleton';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
 import Button from '../components/ui/Button';
 import DotPattern from '../components/ui/DotPattern';
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection';
-import { usePage, useFundingProgress, type PageSection, type FundingProgress } from '../api/hooks';
+import { usePage, type PageSection } from '../api/hooks';
 import { sectionContent, sectionHeading, sectionSubheading } from '../lib/cmsSections';
 import { AnimatedTitle } from '../components/ui/AnimatedTitle';
 import { DashedHLine, DashedVLines } from '../components/ui/GridDecoration';
@@ -16,8 +15,7 @@ import { DashedHLine, DashedVLines } from '../components/ui/GridDecoration';
 /* ──────────────────────────────────────────────
  * /sustain
  *
- * Public "we will never ship ads" commitment page with a live
- * crowdfunding-style funding dashboard. Backed by the CMS
+ * Public "we will never ship ads" commitment page. Backed by the CMS
  * `pages/sustain` document. Every section falls back to constant
  * copy when the CMS document is missing or the relevant section
  * hasn't been populated, so the page renders identically on fresh
@@ -33,11 +31,11 @@ import { DashedHLine, DashedVLines } from '../components/ui/GridDecoration';
 const DEFAULT_HERO_BADGE = 'Funding Oxy';
 const DEFAULT_HERO_TITLE = "We will never ship ads. Here's how.";
 const DEFAULT_HERO_SUBTITLE =
-  'Most platforms sell your attention to advertisers. We sell a product worth paying for. This page shows — in real time — how subscriptions and donations keep Oxy running without compromising your privacy.';
+  'Most platforms sell your attention to advertisers. We sell a product worth paying for. This page explains how subscriptions and donations keep Oxy running without compromising your privacy.';
 
 const DEFAULT_WHY_HEADING = 'Why this page exists';
 const DEFAULT_WHY_CONTENT =
-  'Running a platform that respects your privacy costs real money — servers, bandwidth, engineering, security audits, legal compliance. Most companies cover those costs by selling ads, which means selling your data and your attention. We refuse.\n\nInstead, we ask the people who use Oxy to fund it directly. Subscriptions, donations, and partnerships — money that comes with no strings attached and no incentive to spy on anyone. This page is our public ledger. Every dollar is accounted for, and the goal is simple: reach full sustainability so Oxy can run indefinitely without ever needing ads.';
+  'Running a platform that respects your privacy costs real money — servers, bandwidth, engineering, security audits, legal compliance. Most companies cover those costs by selling ads, which means selling your data and your attention. We refuse.\n\nInstead, we ask the people who use Oxy to fund it directly. Subscriptions, donations, and partnerships — money that comes with no strings attached and no incentive to spy on anyone. The goal is simple: reach full sustainability so Oxy can run indefinitely without ever needing ads.';
 
 const DEFAULT_COMMITMENT_HEADING = 'Our commitment';
 const DEFAULT_COMMITMENT_SUBHEADING =
@@ -62,7 +60,7 @@ const DEFAULT_COMMITMENTS: Commitment[] = [
   {
     title: 'Full transparency',
     description:
-      'This page shows real numbers. How much we need, how much we have, where it comes from. Updated in real time, no spin.',
+      'We say plainly how Oxy is funded and what it is never funded by. No spin, and no figure we cannot stand behind.',
   },
   {
     title: 'Community-funded',
@@ -81,12 +79,9 @@ const DEFAULT_COMMITMENTS: Commitment[] = [
   },
 ];
 
-const DEFAULT_FUNDING_HEADING = 'The numbers';
-const DEFAULT_FUNDING_SUBHEADING = 'Live funding status — updated every minute.';
-
 const DEFAULT_HELP_HEADING = 'How you can help';
 const DEFAULT_HELP_CONTENT =
-  "Every subscription moves the bar. If you use Oxy and find it valuable, a paid plan is the single most impactful thing you can do. If a plan isn't right for you, a one-time donation helps too. And if money isn't an option, just using Oxy and telling others about it matters more than you think.";
+  "Every subscription counts. If you use Oxy and find it valuable, a paid plan is the single most impactful thing you can do. If a plan isn't right for you, a one-time donation helps too. And if money isn't an option, just using Oxy and telling others about it matters more than you think.";
 
 const DEFAULT_CTA_HEADING = 'Keep Oxy ad-free.';
 const DEFAULT_CTA_SUBHEADING =
@@ -115,119 +110,11 @@ function parseCommitments(sections: PageSection[], fallback: Commitment[]): Comm
   return parsed.length > 0 ? parsed : fallback;
 }
 
-/* ── Funding bar ── */
-
-function FundingBar({ raised, target }: { raised: number; target: number }) {
-  const pct = target > 0 ? Math.min(100, (raised / target) * 100) : 0;
-  return (
-    <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
-      <div
-        className="h-full rounded-full bg-primary transition-[width] duration-700 ease-out"
-        style={{ width: `${pct}%` }}
-        role="progressbar"
-        aria-valuenow={Math.round(pct)}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      />
-    </div>
-  );
-}
-
-/* ── Currency formatter ── */
-
-function formatCurrency(cents: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(cents / 100);
-}
-
-/* ── Relative time formatter ── */
-
-function relativeTime(dateString: string): string {
-  const now = Date.now();
-  const then = new Date(dateString).getTime();
-  const diffMs = now - then;
-  const diffSec = Math.floor(diffMs / 1000);
-  if (diffSec < 60) return 'just now';
-  const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `${diffMin}m ago`;
-  const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr}h ago`;
-  const diffDay = Math.floor(diffHr / 24);
-  return `${diffDay}d ago`;
-}
-
-/* ── Funding widget (data loaded) ── */
-
-function FundingWidget({ data }: { data: FundingProgress }) {
-  const pct =
-    data.targetAmount > 0 ? Math.min(100, (data.raisedAmount / data.targetAmount) * 100) : 0;
-
-  const breakdownItems = [
-    { label: 'Subscriptions', value: formatCurrency(data.breakdown.subscriptions) },
-    { label: 'Donations', value: formatCurrency(data.breakdown.donations) },
-    { label: 'Partnerships', value: formatCurrency(data.breakdown.partnerships) },
-    { label: 'Services', value: formatCurrency(data.breakdown.services) },
-  ];
-
-  return (
-    <div className="flex flex-col gap-8">
-      {/* Headline row */}
-      <div className="flex flex-wrap items-baseline justify-between gap-4">
-        <p className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-          {formatCurrency(data.raisedAmount)}{' '}
-          <span className="text-lg font-medium text-muted-foreground md:text-xl">
-            / {formatCurrency(data.targetAmount)} per month
-          </span>
-        </p>
-        <p className="text-lg font-semibold text-primary">{Math.round(pct)}% funded</p>
-      </div>
-
-      {/* Sustainable banner */}
-      {data.sustainable && (
-        <div className="rounded-xl bg-primary/10 p-4 text-primary">
-          Fully funded. Oxy is ad-free thanks to {data.supporters.toLocaleString()} supporters.
-        </div>
-      )}
-
-      {/* Progress bar */}
-      <FundingBar raised={data.raisedAmount} target={data.targetAmount} />
-
-      {/* Breakdown stats */}
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border lg:grid-cols-4">
-        {breakdownItems.map((item) => (
-          <div key={item.label} className="bg-background p-6 text-center">
-            <div className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-              {item.value}
-            </div>
-            <div className="mt-1 text-sm font-medium text-muted-foreground">{item.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Footer */}
-      <p className="text-sm text-muted-foreground">
-        {data.supporters.toLocaleString()} supporters &middot; Updated{' '}
-        {relativeTime(data.updatedAt)}
-      </p>
-    </div>
-  );
-}
-
 /* ── Page ── */
 
 export default function SustainPage() {
   const { data: pageData } = usePage('sustain');
   const sections = pageData?.sections ?? [];
-
-  const {
-    data: fundingData,
-    isPending: fundingPending,
-    isError: fundingError,
-  } = useFundingProgress();
 
   const heroBadge = sectionContent(sections, 'hero', DEFAULT_HERO_BADGE);
   const heroTitle = sectionHeading(sections, 'hero', DEFAULT_HERO_TITLE);
@@ -247,9 +134,6 @@ export default function SustainPage() {
     .split(/\n{2,}/)
     .map((p) => p.trim())
     .filter(Boolean);
-
-  const fundingHeading = sectionHeading(sections, 'funding', DEFAULT_FUNDING_HEADING);
-  const fundingSubheading = sectionSubheading(sections, 'funding', DEFAULT_FUNDING_SUBHEADING);
 
   const helpHeading = sectionHeading(sections, 'help', DEFAULT_HELP_HEADING);
   const helpContent = sectionContent(sections, 'help', DEFAULT_HELP_CONTENT);
@@ -376,85 +260,10 @@ export default function SustainPage() {
           </div>
         </section>
 
-        {/* ═══ Funding progress ═══ */}
-        <section className="container">
-          <div>
-            <DashedHLine />
-            <DashedVLines />
-            <div className="relative grid grid-cols-12">
-              {/* Dot pattern background */}
-              <svg
-                aria-hidden="true"
-                width="100%"
-                height="100%"
-                className="mask-t-to-50% absolute inset-0 text-muted"
-              >
-                <defs>
-                  <pattern id="funding-dots" width="10" height="10" patternUnits="userSpaceOnUse">
-                    <rect x="5.5" y="5.5" width="1" height="1" fill="currentColor" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#funding-dots)" />
-              </svg>
-              <div className="relative col-span-full py-20 max-lg:py-16">
-                <div className="mx-auto max-w-3xl">
-                  <h2 className="text-heading-responsive-sm">{fundingHeading}</h2>
-                  <p className="mt-2 text-muted-foreground">{fundingSubheading}</p>
-
-                  <div className="mt-10">
-                    {fundingPending && (
-                      <div className="flex flex-col gap-6">
-                        <Skeleton.Box width="75%" height={40} />
-                        <Skeleton.Pill size={12} style={{ width: '100%' }} />
-                        <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
-                          {Array.from({ length: 4 }).map((_, i) => (
-                            <div key={i} className="flex flex-col items-center gap-2">
-                              <Skeleton.Box width={96} height={40} />
-                              <Skeleton.Box width={80} height={16} borderRadius={4} />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {!fundingPending && (fundingError || !fundingData) && (
-                      <div className="flex flex-col items-center gap-5 text-center">
-                        <p className="text-lg text-muted-foreground">
-                          Live funding numbers are temporarily unavailable. Subscribe or donate to
-                          help us reach sustainability.
-                        </p>
-                        <div className="flex flex-wrap items-center justify-center gap-3">
-                          <Button variant="primary" responsive href="/one">
-                            Subscribe
-                          </Button>
-                          <Button
-                            variant="outline"
-                            responsive
-                            href={DONATE_URL}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Donate
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {!fundingPending && !fundingError && fundingData && (
-                      <FundingWidget data={fundingData} />
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <DashedVLines />
-            <DashedHLine />
-          </div>
-        </section>
-
         {/* ═══ How you can help ═══ */}
         <section className="container">
           <div>
+            <DashedHLine />
             <div className="grid grid-cols-12">
               <div className="col-span-full py-20 max-lg:py-16">
                 <div className="mx-auto max-w-2xl">
@@ -495,7 +304,7 @@ export default function SustainPage() {
                     </span>
                     <h3 className="mt-6 text-lg font-medium text-foreground">Donate</h3>
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-                      One-time or recurring. Every donation moves the bar and keeps Oxy independent.
+                      One-time or recurring. Every donation keeps Oxy independent.
                     </p>
                     <span className="mt-6 inline-flex">
                       <Button
