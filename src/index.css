@@ -324,8 +324,14 @@
 }
 
 /* Base styles */
-html {
-  scroll-behavior: smooth;
+/* Smooth in-page scrolling only for people who have not asked for reduced
+ * motion (WCAG 2.3.3). With it on unconditionally, an anchor link or a
+ * focus jump glided across thousands of pixels for them too, and on /bloom
+ * every avatar it passed started rendering on the way. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
