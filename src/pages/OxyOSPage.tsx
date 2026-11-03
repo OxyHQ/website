@@ -8,7 +8,7 @@ export default function OxyOSPage() {
       seo={{
         title: 'Oxy OS',
         description:
-          'An operating system designed around privacy and user freedom. No telemetry, no tracking, built on battle-tested open source.',
+          'OxyOS is a new operating system built in the open: its own compositor, apps drawn natively with Bloom, and your Oxy account at the login.',
         canonicalPath: '/os',
         ogImage: APP_CARD_IMAGES['/os'],
       }}

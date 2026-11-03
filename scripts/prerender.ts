@@ -413,7 +413,7 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   '/os': {
     title: 'Oxy OS',
     description:
-      'An operating system designed around privacy and user freedom. No telemetry, no tracking, built on battle-tested open source.',
+      'OxyOS is a new operating system built in the open: its own compositor, apps drawn natively with Bloom, and your Oxy account at the login.',
     canonicalPath: '/os',
     ogImage: `${SITE_URL}${APP_CARD_IMAGES['/os']}`,
   },
