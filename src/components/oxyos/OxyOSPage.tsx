@@ -180,8 +180,8 @@ const highlights = [
   },
 ];
 
-// Captured on OxyOS's development compositor at 1600×1000, scale 1.25. The shell's own text is
-// Spanish today; the apps follow the system's language.
+// Captured on OxyOS's development compositor at 1600×1000, scale 1.25, in an en_US session. The
+// shell and the apps follow the system's language (OxyOS ADR 0040), so these show it in English.
 const screenshots = [
   {
     src: '/images/oxyos/control-center.jpg',
