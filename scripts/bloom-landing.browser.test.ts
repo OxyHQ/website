@@ -1,7 +1,7 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, relative } from 'node:path';
-import { chromium, type Page } from 'playwright';
+import { chromium, type Locator, type Page } from 'playwright';
 import { BLOOM_CHARACTER_BASE } from '../src/lib/bloomCharacterRuntime';
 
 const ROOT = join(import.meta.dir, '..');
@@ -36,47 +36,130 @@ function observeRendering(page: Page) {
   page.on('requestfailed', (request) =>
     messages.push(`${request.url()}: ${request.failure()?.errorText}`),
   );
+  // A renderer that runs out of memory or loses its GPU takes the page with it;
+  // every wait after that only times out, so say so where it happened.
+  page.on('crash', () => messages.push('the page crashed (renderer process gone)'));
 }
-async function renderStage(page: Page, name: string, check: () => Promise<unknown>) {
+/**
+ * Runs one check and, when it fails, records what the page actually showed: a
+ * screenshot, every gallery preview's state (still a placeholder, the error
+ * fallback, or mounted, and whether it is near the viewport, where its
+ * IntersectionObserver mounts it), the heading avatars, the focused element's
+ * DOM and text, and the page's console errors, warnings and failed requests.
+ * `review-artifacts/` is uploaded by both CI and the deploy.
+ */
+async function renderStage(
+  page: Page,
+  name: string,
+  check: () => Promise<unknown>,
+  focus?: Locator,
+) {
   const started = performance.now();
   console.log(`[bloom-landing] ${name}`);
   try {
     await check();
     console.log(`[bloom-landing] ${name} passed in ${Math.round(performance.now() - started)}ms`);
   } catch (error) {
-    const diagnostics = await page.evaluate(() => {
-      function describe(item: Element) {
-        const canvas = item.querySelector('canvas');
-        const pixels = canvas
-          ?.getContext('2d')
-          ?.getImageData(0, 0, canvas.width, canvas.height).data;
-        return {
-          name: item.getAttribute('aria-label') ?? item.textContent,
-          bounds: item.getBoundingClientRect().toJSON(),
-          canvas: canvas ? [canvas.width, canvas.height] : null,
-          painted: pixels?.some((value, index) => index % 4 === 3 && value > 20) ?? false,
+    const elapsedMs = Math.round(performance.now() - started);
+    const focused = focus
+      ? await focus
+          .evaluate((node) => ({
+            text: (node as HTMLElement).innerText.replace(/\s+/g, ' ').slice(0, 600),
+            html: node.outerHTML.slice(0, 6000),
+            bounds: node.getBoundingClientRect().toJSON(),
+          }))
+          .catch((reason: unknown) => ({ unavailable: String(reason).slice(0, 300) }))
+      : null;
+    const page_ = await page
+      .evaluate(() => {
+        const near = (node: Element) => {
+          const box = node.getBoundingClientRect();
+          return box.bottom > -240 && box.top < innerHeight + 240;
         };
-      }
-      return {
-        url: location.href,
-        viewport: [innerWidth, innerHeight],
-        scroll: [scrollX, scrollY],
-        reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
-        presets: [...document.querySelectorAll('[data-bloom-agent-presets] li')].map(describe),
-        editors: [
-          ...document.querySelectorAll('[role="img"][aria-label$=", live avatar preview"]'),
-        ].map(describe),
-      };
-    });
+        const gallery = document.querySelector('#bloom-components')?.closest('section');
+        return {
+          gallery: [...(gallery?.querySelectorAll('article') ?? [])].map((card, index) => {
+            const preview = card.querySelector('[data-bloom-preview]');
+            return {
+              index,
+              preview: preview?.getAttribute('data-bloom-preview') ?? null,
+              state: !preview
+                ? 'none'
+                : preview.querySelector('.bloom-preview-fallback')
+                  ? 'fallback'
+                  : preview.querySelector('.bloom-preview-placeholder')
+                    ? 'placeholder'
+                    : 'mounted',
+              nearViewport: near(card),
+              text: (card as HTMLElement).innerText.replace(/\s+/g, ' ').slice(0, 120),
+            };
+          }),
+          placeholders: document.querySelectorAll('.bloom-preview-placeholder').length,
+          fallbacks: document.querySelectorAll('.bloom-preview-fallback').length,
+          headingAvatars: [
+            ...document.querySelectorAll('[data-agent-preset-marks] [role="img"]'),
+          ].map((avatar) => ({
+            label: avatar.getAttribute('aria-label'),
+            canvas: !!avatar.querySelector('canvas'),
+            text: (avatar as HTMLElement).innerText.trim().slice(0, 80),
+          })),
+        };
+      })
+      .catch((reason: unknown) => ({ unavailable: String(reason).slice(0, 300) }));
+    const diagnostics = await page
+      .evaluate(() => {
+        function describe(item: Element) {
+          const canvas = item.querySelector('canvas');
+          const pixels = canvas
+            ?.getContext('2d')
+            ?.getImageData(0, 0, canvas.width, canvas.height).data;
+          return {
+            name: item.getAttribute('aria-label') ?? item.textContent,
+            bounds: item.getBoundingClientRect().toJSON(),
+            canvas: canvas ? [canvas.width, canvas.height] : null,
+            painted: pixels?.some((value, index) => index % 4 === 3 && value > 20) ?? false,
+          };
+        }
+        return {
+          url: location.href,
+          viewport: [innerWidth, innerHeight],
+          scroll: [scrollX, scrollY],
+          reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+          presets: [...document.querySelectorAll('[data-bloom-agent-presets] li')].map(describe),
+          editors: [
+            ...document.querySelectorAll('[role="img"][aria-label$=", live avatar preview"]'),
+          ].map(describe),
+        };
+      })
+      .catch((reason: unknown) => ({ unavailable: String(reason).slice(0, 300) }));
     const messages = renderMessages.get(page) ?? [];
     const destination = join(ROOT, 'review-artifacts');
     mkdirSync(destination, { recursive: true });
     writeFileSync(
       join(destination, 'bloom-landing-failure.json'),
-      JSON.stringify({ name, diagnostics, messages }, null, 2),
+      JSON.stringify(
+        { name, elapsedMs, diagnostics, page: page_, focused, messages, error: String(error) },
+        null,
+        2,
+      ),
     );
-    console.error(`[bloom-landing] ${name} failed`, JSON.stringify(diagnostics), messages);
-    await page.screenshot({ path: join(destination, 'bloom-landing-failure.png') });
+    console.error(
+      `[bloom-landing] ${name} failed after ${elapsedMs}ms`,
+      JSON.stringify({
+        diagnostics,
+        page: page_,
+        focused: focused && { ...focused, html: undefined },
+      }),
+      messages,
+    );
+    await page
+      .screenshot({ path: join(destination, 'bloom-landing-failure.png') })
+      .catch(() => undefined);
+    if (focus) {
+      await focus
+        .screenshot({ path: join(destination, 'bloom-landing-failure-focus.png') })
+        .catch(() => undefined);
+    }
     throw new Error(`Bloom landing ${name} failed`, { cause: error });
   }
 }
@@ -260,17 +343,31 @@ try {
     invariant(errors.length === 0, `browser errors: ${errors.join('; ')}`);
     // Explicitly enter these lazy previews: a fast sweep can pass the row
     // while another composition is still changing the document's height.
-    await cards.nth(11).scrollIntoViewIfNeeded();
-    await cards.nth(11).getByRole('button', { name: 'Inbox', exact: true }).waitFor();
-    invariant(
-      (await cards.nth(11).getByRole('button', { name: 'Inbox', exact: true }).count()) === 1,
-      'calendar thumbnail is a date picker instead of the monthly event calendar',
+    await renderStage(
+      page,
+      `${mode} calendar thumbnail mounted`,
+      async () => {
+        await cards.nth(11).scrollIntoViewIfNeeded();
+        await cards.nth(11).getByRole('button', { name: 'Inbox', exact: true }).waitFor();
+        invariant(
+          (await cards.nth(11).getByRole('button', { name: 'Inbox', exact: true }).count()) === 1,
+          'calendar thumbnail is a date picker instead of the monthly event calendar',
+        );
+      },
+      cards.nth(11),
     );
-    await cards.nth(12).scrollIntoViewIfNeeded();
-    await cards.nth(12).getByLabel('Full name', { exact: true }).waitFor();
-    invariant(
-      (await cards.nth(12).getByRole('textbox').count()) === 3,
-      'auth thumbnail is missing the registration fields',
+    await renderStage(
+      page,
+      `${mode} auth thumbnail mounted`,
+      async () => {
+        await cards.nth(12).scrollIntoViewIfNeeded();
+        await cards.nth(12).getByLabel('Full name', { exact: true }).waitFor();
+        invariant(
+          (await cards.nth(12).getByRole('textbox').count()) === 3,
+          'auth thumbnail is missing the registration fields',
+        );
+      },
+      cards.nth(12),
     );
     const loader = page.locator('#bloom-loader').locator('xpath=ancestor::section');
     await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -406,13 +503,20 @@ try {
       (await page.locator('[data-bloom-agent-presets]').count()) === 0,
       'Bloom must keep the original decoration layout, without the preset row',
     );
-    invariant(
-      (await page.locator('[data-agent-preset-marks] canvas').count()) === 4,
-      'Bloom lost its four heading avatars',
-    );
-    invariant(
-      (await page.locator('[data-agent-preset-decoration]').count()) === 2,
-      'Bloom lost its two workspace avatars',
+    await renderStage(
+      page,
+      `${mode} heading and workspace avatars present`,
+      async () => {
+        invariant(
+          (await page.locator('[data-agent-preset-marks] canvas').count()) === 4,
+          'Bloom lost its four heading avatars',
+        );
+        invariant(
+          (await page.locator('[data-agent-preset-decoration]').count()) === 2,
+          'Bloom lost its two workspace avatars',
+        );
+      },
+      page.locator('[data-agent-preset-marks]'),
     );
     await page.locator('[data-bloom-preview="multi-agent"]').scrollIntoViewIfNeeded();
     const chat = page.getByTestId('multi-agent-chat');
