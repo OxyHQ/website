@@ -10,7 +10,7 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'anchor', type: 'ContextMenuAnchor | null', optional: true, description: 'Controlled anchor. `null` is closed; a point or rect is open there. Omit (leave `undefined`) for the uncontrolled, trigger-driven menu.' },
         { name: 'onOpenChange', type: '(open: boolean) => void', optional: true, description: 'Called whenever the menu opens or closes, from any cause.' },
-        { name: 'onAnchorChange', type: '(anchor: ContextMenuAnchor | null) => void', optional: true, description: 'Called with the anchor the menu asks for: the pointer point when a trigger opens it, `null` when it is dismissed. What a controlled caller stores.' },
+        { name: 'onAnchorChange', type: '(anchor: ContextMenuAnchor | null) => void', optional: true, description: "Called with the anchor the menu asks for: the pointer point when a trigger opens it from a press; on native, the frame (a box) of the view the menu hangs from when the trigger's `longpress` accessibility action opens it (a screen reader, or the platform's Menu key on the focused control), which a caller may replace with the box of what the menu is about (the selected item); `null` when it is dismissed. What a controlled caller stores." },
         { name: 'anchorRef', type: 'RefObject<ComponentRef<typeof View> | null>', optional: true, description: "The view the menu is about, when the caller renders no `ContextMenuTrigger` around it: a menu opened for a view the caller does not wrap, such as a text field's Cut, Copy and Paste opened by the platform that owns the field." },
       ],
     },
