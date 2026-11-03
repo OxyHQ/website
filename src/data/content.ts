@@ -465,7 +465,7 @@ const technologyNavProductSections: Record<string, string> = {
   noted: 'Tools',
   nilo: 'Tools',
   atlas: 'Tools',
-  stash: 'Tools',
+  dropsea: 'Tools',
   faircoin: 'Finance',
   faircoinexplorer: 'Finance',
   fairwallet: 'Finance',

@@ -40,12 +40,12 @@ const apps: Array<{
     status: { label: 'In OxyOS', tone: 'success' },
   },
   {
-    name: 'Stash',
-    icon: '/images/apps/stash.png',
+    name: 'Dropsea',
+    icon: '/images/apps/dropsea.png',
     description:
       'Photos and files by Oxy, and the file manager of OxyOS: what is on the computer and what you keep in Oxy Files, in one place.',
     status: { label: 'Coming to OxyOS', tone: 'neutral' },
-    link: { label: 'Stash on GitHub', href: 'https://github.com/OxyHQ/Stash' },
+    link: { label: 'Dropsea on GitHub', href: 'https://github.com/OxyHQ/Dropsea' },
   },
   {
     name: 'Atlas',
