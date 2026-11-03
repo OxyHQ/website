@@ -82,6 +82,17 @@ jobs:
           VITE_OXY_CLIENT_ID: ${{ vars.VITE_OXY_CLIENT_ID }}
           VITE_INTERCOM_APP_ID: ${{ vars.VITE_INTERCOM_APP_ID }}
 
+      # The build's browser gates write what a failing page showed (screenshots,
+      # DOM, console and failed requests) to review-artifacts/, as the review
+      # job's do. Without this a deploy that fails a gate leaves no evidence.
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: failure()
+        with:
+          name: deploy-browser-gates
+          path: review-artifacts/
+          if-no-files-found: ignore
+          retention-days: 14
+
       # DEPLOYED WITH `bunx wrangler@4`, NOT `cloudflare/wrangler-action`, which
       # is forbidden fleet-wide (~/Oxy/docs/infra-and-deploys.md). The action
       # installs its own wrangler mid-deploy (`bun i wrangler@...`), which fails
