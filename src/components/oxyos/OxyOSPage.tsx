@@ -180,6 +180,21 @@ const highlights = [
   },
 ];
 
+// Captured on OxyOS's development compositor at 1600×1000, scale 1.25. The shell's own text is
+// Spanish today; the apps follow the system's language.
+const screenshots = [
+  {
+    src: '/images/oxyos/control-center.jpg',
+    alt: 'Control Center open on its Wi-Fi panel, joined to a network, beside a Dropsea window',
+    caption: 'Control Center, with Wi-Fi a click from the menu bar.',
+  },
+  {
+    src: '/images/oxyos/dock-menu.jpg',
+    alt: 'The Dock menu of Dropsea open above the Dock, below its window',
+    caption: 'The Dock, with each app’s menu a right-click away.',
+  },
+];
+
 const linkProps = (href: string) =>
   href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 
@@ -208,11 +223,11 @@ export default function OxyOSContent() {
           </div>
           <div className="media-border-container relative aspect-[16/10] bg-card overflow-hidden">
             <img
-              alt="OxyOS lock screen"
+              alt="The OxyOS desktop with Dropsea, Atlas and Settings open, the menu bar along the top and the Dock along the bottom"
               src="/images/oxyos/os-desktop.jpg"
               className="w-full h-full object-cover"
-              width={1280}
-              height={853}
+              width={1600}
+              height={1000}
               loading="eager"
               decoding="async"
             />
@@ -298,6 +313,26 @@ export default function OxyOSContent() {
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+          <div className="grid gap-g1 grid-cols-1 md:grid-cols-2 mt-v2">
+            {screenshots.map((shot) => (
+              <figure key={shot.src} className="m-0">
+                <div className="media-border-container relative aspect-[16/10] bg-card overflow-hidden">
+                  <img
+                    alt={shot.alt}
+                    src={shot.src}
+                    className="w-full h-full object-cover"
+                    width={1600}
+                    height={1000}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <figcaption className="type-base text-muted-foreground text-pretty mt-v8/12">
+                  {shot.caption}
+                </figcaption>
+              </figure>
             ))}
           </div>
         </div>
