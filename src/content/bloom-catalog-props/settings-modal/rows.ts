@@ -49,6 +49,16 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'SettingsSelectProps<T>': {
+      props: [
+        { name: 'label', type: 'string', optional: false, description: "The select's accessible name (and its sheet's title on compact layouts)." },
+        { name: 'value', type: 'T', optional: false },
+        { name: 'onChange', type: '(value: T) => void', optional: false },
+        { name: 'items', type: 'ReadonlyArray<{ value: T; label: string; }>', optional: false },
+        { name: 'compact', type: 'boolean', optional: true, description: 'Padded to sit inside a row (default). `false` keeps the regular field size.' },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'SettingsCard', propsType: 'SettingsCardProps' },
@@ -56,5 +66,6 @@ export const props: BloomSurfaceProps = {
     { name: 'SettingsSection', propsType: 'SettingsSectionProps' },
     { name: 'SettingsSectionLabel', propsType: 'SettingsSectionLabelProps' },
     { name: 'SettingsValueField', propsType: 'SettingsValueFieldProps' },
+    { name: 'SettingsSelect', propsType: 'SettingsSelectProps<T>' },
   ],
 }
