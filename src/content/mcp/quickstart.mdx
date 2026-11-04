@@ -63,7 +63,7 @@ On any other account the same request is refused with a clear message: writes ar
 |---|---|---|
 | The client asks you to sign in again | Your access token expired or was revoked | Reconnect and approve again on auth.oxy.so |
 | `Authorization service unavailable.` (HTTP `503`) | The server could not reach Oxy to check your token | Retry shortly; nothing is wrong with your connection |
-| A tool result marked as an error saying the tool is only available to website admins | You do not hold the website admin permission | Ask a website owner to grant it in Oxy, or use a read |
+| A tool result marked as an error saying the tool is only available to website admins | You do not hold the website admin permission | Ask the Oxy Website's owners for it, or use a read |
 | A tool result marked as an error refusing a filter | The public read does not support that filter | Remove the filter, or use an admin account |
 
 See [Authentication](/developers/docs/mcp/authentication) for how access is decided and how to revoke a connection.

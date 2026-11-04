@@ -21,9 +21,13 @@ connection on auth.oxy.so. There are no API tokens to create or paste.
 | Anyone else with an Oxy account | reads only, answered from the public REST route |
 
 A website admin is the same person on MCP as on the site's own admin routes:
-whoever holds `website.content.manage`, declared on the **Oxy Website**
-application and granted in Oxy Console (Settings → Roles). There is no list of
-user ids in this deployment. Each tool call asks Oxy with its own access token —
+whoever Oxy says holds `website.content.manage` on the **Oxy Website**
+application. Oxy decides it in one place, its application-permission resolver
+(the one behind `roles/me`). Today a person holds the key through an
+application-role grant in Oxy Console (Settings → Roles). First-party operator
+authority by Oxy organization role is being added to that resolver, and this
+endpoint follows it with no change. There is no list of user ids in this
+deployment. Each tool call asks Oxy with its own access token —
 `oxyService.appPermissionsFor(context.request)` through `isMcpSiteAdmin`
 (`server/middleware/siteAdmin.ts`), which `@oxy.so/core` sends to
 `POST /auth/mcp/oauth/app-permissions`. A write asks fresh, so a revoked grant
