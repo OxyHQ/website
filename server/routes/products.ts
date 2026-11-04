@@ -5,7 +5,7 @@ import { db } from '../db/postgres.js';
 import { categories, media, products } from '../db/schema/index.js';
 import { populate, populateOne } from '../db/refs.js';
 import { requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
+import { adminOnly } from '../middleware/siteAdmin.js';
 import { localeMiddleware } from '../middleware/locale.js';
 import { localizeMany, localizeOne } from '../utils/localize.js';
 import { validate } from '../utils/validate.js';

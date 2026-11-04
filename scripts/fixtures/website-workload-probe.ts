@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { CLARITY_SERVICE_AUDIENCE } from '@clarity.surf/sdk/server';
-import type { AppCapabilityCatalog } from '@oxy.so/contracts';
+import { appCapabilityCatalogSchema } from '@oxy.so/contracts';
+import { capabilityCatalogDigest } from '@oxy.so/mcp';
 
 // The local issuer fixture validates request wiring; no AWS/network credentials are used.
 delete process.env.AWS_PROFILE;
@@ -15,6 +16,16 @@ process.env.R2_BUCKET = 'fixture';
 process.env.R2_ENDPOINT = 'http://127.0.0.1:9';
 process.env.R2_ACCESS_KEY_ID = 'fixture';
 process.env.R2_SECRET_ACCESS_KEY = 'fixture';
+const catalog = appCapabilityCatalogSchema.parse({
+  schemaVersion: '1',
+  appId: 'website',
+  version: '1.0.0',
+  audience: 'website-api',
+  internalBaseUrl: 'http://127.0.0.1:9',
+  accountResourceType: 'oxy_account',
+  tools: [],
+  events: [],
+});
 const minted: { audience: string; protocolVersion: number; scopes?: unknown }[] = [];
 const calls: { path: string; audience: string; body: string }[] = [];
 let rejectCatalog = true;
@@ -58,7 +69,15 @@ const server = createServer(async (req, res) => {
       res.writeHead(401);
       return res.end('{"error":"expired"}');
     }
-    return res.end('{"registration":{}}');
+    return res.end(
+      JSON.stringify({
+        registration: {
+          id: 'reg-fixture',
+          version: catalog.version,
+          digest: capabilityCatalogDigest(catalog),
+        },
+      }),
+    );
   }
   if (req.url === '/v1/jobs/search') return res.end('{"data":[],"mode":"lexical"}');
   throw new Error(`Unexpected path ${req.url}`);
@@ -76,7 +95,7 @@ const { createMcpCatalogRegistration } = await import(
 const { listCareerJobs, closeCareerJobsClient } = await import('../../server/services/careers');
 try {
   const registration = createMcpCatalogRegistration({
-    catalog: { appId: 'website', version: 'fixture', tools: [] } as unknown as AppCapabilityCatalog,
+    catalog,
     transport: oxyTransport,
     oxyApiBase: origin,
     deps: { log: () => undefined, error: () => undefined },

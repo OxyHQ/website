@@ -5,13 +5,12 @@ import { db } from '../db/postgres.js';
 import { newsroomPosts, products } from '../db/schema/index.js';
 import { populate, populateOne } from '../db/refs.js';
 import { optionalAuth, requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
+import { adminActorId, adminOnly, isSiteAdmin } from '../middleware/siteAdmin.js';
 import { localeMiddleware } from '../middleware/locale.js';
 import { localizeMany, localizeOne } from '../utils/localize.js';
 import { toErrorMessage } from '../utils/errorMessage.js';
 import { parsePagination } from '../utils/parsePagination.js';
 import { validate } from '../utils/validate.js';
-import { isAdminUser } from '../utils/adminAccess.js';
 import { isNewsroomThemePreset, newsroomThemeForSlug } from '../constants/newsroomThemes.js';
 import {
   attachProducts,
@@ -84,7 +83,7 @@ router.get('/', localeMiddleware, optionalAuth, async (req, res) => {
     page = '1',
     view = 'summary',
   } = validate(listQuerySchema, req.query);
-  const adminRequest = isAdminUser(req.user);
+  const adminRequest = await isSiteAdmin(req);
   // The authenticated CMS must keep receiving editable rows. Public build-time
   // consumers that genuinely need article bodies can opt in with `view=full`.
   const fullResponse = adminRequest || view === 'full';
@@ -175,7 +174,7 @@ router.get('/:slug', localeMiddleware, optionalAuth, async (req, res) => {
   // Every non-published state is private; admins may inspect it explicitly.
   // The column predates a database enum, so checking only literal `draft`
   // would accidentally publish a malformed or future workflow state.
-  if (post.status !== 'published' && (preview !== 'true' || !isAdminUser(req.user))) {
+  if (post.status !== 'published' && (preview !== 'true' || !(await isSiteAdmin(req)))) {
     setNewsroomReadCache(req, res, true);
     return res.status(404).json({ error: 'Post not found' });
   }
@@ -185,9 +184,6 @@ router.get('/:slug', localeMiddleware, optionalAuth, async (req, res) => {
 });
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {
-  const user = req.user;
-  if (!user) return res.status(401).json({ error: 'Authentication required' });
-
   const body = validate(postBodySchema, req.body);
   if (body.themePreset !== undefined && !isNewsroomThemePreset(body.themePreset)) {
     return res.status(400).json({ error: 'Invalid newsroom theme preset' });
@@ -201,7 +197,7 @@ router.post('/', requireAuth, adminOnly, async (req, res) => {
         themePreset: isNewsroomThemePreset(body.themePreset)
           ? body.themePreset
           : newsroomThemeForSlug(typeof body.slug === 'string' ? body.slug : ''),
-        oxyUserId: user.id,
+        oxyUserId: adminActorId(req),
       } as never)
       .returning();
     res.status(201).json(post);

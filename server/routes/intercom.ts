@@ -3,7 +3,8 @@ import { timingSafeEqual } from 'node:crypto';
 import { Router, type Request, type Response } from 'express';
 import { and, count, eq, gte } from 'drizzle-orm';
 import { z } from 'zod';
-import { oxy, requireAuth } from '../middleware/auth.js';
+import { requireAuth } from '../middleware/auth.js';
+import { oxyService } from '../services/oxyService.js';
 import { config } from '../config.js';
 import { db } from '../db/postgres.js';
 import { featureProposals } from '../db/schema/index.js';
@@ -184,7 +185,7 @@ router.get('/connectors/account-context', async (req, res) => {
   if (!claims) return;
 
   try {
-    const user = await oxy.users.get(claims.user_id);
+    const user = await oxyService.users.get(claims.user_id);
     const displayName =
       typeof user.name?.displayName === 'string' ? user.name.displayName : user.username;
     res.set('Cache-Control', 'no-store').json({

@@ -776,10 +776,9 @@ describe('F07 · idempotency keys', () => {
 
   test('the key is scoped to the acting account', async () => {
     const other = { actorId: 'admin-two', requestId: 't' };
-    process.env.OXY_ADMIN_USER_IDS = 'admin-account,admin-two';
     const { config } = await import('../config.js');
-    const previous = config.adminUserIds;
-    config.adminUserIds = ['admin-account', 'admin-two'];
+    const previous = config.mcp.adminAccountIds;
+    config.mcp.adminAccountIds = ['admin-account', 'admin-two'];
     try {
       data(
         await invokeTool(
@@ -797,7 +796,7 @@ describe('F07 · idempotency keys', () => {
       );
       expect(await countRows('courses')).toBe(2);
     } finally {
-      config.adminUserIds = previous;
+      config.mcp.adminAccountIds = previous;
     }
   });
 

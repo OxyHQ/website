@@ -24,6 +24,12 @@ export const config = {
   databaseUrl: process.env.DATABASE_URL || '',
   oxyApiBase: process.env.OXY_API_BASE || 'https://api.oxy.so',
   /**
+   * The Oxy Website application. Optional: unset, `OxyServer` reads it from the
+   * workload's own service token, which names the application it is bound to.
+   * Setting it skips that read and makes a mismatch a configuration error.
+   */
+  oxyApplicationId: process.env.OXY_APPLICATION_ID?.trim() || undefined,
+  /**
    * Clarity Jobs, the only source of the careers page. Oxy's openings are
    * authored in Mention and indexed by Clarity; this site stores none of them.
    */
@@ -56,6 +62,17 @@ export const config = {
      * Postgres, so the limit holds however many tasks serve the endpoint.
      */
     rateLimitPerMinute: parsePositiveIntEnv(process.env.MCP_RATE_LIMIT_PER_MINUTE, 600),
+    /**
+     * The accounts the MCP endpoint treats as website admins — the ONLY
+     * remaining reader of `OXY_ADMIN_USER_IDS`. The site's own admin routes
+     * ask Oxy instead (`website.content.manage`, held by organization role,
+     * `middleware/siteAdmin.ts`). An MCP token is resource-bound to this
+     * endpoint and has no session, and Oxy has no read yet that answers an
+     * application permission for one. oxy#2123 adds it (`appPermissionsFor`
+     * answering an MCP tool call, `@oxy.so/core` 7.20.0); the change that
+     * adopts it deletes this list and the variable (`docs/MCP.md`).
+     */
+    adminAccountIds: parseCsvEnv(process.env.OXY_ADMIN_USER_IDS),
   },
   // Server-only secret used to sign Intercom Messenger JWTs for authenticated
   // Oxy users. It is optional so visitors keep working before the workspace
@@ -69,7 +86,6 @@ export const config = {
   // and must stay in sync with it — this is deliberately NOT the CMS-configured
   // default, which an editor can change without the route shape following.
   defaultLocale: process.env.DEFAULT_LOCALE || 'en',
-  adminUserIds: parseCsvEnv(process.env.OXY_ADMIN_USER_IDS),
   githubToken: process.env.GITHUB_TOKEN || '',
   featureBoard: {
     // Token used to CREATE issues and to WRITE priority labels in the tracked

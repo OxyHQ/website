@@ -6,13 +6,12 @@ import { db } from '../db/postgres.js';
 import { categories, media, helpFeedback, helpArticles as table } from '../db/schema/index.js';
 import { populate, populateOne } from '../db/refs.js';
 import { optionalAuth, requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
+import { adminOnly, isSiteAdmin } from '../middleware/siteAdmin.js';
 import { localeMiddleware } from '../middleware/locale.js';
 import { localizeMany, localizeOne } from '../utils/localize.js';
 import { toErrorMessage } from '../utils/errorMessage.js';
 import { parsePagination } from '../utils/parsePagination.js';
 import { validate } from '../utils/validate.js';
-import { isAdminUser } from '../utils/adminAccess.js';
 
 const router = Router();
 
@@ -96,10 +95,6 @@ const detailQuerySchema = z
 
 const slugParamsSchema = z.object({ slug: z.string().min(1) });
 
-function isAdminRequest(req: Parameters<typeof adminOnly>[0]): boolean {
-  return isAdminUser(req.user);
-}
-
 router.get('/', optionalAuth, localeMiddleware, async (req, res) => {
   const {
     category,
@@ -116,7 +111,7 @@ router.get('/', optionalAuth, localeMiddleware, async (req, res) => {
   if (featured === 'true') filters.push(eq(table.featured, true));
 
   if (status === 'draft') {
-    if (!isAdminRequest(req)) return res.status(403).json({ error: 'Admin access required' });
+    if (!(await isSiteAdmin(req))) return res.status(403).json({ error: 'Admin access required' });
     filters.push(eq(table.status, 'draft'));
   } else {
     filters.push(eq(table.status, 'published'));
@@ -149,7 +144,7 @@ router.get('/:slug', optionalAuth, localeMiddleware, async (req, res) => {
   const [row] = await db.select().from(table).where(eq(table.slug, slug)).limit(1);
   const article = await populateOne(row, REFS);
   if (!article) return res.status(404).json({ error: 'Help article not found' });
-  if (article.status === 'draft' && (preview !== 'true' || !isAdminRequest(req))) {
+  if (article.status === 'draft' && (preview !== 'true' || !(await isSiteAdmin(req)))) {
     return res.status(404).json({ error: 'Help article not found' });
   }
   res.json(await localizeOne(req, 'help', article));

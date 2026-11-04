@@ -5,13 +5,12 @@ import { db } from '../db/postgres.js';
 import { categories, media, courses as table } from '../db/schema/index.js';
 import { populate, populateOne } from '../db/refs.js';
 import { optionalAuth, requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
+import { adminOnly, isSiteAdmin } from '../middleware/siteAdmin.js';
 import { localeMiddleware } from '../middleware/locale.js';
 import { localizeMany, localizeOne } from '../utils/localize.js';
 import { toErrorMessage } from '../utils/errorMessage.js';
 import { parsePagination } from '../utils/parsePagination.js';
 import { validate } from '../utils/validate.js';
-import { isAdminUser } from '../utils/adminAccess.js';
 
 const router = Router();
 
@@ -87,7 +86,7 @@ router.get('/', localeMiddleware, optionalAuth, async (req, res) => {
   if (category) filters.push(eq(table.category, category));
   if (tag) filters.push(sql`${table.tags} @> ARRAY[${tag}]::text[]`);
   if (featured === 'true') filters.push(eq(table.featured, true));
-  filters.push(eq(table.status, isAdminUser(req.user) && status ? status : 'published'));
+  filters.push(eq(table.status, status && (await isSiteAdmin(req)) ? status : 'published'));
   const where = and(...filters);
 
   const { pageNum, limitNum, skip } = parsePagination(page, limit);
@@ -114,7 +113,7 @@ router.get('/:slug', localeMiddleware, optionalAuth, async (req, res) => {
   const { preview } = validate(detailQuerySchema, req.query);
 
   const visibility =
-    !isAdminUser(req.user) || preview !== 'true' ? eq(table.status, 'published') : undefined;
+    preview === 'true' && (await isSiteAdmin(req)) ? undefined : eq(table.status, 'published');
 
   const [row] = await db
     .select()

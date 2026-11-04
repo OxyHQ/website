@@ -6,7 +6,7 @@ import { and, count, eq, gte } from 'drizzle-orm';
 import { db } from '../db/postgres.js';
 import { featureProposals, votes } from '../db/schema/index.js';
 import { optionalAuth, requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
+import { adminOnly } from '../middleware/siteAdmin.js';
 import { checkAndAwardBadges } from '../services/badgeService.js';
 import {
   GitHubApiError,

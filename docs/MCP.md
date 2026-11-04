@@ -20,6 +20,23 @@ connection on auth.oxy.so. There are no API tokens to create or paste.
 | Listed in `OXY_ADMIN_USER_IDS` | every tool, as before |
 | Any other Oxy account | reads only, answered from the public REST route |
 
+`OXY_ADMIN_USER_IDS` is read by this endpoint alone (`config.mcp.adminAccountIds`);
+nothing else in the website reads it. The site's own admin routes ask Oxy
+instead: a website admin is whoever holds the Oxy Website operator key
+`website.content.manage` (`server/middleware/siteAdmin.ts`). The website is one
+of Oxy's own applications, so that key is declared in code in oxy's first-party
+registry and held by the owners and admins of the `oxy` organization (oxy ADR
+0056, `~/Oxy/docs/application-roles.md`); nobody is granted it per person, and
+making someone a site admin means giving them that organization role.
+
+An MCP access token is bound to this resource and carries no session, and Oxy
+has no read yet that answers an application permission for one, so the endpoint
+keeps the list until it does. oxy#2123 adds that read (`appPermissionsFor`
+answering an MCP tool call, `@oxy.so/core` 7.20.0). The change that adopts it
+replaces `isWebsiteAdmin` with the same `website.content.manage` check and
+deletes `OXY_ADMIN_USER_IDS` from code, `.env.example` and the task definition;
+then the two answers are one.
+
 A non-admin read is not a filtered copy of the admin query: the tool requests the
 site's own `/api/...` route with no credentials, so it returns exactly what an
 anonymous visitor receives. A read with no public route (`list_media`,

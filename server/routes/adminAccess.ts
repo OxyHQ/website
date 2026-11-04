@@ -1,46 +1,51 @@
 import { Router } from 'express';
 import { optionalAuth } from '../middleware/auth.js';
-import { isAdminUser } from '../utils/adminAccess.js';
+import { isSiteAdmin, SITE_ADMIN_PERMISSION } from '../middleware/siteAdmin.js';
 
 const router = Router();
 
 /**
  * Who am I, and am I an admin?
  *
- * The SPA used to answer this itself by matching `user.username` against a
- * hardcoded list, while the API answered it by matching the Oxy user id against
- * `OXY_ADMIN_USER_IDS`. Two allowlists keyed on two different identity fields
- * drift, and when they did the admin UI rendered a 404 at a real admin. This
- * endpoint makes the server the only source of truth: the client asks instead
- * of guessing.
+ * The SPA asks instead of guessing: whether someone administers the site is
+ * Oxy's answer (`middleware/siteAdmin.ts`), and this endpoint relays it.
  *
  * Deliberately `optionalAuth`, not `requireAuth`. A 401 would force the client
  * to tell "no session" apart from "request failed" by sniffing an error shape,
  * and getting that wrong is what produced a terminal 404 in the first place.
- * Every outcome is a 200 with an explicit `authenticated` flag, so the UI maps
- * states instead of interpreting failures — a thrown error then unambiguously
- * means the request itself failed.
+ * Signed out and "not an admin" are both a 200 with explicit flags, so the UI
+ * maps states instead of interpreting failures. Oxy being unable to answer is
+ * NOT one of them: it is a 503 (the error handler), which the UI shows as
+ * "couldn't verify access" rather than as a refusal.
  *
- * `userId` is echoed back deliberately: when access is denied, the UI shows it
- * so the exact value to add to `OXY_ADMIN_USER_IDS` can be read straight off the
- * screen instead of guessed.
+ * `userId` and `permission` are echoed back deliberately: when access is
+ * denied, the UI shows them so the account and the key it lacks can be read
+ * straight off the screen. The key follows the person's role in the
+ * organization that owns the site (`middleware/siteAdmin.ts`); there is no
+ * per-person grant to make.
  *
- * This grants nothing. Authorization is enforced independently on every mutating
- * route by `adminOnly`, which calls the same `isAdminUser()`.
+ * This grants nothing. Every admin route is gated independently by `adminOnly`.
  */
-router.get('/me', optionalAuth, (req, res) => {
+router.get('/me', optionalAuth, async (req, res) => {
   const user = req.user;
   // Never cache: the answer is per-session, and a shared cache hit would be a
   // cross-user identity leak.
   res.set('Cache-Control', 'no-store');
   if (!user) {
-    return res.json({ authenticated: false, isAdmin: false, userId: null, username: null });
+    return res.json({
+      authenticated: false,
+      isAdmin: false,
+      userId: null,
+      username: null,
+      permission: SITE_ADMIN_PERMISSION,
+    });
   }
   res.json({
     authenticated: true,
-    isAdmin: isAdminUser(user),
+    isAdmin: await isSiteAdmin(req),
     userId: user.id ?? user._id ?? null,
     username: user.username ?? null,
+    permission: SITE_ADMIN_PERMISSION,
   });
 });
 

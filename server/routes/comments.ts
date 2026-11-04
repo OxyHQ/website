@@ -4,8 +4,7 @@ import { z } from 'zod';
 import { db } from '../db/postgres.js';
 import { comments as commentsTable } from '../db/schema/index.js';
 import { optionalAuth, requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
-import { isAdminUser } from '../utils/adminAccess.js';
+import { adminOnly, isSiteAdmin } from '../middleware/siteAdmin.js';
 import { COMMENTABLE_TARGET_TYPES } from '../constants/social.js';
 import { checkAndAwardBadges } from '../services/badgeService.js';
 import { toErrorMessage } from '../utils/errorMessage.js';
@@ -236,22 +235,15 @@ router.delete('/:id', requireAuth, async (req, res) => {
 
   const { id } = validate(idParamsSchema, req.params);
 
+  const [comment] = await db.select().from(commentsTable).where(eq(commentsTable._id, id)).limit(1);
+  if (!comment) return res.status(404).json({ error: 'Comment not found' });
+
+  // The comment's author, or a site admin (asked fresh: this is a write).
+  if (comment.userId !== user.id && !(await isSiteAdmin(req, { fresh: true }))) {
+    return res.status(403).json({ error: 'You can only delete your own comments' });
+  }
+
   try {
-    const [comment] = await db
-      .select()
-      .from(commentsTable)
-      .where(eq(commentsTable._id, id))
-      .limit(1);
-    if (!comment) return res.status(404).json({ error: 'Comment not found' });
-
-    // Allow the comment author or an admin to delete
-    const isAuthor = comment.userId === user.id;
-    const isAdmin = isAdminUser(user);
-
-    if (!isAuthor && !isAdmin) {
-      return res.status(403).json({ error: 'You can only delete your own comments' });
-    }
-
     await db
       .update(commentsTable)
       .set({ status: 'deleted', updatedAt: new Date() })

@@ -1,34 +1,55 @@
 /// <reference types="bun" />
 import { describe, expect, test } from 'bun:test';
 import type { AppCapabilityCatalog } from '@oxy.so/contracts';
+import { capabilityCatalogDigest } from '@oxy.so/mcp';
+import { WEBSITE_MCP_CATALOG } from '../mcp/catalog.js';
 import {
   INITIAL_ATTEMPTS,
-  catalogHash,
-  canonicalJson,
   createMcpCatalogRegistration,
-  parseRetryAfter,
   sanitizeErrorMessage,
 } from './mcpCatalogRegistration.js';
 
 /** Stands in for the callbacks these tests do not observe (logging, token invalidation). */
 const ignore = (): void => undefined;
 
+/** The shared Oxy transport, answering with `respond`. */
+function transport(respond: (url: string, init?: RequestInit) => Promise<Response>): {
+  fetch: typeof fetch;
+} {
+  return {
+    fetch: Object.assign(
+      (input: RequestInfo | URL, init?: RequestInit) => respond(String(input), init),
+      { preconnect: fetch.preconnect },
+    ),
+  };
+}
+
 const SERVICE_TOKEN =
   'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJvLXdlYnNpdGUifQ.c2VjcmV0LXNpZ25hdHVyZS12YWx1ZQ';
 
-const catalog = {
-  appId: 'website',
-  version: '2026.09.17',
-  tools: [{ name: 'list_posts' }, { name: 'create_post' }],
-} as unknown as AppCapabilityCatalog;
+const catalog = WEBSITE_MCP_CATALOG;
 
-type Step = { status: number; body?: string; headers?: Record<string, string> } | Error;
+type Step = { status: number; body?: string } | Error;
+
+/** Oxy's answer to a registration of `registered`: the binding it issues tickets for. */
+function accepted(registered: AppCapabilityCatalog = catalog): { status: number; body: string } {
+  return {
+    status: 201,
+    body: JSON.stringify({
+      registration: {
+        id: `reg-${registered.version}`,
+        version: registered.version,
+        digest: capabilityCatalogDigest(registered),
+      },
+    }),
+  };
+}
 
 /**
  * A harness with a virtual clock: `sleep` advances time instead of waiting, so
  * an outage of hours runs in milliseconds and every delay is observable.
  */
-function harness(steps: Step[], options: { random?: () => number } = {}) {
+function harness(steps: Step[]) {
   let clock = Date.parse('2026-09-17T10:00:00Z');
   const sleeps: number[] = [];
   const requests: Array<{ url: string; init: RequestInit }> = [];
@@ -36,22 +57,20 @@ function harness(steps: Step[], options: { random?: () => number } = {}) {
   const registration = createMcpCatalogRegistration({
     catalog,
     oxyApiBase: 'https://api.oxy.test',
-    transport: {
-      fetch: async (url, init) => {
-        requests.push({ url: String(url), init: init ?? {} });
-        const step = steps.shift();
-        if (!step) throw new Error('unexpected extra registration attempt');
-        if (step instanceof Error) throw step;
-        return new Response(step.body ?? '', { status: step.status, headers: step.headers });
-      },
-    },
+    transport: transport(async (url, init) => {
+      requests.push({ url, init: init ?? {} });
+      const step = steps.shift();
+      if (!step) throw new Error('unexpected extra registration attempt');
+      if (step instanceof Error) throw step;
+      return new Response(step.body ?? '', { status: step.status });
+    }),
     deps: {
       now: () => clock,
       sleep: async (ms) => {
         sleeps.push(ms);
         clock += ms;
       },
-      random: options.random ?? (() => 0.5),
+      random: () => 0.5,
       log: (message) => logs.push(message),
       error: (message) => logs.push(message),
     },
@@ -72,7 +91,7 @@ describe('mcp catalog registration', () => {
         ? new Error('connect ECONNREFUSED 10.0.0.1:443')
         : { status: 502, body: 'Bad Gateway' },
     );
-    const h = harness([...outage, { status: 201, body: '{"registration":{}}' }]);
+    const h = harness([...outage, accepted()]);
 
     const done = h.registration.start();
     await done;
@@ -96,7 +115,7 @@ describe('mcp catalog registration', () => {
     const registration = createMcpCatalogRegistration({
       catalog,
       oxyApiBase: 'https://api.oxy.test',
-      transport: { fetch: async () => new Response('unavailable', { status: 500 }) },
+      transport: transport(async () => new Response('unavailable', { status: 500 })),
       deps: {
         now: () => clock,
         sleep: (ms) =>
@@ -115,7 +134,7 @@ describe('mcp catalog registration', () => {
     const status = registration.status();
     expect(status.state).toBe('retrying');
     expect(status.nextAttemptAt).not.toBeNull();
-    expect(status.lastError).toEqual({ status: 500, message: 'unavailable' });
+    expect(status.lastError).toEqual({ status: 500, message: 'Oxy MCP request failed (500)' });
     registration.stop();
     release();
     await done;
@@ -123,7 +142,7 @@ describe('mcp catalog registration', () => {
   });
 
   test('a remaining 401 uses bounded recovery after the shared transport has refreshed', async () => {
-    const h = harness([{ status: 401, body: '{"error":"invalid_token"}' }, { status: 201 }]);
+    const h = harness([{ status: 401, body: '{"error":"invalid_token"}' }, accepted()]);
     await h.registration.start();
 
     expect(h.registration.status().state).toBe('registered');
@@ -131,24 +150,6 @@ describe('mcp catalog registration', () => {
     expect(h.requests.every(({ init }) => !new Headers(init.headers).has('authorization'))).toBe(
       true,
     );
-  });
-
-  test('a 429 with Retry-After in seconds waits at least that long', async () => {
-    const h = harness([{ status: 429, headers: { 'retry-after': '120' } }, { status: 201 }], {
-      random: () => 0,
-    });
-    await h.registration.start();
-    expect(h.sleeps).toEqual([120_000]);
-    expect(h.registration.status().state).toBe('registered');
-  });
-
-  test('a 503 with Retry-After as an HTTP date waits until that date', async () => {
-    const retryAt = new Date(Date.parse('2026-09-17T10:05:00Z')).toUTCString();
-    const h = harness([{ status: 503, headers: { 'retry-after': retryAt } }, { status: 201 }], {
-      random: () => 0,
-    });
-    await h.registration.start();
-    expect(h.sleeps).toEqual([300_000]);
   });
 
   test('a permanent 403 stops retrying and reports a sanitized refusal', async () => {
@@ -174,7 +175,7 @@ describe('mcp catalog registration', () => {
   });
 
   test('408 is retried, not treated as a refusal', async () => {
-    const h = harness([{ status: 408 }, { status: 201 }]);
+    const h = harness([{ status: 408 }, accepted()]);
     await h.registration.start();
     expect(h.registration.status().state).toBe('registered');
   });
@@ -199,34 +200,39 @@ describe('mcp catalog registration', () => {
     expect(registration.status().state).toBe('refused');
   });
 
-  test('the body carries the catalog, the deployment time and the catalog hash', async () => {
-    const h = harness([{ status: 201 }]);
+  test('the body carries the catalog and the deployment time; the status reports its digest', async () => {
+    const h = harness([accepted()]);
     await h.registration.start();
     const body = JSON.parse(String(h.requests[0].init.body));
     expect(body.catalog).toEqual(catalog);
-    expect(body.catalogHash).toBe(catalogHash(catalog));
     expect(body.deployedAt).toBe('2026-09-17T10:00:00.000Z');
     expect(h.requests[0].url).toBe('https://api.oxy.test/capabilities/catalogs/register');
     expect(h.registration.status()).toMatchObject({
-      catalogVersion: '2026.09.17',
-      toolCount: 2,
-      catalogHash: catalogHash(catalog),
+      catalogVersion: catalog.version,
+      toolCount: catalog.tools.length,
+      catalogHash: capabilityCatalogDigest(catalog),
     });
   });
 
+  test('an answer naming another catalogue is not taken as registered', async () => {
+    const h = harness([accepted({ ...catalog, version: '0.0.1' }), accepted()]);
+    await h.registration.start();
+    expect(h.requests).toHaveLength(2);
+    expect(h.registration.status().state).toBe('registered');
+  });
+
   test('two deploy versions report different hashes and each registers once, with no overwrite loop', async () => {
-    const older = harness([{ status: 201 }]);
-    const newerCatalog = { ...catalog, version: '2026.09.18' } as AppCapabilityCatalog;
+    const older = harness([accepted()]);
+    const newerCatalog: AppCapabilityCatalog = { ...catalog, version: '1.1.99' };
     const newerRequests: string[] = [];
     const newer = createMcpCatalogRegistration({
       catalog: newerCatalog,
       oxyApiBase: 'https://api.oxy.test',
-      transport: {
-        fetch: async (url) => {
-          newerRequests.push(String(url));
-          return new Response('', { status: 201 });
-        },
-      },
+      transport: transport(async (url) => {
+        newerRequests.push(url);
+        const answer = accepted(newerCatalog);
+        return new Response(answer.body, { status: answer.status });
+      }),
       deps: {
         sleep: async () => undefined,
         log: ignore,
@@ -246,11 +252,9 @@ describe('mcp catalog registration', () => {
     let clock = 0;
     const registration = createMcpCatalogRegistration({
       catalog,
-      transport: {
-        fetch: async () => {
-          throw new Error('credentials unavailable');
-        },
-      },
+      transport: transport(async () => {
+        throw new Error('credentials unavailable');
+      }),
       oxyApiBase: 'https://api.oxy.test',
       deps: {
         now: () => clock,
@@ -272,22 +276,6 @@ describe('mcp catalog registration', () => {
 });
 
 describe('helpers', () => {
-  test('canonical JSON ignores key order', () => {
-    expect(canonicalJson({ b: 1, a: { d: [1, { z: 1, y: 2 }], c: null } })).toBe(
-      '{"a":{"c":null,"d":[1,{"y":2,"z":1}]},"b":1}',
-    );
-    expect(catalogHash({ a: 1, b: 2 })).toBe(catalogHash({ b: 2, a: 1 }));
-  });
-
-  test('Retry-After parsing', () => {
-    const now = Date.parse('2026-09-17T10:00:00Z');
-    expect(parseRetryAfter('30', now)).toBe(30_000);
-    expect(parseRetryAfter('Thu, 17 Sep 2026 10:01:00 GMT', now)).toBe(60_000);
-    expect(parseRetryAfter('Thu, 17 Sep 2026 09:00:00 GMT', now)).toBe(0);
-    expect(parseRetryAfter('soon', now)).toBeNull();
-    expect(parseRetryAfter(null, now)).toBeNull();
-  });
-
   test('sanitizer masks bearer credentials and truncates', () => {
     const message = sanitizeErrorMessage(`Authorization: Bearer abc.def ${'y'.repeat(500)}`);
     expect(message).not.toContain('abc.def');

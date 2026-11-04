@@ -53,6 +53,8 @@ describe('public functional status', () => {
     }
     assert.equal(authoritativeProbeUrl('nilo'), 'https://api.nilo.so/health/ready');
     assert.equal(authoritativeProbeUrl('website-api'), 'https://website-api.oxy.so/api/ready');
+    // Noted's server is Nilo's API; its own host is retired.
+    assert.equal(authoritativeProbeUrl('noted'), 'https://api.nilo.so/health/ready');
   });
 
   it('propagates shared platform failure without improving an unknown app', () => {
