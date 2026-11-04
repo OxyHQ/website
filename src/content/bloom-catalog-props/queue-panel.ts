@@ -16,7 +16,7 @@ export const props: BloomSurfaceProps = {
         { name: 'tab', type: 'QueuePanelTab', options: ['queue', 'recent'], optional: true, description: 'Controlled tab.' },
         { name: 'defaultTab', type: 'QueuePanelTab', options: ['queue', 'recent'], optional: true, description: 'Initial tab when uncontrolled. Default `queue`.' },
         { name: 'onTabChange', type: '(tab: QueuePanelTab) => void', optional: true },
-        { name: 'onReorder', type: '(section: QueueSection, from: number, to: number) => void', optional: true, description: 'A row was dragged, moved by keyboard or moved from its menu. Indices are within `section`. The panel draws what it is given — apply the move with `moveQueueItem` and pass the new list back.' },
+        { name: 'onReorder', type: '(section: QueueSection, from: number, to: number) => void', optional: true, description: 'A row was dragged, moved by keyboard or moved from its menu. Indices are within `section`. The panel draws what it is given — apply the move with `moveItem` (`@oxy.so/bloom/hooks`) and pass the new list back.' },
         { name: 'onRemove', type: '(section: QueueSection, index: number, track: QueueTrack) => void', optional: true, description: "A row's remove action. Omit to hide it." },
         { name: 'onPlay', type: "(section: QueueSection | 'recent' | 'now', index: number, track: QueueTrack) => void", optional: true, description: 'A row was pressed. `index` is within `section`; `now` is the now-playing row.' },
         { name: 'onClearQueue', type: '() => void', optional: true, description: '"Clear queue" beside "Next in queue". Omit to hide it.' },

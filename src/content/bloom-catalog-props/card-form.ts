@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'CardFormProps': {
       props: [
+        { name: 'hostedFields', type: '{ number: React.ReactNode; expiry: React.ReactNode; securityCode: React.ReactNode; }', optional: true, description: 'Atomic secure-control slots. All three are required; never falls back to local inputs.' },
         { name: 'value', type: 'Partial<CardFormValue>', optional: true, description: 'Controlled value.' },
         { name: 'defaultValue', type: 'Partial<CardFormValue>', optional: true, description: 'Initial value when uncontrolled.' },
         { name: 'onValueChange', type: '(value: CardFormValue) => void', optional: true, description: 'Every change, with the whole value.' },
@@ -22,6 +23,20 @@ export const props: BloomSurfaceProps = {
         { name: 'secureSecurityCode', type: 'boolean', optional: true, description: 'Masks the security code. Default `false`.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the form as a whole. The individual boxes name themselves from their own labels.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'CardFormHostedFieldProps': {
+      props: [
+        { name: 'label', type: 'string', optional: false },
+        { name: 'accessibilityLabel', type: 'string', optional: true },
+        { name: 'nativeID', type: 'string', optional: true },
+        { name: 'error', type: 'string', optional: true },
+        { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'required', type: 'boolean', optional: true },
+        { name: 'invalid', type: 'boolean', optional: true },
+        { name: 'focused', type: 'boolean', optional: false, description: "Report the hosted control's focus; disabled membership always wins." },
+        { name: 'children', type: '(control: CardFormHostedFieldControl) => ReactNode', optional: false },
         { name: 'testID', type: 'string', optional: true },
       ],
     },
@@ -148,6 +163,7 @@ export const props: BloomSurfaceProps = {
   },
   components: [
     { name: 'CardForm', propsType: 'CardFormProps' },
+    { name: 'CardFormHostedField', propsType: 'CardFormHostedFieldProps' },
     { name: 'CardFormCountry', propsType: 'CardFormCountryProps' },
     { name: 'CardFormExpiry', propsType: 'CardFormExpiryProps' },
     { name: 'CardFormName', propsType: 'CardFormNameProps' },

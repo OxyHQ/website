@@ -9,7 +9,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'title', type: 'React.ReactNode', optional: false },
         { name: 'description', type: 'React.ReactNode', optional: true },
-        { name: 'icon', type: 'AnnouncementIconComponent', optional: true, description: 'Leading 20px glyph. Defaults to the shield-star (`RiShieldStarFill`).' },
+        { name: 'icon', type: 'BloomIconComponent', optional: true, description: 'Leading 20px glyph. Defaults to the shield-star (`RiShieldStarFill`).' },
         { name: 'actionLabel', type: 'React.ReactNode', optional: true, description: 'CTA label. When set, a full-width small secondary Button is rendered.' },
         { name: 'onAction', type: '() => void', optional: true },
         { name: 'dismissible', type: 'boolean', optional: true, description: 'Show the close button in the top-right corner. Defaults to `false`.' },

@@ -7,8 +7,8 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'CallControlButtonProps': {
       props: [
-        { name: 'icon', type: 'CallGlyph', optional: false, description: 'The glyph drawn when the button is NOT active (or always, with no `activeIcon`).' },
-        { name: 'activeIcon', type: 'CallGlyph', optional: true, description: 'The glyph drawn while `active` — a muted mic, a crossed-out camera.' },
+        { name: 'icon', type: 'BloomIconComponent', optional: false, description: 'The glyph drawn when the button is NOT active (or always, with no `activeIcon`).' },
+        { name: 'activeIcon', type: 'BloomIconComponent', optional: true, description: 'The glyph drawn while `active` — a muted mic, a crossed-out camera.' },
         { name: 'label', type: 'string', optional: false, description: 'The accessible name, and the caption under the button when `showLabel`. REQUIRED: the button draws one glyph and no text of its own.' },
         { name: 'active', type: 'boolean', optional: true, description: 'Makes the button a TOGGLE: it emits `aria-pressed` plus native `accessibilityState.selected`. Leave it undefined for a plain action (flip camera, add participant) — a one-shot action that reports `aria-pressed="false"` forever announces a state it does not have.' },
         { name: 'tone', type: 'CallControlTone', options: ['default', 'end', 'accept'], optional: true },

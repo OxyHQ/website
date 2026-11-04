@@ -96,7 +96,7 @@ export const props: BloomSurfaceProps = {
     },
     'TrackListEmptyProps': {
       props: [
-        { name: 'icon', type: 'TrackIconComponent', optional: true, description: 'Default: a note glyph.' },
+        { name: 'icon', type: 'BloomIconComponent', optional: true, description: 'Default: a note glyph.' },
         { name: 'title', type: 'string', optional: false },
         { name: 'description', type: 'string', optional: true },
         { name: 'actionLabel', type: 'string', optional: true, description: 'Button label; drawn with `onAction`.' },

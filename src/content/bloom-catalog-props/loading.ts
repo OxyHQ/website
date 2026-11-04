@@ -27,9 +27,20 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'ViewStyle', optional: true },
       ],
     },
+    'StatusRingProps': {
+      props: [
+        { name: 'state', type: "'idle' | 'loading' | 'success' | 'error'", options: ['idle', 'loading', 'success', 'error'], optional: false },
+        { name: 'children', type: 'ReactNode', optional: false, description: 'Brand artwork, crossfaded with status layers. The host owns the asset.' },
+        { name: 'size', type: 'number', optional: true },
+        { name: 'accessibilityLabel', type: 'string', optional: false, description: 'Localized status, announced without exposing duplicate decorative children.' },
+        { name: 'testID', type: 'string', optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'Loading', propsType: 'LoadingProps' },
     { name: 'SpinnerIcon', propsType: 'SpinnerIconProps' },
+    { name: 'StatusRing', propsType: 'StatusRingProps' },
   ],
 }

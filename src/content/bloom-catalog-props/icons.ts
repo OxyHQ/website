@@ -8,9 +8,9 @@ export const props: BloomSurfaceProps = {
     'RiAccessibilityLine': {
       props: [
         { name: 'fill', type: 'import("react-native-svg").PathProps["fill"]', optional: true },
-        { name: 'style', type: 'import("react-native").StyleProp<import("..").IconStyle>', optional: true },
-        { name: 'size', type: 'keyof typeof import("..").sizes', options: ['sm', 'md', 'lg', 'xl', 'xs', '2xs', '2xl', '3xl'], optional: true },
-        { name: 'gradient', type: 'keyof typeof import("../../styles/tokens").gradients', options: ['primary', 'sky'], optional: true },
+        { name: 'style', type: 'import("react-native").StyleProp<import("../index.js").IconStyle>', optional: true },
+        { name: 'size', type: 'keyof typeof import("../index.js").sizes', options: ['sm', 'md', 'lg', 'xl', 'xs', '2xs', '2xl', '3xl'], optional: true },
+        { name: 'gradient', type: 'keyof typeof import("../../styles/tokens.js").gradients', options: ['primary', 'sky'], optional: true },
       ],
       inheritsFrom: ['Omit<SvgProps, "size" | "style">', 'RefAttributes<Svg>'],
     },

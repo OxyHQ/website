@@ -1,7 +1,7 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, relative } from 'node:path';
-import { chromium, type Locator, type Page } from 'playwright';
+import { chromium, type Locator, type Page, type Request } from 'playwright';
 import { BLOOM_CHARACTER_BASE } from '../src/lib/bloomCharacterRuntime';
 
 const ROOT = join(import.meta.dir, '..');
@@ -26,6 +26,10 @@ function invariant(value: unknown, message: string): asserts value {
 
 const COLD_RENDER_TIMEOUT = 90_000;
 const renderMessages = new WeakMap<Page, string[]>();
+// Requests this gate aborts itself (the scripts-blocked prepaint probe). They
+// fail with net::ERR_FAILED by design; listed among the page's failures they
+// lead the dump and read as the page failing to load its own JS (#220's queue).
+const blockedByGate = new WeakSet<Request>();
 function observeRendering(page: Page) {
   const messages: string[] = [];
   renderMessages.set(page, messages);
@@ -33,9 +37,10 @@ function observeRendering(page: Page) {
   page.on('console', (message) => {
     if (message.type() === 'warning' || message.type() === 'error') messages.push(message.text());
   });
-  page.on('requestfailed', (request) =>
-    messages.push(`${request.url()}: ${request.failure()?.errorText}`),
-  );
+  page.on('requestfailed', (request) => {
+    if (blockedByGate.has(request)) return;
+    messages.push(`${request.url()}: ${request.failure()?.errorText}`);
+  });
   // A renderer that runs out of memory or loses its GPU takes the page with it;
   // every wait after that only times out, so say so where it happened.
   page.on('crash', () => messages.push('the page crashed (renderer process gone)'));
@@ -245,6 +250,15 @@ try {
   await renderStage(motionPage, 'nine normal-motion portraits painted', () =>
     motionPage.waitForFunction(
       () => {
+        // Before Bloom 17.1.1 the runtime gave a GPU readback 30 s and then
+        // failed every avatar for good; CI's software GPU queue outlasted it. An
+        // avatar that gives up never paints: say so now, not at the timeout.
+        const gaveUp = [...document.querySelectorAll('[data-bloom-agent-presets] li')].filter(
+          (item) =>
+            !item.querySelector('canvas') && item.textContent?.includes('Avatar unavailable'),
+        );
+        if (gaveUp.length)
+          throw new Error(`${gaveUp.length} preset avatar(s) gave up: "Avatar unavailable"`);
         const canvases = [
           ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
         ];
@@ -296,7 +310,10 @@ try {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     // A generated brand palette must match before and after React starts.
-    await page.route('**/*.js', (route) => route.abort());
+    await page.route('**/*.js', (route) => {
+      blockedByGate.add(route.request());
+      return route.abort();
+    });
     await page.goto(`${origin}/bloom/`);
     // Marketing routes prerender their head. Probe the generated scoped
     // palette with scripts blocked before comparing the actual React shell.
@@ -718,6 +735,12 @@ try {
     await renderStage(page, `${mode} nine reduced-motion portraits painted`, () =>
       page.waitForFunction(
         () => {
+          const gaveUp = [...document.querySelectorAll('[data-bloom-agent-presets] li')].filter(
+            (item) =>
+              !item.querySelector('canvas') && item.textContent?.includes('Avatar unavailable'),
+          );
+          if (gaveUp.length)
+            throw new Error(`${gaveUp.length} preset avatar(s) gave up: "Avatar unavailable"`);
           const canvases = [
             ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
           ];

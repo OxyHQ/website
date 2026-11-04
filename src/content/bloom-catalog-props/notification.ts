@@ -11,7 +11,7 @@ export const props: BloomSurfaceProps = {
         { name: 'description', type: 'React.ReactNode', optional: true },
         { name: 'timestamp', type: 'React.ReactNode', optional: true, description: 'Muted text after the title, e.g. `2m ago`.' },
         { name: 'status', type: 'NotificationStatus', options: ['neutral', 'information', 'success', 'warning', 'error'], optional: true, description: 'Colours the leading disc. Defaults to `neutral`.' },
-        { name: 'icon', type: 'NotificationIconComponent', optional: true, description: 'Custom leading glyph. Defaults to the icon associated with `status`.' },
+        { name: 'icon', type: 'BloomIconComponent', optional: true, description: 'Custom leading glyph. Defaults to the icon associated with `status`.' },
         { name: 'avatar', type: 'NotificationAvatar', optional: true, description: 'Avatar leading visual. Takes precedence over `icon`.' },
         { name: 'actions', type: 'NotificationAction[]', optional: true, description: 'Small action buttons below the message.' },
         { name: 'dismissible', type: 'boolean', optional: true, description: 'Show the close button. Defaults to `true`.' },
@@ -27,7 +27,7 @@ export const props: BloomSurfaceProps = {
     'NotificationStatusVisual': {
       props: [
         { name: 'status', type: 'NotificationStatus', options: ['neutral', 'information', 'success', 'warning', 'error'], optional: false },
-        { name: 'icon', type: 'NotificationIconComponent', optional: true },
+        { name: 'icon', type: 'BloomIconComponent', optional: true },
         { name: 'paint', type: 'NotificationPaint', optional: false },
         { name: 'children', type: 'React.ReactNode', optional: true, description: 'Replaces the glyph (e.g. a spinner) while keeping the disc.' },
       ],

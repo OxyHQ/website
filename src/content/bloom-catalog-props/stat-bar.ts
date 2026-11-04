@@ -7,8 +7,9 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'AnyMeterProps': {
       props: [
-        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'What the bar measures. Required: ARIA never computes a name for `progressbar` from its contents, and the bar draws no text of its own, so without this it announces "progress bar, 40%" with no subject.' },
-        { name: 'valueText', type: 'string', optional: true, description: '`aria-valuetext` — the reading a screen reader says instead of the raw number, which is otherwise announced as a percentage ("4 of 5" vs "80%").' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'What the bar measures. Required: ARIA never computes a name for a `meter` or a `progressbar` from its contents, and the bar draws no text of its own, so without this it announces "level indicator, 40%" with no subject.' },
+        { name: 'valueText', type: 'string', optional: true, description: '`aria-valuetext` — the reading a screen reader says ("4 of 5"). Without it, the share of the track in the reader\'s locale (`formatPercent`: "80%", "80 %"), which is what a screen reader says of a bare number.' },
+        { name: 'role', type: 'MeterRole', options: ['meter', 'progressbar'], optional: true },
         { name: 'decorative', type: 'false', optional: true },
         { name: 'reveal', type: 'MeterReveal', optional: true, description: 'Animate only the fill from empty when visible; reduced motion displays the real value immediately.' },
         { name: 'className', type: 'string', optional: true, description: 'Classes on the track. Unclaimed properties retain the normal Meter defaults.' },
@@ -36,7 +37,8 @@ export const props: BloomSurfaceProps = {
         { name: 'track', type: 'string', optional: true, description: 'The ring behind it.' },
         { name: 'cap', type: "'round' | 'butt'", options: ['round', 'butt'], optional: true, description: "The arc's end cap. `'round'` reads as a needle tip; at value 0 it would draw a dot on an empty ring, so `'round'` degrades to `'butt'` there." },
         { name: 'accessibilityLabel', type: 'string', optional: false, description: 'What the ring measures. Required, for the reason `Meter` states.' },
-        { name: 'valueText', type: 'string', optional: true, description: '`aria-valuetext`.' },
+        { name: 'valueText', type: 'string', optional: true, description: "`aria-valuetext`. Without it, the share of the ring, as `Meter`'s." },
+        { name: 'role', type: 'MeterRole', options: ['meter', 'progressbar'], optional: true },
         { name: 'transitionMs', type: 'number', optional: true, description: 'Milliseconds the arc eases over, on WEB only — native snaps. Ignored under `prefers-reduced-motion`.' },
         { name: 'indeterminate', type: 'boolean', optional: true, description: 'The amount is not known yet — a download that has not started, a step that reports none: a quarter of the ring turns around it, and the progressbar reports no value (`aria-valuenow` absent, `aria-busy`), which is what makes it indeterminate to assistive technology. `value` is not drawn meanwhile.' },
         { name: 'children', type: 'ReactNode', optional: true, description: 'Centred content — the score, a glyph. Hidden from assistive technology.' },

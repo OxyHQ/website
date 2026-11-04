@@ -38,6 +38,12 @@ export const props: BloomSurfaceProps = {
       ],
       inheritsFrom: ["Omit<TextInputProps, 'value' | 'onChangeText' | 'placeholder'>"],
     },
+    'TextFieldHostedContent': {
+      props: [
+        { name: 'children', type: 'React.ReactNode', optional: false },
+        { name: 'focused', type: 'boolean', optional: false },
+      ],
+    },
     'TextFieldLabelProps': {
       props: [
         { name: 'nativeID', type: 'string', optional: true },
@@ -49,7 +55,7 @@ export const props: BloomSurfaceProps = {
     },
     'TextFieldHintProps': {
       props: [
-        { name: 'invalid', type: 'boolean', optional: true, description: 'Paint the hint in the error colour.' },
+        { name: 'invalid', type: 'boolean', optional: true, description: "The hint is the field's ERROR: painted in the error colour and an `alert`, so a screen reader says it once, interrupting, when it appears or changes." },
         { name: 'isInvalid', type: 'boolean', optional: true },
         { name: 'nativeID', type: 'string', optional: true },
         { name: 'style', type: 'TextStyle | TextStyle[]', optional: true },
@@ -81,6 +87,7 @@ export const props: BloomSurfaceProps = {
   components: [
     { name: 'TextField', propsType: 'TextFieldProps' },
     { name: 'TextFieldInput', propsType: 'TextFieldInputProps' },
+    { name: 'TextFieldHostedContent', propsType: 'TextFieldHostedContent' },
     { name: 'TextFieldLabel', propsType: 'TextFieldLabelProps' },
     { name: 'TextFieldHint', propsType: 'TextFieldHintProps' },
     { name: 'TextFieldIcon', propsType: 'TextFieldIconProps' },

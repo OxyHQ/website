@@ -8,7 +8,6 @@ export const props: BloomSurfaceProps = {
     'RadioIndicatorProps': {
       props: [
         { name: 'selected', type: 'boolean', optional: false, description: 'Whether the radio is selected' },
-        { name: 'pressed', type: 'boolean', optional: true, description: 'Whether the control it belongs to is currently HELD.' },
         { name: 'size', type: 'number', optional: true, description: 'Outer circle size in pixels (defaults to 16, the `md` size; 14 is `sm`)' },
         { name: 'selectedColor', type: 'string', optional: true, description: 'Accent the selected gradient is built around (defaults to theme.colors.primary)' },
         { name: 'selectedForeground', type: 'string', optional: true, description: 'Foreground paired with selectedColor; shared tonal controls pass this with the fill.' },
