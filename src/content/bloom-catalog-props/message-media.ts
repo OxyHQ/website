@@ -77,7 +77,7 @@ export const props: BloomSurfaceProps = {
         { name: 'radius', type: 'number', optional: true },
         { name: 'placeholderColor', type: 'string', optional: true },
         { name: 'badgeLabel', type: 'string', optional: true, description: 'Draws the pill. Default "GIF".' },
-        { name: 'playing', type: 'boolean', optional: true, description: '`false` shows the play affordance for a click-to-play GIF.' },
+        { name: 'playing', type: 'boolean', optional: true, description: "`false` shows the play affordance for a click-to-play GIF. Unset, it follows the viewer's autoplay preference (`useMediaAutoplay`)." },
         { name: 'onPress', type: '() => void', optional: true },
         { name: 'state', type: 'MessageMediaState', options: ['idle', 'sending', 'failed'], optional: true },
         { name: 'progress', type: 'number', optional: true },

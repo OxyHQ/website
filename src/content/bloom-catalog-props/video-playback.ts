@@ -8,6 +8,7 @@ export const props: BloomSurfaceProps = {
     'VideoPlaybackProviderProps': {
       props: [
         { name: 'children', type: 'ReactNode', optional: false },
+        { name: 'autoplay', type: 'boolean', optional: true, description: "Whether a visible video starts on its own. Defaults to the viewer's `videoAutoplay` preference (`@oxy.so/bloom/preferences`, `useMediaAutoplay`), so an app passes nothing. With `false` nothing is elected by position and silent players stop too: a video plays only once the viewer starts it (`claimActive()`), or while it owns the OS Picture-in-Picture window. Pass it only to override the preference for a subtree; a change re-runs the election." },
       ],
     },
     'VideoViewabilityProviderProps': {

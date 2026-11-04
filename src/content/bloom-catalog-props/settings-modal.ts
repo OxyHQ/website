@@ -108,6 +108,16 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'SettingsSelectProps<T>': {
+      props: [
+        { name: 'label', type: 'string', optional: false, description: "The select's accessible name (and its sheet's title on compact layouts)." },
+        { name: 'value', type: 'T', optional: false },
+        { name: 'onChange', type: '(value: T) => void', optional: false },
+        { name: 'items', type: 'ReadonlyArray<{ value: T; label: string; }>', optional: false },
+        { name: 'compact', type: 'boolean', optional: true, description: 'Padded to sit inside a row (default). `false` keeps the regular field size.' },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
     'SettingsPlanCardProps': {
       props: [
         { name: 'badge', type: 'string', optional: true, description: 'Chip over the title (`Current plan` in English).' },
@@ -206,6 +216,7 @@ export const props: BloomSurfaceProps = {
     { name: 'SettingsValueField', propsType: 'SettingsValueFieldProps' },
     { name: 'SettingsTextField', propsType: 'SettingsTextFieldProps' },
     { name: 'SettingsDateField', propsType: 'SettingsDateFieldProps' },
+    { name: 'SettingsSelect', propsType: 'SettingsSelectProps<T>' },
     { name: 'SettingsPlanCard', propsType: 'SettingsPlanCardProps' },
     { name: 'SettingsGeneralPage', propsType: 'SettingsGeneralPageProps' },
     { name: 'SettingsProfilePage', propsType: 'SettingsProfilePageProps' },
