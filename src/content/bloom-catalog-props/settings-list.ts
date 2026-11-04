@@ -9,6 +9,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'icon', type: 'React.ReactNode', optional: true, description: 'Icon element (e.g. SVG icon component) or Ionicons-style string' },
         { name: 'title', type: 'string', optional: false, description: 'Primary label' },
+        { name: 'content', type: 'ReactNode', optional: true, description: 'Replaces the standard title/description/value body; row padding and surface remain shared.' },
         { name: 'titleNumberOfLines', type: 'number', optional: true, description: 'How many lines the title may take before it truncates. Default `1`.' },
         { name: 'description', type: 'string', optional: true, description: 'Secondary description text below title' },
         { name: 'descriptionLines', type: 'number', optional: true, description: 'Lines the description may take before it truncates. Defaults to `2`; `0` never truncates (a help text or a policy that has to be read whole).' },

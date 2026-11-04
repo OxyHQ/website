@@ -23,7 +23,7 @@ export const props: BloomSurfaceProps = {
         { name: 'emptyState', type: 'ReactNode', optional: true, description: 'Replaces the whole empty state (e.g. an "Add an API key" notice).' },
         { name: 'headerLeading', type: 'ReactNode', optional: true, description: 'Leading header slot — a phone nav toggle mounts here.' },
         { name: 'headerIdentity', type: 'ReactNode', optional: true, description: "Avatar/name composition in PageHeader's title slot. Owns its accessible semantics." },
-        { name: 'headerTitleAlign', type: "import('../page-header/types').PageHeaderTitleAlign", options: ['start', 'center'], optional: true, description: 'Defaults to center when headerIdentity is supplied, otherwise start.' },
+        { name: 'headerTitleAlign', type: "import('../page-header/types.js').PageHeaderTitleAlign", options: ['start', 'center'], optional: true, description: 'Defaults to center when headerIdentity is supplied, otherwise start.' },
         { name: 'composerProps', type: "AgentChatComposerProps['composerProps']", optional: true, description: 'Shared ComposerPill integrations; draft, submit and generation state are owned by AgentChat.' },
         { name: 'onShare', type: "AgentChatActionsProps['onShare']", optional: true },
         { name: 'onExport', type: '() => void', optional: true, description: 'Also shown in the history rail footer.' },
@@ -62,7 +62,7 @@ export const props: BloomSurfaceProps = {
     },
     'AgentChatComposerProps': {
       props: [
-        { name: 'composerProps', type: "Omit<import('../composer-panel/types').ComposerPillProps, 'value' | 'defaultValue' | 'onValueChange' | 'onSubmit' | 'onStop' | 'busy'>", optional: true, description: 'Shared pill API: attachments, models, permissions, voice and keyboard integration.' },
+        { name: 'composerProps', type: "Omit<import('../composer-panel/types.js').ComposerPillProps, 'value' | 'defaultValue' | 'onValueChange' | 'onSubmit' | 'onStop' | 'busy'>", optional: true, description: 'Shared pill API: attachments, models, permissions, voice and keyboard integration.' },
         { name: 'value', type: 'string', optional: true },
         { name: 'defaultValue', type: 'string', optional: true },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },

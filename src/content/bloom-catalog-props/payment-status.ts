@@ -31,6 +31,8 @@ export const props: BloomSurfaceProps = {
         { name: 'reason', type: 'string', optional: true, description: "WHY it failed, in the processor's own words, drawn in an `Admonition`." },
         { name: 'actions', type: 'ReactNode', optional: true, description: 'The retry, the receipt, the "try another method" — as `Button`s.' },
         { name: 'icon', type: 'BloomIconComponent', optional: true, description: "The glyph, overriding the state's own." },
+        { name: 'illustration', type: 'ReactNode', optional: true, description: 'Replaces the status glyph tile. Pass null for text-only status.' },
+        { name: 'showIcon', type: 'boolean', optional: true, description: 'Hide the default glyph tile while retaining text or a custom illustration.' },
         { name: 'variant', type: "'surface' | 'plain'", options: ['surface', 'plain'], optional: true, description: '`surface` paints a card of its own; `plain` draws only the content.' },
         { name: 'labels', type: 'PaymentStatusLabels', optional: true, description: 'Replaces the default words for any of the five states.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: "Names the block. Defaults to the state's words and the amount joined — the block's own heading, which is what a reader lands on." },

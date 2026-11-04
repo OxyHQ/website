@@ -109,7 +109,6 @@ export const props: BloomSurfaceProps = {
         { name: 'maxPanelWidth', type: 'number', optional: true },
         { name: 'navOpen', type: 'boolean', optional: true, description: 'Controlled nav drawer (below `lg`).' },
         { name: 'onNavOpenChange', type: '(open: boolean) => void', optional: true },
-        { name: 'navSwipeEnabled', type: 'boolean', optional: true },
         { name: 'panelOpen', type: 'boolean', optional: true, description: 'Controlled panel drawer (below `xl`).' },
         { name: 'onPanelOpenChange', type: '(open: boolean) => void', optional: true },
         { name: 'background', type: 'ReactNode', optional: true, description: "A layer filling the shell, drawn ABOVE its own background-full and BELOW the sidebar, workspace and drawers. Not interactive (`pointerEvents: 'none'`)." },
@@ -188,20 +187,6 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'ReactNode', optional: false },
       ],
     },
-    'ResizeHandleProps': {
-      props: [
-        { name: 'orientation', type: "'vertical' | 'horizontal'", options: ['vertical', 'horizontal'], optional: true, description: 'Separator orientation; horizontal separators resize panel heights.' },
-        { name: 'variant', type: 'ResizeHandleVariant', options: ['grip', 'pill'], optional: true, description: 'How the handle draws. Default `grip`.' },
-        { name: 'thickness', type: 'number', optional: true, description: 'Depth of the hit strip across the separator, centred on it, px. Default 20 for `grip` and 11 for `pill` (a 7px gap and 2px of each pane).' },
-        { name: 'onResizeStart', type: '() => void', optional: true, description: 'Pointer went down on the grip.' },
-        { name: 'onResize', type: '(dx: number) => void', optional: false, description: 'Distance along the resize axis from the drag start, px.' },
-        { name: 'onResizeEnd', type: '() => void', optional: true },
-        { name: 'label', type: 'string', optional: true, description: "Names the separator. `'Resize panels'` in English." },
-        { name: 'onNudge', type: '(dx: number) => void', optional: true, description: 'Keyboard nudge (web: ←/→ move by 16).' },
-        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'testID', type: 'string', optional: true },
-      ],
-    },
     'AiChatHeaderProps': {
       props: [
         { name: 'children', type: 'ReactNode', optional: false, description: "The title, drawn as is and centred: the conversation's participants, say." },
@@ -232,7 +217,6 @@ export const props: BloomSurfaceProps = {
     { name: 'AiChatLinkChip', propsType: 'AiChatLinkChipProps' },
     { name: 'AiChatMessageLine', propsType: 'AiChatMessageLineProps' },
     { name: 'AiChatStrong', propsType: 'AiChatStrongProps' },
-    { name: 'AiChatResizeHandle', propsType: 'ResizeHandleProps' },
     { name: 'AiChatHeader', propsType: 'AiChatHeaderProps' },
     { name: 'AiChatMobileHeader', propsType: 'AiChatMobileHeaderProps' },
   ],

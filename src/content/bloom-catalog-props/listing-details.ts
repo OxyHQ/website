@@ -44,7 +44,7 @@ export const props: BloomSurfaceProps = {
         { name: 'avatarVariant', type: 'string', optional: true, description: 'Rendition forwarded to the `ImageResolver`. Default `"medium"`.' },
         { name: 'verified', type: 'boolean', optional: true, description: 'Draws the check badge on the avatar.' },
         { name: 'verifiedLabel', type: 'string', optional: true, description: 'The badge\'s accessible name. `"Verified"` in English.' },
-        { name: 'labelIcon', type: 'ListingIcon', optional: true },
+        { name: 'labelIcon', type: 'BloomIconComponent', optional: true },
         { name: 'stats', type: 'readonly HostStat[]', optional: true, description: "The column on the card's right, separated by hairlines." },
         { name: 'responseLines', type: 'readonly string[]', optional: true, description: 'Plain lines ("Response rate: 100%", "Responds within an hour").' },
         { name: 'onMessage', type: '() => void', optional: true, description: 'Draws the message button when set.' },
@@ -70,7 +70,7 @@ export const props: BloomSurfaceProps = {
         { name: 'verified', type: 'boolean', optional: true, description: 'Draws the check badge on the avatar.' },
         { name: 'verifiedLabel', type: 'string', optional: true, description: 'The badge\'s accessible name. `"Verified"` in English.' },
         { name: 'label', type: 'string', optional: true, description: 'A short label under the name ("Top host").' },
-        { name: 'labelIcon', type: 'ListingIcon', optional: true },
+        { name: 'labelIcon', type: 'BloomIconComponent', optional: true },
         { name: 'stats', type: 'readonly HostStat[]', optional: true, description: "The column on the card's right, separated by hairlines." },
         { name: 'details', type: 'readonly HostDetail[]', optional: true, description: 'Lines with icons under the card ("Speaks English and Portuguese").' },
         { name: 'responseLines', type: 'readonly string[]', optional: true, description: 'Plain lines ("Response rate: 100%", "Responds within an hour").' },
@@ -102,7 +102,7 @@ export const props: BloomSurfaceProps = {
     'ListingHeaderActionProps': {
       props: [
         { name: 'label', type: 'string', optional: false },
-        { name: 'icon', type: 'ListingIcon', optional: true },
+        { name: 'icon', type: 'BloomIconComponent', optional: true },
         { name: 'onPress', type: '() => void', optional: true },
         { name: 'pressed', type: 'boolean', optional: true, description: 'A toggled action ("Saved"): `aria-pressed` on web, `selected` on native.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Overrides `label` as the accessible name.' },

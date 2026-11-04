@@ -4,6 +4,12 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
     'The pieces of an agent’s reply (bubble, who answered, actions, team profile) need a conversation with agents behind them. See Agent Chat for the composed conversation.',
   'avatar-flight':
     'Avatars that fly between anchors measure two places on a real screen. It needs an app layout with anchors; the Alia chat sheet is its reference host.',
+  'checkout-sheet':
+    'The checkout sheet walks a customer through an authoritative quote from your backend (items, tax, payment methods) and reports the result. It needs a host that supplies that quote.',
+  'checkout-sheet/model':
+    'The checkout view model: step order, sections and an empty draft, with no visual output. Use it beside the Checkout Sheet it drives.',
+  'color-engine':
+    'The React-free colour engine for servers and build scripts: theme roles from a seed colour, and seeds from image pixels. It returns values rather than rendering.',
   'conversation-sidebar':
     'A sidebar of conversations needs the account’s chats and agents. See Sidebar for the live panel it is built on.',
   voice:

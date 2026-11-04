@@ -16,7 +16,6 @@ export const props: BloomSurfaceProps = {
         { name: 'onValueLongPress', type: '(value: string) => void', optional: true, description: 'Long press on a destination (for example an account switcher).' },
         { name: 'actionPlacement', type: "'auto' | 'beside' | 'above'", options: ['auto', 'beside', 'above'], optional: true, description: 'Auto places the action above navigation when side-by-side targets would be cramped.' },
         { name: 'actionBehavior', type: "'hide' | 'visible'", options: ['hide', 'visible'], optional: true, description: 'Hide the accessory while minimizing, returning on upward scroll. Default hide; standalone actions remain visible.' },
-        { name: 'onReselect', type: '(name: string) => void', optional: true },
       ],
     },
   },

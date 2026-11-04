@@ -7,7 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'MultiAgentChatProps': {
       props: [
-        { name: 'providers', type: "ReadonlyArray<import('../composer-panel/types').ModelPickerProvider>", optional: true, description: "Model catalogue passed to Bloom's shared composer picker." },
+        { name: 'providers', type: "ReadonlyArray<import('../composer-panel/types.js').ModelPickerProvider>", optional: true, description: "Model catalogue passed to Bloom's shared composer picker." },
         { name: 'onRespond', type: '(agent: Agent, messages: Message[], signal: AbortSignal, request: MultiAgentChatRequest) => Promise<string>', optional: true },
         { name: 'composerProps', type: "Omit<ComposerPanelProps, 'value' | 'defaultValue' | 'onValueChange' | 'onSubmit' | 'busy' | 'onStop' | 'providers'>", optional: true, description: 'Shared ComposerPanel API for models, permissions, voice, attachments and labels.' },
         { name: 'initialWorkspace', type: 'Workspace', optional: true },

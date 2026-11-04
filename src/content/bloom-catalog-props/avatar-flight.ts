@@ -15,7 +15,7 @@ export const props: BloomSurfaceProps = {
     },
     'AvatarFlightLayer': {
       props: [
-        { name: 'flights', type: '{ layer: import("./types").AvatarFlightLayerState; }', optional: false },
+        { name: 'flights', type: '{ layer: import("./types.js").AvatarFlightLayerState; }', optional: false },
       ],
     },
   },

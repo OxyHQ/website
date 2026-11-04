@@ -74,7 +74,6 @@ export const props: BloomSurfaceProps = {
         { name: 'scrollRef', type: 'Ref<ComponentRef<typeof ScrollView>>', optional: true },
         { name: 'label', type: 'string', optional: true },
         { name: 'fadeBottom', type: 'boolean', optional: true },
-        { name: 'chatId', type: 'string', optional: true },
         { name: 'animatedHandler', type: 'ScrollHandlerProcessed<Record<string, unknown>>', optional: true, description: 'Reanimated scroll handler, composed on the UI thread with Bloom metrics. onScroll remains a plain JS observer.' },
         { name: 'className', type: 'string', optional: true, description: "Utilities for the scrolling viewport, resolved by Bloom's own interop." },
         { name: 'containerClassName', type: 'string', optional: true, description: 'Utilities for the outer sized area on web; shares the viewport on native.' },
