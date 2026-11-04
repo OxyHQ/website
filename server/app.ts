@@ -4,8 +4,13 @@ import express, {
   type RequestHandler,
   type Response,
 } from 'express';
-import cors from 'cors';
-import { oxyTrustProxy } from '@oxy.so/core/server';
+import {
+  createOxyCors,
+  createOxyOriginCheck,
+  createOxyRateLimit,
+  createOxySecurityHeaders,
+  oxyTrustProxy,
+} from '@oxy.so/core/server';
 import { config } from './config.js';
 import { ValidationError } from './utils/validate.js';
 import { sql as pgClient } from './db/postgres.js';
@@ -13,6 +18,9 @@ import { readInfrastructureStatus } from './services/infrastructureStatus.js';
 import { isBootstrapComplete } from './services/startupState.js';
 import type { McpCatalogRegistrationStatus } from './services/mcpCatalogRegistration.js';
 import { mountMcp } from './mcp.js';
+import { OXY_AUTH_OPTIONS } from './middleware/auth.js';
+import { siteAdminErrors } from './middleware/siteAdmin.js';
+import { oxyService } from './services/oxyService.js';
 import pagesRouter from './routes/pages.js';
 import navigationRouter from './routes/navigation.js';
 import footerRouter from './routes/footer.js';
@@ -76,9 +84,24 @@ export function createApp(options: AppOptions): express.Express {
   app.set('trust proxy', oxyTrustProxy);
   if (options.activityMiddleware) app.use(options.activityMiddleware);
 
-  const ALWAYS_ALLOWED_ORIGINS = new Set([
-    'https://oxy.so',
-    'https://www.oxy.so',
+  /*
+   * Helmet's non-CSP hardening (HSTS, nosniff, frameguard, referrer policy) on
+   * every response. This origin serves JSON, which no CSP governs, and its
+   * media is embedded by the sites below — so its resources stay readable
+   * cross-origin rather than Helmet's same-origin default.
+   */
+  app.use(
+    createOxySecurityHeaders({
+      helmet: { crossOriginResourcePolicy: { policy: 'cross-origin' } },
+    }),
+  );
+
+  /**
+   * Browser origins the site's API answers, beyond the Oxy family
+   * (`https://oxy.so` and its one-label subdomains), which the SDK admits
+   * itself. `CORS_ORIGIN` adds more, comma-separated.
+   */
+  const appOrigins = [
     'https://fairco.in',
     'https://www.fairco.in',
     'https://homiio.com',
@@ -87,7 +110,12 @@ export function createApp(options: AppOptions): express.Express {
     'http://localhost:4173',
     'http://localhost:8081',
     'http://localhost:19006',
-  ]);
+    ...config.corsOrigin
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean),
+  ];
+  const isAllowedSiteOrigin = createOxyOriginCheck(appOrigins);
 
   /**
    * The MCP endpoint and its OAuth metadata come BEFORE the site's CORS policy.
@@ -105,18 +133,8 @@ export function createApp(options: AppOptions): express.Express {
    */
   app.use('/api/oxy/file-events', oxyFileEventsRouter);
 
-  function isAllowedSiteOrigin(origin: string): boolean {
-    if (ALWAYS_ALLOWED_ORIGINS.has(origin)) return true;
-    const envAllowed =
-      config.corsOrigin
-        ?.split(',')
-        .map((s) => s.trim())
-        .filter(Boolean) ?? [];
-    return envAllowed.includes(origin);
-  }
-
   // A browser origin outside the list is refused with a 403 the caller can read,
-  // not thrown into the error handler as a generic 500.
+  // instead of a response the browser then hides from it.
   app.use((req, res, next) => {
     const origin = req.headers.origin;
     if (origin && !isAllowedSiteOrigin(origin)) {
@@ -124,11 +142,20 @@ export function createApp(options: AppOptions): express.Express {
     }
     return next();
   });
+  app.use(createOxyCors({ appOrigins }));
 
+  /**
+   * Resolves the session (the same options every route mount uses) and limits
+   * per person, or per address when anonymous. Reads are exempt: they are public,
+   * served through Cloudflare's cache, and the build's prerender reads every
+   * route's SEO from one runner address — thousands of requests a limit sized
+   * for a visitor would turn into silently missing metadata. Everything that
+   * writes, submits or uploads is limited.
+   */
   app.use(
-    cors({
-      origin: (origin, callback) => callback(null, !origin || isAllowedSiteOrigin(origin)),
-      credentials: true,
+    createOxyRateLimit(oxyService, {
+      auth: OXY_AUTH_OPTIONS.auth,
+      exempt: (req) => req.method === 'GET' || req.method === 'HEAD',
     }),
   );
 
@@ -230,7 +257,8 @@ export function createApp(options: AppOptions): express.Express {
       await pgClient`select 1`;
       res.json({ ready: true, db: 'connected' });
     } catch (err) {
-      res.status(503).json({ ready: false, db: 'disconnected', error: (err as Error).message });
+      console.error('[ready] database check failed:', err);
+      res.status(503).json({ ready: false, db: 'disconnected' });
     }
   });
 
@@ -273,6 +301,9 @@ export function createApp(options: AppOptions): express.Express {
     }
     return next(err);
   });
+
+  // Site-admin refusals and failures (`middleware/siteAdmin.ts`).
+  app.use(siteAdminErrors);
 
   // Terminal error handler — without this, anything that is not a ValidationError
   // reaches Express's default handler, which answers JSON API clients with an

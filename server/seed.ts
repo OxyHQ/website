@@ -664,7 +664,7 @@ async function seed() {
       tagline: 'Notes that stay yours',
       description: 'A private notes workspace with real-time collaboration.',
       href: 'https://noted.oxy.so',
-      healthUrl: 'https://api.noted.oxy.so/health/ready',
+      healthUrl: 'https://api.nilo.so/health/ready',
       external: true,
       cta: 'Open Noted',
       brand: '#7c3aed',

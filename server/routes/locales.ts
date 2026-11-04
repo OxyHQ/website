@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { db } from '../db/postgres.js';
 import { locales as localesTable } from '../db/schema/index.js';
 import { requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
+import { adminOnly } from '../middleware/siteAdmin.js';
 import { validate } from '../utils/validate.js';
 import { getEnabledLocalesWithReadiness } from '../utils/localeReadiness.js';
 import { createLocale, deleteLocale, LocaleError, updateLocale } from '../services/locales.js';

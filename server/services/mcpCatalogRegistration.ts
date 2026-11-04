@@ -1,5 +1,9 @@
-import { createHash } from 'node:crypto';
 import type { AppCapabilityCatalog } from '@oxy.so/contracts';
+import {
+  capabilityCatalogDigest,
+  OxyMcpRequestError,
+  registerCapabilityCatalog,
+} from '@oxy.so/mcp';
 
 /**
  * Register the MCP catalog with Oxy, which is what makes Oxy recognise
@@ -10,14 +14,16 @@ import type { AppCapabilityCatalog } from '@oxy.so/contracts';
  * gives up on a failure that can heal — a registry outage longer than the
  * initial burst used to leave MCP sign-in broken until the next deploy.
  *
+ * One attempt is the SDK's `registerCapabilityCatalog`, which also refuses an
+ * answer naming a different catalogue than this process serves. This module
+ * owns only what the SDK leaves to the caller: when to try again.
+ *
  * Retry policy:
  * - An initial burst of {@link INITIAL_ATTEMPTS} attempts backs off to a one
  *   minute ceiling, then sustained recovery continues with the ceiling raised
  *   to {@link SUSTAINED_MAX_DELAY_MS}. Every delay is full jitter (uniform
  *   between a small floor and the ceiling) so a fleet of tasks booted together
  *   does not retry in lockstep.
- * - `Retry-After` on a 429 or 503 is honoured (seconds or an HTTP date) when it
- *   asks for longer than the computed delay.
  * - The shared Oxy transport refreshes a rejected workload credential once.
  *   A remaining 401 is retried with the same bounded outage backoff.
  * - Any other 4xx except 408 and 429 is a configuration refusal (the
@@ -32,10 +38,9 @@ import type { AppCapabilityCatalog } from '@oxy.so/contracts';
  * or digests to reject an older catalog. During a rolling deploy an old task
  * whose registration is still retrying can therefore land AFTER the new task
  * registered and reactivate the older catalog. That is a known limitation until
- * Oxy compares versions; the body carries `deployedAt` and `catalogHash` so the
- * registry has what it needs to do so, and so the stored row says which build
- * sent it. Each task reports its own hash at `GET /api/mcp/status`, which is how
- * the mismatch is spotted.
+ * Oxy compares versions; the body carries `deployedAt`, so the stored row says
+ * which build sent it. Each task reports its catalogue's digest — the one Oxy
+ * computes — at `GET /api/mcp/status`, which is how the mismatch is spotted.
  */
 
 export const INITIAL_ATTEMPTS = 6;
@@ -43,8 +48,6 @@ export const INITIAL_MAX_DELAY_MS = 60_000;
 export const SUSTAINED_MAX_DELAY_MS = 10 * 60_000;
 export const BASE_DELAY_MS = 5_000;
 export const MIN_DELAY_MS = 1_000;
-/** A `Retry-After` longer than this is capped: a misconfigured proxy must not park MCP for a day. */
-export const MAX_RETRY_AFTER_MS = 60 * 60_000;
 export const REQUEST_TIMEOUT_MS = 15_000;
 const MAX_ERROR_MESSAGE_LENGTH = 200;
 
@@ -107,21 +110,6 @@ const defaultDeps: McpCatalogRegistrationDeps = {
   error: (message) => console.error(message),
 };
 
-/** JSON with object keys sorted at every depth, so equal catalogs hash equally. */
-export function canonicalJson(value: unknown): string {
-  if (value === null || typeof value !== 'object') return JSON.stringify(value) ?? 'null';
-  if (Array.isArray(value))
-    return `[${value.map((item) => canonicalJson(item === undefined ? null : item)).join(',')}]`;
-  const entries = Object.entries(value as Record<string, unknown>)
-    .filter(([, item]) => item !== undefined)
-    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
-  return `{${entries.map(([key, item]) => `${JSON.stringify(key)}:${canonicalJson(item)}`).join(',')}}`;
-}
-
-export function catalogHash(catalog: unknown): string {
-  return createHash('sha256').update(canonicalJson(catalog)).digest('hex');
-}
-
 /**
  * Reduce an error to something safe to log and to serve from a public
  * endpoint: bearer credentials, JWTs and long opaque strings are masked, and
@@ -143,31 +131,21 @@ export function sanitizeErrorMessage(raw: string, secrets: readonly string[] = [
     : message;
 }
 
-/** Parse `Retry-After` as delta-seconds or an HTTP date; null when absent or unusable. */
-export function parseRetryAfter(header: string | null, nowMs: number): number | null {
-  if (!header) return null;
-  const trimmed = header.trim();
-  if (/^\d+$/.test(trimmed)) return Number(trimmed) * 1000;
-  const at = Date.parse(trimmed);
-  if (Number.isNaN(at)) return null;
-  return Math.max(0, at - nowMs);
-}
-
 function isPermanentRefusal(status: number): boolean {
   return status >= 400 && status < 500 && status !== 401 && status !== 408 && status !== 429;
 }
 
 export function createMcpCatalogRegistration(input: {
   catalog: AppCapabilityCatalog;
-  transport: { fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> };
+  transport: { fetch: typeof fetch };
   oxyApiBase: string;
   deps?: Partial<McpCatalogRegistrationDeps>;
 }): McpCatalogRegistration {
   const deps: McpCatalogRegistrationDeps = { ...defaultDeps, ...input.deps };
-  const hash = catalogHash(input.catalog);
+  const hash = capabilityCatalogDigest(input.catalog);
   // The build's start, not each attempt's: a retry that lands an hour later is
   // still the same deployment.
-  const deployedAt = new Date(deps.now()).toISOString();
+  const deployedAt = new Date(deps.now());
   const stopController = new AbortController();
   let running: Promise<void> | null = null;
 
@@ -201,54 +179,36 @@ export function createMcpCatalogRegistration(input: {
     current.lastAttemptAt = iso(deps.now());
     current.nextAttemptAt = null;
     try {
-      const response = await input.transport.fetch(
-        `${input.oxyApiBase}/capabilities/catalogs/register`,
-        {
-          method: 'POST',
-          headers: {
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({ catalog: input.catalog, deployedAt, catalogHash: hash }),
-          signal: AbortSignal.any([AbortSignal.timeout(REQUEST_TIMEOUT_MS), stopController.signal]),
-        },
+      await registerCapabilityCatalog(input.catalog, {
+        transport: input.transport,
+        oxyApiUrl: input.oxyApiBase,
+        deployedAt,
+        timeoutMs: REQUEST_TIMEOUT_MS,
+      });
+      current.state = 'registered';
+      current.lastSuccessAt = iso(deps.now());
+      current.lastError = null;
+      deps.log(
+        `[mcp] registered capability catalog ${input.catalog.version} (${input.catalog.tools.length} tools, digest ${hash.slice(0, 12)}, attempt ${attempt})`,
       );
-      if (response.ok) {
-        current.state = 'registered';
-        current.lastSuccessAt = iso(deps.now());
-        current.lastError = null;
-        deps.log(
-          `[mcp] registered capability catalog ${input.catalog.version} (${input.catalog.tools.length} tools, hash ${hash.slice(0, 12)}, attempt ${attempt})`,
-        );
-        return null;
-      }
-      // The body names the refusal (an unregistered workload, a schema the
-      // API rejected); it is logged and kept, sanitized and short.
-      const detail = await response.text().catch(() => '');
-      recordError(response.status, detail || response.statusText || `HTTP ${response.status}`);
-      if (isPermanentRefusal(response.status)) {
-        current.state = 'refused';
-        deps.error(
-          `[mcp] catalog registration refused by configuration (status=${response.status}); not retrying: ${current.lastError?.message}`,
-        );
-        return null;
-      }
-      current.state = 'retrying';
-      let delay = backoffDelay(attempt);
-      if (response.status === 429 || response.status === 503) {
-        const retryAfter = parseRetryAfter(response.headers.get('retry-after'), deps.now());
-        if (retryAfter !== null) delay = Math.max(delay, Math.min(retryAfter, MAX_RETRY_AFTER_MS));
-      }
-      deps.error(
-        `[mcp] catalog registration failed (status=${response.status}, attempt ${attempt}), retrying in ${delay}ms: ${current.lastError?.message}`,
-      );
-      return delay;
+      return null;
     } catch (error) {
       if (stopController.signal.aborted) return null;
-      recordError(null, error instanceof Error ? error.message : String(error));
+      // A refusal names itself (an unregistered workload, a schema the API
+      // rejected); it is logged and kept, sanitized and short.
+      const status = error instanceof OxyMcpRequestError ? error.status : null;
+      recordError(status, error instanceof Error ? error.message : String(error));
+      if (status !== null && isPermanentRefusal(status)) {
+        current.state = 'refused';
+        deps.error(
+          `[mcp] catalog registration refused by configuration (status=${status}); not retrying: ${current.lastError?.message}`,
+        );
+        return null;
+      }
       current.state = 'retrying';
       const delay = backoffDelay(attempt);
       deps.error(
-        `[mcp] catalog registration failed (attempt ${attempt}), retrying in ${delay}ms: ${current.lastError?.message}`,
+        `[mcp] catalog registration failed (${status === null ? '' : `status=${status}, `}attempt ${attempt}), retrying in ${delay}ms: ${current.lastError?.message}`,
       );
       return delay;
     }
@@ -295,7 +255,7 @@ export function disabledMcpCatalogRegistrationStatus(
   return {
     state: 'disabled',
     catalogVersion: catalog?.version ?? null,
-    catalogHash: catalog ? catalogHash(catalog) : null,
+    catalogHash: catalog ? capabilityCatalogDigest(catalog) : null,
     toolCount: catalog?.tools.length ?? 0,
     attempts: 0,
     lastAttemptAt: null,

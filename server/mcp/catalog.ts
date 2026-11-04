@@ -146,7 +146,7 @@ export const WEBSITE_MCP_TOOL_NAMES: readonly string[] = TOOLS.map((tool) => too
 // ── Authorization ───────────────────────────────────────────────────────────
 
 export function isWebsiteAdmin(accountId: string): boolean {
-  return config.adminUserIds.includes(accountId);
+  return config.mcp.adminAccountIds.includes(accountId);
 }
 
 function adminOnly(access: McpToolAccess): boolean {

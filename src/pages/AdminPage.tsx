@@ -54,7 +54,7 @@ function AdminGateScreen({
 
 export default function AdminPage() {
   const { signIn } = useAuth();
-  const { isAdmin, isAuthenticated, userId, username, isPending, isError, refetch } =
+  const { isAdmin, isAuthenticated, userId, username, permission, isPending, isError, refetch } =
     useAdminAccess();
 
   // Authorization is the server's answer, never a guess made here — see
@@ -77,7 +77,7 @@ export default function AdminPage() {
     return (
       <AdminGateScreen overline="Status: unavailable" title="Couldn't verify access">
         <p className="mt-3 text-pretty text-muted-foreground">
-          The website API didn't answer. Your session is fine — this is a connection problem.
+          Access could not be checked right now. Your session is fine — try again in a moment.
         </p>
         <div className="mt-6 flex justify-center">
           <Button variant="primary" onClick={() => void refetch()}>
@@ -110,8 +110,14 @@ export default function AdminPage() {
           You're signed in{username ? ` as @${username}` : ''}, but this account isn't an
           administrator.
         </p>
-        {/* Shown so the exact value can be copied into OXY_ADMIN_USER_IDS on the
-            backend — the allowlist is keyed on this id, not on the username. */}
+        {/* Admin is an Oxy application permission: shown so an owner of the Oxy
+            Website application can grant it to exactly this account. */}
+        {permission && (
+          <p className="mt-3 text-pretty text-muted-foreground">
+            An owner of the Oxy Website application grants{' '}
+            <code className="font-mono text-xs">{permission}</code> in the Oxy Console.
+          </p>
+        )}
         {userId && (
           <p className="mt-4 break-all rounded-md bg-surface px-3 py-2 font-mono text-xs text-muted-foreground">
             User ID: {userId}

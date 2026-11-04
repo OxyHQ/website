@@ -4,7 +4,7 @@ import { and, asc, desc, eq, sql, type SQL } from 'drizzle-orm';
 import { db } from '../db/postgres.js';
 import { referrals } from '../db/schema/index.js';
 import { requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
+import { adminOnly } from '../middleware/siteAdmin.js';
 import { validate } from '../utils/validate.js';
 
 const router = Router();

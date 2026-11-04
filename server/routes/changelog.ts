@@ -5,7 +5,7 @@ import { db } from '../db/postgres.js';
 import { changelogEntries, media, trackedRepos } from '../db/schema/index.js';
 import { populate } from '../db/refs.js';
 import { requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
+import { adminOnly } from '../middleware/siteAdmin.js';
 import { localeMiddleware } from '../middleware/locale.js';
 import { localizeMany } from '../utils/localize.js';
 import { syncAllRepos, syncSingleRepo } from '../services/githubSync.js';

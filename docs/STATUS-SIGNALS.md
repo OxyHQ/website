@@ -13,7 +13,7 @@ alarm in `OK`; a missing alarm, an unreadable CloudWatch response or
 | Clarity | `GET https://api.clarity.surf/health/ready` | PostgreSQL and attested-cutover readiness | Oxy API and Kaana |
 | CrowdSource | `GET https://api.crowdsource.oxy.so/health/ready` | Runtime and PostgreSQL readiness | Oxy API |
 | Nilo | `GET https://api.nilo.so/health/ready` | PostgreSQL readiness | Oxy API |
-| Noted | `GET https://api.noted.oxy.so/health/ready` | Database and migration readiness | Oxy API |
+| Noted | `GET https://api.nilo.so/health/ready` — Noted has no backend of its own: Nilo's API serves its notes (`api.noted.oxy.so` is retired, oxy-infra#311) | PostgreSQL readiness | Oxy API |
 | Moovo | `GET https://api.moovo.now/health/ready` | Store readiness | Oxy API |
 | Mercaria | `GET https://api.mercaria.co/health/ready` | Database and migration readiness | Oxy API |
 | FairCoin bridge / buy / explorer | Their dedicated `/health`, `/health/buy`, or mining-info API endpoint | Public backend contract | none declared |

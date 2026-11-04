@@ -6,7 +6,7 @@ import { userBadges } from '../db/schema/index.js';
 import { BADGE_DEFINITIONS, BADGE_IDS } from '../data/badges.js';
 import { requireAuth } from '../middleware/auth.js';
 import { toErrorMessage } from '../utils/errorMessage.js';
-import { adminOnly } from '../middleware/adminOnly.js';
+import { adminActorId, adminOnly } from '../middleware/siteAdmin.js';
 import { checkAndAwardBadges } from '../services/badgeService.js';
 import { validate } from '../utils/validate.js';
 
@@ -48,7 +48,7 @@ router.get('/definitions', (_req, res) => {
 // Admin: award badge
 router.post('/award', requireAuth, adminOnly, async (req, res) => {
   const { userId, username, badgeId } = validate(awardBodySchema, req.body);
-  const awardedBy = req.user?.id ?? '';
+  const awardedBy = adminActorId(req);
 
   try {
     const [badge] = await db

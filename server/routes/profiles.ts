@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, type Response } from 'express';
 import { and, asc, count, desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db/postgres.js';
@@ -10,7 +10,9 @@ import {
   userProfileExtras,
   votes,
 } from '../db/schema/index.js';
-import { optionalAuth, oxy, requireAuth } from '../middleware/auth.js';
+import { OxyApiError } from '@oxy.so/core';
+import { optionalAuth, requireAuth } from '../middleware/auth.js';
+import { oxyService } from '../services/oxyService.js';
 import { toErrorMessage } from '../utils/errorMessage.js';
 import { parsePagination } from '../utils/parsePagination.js';
 import { validate } from '../utils/validate.js';
@@ -41,12 +43,21 @@ const activityQuerySchema = z
   })
   .passthrough();
 
+/** Oxy said there is no such person: 404. Oxy could not answer: 503, never "not found". */
+function userLookupFailed(res: Response, error: unknown) {
+  if (error instanceof OxyApiError && error.status === 404) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  console.error('[profiles] Oxy user lookup failed:', error);
+  return res.status(503).json({ error: 'Profiles are temporarily unavailable' });
+}
+
 // Get basic user info by ID (for article author display)
 // MUST be before /:username to avoid Express matching "id" as a username
 router.get('/id/:userId', async (req, res) => {
   const { userId } = validate(userIdParamsSchema, req.params);
   try {
-    const oxyUser = await oxy.users.get(userId);
+    const oxyUser = await oxyService.users.get(userId);
     res.json({
       _id: oxyUser.id,
       username: oxyUser.username,
@@ -54,8 +65,8 @@ router.get('/id/:userId', async (req, res) => {
       avatar: oxyUser.avatar,
       color: oxyUser.color,
     });
-  } catch {
-    return res.status(404).json({ error: 'User not found' });
+  } catch (error) {
+    return userLookupFailed(res, error);
   }
 });
 
@@ -93,11 +104,11 @@ router.get('/:username', optionalAuth, async (req, res) => {
   const { username } = validate(usernameParamsSchema, req.params);
 
   try {
-    let oxyUser: Awaited<ReturnType<typeof oxy.users.byUsername>>;
+    let oxyUser: Awaited<ReturnType<typeof oxyService.users.byUsername>>;
     try {
-      oxyUser = await oxy.users.byUsername(username);
-    } catch {
-      return res.status(404).json({ error: 'User not found' });
+      oxyUser = await oxyService.users.byUsername(username);
+    } catch (error) {
+      return userLookupFailed(res, error);
     }
 
     const [[profileExtra], badges] = await Promise.all([
@@ -133,11 +144,11 @@ router.get('/:username', optionalAuth, async (req, res) => {
                 and(eq(newsroomPosts.oxyUserId, userId), eq(newsroomPosts.status, 'published')),
               ),
           ),
-          oxy.follows
+          oxyService.follows
             .followers(userId)
             .then((r) => r.total)
             .catch(() => 0),
-          oxy.follows
+          oxyService.follows
             .following(userId)
             .then((r) => r.total)
             .catch(() => 0),

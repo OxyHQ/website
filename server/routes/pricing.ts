@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { db } from '../db/postgres.js';
 import { pricingPlans } from '../db/schema/index.js';
 import { requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
+import { adminOnly } from '../middleware/siteAdmin.js';
 import { localeMiddleware } from '../middleware/locale.js';
 import { localizeMany } from '../utils/localize.js';
 import { validate } from '../utils/validate.js';

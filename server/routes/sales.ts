@@ -1,14 +1,14 @@
-import { Router } from 'express';
+import { Router, type Request } from 'express';
 import { rateLimit } from 'express-rate-limit';
-import { OxyServices } from '@oxy.so/core';
 import { and, desc, eq, lt, sql } from 'drizzle-orm';
 import { db } from '../db/postgres.js';
 import { salesInquiries } from '../db/schema/index.js';
 import { isUniqueViolation } from '../db/pgErrors.js';
 import { validate } from '../utils/validate.js';
 import { optionalAuth, requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
-import { config } from '../config.js';
+import { adminActorId, adminOnly } from '../middleware/siteAdmin.js';
+import { oxyService } from '../services/oxyService.js';
+import type { OxyAuthRequest } from '@oxy.so/core/server';
 import {
   INQUIRY_RETENTION_DAYS,
   INQUIRY_STATUSES,
@@ -45,45 +45,37 @@ const submitLimiter = rateLimit({
 });
 
 /**
- * Verify that the signed-in caller can actually see the account and application
- * they asked us to attach.
+ * Verify that the signed-in caller belongs to the account, and the application
+ * to that account, they asked us to attach.
  *
  * A client-supplied account id is a CLAIM of access, not proof of one, and
  * writing it unchecked would let anyone label their inquiry with someone else's
- * organization. So the check runs as the caller, with the caller's own token,
- * against the Oxy control plane — the only system that knows the answer.
+ * organization. So Oxy is asked, with the caller's own session — the only
+ * system that knows the answer.
  *
- * A fresh `OxyServices` per request rather than the shared instance: the shared
- * one is unauthenticated and `session.setAccessToken` on it would leak one caller's token
- * into another caller's request.
+ * Any failure to confirm drops the association rather than the inquiry: a
+ * refusal and an outage alike leave nothing proven, and the inquiry is still
+ * worth having without it. Nothing is cached from a failure.
  */
 async function verifiedAccountRefs(
-  bearerToken: string | undefined,
+  req: Request,
   accountId: string | undefined,
   applicationId: string | undefined,
 ): Promise<{ accountId?: string; applicationId?: string }> {
-  if (!bearerToken || !accountId) return {};
+  const caller = req as OxyAuthRequest;
+  if (!accountId || !caller.userId) return {};
   try {
-    const asCaller = new OxyServices({ baseURL: config.oxyApiBase });
-    asCaller.session.setAccessToken(bearerToken);
-    const accounts = await asCaller.accounts.list();
-    if (!accounts.some((node) => node.accountId === accountId)) return {};
-    if (!applicationId) return { accountId };
-    const apps = await asCaller.apps.list(accountId);
-    return apps.some((app) => app._id === applicationId)
-      ? { accountId, applicationId }
-      : { accountId };
+    await oxyService.accountAccessFor(caller, accountId);
   } catch {
-    // The control plane being unreachable must not fail the submission: the
-    // inquiry is still worth having, just without the association.
     return {};
   }
-}
-
-function bearerFrom(header: string | undefined): string | undefined {
-  if (!header) return undefined;
-  const match = /^Bearer\s+(.+)$/i.exec(header.trim());
-  return match?.[1];
+  if (!applicationId) return { accountId };
+  try {
+    const application = await oxyService.applicationAccessFor(caller, applicationId);
+    return application.ownerAccountId === accountId ? { accountId, applicationId } : { accountId };
+  } catch {
+    return { accountId };
+  }
 }
 
 /**
@@ -102,11 +94,7 @@ router.post('/', submitLimiter, optionalAuth, async (req, res) => {
     return res.status(202).json({ status: 'received' });
   }
 
-  const refs = await verifiedAccountRefs(
-    bearerFrom(req.headers.authorization),
-    input.accountId,
-    input.applicationId,
-  );
+  const refs = await verifiedAccountRefs(req, input.accountId, input.applicationId);
 
   const deleteAfter = new Date(Date.now() + INQUIRY_RETENTION_DAYS * 86_400_000);
   const idempotencyKey = idempotencyKeyFor(input);
@@ -262,7 +250,7 @@ router.patch('/:id', requireAuth, adminOnly, async (req, res) => {
   const changes: Record<string, unknown> = { updatedAt: new Date() };
   if (patch.status) {
     changes.status = patch.status satisfies InquiryStatus;
-    changes.statusChangedBy = req.user?.id ?? null;
+    changes.statusChangedBy = adminActorId(req);
     changes.statusChangedAt = new Date();
   }
   if (patch.internalNote !== undefined) changes.internalNote = patch.internalNote;

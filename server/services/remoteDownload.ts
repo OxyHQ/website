@@ -1,4 +1,4 @@
-import { safeFetch, UpstreamError } from '@oxy.so/core/server';
+import { readResponseBody, safeFetch, UpstreamError } from '@oxy.so/core/server';
 import { DomainError } from '../utils/domainError.js';
 
 /* ──────────────────────────────────────────────
@@ -6,8 +6,8 @@ import { DomainError } from '../utils/domainError.js';
  *
  * `safeFetch` owns the SSRF defence — every redirect hop re-validated, the
  * connection pinned to the checked address, a deadline on the response
- * headers. This adds what it leaves to the caller: a byte ceiling on the body
- * and a deadline on the WHOLE download, so a source that trickles bytes
+ * headers — and `readResponseBody` reads the body under a byte ceiling. This
+ * adds one deadline over the WHOLE download, so a source that trickles bytes
  * forever cannot hold a request open.
  * ──────────────────────────────────────────── */
 
@@ -31,7 +31,9 @@ export async function downloadRemote(
   } = {},
 ): Promise<DownloadedFile> {
   const maxBytes = options.maxBytes ?? MAX_DOWNLOAD_BYTES;
-  const deadline = AbortSignal.timeout(options.timeoutMs ?? DOWNLOAD_TIMEOUT_MS);
+  const timeoutMs = options.timeoutMs ?? DOWNLOAD_TIMEOUT_MS;
+  const startedAt = Date.now();
+  const deadline = AbortSignal.timeout(timeoutMs);
   const signal = options.signal ? AbortSignal.any([options.signal, deadline]) : deadline;
 
   const result = await (options.fetcher ?? safeFetch)(url, { signal });
@@ -49,35 +51,33 @@ export async function downloadRemote(
     (Array.isArray(rawContentType) ? rawContentType[0] : rawContentType) ??
     'application/octet-stream';
 
-  return new Promise<DownloadedFile>((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    let totalBytes = 0;
-    const abort = () => {
-      result.response.destroy();
-      reject(new UpstreamError('Download timed out or was cancelled'));
-    };
-    if (signal.aborted) return abort();
-    signal.addEventListener('abort', abort, { once: true });
+  // The caller cancelling, or the whole-download deadline passing, ends the
+  // read: destroying the stream settles `readResponseBody` at once.
+  const cancel = () => result.response.destroy();
+  if (signal.aborted) {
+    cancel();
+    throw new UpstreamError('Download timed out or was cancelled');
+  }
+  signal.addEventListener('abort', cancel, { once: true });
+  const body = await readResponseBody(result.response, {
+    maxBytes,
+    timeoutMs: Math.max(1, timeoutMs - (Date.now() - startedAt)),
+  }).finally(() => signal.removeEventListener('abort', cancel));
 
-    result.response.on('data', (chunk: Buffer) => {
-      totalBytes += chunk.length;
-      if (totalBytes > maxBytes) {
-        signal.removeEventListener('abort', abort);
-        result.response.destroy();
-        reject(new DownloadTooLarge(maxBytes));
-        return;
-      }
-      chunks.push(chunk);
-    });
-    result.response.on('end', () => {
-      signal.removeEventListener('abort', abort);
-      resolve({ buffer: Buffer.concat(chunks), declaredContentType, finalUrl: result.finalUrl });
-    });
-    result.response.on('error', (err: Error) => {
-      signal.removeEventListener('abort', abort);
-      reject(new UpstreamError(`Stream error: ${err.message}`));
-    });
-  });
+  switch (body.kind) {
+    case 'ok':
+      return { buffer: body.body, declaredContentType, finalUrl: result.finalUrl };
+    case 'too_large':
+      throw new DownloadTooLarge(maxBytes);
+    case 'timeout':
+      throw new UpstreamError('Download timed out or was cancelled');
+    case 'error':
+      throw new UpstreamError(
+        signal.aborted
+          ? 'Download timed out or was cancelled'
+          : `Stream error: ${body.error.message}`,
+      );
+  }
 }
 
 export class DownloadTooLarge extends DomainError {

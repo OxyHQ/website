@@ -7,7 +7,7 @@ import { populate, populateOne } from '../db/refs.js';
 import { isUniqueViolation } from '../db/pgErrors.js';
 import { insertWithSlug, SlugConflictError, slugBase } from '../services/slugs.js';
 import { requireAuth } from '../middleware/auth.js';
-import { adminOnly } from '../middleware/adminOnly.js';
+import { adminOnly } from '../middleware/siteAdmin.js';
 import { localeMiddleware } from '../middleware/locale.js';
 import { localizeMany, localizeOne } from '../utils/localize.js';
 import { validate } from '../utils/validate.js';

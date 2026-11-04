@@ -20,6 +20,14 @@ connection on auth.oxy.so. There are no API tokens to create or paste.
 | Listed in `OXY_ADMIN_USER_IDS` | every tool, as before |
 | Any other Oxy account | reads only, answered from the public REST route |
 
+`OXY_ADMIN_USER_IDS` is read by this endpoint alone (`config.mcp.adminAccountIds`).
+The site's own admin routes ask Oxy instead: a website admin is whoever holds the
+Oxy Website application permission `website.content.manage`
+(`server/middleware/siteAdmin.ts`). An MCP access token is bound to this
+resource, and Oxy has no read yet that answers an application permission for
+one, so the endpoint keeps the list until it does; then the list goes and the
+two answers become one.
+
 A non-admin read is not a filtered copy of the admin query: the tool requests the
 site's own `/api/...` route with no credentials, so it returns exactly what an
 anonymous visitor receives. A read with no public route (`list_media`,

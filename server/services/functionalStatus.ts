@@ -41,7 +41,10 @@ const AUTHORITATIVE_PROBES: Readonly<Record<string, string>> = {
   mercaria: 'https://api.mercaria.co/health/ready',
   moovo: 'https://api.moovo.now/health/ready',
   nilo: 'https://api.nilo.so/health/ready',
-  noted: 'https://api.noted.oxy.so/health/ready',
+  // Noted has no backend of its own: its notes are served by Nilo's API
+  // (Noted `packages/frontend/lib/api/routes.ts`; oxy-infra#311 retired
+  // api.noted.oxy.so), so Nilo's readiness is Noted's.
+  noted: 'https://api.nilo.so/health/ready',
   'oxy-api': 'https://api.oxy.so/health',
   // The ALB deliberately uses /api/health, which stays live after bootstrap.
   // Public status needs the dynamic database-aware contract instead.

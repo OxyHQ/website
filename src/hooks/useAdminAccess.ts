@@ -8,15 +8,16 @@ export interface AdminAccess {
   isAdmin: boolean;
   userId: string | null;
   username: string | null;
+  /** The Oxy Website application permission that makes someone an admin. */
+  permission: string;
 }
 
 /**
- * Admin authorization, decided by the server.
+ * Admin authorization, decided by the server — which asks Oxy whether the
+ * person holds the Oxy Website application's admin permission.
  *
- * The client deliberately holds no allowlist. It used to compare `user.username`
- * against a hardcoded `ADMIN_USERNAMES`, while the API compared the Oxy user id
- * against `OXY_ADMIN_USER_IDS` — two allowlists on two identity fields, which
- * drifted and locked real admins out.
+ * The client deliberately holds no allowlist: a username list here once drifted
+ * from the server's answer and locked real admins out.
  *
  * `user?.id` is part of the query key on purpose. The SDK's auth cold boot on
  * this origin can resolve well after the first render, so the first request may
@@ -43,6 +44,7 @@ export function useAdminAccess() {
     isAuthenticated: query.data?.authenticated ?? false,
     userId: query.data?.userId ?? null,
     username: query.data?.username ?? null,
+    permission: query.data?.permission ?? null,
     isPending: query.isPending,
     isError: query.isError,
     error: query.error,
