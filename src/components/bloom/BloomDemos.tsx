@@ -50,6 +50,7 @@ import { RiHomeLine } from '@oxy.so/bloom/icons/RiHomeLine';
 import { RiLayoutGridLine } from '@oxy.so/bloom/icons/RiLayoutGridLine';
 import { RiChat3Line } from '@oxy.so/bloom/icons/RiChat3Line';
 import { useTheme, buildTheme } from '@oxy.so/bloom/theme';
+import { formatNumber } from '@oxy.so/bloom/locale';
 import { useTranslation } from '../../lib/i18n';
 import type { BloomDemoName } from './BloomPreview';
 
@@ -91,7 +92,7 @@ export default function BloomDemos({ name, active }: { name: BloomDemoName; acti
     { id: '1', role: 'user', text: t('bloom.demoPrompt') },
     { id: '2', role: 'assistant', text: t('bloom.demoReply') },
   ]);
-  const n = new Intl.NumberFormat(locale);
+  const formatCount = (value: number) => formatNumber(value, locale);
   const chartData = Array.from({ length: 12 }, (_, i) => ({
     label: new Intl.DateTimeFormat(locale, { month: 'short' }).format(new Date(2026, i, 1)),
     value: [420, 510, 480, 620, 590, 710, 680, 540, 760, 650, 720, 782][i]!,
@@ -149,7 +150,7 @@ export default function BloomDemos({ name, active }: { name: BloomDemoName; acti
           }))}
           title={title('steps')}
           range="29 Jun – 5 Jul"
-          format={n.format}
+          format={formatCount}
           style={medicalFit}
         />
       );
@@ -216,7 +217,7 @@ export default function BloomDemos({ name, active }: { name: BloomDemoName; acti
           year={2026}
           initialMonth={8}
           headline={32459}
-          format={n.format}
+          format={formatCount}
           rings={({ day, month: m }) => [
             ((day * 17 + m) % 100) / 100,
             ((day * 31) % 100) / 100,
@@ -353,7 +354,7 @@ export default function BloomDemos({ name, active }: { name: BloomDemoName; acti
           handle="@maya"
           initials="M"
           contributions={958}
-          format={n.format}
+          format={formatCount}
           countUpDuration={active ? 1600 : 0}
           delta="+14.8%"
           cells={cells}
@@ -805,7 +806,7 @@ export default function BloomDemos({ name, active }: { name: BloomDemoName; acti
           title="Sign-up funnel"
           delta={0.052}
           range="Last 7 days"
-          format={n.format}
+          format={formatCount}
           style={fit}
         />
       );
@@ -878,7 +879,7 @@ export default function BloomDemos({ name, active }: { name: BloomDemoName; acti
           delta={0.052}
           range="H1 2024"
           tiles
-          format={n.format}
+          format={formatCount}
           style={fit}
         />
       );
@@ -928,7 +929,7 @@ export default function BloomDemos({ name, active }: { name: BloomDemoName; acti
           }))}
           delta={0.024}
           range="Last 7 days"
-          format={n.format}
+          format={formatCount}
           style={fit}
         />
       );
@@ -951,7 +952,7 @@ export default function BloomDemos({ name, active }: { name: BloomDemoName; acti
           delta={0.052}
           range="Last 7 days"
           tiles
-          format={n.format}
+          format={formatCount}
           style={fit}
         />
       );

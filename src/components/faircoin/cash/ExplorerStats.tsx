@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { formatCurrency, formatInteger } from '@oxy.so/bloom/locale';
 import {
   FAIRCOIN_EXPLORER_URL,
   fetchExplorerPrice,
@@ -8,12 +9,6 @@ import { fc } from '../../../lib/faircoin-links';
 import { Link } from '../../../lib/navigation';
 
 const compact = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 2 });
-const integer = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
-const usd = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 6,
-});
 
 /** Public explorer data; never replace an unavailable quote with zero. */
 export default function ExplorerStats({
@@ -43,7 +38,12 @@ export default function ExplorerStats({
   const tiles = [
     {
       label: 'FAIR price · USD',
-      value: quote?.price != null ? usd.format(quote.price) : price.isPending ? '…' : 'Unavailable',
+      value:
+        quote?.price != null
+          ? formatCurrency(quote.price, 'USD', 'en-US', { minimum: 2, maximum: 6 })
+          : price.isPending
+            ? '…'
+            : 'Unavailable',
       detail:
         price.isError && quote?.price != null
           ? 'Last available quote'
@@ -62,11 +62,15 @@ export default function ExplorerStats({
           : 'Unavailable',
       detail: network.isError && stats ? 'Last available snapshot' : 'Native FairCoin supply',
       href: `${FAIRCOIN_EXPLORER_URL}/stats`,
-      title: stats ? `${integer.format(stats.circulatingSupply)} FAIR` : undefined,
+      title: stats ? `${formatInteger(stats.circulatingSupply, 'en-US')} FAIR` : undefined,
     },
     {
       label: 'Latest block',
-      value: stats ? integer.format(stats.blockHeight) : network.isPending ? '…' : 'Unavailable',
+      value: stats
+        ? formatInteger(stats.blockHeight, 'en-US')
+        : network.isPending
+          ? '…'
+          : 'Unavailable',
       detail: network.isError && stats ? 'Last available snapshot' : 'FairCoin mainnet',
       href: `${FAIRCOIN_EXPLORER_URL}/stats`,
       title: undefined,

@@ -1,4 +1,4 @@
-import { formatNumber } from '../../lib/utils';
+import { formatNumber } from '@oxy.so/bloom/locale';
 import type { PlatformActivityEvent, PlatformStats } from '../../api/hooks';
 import { INFRA_NODES } from '../../data/dashboard/infra-nodes';
 import { useTranslation } from '../../lib/i18n';
@@ -11,7 +11,7 @@ export function TotalRequests({ stats }: { stats: PlatformStats }) {
         {t('dashboard.totalUsers')}
       </h2>
       <div className="text-4xl md:text-5xl tracking-normal font-mono tabular-nums">
-        {formatNumber(stats.totalUsers)}
+        {formatNumber(stats.totalUsers, 'en-US')}
       </div>
     </div>
   );
@@ -55,7 +55,7 @@ export function LiveOrigins({ events }: { events: PlatformActivityEvent[] }) {
           <div key={country} className="flex justify-end gap-4 font-mono text-sm">
             <span className="text-primary">{displayNames?.of(country) ?? country}</span>
             <span className="w-[7ch] tabular-nums text-foreground">
-              {formatNumber(connections)}
+              {formatNumber(connections, 'en-US')}
             </span>
           </div>
         ))
@@ -78,7 +78,7 @@ function LocationRow({ location, count }: { location: string; count: number }) {
         <h3 className="inline-block my-0 font-medium text-[16px] text-primary">&nbsp;{location}</h3>
       </div>
       <div className="w-[16ch] text-right">
-        <span className="inline-flex tabular-nums">{formatNumber(count)}</span>
+        <span className="inline-flex tabular-nums">{formatNumber(count, 'en-US')}</span>
       </div>
     </li>
   );

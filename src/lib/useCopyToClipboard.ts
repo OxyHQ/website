@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { toast } from '@oxy.so/bloom';
+import { writeClipboardText } from '@oxy.so/bloom/hooks';
 import { useTranslation } from './i18n';
 
 /** Flatten a React node tree to its plain text — used to copy code blocks. */
@@ -42,9 +43,8 @@ export function useCopyToClipboard(resetMs = 2000): {
       try {
         const value = await text;
         if (!value) throw new Error('nothing to copy');
-        // `navigator.clipboard` is undefined outside a secure context; the
-        // TypeError lands in the same catch as a refused permission.
-        await navigator.clipboard.writeText(value);
+        // Rejects outside a secure context as well as on a refused permission.
+        await writeClipboardText(value);
       } catch (error) {
         console.warn('[useCopyToClipboard] clipboard write failed:', error);
         toast.error(t('common.copyFailed'));

@@ -20,18 +20,20 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
     'Appearance scope inherited by the live component examples. Configure it around your app or a component subtree.',
   'color-presets': 'Colour preset definitions. See the colour recipes page for rendered palettes.',
   'connection-status':
-    'Connection notifications subscribe to your app’s connectivity state. Integrate them with a toast host to preview network transitions.',
+    'Connection notifications and useNetworkStatus() (online, metered) follow the device’s connectivity, from one shared subscription. Integrate them with a toast host to preview network transitions.',
   'design-tokens': 'Design token values and CSS exports, used by every live example.',
   fonts:
     'Font loading infrastructure. It supplies typography rather than rendering a standalone control.',
-  hooks: 'Behaviour hooks and haptic configuration for use inside your app.',
+  hooks:
+    'Behaviour hooks for use inside your app: haptics, controllable state, reduced motion, roving focus, clipboard, keyboard visibility, textarea autosize, browser title and openHref.',
   'markdown/inline':
     'React-free inline Markdown parsing, visible-length counting and truncation for server and data pipelines. See Markdown for the rendered output.',
   'image-aspect-ratio-cache': 'Image measurement cache with no standalone visual output.',
   'image-resolver':
     'Image resolution provider. Wrap image components with your application’s resolver.',
   layout: 'Screen edge and scroll contexts used by app layouts.',
-  locale: 'Locale context for the labels rendered by Bloom components.',
+  locale:
+    'Locale context for the labels rendered by Bloom components, and the number formatters (formatNumber, formatCurrency, formatPercent and more) they format with.',
   overlay:
     'Overlay hosts, backdrops and inert boundaries. See Dialog and Popover for interactive compositions.',
   portal:

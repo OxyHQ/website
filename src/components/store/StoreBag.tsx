@@ -1,7 +1,7 @@
 import { Dialog } from '@oxy.so/bloom/dialog';
 import { Button } from '@oxy.so/bloom/button';
 import { CartPanel } from '@oxy.so/bloom/cart-panel';
-import { LocaleProvider as BloomLocaleProvider } from '@oxy.so/bloom/locale';
+import { LocaleProvider as BloomLocaleProvider, formatCurrency } from '@oxy.so/bloom/locale';
 import { mercariaStoreId } from '../../lib/mercaria-store';
 import { useStoreCatalog } from './useStoreCatalog';
 import { STORE_PRODUCTS } from '../../data/store';
@@ -16,12 +16,7 @@ export default function StoreBag({ open, onClose }: { open: boolean; onClose: ()
   const navigate = useNavigate();
   const catalog = useStoreCatalog();
   const { quantities, count, total, setQuantity } = useStoreBag();
-  const money = (amount: number) =>
-    new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0,
-    }).format(amount);
+  const money = (amount: number) => formatCurrency(amount, 'EUR', locale);
   const lines = STORE_PRODUCTS.filter((product) => quantities[product.id]).map((product) => ({
     id: product.id,
     name: product.name,

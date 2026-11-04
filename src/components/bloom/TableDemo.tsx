@@ -9,6 +9,8 @@ import {
   DataTableRowActions,
 } from '@oxy.so/bloom/data-table';
 import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine';
+import { writeClipboardText } from '@oxy.so/bloom/hooks';
+import { formatCurrency, formatNumber } from '@oxy.so/bloom/locale';
 import { useTranslation } from '../../lib/i18n';
 
 const customers = Array.from({ length: 48 }, (_, i) => ({
@@ -52,7 +54,7 @@ export default function TableDemo() {
       getRowId={(row) => row.id}
       accessibilityLabel="Bloom DataTable"
       title={text('results')}
-      summary={`${new Intl.NumberFormat(locale).format(rows.length)} ${text('customers')}`}
+      summary={`${formatNumber(rows.length, locale)} ${text('customers')}`}
       pageSize={5}
       selectable
       defaultSelectedRowIds={['1', '2']}
@@ -123,12 +125,7 @@ export default function TableDemo() {
           header: text('price'),
           accessor: (row) => row.price,
           basis: 100,
-          cell: ({ row }) =>
-            new Intl.NumberFormat(locale, {
-              style: 'currency',
-              currency: 'EUR',
-              maximumFractionDigits: 0,
-            }).format(row.price),
+          cell: ({ row }) => formatCurrency(row.price, 'EUR', locale),
         },
         {
           id: 'actions',
@@ -142,7 +139,7 @@ export default function TableDemo() {
                   icon: RiFileCopyLine,
                   label: copied ? t('docs.copied') : t('common.copyCode'),
                   onPress: () => {
-                    void navigator.clipboard.writeText(row.name).then(() => setCopied(true));
+                    void writeClipboardText(row.name).then(() => setCopied(true));
                   },
                 },
               ]}

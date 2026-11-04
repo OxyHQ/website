@@ -11,7 +11,7 @@ import { Button } from '@oxy.so/bloom/button';
 import ExplorerStats from '../cash/ExplorerStats';
 import WalletScenes, { type WalletScene } from './WalletScenes';
 import '../cash/fonts.css';
-import { useWalletReducedMotion } from './useWalletReducedMotion';
+import { usePrefersReducedMotion } from '@oxy.so/bloom/hooks';
 
 const DOWNLOAD = 'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest';
 const GUTTER = 'px-[5px] lg:px-5';
@@ -79,7 +79,7 @@ const FAQS = [
 function WalletFaq() {
   const [open, setOpen] = useState<number | null>(null);
   const id = useId();
-  const reduce = useWalletReducedMotion();
+  const reduce = usePrefersReducedMotion();
   return (
     <section
       id="wallet-questions"
