@@ -31,6 +31,7 @@ import {
   SegmentedControlItemText,
 } from '@oxy.so/bloom/segmented-control';
 import { Stepper } from '@oxy.so/bloom/stepper';
+import { formatCurrency, formatNumber } from '@oxy.so/bloom/locale';
 import { getBrandMark } from '../../data/brand-assets';
 
 import { organizationSeatCount, pricingOrganizationId } from '../../lib/pricingSeats';
@@ -122,14 +123,9 @@ export default function OnePlansSection({
     const free = name === 'Free';
     const quote = onePlanQuote(tier, billingPeriod, seats);
     const formatPrice = (amount: number) =>
-      new Intl.NumberFormat(locale, {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: amount % 100 === 0 ? 0 : 2,
-        maximumFractionDigits: 2,
-      }).format(amount / 100);
+      formatCurrency(amount / 100, 'USD', locale, amount % 100 === 0 ? 0 : 2);
     const formatStorage = (gb: number) =>
-      `${new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(gb >= 1000 ? gb / 1000 : gb)} ${gb >= 1000 ? 'TB' : 'GB'}`;
+      `${formatNumber(gb >= 1000 ? gb / 1000 : gb, locale, { maximumFractionDigits: 2 })} ${gb >= 1000 ? 'TB' : 'GB'}`;
     const creditLabel =
       quote.monthlyCredits === undefined
         ? '—'

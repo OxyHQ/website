@@ -5,6 +5,7 @@ import { TextFieldInput } from '@oxy.so/bloom/text-field';
 import { Textarea } from '@oxy.so/bloom/textarea';
 import { Dialog, type DialogControlProps } from '@oxy.so/bloom/dialog';
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine';
+import { openHref } from '@oxy.so/bloom/hooks';
 import Button from '../ui/Button';
 import OptionSelect from '../ui/OptionSelect';
 
@@ -102,7 +103,7 @@ export default function StartupProgramDialog({ control }: StartupProgramDialogPr
     event.preventDefault();
     if (!requiredFieldsReady) return;
 
-    window.location.href = encodeMailto(application);
+    openHref(encodeMailto(application));
     control.close();
   }
 

@@ -4,7 +4,7 @@ import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { formatNumber } from '../../lib/utils';
+import { formatNumber } from '@oxy.so/bloom/locale';
 import { useTranslation } from '../../lib/i18n';
 import type { PlatformStats } from '../../api/hooks';
 import '../../styles/dashboard-metrics.css';
@@ -207,7 +207,9 @@ export default function ReferenceMetricsGrid({
         )}
 
         <Card title={t('dashboard.activeSessions')}>
-          <LiveValue version={stats.timestamp}>{formatNumber(stats.activeSessions)}</LiveValue>
+          <LiveValue version={stats.timestamp}>
+            {formatNumber(stats.activeSessions, 'en-US')}
+          </LiveValue>
           <div className="dashboard-allocation absolute">
             <div className="mb-[.5cqw] flex justify-between tracking-[-0.035em]">
               <span className="text-primary">
@@ -226,13 +228,15 @@ export default function ReferenceMetricsGrid({
             </div>
             <div className="mt-[1.55cqw] flex justify-between tracking-[-0.045em]">
               <span>0</span>
-              <span>{formatNumber(stats.totalUsers)}</span>
+              <span>{formatNumber(stats.totalUsers, 'en-US')}</span>
             </div>
           </div>
         </Card>
 
         <Card title={t('dashboard.developerApps')}>
-          <LiveValue version={stats.timestamp}>{formatNumber(stats.totalDeveloperApps)}</LiveValue>
+          <LiveValue version={stats.timestamp}>
+            {formatNumber(stats.totalDeveloperApps, 'en-US')}
+          </LiveValue>
           <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]">
             <span className="text-primary">{t('dashboard.connectedApi')}</span>
           </p>
@@ -256,7 +260,9 @@ export default function ReferenceMetricsGrid({
 
         {!compact && (
           <Card title={t('dashboard.storedFiles')}>
-            <LiveValue version={stats.timestamp}>{formatNumber(stats.totalFiles)}</LiveValue>
+            <LiveValue version={stats.timestamp}>
+              {formatNumber(stats.totalFiles, 'en-US')}
+            </LiveValue>
             <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]">
               <span className="text-primary">{t('dashboard.privateAllApps')}</span>
             </p>
@@ -280,14 +286,16 @@ export default function ReferenceMetricsGrid({
         )}
 
         <Card title={t('dashboard.messages')}>
-          <LiveValue version={stats.timestamp}>{formatNumber(stats.totalMessages)}</LiveValue>
+          <LiveValue version={stats.timestamp}>
+            {formatNumber(stats.totalMessages, 'en-US')}
+          </LiveValue>
           <LineChart />
         </Card>
 
         {!compact && (
           <Card title={t('dashboard.notifications')} circle>
             <LiveValue version={stats.timestamp}>
-              {formatNumber(stats.totalNotifications)}
+              {formatNumber(stats.totalNotifications, 'en-US')}
             </LiveValue>
             <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]">
               <span className="text-primary">{t('dashboard.deliveredTotal')}</span>
@@ -321,7 +329,7 @@ export default function ReferenceMetricsGrid({
               viewBox="0 0 100 100"
               role="img"
               aria-label={t('dashboard.totalTransactions', {
-                count: formatNumber(stats.totalTransactions),
+                count: formatNumber(stats.totalTransactions, 'en-US'),
               })}
             >
               <circle cx="50" cy="50" r="37" fill="none" stroke="var(--border)" strokeWidth="22" />
@@ -339,7 +347,7 @@ export default function ReferenceMetricsGrid({
               />
             </svg>
             <p className="dashboard-transaction-value absolute font-bold tracking-[-0.05em]">
-              {formatNumber(stats.totalTransactions)}
+              {formatNumber(stats.totalTransactions, 'en-US')}
               <span className="font-medium tracking-normal text-muted-foreground">
                 {stats.totalTransactions === 0 ? t('dashboard.noneYet') : t('dashboard.total')}
               </span>
@@ -351,14 +359,14 @@ export default function ReferenceMetricsGrid({
               </span>
               <span className="flex items-center gap-[.35cqw]">
                 <i className="inline-block h-[1.95cqw] w-[1cqw] rounded-full bg-primary" />
-                {t('dashboard.tx')} {formatNumber(stats.totalTransactions)}
+                {t('dashboard.tx')} {formatNumber(stats.totalTransactions, 'en-US')}
               </span>
             </div>
           </Card>
         )}
 
         <Card title={t('dashboard.aiModels')}>
-          <LiveValue version={stats.timestamp}>{formatNumber(stats.aiModels)}</LiveValue>
+          <LiveValue version={stats.timestamp}>{formatNumber(stats.aiModels, 'en-US')}</LiveValue>
           <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]">
             <span className="text-primary">{t('dashboard.availableNow')}</span>
           </p>
@@ -382,7 +390,9 @@ export default function ReferenceMetricsGrid({
 
         {!compact && (
           <Card title={t('dashboard.connections')}>
-            <LiveValue version={stats.timestamp}>{formatNumber(stats.totalFollows)}</LiveValue>
+            <LiveValue version={stats.timestamp}>
+              {formatNumber(stats.totalFollows, 'en-US')}
+            </LiveValue>
             <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]">
               <span className="text-primary">{t('dashboard.privateGraphTotal')}</span>
             </p>

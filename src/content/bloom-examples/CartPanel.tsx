@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { CartPanel } from '@oxy.so/bloom/cart-panel';
 import { Button } from '@oxy.so/bloom/button';
+import { formatCurrency } from '@oxy.so/bloom/locale';
 
 export default function CartPanelExample() {
   const [quantity, setQuantity] = useState(1);
-  const amount = new Intl.NumberFormat('en', { style: 'currency', currency: 'EUR' }).format(
-    28 * quantity,
-  );
+  const amount = formatCurrency(28 * quantity, 'EUR', 'en', 2);
   return (
     <div className="w-full max-w-lg space-y-4 text-foreground">
       <CartPanel

@@ -6,6 +6,7 @@ import { RiCpuLine } from '@oxy.so/bloom/icons/RiCpuLine';
 import { RiPlugLine } from '@oxy.so/bloom/icons/RiPlugLine';
 import { RiShapesLine } from '@oxy.so/bloom/icons/RiShapesLine';
 import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine';
+import { formatCompactNumber, formatNumber } from '@oxy.so/bloom/locale';
 import { useFairCoinStats, useNewsroomPosts } from '../../api/hooks';
 import type { FairCoinStats } from '../../api/faircoinStore';
 import { AnimatedTitle } from '../ui/AnimatedTitle';
@@ -24,8 +25,6 @@ import { BrandScope } from '../../theme/BrandScope';
  * banner and sits nothing like the rest of this page.
  */
 
-const COMPACT = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 });
-
 /*
  * Short forms, the way a balance is written: 378,995,651 reads as a length
  * before it reads as a number. Below a thousand there is nothing to shorten, so
@@ -33,10 +32,10 @@ const COMPACT = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFra
  * still means anything.
  */
 function formatStat(value: number, decimals: number): string {
-  if (Math.abs(value) >= 1000) return COMPACT.format(value);
+  if (Math.abs(value) >= 1000) return formatCompactNumber(value, 'en-US');
   // `maximumFractionDigits`, not `toFixed`: the count-up starts at zero, and a
   // stat declaring four decimals would open on "0.0000".
-  return new Intl.NumberFormat('en-US', { maximumFractionDigits: decimals }).format(value);
+  return formatNumber(value, 'en-US', { maximumFractionDigits: decimals });
 }
 
 function AnimatedStat({

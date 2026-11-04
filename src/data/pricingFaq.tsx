@@ -1,4 +1,5 @@
 import type { FaqGroup } from '../components/sections/FaqSection';
+import { formatCurrency } from '@oxy.so/bloom/locale';
 import { Link } from '../lib/navigation';
 import {
   OXY_ONE_PERSONAL_PLANS,
@@ -352,7 +353,7 @@ export function getAudienceFaqGroups(
               },
               {
                 question: 'How do the base fee and seats work?',
-                answer: `Your total is the team base fee plus the per-user price multiplied by the number of members. Every member needs a paid seat; seats are not included in the base fee. For example, Business Go with five members costs ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format((OXY_ONE_BUSINESS_PLANS.Go.monthlyPrice + 5 * OXY_ONE_BUSINESS_PLANS.Go.monthlySeatPrice) / 100)} per month. Annual billing saves 20% on both the base fee and the seats. Monthly credits are also calculated as a base allowance plus the allowance for each active seat, shared by the team.`,
+                answer: `Your total is the team base fee plus the per-user price multiplied by the number of members. Every member needs a paid seat; seats are not included in the base fee. For example, Business Go with five members costs ${formatCurrency((OXY_ONE_BUSINESS_PLANS.Go.monthlyPrice + 5 * OXY_ONE_BUSINESS_PLANS.Go.monthlySeatPrice) / 100, 'USD', 'en-US')} per month. Annual billing saves 20% on both the base fee and the seats. Monthly credits are also calculated as a base allowance plus the allowance for each active seat, shared by the team.`,
               },
             ]
           : []),

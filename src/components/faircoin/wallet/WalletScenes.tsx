@@ -16,7 +16,7 @@ import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine';
 import { RiKey2Line } from '@oxy.so/bloom/icons/RiKey2Line';
 import { RiPauseFill } from '@oxy.so/bloom/icons/RiPauseFill';
 import { RiPlayFill } from '@oxy.so/bloom/icons/RiPlayFill';
-import { useWalletReducedMotion } from './useWalletReducedMotion';
+import { usePrefersReducedMotion } from '@oxy.so/bloom/hooks';
 
 export type WalletScene =
   | 'send'
@@ -256,7 +256,7 @@ export default function WalletScenes({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const visible = useInView(ref, { amount: 0.25 });
-  const reduce = useWalletReducedMotion();
+  const reduce = usePrefersReducedMotion();
   const [paused, setPaused] = useState(false);
   const time = useMotionValue(0);
   const controls = useRef<ReturnType<typeof animate> | null>(null);
