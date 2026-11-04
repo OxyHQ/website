@@ -11,6 +11,7 @@ import type {
   CatalogToolResult,
 } from '@oxy.so/mcp';
 import { config } from '../config.js';
+import { isMcpSiteAdmin } from '../middleware/siteAdmin.js';
 import {
   effectsFor,
   MCP_TOOL_ACCESS,
@@ -145,9 +146,15 @@ export const WEBSITE_MCP_TOOL_NAMES: readonly string[] = TOOLS.map((tool) => too
 
 // ── Authorization ───────────────────────────────────────────────────────────
 
-export function isWebsiteAdmin(accountId: string): boolean {
-  return config.mcp.adminAccountIds.includes(accountId);
-}
+/*
+ * A website admin is whoever holds the Oxy Website application permission
+ * `website.content.manage` — the same question the REST admin routes ask
+ * (`middleware/siteAdmin.ts`), asked with the call's MCP access token. Oxy
+ * answers for the person who authorized the connector, whichever account the
+ * connection is acting as.
+ */
+
+const ADMIN_UNAVAILABLE = 'Website admin access could not be checked right now';
 
 function adminOnly(access: McpToolAccess): boolean {
   return access.kind === 'write' || access.kind === 'admin-read';
@@ -155,17 +162,29 @@ function adminOnly(access: McpToolAccess): boolean {
 
 export async function authorize(
   _input: Readonly<Record<string, unknown>>,
-  { tool, principal }: CatalogInvocationContext,
+  { tool, principal, request }: CatalogInvocationContext,
 ): Promise<CatalogMcpAuthorizationDecision> {
-  if (adminOnly(accessFor(tool.name)) && !isWebsiteAdmin(principal.activeAccountId)) {
-    return { allowed: false, reason: `${tool.name} is only available to website admins` };
+  const access = accessFor(tool.name);
+  if (adminOnly(access)) {
+    let admin: boolean;
+    try {
+      // A write asks Oxy, so a revoked grant stops writing at once; the
+      // handler then reads this refreshed answer from the SDK's cache.
+      admin = await isMcpSiteAdmin(request, { fresh: access.kind === 'write' });
+    } catch (error) {
+      console.error('[mcp] could not resolve the site admin permission:', error);
+      return { allowed: false, reason: ADMIN_UNAVAILABLE };
+    }
+    if (!admin) {
+      return { allowed: false, reason: `${tool.name} is only available to website admins` };
+    }
   }
   return { allowed: true, effectiveAccountId: principal.activeAccountId };
 }
 
 /** Everything a caller needs to know to use the tools without trial and error. */
 export function describeAccess(context: ToolContext): Record<string, unknown> {
-  const admin = isWebsiteAdmin(context.actorId);
+  const { admin } = context;
   const domains: Record<string, unknown[]> = {};
   for (const tool of TOOLS) {
     const access = accessFor(tool.name);
@@ -272,9 +291,9 @@ export async function invokeTool(
     >;
     if (definition.options.localized) await resolveReadLocale(args.locale as string | undefined);
 
-    if (access.kind === 'public-read' && !isWebsiteAdmin(context.actorId)) {
+    if (access.kind === 'public-read' && !context.admin) {
       result = await readPublicRoute(access, args, context.signal);
-    } else if (adminOnly(access) && !isWebsiteAdmin(context.actorId)) {
+    } else if (adminOnly(access) && !context.admin) {
       // The transport's `authorize` already refuses this; kept so no other
       // caller of invokeTool can reach an admin handler.
       result = errorOf('permission_denied', `${name} is only available to website admins`);
@@ -317,16 +336,26 @@ export const handlers: CatalogToolHandlers = Object.fromEntries(
     async (
       input: Readonly<Record<string, unknown>>,
       context: CatalogInvocationContext,
-    ): Promise<CatalogToolResult> =>
-      invokeTool(
+    ): Promise<CatalogToolResult> => {
+      let admin: boolean;
+      try {
+        admin = await isMcpSiteAdmin(context.request);
+      } catch (error) {
+        // Never the reader's answer in its place: an outage is not "not an admin".
+        console.error('[mcp] could not resolve the site admin permission:', error);
+        return errorOf('service_unavailable', ADMIN_UNAVAILABLE);
+      }
+      return invokeTool(
         definition.name,
         { ...input },
         {
           actorId: context.principal.activeAccountId,
+          admin,
           scopes: context.principal.scopes,
           signal: context.request.signal,
           requestId: context.request.requestId,
         },
-      ),
+      );
+    },
   ]),
 );

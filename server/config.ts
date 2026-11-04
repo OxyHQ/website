@@ -62,17 +62,6 @@ export const config = {
      * Postgres, so the limit holds however many tasks serve the endpoint.
      */
     rateLimitPerMinute: parsePositiveIntEnv(process.env.MCP_RATE_LIMIT_PER_MINUTE, 600),
-    /**
-     * The accounts the MCP endpoint treats as website admins — the ONLY
-     * remaining reader of `OXY_ADMIN_USER_IDS`. The site's own admin routes
-     * ask Oxy instead (`website.content.manage`, held by organization role,
-     * `middleware/siteAdmin.ts`). An MCP token is resource-bound to this
-     * endpoint and has no session, and Oxy has no read yet that answers an
-     * application permission for one. oxy#2123 adds it (`appPermissionsFor`
-     * answering an MCP tool call, `@oxy.so/core` 7.20.0); the change that
-     * adopts it deletes this list and the variable (`docs/MCP.md`).
-     */
-    adminAccountIds: parseCsvEnv(process.env.OXY_ADMIN_USER_IDS),
   },
   // Server-only secret used to sign Intercom Messenger JWTs for authenticated
   // Oxy users. It is optional so visitors keep working before the workspace
