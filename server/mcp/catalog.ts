@@ -168,7 +168,7 @@ export async function authorize(
   if (adminOnly(access)) {
     let admin: boolean;
     try {
-      // A write asks Oxy, so a revoked grant stops writing at once; the
+      // A write asks Oxy, so a lost permission stops writing at once; the
       // handler then reads this refreshed answer from the SDK's cache.
       admin = await isMcpSiteAdmin(request, { fresh: access.kind === 'write' });
     } catch (error) {

@@ -304,7 +304,7 @@ describe('authorization never runs the handler for a refused call', () => {
     expect(await countRows('courses')).toBe(1);
   });
 
-  test('a write asks Oxy fresh, so a revoked grant stops writing at once', async () => {
+  test('a write asks Oxy fresh, so a lost permission stops writing at once', async () => {
     expect((await callTool('create_course', { title: 'One' }, 'admin')).json?.result?.isError).toBe(
       undefined,
     );

@@ -23,14 +23,14 @@ connection on auth.oxy.so. There are no API tokens to create or paste.
 A website admin is the same person on MCP as on the site's own admin routes:
 whoever Oxy says holds `website.content.manage` on the **Oxy Website**
 application. Oxy decides it in one place, its application-permission resolver
-(the one behind `roles/me`). Today a person holds the key through an
-application-role grant in Oxy Console (Settings → Roles). First-party operator
-authority by Oxy organization role is being added to that resolver, and this
-endpoint follows it with no change. There is no list of user ids in this
-deployment. Each tool call asks Oxy with its own access token —
+(the one behind `roles/me`). The Oxy Website is one of Oxy's own applications,
+so the key is declared in Oxy's code and held by the owners and admins of the
+organization that owns it (oxy ADR 0056). Making someone a website admin means
+giving them that role in the organization; nobody is granted it per person.
+There is no list of user ids in this deployment. Each tool call asks Oxy with its own access token —
 `oxyService.appPermissionsFor(context.request)` through `isMcpSiteAdmin`
 (`server/middleware/siteAdmin.ts`), which `@oxy.so/core` sends to
-`POST /auth/mcp/oauth/app-permissions`. A write asks fresh, so a revoked grant
+`POST /auth/mcp/oauth/app-permissions`. A write asks fresh, so a lost role
 stops writing at once; reads may reuse an answer for 30 s. When Oxy cannot
 answer, the call fails with `service_unavailable` — never the reader's answer in
 its place.

@@ -27,8 +27,8 @@ import { oxyService } from '../services/oxyService.js';
  * behind the request holds — with the request's own verified session, so
  * someone acting as their organization is answered for themselves. The MCP
  * endpoint asks the same question with the tool call's access token
- * (`isMcpSiteAdmin`). Answers are cached for 30 s; a refusal and an outage never are, and an outage is
- * 503, never "not an admin".
+ * (`isMcpSiteAdmin`). Answers are cached for 30 s; a refusal and an outage
+ * never are, and an outage is 503, never "not an admin".
  * ──────────────────────────────────────────── */
 
 export const SITE_ADMIN_PERMISSION = 'website.content.manage';
