@@ -7,14 +7,25 @@ import {
 import { oxyService } from '../services/oxyService.js';
 
 /* ──────────────────────────────────────────────
- * Who administers the site is decided in Oxy (`~/Oxy/docs/application-roles.md`).
+ * Who administers the site is decided in Oxy (`~/Oxy/docs/application-roles.md`,
+ * oxy ADR 0056).
  *
- * The Oxy Website application declares `website.content.manage`; its owners
- * grant it to people in the Oxy Console. This backend asks Oxy which of the
- * application's permissions the person behind the request holds — with the
- * request's own verified session, so someone acting as their organization is
- * answered for themselves. Answers are cached for 30 s; a refusal and an
- * outage never are, and an outage is 503, never "not an admin".
+ * The website is one of Oxy's own applications, so its operator key is
+ * declared in code: the "Oxy Website" entry of oxy's first-party registry
+ * (`operatorPermissions` in `packages/api/src/scripts/seedOxyApplicationsSpecs.ts`)
+ * declares `website.content.manage`, held by the owners and admins of the
+ * organization that owns the application (the `oxy` organization), and oxy's
+ * "Seed Oxy applications" workflow applies it. Nobody is granted anything per
+ * person (Oxy refuses a grant on a first-party application with
+ * `409 FIRST_PARTY_ROLES_IN_CODE`): to make someone a site admin, give them
+ * that role in the organization. The constant below must stay the registry's
+ * key; renamed in only one place, it locks everybody out.
+ *
+ * This backend asks Oxy which of the application's permissions the person
+ * behind the request holds — with the request's own verified session, so
+ * someone acting as their organization is answered for themselves. Answers
+ * are cached for 30 s; a refusal and an outage never are, and an outage is
+ * 503, never "not an admin".
  * ──────────────────────────────────────────── */
 
 export const SITE_ADMIN_PERMISSION = 'website.content.manage';
@@ -31,7 +42,8 @@ const gateWrites = oxyService.middleware.requireAppPermission(SITE_ADMIN_PERMISS
 
 /**
  * Admin routes, mounted after `requireAuth`. A read may reuse a 30 s answer;
- * a write asks Oxy, so a revoked grant stops writing at once.
+ * a write asks Oxy, so someone whose organization role was removed stops
+ * writing at once.
  */
 export const adminOnly: RequestHandler = (req, res, next) =>
   req.method === 'GET' || req.method === 'HEAD'

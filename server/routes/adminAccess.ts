@@ -19,8 +19,10 @@ const router = Router();
  * "couldn't verify access" rather than as a refusal.
  *
  * `userId` and `permission` are echoed back deliberately: when access is
- * denied, the UI shows them so the grant to make in the Oxy Console can be read
- * straight off the screen.
+ * denied, the UI shows them so the account and the key it lacks can be read
+ * straight off the screen. The key follows the person's role in the
+ * organization that owns the site (`middleware/siteAdmin.ts`); there is no
+ * per-person grant to make.
  *
  * This grants nothing. Every admin route is gated independently by `adminOnly`.
  */

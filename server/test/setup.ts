@@ -58,8 +58,9 @@ process.env.R2_ACCESS_KEY_ID ??= 'test';
 process.env.R2_SECRET_ACCESS_KEY ??= 'test';
 process.env.OXY_CLOUD_URL = 'https://cloud.test';
 process.env.OXY_FILES_WEBHOOK_SECRET = 'whsec_test';
-// The MCP endpoint's admin accounts (`config.mcp.adminAccountIds`); the site's
-// own admin routes ask the fake Oxy for the application permission instead.
+// The MCP endpoint's admin accounts (`config.mcp.adminAccountIds`, the one
+// remaining reader, until oxy#2123); the site's own admin routes ask the fake
+// Oxy for the application permission instead.
 process.env.OXY_ADMIN_USER_IDS = 'admin-account';
 process.env.OXY_APPLICATION_ID = 'website-test-app';
 

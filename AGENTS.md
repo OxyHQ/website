@@ -12,12 +12,12 @@ bun run dev / build / server / sync-docs / sync-changelog
 
 ## Rules
 
-- **`tsc --noEmit` is NOT the check this project builds with.** `bun run build` runs `tsc -b`, which builds the referenced projects and sees errors the flat check does not (a locale missing a key, an unused declaration). `main` failed to build for four commits while `tsc --noEmit` passed. Run `bunx tsc -b`.
+- **`tsc --noEmit` is NOT the check this project builds with.** `bun run build` runs `tsc -b`, which builds the referenced projects and sees errors the flat check does not (a locale missing a key, an unused declaration). Run `bunx tsc -b`.
 - **Adding a key to `src/lib/i18n/locales/` means adding it to all eleven.** The locale type requires every key, so three locales is a build failure, not a fallback. Translate it — a placeholder is read by whoever opens the thing.
 - **Public `/developers/docs/**` special routes keep `PageShell` around their docs layout.** `DocsShell`/`DocsSubNav` are inner chrome, never replacements for the global header and footer.
-- **MCP non-admins read only via public REST routes**, else admin-only (`docs/MCP.md`).
+- **Site admin = `website.content.manage`, held by `oxy` org owners/admins via oxy's first-party registry**; no grants or id lists. MCP non-admins read only via public REST routes, else admin-only; only MCP's admin check reads `OXY_ADMIN_USER_IDS` (until oxy#2123, `docs/MCP.md`).
 - **Careers are read-only Clarity Jobs** (`server/services/careers.ts`), written in Mention. No jobs table here.
-- **Do not add local auth middleware** — `@oxy.so/core/server` for every new protected route.
+- **No local auth middleware**: `@oxy.so/core/server` for every protected route.
 - **Validate deploy-time configuration BEFORE `app.listen()`, never inside `connectWithRetry`** — a throw there reads as a database problem, re-runs migrations and stacks another sync interval per retry.
 
 ## Database (PostgreSQL, drizzle + postgres.js)
@@ -37,7 +37,7 @@ bun run dev / build / server / sync-docs / sync-changelog
 
 **Bloom is the only source of colour.** `src/index.css` imports `@oxy.so/bloom/design-tokens/theme.css` for the `--color-x` vocabulary and declares none of it locally — that import also brings `card`, `tertiary`, the status, chart and sidebar families, the type scale, radii and shadows, so reach for those before inventing a name.
 
-- **Never hand-write a palette.** `src/styles/theme.generated.css` holds every resolved value and is written by `scripts/generate-theme-css.ts` from Bloom's own `getPresetVars` / `buildSeedScopeVars` (wired into `predev`/`prebuild`). The hand-written file it replaced claimed to mirror a preset and had drifted into a different palette, with no `--card` at all — and every page here is PRERENDERED, so that gap is what visitors saw first.
+- **Never hand-write a palette.** `src/styles/theme.generated.css` holds every resolved value and is written by `scripts/generate-theme-css.ts` from Bloom's own `getPresetVars` / `buildSeedScopeVars` (wired into `predev`/`prebuild`). The hand-written file it replaced had drifted into another palette with no `--card`, and every page here is PRERENDERED, so visitors saw that first.
 - **A brand surface is one seed in `src/theme/brands.ts`** and Bloom's engine derives the ramp. A product stylesheet may hold type scale, rhythm and shape — **never a colour**; every value in one is a `var()` or a `color-mix()` over Bloom tokens.
 - **Scoped blocks must carry the `--color-x` aliases as well as the canonical tokens** (hence `buildSeedScopeVars`) — an alias substitutes where it is DECLARED, so overriding `--background` inside a scope cannot move a `--color-background` declared at `:root`.
 - **A palette cannot take a Tailwind variant.** A surface that changes palette at a breakpoint gets a second generated class inside a media query, from the same seed.

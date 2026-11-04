@@ -1,8 +1,9 @@
 /**
  * Who may call each MCP tool, and what a non-admin sees when they may.
  *
- * Anyone with an Oxy account can connect. A website admin (`OXY_ADMIN_USER_IDS`)
- * gets every tool as it always behaved. Everyone else gets reads only, and a
+ * Anyone with an Oxy account can connect. A website admin gets every tool as it
+ * always behaved; for now the endpoint knows admins from `OXY_ADMIN_USER_IDS`
+ * (`config.mcp.adminAccountIds`, to be replaced by Oxy's own answer, oxy#2123). Everyone else gets reads only, and a
  * read answers from the site's own public REST route, requested with no
  * credentials — so a non-admin can never see more through MCP than an anonymous
  * visitor sees on the site. That is the whole guarantee, so a read with no

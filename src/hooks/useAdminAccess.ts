@@ -8,7 +8,7 @@ export interface AdminAccess {
   isAdmin: boolean;
   userId: string | null;
   username: string | null;
-  /** The Oxy Website application permission that makes someone an admin. */
+  /** The Oxy Website operator key that makes someone an admin (held by organization role). */
   permission: string;
 }
 

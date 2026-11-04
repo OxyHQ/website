@@ -110,12 +110,14 @@ export default function AdminPage() {
           You're signed in{username ? ` as @${username}` : ''}, but this account isn't an
           administrator.
         </p>
-        {/* Admin is an Oxy application permission: shown so an owner of the Oxy
-            Website application can grant it to exactly this account. */}
+        {/* Admin is the Oxy Website's operator key, held by the owners and
+            admins of the organization that owns the site (oxy ADR 0056).
+            Nothing is granted per person: the organization role is the switch. */}
         {permission && (
           <p className="mt-3 text-pretty text-muted-foreground">
-            An owner of the Oxy Website application grants{' '}
-            <code className="font-mono text-xs">{permission}</code> in the Oxy Console.
+            Site administration (<code className="font-mono text-xs">{permission}</code>) is held by
+            the owners and admins of the Oxy organization. Ask an owner to give this account one of
+            those roles.
           </p>
         )}
         {userId && (
