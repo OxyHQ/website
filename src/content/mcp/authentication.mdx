@@ -25,20 +25,20 @@ Tokens travel only in the `Authorization: Bearer` header. A token in a query str
 | `website.read` | Read tools |
 | `website.write` | Write tools — create, update, delete, upload and sync |
 
-A scope is necessary but not sufficient: what a call may actually do also depends on the account behind the connection.
+A scope is necessary but not sufficient: what a call may actually do also depends on the person behind the connection.
 
 ## The active account
 
-Oxy lets one connection hold more than one account. Every call is judged on the connection's **active account** — the account Oxy reports for the token at that moment — never on another account the connection could switch to.
+Oxy lets one connection hold more than one account. Every call reads and writes as the connection's **active account** — the account Oxy reports for the token at that moment — never as another account the connection could switch to.
 
 ## Who can do what
 
-| Active account | Reads | Writes |
+| Person who connected | Reads | Writes |
 |---|---|---|
 | A website admin | Every read, including drafts and admin-only data | Every write |
-| Any other Oxy account | Public reads only | None |
+| Anyone else with an Oxy account | Public reads only | None |
 
-**Admins** are the accounts listed in the website's admin configuration. Everyone else gets reads answered by the site's own public API, requested with no credentials — exactly what an anonymous visitor to oxy.so receives, not a filtered copy of admin data. That means:
+**Admins** are the people Oxy says hold the Oxy Website permission `website.content.manage` — the same permission the website's own admin panel requires: the owners and admins of the Oxy organization that owns the site. Each call asks Oxy, so a role change takes effect without reconnecting. The answer is about the person who approved the connection, whichever account it is acting as: linking someone else's account lends the connection that account, not their admin permission. Everyone else gets reads answered by the site's own public API, requested with no credentials — exactly what an anonymous visitor to oxy.so receives, not a filtered copy of admin data. That means:
 
 - **Admin-only reads.** Reads with no public equivalent are admin-only: drafts, the media library, pages listings, translations, referrals and tracked repositories.
 - **Refused filters.** A filter the public API does not implement (for example, asking for drafts) is refused with an error rather than silently dropped, so a result never looks complete when it is not.

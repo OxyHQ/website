@@ -775,29 +775,14 @@ describe('F07 · idempotency keys', () => {
   });
 
   test('the key is scoped to the acting account', async () => {
-    const other = { actorId: 'admin-two', requestId: 't' };
-    const { config } = await import('../config.js');
-    const previous = config.mcp.adminAccountIds;
-    config.mcp.adminAccountIds = ['admin-account', 'admin-two'];
-    try {
-      data(
-        await invokeTool(
-          'create_course',
-          { title: 'Scoped', idempotencyKey: 'key-00000004' },
-          admin,
-        ),
-      );
-      data(
-        await invokeTool(
-          'create_course',
-          { title: 'Scoped', idempotencyKey: 'key-00000004' },
-          other,
-        ),
-      );
-      expect(await countRows('courses')).toBe(2);
-    } finally {
-      config.mcp.adminAccountIds = previous;
-    }
+    const other = { actorId: 'admin-two', admin: true, requestId: 't' };
+    data(
+      await invokeTool('create_course', { title: 'Scoped', idempotencyKey: 'key-00000004' }, admin),
+    );
+    data(
+      await invokeTool('create_course', { title: 'Scoped', idempotencyKey: 'key-00000004' }, other),
+    );
+    expect(await countRows('courses')).toBe(2);
   });
 
   test('a failing keyed call rolls back its partial writes and replays the same error', async () => {

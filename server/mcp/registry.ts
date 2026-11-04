@@ -20,6 +20,11 @@ export type ToolShape = Record<string, z.ZodType>;
  */
 export interface ToolContext {
   actorId: string;
+  /**
+   * Whether the person behind the call holds the Oxy Website permission
+   * `website.content.manage`, as Oxy answered for this call's access token.
+   */
+  admin: boolean;
   scopes?: readonly string[];
   signal?: AbortSignal;
   requestId?: string | number;

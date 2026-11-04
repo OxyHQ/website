@@ -50,7 +50,7 @@ function access(name: string): string {
 }
 
 export function renderToolReference(): string {
-  const described = describeAccess({ actorId: '' }).domains as Record<
+  const described = describeAccess({ actorId: '', admin: false }).domains as Record<
     string,
     {
       name: string;

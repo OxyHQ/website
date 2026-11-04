@@ -1,8 +1,10 @@
 import type { ErrorRequestHandler, Request, RequestHandler } from 'express';
 import {
+  type AppPermissionsSource,
   appPermissionErrorStatus,
   OxyAppPermissionError,
   type OxyAuthRequest,
+  type OxyMcpCallerRequest,
 } from '@oxy.so/core/server';
 import { oxyService } from '../services/oxyService.js';
 
@@ -23,9 +25,10 @@ import { oxyService } from '../services/oxyService.js';
  *
  * This backend asks Oxy which of the application's permissions the person
  * behind the request holds — with the request's own verified session, so
- * someone acting as their organization is answered for themselves. Answers
- * are cached for 30 s; a refusal and an outage never are, and an outage is
- * 503, never "not an admin".
+ * someone acting as their organization is answered for themselves. The MCP
+ * endpoint asks the same question with the tool call's access token
+ * (`isMcpSiteAdmin`). Answers are cached for 30 s; a refusal and an outage
+ * never are, and an outage is 503, never "not an admin".
  * ──────────────────────────────────────────── */
 
 export const SITE_ADMIN_PERMISSION = 'website.content.manage';
@@ -62,8 +65,28 @@ export async function isSiteAdmin(
 ): Promise<boolean> {
   const caller = req as OxyAuthRequest;
   if (!caller.userId) return false;
+  return holdsSiteAdmin(caller, options);
+}
+
+/**
+ * The same question for an MCP tool call (its `extra`, carrying the access
+ * token the transport introspected): Oxy answers for the person who authorized
+ * the connector, whichever account the connection is acting as. Throws when Oxy
+ * could not answer, like `isSiteAdmin`.
+ */
+export function isMcpSiteAdmin(
+  call: OxyMcpCallerRequest,
+  options: { fresh?: boolean } = {},
+): Promise<boolean> {
+  return holdsSiteAdmin(call, options);
+}
+
+async function holdsSiteAdmin(
+  source: AppPermissionsSource,
+  options: { fresh?: boolean },
+): Promise<boolean> {
   try {
-    return (await oxyService.appPermissionsFor(caller, options)).has(SITE_ADMIN_PERMISSION);
+    return (await oxyService.appPermissionsFor(source, options)).has(SITE_ADMIN_PERMISSION);
   } catch (error) {
     if (
       error instanceof OxyAppPermissionError &&

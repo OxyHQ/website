@@ -15,27 +15,25 @@ connection on auth.oxy.so. There are no API tokens to create or paste.
 
 ## Who can do what
 
-| Account | Tools |
+| Person | Tools |
 | --- | --- |
-| Listed in `OXY_ADMIN_USER_IDS` | every tool, as before |
-| Any other Oxy account | reads only, answered from the public REST route |
+| Holds the Oxy Website permission `website.content.manage` | every tool |
+| Anyone else with an Oxy account | reads only, answered from the public REST route |
 
-`OXY_ADMIN_USER_IDS` is read by this endpoint alone (`config.mcp.adminAccountIds`);
-nothing else in the website reads it. The site's own admin routes ask Oxy
-instead: a website admin is whoever holds the Oxy Website operator key
-`website.content.manage` (`server/middleware/siteAdmin.ts`). The website is one
-of Oxy's own applications, so that key is declared in code in oxy's first-party
-registry and held by the owners and admins of the `oxy` organization (oxy ADR
-0056, `~/Oxy/docs/application-roles.md`); nobody is granted it per person, and
-making someone a site admin means giving them that organization role.
-
-An MCP access token is bound to this resource and carries no session, and Oxy
-has no read yet that answers an application permission for one, so the endpoint
-keeps the list until it does. oxy#2123 adds that read (`appPermissionsFor`
-answering an MCP tool call, `@oxy.so/core` 7.20.0). The change that adopts it
-replaces `isWebsiteAdmin` with the same `website.content.manage` check and
-deletes `OXY_ADMIN_USER_IDS` from code, `.env.example` and the task definition;
-then the two answers are one.
+A website admin is the same person on MCP as on the site's own admin routes:
+whoever Oxy says holds `website.content.manage` on the **Oxy Website**
+application. Oxy decides it in one place, its application-permission resolver
+(the one behind `roles/me`). The Oxy Website is one of Oxy's own applications,
+so the key is declared in Oxy's code and held by the owners and admins of the
+organization that owns it (oxy ADR 0056). Making someone a website admin means
+giving them that role in the organization; nobody is granted it per person.
+There is no list of user ids in this deployment. Each tool call asks Oxy with its own access token —
+`oxyService.appPermissionsFor(context.request)` through `isMcpSiteAdmin`
+(`server/middleware/siteAdmin.ts`), which `@oxy.so/core` sends to
+`POST /auth/mcp/oauth/app-permissions`. A write asks fresh, so a lost role
+stops writing at once; reads may reuse an answer for 30 s. When Oxy cannot
+answer, the call fails with `service_unavailable` — never the reader's answer in
+its place.
 
 A non-admin read is not a filtered copy of the admin query: the tool requests the
 site's own `/api/...` route with no credentials, so it returns exactly what an
@@ -45,8 +43,12 @@ the public route does not implement (drafts, changelog search, course level) is
 refused rather than silently dropped.
 
 The acting account is the connection's active account — the one Oxy reports on
-introspection — so a connection that holds several accounts is judged on the one
-it is acting as.
+introspection — so a connection that holds several accounts reads and writes as
+the one it is acting as (`actorId`: idempotency keys, rate limits, authorship).
+Whether it may use admin tools is a question about the PERSON: Oxy answers for
+whoever authorized the connector, whichever account it is acting as. Linking
+someone else's account lends the connector that account, never its owner's
+admin permission.
 
 ## How it is wired
 

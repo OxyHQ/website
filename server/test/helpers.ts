@@ -55,8 +55,8 @@ export const storage = (globalThis as Record<string, unknown>).__testStorage as 
 export const remote = (globalThis as Record<string, unknown>).__testRemote as TestRemote;
 export const oxy = (globalThis as Record<string, unknown>).__testOxy as TestOxy;
 
-export const admin: ToolContext = { actorId: 'admin-account', requestId: 'test' };
-export const reader: ToolContext = { actorId: 'reader-account', requestId: 'test' };
+export const admin: ToolContext = { actorId: 'admin-account', admin: true, requestId: 'test' };
+export const reader: ToolContext = { actorId: 'reader-account', admin: false, requestId: 'test' };
 
 /** Empties every table the migrations created, keeping the migration journal. */
 export async function resetDatabase(): Promise<void> {

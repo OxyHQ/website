@@ -15,7 +15,7 @@ bun run dev / build / server / sync-docs / sync-changelog
 - **`tsc --noEmit` is NOT the check this project builds with.** `bun run build` runs `tsc -b`, which builds the referenced projects and sees errors the flat check does not (a locale missing a key, an unused declaration). Run `bunx tsc -b`.
 - **Adding a key to `src/lib/i18n/locales/` means adding it to all eleven.** The locale type requires every key, so three locales is a build failure, not a fallback. Translate it — a placeholder is read by whoever opens the thing.
 - **Public `/developers/docs/**` special routes keep `PageShell` around their docs layout.** `DocsShell`/`DocsSubNav` are inner chrome, never replacements for the global header and footer.
-- **Site admin = `website.content.manage`, held by `oxy` org owners/admins via oxy's first-party registry**; no grants or id lists. MCP non-admins read only via public REST routes, else admin-only; only MCP's admin check reads `OXY_ADMIN_USER_IDS` (until oxy#2123, `docs/MCP.md`).
+- **Site admin = `website.content.manage`, held by `oxy` org owners/admins via oxy's first-party registry**; no grants or id lists. MCP asks the same key with the tool call (`isMcpSiteAdmin`); MCP non-admins read only via public REST routes, else admin-only (`docs/MCP.md`).
 - **Careers are read-only Clarity Jobs** (`server/services/careers.ts`), written in Mention. No jobs table here.
 - **No local auth middleware**: `@oxy.so/core/server` for every protected route.
 - **Validate deploy-time configuration BEFORE `app.listen()`, never inside `connectWithRetry`** — a throw there reads as a database problem, re-runs migrations and stacks another sync interval per retry.

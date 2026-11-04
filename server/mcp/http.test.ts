@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'bun:test';
+import { afterAll, beforeAll, beforeEach, describe, expect, spyOn, test } from 'bun:test';
 import http from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { db } from '../db/postgres.js';
@@ -6,12 +6,14 @@ import { newsroomPosts } from '../db/schema/index.js';
 import { ensureApp } from '../test/app.js';
 import { config } from '../config.js';
 import { invokeTool } from '../mcp.js';
-import { oxyTransport } from '../services/oxyService.js';
+import { SITE_ADMIN_PERMISSION } from '../middleware/siteAdmin.js';
+import { oxyService, oxyTransport } from '../services/oxyService.js';
 import { countRows, errorCode, reader, resetDatabase } from '../test/helpers.js';
 
 /* The MCP endpoint through the real Express composition: site CORS, the SDK's
-   own origin/host checks, token introspection against a fake Oxy, the
-   authorization policy, and the public-read bridge back into the same app. */
+   own origin/host checks, token introspection and the application-permission
+   read against a fake Oxy, the authorization policy, and the public-read bridge
+   back into the same app. */
 
 const RESOURCE = config.mcp.resource;
 const ISSUER = config.oxyApiBase;
@@ -31,6 +33,10 @@ interface FakeClaims {
 
 const tokens = new Map<string, FakeClaims>();
 let introspections = 0;
+/** People the fake Oxy says hold `website.content.manage`, and how often it was asked. */
+const admins = new Set<string>();
+let permissionReads = 0;
+let permissionsDown = false;
 
 function claims(account: string, overrides: Partial<FakeClaims> = {}): FakeClaims {
   const now = Math.floor(Date.now() / 1000);
@@ -58,23 +64,44 @@ beforeAll(async () => {
     let body = '';
     req.on('data', (chunk) => (body += chunk));
     req.on('end', () => {
-      if (
-        req.url !== '/auth/mcp/oauth/introspect' ||
-        req.headers.authorization !== 'Bearer service-token'
-      ) {
+      if (req.headers.authorization !== 'Bearer service-token') {
         res.writeHead(401).end();
         return;
       }
-      introspections += 1;
       const { token } = JSON.parse(body) as { token: string };
-      res
-        .writeHead(200, { 'content-type': 'application/json' })
-        .end(JSON.stringify(tokens.get(token) ?? { active: false }));
+      const json = (status: number, payload: unknown) =>
+        res.writeHead(status, { 'content-type': 'application/json' }).end(JSON.stringify(payload));
+      if (req.url === '/auth/mcp/oauth/introspect') {
+        introspections += 1;
+        json(200, tokens.get(token) ?? { active: false });
+        return;
+      }
+      if (req.url === '/auth/mcp/oauth/app-permissions') {
+        permissionReads += 1;
+        const person = tokens.get(token);
+        if (permissionsDown) json(503, { error: 'server_error' });
+        else if (!person?.active || !person.sub) json(401, { error: 'invalid_grant' });
+        else
+          json(200, {
+            applicationId: config.oxyApplicationId,
+            userId: person.sub,
+            permissions: admins.has(person.sub) ? [SITE_ADMIN_PERMISSION] : [],
+          });
+        return;
+      }
+      res.writeHead(404).end();
     });
   });
   await new Promise<void>((resolve) =>
     fakeOxy.listen(Number(process.env.TEST_FAKE_OXY_PORT), 'localhost', resolve),
   );
+
+  // The SDK's own service lane (`appPermissionsFor`) proves this process with
+  // its workload token; the fake Oxy accepts this one.
+  spyOn(
+    oxyService as unknown as { platformServiceToken: () => Promise<string> },
+    'platformServiceToken',
+  ).mockResolvedValue('service-token');
 
   oxyTransport.fetch = Object.assign(
     (input: RequestInfo | URL, init?: RequestInit) => {
@@ -102,6 +129,11 @@ beforeEach(async () => {
   tokens.set('admin', claims('admin-account'));
   tokens.set('reader', claims('reader-account'));
   introspections = 0;
+  admins.clear();
+  admins.add('admin-account');
+  permissionReads = 0;
+  permissionsDown = false;
+  oxyService.invalidateAppPermissions();
 });
 
 let rpcId = 0;
@@ -246,24 +278,56 @@ describe('authorization never runs the handler for a refused call', () => {
     expect(await countRows('courses')).toBe(0);
   });
 
-  test('a connection judged on its ACTIVE account: admin origin acting as a reader cannot write', async () => {
-    tokens.set(
-      'switched',
-      claims('admin-account', {
+  test("admin is the connecting PERSON's permission, not the active account's", async () => {
+    const linked = (origin: string, active: string) =>
+      claims(origin, {
         connection: {
-          connection_id: 'conn-1',
-          origin_account_id: 'admin-account',
-          active_account_id: 'reader-account',
+          connection_id: `conn-${origin}`,
+          origin_account_id: origin,
+          active_account_id: active,
           accounts: [
-            { account_id: 'admin-account', is_origin: true, linked_at: new Date().toISOString() },
-            { account_id: 'reader-account', is_origin: false, linked_at: new Date().toISOString() },
+            { account_id: origin, is_origin: true, linked_at: new Date().toISOString() },
+            { account_id: active, is_origin: false, linked_at: new Date().toISOString() },
           ],
         },
-      }),
-    );
-    const { json } = await callTool('create_course', { title: 'Nope' }, 'switched');
-    expect(json?.result?.isError ?? Boolean(json?.error)).toBe(true);
+      });
+    // A reader's connector acting as an admin's linked account gets no admin tools.
+    tokens.set('borrowed', linked('reader-account', 'admin-account'));
+    const borrowed = await callTool('create_course', { title: 'Nope' }, 'borrowed');
+    expect(borrowed.json?.result?.isError ?? Boolean(borrowed.json?.error)).toBe(true);
     expect(await countRows('courses')).toBe(0);
+
+    // The admin's connector acting as another account keeps the admin's permission.
+    tokens.set('switched', linked('admin-account', 'reader-account'));
+    const switched = await callTool('create_course', { title: 'Yes' }, 'switched');
+    expect(switched.json?.result?.isError).toBeUndefined();
+    expect(await countRows('courses')).toBe(1);
+  });
+
+  test('a write asks Oxy fresh, so a lost permission stops writing at once', async () => {
+    expect((await callTool('create_course', { title: 'One' }, 'admin')).json?.result?.isError).toBe(
+      undefined,
+    );
+    admins.delete('admin-account');
+    const { json } = await callTool('create_course', { title: 'Two' }, 'admin');
+    expect(json?.result?.isError ?? Boolean(json?.error)).toBe(true);
+    expect(JSON.stringify(json)).toContain('only available to website admins');
+    expect(await countRows('courses')).toBe(1);
+  });
+
+  test('an Oxy outage is never the reader answer: admin tools and reads both fail', async () => {
+    permissionsDown = true;
+    const write = await callTool('create_course', { title: 'Nope' }, 'admin');
+    expect(write.json?.result?.isError ?? Boolean(write.json?.error)).toBe(true);
+    expect(JSON.stringify(write.json)).toContain('could not be checked');
+    expect(await countRows('courses')).toBe(0);
+
+    const read = await callTool('list_posts', {}, 'admin');
+    expect(read.json?.result?.isError).toBe(true);
+    expect(read.json?.result?.structuredContent).toMatchObject({
+      error: { code: 'service_unavailable' },
+    });
+    expect(permissionReads).toBeGreaterThan(0);
   });
 
   test('the admin with both scopes writes, and the tool result is structured', async () => {
