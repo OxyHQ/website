@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-28T02:51:13.150Z",
+  "generatedAt": "2026-11-03T03:19:54.272Z",
   "packages": [
     {
       "package": "@oxy.so/bloom",
@@ -2259,6 +2259,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/AmbientPhoto",
+              "title": "AmbientPhoto()",
+              "file": "bloom/9.0.0/api/functions/AmbientPhoto.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/AmenityFilter",
               "title": "AmenityFilter()",
               "file": "bloom/9.0.0/api/functions/AmenityFilter.md",
@@ -2276,6 +2283,13 @@
               "slug": "api/functions/animateMotion",
               "title": "animateMotion()",
               "file": "bloom/9.0.0/api/functions/animateMotion.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/animateWithSpec",
+              "title": "animateWithSpec()",
+              "file": "bloom/9.0.0/api/functions/animateWithSpec.md",
               "order": 10000,
               "section": "api"
             },
@@ -2322,6 +2336,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/AppShellPanelVisibility",
+              "title": "AppShellPanelVisibility()",
+              "file": "bloom/9.0.0/api/functions/AppShellPanelVisibility.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/AreaChartCard",
               "title": "AreaChartCard()",
               "file": "bloom/9.0.0/api/functions/AreaChartCard.md",
@@ -2339,6 +2360,13 @@
               "slug": "api/functions/AspectRatio",
               "title": "AspectRatio()",
               "file": "bloom/9.0.0/api/functions/AspectRatio.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/AutoHideBar",
+              "title": "AutoHideBar()",
+              "file": "bloom/9.0.0/api/functions/AutoHideBar.md",
               "order": 10000,
               "section": "api"
             },
@@ -2430,6 +2458,13 @@
               "slug": "api/functions/bloomThemeCss",
               "title": "bloomThemeCss()",
               "file": "bloom/9.0.0/api/functions/bloomThemeCss.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/BloomThemeHead",
+              "title": "BloomThemeHead()",
+              "file": "bloom/9.0.0/api/functions/BloomThemeHead.md",
               "order": 10000,
               "section": "api"
             },
@@ -2854,6 +2889,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/ColorEngine.seedsFromRgbBytes",
+              "title": "seedsFromRgbBytes()",
+              "file": "bloom/9.0.0/api/functions/ColorEngine.seedsFromRgbBytes.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/ComboChartCard",
               "title": "ComboChartCard()",
               "file": "bloom/9.0.0/api/functions/ComboChartCard.md",
@@ -3095,6 +3137,13 @@
               "slug": "api/functions/CoverImage",
               "title": "CoverImage()",
               "file": "bloom/9.0.0/api/functions/CoverImage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/createViewableKeysStore",
+              "title": "createViewableKeysStore()",
+              "file": "bloom/9.0.0/api/functions/createViewableKeysStore.md",
               "order": 10000,
               "section": "api"
             },
@@ -3358,9 +3407,30 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/EngagementBar",
+              "title": "EngagementBar()",
+              "file": "bloom/9.0.0/api/functions/EngagementBar.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/EngagementGroup",
+              "title": "EngagementGroup()",
+              "file": "bloom/9.0.0/api/functions/EngagementGroup.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/EpisodeList",
               "title": "EpisodeList()",
               "file": "bloom/9.0.0/api/functions/EpisodeList.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/excludeFromPortalBridge",
+              "title": "excludeFromPortalBridge()",
+              "file": "bloom/9.0.0/api/functions/excludeFromPortalBridge.md",
               "order": 10000,
               "section": "api"
             },
@@ -3449,6 +3519,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/Fonts.BloomFontHead",
+              "title": "BloomFontHead()",
+              "file": "bloom/9.0.0/api/functions/Fonts.BloomFontHead.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/Fonts.FontLoader",
               "title": "FontLoader()",
               "file": "bloom/9.0.0/api/functions/Fonts.FontLoader.md",
@@ -3522,6 +3599,13 @@
               "slug": "api/functions/FunnelChartCard",
               "title": "FunnelChartCard()",
               "file": "bloom/9.0.0/api/functions/FunnelChartCard.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/getThemeBootstrap",
+              "title": "getThemeBootstrap()",
+              "file": "bloom/9.0.0/api/functions/getThemeBootstrap.md",
               "order": 10000,
               "section": "api"
             },
@@ -4002,13 +4086,6 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/MenubarContent",
-              "title": "MenubarContent()",
-              "file": "bloom/9.0.0/api/functions/MenubarContent.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/functions/MenubarMenu",
               "title": "MenubarMenu()",
               "file": "bloom/9.0.0/api/functions/MenubarMenu.md",
@@ -4082,6 +4159,27 @@
               "slug": "api/functions/MostActiveDaysCard",
               "title": "MostActiveDaysCard()",
               "file": "bloom/9.0.0/api/functions/MostActiveDaysCard.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/motionCss",
+              "title": "motionCss()",
+              "file": "bloom/9.0.0/api/functions/motionCss.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/motionDurationMs",
+              "title": "motionDurationMs()",
+              "file": "bloom/9.0.0/api/functions/motionDurationMs.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/motionProgressAt",
+              "title": "motionProgressAt()",
+              "file": "bloom/9.0.0/api/functions/motionProgressAt.md",
               "order": 10000,
               "section": "api"
             },
@@ -4313,6 +4411,13 @@
               "slug": "api/functions/paginationRange",
               "title": "paginationRange()",
               "file": "bloom/9.0.0/api/functions/paginationRange.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/panelDropZoneRect",
+              "title": "panelDropZoneRect()",
+              "file": "bloom/9.0.0/api/functions/panelDropZoneRect.md",
               "order": 10000,
               "section": "api"
             },
@@ -4569,6 +4674,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/quantizeWidth",
+              "title": "quantizeWidth()",
+              "file": "bloom/9.0.0/api/functions/quantizeWidth.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/RadarChartCard",
               "title": "RadarChartCard()",
               "file": "bloom/9.0.0/api/functions/RadarChartCard.md",
@@ -4765,6 +4877,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/resolveConcentricCorners",
+              "title": "resolveConcentricCorners()",
+              "file": "bloom/9.0.0/api/functions/resolveConcentricCorners.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/resolveContactPaint",
               "title": "resolveContactPaint()",
               "file": "bloom/9.0.0/api/functions/resolveContactPaint.md",
@@ -4915,6 +5034,13 @@
               "slug": "api/functions/resolveOrderStatusPaint",
               "title": "resolveOrderStatusPaint()",
               "file": "bloom/9.0.0/api/functions/resolveOrderStatusPaint.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/resolvePanelDropTarget",
+              "title": "resolvePanelDropTarget()",
+              "file": "bloom/9.0.0/api/functions/resolvePanelDropTarget.md",
               "order": 10000,
               "section": "api"
             },
@@ -5073,9 +5199,23 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/ScreenActivity",
+              "title": "ScreenActivity()",
+              "file": "bloom/9.0.0/api/functions/ScreenActivity.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/ScreenPager",
               "title": "ScreenPager()",
               "file": "bloom/9.0.0/api/functions/ScreenPager.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/ScreenReselectScope",
+              "title": "ScreenReselectScope()",
+              "file": "bloom/9.0.0/api/functions/ScreenReselectScope.md",
               "order": 10000,
               "section": "api"
             },
@@ -5297,6 +5437,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/settingsLayoutFor",
+              "title": "settingsLayoutFor()",
+              "file": "bloom/9.0.0/api/functions/settingsLayoutFor.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/SettingsPlanArt",
               "title": "SettingsPlanArt()",
               "file": "bloom/9.0.0/api/functions/SettingsPlanArt.md",
@@ -5374,6 +5521,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/setVideoHasRenderedFrame",
+              "title": "setVideoHasRenderedFrame()",
+              "file": "bloom/9.0.0/api/functions/setVideoHasRenderedFrame.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/Shapes.Border",
               "title": "Border()",
               "file": "bloom/9.0.0/api/functions/Shapes.Border.md",
@@ -5419,6 +5573,13 @@
               "slug": "api/functions/shelfGridColumns",
               "title": "shelfGridColumns()",
               "file": "bloom/9.0.0/api/functions/shelfGridColumns.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/shelfPageColumns",
+              "title": "shelfPageColumns()",
+              "file": "bloom/9.0.0/api/functions/shelfPageColumns.md",
               "order": 10000,
               "section": "api"
             },
@@ -5563,6 +5724,27 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/springPhysics",
+              "title": "springPhysics()",
+              "file": "bloom/9.0.0/api/functions/springPhysics.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/springProgressAt",
+              "title": "springProgressAt()",
+              "file": "bloom/9.0.0/api/functions/springProgressAt.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/springSettleMs",
+              "title": "springSettleMs()",
+              "file": "bloom/9.0.0/api/functions/springSettleMs.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/StageBarsCard",
               "title": "StageBarsCard()",
               "file": "bloom/9.0.0/api/functions/StageBarsCard.md",
@@ -5601,6 +5783,13 @@
               "slug": "api/functions/StreamsChart",
               "title": "StreamsChart()",
               "file": "bloom/9.0.0/api/functions/StreamsChart.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/subscribeVideoLoadingDemand",
+              "title": "subscribeVideoLoadingDemand()",
+              "file": "bloom/9.0.0/api/functions/subscribeVideoLoadingDemand.md",
               "order": 10000,
               "section": "api"
             },
@@ -5685,6 +5874,13 @@
               "slug": "api/functions/TableRow",
               "title": "TableRow()",
               "file": "bloom/9.0.0/api/functions/TableRow.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/TabPagerBottomBar",
+              "title": "TabPagerBottomBar()",
+              "file": "bloom/9.0.0/api/functions/TabPagerBottomBar.md",
               "order": 10000,
               "section": "api"
             },
@@ -6011,6 +6207,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useAppForeground",
+              "title": "useAppForeground()",
+              "file": "bloom/9.0.0/api/functions/useAppForeground.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useAppShell",
               "title": "useAppShell()",
               "file": "bloom/9.0.0/api/functions/useAppShell.md",
@@ -6035,6 +6238,13 @@
               "slug": "api/functions/useAvatarJoin",
               "title": "useAvatarJoin()",
               "file": "bloom/9.0.0/api/functions/useAvatarJoin.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useAvatarRendererCapabilities",
+              "title": "useAvatarRendererCapabilities()",
+              "file": "bloom/9.0.0/api/functions/useAvatarRendererCapabilities.md",
               "order": 10000,
               "section": "api"
             },
@@ -6165,9 +6375,23 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useFrontScroller",
+              "title": "useFrontScroller()",
+              "file": "bloom/9.0.0/api/functions/useFrontScroller.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useGutters",
               "title": "useGutters()",
               "file": "bloom/9.0.0/api/functions/useGutters.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useHapticFeedback",
+              "title": "useHapticFeedback()",
+              "file": "bloom/9.0.0/api/functions/useHapticFeedback.md",
               "order": 10000,
               "section": "api"
             },
@@ -6200,6 +6424,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useIncreasedContrast",
+              "title": "useIncreasedContrast()",
+              "file": "bloom/9.0.0/api/functions/useIncreasedContrast.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useInteractionState",
               "title": "useInteractionState()",
               "file": "bloom/9.0.0/api/functions/useInteractionState.md",
@@ -6224,6 +6455,20 @@
               "slug": "api/functions/useIsRtl",
               "title": "useIsRtl()",
               "file": "bloom/9.0.0/api/functions/useIsRtl.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useItemAccessibilityFocus",
+              "title": "useItemAccessibilityFocus()",
+              "file": "bloom/9.0.0/api/functions/useItemAccessibilityFocus.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useMeasuredSizeClass",
+              "title": "useMeasuredSizeClass()",
+              "file": "bloom/9.0.0/api/functions/useMeasuredSizeClass.md",
               "order": 10000,
               "section": "api"
             },
@@ -6298,9 +6543,65 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/usePlatformAppearance",
+              "title": "usePlatformAppearance()",
+              "file": "bloom/9.0.0/api/functions/usePlatformAppearance.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/usePlatformAppearanceState",
+              "title": "usePlatformAppearanceState()",
+              "file": "bloom/9.0.0/api/functions/usePlatformAppearanceState.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/usePlatformKeyboard",
+              "title": "usePlatformKeyboard()",
+              "file": "bloom/9.0.0/api/functions/usePlatformKeyboard.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/usePlatformMenuBar",
+              "title": "usePlatformMenuBar()",
+              "file": "bloom/9.0.0/api/functions/usePlatformMenuBar.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/usePlatformSurfaces",
+              "title": "usePlatformSurfaces()",
+              "file": "bloom/9.0.0/api/functions/usePlatformSurfaces.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/usePlatformWindow",
+              "title": "usePlatformWindow()",
+              "file": "bloom/9.0.0/api/functions/usePlatformWindow.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/usePopupSurface",
+              "title": "usePopupSurface()",
+              "file": "bloom/9.0.0/api/functions/usePopupSurface.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/usePressAnimation",
               "title": "usePressAnimation()",
               "file": "bloom/9.0.0/api/functions/usePressAnimation.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useReducedTransparency",
+              "title": "useReducedTransparency()",
+              "file": "bloom/9.0.0/api/functions/useReducedTransparency.md",
               "order": 10000,
               "section": "api"
             },
@@ -6319,6 +6620,27 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useScreenBack",
+              "title": "useScreenBack()",
+              "file": "bloom/9.0.0/api/functions/useScreenBack.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useScreenReselect",
+              "title": "useScreenReselect()",
+              "file": "bloom/9.0.0/api/functions/useScreenReselect.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useScreenReselectHandler",
+              "title": "useScreenReselectHandler()",
+              "file": "bloom/9.0.0/api/functions/useScreenReselectHandler.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useScreenScroll",
               "title": "useScreenScroll()",
               "file": "bloom/9.0.0/api/functions/useScreenScroll.md",
@@ -6329,6 +6651,13 @@
               "slug": "api/functions/useScreenViewport",
               "title": "useScreenViewport()",
               "file": "bloom/9.0.0/api/functions/useScreenViewport.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useScreenVisible",
+              "title": "useScreenVisible()",
+              "file": "bloom/9.0.0/api/functions/useScreenVisible.md",
               "order": 10000,
               "section": "api"
             },
@@ -6375,6 +6704,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useShelfCell",
+              "title": "useShelfCell()",
+              "file": "bloom/9.0.0/api/functions/useShelfCell.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useSurface",
               "title": "useSurface()",
               "file": "bloom/9.0.0/api/functions/useSurface.md",
@@ -6385,6 +6721,13 @@
               "slug": "api/functions/useSwipeAvailable",
               "title": "useSwipeAvailable()",
               "file": "bloom/9.0.0/api/functions/useSwipeAvailable.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useTabPager",
+              "title": "useTabPager()",
+              "file": "bloom/9.0.0/api/functions/useTabPager.md",
               "order": 10000,
               "section": "api"
             },
@@ -6403,6 +6746,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useThemePaint",
+              "title": "useThemePaint()",
+              "file": "bloom/9.0.0/api/functions/useThemePaint.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useThrottledValue",
               "title": "useThrottledValue()",
               "file": "bloom/9.0.0/api/functions/useThrottledValue.md",
@@ -6417,9 +6767,79 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useVideoPlayback",
+              "title": "useVideoPlayback()",
+              "file": "bloom/9.0.0/api/functions/useVideoPlayback.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useVideoPlaybackControl",
+              "title": "useVideoPlaybackControl()",
+              "file": "bloom/9.0.0/api/functions/useVideoPlaybackControl.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useViewableVisible",
+              "title": "useViewableVisible()",
+              "file": "bloom/9.0.0/api/functions/useViewableVisible.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useViewportBinding",
               "title": "useViewportBinding()",
               "file": "bloom/9.0.0/api/functions/useViewportBinding.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useWindow",
+              "title": "useWindow()",
+              "file": "bloom/9.0.0/api/functions/useWindow.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useWindowBreakpoint",
+              "title": "useWindowBreakpoint()",
+              "file": "bloom/9.0.0/api/functions/useWindowBreakpoint.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useWindowControlsRoom",
+              "title": "useWindowControlsRoom()",
+              "file": "bloom/9.0.0/api/functions/useWindowControlsRoom.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useWindowHeaderRoom",
+              "title": "useWindowHeaderRoom()",
+              "file": "bloom/9.0.0/api/functions/useWindowHeaderRoom.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useWindowSizeLimits",
+              "title": "useWindowSizeLimits()",
+              "file": "bloom/9.0.0/api/functions/useWindowSizeLimits.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useWindowSizeWhile",
+              "title": "useWindowSizeWhile()",
+              "file": "bloom/9.0.0/api/functions/useWindowSizeWhile.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useWindowWidthClass",
+              "title": "useWindowWidthClass()",
+              "file": "bloom/9.0.0/api/functions/useWindowWidthClass.md",
               "order": 10000,
               "section": "api"
             },
@@ -6448,6 +6868,27 @@
               "slug": "api/functions/vendorFacts",
               "title": "vendorFacts()",
               "file": "bloom/9.0.0/api/functions/vendorFacts.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/VideoPlaybackProvider",
+              "title": "VideoPlaybackProvider()",
+              "file": "bloom/9.0.0/api/functions/VideoPlaybackProvider.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/VideoViewabilityProvider",
+              "title": "VideoViewabilityProvider()",
+              "file": "bloom/9.0.0/api/functions/VideoViewabilityProvider.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/VideoViewabilityScope",
+              "title": "VideoViewabilityScope()",
+              "file": "bloom/9.0.0/api/functions/VideoViewabilityScope.md",
               "order": 10000,
               "section": "api"
             },
@@ -6497,6 +6938,13 @@
               "slug": "api/functions/WeekRangePill",
               "title": "WeekRangePill()",
               "file": "bloom/9.0.0/api/functions/WeekRangePill.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/WindowControls",
+              "title": "WindowControls()",
+              "file": "bloom/9.0.0/api/functions/WindowControls.md",
               "order": 10000,
               "section": "api"
             },
@@ -7299,6 +7747,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/AmbientPhotoProps",
+              "title": "AmbientPhotoProps",
+              "file": "bloom/9.0.0/api/interfaces/AmbientPhotoProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/AmbientThemeApi",
               "title": "AmbientThemeApi",
               "file": "bloom/9.0.0/api/interfaces/AmbientThemeApi.md",
@@ -7369,6 +7824,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/AppDestination",
+              "title": "AppDestination",
+              "file": "bloom/9.0.0/api/interfaces/AppDestination.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/ApplicationChecklistProps",
               "title": "ApplicationChecklistProps",
               "file": "bloom/9.0.0/api/interfaces/ApplicationChecklistProps.md",
@@ -7386,6 +7848,41 @@
               "slug": "api/interfaces/AppShellContextValue",
               "title": "AppShellContextValue",
               "file": "bloom/9.0.0/api/interfaces/AppShellContextValue.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AppShellDock",
+              "title": "AppShellDock",
+              "file": "bloom/9.0.0/api/interfaces/AppShellDock.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AppShellDockMotion",
+              "title": "AppShellDockMotion",
+              "file": "bloom/9.0.0/api/interfaces/AppShellDockMotion.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AppShellDockPeek",
+              "title": "AppShellDockPeek",
+              "file": "bloom/9.0.0/api/interfaces/AppShellDockPeek.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AppShellDockPeekChrome",
+              "title": "AppShellDockPeekChrome",
+              "file": "bloom/9.0.0/api/interfaces/AppShellDockPeekChrome.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AppShellDockState",
+              "title": "AppShellDockState",
+              "file": "bloom/9.0.0/api/interfaces/AppShellDockState.md",
               "order": 10000,
               "section": "api"
             },
@@ -7414,6 +7911,13 @@
               "slug": "api/interfaces/AppShellPanelDefinition",
               "title": "AppShellPanelDefinition",
               "file": "bloom/9.0.0/api/interfaces/AppShellPanelDefinition.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AppShellPanelDrop",
+              "title": "AppShellPanelDrop",
+              "file": "bloom/9.0.0/api/interfaces/AppShellPanelDrop.md",
               "order": 10000,
               "section": "api"
             },
@@ -7449,6 +7953,13 @@
               "slug": "api/interfaces/AppShellPanelViewport",
               "title": "AppShellPanelViewport",
               "file": "bloom/9.0.0/api/interfaces/AppShellPanelViewport.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AppShellPanelVisibilityProps",
+              "title": "AppShellPanelVisibilityProps",
+              "file": "bloom/9.0.0/api/interfaces/AppShellPanelVisibilityProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -7677,6 +8188,20 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/AutoHideBarMotion",
+              "title": "AutoHideBarMotion",
+              "file": "bloom/9.0.0/api/interfaces/AutoHideBarMotion.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AutoHideBarProps",
+              "title": "AutoHideBarProps",
+              "file": "bloom/9.0.0/api/interfaces/AutoHideBarProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/AvailabilityFilterProps",
               "title": "AvailabilityFilterProps",
               "file": "bloom/9.0.0/api/interfaces/AvailabilityFilterProps.md",
@@ -7855,6 +8380,13 @@
               "slug": "api/interfaces/BloomSeedScopeProps",
               "title": "BloomSeedScopeProps",
               "file": "bloom/9.0.0/api/interfaces/BloomSeedScopeProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/BloomThemeBootstrapConfig",
+              "title": "BloomThemeBootstrapConfig",
+              "file": "bloom/9.0.0/api/interfaces/BloomThemeBootstrapConfig.md",
               "order": 10000,
               "section": "api"
             },
@@ -9203,6 +9735,34 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/ConcentricCorners",
+              "title": "ConcentricCorners",
+              "file": "bloom/9.0.0/api/interfaces/ConcentricCorners.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ConcentricEdges",
+              "title": "ConcentricEdges",
+              "file": "bloom/9.0.0/api/interfaces/ConcentricEdges.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ConcentricGeometry",
+              "title": "ConcentricGeometry",
+              "file": "bloom/9.0.0/api/interfaces/ConcentricGeometry.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ConcentricViewProps",
+              "title": "ConcentricViewProps",
+              "file": "bloom/9.0.0/api/interfaces/ConcentricViewProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/ConnectBannerProps",
               "title": "ConnectBannerProps",
               "file": "bloom/9.0.0/api/interfaces/ConnectBannerProps.md",
@@ -9367,6 +9927,13 @@
               "slug": "api/interfaces/ControlledProjectBoardProps",
               "title": "ControlledProjectBoardProps\\<Item\\>",
               "file": "bloom/9.0.0/api/interfaces/ControlledProjectBoardProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ControlledVideoPlayer",
+              "title": "ControlledVideoPlayer",
+              "file": "bloom/9.0.0/api/interfaces/ControlledVideoPlayer.md",
               "order": 10000,
               "section": "api"
             },
@@ -9819,6 +10386,41 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/DropData",
+              "title": "DropData",
+              "file": "bloom/9.0.0/api/interfaces/DropData.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/DroppedFile",
+              "title": "DroppedFile",
+              "file": "bloom/9.0.0/api/interfaces/DroppedFile.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/DropTargetDragEvent",
+              "title": "DropTargetDragEvent",
+              "file": "bloom/9.0.0/api/interfaces/DropTargetDragEvent.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/DropTargetDropEvent",
+              "title": "DropTargetDropEvent",
+              "file": "bloom/9.0.0/api/interfaces/DropTargetDropEvent.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/DropZoneProps",
+              "title": "DropZoneProps",
+              "file": "bloom/9.0.0/api/interfaces/DropZoneProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/EarningsBar",
               "title": "EarningsBar",
               "file": "bloom/9.0.0/api/interfaces/EarningsBar.md",
@@ -9980,6 +10582,27 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/EngagementActionProps",
+              "title": "EngagementActionProps",
+              "file": "bloom/9.0.0/api/interfaces/EngagementActionProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/EngagementBarProps",
+              "title": "EngagementBarProps",
+              "file": "bloom/9.0.0/api/interfaces/EngagementBarProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/EngagementGroupProps",
+              "title": "EngagementGroupProps",
+              "file": "bloom/9.0.0/api/interfaces/EngagementGroupProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/Episode",
               "title": "Episode",
               "file": "bloom/9.0.0/api/interfaces/Episode.md",
@@ -10078,6 +10701,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/ExpandableTextProps",
+              "title": "ExpandableTextProps",
+              "file": "bloom/9.0.0/api/interfaces/ExpandableTextProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/ExplicitBadgeProps",
               "title": "ExplicitBadgeProps",
               "file": "bloom/9.0.0/api/interfaces/ExplicitBadgeProps.md",
@@ -10088,6 +10718,20 @@
               "slug": "api/interfaces/FabProps",
               "title": "FabProps",
               "file": "bloom/9.0.0/api/interfaces/FabProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/FactStripItem",
+              "title": "FactStripItem",
+              "file": "bloom/9.0.0/api/interfaces/FactStripItem.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/FactStripProps",
+              "title": "FactStripProps",
+              "file": "bloom/9.0.0/api/interfaces/FactStripProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -10228,6 +10872,13 @@
               "slug": "api/interfaces/FollowButtonProps",
               "title": "FollowButtonProps",
               "file": "bloom/9.0.0/api/interfaces/FollowButtonProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/Fonts.BloomFontHeadProps",
+              "title": "BloomFontHeadProps",
+              "file": "bloom/9.0.0/api/interfaces/Fonts.BloomFontHeadProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -10403,6 +11054,13 @@
               "slug": "api/interfaces/Gutters",
               "title": "Gutters",
               "file": "bloom/9.0.0/api/interfaces/Gutters.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/HapticFeedback",
+              "title": "HapticFeedback",
+              "file": "bloom/9.0.0/api/interfaces/HapticFeedback.md",
               "order": 10000,
               "section": "api"
             },
@@ -10960,6 +11618,20 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/LockupProps",
+              "title": "LockupProps",
+              "file": "bloom/9.0.0/api/interfaces/LockupProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/LockupSkeletonProps",
+              "title": "LockupSkeletonProps",
+              "file": "bloom/9.0.0/api/interfaces/LockupSkeletonProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/LottiePlayerProps",
               "title": "LottiePlayerProps",
               "file": "bloom/9.0.0/api/interfaces/LottiePlayerProps.md",
@@ -11513,6 +12185,20 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/MenubarCheckboxItemProps",
+              "title": "MenubarCheckboxItemProps",
+              "file": "bloom/9.0.0/api/interfaces/MenubarCheckboxItemProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/MenubarItemProps",
+              "title": "MenubarItemProps",
+              "file": "bloom/9.0.0/api/interfaces/MenubarItemProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/MenubarMenuProps",
               "title": "MenubarMenuProps",
               "file": "bloom/9.0.0/api/interfaces/MenubarMenuProps.md",
@@ -11523,6 +12209,13 @@
               "slug": "api/interfaces/MenubarProps",
               "title": "MenubarProps",
               "file": "bloom/9.0.0/api/interfaces/MenubarProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/MenubarRadioItemProps",
+              "title": "MenubarRadioItemProps",
+              "file": "bloom/9.0.0/api/interfaces/MenubarRadioItemProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -11684,13 +12377,6 @@
               "slug": "api/interfaces/MeterProps",
               "title": "MeterProps",
               "file": "bloom/9.0.0/api/interfaces/MeterProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/MeterRingProps",
-              "title": "MeterRingProps",
-              "file": "bloom/9.0.0/api/interfaces/MeterRingProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -12283,6 +12969,27 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/PanelDropPoint",
+              "title": "PanelDropPoint",
+              "file": "bloom/9.0.0/api/interfaces/PanelDropPoint.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PanelDropRect",
+              "title": "PanelDropRect",
+              "file": "bloom/9.0.0/api/interfaces/PanelDropRect.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PanelDropTarget",
+              "title": "PanelDropTarget",
+              "file": "bloom/9.0.0/api/interfaces/PanelDropTarget.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/PanelErrorBoundaryOptions",
               "title": "PanelErrorBoundaryOptions",
               "file": "bloom/9.0.0/api/interfaces/PanelErrorBoundaryOptions.md",
@@ -12773,6 +13480,83 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/PlatformAppearance",
+              "title": "PlatformAppearance",
+              "file": "bloom/9.0.0/api/interfaces/PlatformAppearance.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PlatformAppearanceState",
+              "title": "PlatformAppearanceState",
+              "file": "bloom/9.0.0/api/interfaces/PlatformAppearanceState.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PlatformKeyboard",
+              "title": "PlatformKeyboard",
+              "file": "bloom/9.0.0/api/interfaces/PlatformKeyboard.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PlatformKeyEvent",
+              "title": "PlatformKeyEvent",
+              "file": "bloom/9.0.0/api/interfaces/PlatformKeyEvent.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PlatformMenu",
+              "title": "PlatformMenu",
+              "file": "bloom/9.0.0/api/interfaces/PlatformMenu.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PlatformMenuBar",
+              "title": "PlatformMenuBar",
+              "file": "bloom/9.0.0/api/interfaces/PlatformMenuBar.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PlatformSurfaceAdapter",
+              "title": "PlatformSurfaceAdapter",
+              "file": "bloom/9.0.0/api/interfaces/PlatformSurfaceAdapter.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PlatformWindow",
+              "title": "PlatformWindow",
+              "file": "bloom/9.0.0/api/interfaces/PlatformWindow.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PlatformWindowMetrics",
+              "title": "PlatformWindowMetrics",
+              "file": "bloom/9.0.0/api/interfaces/PlatformWindowMetrics.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PlatformWindowSizeLimits",
+              "title": "PlatformWindowSizeLimits",
+              "file": "bloom/9.0.0/api/interfaces/PlatformWindowSizeLimits.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PlatformWindowState",
+              "title": "PlatformWindowState",
+              "file": "bloom/9.0.0/api/interfaces/PlatformWindowState.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/PlaybackDevice",
               "title": "PlaybackDevice",
               "file": "bloom/9.0.0/api/interfaces/PlaybackDevice.md",
@@ -12888,6 +13672,13 @@
               "slug": "api/interfaces/PopularTracksProps",
               "title": "PopularTracksProps",
               "file": "bloom/9.0.0/api/interfaces/PopularTracksProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PopupSurfaceProps",
+              "title": "PopupSurfaceProps",
+              "file": "bloom/9.0.0/api/interfaces/PopupSurfaceProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -13480,6 +14271,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/ResolvePanelDropOptions",
+              "title": "ResolvePanelDropOptions",
+              "file": "bloom/9.0.0/api/interfaces/ResolvePanelDropOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/ReviewCardProps",
               "title": "ReviewCardProps",
               "file": "bloom/9.0.0/api/interfaces/ReviewCardProps.md",
@@ -13662,6 +14460,20 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/ScreenReselectHandler",
+              "title": "ScreenReselectHandler",
+              "file": "bloom/9.0.0/api/interfaces/ScreenReselectHandler.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ScreenScroller",
+              "title": "ScreenScroller",
+              "file": "bloom/9.0.0/api/interfaces/ScreenScroller.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/ScreenScrollOptions",
               "title": "ScreenScrollOptions",
               "file": "bloom/9.0.0/api/interfaces/ScreenScrollOptions.md",
@@ -13840,6 +14652,13 @@
               "slug": "api/interfaces/SettingsGeneralPageProps",
               "title": "SettingsGeneralPageProps",
               "file": "bloom/9.0.0/api/interfaces/SettingsGeneralPageProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/SettingsLayoutProps",
+              "title": "SettingsLayoutProps",
+              "file": "bloom/9.0.0/api/interfaces/SettingsLayoutProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -14071,6 +14890,27 @@
               "slug": "api/interfaces/SharedMediaItem",
               "title": "SharedMediaItem",
               "file": "bloom/9.0.0/api/interfaces/SharedMediaItem.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ShareSheetProps",
+              "title": "ShareSheetProps",
+              "file": "bloom/9.0.0/api/interfaces/ShareSheetProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ShareSheetTarget",
+              "title": "ShareSheetTarget",
+              "file": "bloom/9.0.0/api/interfaces/ShareSheetTarget.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ShelfCell",
+              "title": "ShelfCell",
+              "file": "bloom/9.0.0/api/interfaces/ShelfCell.md",
               "order": 10000,
               "section": "api"
             },
@@ -14491,6 +15331,13 @@
               "slug": "api/interfaces/SpinnerLoadingProps",
               "title": "SpinnerLoadingProps",
               "file": "bloom/9.0.0/api/interfaces/SpinnerLoadingProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/SpringSpec",
+              "title": "SpringSpec",
+              "file": "bloom/9.0.0/api/interfaces/SpringSpec.md",
               "order": 10000,
               "section": "api"
             },
@@ -14925,6 +15772,20 @@
               "slug": "api/interfaces/TableRowProps",
               "title": "TableRowProps",
               "file": "bloom/9.0.0/api/interfaces/TableRowProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/TabPage",
+              "title": "~~Interface: TabPage~~",
+              "file": "bloom/9.0.0/api/interfaces/TabPage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/TabPagerState",
+              "title": "TabPagerState",
+              "file": "bloom/9.0.0/api/interfaces/TabPagerState.md",
               "order": 10000,
               "section": "api"
             },
@@ -15482,6 +16343,27 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/UseVideoPlaybackOptions",
+              "title": "UseVideoPlaybackOptions",
+              "file": "bloom/9.0.0/api/interfaces/UseVideoPlaybackOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/UseVideoPlaybackResult",
+              "title": "UseVideoPlaybackResult",
+              "file": "bloom/9.0.0/api/interfaces/UseVideoPlaybackResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/UseViewableVisibleOptions",
+              "title": "UseViewableVisibleOptions",
+              "file": "bloom/9.0.0/api/interfaces/UseViewableVisibleOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/VehicleOption",
               "title": "VehicleOption\\<T\\>",
               "file": "bloom/9.0.0/api/interfaces/VehicleOption.md",
@@ -15513,6 +16395,34 @@
               "slug": "api/interfaces/VideoMessageProps",
               "title": "VideoMessageProps",
               "file": "bloom/9.0.0/api/interfaces/VideoMessageProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/VideoPlaybackProviderProps",
+              "title": "VideoPlaybackProviderProps",
+              "file": "bloom/9.0.0/api/interfaces/VideoPlaybackProviderProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/VideoPlayerSubscription",
+              "title": "VideoPlayerSubscription",
+              "file": "bloom/9.0.0/api/interfaces/VideoPlayerSubscription.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/VideoViewabilityScopeProps",
+              "title": "VideoViewabilityScopeProps",
+              "file": "bloom/9.0.0/api/interfaces/VideoViewabilityScopeProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ViewableKeysStore",
+              "title": "ViewableKeysStore",
+              "file": "bloom/9.0.0/api/interfaces/ViewableKeysStore.md",
               "order": 10000,
               "section": "api"
             },
@@ -15653,6 +16563,41 @@
               "slug": "api/interfaces/WeekRangePillProps",
               "title": "WeekRangePillProps",
               "file": "bloom/9.0.0/api/interfaces/WeekRangePillProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/WindowControlsProps",
+              "title": "WindowControlsProps",
+              "file": "bloom/9.0.0/api/interfaces/WindowControlsProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/WindowControlsRoom",
+              "title": "WindowControlsRoom",
+              "file": "bloom/9.0.0/api/interfaces/WindowControlsRoom.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/WindowDragRegionProps",
+              "title": "WindowDragRegionProps",
+              "file": "bloom/9.0.0/api/interfaces/WindowDragRegionProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/WindowHandle",
+              "title": "WindowHandle",
+              "file": "bloom/9.0.0/api/interfaces/WindowHandle.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/WindowSizeLimits",
+              "title": "WindowSizeLimits",
+              "file": "bloom/9.0.0/api/interfaces/WindowSizeLimits.md",
               "order": 10000,
               "section": "api"
             },
@@ -16017,6 +16962,20 @@
               "slug": "api/types/AppShellDrawer",
               "title": "AppShellDrawer",
               "file": "bloom/9.0.0/api/types/AppShellDrawer.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/AppShellEdge",
+              "title": "AppShellEdge",
+              "file": "bloom/9.0.0/api/types/AppShellEdge.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/AppShellEdges",
+              "title": "AppShellEdges",
+              "file": "bloom/9.0.0/api/types/AppShellEdges.md",
               "order": 10000,
               "section": "api"
             },
@@ -16777,6 +17736,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/ConcentricRadius",
+              "title": "ConcentricRadius",
+              "file": "bloom/9.0.0/api/types/ConcentricRadius.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/ContactChannelKind",
               "title": "ContactChannelKind",
               "file": "bloom/9.0.0/api/types/ContactChannelKind.md",
@@ -16808,6 +17774,13 @@
               "slug": "api/types/ContentPanelFramedBreakpoint",
               "title": "ContentPanelFramedBreakpoint",
               "file": "bloom/9.0.0/api/types/ContentPanelFramedBreakpoint.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/ContextMenuAnchor",
+              "title": "ContextMenuAnchor",
+              "file": "bloom/9.0.0/api/types/ContextMenuAnchor.md",
               "order": 10000,
               "section": "api"
             },
@@ -17064,6 +18037,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/DragAction",
+              "title": "DragAction",
+              "file": "bloom/9.0.0/api/types/DragAction.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/DropdownMenuCheckboxItemProps",
               "title": "DropdownMenuCheckboxItemProps",
               "file": "bloom/9.0.0/api/types/DropdownMenuCheckboxItemProps.md",
@@ -17155,6 +18135,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/DropKind",
+              "title": "DropKind",
+              "file": "bloom/9.0.0/api/types/DropKind.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/EarningsGeometry",
               "title": "EarningsGeometry",
               "file": "bloom/9.0.0/api/types/EarningsGeometry.md",
@@ -17225,6 +18212,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/EngagementTone",
+              "title": "EngagementTone",
+              "file": "bloom/9.0.0/api/types/EngagementTone.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/ErrorBoundaryFallback",
               "title": "ErrorBoundaryFallback",
               "file": "bloom/9.0.0/api/types/ErrorBoundaryFallback.md",
@@ -17263,6 +18257,13 @@
               "slug": "api/types/ExchangeMode",
               "title": "ExchangeMode",
               "file": "bloom/9.0.0/api/types/ExchangeMode.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/ExpandableTextToggle",
+              "title": "ExpandableTextToggle",
+              "file": "bloom/9.0.0/api/types/ExpandableTextToggle.md",
               "order": 10000,
               "section": "api"
             },
@@ -17736,6 +18737,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/LockupSize",
+              "title": "LockupSize",
+              "file": "bloom/9.0.0/api/types/LockupSize.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/LyricsSize",
               "title": "LyricsSize",
               "file": "bloom/9.0.0/api/types/LyricsSize.md",
@@ -17911,13 +18919,6 @@
               "section": "api"
             },
             {
-              "slug": "api/types/MenubarCheckboxItemProps",
-              "title": "MenubarCheckboxItemProps",
-              "file": "bloom/9.0.0/api/types/MenubarCheckboxItemProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/types/MenubarContentProps",
               "title": "MenubarContentProps",
               "file": "bloom/9.0.0/api/types/MenubarContentProps.md",
@@ -17932,13 +18933,6 @@
               "section": "api"
             },
             {
-              "slug": "api/types/MenubarItemProps",
-              "title": "MenubarItemProps",
-              "file": "bloom/9.0.0/api/types/MenubarItemProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/types/MenubarLabelProps",
               "title": "MenubarLabelProps",
               "file": "bloom/9.0.0/api/types/MenubarLabelProps.md",
@@ -17949,13 +18943,6 @@
               "slug": "api/types/MenubarRadioGroupProps",
               "title": "MenubarRadioGroupProps",
               "file": "bloom/9.0.0/api/types/MenubarRadioGroupProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/types/MenubarRadioItemProps",
-              "title": "MenubarRadioItemProps",
-              "file": "bloom/9.0.0/api/types/MenubarRadioItemProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -18086,9 +19073,23 @@
               "section": "api"
             },
             {
+              "slug": "api/types/MeterRingProps",
+              "title": "MeterRingProps",
+              "file": "bloom/9.0.0/api/types/MeterRingProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/MotionIntent",
               "title": "MotionIntent",
               "file": "bloom/9.0.0/api/types/MotionIntent.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/MotionSpec",
+              "title": "MotionSpec",
+              "file": "bloom/9.0.0/api/types/MotionSpec.md",
               "order": 10000,
               "section": "api"
             },
@@ -18366,6 +19367,20 @@
               "section": "api"
             },
             {
+              "slug": "api/types/PanelDropEdge",
+              "title": "PanelDropEdge",
+              "file": "bloom/9.0.0/api/types/PanelDropEdge.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/PanelDropStage",
+              "title": "PanelDropStage",
+              "file": "bloom/9.0.0/api/types/PanelDropStage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/PanelHref",
               "title": "PanelHref",
               "file": "bloom/9.0.0/api/types/PanelHref.md",
@@ -18506,6 +19521,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/PlatformMenuItem",
+              "title": "PlatformMenuItem",
+              "file": "bloom/9.0.0/api/types/PlatformMenuItem.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/PlaybackDeviceKind",
               "title": "PlaybackDeviceKind",
               "file": "bloom/9.0.0/api/types/PlaybackDeviceKind.md",
@@ -18558,6 +19580,13 @@
               "slug": "api/types/PopoverTriggerProps",
               "title": "PopoverTriggerProps",
               "file": "bloom/9.0.0/api/types/PopoverTriggerProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/PopupDismissReason",
+              "title": "PopupDismissReason",
+              "file": "bloom/9.0.0/api/types/PopupDismissReason.md",
               "order": 10000,
               "section": "api"
             },
@@ -18849,6 +19878,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/ResizeHandleVariant",
+              "title": "ResizeHandleVariant",
+              "file": "bloom/9.0.0/api/types/ResizeHandleVariant.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/ResolvedAvatarCharacter",
               "title": "ResolvedAvatarCharacter",
               "file": "bloom/9.0.0/api/types/ResolvedAvatarCharacter.md",
@@ -19062,6 +20098,13 @@
               "slug": "api/types/SettingsListItemProps",
               "title": "~~Type Alias: SettingsListItemProps~~",
               "file": "bloom/9.0.0/api/types/SettingsListItemProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/SettingsModalLayout",
+              "title": "SettingsModalLayout",
+              "file": "bloom/9.0.0/api/types/SettingsModalLayout.md",
               "order": 10000,
               "section": "api"
             },
@@ -19339,6 +20382,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/SurfaceCapability",
+              "title": "SurfaceCapability",
+              "file": "bloom/9.0.0/api/types/SurfaceCapability.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/SurfaceRenderFn",
               "title": "SurfaceRenderFn",
               "file": "bloom/9.0.0/api/types/SurfaceRenderFn.md",
@@ -19384,6 +20434,13 @@
               "slug": "api/types/TableSortDirection",
               "title": "TableSortDirection",
               "file": "bloom/9.0.0/api/types/TableSortDirection.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/TabPagerBottomBarProps",
+              "title": "TabPagerBottomBarProps",
+              "file": "bloom/9.0.0/api/types/TabPagerBottomBarProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -19734,6 +20791,13 @@
               "slug": "api/types/VideoMessageVariant",
               "title": "VideoMessageVariant",
               "file": "bloom/9.0.0/api/types/VideoMessageVariant.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/VideoViewabilityProviderProps",
+              "title": "VideoViewabilityProviderProps",
+              "file": "bloom/9.0.0/api/types/VideoViewabilityProviderProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -21390,6 +22454,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/ConcentricView",
+              "title": "ConcentricView",
+              "file": "bloom/9.0.0/api/variables/ConcentricView.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/ConnectBanner",
               "title": "ConnectBanner",
               "file": "bloom/9.0.0/api/variables/ConnectBanner.md",
@@ -22090,6 +23161,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/DropZone",
+              "title": "DropZone",
+              "file": "bloom/9.0.0/api/variables/DropZone.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/EARNINGS_GEOMETRY",
               "title": "EARNINGS\\_GEOMETRY",
               "file": "bloom/9.0.0/api/variables/EARNINGS_GEOMETRY.md",
@@ -22223,6 +23301,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/EngagementAction",
+              "title": "EngagementAction",
+              "file": "bloom/9.0.0/api/variables/EngagementAction.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/EpisodeCard",
               "title": "EpisodeCard",
               "file": "bloom/9.0.0/api/variables/EpisodeCard.md",
@@ -22293,6 +23378,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/ExpandableText",
+              "title": "ExpandableText",
+              "file": "bloom/9.0.0/api/variables/ExpandableText.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/ExplicitBadge",
               "title": "ExplicitBadge",
               "file": "bloom/9.0.0/api/variables/ExplicitBadge.md",
@@ -22303,6 +23395,13 @@
               "slug": "api/variables/Fab",
               "title": "Fab",
               "file": "bloom/9.0.0/api/variables/Fab.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/FactStrip",
+              "title": "FactStrip",
+              "file": "bloom/9.0.0/api/variables/FactStrip.md",
               "order": 10000,
               "section": "api"
             },
@@ -23539,6 +24638,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiCloudyLine",
+              "title": "RiCloudyLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiCloudyLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiCodeBlock",
               "title": "RiCodeBlock",
               "file": "bloom/9.0.0/api/variables/Icons.RiCodeBlock.md",
@@ -23840,6 +24946,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiDrizzleLine",
+              "title": "RiDrizzleLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiDrizzleLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiDropLine",
               "title": "RiDropLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiDropLine.md",
@@ -23969,6 +25082,13 @@
               "slug": "api/variables/Icons.RiEyeOffLine",
               "title": "RiEyeOffLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiEyeOffLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiFediverseLine",
+              "title": "RiFediverseLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiFediverseLine.md",
               "order": 10000,
               "section": "api"
             },
@@ -24197,6 +25317,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiFoggyLine",
+              "title": "RiFoggyLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiFoggyLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiFolder2Line",
               "title": "RiFolder2Line",
               "file": "bloom/9.0.0/api/variables/Icons.RiFolder2Line.md",
@@ -24421,6 +25548,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiHailLine",
+              "title": "RiHailLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiHailLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiHammerLine",
               "title": "RiHammerLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiHammerLine.md",
@@ -24515,6 +25649,13 @@
               "slug": "api/variables/Icons.RiHeartPulseLine",
               "title": "RiHeartPulseLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiHeartPulseLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiHeavyShowersLine",
+              "title": "RiHeavyShowersLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiHeavyShowersLine.md",
               "order": 10000,
               "section": "api"
             },
@@ -24645,6 +25786,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiInsertColumnRight",
+              "title": "RiInsertColumnRight",
+              "file": "bloom/9.0.0/api/variables/Icons.RiInsertColumnRight.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiInstagramFill",
               "title": "RiInstagramFill",
               "file": "bloom/9.0.0/api/variables/Icons.RiInstagramFill.md",
@@ -24746,6 +25894,13 @@
               "slug": "api/variables/Icons.RiLinkM",
               "title": "RiLinkM",
               "file": "bloom/9.0.0/api/variables/Icons.RiLinkM.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiLinksLine",
+              "title": "RiLinksLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiLinksLine.md",
               "order": 10000,
               "section": "api"
             },
@@ -24960,6 +26115,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiMegaphoneFill",
+              "title": "RiMegaphoneFill",
+              "file": "bloom/9.0.0/api/variables/Icons.RiMegaphoneFill.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiMegaphoneLine",
               "title": "RiMegaphoneLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiMegaphoneLine.md",
@@ -25037,6 +26199,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiMistLine",
+              "title": "RiMistLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiMistLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiMoneyDollarBoxLine",
               "title": "RiMoneyDollarBoxLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiMoneyDollarBoxLine.md",
@@ -25061,6 +26230,20 @@
               "slug": "api/variables/Icons.RiMoonClearFill",
               "title": "RiMoonClearFill",
               "file": "bloom/9.0.0/api/variables/Icons.RiMoonClearFill.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiMoonClearLine",
+              "title": "RiMoonClearLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiMoonClearLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiMoonCloudyLine",
+              "title": "RiMoonCloudyLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiMoonCloudyLine.md",
               "order": 10000,
               "section": "api"
             },
@@ -25415,6 +26598,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiRainyLine",
+              "title": "RiRainyLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiRainyLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiReceiptLine",
               "title": "RiReceiptLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiReceiptLine.md",
@@ -25611,6 +26801,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiSendPlaneFill",
+              "title": "RiSendPlaneFill",
+              "file": "bloom/9.0.0/api/variables/Icons.RiSendPlaneFill.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiSendPlaneLine",
               "title": "RiSendPlaneLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiSendPlaneLine.md",
@@ -25779,6 +26976,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiShowersLine",
+              "title": "RiShowersLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiShowersLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiShuffleLine",
               "title": "RiShuffleLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiShuffleLine.md",
@@ -25831,6 +27035,13 @@
               "slug": "api/variables/Icons.RiSnowflakeLine",
               "title": "RiSnowflakeLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiSnowflakeLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiSnowyLine",
+              "title": "RiSnowyLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiSnowyLine.md",
               "order": 10000,
               "section": "api"
             },
@@ -25922,6 +27133,20 @@
               "slug": "api/variables/Icons.RiSpeedUpLine",
               "title": "RiSpeedUpLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiSpeedUpLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiSpotifyFill",
+              "title": "RiSpotifyFill",
+              "file": "bloom/9.0.0/api/variables/Icons.RiSpotifyFill.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiSpotifyLine",
+              "title": "RiSpotifyLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiSpotifyLine.md",
               "order": 10000,
               "section": "api"
             },
@@ -26024,6 +27249,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiSunCloudyLine",
+              "title": "RiSunCloudyLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiSunCloudyLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiSunFoggyLine",
               "title": "RiSunFoggyLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiSunFoggyLine.md",
@@ -26062,6 +27294,13 @@
               "slug": "api/variables/Icons.RiTeamLine",
               "title": "RiTeamLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiTeamLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiTelegramFill",
+              "title": "RiTelegramFill",
+              "file": "bloom/9.0.0/api/variables/Icons.RiTelegramFill.md",
               "order": 10000,
               "section": "api"
             },
@@ -26143,9 +27382,23 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiThunderstormsLine",
+              "title": "RiThunderstormsLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiThunderstormsLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiTicketLine",
               "title": "RiTicketLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiTicketLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiTimeFill",
+              "title": "RiTimeFill",
+              "file": "bloom/9.0.0/api/variables/Icons.RiTimeFill.md",
               "order": 10000,
               "section": "api"
             },
@@ -26395,6 +27648,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiVideoFill",
+              "title": "RiVideoFill",
+              "file": "bloom/9.0.0/api/variables/Icons.RiVideoFill.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiVideoLine",
               "title": "RiVideoLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiVideoLine.md",
@@ -26472,6 +27732,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Icons.RiWhatsappFill",
+              "title": "RiWhatsappFill",
+              "file": "bloom/9.0.0/api/variables/Icons.RiWhatsappFill.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Icons.RiWheelchairLine",
               "title": "RiWheelchairLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiWheelchairLine.md",
@@ -26482,6 +27749,13 @@
               "slug": "api/variables/Icons.RiWifiLine",
               "title": "RiWifiLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiWifiLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiWifiOffLine",
+              "title": "RiWifiOffLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiWifiOffLine.md",
               "order": 10000,
               "section": "api"
             },
@@ -26503,6 +27777,20 @@
               "slug": "api/variables/Icons.RiWrenchLine",
               "title": "RiWrenchLine",
               "file": "bloom/9.0.0/api/variables/Icons.RiWrenchLine.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiYoutubeFill",
+              "title": "RiYoutubeFill",
+              "file": "bloom/9.0.0/api/variables/Icons.RiYoutubeFill.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Icons.RiYoutubeLine",
+              "title": "RiYoutubeLine",
+              "file": "bloom/9.0.0/api/variables/Icons.RiYoutubeLine.md",
               "order": 10000,
               "section": "api"
             },
@@ -26969,6 +28257,20 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/Lockup",
+              "title": "Lockup",
+              "file": "bloom/9.0.0/api/variables/Lockup.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/LockupSkeleton",
+              "title": "LockupSkeleton",
+              "file": "bloom/9.0.0/api/variables/LockupSkeleton.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/LyricsPreviewCard",
               "title": "LyricsPreviewCard",
               "file": "bloom/9.0.0/api/variables/LyricsPreviewCard.md",
@@ -27259,6 +28561,13 @@
               "slug": "api/variables/MenubarCheckboxItem",
               "title": "MenubarCheckboxItem",
               "file": "bloom/9.0.0/api/variables/MenubarCheckboxItem.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/MenubarContent",
+              "title": "MenubarContent",
+              "file": "bloom/9.0.0/api/variables/MenubarContent.md",
               "order": 10000,
               "section": "api"
             },
@@ -27711,6 +29020,27 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/PANEL_DROP_MOTION",
+              "title": "PANEL\\_DROP\\_MOTION",
+              "file": "bloom/9.0.0/api/variables/PANEL_DROP_MOTION.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/PANEL_DROP_PREVIEW",
+              "title": "PANEL\\_DROP\\_PREVIEW",
+              "file": "bloom/9.0.0/api/variables/PANEL_DROP_PREVIEW.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/PANEL_DROP_STAGES",
+              "title": "PANEL\\_DROP\\_STAGES",
+              "file": "bloom/9.0.0/api/variables/PANEL_DROP_STAGES.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/PANEL_TOP_INSET",
               "title": "PANEL\\_TOP\\_INSET",
               "file": "bloom/9.0.0/api/variables/PANEL_TOP_INSET.md",
@@ -28071,6 +29401,13 @@
               "slug": "api/variables/PlaceTransit",
               "title": "PlaceTransit",
               "file": "bloom/9.0.0/api/variables/PlaceTransit.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/PlatformSurfaceProvider",
+              "title": "PlatformSurfaceProvider",
+              "file": "bloom/9.0.0/api/variables/PlatformSurfaceProvider.md",
               "order": 10000,
               "section": "api"
             },
@@ -28460,6 +29797,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/RatingSummary",
+              "title": "RatingSummary",
+              "file": "bloom/9.0.0/api/variables/RatingSummary.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/REACTION_PICKER_EMOJIS",
               "title": "REACTION\\_PICKER\\_EMOJIS",
               "file": "bloom/9.0.0/api/variables/REACTION_PICKER_EMOJIS.md",
@@ -28747,6 +30091,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/SettingsLayout",
+              "title": "SettingsLayout",
+              "file": "bloom/9.0.0/api/variables/SettingsLayout.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/SettingsListDivider",
               "title": "~~Variable: SettingsListDivider~~",
               "file": "bloom/9.0.0/api/variables/SettingsListDivider.md",
@@ -28820,6 +30171,13 @@
               "slug": "api/variables/SharedMediaGrid",
               "title": "SharedMediaGrid",
               "file": "bloom/9.0.0/api/variables/SharedMediaGrid.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/ShareSheet",
+              "title": "ShareSheet",
+              "file": "bloom/9.0.0/api/variables/ShareSheet.md",
               "order": 10000,
               "section": "api"
             },
@@ -29447,6 +30805,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/tokens.hitSlop",
+              "title": "hitSlop",
+              "file": "bloom/9.0.0/api/variables/tokens.hitSlop.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/tokens.lineHeight",
               "title": "lineHeight",
               "file": "bloom/9.0.0/api/variables/tokens.lineHeight.md",
@@ -29793,6 +31158,13 @@
               "slug": "api/variables/WebSearch",
               "title": "WebSearch",
               "file": "bloom/9.0.0/api/variables/WebSearch.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/WindowDragRegion",
+              "title": "WindowDragRegion",
+              "file": "bloom/9.0.0/api/variables/WindowDragRegion.md",
               "order": 10000,
               "section": "api"
             },
@@ -34257,6 +35629,13 @@
               "section": "api"
             },
             {
+              "slug": "api/classes/StoreInstallerError",
+              "title": "StoreInstallerError",
+              "file": "core/main/api/classes/StoreInstallerError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/enums/TopicSource",
               "title": "Enumeration: TopicSource",
               "file": "core/main/api/enums/TopicSource.md",
@@ -34624,6 +36003,13 @@
               "slug": "api/functions/getPrimaryLanguage",
               "title": "getPrimaryLanguage()",
               "file": "core/main/api/functions/getPrimaryLanguage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/getStoreInstaller",
+              "title": "getStoreInstaller()",
+              "file": "core/main/api/functions/getStoreInstaller.md",
               "order": 10000,
               "section": "api"
             },
@@ -35132,6 +36518,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/setStoreInstaller",
+              "title": "setStoreInstaller()",
+              "file": "core/main/api/functions/setStoreInstaller.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/shouldAllowRequest",
               "title": "shouldAllowRequest()",
               "file": "core/main/api/functions/shouldAllowRequest.md",
@@ -35450,6 +36843,20 @@
               "slug": "api/interfaces/AssetDeleteSummary",
               "title": "AssetDeleteSummary",
               "file": "core/main/api/interfaces/AssetDeleteSummary.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AssetFilePartRequest",
+              "title": "AssetFilePartRequest",
+              "file": "core/main/api/interfaces/AssetFilePartRequest.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AssetFileSource",
+              "title": "AssetFileSource",
+              "file": "core/main/api/interfaces/AssetFileSource.md",
               "order": 10000,
               "section": "api"
             },
@@ -36630,6 +38037,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/StoreInstaller",
+              "title": "StoreInstaller",
+              "file": "core/main/api/interfaces/StoreInstaller.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/StoreListingDetail",
               "title": "StoreListingDetail",
               "file": "core/main/api/interfaces/StoreListingDetail.md",
@@ -36689,6 +38103,27 @@
               "slug": "api/interfaces/StoreScreenshot",
               "title": "StoreScreenshot",
               "file": "core/main/api/interfaces/StoreScreenshot.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StoreUpdate",
+              "title": "StoreUpdate",
+              "file": "core/main/api/interfaces/StoreUpdate.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StoreUpdates",
+              "title": "StoreUpdates",
+              "file": "core/main/api/interfaces/StoreUpdates.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StoreUpdatesSource",
+              "title": "StoreUpdatesSource",
+              "file": "core/main/api/interfaces/StoreUpdatesSource.md",
               "order": 10000,
               "section": "api"
             },
@@ -36945,6 +38380,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/AcceptConsoleTermsInput",
+              "title": "AcceptConsoleTermsInput",
+              "file": "core/main/api/types/AcceptConsoleTermsInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/AccountCategoryId",
               "title": "AccountCategoryId",
               "file": "core/main/api/types/AccountCategoryId.md",
@@ -37036,6 +38478,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/AssetFileAdapter",
+              "title": "AssetFileAdapter",
+              "file": "core/main/api/types/AssetFileAdapter.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/AssetLiveStatus",
               "title": "AssetLiveStatus",
               "file": "core/main/api/types/AssetLiveStatus.md",
@@ -37067,6 +38516,13 @@
               "slug": "api/types/AssetUploadInput",
               "title": "AssetUploadInput",
               "file": "core/main/api/types/AssetUploadInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/AssetUploadStageProgress",
+              "title": "AssetUploadStageProgress",
+              "file": "core/main/api/types/AssetUploadStageProgress.md",
               "order": 10000,
               "section": "api"
             },
@@ -37123,6 +38579,13 @@
               "slug": "api/types/ConsoleOnboardingState",
               "title": "ConsoleOnboardingState",
               "file": "core/main/api/types/ConsoleOnboardingState.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/ConsoleUseCaseId",
+              "title": "ConsoleUseCaseId",
+              "file": "core/main/api/types/ConsoleUseCaseId.md",
               "order": 10000,
               "section": "api"
             },
@@ -37309,6 +38772,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/SaveConsoleUseCasesInput",
+              "title": "SaveConsoleUseCasesInput",
+              "file": "core/main/api/types/SaveConsoleUseCasesInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/SecurityEventSeverity",
               "title": "SecurityEventSeverity",
               "file": "core/main/api/types/SecurityEventSeverity.md",
@@ -37326,6 +38796,20 @@
               "slug": "api/types/ServiceFileReferenceResult",
               "title": "ServiceFileReferenceResult",
               "file": "core/main/api/types/ServiceFileReferenceResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/StoreInstallerFailure",
+              "title": "StoreInstallerFailure",
+              "file": "core/main/api/types/StoreInstallerFailure.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/StoreInstallState",
+              "title": "StoreInstallState",
+              "file": "core/main/api/types/StoreInstallState.md",
               "order": 10000,
               "section": "api"
             },
@@ -38766,6 +40250,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/OxyDeviceSignInProps",
+              "title": "OxyDeviceSignInProps",
+              "file": "services/main/api/interfaces/OxyDeviceSignInProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/OxyEmailPanelProps",
               "title": "OxyEmailPanelProps",
               "file": "services/main/api/interfaces/OxyEmailPanelProps.md",
@@ -39350,6 +40841,13 @@
               "slug": "api/variables/OxyDeleteAccountPanel",
               "title": "OxyDeleteAccountPanel",
               "file": "services/main/api/variables/OxyDeleteAccountPanel.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/OxyDeviceSignIn",
+              "title": "OxyDeviceSignIn",
+              "file": "services/main/api/variables/OxyDeviceSignIn.md",
               "order": 10000,
               "section": "api"
             },
@@ -40573,9 +42071,30 @@
               "section": "guides"
             },
             {
+              "slug": "audits/2026-10-28-android-paint-profile/README",
+              "title": "Android feed reprofiling and paint cache — 2026-10-28",
+              "file": "mention/main/audits/2026-10-28-android-paint-profile/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/2026-10-28-search-production/1270-review",
+              "title": "Issue #1270: production search diagnosis (2026-10-28)",
+              "file": "mention/main/audits/2026-10-28-search-production/1270-review.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "audits/feed-quality-2026-10-21/README",
               "title": "Feed quality audit — 21 October 2026",
               "file": "mention/main/audits/feed-quality-2026-10-21/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/feed-return-2026-10-28",
+              "title": "Feed return audit — 28 October 2026",
+              "file": "mention/main/audits/feed-return-2026-10-28.md",
               "order": 1000,
               "section": "guides"
             },
@@ -40702,6 +42221,20 @@
               "slug": "managed-mention",
               "title": "Managed Mention: dedicated application contract",
               "file": "mention/main/managed-mention.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "memberships",
+              "title": "Membership communities",
+              "file": "mention/main/memberships.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "mention-plus-payments",
+              "title": "Mention Plus payment window",
+              "file": "mention/main/mention-plus-payments.md",
               "order": 1000,
               "section": "guides"
             },
@@ -41896,6 +43429,14 @@
               "section": "guides"
             },
             {
+              "slug": "account-session",
+              "title": "Oxy account and session on OxyOS",
+              "description": "Inventory of the existing Oxy SDK owners that OxyOS's required-account model must reuse, the gaps, and the open decisions for #35.",
+              "file": "oxyos/main/account-session.mdx",
+              "order": 4,
+              "section": "guides"
+            },
+            {
               "slug": "iso-build",
               "title": "Base image configuration",
               "description": "The live-build configuration of the Debian base system, what it installs, and why no image is published yet.",
@@ -41910,55 +43451,284 @@
               "file": "oxyos/main/retired-desktop-stack.mdx",
               "order": 5,
               "section": "guides"
+            },
+            {
+              "slug": "react-native-android-adaptation",
+              "title": "React Native's Android implementation on OxyOS",
+              "description": "What the OxyOS host reuses from React Native's Android implementation, what it implements itself, and what it does not provide.",
+              "file": "oxyos/main/react-native-android-adaptation.mdx",
+              "order": 6,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0001-native-platform-boundaries",
+              "title": "ADR 0001: Native platform boundaries, surface roles and popup policy",
+              "description": "Process and privilege split, ownership and dependency direction, surface roles, coordinates, input/focus ownership, buffer lifetime and the popup and lock policies of the OxyOS display protocol.",
+              "file": "oxyos/main/adr/0001-native-platform-boundaries.mdx",
+              "order": 10,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0002-bloom-platform-surface-api",
+              "title": "ADR 0002: Bloom platform surface API",
+              "description": "Proposed app-facing popup/window capability API at Bloom's floating-panel owner, its adapter registration and its mapping onto the OxyOS display protocol.",
+              "file": "oxyos/main/adr/0002-bloom-platform-surface-api.mdx",
+              "order": 11,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0003-accessibility-protocol",
+              "title": "ADR 0003: Accessibility in the OxyOS display protocol",
+              "description": "How applications publish their accessibility trees to the compositor, how an assistive technology reads them and acts on them, and what stays out of reach.",
+              "file": "oxyos/main/adr/0003-accessibility-protocol.mdx",
+              "order": 12,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0004-gpu-composition",
+              "title": "ADR 0004: GPU composition and output",
+              "description": "How the compositor moves from CPU composition to Vulkan composition and DRM/KMS output, what the first slice proves and what only real hardware can.",
+              "file": "oxyos/main/adr/0004-gpu-composition.mdx",
+              "order": 13,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0005-damage",
+              "title": "ADR 0005: Damage: composing and drawing only what changed",
+              "description": "How applications tell the compositor what changed in a frame, how the compositor turns that into what changed on the output, and how both stop redrawing and re-uploading whole frames.",
+              "file": "oxyos/main/adr/0005-damage.mdx",
+              "order": 14,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0006-seat",
+              "title": "ADR 0006: The compositor's seat through logind",
+              "description": "How the compositor runs as the user of a session instead of as root, with its display, input devices and terminal handed to it by systemd-logind.",
+              "file": "oxyos/main/adr/0006-seat.mdx",
+              "order": 15,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0007-clipboard",
+              "title": "ADR 0007: The clipboard",
+              "description": "How an application offers what the user copied, how another receives it when the user pastes, and what keeps a background application from reading or replacing it.",
+              "file": "oxyos/main/adr/0007-clipboard.mdx",
+              "order": 16,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0008-input-method",
+              "title": "ADR 0008: Input methods",
+              "description": "How a text field tells the system what it is editing, how an input method composes text into it, and what an input method may see.",
+              "file": "oxyos/main/adr/0008-input-method.mdx",
+              "order": 17,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0009-session-shell",
+              "title": "ADR 0009: The session shell",
+              "description": "How the OxyOS shell, one React tree, becomes the compositor's background, panels and overlays, and how it shows and manages the compositor's windows and workspaces.",
+              "file": "oxyos/main/adr/0009-session-shell.mdx",
+              "order": 18,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0010-lock-screen",
+              "title": "ADR 0010: The lock screen",
+              "description": "How an OxyOS session locks, what the lock screen is and draws, and how a password unlocks it through the session's authentication path, PAM.",
+              "file": "oxyos/main/adr/0010-lock-screen.mdx",
+              "order": 19,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0011-transitions",
+              "title": "ADR 0011: Transitions",
+              "description": "How surfaces appear and go in an OxyOS session — the compositor animates their arrival and departure, applications animate their own content — and what composition needs for it.",
+              "file": "oxyos/main/adr/0011-transitions.mdx",
+              "order": 20,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0012-solar-wallpaper",
+              "title": "ADR 0012: The solar wallpaper",
+              "description": "How the shell's wallpaper follows the sun: where the sun is, computed by the OS from the clock and the time zone's place, never a location service; which of the wallpaper's frames that is; and how the shell is told.",
+              "file": "oxyos/main/adr/0012-solar-wallpaper.mdx",
+              "order": 21,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0013-launching-applications",
+              "title": "ADR 0013: Launching applications",
+              "description": "Which applications an OxyOS session has, how the shell asks for one, how the session starts it, and how a window comes to be known as an application's.",
+              "file": "oxyos/main/adr/0013-launching-applications.mdx",
+              "order": 22,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0014-screen-reader",
+              "title": "ADR 0014: The screen reader",
+              "description": "OxyOS's own screen reader — an assistive technology that speaks — its speech engine, how the session starts it, and how its keys reach it alone.",
+              "file": "oxyos/main/adr/0014-screen-reader.mdx",
+              "order": 23,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0015-application-model",
+              "title": "ADR 0015: The application model",
+              "description": "How one Oxy application, built from Bloom, runs on the web, as a native mobile or desktop application and on OxyOS without asking which: what an application declares, what Bloom makes of it, and what each platform supplies.",
+              "file": "oxyos/main/adr/0015-application-model.mdx",
+              "order": 24,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0016-windows",
+              "title": "ADR 0016: Windows",
+              "description": "What an OxyOS window is — no title bar, its controls as glass bubbles always in the same place, its content arranged around them by Bloom — and what the protocol, the compositor and Bloom each do for it.",
+              "file": "oxyos/main/adr/0016-windows.mdx",
+              "order": 25,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0017-boot-logo",
+              "title": "ADR 0017: The boot logo",
+              "description": "How OxyOS shows the Oxy mark from the moment Linux takes the display until the session's first frame, as a Mac shows its own while it starts, and how the session takes the display over without a pixel changing.",
+              "file": "oxyos/main/adr/0017-boot-logo.mdx",
+              "order": 26,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0018-several-displays",
+              "title": "ADR 0018: Several displays",
+              "description": "How the session drives every display of its card, as a Mac does — arranged side by side, each at its own mode, scale and refresh (its fastest, 120 or 144 Hz where it has them), every frame paced by that refresh, the pointer crossing between them, the shell's top bar on each and the dock on the primary — follows monitors plugged in and out, and lets Settings change each display's arrangement, main display, scale, resolution and refresh, kept for that display.",
+              "file": "oxyos/main/adr/0018-several-displays.mdx",
+              "order": 27,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0019-settings",
+              "title": "ADR 0019: Settings",
+              "description": "Where an OxyOS session's preferences live, who may change them, how every application follows them, and the Settings application that changes them.",
+              "file": "oxyos/main/adr/0019-settings.mdx",
+              "order": 28,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0020-oxy-account-login",
+              "title": "ADR 0020: Signing in with an Oxy account",
+              "description": "How a person signs in to OxyOS with their Oxy account — set up online once, then offline with the account's own password — who holds the account's credential on the machine, and what the login screen is.",
+              "file": "oxyos/main/adr/0020-oxy-account-login.mdx",
+              "order": 29,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0021-menu-bar",
+              "title": "ADR 0021: The menu bar",
+              "description": "How an application's menus reach the menu bar at the top of the screen, as on a Mac — declared once with Bloom's Menubar, shown by the shell for the active window, chosen back in the application — and how their shortcuts work everywhere.",
+              "file": "oxyos/main/adr/0021-menu-bar.mdx",
+              "order": 30,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0022-window-views",
+              "title": "ADR 0022: Windows live in the overview",
+              "description": "How the overview shows each window's contents as Mission Control does — the compositor draws the windows themselves, scaled and filtered, where the shell's layout places them — and why the shell never receives their pixels.",
+              "file": "oxyos/main/adr/0022-window-views.mdx",
+              "order": 31,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0023-installing-oxyos",
+              "title": "ADR 0023: Installing OxyOS",
+              "description": "How OxyOS gets from the live image onto a machine's disk as a mature OS installs itself — the tested image written whole, the disk's layout, encryption bound to the Oxy password, the bootloader under Secure Boot, the first boot, updates — and the gate an image passes before any of it.",
+              "file": "oxyos/main/adr/0023-installing-oxyos.mdx",
+              "order": 32,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0024-system-shortcuts",
+              "title": "ADR 0024: System shortcuts",
+              "description": "OxyOS's system keyboard shortcuts, a Mac's with Super as ⌘ — the application switcher, closing, quitting, minimizing and hiding, the windows of an application, full screen and search — who owns each, and why no application ever sees them.",
+              "file": "oxyos/main/adr/0024-system-shortcuts.mdx",
+              "order": 33,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0025-hardware-keys-and-control-center",
+              "title": "ADR 0025: Hardware keys and Control Center",
+              "description": "How OxyOS's volume, microphone, brightness and keyboard backlight keys and its Control Center work as a Mac's — who owns each (the session, through PipeWire's WirePlumber, logind, UPower, NetworkManager and BlueZ), why no application sees the keys, the bezel, and what the shell is told and may ask.",
+              "file": "oxyos/main/adr/0025-hardware-keys-and-control-center.mdx",
+              "order": 34,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0026-notifications",
+              "title": "ADR 0026: Notifications",
+              "description": "How OxyOS applications post notifications through expo-notifications' API, how the session keeps them, how the shell shows them as banners and in the Notification Center, what the lock screen shows, and how a press reaches the application once.",
+              "file": "oxyos/main/adr/0026-notifications.mdx",
+              "order": 35,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0028-file-access",
+              "title": "ADR 0028: File access for applications",
+              "description": "How an OxyOS application reaches files, through Expo's own file system API (expo-file-system), which OxyOS implements over crates/oxyos-files, and what the platform adds that the API lacks (the person's places and the Trash, through Bloom's platform adapter). Stash, the Oxy file manager on every platform, is OxyOS's.",
+              "file": "oxyos/main/adr/0028-file-access.mdx",
+              "order": 37,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0029-chromium-on-oxyos",
+              "title": "ADR 0029: Chromium on OxyOS (Astro)",
+              "description": "How Astro, Oxy's Chromium browser, runs as a native OxyOS application through an Ozone platform of its own — windows, input, buffers today and on the GPU, popups, the frame, sandbox, packaging, the menu bar and accessibility — and what is left.",
+              "file": "oxyos/main/adr/0029-chromium-on-oxyos.mdx",
+              "order": 38,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0030-installing-applications",
+              "title": "ADR 0030: Installing applications (Atlas)",
+              "description": "How OxyOS installs, updates and removes applications from Atlas, Oxy's app store, as a Mac does from the App Store. Covers the package, who signs it and who verifies it, the root-owned install service, the system's confirmation and capabilities, runtimes, updates, what the store's backend must add, and which applications come with the OS.",
+              "file": "oxyos/main/adr/0030-installing-applications.mdx",
+              "order": 39,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0031-gpu-buffers",
+              "title": "ADR 0031: GPU buffers for applications",
+              "description": "How applications draw on the GPU and hand the compositor their buffers with no copy — DMA-BUF with format and modifier negotiation, explicit synchronization on DRM syncobj timelines, damage and feedback, resizes, direct scanout, the fallback to shared memory, security — and how the Bloom host renders on the GPU.",
+              "file": "oxyos/main/adr/0031-gpu-buffers.mdx",
+              "order": 40,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0032-arm",
+              "title": "ADR 0032: ARM (AArch64)",
+              "description": "OxyOS on ARM laptops and boards as well as PCs — which ARM machines come first and in what order, how each boots, its graphics, input, audio and power, how its image and installation differ, the firmware it may carry, and what is not supported.",
+              "file": "oxyos/main/adr/0032-arm.mdx",
+              "order": 41,
+              "section": "guides"
+            },
+            {
+              "slug": "performance",
+              "title": "Performance",
+              "description": "How OxyOS's compositor and Bloom host are measured, the numbers, what they mean and what was fixed.",
+              "file": "oxyos/main/performance.mdx",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "shell-preview",
+              "title": "Shell development preview",
+              "description": "Develop the OxyOS-owned shell components with NativeWind and real Bloom controls.",
+              "file": "oxyos/main/shell-preview.mdx",
+              "order": 1000,
+              "section": "guides"
             }
           ]
         }
       ],
       "versioned": false,
       "latestVersion": "main",
-      "deprecatedVersions": []
-    },
-    {
-      "package": "oxyfont",
-      "displayName": "OxyFont",
-      "shortName": "oxyfont",
-      "repo": "https://github.com/OxyHQ/OxyFont",
-      "category": "ui-library",
-      "description": "Oxy font family (BlomusModernus + variants)",
-      "defaultVersion": "0.1.0",
-      "versions": [
-        {
-          "version": "0.1.0",
-          "pages": [
-            {
-              "slug": "",
-              "title": "OxyFont",
-              "description": "The Oxy display + text font family. BlomusModernus in TrueType and WOFF2.",
-              "file": "oxyfont/0.1.0/index.mdx",
-              "order": 0,
-              "section": "guides"
-            },
-            {
-              "slug": "usage",
-              "title": "Usage",
-              "description": "Load BlomusModernus in web, React Native, and Expo projects.",
-              "file": "oxyfont/0.1.0/usage.mdx",
-              "order": 1,
-              "section": "guides"
-            },
-            {
-              "slug": "specimens",
-              "title": "Specimens",
-              "description": "Live preview of BlomusModernus Regular and Bold across display, body, and caption sizes.",
-              "file": "oxyfont/0.1.0/specimens.mdx",
-              "order": 2,
-              "section": "guides"
-            }
-          ]
-        }
-      ],
-      "versioned": true,
-      "latestVersion": "0.1.0",
       "deprecatedVersions": []
     },
     {
