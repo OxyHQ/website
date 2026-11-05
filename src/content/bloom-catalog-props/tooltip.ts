@@ -5,11 +5,12 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'tooltip',
   propTypes: {
-    'Tooltip': {
+    'TooltipProps': {
       props: [
-        { name: 'children', type: 'React.ReactNode', optional: false },
-        { name: 'position', type: "'top' | 'bottom'", options: ['top', 'bottom'], optional: true },
-        { name: 'visible', type: 'boolean', optional: false },
+        { name: 'children', type: 'ReactNode', optional: false },
+        { name: 'position', type: "'top' | 'bottom'", options: ['top', 'bottom'], optional: true, description: 'A preference: a bubble near a screen edge is nudged back into view.' },
+        { name: 'visible', type: 'boolean', optional: false, description: "The request to show. What sets it (hover, focus, long-press) is the call site's choice." },
+        { name: 'delay', type: 'number', optional: true, description: 'Milliseconds `visible` must stay true before the bubble shows, so a pointer that only passes over the trigger opens nothing. Closing is immediate. Default `0`.' },
         { name: 'onVisibleChange', type: '(visible: boolean) => void', optional: false },
       ],
     },
@@ -33,7 +34,7 @@ export const props: BloomSurfaceProps = {
     },
   },
   components: [
-    { name: 'Tooltip', propsType: 'Tooltip' },
+    { name: 'Tooltip', propsType: 'TooltipProps' },
     { name: 'TooltipTrigger', propsType: 'TooltipTrigger' },
     { name: 'TooltipContent', propsType: 'TooltipContent' },
     { name: 'TooltipTextBubble', propsType: 'TooltipTextBubble' },

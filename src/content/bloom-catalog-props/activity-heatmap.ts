@@ -16,7 +16,7 @@ export const props: BloomSurfaceProps = {
         { name: 'cellSize', type: 'number', optional: true, description: 'Side length of each day cell in px.' },
         { name: 'gap', type: 'number', optional: true, description: 'Gap between cells in px (both axes).' },
         { name: 'weekStartsOn', type: '0 | 1', optional: true, description: 'First day of the week: 0 = Sunday, 1 = Monday. Controls both the row order and how the leading partial week aligns.' },
-        { name: 'monthLabels', type: 'string[]', optional: true, description: '12 short month names indexed by month (0 = January), for the month-label row. Pass localized names; defaults to English abbreviations.' },
+        { name: 'monthLabels', type: 'string[]', optional: true, description: "12 short month names indexed by month (0 = January), for the month-label row. Defaults to the locale's short month names (`monthNames`)." },
         { name: 'weekdayLabels', type: 'string[]', optional: true, description: '7 short weekday names indexed by day of week (0 = Sunday). When provided, a weekday-label column is rendered to the left of the grid. Omit for no weekday column. Pass empty strings for rows you want left blank.' },
         { name: 'onPressDay', type: '(day: ActivityHeatmapDay) => void', optional: true, description: 'Called with the pressed day. When set, each populated cell is pressable.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Container style override.' },

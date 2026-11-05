@@ -27,6 +27,7 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
         { name: 'pressTrigger', type: 'React.ReactElement<OverlayTriggerProps>', optional: true, description: 'An independent primary press surface, composed around the same control after menu handlers.' },
+        { name: 'restoreFocus', type: 'boolean', optional: true, description: "Whether the screen reader's focus comes back to the trigger as the menu closes (default `true`). Read as it closes. `false` for a trigger that hands focus elsewhere itself: a system menu opened with the pointer, whose choice gives the keyboard back to the window that had it, as a Mac's menu bar extras do. Native only: on web the browser owns focus." },
       ],
     },
     'MenuSurfaceProps': {

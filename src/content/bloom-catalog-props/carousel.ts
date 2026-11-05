@@ -42,9 +42,27 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'CarouselDotsProps': {
+      props: [
+        { name: 'count', type: 'number', optional: false, description: 'How many slides (or stops) the dots stand for. No dots are drawn for fewer than two.' },
+        { name: 'index', type: 'number', optional: false, description: 'The zero-based active slide.' },
+        { name: 'onIndexChange', type: '(index: number) => void', optional: true, description: 'Makes each dot a button that requests its slide. Without it the dots are a decorative position indicator: hidden from assistive technology and inert to pointers, for a gallery whose own controls already name the position.' },
+        { name: 'dotLabel', type: '(slide: number) => string', optional: true, description: 'Accessible name of a dot. Defaults to the localised `` n => `Go to slide ${n}` `` (in English).' },
+        { name: 'shape', type: "'pill' | 'dot'", options: ['pill', 'dot'], optional: true, description: "`'pill'` stretches the active dot to `activeWidth`; `'dot'` keeps every dot round and tells the active one by opacity. Defaults to `'pill'`." },
+        { name: 'appearance', type: "'default' | 'onMedia'", options: ['default', 'onMedia'], optional: true, description: "`'default'` paints the text colour over the tertiary surface; `'onMedia'` paints every dot in the light drawn over a photo, the inactive ones at `inactiveOpacity`. Defaults to `'default'`." },
+        { name: 'maxDots', type: 'number', optional: true, description: 'The most dots drawn; a longer run slides a window that follows the active slide, its edge dots shrinking to 4px while more slides lie beyond. Defaults to every slide.' },
+        { name: 'activeWidth', type: 'number', optional: true, description: "The active pill's width, px. Defaults to `16`." },
+        { name: 'activeOpacity', type: 'number', optional: true, description: 'Opacity of the active dot. Defaults to `1`.' },
+        { name: 'inactiveOpacity', type: 'number', optional: true, description: 'Opacity of the other dots. Defaults to `0.6` on media, `1` otherwise.' },
+        { name: 'duration', type: 'number', optional: true, description: 'How long a dot eases between states, ms; skipped under reduced motion. Defaults to `200`.' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: "Style of the row — position it here (an overlay's `position: 'absolute'`, an inset)." },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'Carousel', propsType: 'CarouselProps' },
     { name: 'CarouselItem', propsType: 'CarouselItemProps' },
+    { name: 'CarouselDots', propsType: 'CarouselDotsProps' },
   ],
 }
