@@ -1,7 +1,9 @@
+import { BloomColorScope } from '@oxy.so/bloom/theme';
+import { FAIRCOIN_PRESET } from '../../../theme/brands';
 import { useLayoutEffect, useRef, type RefObject } from 'react';
 import { gsap } from 'gsap';
 import { CustomEase } from 'gsap/CustomEase';
-import Button from './FairCoinButton';
+import Button from '../../ui/Button';
 import LandingPhone from './LandingPhone';
 
 gsap.registerPlugin(CustomEase);
@@ -204,63 +206,65 @@ export default function FairCoinIntro({
   }, [target, onComplete]);
 
   return (
-    <div
-      ref={root}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Welcome to FairCoin"
-      tabIndex={-1}
-      className="faircoin-editorial fixed inset-0 z-[200] overflow-hidden text-foreground outline-none [font-family:'FairCoin_Editorial',sans-serif]"
-    >
-      <div data-intro-backdrop className="absolute inset-0 bg-card" />
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-[13.27014svh] p-[15px] min-[1025px]:flex-row min-[1025px]:justify-between min-[1025px]:gap-0 min-[1025px]:p-5">
-        <div className="relative text-[42px] leading-[1.2] tracking-[-0.03em] min-[1025px]:flex-1 min-[1025px]:text-[72px]">
-          <Words side="left" phase={0}>
-            The shape
-          </Words>
-          <Words side="left" phase={1}>
-            FairCoin
-          </Words>
-        </div>
-        <div data-intro-spinner className="relative size-[120px] shrink-0">
-          {OBJECTS.map((src, i) => (
-            <img
-              key={src}
-              data-intro-object={i}
-              src={src}
-              width={120}
-              height={120}
-              alt=""
-              className="absolute inset-0 size-full object-contain"
-            />
-          ))}
-        </div>
-        <div className="relative text-[42px] leading-[1.2] tracking-[-0.03em] min-[1025px]:flex-1 min-[1025px]:text-[72px]">
-          <Words side="right" phase={0}>
-            of money
-          </Words>
-          <Words side="right" phase={1}>
-            For everyone
-          </Words>
-        </div>
-      </div>
+    <BloomColorScope colorPreset={FAIRCOIN_PRESET} mode="light" asChild>
       <div
-        data-intro-phone
-        aria-hidden="true"
-        className="faircoin-editorial-green pointer-events-none absolute left-0 top-0 overflow-hidden bg-primary will-change-transform"
+        ref={root}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Welcome to FairCoin"
+        tabIndex={-1}
+        className="faircoin-editorial fixed inset-0 z-[200] overflow-hidden text-foreground outline-none [font-family:'FairCoin_Editorial',sans-serif]"
       >
+        <div data-intro-backdrop className="absolute inset-0 bg-card" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-[13.27014svh] p-[15px] min-[1025px]:flex-row min-[1025px]:justify-between min-[1025px]:gap-0 min-[1025px]:p-5">
+          <div className="relative text-[42px] leading-[1.2] tracking-[-0.03em] min-[1025px]:flex-1 min-[1025px]:text-[72px]">
+            <Words side="left" phase={0}>
+              The shape
+            </Words>
+            <Words side="left" phase={1}>
+              FairCoin
+            </Words>
+          </div>
+          <div data-intro-spinner className="relative size-[120px] shrink-0">
+            {OBJECTS.map((src, i) => (
+              <img
+                key={src}
+                data-intro-object={i}
+                src={src}
+                width={120}
+                height={120}
+                alt=""
+                className="absolute inset-0 size-full object-contain"
+              />
+            ))}
+          </div>
+          <div className="relative text-[42px] leading-[1.2] tracking-[-0.03em] min-[1025px]:flex-1 min-[1025px]:text-[72px]">
+            <Words side="right" phase={0}>
+              of money
+            </Words>
+            <Words side="right" phase={1}>
+              For everyone
+            </Words>
+          </div>
+        </div>
         <div
-          data-intro-screen
-          className="size-full rounded-[inherit] [&>[data-faircoin-phone]]:h-full [&>[data-faircoin-phone]]:rounded-[inherit]"
+          data-intro-phone
+          aria-hidden="true"
+          className="faircoin-editorial-green pointer-events-none absolute left-0 top-0 overflow-hidden bg-primary will-change-transform"
         >
-          <LandingPhone paused />
+          <div
+            data-intro-screen
+            className="size-full rounded-[inherit] [&>[data-faircoin-phone]]:h-full [&>[data-faircoin-phone]]:rounded-[inherit]"
+          >
+            <LandingPhone paused />
+          </div>
+        </div>
+        <div data-intro-skip className="absolute right-5 top-5">
+          <Button variant="ghost" onClick={onComplete}>
+            Skip intro →
+          </Button>
         </div>
       </div>
-      <div data-intro-skip className="absolute right-5 top-5">
-        <Button variant="ghost" onClick={onComplete}>
-          Skip intro →
-        </Button>
-      </div>
-    </div>
+    </BloomColorScope>
   );
 }

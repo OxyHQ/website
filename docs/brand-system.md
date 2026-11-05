@@ -100,8 +100,10 @@ component context must resolve the same named recipe before and after JavaScript
 
 The FairCoin buy flow uses the same editorial type and recipe surfaces, with its purchase form immediately after the title. Keep the shared
 header transparent and its brand symbol accessible without a visible wordmark;
-the footer retains its full identity. Use Bloom controls with scoped tokens for
-every interaction state. Only the server quote establishes the payment price;
+the footer retains its full identity. Use standard Bloom buttons and accordion controls, with the named recipe
+provided through `BloomColorScope` for each light or dark section. Keep page
+classes limited to placement and width: no local button wrapper, pseudo-element
+paint, typography, padding, radius or disabled-state overrides. Only the server quote establishes the payment price;
 do not display an estimated conversion before a quote exists.
 
 The regression commands are:

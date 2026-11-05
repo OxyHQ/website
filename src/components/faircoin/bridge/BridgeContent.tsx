@@ -1,3 +1,4 @@
+import { Button as BloomButton } from '@oxy.so/bloom/button';
 import { useMemo } from 'react';
 import { Link } from '../../../lib/navigation';
 import { motion } from 'framer-motion';
@@ -151,35 +152,29 @@ function BridgeHero() {
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.15 }}
             className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:gap-4"
           >
-            <a
+            <BloomButton
               href={UNISWAP_SWAP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-[0_8px_24px_-8px] shadow-primary/40 transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
+              appearance="solid"
+              tone="accent"
+              trailingIcon={RiArrowRightLine}
             >
               Trade WFAIR
-              <span
-                aria-hidden="true"
-                className="inline-flex transition-transform group-hover:translate-x-0.5"
-              >
-                <RiArrowRightLine width={16} height={16} fill="currentColor" />
-              </span>
-            </a>
-            <Link
-              to={fc('/unwrap')}
-              className="inline-flex h-12 items-center gap-2 rounded-full border border-border bg-background/60 px-6 text-sm font-semibold text-foreground backdrop-blur-sm transition-all duration-200 hover:border-primary/50 hover:bg-background"
-            >
-              Redeem WFAIR
-            </Link>
-            <a
+            </BloomButton>
+            <BloomButton asChild appearance="outline" tone="neutral">
+              <Link to={fc('/unwrap')}>Redeem WFAIR</Link>
+            </BloomButton>
+            <BloomButton
               href={BASESCAN_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-12 items-center gap-2 rounded-full px-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              appearance="plain"
+              tone="neutral"
+              leadingIcon={RiShieldCheckLine}
             >
-              <RiShieldCheckLine width={16} height={16} fill="currentColor" />
               Contract on Basescan
-            </a>
+            </BloomButton>
           </motion.div>
         </div>
       </div>
@@ -344,18 +339,15 @@ function CurlBlock({ value }: { value: string }) {
       <pre className="flex-1 overflow-x-auto font-mono text-body-xs leading-relaxed text-foreground/80">
         <code>{value}</code>
       </pre>
-      <button
-        type="button"
-        onClick={() => void copy(value)}
-        aria-label="Copy curl command"
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/20"
-      >
-        {copied ? (
-          <RiCheckboxCircleLine width={14} height={14} fill="currentColor" />
-        ) : (
-          <RiFileCopyLine width={14} height={14} fill="currentColor" />
-        )}
-      </button>
+      <BloomButton
+        appearance="plain"
+        tone="neutral"
+        size="sm"
+        iconOnly
+        icon={copied ? RiCheckboxCircleLine : RiFileCopyLine}
+        onPress={() => void copy(value)}
+        accessibilityLabel="Copy curl command"
+      />
     </div>
   );
 }

@@ -197,14 +197,10 @@ export default function PhoneMockup() {
 
           {/* ---- Top bar overlaid on hero: wallet name + sync pill ---- */}
           <div className="relative z-20 flex items-center justify-between px-5 pt-2 pb-3">
-            <button
-              type="button"
-              className="flex items-center gap-0.5 text-foreground"
-              style={TEXT_SHADOW_LIGHT}
-            >
+            <span className="flex items-center gap-0.5 text-foreground" style={TEXT_SHADOW_LIGHT}>
               <span className="text-[15px] font-semibold">Main wallet</span>
               <ChevronDownGlyph />
-            </button>
+            </span>
             <div className="flex items-center gap-1 text-foreground" style={TEXT_SHADOW_LIGHT}>
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               <span className="text-[11px]">Synced</span>

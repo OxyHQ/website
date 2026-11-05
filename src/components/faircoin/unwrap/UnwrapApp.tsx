@@ -1,3 +1,4 @@
+import { Button as BloomButton } from '@oxy.so/bloom/button';
 /**
  * UnwrapApp — app-style WFAIR → native FAIR redemption flow.
  *
@@ -183,42 +184,32 @@ function ConnectStep() {
       {connectors.map((connector) => {
         const isThisPending = isConnecting && chosen === connector.uid;
         return (
-          <button
-            key={connector.uid}
-            type="button"
-            disabled={isConnecting}
-            onClick={() => {
-              setChosen(connector.uid);
-              connect({ connector, chainId: base.id });
-            }}
-            className="flex h-14 items-center justify-between rounded-2xl border border-border bg-background/60 px-4 text-left transition-all duration-150 hover:border-primary/50 hover:bg-background disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <span className="flex items-center gap-3">
-              <span
-                aria-hidden
-                className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary"
-              >
-                <RiWallet3Line width={16} height={16} fill="currentColor" />
-              </span>
-              <span className="flex flex-col">
-                <span className="text-sm font-semibold text-foreground">
-                  {connectorLabel(connector.name, connector.id)}
-                </span>
-                <span className="text-body-xs text-muted-foreground">
-                  {connectorHint(connector.id)}
-                </span>
-              </span>
-            </span>
-            {isThisPending ? (
-              <span aria-hidden="true" className="inline-flex animate-spin text-muted-foreground">
-                <RiLoader4Line width={16} height={16} fill="currentColor" />
-              </span>
-            ) : (
-              <span aria-hidden="true" className="inline-flex text-muted-foreground">
-                <RiArrowRightLine width={16} height={16} fill="currentColor" />
-              </span>
-            )}
-          </button>
+          <div key={connector.uid}>
+            <BloomButton
+              appearance="outline"
+              tone="neutral"
+              className="w-full"
+              leadingIcon={RiWallet3Line}
+              trailingIcon={RiArrowRightLine}
+              disabled={isConnecting}
+              loading={isThisPending}
+              asChild
+              onPress={() => {
+                setChosen(connector.uid);
+                connect({ connector, chainId: base.id });
+              }}
+            >
+              <button type="button" aria-describedby={`unwrap-connector-${connector.uid}-hint`}>
+                {connectorLabel(connector.name, connector.id)}
+              </button>
+            </BloomButton>
+            <p
+              id={`unwrap-connector-${connector.uid}-hint`}
+              className="mt-1 text-xs text-muted-foreground"
+            >
+              {connectorHint(connector.id)}
+            </p>
+          </div>
         );
       })}
 
@@ -381,14 +372,16 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
               Your wallet is on the wrong network. WFAIR lives on <strong>Base mainnet</strong>.
             </span>
           </div>
-          <button
+          <BloomButton
+            appearance="solid"
+            tone="warning"
+            loading={isSwitchingChain}
             type="button"
             disabled={isSwitchingChain}
-            onClick={() => switchChain({ chainId: base.id })}
-            className="h-10 rounded-xl bg-warning text-sm font-semibold text-warning-foreground transition-all hover:brightness-110 disabled:opacity-60"
+            onPress={() => switchChain({ chainId: base.id })}
           >
             {isSwitchingChain ? 'Switching network…' : 'Switch to Base'}
-          </button>
+          </BloomButton>
         </div>
       ) : null}
 
@@ -424,27 +417,31 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
           </div>
         </div>
         <div className="mt-2.5 flex items-center gap-2">
-          <button
+          <BloomButton
+            appearance="outline"
+            tone="neutral"
             type="button"
-            onClick={handleMax}
+            size="xs"
+            onPress={handleMax}
             disabled={balanceWei === 0n}
-            className="rounded-full bg-primary/10 px-2.5 py-1 text-body-xs font-semibold text-primary transition-colors hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Max
-          </button>
+          </BloomButton>
           {(['25', '50', '75'] as const).map((pct) => {
             const fraction = (balanceWei * BigInt(Number(pct))) / 100n;
             const display = formatUnits(fraction, WFAIR_DECIMALS);
             return (
-              <button
+              <BloomButton
+                appearance="outline"
+                tone="neutral"
+                size="xs"
                 key={pct}
                 type="button"
-                onClick={() => setAmount(display)}
+                onPress={() => setAmount(display)}
                 disabled={balanceWei === 0n}
-                className="rounded-full bg-muted px-2.5 py-1 text-body-xs font-semibold text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {pct}%
-              </button>
+              </BloomButton>
             );
           })}
         </div>
@@ -536,37 +533,22 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
       ) : null}
 
       {/* CTA */}
-      <button
+      <BloomButton
+        appearance="solid"
+        tone="accent"
+        size="lg"
+        className="w-full"
         type="submit"
         disabled={!canSubmit}
-        className="group flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-base font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground sm:h-14"
+        loading={writeContract.isPending || burnReceipt.isLoading}
+        trailingIcon={RiArrowRightLine}
       >
-        {writeContract.isPending ? (
-          <>
-            <span aria-hidden="true" className="inline-flex animate-spin">
-              <RiLoader4Line width={16} height={16} fill="currentColor" />
-            </span>
-            Confirm in your wallet…
-          </>
-        ) : burnReceipt.isLoading ? (
-          <>
-            <span aria-hidden="true" className="inline-flex animate-spin">
-              <RiLoader4Line width={16} height={16} fill="currentColor" />
-            </span>
-            Waiting for confirmation…
-          </>
-        ) : (
-          <>
-            Redeem WFAIR
-            <span
-              aria-hidden="true"
-              className="inline-flex transition-transform group-hover:translate-x-0.5"
-            >
-              <RiArrowRightLine width={16} height={16} fill="currentColor" />
-            </span>
-          </>
-        )}
-      </button>
+        {writeContract.isPending
+          ? 'Confirm in your wallet…'
+          : burnReceipt.isLoading
+            ? 'Waiting for confirmation…'
+            : 'Redeem WFAIR'}
+      </BloomButton>
 
       {writeError && !writeContract.isPending ? (
         <ErrorBanner message={describeWriteError(writeError)} />
@@ -677,14 +659,15 @@ function UnwrapFailed({ burn, onReset }: { burn: ActiveBurn; onReset: () => void
         </div>
         <p className="mt-1 break-all font-mono text-xs text-foreground">{burn.txHash}</p>
       </div>
-      <button
+      <BloomButton
+        appearance="outline"
+        tone="neutral"
         type="button"
-        onClick={onReset}
-        className="flex h-12 items-center justify-center gap-2 rounded-full border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+        onPress={onReset}
+        leadingIcon={RiResetLeftLine}
       >
-        <RiResetLeftLine aria-hidden width={16} height={16} fill="currentColor" />
         Start a new redemption
-      </button>
+      </BloomButton>
     </div>
   );
 }
@@ -726,40 +709,39 @@ function UnwrapSuccess({
 
       <div className="flex w-full flex-col gap-2">
         {explorerUrl ? (
-          <a
+          <BloomButton
             href={explorerUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between gap-3 rounded-full border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
+            appearance="outline"
+            tone="neutral"
+            trailingIcon={RiExternalLinkLine}
           >
-            <span className="text-foreground">FairCoin transaction</span>
-            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              Explorer
-              <RiExternalLinkLine aria-hidden width={12} height={12} fill="currentColor" />
-            </span>
-          </a>
+            FairCoin transaction
+          </BloomButton>
         ) : null}
-        <a
+        <BloomButton
           href={burnUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-between gap-3 rounded-full border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
+          appearance="outline"
+          tone="neutral"
+          trailingIcon={RiExternalLinkLine}
         >
-          <span className="text-foreground">Base burn</span>
-          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            Basescan
-            <RiExternalLinkLine aria-hidden width={12} height={12} fill="currentColor" />
-          </span>
-        </a>
+          Base burn
+        </BloomButton>
       </div>
 
-      <button
+      <BloomButton
+        appearance="solid"
+        tone="accent"
+        className="w-full"
         type="button"
-        onClick={onReset}
-        className="h-12 w-full rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
+        onPress={onReset}
+        leadingIcon={RiResetLeftLine}
       >
         Redeem more WFAIR
-      </button>
+      </BloomButton>
     </div>
   );
 }
@@ -878,26 +860,24 @@ function ConnectedPill({
     <div className="inline-flex items-center gap-1 rounded-full border border-border bg-popover/80 p-0.5 pl-3">
       <span aria-hidden className="flex h-2 w-2 rounded-full bg-success" />
       <span className="font-mono text-xs text-foreground">{shortAddress(address)}</span>
-      <button
-        type="button"
-        onClick={() => void copy(address)}
-        aria-label="Copy address"
-        className="flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
-      >
-        {copied ? (
-          <RiCheckboxCircleLine width={14} height={14} fill="currentColor" />
-        ) : (
-          <RiFileCopyLine width={14} height={14} fill="currentColor" />
-        )}
-      </button>
-      <button
-        type="button"
-        onClick={onDisconnect}
-        aria-label="Disconnect wallet"
-        className="flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
-      >
-        <RiLogoutBoxRLine width={14} height={14} fill="currentColor" />
-      </button>
+      <BloomButton
+        appearance="plain"
+        tone="neutral"
+        size="sm"
+        iconOnly
+        icon={copied ? RiCheckboxCircleLine : RiFileCopyLine}
+        onPress={() => void copy(address)}
+        accessibilityLabel="Copy address"
+      />
+      <BloomButton
+        appearance="plain"
+        tone="neutral"
+        size="sm"
+        iconOnly
+        icon={RiLogoutBoxRLine}
+        onPress={onDisconnect}
+        accessibilityLabel="Disconnect wallet"
+      />
     </div>
   );
 }

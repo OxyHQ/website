@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import Button from '../cash/FairCoinButton';
+import Button from '../../ui/Button';
 import { fc } from '../../../lib/faircoin-links';
 import '../cash/fonts.css';
 
@@ -24,7 +24,7 @@ export default function BuyShell({
   return (
     <div
       data-faircoin-buy
-      className="faircoin-editorial mx-auto max-w-[2600px] bg-card text-foreground [font-family:'FairCoin_Editorial',sans-serif] [--buy-banner-height:0px] [body:has(.site-banner)_&]:[--buy-banner-height:var(--site-header-banner-visible-height)] pt-[calc(var(--site-header-height)+var(--buy-banner-height)+32px)] min-[760px]:pt-[calc(var(--site-header-height)+var(--buy-banner-height)+48px)] lg:pt-[calc(var(--site-header-height)+var(--buy-banner-height)+64px)] [&_.bloom-btn]:!bg-none [&_.bloom-btn::after]:!bg-none [&_.bloom-btn::after]:!shadow-none"
+      className="faircoin-editorial mx-auto max-w-[2600px] bg-card text-foreground [font-family:'FairCoin_Editorial',sans-serif] [--buy-banner-height:0px] [body:has(.site-banner)_&]:[--buy-banner-height:var(--site-header-banner-visible-height)] pt-[calc(var(--site-header-height)+var(--buy-banner-height)+32px)] min-[760px]:pt-[calc(var(--site-header-height)+var(--buy-banner-height)+48px)] lg:pt-[calc(var(--site-header-height)+var(--buy-banner-height)+64px)]"
     >
       <section aria-labelledby="buy-title" className="px-[5px] lg:px-5">
         <div className="mx-auto mb-7 max-w-[820px] px-4 text-center lg:mb-10">
@@ -119,8 +119,12 @@ export default function BuyShell({
         <div className="mt-12 flex flex-col items-start justify-between gap-6 border-t border-border pt-8 md:flex-row md:items-center lg:mt-16">
           <p className="text-xl leading-tight">Your FairCoin. Your own wallet.</p>
           <div className="flex flex-wrap gap-3">
-            <Button href={fc('/wallet/')}>Get FAIRWallet</Button>
-            <Button href={fc('/bridge/')}>Explore the bridge</Button>
+            <Button variant="outline" href={fc('/wallet/')}>
+              Get FAIRWallet
+            </Button>
+            <Button variant="outline" href={fc('/bridge/')}>
+              Explore the bridge
+            </Button>
           </div>
         </div>
       </section>
