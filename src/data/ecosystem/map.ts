@@ -6,6 +6,8 @@ export interface EcosystemProject {
   name: string;
   description: string;
   icon?: { src: string; monochrome?: boolean };
+  /** An Oxy app: its icon comes from the app store, by the product id it has on the site. */
+  productId?: string;
   /** A product introduction, not a claim that every service is available. */
   href?: string;
 }
@@ -130,7 +132,7 @@ export const ecosystemDomains: EcosystemDomain[] = [
         projects: [
           {
             name: 'Homiio',
-            icon: { src: BRAND_MARKS.homiio },
+            productId: 'homiio',
             description: 'Explore homes and renting.',
             href: '/homiio/',
           },
@@ -209,7 +211,7 @@ export const ecosystemDomains: EcosystemDomain[] = [
         projects: [
           {
             name: 'Moovo',
-            icon: { src: BRAND_MARKS.moovo },
+            productId: 'm', // Moovo's CMS row
             description: 'Discover the mobility project.',
             href: 'https://moovo.now/',
           },
@@ -249,13 +251,13 @@ export const ecosystemDomains: EcosystemDomain[] = [
         projects: [
           {
             name: 'Allo',
-            icon: { src: BRAND_MARKS.allo },
+            productId: 'allo',
             description: 'Private conversations.',
             href: 'https://allo.you/',
           },
           {
             name: 'Inbox',
-            icon: { src: BRAND_MARKS.inbox },
+            productId: 'i', // Inbox's CMS row
             description: 'A calmer way to handle email.',
             href: '/inbox/',
           },
@@ -270,7 +272,7 @@ export const ecosystemDomains: EcosystemDomain[] = [
         projects: [
           {
             name: 'Mention',
-            icon: { src: BRAND_MARKS.mention },
+            productId: 'mention',
             description: 'Social expression and community.',
             href: '/mention/',
           },
@@ -330,7 +332,7 @@ export const ecosystemDomains: EcosystemDomain[] = [
         projects: [
           {
             name: 'Mercaria',
-            icon: { src: BRAND_MARKS.mercaria },
+            productId: 'marketplace', // Mercaria's CMS row
             description: 'An open marketplace.',
             href: '/mercaria/',
           },
@@ -351,7 +353,7 @@ export const ecosystemDomains: EcosystemDomain[] = [
           },
           {
             name: 'FairCoin',
-            icon: { src: BRAND_MARKS.faircoin },
+            productId: 'faircoin',
             description: 'An ethical digital currency.',
             href: '/faircoin/',
           },
@@ -388,7 +390,7 @@ export const ecosystemDomains: EcosystemDomain[] = [
         projects: [
           {
             name: 'TNP',
-            icon: { src: BRAND_MARKS.tnp },
+            productId: 'tnp',
             description: 'Explore open network infrastructure.',
             href: '/tnp/',
           },

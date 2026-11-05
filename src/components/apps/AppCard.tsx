@@ -43,17 +43,14 @@ export function AppIcon({
       />
     );
   }
-  // Most records have no uploaded logo, so the brand mark stands in: an empty
-  // hole where the icon goes reads as a broken image.
-  // The mark sits on the product's own brand colour, not on the page, so it
-  // takes `.force-dark` and `--foreground` is light ink in either theme.
+  // The store has no icon for this app yet: a neutral tile with its initial
+  // stands in, so an empty hole never reads as a broken image.
   return (
     <span
       aria-hidden="true"
-      className={`force-dark flex size-full items-center justify-center rounded-sm font-display text-[1.25em] ${className}`}
-      style={{ background: product.brand, color: product.brandForeground ?? 'var(--foreground)' }}
+      className={`flex size-full items-center justify-center rounded-sm bg-muted font-display text-[1.25em] text-muted-foreground ${className}`}
     >
-      {product.mark}
+      {product.name.charAt(0).toUpperCase()}
     </span>
   );
 }

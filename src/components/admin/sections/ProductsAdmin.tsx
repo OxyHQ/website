@@ -126,7 +126,7 @@ function slugify(input: string): string {
 }
 
 export default function ProductsAdmin() {
-  const { data, refetch } = useProducts();
+  const { data, refetch } = useProducts({ source: 'cms' });
   const { data: categoriesData } = useCategories('apps');
   const categories = categoriesData ?? [];
   const [editing, setEditing] = useState<ProductRecord | null>(null);

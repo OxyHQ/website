@@ -57,7 +57,6 @@ export default function OxyAppsFeatureGrid({
     {
       type: 'profile',
       image: APP_CARD_IMAGES['/inbox'],
-      logo: '/images/apps/inbox.png',
       name: 'Inbox',
       role: t('products.inboxDescription'),
       href: '/inbox',
@@ -66,7 +65,6 @@ export default function OxyAppsFeatureGrid({
     {
       type: 'profile',
       image: APP_CARD_IMAGES['/astro'],
-      logo: '/images/apps/astro.svg',
       name: 'Astro',
       role: t('products.astroDescription'),
       href: '/astro',
@@ -75,7 +73,6 @@ export default function OxyAppsFeatureGrid({
     {
       type: 'profile',
       image: APP_CARD_IMAGES['/ai'],
-      logo: '/images/apps/alia.svg',
       cornerIcon: '/images/apps/alia-corner.svg',
       name: 'Alia',
       role: t('products.aliaDescription'),
@@ -85,7 +82,6 @@ export default function OxyAppsFeatureGrid({
     {
       type: 'profile',
       image: APP_CARD_IMAGES['/os'],
-      logo: '/images/apps/oxyos.png',
       name: 'OxyOS',
       role: t('products.oxyOSDescription'),
       href: '/os',

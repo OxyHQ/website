@@ -1,12 +1,16 @@
 import { RiTeamLine } from '@oxy.so/bloom/icons/RiTeamLine';
+import { useAppIconUrl } from '../../api/hooks';
 import type { EcosystemProject } from '../../data/ecosystem/map';
 import { Link } from '../../lib/navigation';
 
 export default function ProjectItem({ project }: { project: EcosystemProject }) {
+  const storeIcon = useAppIconUrl(project.productId ?? '');
   const content = (
     <>
       <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-card shadow-xs ring-1 ring-foreground/10 transition-transform group-hover:scale-105 motion-reduce:transition-none">
-        {project.icon ? (
+        {storeIcon ? (
+          <img src={storeIcon} width={64} height={64} alt="" className="size-16 object-contain" />
+        ) : project.icon ? (
           project.icon.monochrome ? (
             <span
               aria-hidden="true"

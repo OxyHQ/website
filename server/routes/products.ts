@@ -9,8 +9,13 @@ import { adminOnly } from '../middleware/siteAdmin.js';
 import { localeMiddleware } from '../middleware/locale.js';
 import { localizeMany, localizeOne } from '../utils/localize.js';
 import { validate } from '../utils/validate.js';
+import { appCatalogue } from '../services/appStoreCatalogue.js';
+import { applyAppListing, reportUnlistedProducts } from '../services/appListing.js';
 
 const router = Router();
+
+/** A product row as the API returns it, before the store's listing is joined on. */
+type ProductDoc = { productId: string; name: string; tagline: string };
 
 /** The referenced rows every product response carries inline. */
 const PRODUCT_REFS = { logo: media, category: categories };
@@ -55,6 +60,12 @@ const listQuerySchema = z.object({
   surface: z.enum(['products', 'status', 'nav']).optional(),
   lifecycle: z.enum(['live', 'in-development']).optional(),
   section: z.string().optional(),
+  /**
+   * `cms` returns the rows as stored, with no app-store join. The admin edits
+   * the rows it reads, so saving a joined copy would write the store's name
+   * back into the CMS.
+   */
+  source: z.enum(['cms']).optional(),
 });
 
 router.get('/', localeMiddleware, async (req, res) => {
@@ -77,7 +88,14 @@ router.get('/', localeMiddleware, async (req, res) => {
       asc(products._id),
     );
 
-  res.json(await localizeMany(req, 'products', await populate(rows, PRODUCT_REFS)));
+  const docs = await localizeMany(req, 'products', await populate(rows, PRODUCT_REFS));
+  if (query.source === 'cms') return res.json(docs);
+  const index = await appCatalogue.get();
+  reportUnlistedProducts(
+    docs.map((doc) => String(doc.productId)),
+    index,
+  );
+  res.json(docs.map((doc) => applyAppListing(doc as ProductDoc, index)));
 });
 
 router.get('/:productId', localeMiddleware, async (req, res) => {
@@ -88,7 +106,10 @@ router.get('/:productId', localeMiddleware, async (req, res) => {
     .limit(1);
   const doc = await populateOne(row, PRODUCT_REFS);
   if (!doc) return res.status(404).json({ error: 'Not found' });
-  res.json(await localizeOne(req, 'products', doc));
+  const localized = await localizeOne(req, 'products', doc);
+  const index = await appCatalogue.get();
+  reportUnlistedProducts([String(localized.productId)], index);
+  res.json(applyAppListing(localized as ProductDoc, index));
 });
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {
