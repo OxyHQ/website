@@ -205,6 +205,13 @@ jobs:
       # `--frozen-lockfile` so the Bloom catalog below is checked against the
       # Bloom version the lockfile pins, not whatever resolves today.
       - run: bun install --frozen-lockfile
+      # @oxy.so/doctor: an @oxy.so release left behind for more than 14 days,
+      # and more than one locked or installed copy of a package where one would
+      # do (two @oxy.so/core, two socket.io-client). This is a web-only target,
+      # so it requires none of @oxy.so/services' native peers, and the
+      # @fairwallet/bloom alias counts as a separate copy.
+      - name: Verify Oxy dependency health
+        run: bun run doctor:oxy
       - name: Lint and format (Biome)
         run: bunx biome ci .
       # Only what Biome cannot check: the React Compiler rules from
