@@ -26,12 +26,13 @@ export const props: BloomSurfaceProps = {
     'TableColumnProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true, description: "Header label. A string is rendered in the header's own type." },
+        { name: 'leading', type: 'React.ReactNode', optional: true, description: 'Drawn before the label, 8px from it and OUTSIDE the sort button — a select-all checkbox, which a `<button>` may not contain.' },
         { name: 'onSort', type: '() => void', optional: true, description: 'Makes the header a sort button: label plus a sort chevron. Pair with `sortDirection`.' },
         { name: 'sortDirection', type: 'TableSortDirection', options: ['ascending', 'descending', 'none'], optional: true, description: "Current sort of this column. Only meaningful with `onSort`. Defaults to `'none'`." },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names a header whose `children` is not a plain string.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
-        { name: 'width', type: 'number', optional: true, description: 'Fixed width in px. Wins over `flex`.' },
+        { name: 'width', type: "number | 'auto'", optional: true, description: "Fixed width in px, or `'auto'` to hug the content (no share of the rest). Wins over `flex`." },
         { name: 'flex', type: 'number', optional: true, description: 'Share of the remaining width. Defaults to `1`.' },
         { name: 'minWidth', type: 'number', optional: true, description: 'Floor for a flexed column.' },
         { name: 'align', type: 'TableAlign', options: ['start', 'center', 'end'], optional: true },
@@ -58,7 +59,7 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: true, description: 'Cell content. A string or number is rendered in the body type.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
-        { name: 'width', type: 'number', optional: true, description: 'Fixed width in px. Wins over `flex`.' },
+        { name: 'width', type: "number | 'auto'", optional: true, description: "Fixed width in px, or `'auto'` to hug the content (no share of the rest). Wins over `flex`." },
         { name: 'flex', type: 'number', optional: true, description: 'Share of the remaining width. Defaults to `1`.' },
         { name: 'minWidth', type: 'number', optional: true, description: 'Floor for a flexed column.' },
         { name: 'align', type: 'TableAlign', options: ['start', 'center', 'end'], optional: true },

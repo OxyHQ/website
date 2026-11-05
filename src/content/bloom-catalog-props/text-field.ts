@@ -69,10 +69,10 @@ export const props: BloomSurfaceProps = {
         { name: 'position', type: "'leading' | 'trailing'", options: ['leading', 'trailing'], optional: true, description: '`leading` (default) sits 2px before the input; `trailing` 8px after it.' },
       ],
     },
-    'PropsWithChildren<…>': {
+    'TextFieldAffixProps': {
       props: [
         { name: 'style', type: 'TextStyle | TextStyle[]', optional: true },
-        { name: 'label', type: 'string', optional: false },
+        { name: 'label', type: 'string', optional: false, description: 'What the adornment says to a screen reader — the unit or currency it names.' },
         { name: 'accessibilityHint', type: "AccessibilityProps['accessibilityHint']", optional: true },
       ],
       inheritsFrom: ['React.PropsWithChildren<…>'],
@@ -91,7 +91,8 @@ export const props: BloomSurfaceProps = {
     { name: 'TextFieldLabel', propsType: 'TextFieldLabelProps' },
     { name: 'TextFieldHint', propsType: 'TextFieldHintProps' },
     { name: 'TextFieldIcon', propsType: 'TextFieldIconProps' },
-    { name: 'TextFieldSuffix', propsType: 'PropsWithChildren<…>' },
+    { name: 'TextFieldSuffix', propsType: 'TextFieldAffixProps' },
+    { name: 'TextFieldPrefix', propsType: 'TextFieldAffixProps' },
     { name: 'TextFieldGhost', propsType: 'TextFieldGhost' },
   ],
 }

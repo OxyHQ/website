@@ -27,10 +27,10 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
-    'SelectValueProps': {
+    'SelectValueProps<T>': {
       props: [
-        { name: 'children', type: '(value: unknown) => React.ReactNode', optional: true, description: 'Extracts the display text from the currently-selected item. Defaults to `item => item.label`.' },
-        { name: 'leading', type: 'React.ReactNode | ((item: unknown) => React.ReactNode)', optional: true, description: 'A node before the value — a status dot, an icon — laid out `gap-[5px]` (`gap-1` on `sm`), the way the trigger shows an option whose content leads with one. A function receives the selected item (`undefined` while nothing is chosen), so the mark can follow the value.' },
+        { name: 'children', type: '(item: T) => React.ReactNode', optional: true, description: "Extracts the display text from the currently-selected ITEM — the entry of `SelectContent`'s `items` whose value is chosen, on both platforms, never the bare value string. A value no item matches shows as itself. Defaults to `item => item.label`." },
+        { name: 'leading', type: 'React.ReactNode | ((item: T | undefined) => React.ReactNode)', optional: true, description: 'A node before the value — a status dot, an icon — laid out `gap-[5px]` (`gap-1` on `sm`), the way the trigger shows an option whose content leads with one. A function receives the selected item (`undefined` while nothing is chosen), so the mark can follow the value.' },
         { name: 'placeholder', type: 'string', optional: true },
         { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'TextStyle', optional: true },
@@ -63,6 +63,23 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: false },
         { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+      ],
+    },
+    'SelectFieldProps<T>': {
+      props: [
+        { name: 'label', type: 'string', optional: false, description: "The visible label above the trigger, and the trigger's and the list's name." },
+        { name: 'items', type: 'readonly SelectOption<T>[]', optional: false },
+        { name: 'value', type: 'T', optional: true },
+        { name: 'defaultValue', type: 'T', optional: true, description: 'Initial selection when `value` is uncontrolled.' },
+        { name: 'onValueChange', type: '(value: T) => void', optional: true },
+        { name: 'placeholder', type: 'string', optional: true, description: 'Shown in the trigger while nothing is chosen.' },
+        { name: 'description', type: 'React.ReactNode', optional: true, description: 'Helper text under the trigger; an `error` replaces it.' },
+        { name: 'error', type: 'string | null', optional: true, description: 'A non-empty message paints the field invalid and shows under the trigger.' },
+        { name: 'required', type: 'boolean', optional: true },
+        { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'size', type: 'SelectSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Trigger size; otherwise the nearest BloomScope (default md).' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: "The field stack's own box." },
+        { name: 'testID', type: 'string', optional: true, description: 'On the trigger.' },
       ],
     },
     'SelectItemTextProps': {
@@ -105,10 +122,11 @@ export const props: BloomSurfaceProps = {
   components: [
     { name: 'Select', propsType: 'SelectProps' },
     { name: 'SelectTrigger', propsType: 'SelectTriggerProps' },
-    { name: 'SelectValue', propsType: 'SelectValueProps' },
+    { name: 'SelectValue', propsType: 'SelectValueProps<T>' },
     { name: 'SelectIcon', propsType: 'SelectIconProps' },
     { name: 'SelectContent', propsType: 'SelectContentProps<T>' },
     { name: 'SelectItem', propsType: 'SelectItemProps' },
+    { name: 'SelectField', propsType: 'SelectFieldProps<T>' },
     { name: 'SelectItemText', propsType: 'SelectItemTextProps' },
     { name: 'SelectItemIndicator', propsType: 'SelectItemIndicatorProps' },
     { name: 'SelectSeparator' },

@@ -23,7 +23,7 @@ export const props: BloomSurfaceProps = {
         { name: 'lineNumbers', type: 'boolean', optional: true, description: 'Number the lines. Default `true`.' },
         { name: 'wrap', type: 'boolean', optional: true, description: 'Soft-wrap instead of scrolling sideways. Default `false`.' },
         { name: 'copyable', type: 'boolean', optional: true, description: 'Show the copy button. Default `true`.' },
-        { name: 'onCopy', type: '(code: string) => void | Promise<void>', optional: true, description: 'Copy handler; the glyph shows a check for 1.6s after. Default on web: the clipboard.' },
+        { name: 'onCopy', type: '(code: string) => void | Promise<void>', optional: true, description: "Copy handler; the glyph shows a check for 1.6s after. Default: Bloom's clipboard — on native with the optional `expo-clipboard` peer, without which (and with no handler) the button is not drawn." },
         { name: 'headerAccessory', type: 'ReactNode', optional: true, description: 'Extra header content before the diff counts.' },
         { name: 'labels', type: 'CodeBlockLabels', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

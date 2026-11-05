@@ -90,4 +90,12 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
     'The app-wide authority that decides which video may play. It needs players and a scrolling list or pager in your own screens.',
   window:
     'Window chrome (controls and drag region) for a desktop-style app shell. It needs a real window host; see App Shell for the shell that mounts it.',
+  'preferences/haptics-setting-row':
+    'A settings row for the haptics preference. It reads and writes your app’s own preference store; see Preferences for the composed settings.',
+  'preferences/video-autoplay-setting-row':
+    'A settings row for the video autoplay preference. It reads and writes your app’s own preference store; see Preferences for the composed settings.',
+  'row-actions':
+    'Icon buttons and a “⋮” menu for one list row. It needs the row’s own actions and menu entries from your screen; see Settings List for rows it sits in.',
+  'settings-modal/select':
+    'A select sized to sit inside a settings row. It must be placed inside a Settings Modal row; see Settings Modal Rows for the composed rows.',
 };

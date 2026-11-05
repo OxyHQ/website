@@ -9,7 +9,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'amount', type: 'number', optional: false },
         { name: 'currency', type: 'string', optional: false },
-        { name: 'locale', type: 'string', optional: true },
+        { name: 'locale', type: 'string', optional: true, description: "The price's locale; the app's (`BloomProvider locale`) by default." },
         { name: 'suffix', type: 'string', optional: true },
         { name: 'description', type: 'string', optional: true },
       ],
