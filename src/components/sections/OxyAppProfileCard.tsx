@@ -4,7 +4,6 @@ import { APP_CARD_IMAGES } from '../../data/appCardImages';
 export type CommunityProfileCard = {
   type: 'profile';
   image: string;
-  logo?: string;
   cornerIcon?: string;
   name: string;
   role: string;
@@ -28,7 +27,6 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
   {
     type: 'profile',
     image: APP_CARD_IMAGES['/mention'],
-    logo: '/images/apps/mention.png',
     cornerIcon: '/images/apps/mention-corner.svg',
     name: 'Mention',
     role: 'An open social network for genuine connection',
@@ -39,7 +37,6 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
   {
     type: 'profile',
     image: APP_CARD_IMAGES['/apps/allo'],
-    logo: '/images/apps/allo.png',
     cornerIcon: '/images/apps/allo-corner.svg',
     name: 'Allo',
     role: 'Private conversations, built together',
@@ -50,7 +47,6 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
   {
     type: 'profile',
     image: APP_CARD_IMAGES['/apps/faircoin'],
-    logo: '/images/apps/faircoin.svg',
     cornerIcon: '/images/apps/faircoin-corner.svg',
     name: 'FairCoin',
     role: 'A community-run currency for cooperation',
@@ -70,7 +66,6 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
   {
     type: 'profile',
     image: APP_CARD_IMAGES['/mercaria'],
-    logo: '/images/apps/mercaria.svg',
     cornerIcon: '/images/apps/mercaria-corner.svg',
     name: 'Mercaria',
     role: 'An open marketplace for fair, human-centered commerce',

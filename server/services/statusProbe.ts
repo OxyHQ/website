@@ -1,7 +1,9 @@
 import { and, asc, eq, isNull, or } from 'drizzle-orm';
 import { db } from '../db/postgres.js';
-import { categories, incidents, media, products } from '../db/schema/index.js';
+import { categories, incidents, products } from '../db/schema/index.js';
 import { populate } from '../db/refs.js';
+import { appCatalogue } from './appStoreCatalogue.js';
+import { applyAppListing, type AppListingIndex, reportUnlistedProducts } from './appListing.js';
 import {
   applyFunctionalSignals,
   authoritativeProbeUrl,
@@ -12,11 +14,6 @@ import {
 } from './functionalStatus.js';
 
 export type ServiceStatus = PublicServiceStatus;
-
-interface LogoRef {
-  url?: string;
-  thumbnails?: { sm?: string; md?: string; lg?: string };
-}
 
 export interface ServiceResult {
   id: string;
@@ -51,8 +48,8 @@ export interface CachedStatusPayload {
 
 const CACHE_TTL_MS = 60_000;
 
-/** A product row with its logo already resolved, which is what a probe reads. */
-type ProductRow = typeof products.$inferSelect & { logo: unknown; category: unknown };
+/** A product row with its category already populated, which is what a probe reads. */
+type ProductRow = typeof products.$inferSelect & { category: unknown };
 
 /**
  * The heading a group of services is shown under.
@@ -71,26 +68,25 @@ let cached: CachedStatusPayload | null = null;
 let cachedAt = 0;
 let inFlight: Promise<CachedStatusPayload> | null = null;
 
-function resolveLogoUrl(logo: unknown): string | null {
-  if (!logo || typeof logo !== 'object') return null;
-  const obj = logo as LogoRef;
-  return obj.url || obj.thumbnails?.lg || obj.thumbnails?.md || obj.thumbnails?.sm || null;
-}
-
-async function probeService(product: ProductRow): Promise<CachedServiceResult> {
+async function probeService(
+  product: ProductRow,
+  listings: AppListingIndex,
+): Promise<CachedServiceResult> {
   const target = authoritativeProbeUrl(product.productId);
+  // The name, tagline and icon come from the app store listing, not the row.
+  const listed = applyAppListing(product, listings);
   const base: Omit<CachedServiceResult, 'status' | 'latencyMs' | 'httpStatus' | 'lastChecked'> = {
     id: product.productId,
     productDocId: product._id,
-    name: product.name,
-    description: product.tagline || product.description || '',
+    name: listed.name,
+    description: listed.tagline || product.description || '',
     section: resolveSectionLabel(product),
     url: product.href,
     landingUrl: product.landingUrl || null,
     brand: product.brand,
     brandForeground: product.brandForeground,
     mark: product.mark,
-    logoUrl: resolveLogoUrl(product.logo),
+    logoUrl: listed.appIconUrl,
   };
   const probe: ProbeResult =
     target === null
@@ -145,12 +141,14 @@ async function buildPayload(): Promise<CachedStatusPayload> {
     .from(products)
     .where(eq(products.showOnStatus, true))
     .orderBy(asc(products.section), asc(products.order), asc(products._id));
-  const probed = (await populate(rows, {
-    logo: media,
-    category: categories,
-  })) as unknown as ProductRow[];
+  const probed = (await populate(rows, { category: categories })) as unknown as ProductRow[];
+  const listings = await appCatalogue.get();
+  reportUnlistedProducts(
+    probed.map((product) => product.productId),
+    listings,
+  );
   const services = applyFunctionalSignals(
-    await Promise.all(probed.map(probeService)),
+    await Promise.all(probed.map((product) => probeService(product, listings))),
     await readFunctionalSignals(),
   );
   return {

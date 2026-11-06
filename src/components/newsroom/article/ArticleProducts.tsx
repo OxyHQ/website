@@ -37,7 +37,7 @@ function ProductCallout({ product }: { product: ProductRecord }) {
               className={`size-full ${product.productId === 'kaana' ? 'object-contain' : 'object-cover'}`}
             />
           ) : (
-            product.mark
+            product.name.charAt(0).toUpperCase()
           )}
         </span>
         <div className="min-w-0">

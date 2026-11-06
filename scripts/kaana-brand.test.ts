@@ -26,22 +26,19 @@ describe('Kaana public brand contract', () => {
   });
 
   test('uses the source SVG without recoloring or optimization', async () => {
-    const [seed, content, productHooks, appCard, articleProducts, navbar, viteConfig] =
-      await Promise.all([
-        repositoryFile('server/seed.ts'),
-        repositoryFile('src/data/content.ts'),
-        repositoryFile('src/api/hooks.ts'),
-        repositoryFile('src/components/apps/AppCard.tsx'),
-        repositoryFile('src/components/newsroom/article/ArticleProducts.tsx'),
-        repositoryFile('src/components/layout/Navbar.tsx'),
-        repositoryFile('vite.config.ts'),
-      ]);
+    const [seed, content, appCard, articleProducts, navbar, viteConfig] = await Promise.all([
+      repositoryFile('server/seed.ts'),
+      repositoryFile('src/data/content.ts'),
+      repositoryFile('src/components/apps/AppCard.tsx'),
+      repositoryFile('src/components/newsroom/article/ArticleProducts.tsx'),
+      repositoryFile('src/components/layout/Navbar.tsx'),
+      repositoryFile('vite.config.ts'),
+    ]);
 
     expect(flat(seed)).toContain("kaana: '/images/apps/kaana.svg'");
     expect(flat(content)).toContain(
       "href: 'https://kaana.ai', image: '/images/apps/kaana.svg', preserveImageColors: true",
     );
-    expect(flat(productHooks)).toContain("kaana: '/images/apps/kaana.svg'");
     expect(flat(appCard)).toContain(
       "product.productId === 'kaana' ? 'object-contain' : 'object-cover'",
     );

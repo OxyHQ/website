@@ -22,7 +22,6 @@ import {
 } from './platformActivityStore';
 
 import type { Testimonial } from '../data/content';
-import { BRAND_MARKS } from '../data/brand-assets';
 import type { BillingPlan, PricingPlan } from '../data/pricing';
 import { OXY_API } from '../lib/oxyApi';
 import type { NewsroomPost, NewsroomPostSummary } from '../data/newsroom';
@@ -209,6 +208,13 @@ export interface ProductRecord {
   showInNav: boolean;
   navOpensApp: boolean;
   order: number;
+  /**
+   * From the Oxy app store (`oxy.store`), joined on by the server. `name` and
+   * `tagline` above already carry the store's copy when `appListed` is true.
+   */
+  appListed?: boolean;
+  /** The store's icon URL for the app, or null: render a neutral placeholder. */
+  appIconUrl?: string | null;
 }
 
 export function resolveProductCategoryId(product: Pick<ProductRecord, 'category'>): string {
@@ -223,6 +229,8 @@ export interface UseProductsOptions {
   lifecycle?: ProductLifecycle;
   section?: string;
   enabled?: boolean;
+  /** `cms`: the rows as stored, without the app store's name and icon. Admin editing only. */
+  source?: 'cms';
 }
 
 export function useProducts(options: UseProductsOptions = {}) {
@@ -231,6 +239,7 @@ export function useProducts(options: UseProductsOptions = {}) {
   if (options.surface) qs.set('surface', options.surface);
   if (options.lifecycle) qs.set('lifecycle', options.lifecycle);
   if (options.section) qs.set('section', options.section);
+  if (options.source) qs.set('source', options.source);
   const query = qs.toString();
   return useQuery<ProductRecord[]>({
     queryKey: [
@@ -238,6 +247,7 @@ export function useProducts(options: UseProductsOptions = {}) {
       options.surface ?? 'all',
       options.lifecycle ?? 'any',
       options.section ?? 'any',
+      options.source ?? 'joined',
       locale,
     ],
     queryFn: () => apiFetch<ProductRecord[]>(`/products${query ? `?${query}` : ''}`, { locale }),
@@ -260,31 +270,19 @@ export function useProduct(productId: string) {
   });
 }
 
-const LOCAL_PRODUCT_LOGOS: Readonly<Record<string, string>> = {
-  allo: BRAND_MARKS.allo,
-  atlas: BRAND_MARKS.atlas,
-  dropsea: BRAND_MARKS.dropsea,
-  homiio: BRAND_MARKS.homiio,
-  i: BRAND_MARKS.inbox,
-  inbox: BRAND_MARKS.inbox,
-  m: BRAND_MARKS.moovo,
-  marketplace: BRAND_MARKS.mercaria,
-  mercaria: BRAND_MARKS.mercaria,
-  moovo: BRAND_MARKS.moovo,
-  noted: BRAND_MARKS.noted,
-  faircoin: '/images/apps/faircoin.svg',
-  'faircoin-wallet': '/images/apps/faircoin-wallet.svg',
-  fairwallet: '/images/apps/faircoin-wallet.svg',
-  kaana: '/images/apps/kaana.svg',
-};
+/** The app's icon from the Oxy app store, or '' when the store has none. */
+export function resolveProductLogoUrl(product: Pick<ProductRecord, 'appIconUrl'>): string {
+  return product.appIconUrl || '';
+}
 
-export function resolveProductLogoUrl(product: ProductRecord): string {
-  if (LOCAL_PRODUCT_LOGOS[product.productId]) return LOCAL_PRODUCT_LOGOS[product.productId];
-
-  const logo = product.logo;
-  if (!logo) return '';
-  if (typeof logo === 'string') return logo;
-  return logo.thumbnails?.md || logo.thumbnails?.lg || logo.url || '';
+/**
+ * The store icon for one app, by its `productId`. '' while loading or when the
+ * store has no icon for it; callers draw their own neutral placeholder then.
+ */
+export function useAppIconUrl(productId: string): string {
+  const { data } = useProducts({ enabled: productId.length > 0 });
+  const product = data?.find((p) => p.productId === productId);
+  return product ? resolveProductLogoUrl(product) : '';
 }
 
 // ── Service status ──
