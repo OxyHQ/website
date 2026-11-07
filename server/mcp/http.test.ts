@@ -207,9 +207,15 @@ describe('transport composition', () => {
     expect(response.headers.get('access-control-allow-headers')).toContain('Authorization');
   });
 
-  test('a forbidden origin is refused with 403 on MCP and on the site API, never a 500', async () => {
+  test('MCP does not refuse an unlisted origin: a Bearer call is served without a CORS grant', async () => {
+    // The transport is Bearer-only, so an origin is never a credential. An unlisted
+    // Origin (every non-browser MCP client, such as Grok) must reach authentication.
     const mcp = await callTool('list_pages', {}, 'admin', { origin: 'https://evil.test' });
-    expect(mcp.response.status).toBe(403);
+    expect(mcp.response.status).toBe(200);
+    expect(mcp.response.headers.get('access-control-allow-origin')).toBeNull();
+  });
+
+  test('the site API still refuses a forbidden origin with 403, never a 500', async () => {
     const site = await fetch(`${BASE}/api/hero`, { headers: { origin: 'https://evil.test' } });
     expect(site.status).toBe(403);
     const preflight = await fetch(`${BASE}/api/hero`, {
