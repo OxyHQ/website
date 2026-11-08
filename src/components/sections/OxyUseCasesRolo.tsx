@@ -30,14 +30,15 @@ export default function OxyUseCasesRolo() {
   const useCases = USE_CASE_KEYS.map((key) => t(key));
   const roloItems = [...useCases, ...useCases, ...useCases];
   const [activeIndex, setActiveIndex] = useState(useCases.length + Math.floor(useCases.length / 2));
-  const [paused, setPaused] = useState(false);
   const [transitionEnabled, setTransitionEnabled] = useState(true);
 
+  // Always moving: hovering or focusing never stops the rolo. A pause on hover
+  // stalled it whenever the cursor rested on it, and on touch screens, where
+  // mouseenter fires on tap and mouseleave never comes.
   useEffect(() => {
-    if (paused) return;
     const timer = window.setInterval(() => setActiveIndex((index) => index + 1), 2200);
     return () => window.clearInterval(timer);
-  }, [paused]);
+  }, []);
 
   useEffect(() => {
     if (activeIndex < useCases.length * 2) return;
@@ -57,10 +58,6 @@ export default function OxyUseCasesRolo() {
     <section
       className="section w-full overflow-hidden bg-[color-mix(in_srgb,var(--primary)_4%,var(--background))] text-foreground"
       aria-label={t('home.useCasesHeading')}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
     >
       <div className="container">
         <div className="grid min-h-[40rem] grid-cols-1 items-center gap-8 py-16 md:grid-cols-[minmax(0,0.28fr)_minmax(0,0.72fr)] md:gap-4 md:py-20 lg:min-h-[48rem] lg:grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] lg:gap-6">

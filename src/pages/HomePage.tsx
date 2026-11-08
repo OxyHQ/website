@@ -15,7 +15,6 @@ import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
 import CommonsAppSection from '../components/homepage/CommonsAppSection';
 import HomeHero from '../components/homepage/HomeHero';
-import HomeTagPhysics from '../components/homepage/HomeTagPhysics';
 import FairCoinSection from '../components/sections/FairCoinSection';
 import FaqSection from '../components/sections/FaqSection';
 import { usePage, type PageSection } from '../api/hooks';
@@ -361,7 +360,6 @@ export default function HomePage({ archived = false }: { archived?: boolean }) {
         <HomeHero />
         <BuildForEveryoneSection />
         <OxyAppsFeatureGrid />
-        <HomeTagPhysics />
         <OxyUseCasesRolo />
         <ValuesSection />
         <FairCoinSection />
