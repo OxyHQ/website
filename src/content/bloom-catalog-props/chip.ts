@@ -61,9 +61,23 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'CappedChipRowProps': {
+      props: [
+        { name: 'children', type: 'React.ReactNode', optional: true, description: 'The pills, in order.' },
+        { name: 'maxLines', type: 'number', optional: true, description: 'Most lines the row may take. Pills that would start a line past this are hidden behind a trailing "+N" pill, which expands the row. Default 2.' },
+        { name: 'gap', type: 'number', optional: true, description: 'Between pills, both across and down. Default 8.' },
+        { name: 'moreLabel', type: '(hidden: number) => React.ReactNode', optional: true, description: 'Label of the expander pill. Default `+N`, where N is the hidden count.' },
+        { name: 'moreAccessibilityLabel', type: '(hidden: number) => string', optional: true, description: 'Names the expander for assistive technology. Default `Show N more`.' },
+        { name: 'role', type: "'group' | 'list'", options: ['group', 'list'], optional: true, description: 'What the row is. Default `group`.' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the row.' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'Chip', propsType: 'ChipProps' },
     { name: 'ChipRow', propsType: 'ChipRowProps' },
+    { name: 'CappedChipRow', propsType: 'CappedChipRowProps' },
   ],
 }

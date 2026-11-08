@@ -5,20 +5,6 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'menubar',
   propTypes: {
-    'MenubarProps': {
-      props: [
-        { name: 'children', type: 'React.ReactNode', optional: true },
-        { name: 'value', type: 'string', optional: true, description: 'The `value` of the open menu. Controlled when supplied; `undefined` closes every menu. shadcn spells the same state the same way.' },
-        { name: 'defaultValue', type: 'string', optional: true, description: 'Initial open menu when uncontrolled. Defaults to none open.' },
-        { name: 'onValueChange', type: '(value: string | undefined) => void', optional: true },
-        { name: 'focusValue', type: 'string', optional: true, description: "The `value` of the menu whose title has the keyboard, the bar driven from it as a Mac's after Control-F2 (OxyOS's Super+F2); `undefined` when the keyboard is elsewhere. Controlled when supplied: the owner puts the keyboard on the bar by setting it (to the first menu's value, as a Mac does)." },
-        { name: 'onFocusValueChange', type: '(value: string | undefined) => void', optional: true, description: 'The keyboard moved across the bar, or left it (`undefined`).' },
-        { name: 'label', type: 'string', optional: true, description: 'Accessible name for the bar.' },
-        { name: 'className', type: 'string', optional: true, description: "Appended to the bar's own classes — never substituted for them." },
-        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'testID', type: 'string', optional: true },
-      ],
-    },
     'MenubarMenuProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
@@ -39,7 +25,6 @@ export const props: BloomSurfaceProps = {
     },
   },
   components: [
-    { name: 'Menubar', propsType: 'MenubarProps' },
     { name: 'MenubarMenu', propsType: 'MenubarMenuProps' },
     { name: 'MenubarTrigger', propsType: 'OverlayTriggerProps' },
   ],
