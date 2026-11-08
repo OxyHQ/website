@@ -1,3 +1,5 @@
+import { BloomColorScope } from '@oxy.so/bloom/theme';
+import { FAIRCOIN_PRESET } from '../theme/brands';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
@@ -53,11 +55,13 @@ export default function FairCoinBridgePage() {
         hideBanner={onFairCoinHost}
         hideLocalePicker={onFairCoinHost}
       />
-      <main className="flex-1">
-        <WagmiAppProvider>
-          <BridgeContent />
-        </WagmiAppProvider>
-      </main>
+      <BloomColorScope colorPreset={FAIRCOIN_PRESET} asChild>
+        <main className="flex-1">
+          <WagmiAppProvider>
+            <BridgeContent />
+          </WagmiAppProvider>
+        </main>
+      </BloomColorScope>
       <Footer
         brand={footerBrand}
         columns={footerColumns}

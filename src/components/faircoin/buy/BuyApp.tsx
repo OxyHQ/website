@@ -1,3 +1,4 @@
+import { Button as BloomButton } from '@oxy.so/bloom/button';
 /**
  * BuyApp — app-style FAIR purchase flow.
  *
@@ -30,7 +31,6 @@ import { RiResetLeftLine } from '@oxy.so/bloom/icons/RiResetLeftLine';
 import { RiErrorWarningLine } from '@oxy.so/bloom/icons/RiErrorWarningLine';
 import { RiWallet3Line } from '@oxy.so/bloom/icons/RiWallet3Line';
 import BuyShell from './BuyShell';
-import Button from '../../ui/Button';
 import StepTransition from '../app/StepTransition';
 import {
   BuyApiError,
@@ -54,10 +54,6 @@ const BUY_BOUNDS = { min: 1, max: 1000 } as const;
 const PRESET_AMOUNTS = ['10', '25', '50', '100'] as const;
 
 const COPY_FLASH_MS = 1_500;
-
-// Bloom keeps interaction semantics; scoped tokens keep every state in FairCoin's palette.
-const PRIMARY_ACTION_CLASS =
-  '!min-h-14 w-full !rounded-full !bg-primary !text-primary-foreground !text-base !font-normal !shadow-none ![font-family:inherit] [&::before]:!hidden [&::after]:!bg-primary hover:[&::after]:!bg-primary/90 disabled:!bg-muted disabled:!text-muted-foreground disabled:[&::after]:!bg-muted';
 
 const STEPS = [
   { id: 'amount', label: 'Amount' },
@@ -301,19 +297,17 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
             {PRESET_AMOUNTS.map((preset) => {
               const active = amount === preset;
               return (
-                <button
+                <BloomButton
+                  appearance={active ? 'solid' : 'subtle'}
+                  tone="accent"
+                  size="xs"
+                  pressed={active}
                   key={preset}
                   type="button"
-                  onClick={() => setAmount(preset)}
-                  className={[
-                    'rounded-full px-3 py-1.5 text-sm transition-colors',
-                    active
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground',
-                  ].join(' ')}
+                  onPress={() => setAmount(preset)}
                 >
                   {preset}
-                </button>
+                </BloomButton>
               );
             })}
           </div>
@@ -341,23 +335,27 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
             const active = option.currency === currency;
             const disabled = option.comingSoon === true;
             return (
-              <button
-                key={option.currency}
-                type="button"
-                disabled={disabled}
-                onClick={() => setCurrency(option.currency)}
-                className={[
-                  'flex min-w-0 flex-col items-start gap-1 rounded-xl border px-3 py-2.5 text-left transition-colors',
-                  active
-                    ? 'border-primary bg-card ring-1 ring-primary'
-                    : disabled
-                      ? 'cursor-not-allowed border-border bg-background/40 opacity-50'
-                      : 'border-border bg-background/40 hover:border-primary/40 hover:bg-background/80',
-                ].join(' ')}
-              >
-                <span className="text-sm font-semibold text-foreground">{option.label}</span>
-                <span className="text-xs text-muted-foreground">{option.hint}</span>
-              </button>
+              <div key={option.currency} className="min-w-0">
+                <BloomButton
+                  appearance={active ? 'solid' : 'outline'}
+                  tone={active ? 'accent' : 'neutral'}
+                  pressed={active}
+                  asChild
+                  disabled={disabled}
+                  onPress={() => setCurrency(option.currency)}
+                  className="w-full"
+                >
+                  <button type="button" aria-describedby={`buy-payment-${option.currency}-hint`}>
+                    {option.label}
+                  </button>
+                </BloomButton>
+                <p
+                  id={`buy-payment-${option.currency}-hint`}
+                  className="mt-1 text-xs text-muted-foreground"
+                >
+                  {option.hint}
+                </p>
+              </div>
             );
           })}
         </div>
@@ -403,31 +401,18 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
       </div>
 
       {/* CTA */}
-      <Button
+      <BloomButton
         type="submit"
+        appearance="solid"
+        tone="accent"
+        size="lg"
+        className="w-full"
         disabled={!canSubmit}
-        aria-busy={mutation.isPending}
-        className={`group ${PRIMARY_ACTION_CLASS}`}
+        loading={mutation.isPending}
+        trailingIcon={RiArrowRightLine}
       >
-        {mutation.isPending ? (
-          <>
-            <span aria-hidden="true" className="inline-flex motion-safe:animate-spin">
-              <RiLoader4Line width={16} height={16} fill="currentColor" />
-            </span>
-            Generating quote…
-          </>
-        ) : (
-          <>
-            Continue
-            <span
-              aria-hidden="true"
-              className="inline-flex transition-transform group-hover:translate-x-0.5"
-            >
-              <RiArrowRightLine width={16} height={16} fill="currentColor" />
-            </span>
-          </>
-        )}
-      </Button>
+        {mutation.isPending ? 'Generating quote…' : 'Continue'}
+      </BloomButton>
 
       {submissionError ? (
         <div className="flex items-start gap-2 rounded-xl border border-error/40 bg-error-subtle px-3 py-2.5 text-xs text-error-text">
@@ -557,14 +542,15 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
             {shortAddress(quote.fairDestinationAddress)}
           </span>
         </div>
-        <button
+        <BloomButton
+          appearance="outline"
+          tone="neutral"
+          leadingIcon={RiArrowLeftLine}
           type="button"
-          onClick={onStartOver}
-          className="flex h-10 items-center justify-center gap-2 rounded-full border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+          onPress={onStartOver}
         >
-          <RiArrowLeftLine aria-hidden width={16} height={16} fill="currentColor" />
           {quoteExpired ? 'Generate new quote' : 'Start over'}
-        </button>
+        </BloomButton>
       </div>
 
       {statusQuery.isError && statusQuery.failureCount > 2 ? (
@@ -620,39 +606,42 @@ function SuccessStep({
       {(explorerTxUrl || baseTxUrl) && (
         <div className="flex w-full flex-col gap-2">
           {explorerTxUrl ? (
-            <a
+            <BloomButton
               href={explorerTxUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between gap-3 rounded-full border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
+              appearance="outline"
+              tone="neutral"
+              trailingIcon={RiExternalLinkLine}
             >
-              <span className="text-foreground">FairCoin transaction</span>
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                Explorer
-                <RiExternalLinkLine aria-hidden width={12} height={12} fill="currentColor" />
-              </span>
-            </a>
+              FairCoin transaction
+            </BloomButton>
           ) : null}
           {baseTxUrl ? (
-            <a
+            <BloomButton
               href={baseTxUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between gap-3 rounded-full border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
+              appearance="outline"
+              tone="neutral"
+              trailingIcon={RiExternalLinkLine}
             >
-              <span className="text-foreground">Base swap</span>
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                Basescan
-                <RiExternalLinkLine aria-hidden width={12} height={12} fill="currentColor" />
-              </span>
-            </a>
+              Base swap
+            </BloomButton>
           ) : null}
         </div>
       )}
 
-      <Button type="button" onClick={onStartOver} className={PRIMARY_ACTION_CLASS}>
+      <BloomButton
+        type="button"
+        onPress={onStartOver}
+        appearance="solid"
+        tone="accent"
+        size="lg"
+        className="w-full"
+      >
         Buy more FAIR
-      </Button>
+      </BloomButton>
     </div>
   );
 }
@@ -668,10 +657,17 @@ function FailedStep({ message, onStartOver }: { message: string | null; onStartO
         </span>
         <span>{message ?? 'No further detail was provided. Try a fresh quote.'}</span>
       </div>
-      <Button type="button" onClick={onStartOver} className={PRIMARY_ACTION_CLASS}>
-        <RiResetLeftLine aria-hidden width={16} height={16} fill="currentColor" />
+      <BloomButton
+        type="button"
+        onPress={onStartOver}
+        appearance="solid"
+        tone="accent"
+        size="lg"
+        className="w-full"
+        leadingIcon={RiResetLeftLine}
+      >
         Start a new order
-      </Button>
+      </BloomButton>
     </div>
   );
 }
@@ -736,18 +732,16 @@ function CopyableValue({ label, value, monospace }: CopyableValueProps) {
         >
           {value}
         </span>
-        <button
+        <BloomButton
           type="button"
-          onClick={() => void copy(value)}
-          aria-label={`Copy ${label}`}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/20"
-        >
-          {copied ? (
-            <RiCheckboxCircleLine aria-hidden width={14} height={14} fill="currentColor" />
-          ) : (
-            <RiFileCopyLine aria-hidden width={14} height={14} fill="currentColor" />
-          )}
-        </button>
+          appearance="plain"
+          tone="neutral"
+          size="sm"
+          iconOnly
+          icon={copied ? RiCheckboxCircleLine : RiFileCopyLine}
+          onPress={() => void copy(value)}
+          accessibilityLabel={`Copy ${label}`}
+        />
       </div>
     </div>
   );

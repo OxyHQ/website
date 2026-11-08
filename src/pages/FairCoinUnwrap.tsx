@@ -1,3 +1,5 @@
+import { BloomColorScope } from '@oxy.so/bloom/theme';
+import { FAIRCOIN_PRESET } from '../theme/brands';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import SEO from '../components/SEO';
@@ -51,11 +53,13 @@ export default function FairCoinUnwrapPage() {
         hideBanner={onFairCoinHost}
         hideLocalePicker={onFairCoinHost}
       />
-      <main className="flex-1">
-        <WagmiAppProvider>
-          <UnwrapApp />
-        </WagmiAppProvider>
-      </main>
+      <BloomColorScope colorPreset={FAIRCOIN_PRESET} asChild>
+        <main className="flex-1">
+          <WagmiAppProvider>
+            <UnwrapApp />
+          </WagmiAppProvider>
+        </main>
+      </BloomColorScope>
       <Footer
         brand={footerBrand}
         columns={footerColumns}

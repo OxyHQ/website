@@ -1,16 +1,21 @@
+import { BloomColorScope } from '@oxy.so/bloom/theme';
+import { FAIRCOIN_PRESET } from '../../../theme/brands';
 import { useEffect, useId, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@oxy.so/bloom/accordion';
 import { RiArrowUpLine } from '@oxy.so/bloom/icons/RiArrowUpLine';
 import { RiQrCodeLine } from '@oxy.so/bloom/icons/RiQrCodeLine';
 import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine';
 import { RiWallet3Line } from '@oxy.so/bloom/icons/RiWallet3Line';
 import { fc } from '../../../lib/faircoin-links';
-import { Link } from '../../../lib/navigation';
-import Button from '../cash/FairCoinButton';
+import Button from '../../ui/Button';
 import ExplorerStats from '../cash/ExplorerStats';
 import WalletScenes, { type WalletScene } from './WalletScenes';
 import '../cash/fonts.css';
-import { useWalletReducedMotion } from './useWalletReducedMotion';
 
 const DOWNLOAD = 'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest';
 const GUTTER = 'px-[5px] lg:px-5';
@@ -76,9 +81,8 @@ const FAQS = [
 ];
 
 function WalletFaq() {
-  const [open, setOpen] = useState<number | null>(null);
+  const [open, setOpen] = useState<string | undefined>();
   const id = useId();
-  const reduce = useWalletReducedMotion();
   return (
     <section
       id="wallet-questions"
@@ -88,48 +92,20 @@ function WalletFaq() {
       <h2 id={`${id}-title`} className={`${HEADING} mb-6 lg:mb-8`}>
         Common questions
       </h2>
-      <div className="border-t border-border">
-        {FAQS.map(([question, answer], index) => (
-          <div key={question} className="border-b border-border">
-            <h3>
-              <button
-                type="button"
-                id={`${id}-q-${index}`}
-                aria-expanded={open === index}
-                aria-controls={`${id}-a-${index}`}
-                onClick={() => setOpen(open === index ? null : index)}
-                className="flex min-h-[78px] w-full items-center justify-between gap-6 py-5 lg:py-[18px] text-left text-[calc(var(--wallet-type)*1.57143)] leading-[1.1] tracking-[-.02em] text-foreground/60 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring lg:text-[calc(var(--wallet-type)*1.9)]"
-              >
-                {question}
-                <span
-                  aria-hidden="true"
-                  className={`relative size-8 shrink-0 text-foreground transition-transform motion-reduce:transition-none lg:size-10 ${open === index ? 'rotate-45' : ''}`}
-                >
-                  <span className="absolute inset-y-[8%] left-1/2 w-[1.5px] bg-current" />
-                  <span className="absolute inset-x-[8%] top-1/2 h-[1.5px] bg-current" />
-                </span>
-              </button>
-            </h3>
-            <section id={`${id}-a-${index}`} aria-labelledby={`${id}-q-${index}`}>
-              <AnimatePresence initial={false}>
-                {open === index && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: reduce ? 0 : 0.25 }}
-                    className="overflow-hidden"
-                  >
-                    <p className="max-w-[850px] pb-7 pr-10 text-[calc(var(--wallet-type)*1)] leading-[1.4]">
-                      {answer}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </section>
-          </div>
+      <Accordion
+        value={open}
+        onValueChange={(value) => setOpen(typeof value === 'string' ? value : undefined)}
+        type="single"
+      >
+        {FAQS.map(([question, answer]) => (
+          <AccordionItem key={question} value={question}>
+            <AccordionTrigger>{question}</AccordionTrigger>
+            <AccordionContent>
+              <p className="max-w-[850px]">{answer}</p>
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </div>
+      </Accordion>
     </section>
   );
 }
@@ -162,7 +138,7 @@ export default function WalletLandingContent({
   return (
     <div
       data-wallet-landing
-      className="faircoin-editorial mx-auto max-w-[2600px] bg-card [&_.bloom-btn]:!bg-none [&_.bloom-btn::after]:!bg-none [&_.bloom-btn::after]:!shadow-none [--wallet-banner-height:0px] [body:has(.site-banner)_&]:[--wallet-banner-height:var(--site-header-banner-visible-height)] pt-[calc(var(--site-header-height)+var(--wallet-banner-height)+32px)] min-[760px]:pt-[calc(var(--site-header-height)+var(--wallet-banner-height)+48px)] lg:pt-[calc(var(--site-header-height)+var(--wallet-banner-height)+64px)] text-foreground [font-family:'FairCoin_Editorial',sans-serif] [--wallet-type:clamp(11.94px,calc(2.522864px+2.94286vw),14px)] min-[391px]:[--wallet-type:clamp(14px,calc(8.475008px+1.41304vw),19.2px)] min-[760px]:[--wallet-type:clamp(16px,calc(3.343072px+1.66538vw),20.33px)] lg:[--wallet-type:clamp(13.6px,calc(-1.31714px+1.46246vw),36.7069px)]"
+      className="faircoin-editorial mx-auto max-w-[2600px] bg-card [--wallet-banner-height:0px] [body:has(.site-banner)_&]:[--wallet-banner-height:var(--site-header-banner-visible-height)] pt-[calc(var(--site-header-height)+var(--wallet-banner-height)+32px)] min-[760px]:pt-[calc(var(--site-header-height)+var(--wallet-banner-height)+48px)] lg:pt-[calc(var(--site-header-height)+var(--wallet-banner-height)+64px)] text-foreground [font-family:'FairCoin_Editorial',sans-serif] [--wallet-type:clamp(11.94px,calc(2.522864px+2.94286vw),14px)] min-[391px]:[--wallet-type:clamp(14px,calc(8.475008px+1.41304vw),19.2px)] min-[760px]:[--wallet-type:clamp(16px,calc(3.343072px+1.66538vw),20.33px)] lg:[--wallet-type:clamp(13.6px,calc(-1.31714px+1.46246vw),36.7069px)]"
     >
       <section className={`${GUTTER} relative lg:pb-2`} aria-labelledby="wallet-title">
         <h1
@@ -242,17 +218,15 @@ export default function WalletLandingContent({
                 {scene === 'pockets' && (
                   <>
                     <Button
+                      variant="outline"
                       href="#wallet-download"
-                      className="mt-6 hidden lg:inline-flex lg:!min-h-[70px] lg:!px-7 lg:!text-base"
+                      className="mt-6 hidden lg:inline-flex"
                     >
                       Explore pockets
                     </Button>
-                    <a
-                      href="#wallet-download"
-                      className="mt-2 block text-sm font-semibold lg:hidden"
-                    >
-                      Explore pockets →
-                    </a>
+                    <Button variant="ghost" href="#wallet-download" className="mt-2 lg:hidden">
+                      Explore pockets
+                    </Button>
                   </>
                 )}
               </div>
@@ -285,14 +259,15 @@ export default function WalletLandingContent({
               <br className="hidden lg:block" /> security
             </h2>
             <Button
+              variant="outline"
               href="#wallet-questions"
-              className="hidden lg:mt-6 lg:inline-flex lg:!min-h-[70px] lg:!px-7 lg:!text-base"
+              className="hidden lg:mt-6 lg:inline-flex"
             >
               Learn about security
             </Button>
-            <a href="#wallet-questions" className="mt-2 mb-2 block text-sm font-semibold lg:hidden">
-              Learn about security →
-            </a>
+            <Button variant="ghost" href="#wallet-questions" className="mt-2 mb-2 lg:hidden">
+              Learn about security
+            </Button>
           </div>
           {[
             { scene: 'review' as const, label: 'Review every payment' },
@@ -352,35 +327,34 @@ export default function WalletLandingContent({
                 <h3 className="text-[calc(var(--wallet-type)*1.28571)] leading-[1.1] tracking-[-.02em] lg:mb-6 lg:mt-4 lg:max-w-[85%]">
                   {label}
                 </h3>
-                <Button
-                  href={href}
-                  className="hidden lg:inline-flex lg:mt-0 lg:!min-h-[70px] lg:!px-7 lg:!text-base"
-                >
+                <Button variant="outline" href={href} className="hidden lg:inline-flex lg:mt-0">
                   {cta}
                 </Button>
-                <Link to={href} className="mt-1 self-start text-sm font-semibold lg:hidden">
-                  {cta} →
-                </Link>
+                <Button variant="ghost" href={href} className="mt-1 self-start lg:hidden">
+                  {cta}
+                </Button>
               </div>
             ))}
           </div>
         </div>
       </section>
-      <section
-        ref={finalSection}
-        id="wallet-download"
-        className={`faircoin-editorial-dark ${GUTTER} bg-background pb-20 pt-[100px] text-foreground lg:pt-[180px]`}
-      >
-        <h2 className="mb-[100px] text-[calc(var(--wallet-type)*2.57143)] leading-[.95] tracking-[-.03em] lg:mb-[200px] lg:text-[calc(var(--wallet-type)*2.75)]">
-          FairCoin makes
-          <br />
-          money meaningful.
-        </h2>
-        <ExplorerStats ctaHref={DOWNLOAD} ctaLabel="Get FAIRWallet" />
-      </section>
+      <BloomColorScope colorPreset={FAIRCOIN_PRESET} mode="dark" asChild>
+        <section
+          ref={finalSection}
+          id="wallet-download"
+          className={`faircoin-editorial-dark ${GUTTER} bg-background pb-20 pt-[100px] text-foreground lg:pt-[180px]`}
+        >
+          <h2 className="mb-[100px] text-[calc(var(--wallet-type)*2.57143)] leading-[.95] tracking-[-.03em] lg:mb-[200px] lg:text-[calc(var(--wallet-type)*2.75)]">
+            FairCoin makes
+            <br />
+            money meaningful.
+          </h2>
+          <ExplorerStats ctaHref={DOWNLOAD} ctaLabel="Get FAIRWallet" />
+        </section>
+      </BloomColorScope>
       <div className="faircoin-editorial fixed inset-x-0 bottom-0 z-30 flex justify-center bg-card px-4 pb-[max(24px,env(safe-area-inset-bottom))] pt-6 lg:hidden">
-        <span className="rounded-full bg-primary text-primary-foreground [&_a]:!min-h-10">
-          <Button href={DOWNLOAD} className="!border-transparent !px-7">
+        <span>
+          <Button variant="primary" href={DOWNLOAD}>
             Download FAIRWallet
           </Button>
         </span>
