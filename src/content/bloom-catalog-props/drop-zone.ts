@@ -8,8 +8,10 @@ export const props: BloomSurfaceProps = {
     'DropZoneProps': {
       props: [
         { name: 'accept', type: 'readonly DropKind[]', optional: false, description: 'The kinds of content it takes: `files`, `text`, `url`, `html`, or media types.' },
+        { name: 'acceptFileTypes', type: 'readonly string[]', optional: true, description: "The media types of files it takes (`image/png`, `image/*`), case and parameters ignored: a drag of files is taken only when every file dragged is of one of them (an application's icon that lights only for documents it opens). A drag whose files' types are unknown is not taken. Absent: any." },
         { name: 'actions', type: 'readonly DragAction[]', optional: true, description: "The actions it supports, its preferred one first. Default: `['copy']`." },
         { name: 'preferredAction', type: 'DragAction', options: ['copy', 'move', 'link'], optional: true, description: 'Its preferred action, when not the first of `actions`.' },
+        { name: 'folder', type: 'string', optional: true, description: "The folder files dropped on it go into, as a `file://` URI. Where the platform knows the volume each dragged file is on (OxyOS), a drag of files prefers a move when every one is on this folder's volume and a copy when any is not, as Finder does; Option still forces a copy and Command a move. It matters only when `actions` allows both. Ignored on the web, whose drags name no folders." },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Takes nothing while true.' },
         { name: 'onDragEnter', type: '(event: DropTargetDragEvent) => void', optional: true, description: 'A drag it would take entered it.' },
         { name: 'onDragOver', type: '(event: DropTargetDragEvent) => void', optional: true, description: 'A drag it would take moved over it.' },
