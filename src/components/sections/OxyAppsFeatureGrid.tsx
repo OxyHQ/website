@@ -98,7 +98,13 @@ export default function OxyAppsFeatureGrid({
     },
   ];
 
-  const cards = [...appCards, ...additionalCards].map((card) =>
+  // FairCoin closes the row: it is the newest app and reads as the last card.
+  const orderedCards = [
+    ...[...appCards, ...additionalCards].filter((card) => card.name !== 'FairCoin'),
+    ...[...appCards, ...additionalCards].filter((card) => card.name === 'FairCoin'),
+  ];
+
+  const cards = orderedCards.map((card) =>
     unifiedTheme ? { ...card, theme: undefined, descriptionClassName: undefined } : card,
   );
 
