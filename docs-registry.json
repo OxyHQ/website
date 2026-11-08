@@ -3,7 +3,7 @@
     {
       "name": "Bloom",
       "git": "https://github.com/OxyHQ/Bloom.git",
-      "ref": "@oxy.so/bloom@17.22.0"
+      "ref": "@oxy.so/bloom@17.21.0"
     },
     {
       "name": "OxyHQServices",
@@ -61,7 +61,7 @@
       "name": "Astro",
       "localPath": "/home/nate/Oxy/Astro",
       "git": "https://github.com/OxyHQ/Astro.git",
-      "ref": "master"
+      "ref": "main"
     },
     {
       "name": "Clarity",
