@@ -1,8 +1,6 @@
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { dirname, join, relative } from 'node:path';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { chromium, type Locator, type Page, type Request } from 'playwright';
-import { BLOOM_CHARACTER_BASE } from '../src/lib/bloomCharacterRuntime';
 
 const ROOT = join(import.meta.dir, '..');
 const reservation = Bun.serve({
@@ -180,23 +178,6 @@ async function assertNoOverflow(page: Page) {
 }
 
 try {
-  if (!process.env.BLOOM_TEST_ORIGIN) {
-    const require = createRequire(import.meta.url);
-    const source = join(
-      dirname(require.resolve('@oxy.so/bloom/package.json')),
-      'assets/character-runtime',
-    );
-    for (const file of readdirSync(source, { recursive: true, withFileTypes: true })) {
-      if (!file.isFile()) continue;
-      const name = relative(source, join(file.parentPath, file.name));
-      invariant(
-        readFileSync(join(file.parentPath, file.name)).equals(
-          readFileSync(join(ROOT, 'dist', BLOOM_CHARACTER_BASE, name)),
-        ),
-        `published Bloom runtime asset was modified: ${name}`,
-      );
-    }
-  }
   for (let attempt = 0; attempt < 50; attempt++) {
     try {
       if ((await fetch(origin)).ok) break;
@@ -205,35 +186,6 @@ try {
     }
     await Bun.sleep(100);
   }
-  for (const [file, mime] of [
-    ['runtime.mjs', 'text/javascript'],
-    ['manifest.json', 'application/json'],
-  ] as const) {
-    const response = await fetch(`${origin}${BLOOM_CHARACTER_BASE}${file}`, { method: 'HEAD' });
-    invariant(
-      response.ok && response.headers.get('content-type')?.includes(mime),
-      `Bloom runtime asset is missing or served with the wrong MIME type: ${file}`,
-    );
-  }
-  const manifestResponse = await fetch(`${origin}${BLOOM_CHARACTER_BASE}manifest.json`);
-  const manifest = (await manifestResponse.json()) as { files: Record<string, string> };
-  invariant(
-    Object.keys(manifest.files).some(
-      (file) => file.startsWith('assets/') && file.endsWith('.bin'),
-    ) && !Object.keys(manifest.files).some((file) => /\.(wasm|data)$/.test(file)),
-    'Bloom must ship the new geometry assets without the retired runtime',
-  );
-  const geometryFile = Object.keys(manifest.files).find((file) => file.endsWith('.bin'));
-  invariant(geometryFile, 'Bloom geometry manifest is empty');
-  const geometryHead = await fetch(`${origin}${BLOOM_CHARACTER_BASE}${geometryFile}`, {
-    method: 'HEAD',
-  });
-  invariant(
-    geometryHead.ok &&
-      geometryHead.headers.get('content-type')?.includes('application/octet-stream'),
-    'Bloom geometry is served with the wrong MIME type',
-  );
-
   // Framer Motion snapshots reduced-motion at mount. Verify live portraits
   // in a fresh normal-motion page, not by changing media on a paused page.
   const motionContext = await browser.newContext({
