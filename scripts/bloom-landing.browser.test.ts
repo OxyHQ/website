@@ -1,8 +1,6 @@
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { dirname, join, relative } from 'node:path';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { chromium, type Locator, type Page, type Request } from 'playwright';
-import { BLOOM_CHARACTER_BASE } from '../src/lib/bloomCharacterRuntime';
 
 const ROOT = join(import.meta.dir, '..');
 const reservation = Bun.serve({
@@ -108,7 +106,7 @@ async function renderStage(
             ...document.querySelectorAll('[data-agent-preset-marks] [role="img"]'),
           ].map((avatar) => ({
             label: avatar.getAttribute('aria-label'),
-            canvas: !!avatar.querySelector('canvas'),
+            drawn: !!avatar.querySelector('svg path'),
             text: (avatar as HTMLElement).innerText.trim().slice(0, 80),
           })),
         };
@@ -117,15 +115,13 @@ async function renderStage(
     const diagnostics = await page
       .evaluate(() => {
         function describe(item: Element) {
-          const canvas = item.querySelector('canvas');
-          const pixels = canvas
-            ?.getContext('2d')
-            ?.getImageData(0, 0, canvas.width, canvas.height).data;
+          const avatar = item.querySelector('[data-bloom-vector-avatar]');
           return {
             name: item.getAttribute('aria-label') ?? item.textContent,
             bounds: item.getBoundingClientRect().toJSON(),
-            canvas: canvas ? [canvas.width, canvas.height] : null,
-            painted: pixels?.some((value, index) => index % 4 === 3 && value > 20) ?? false,
+            busy: avatar?.getAttribute('aria-busy') ?? null,
+            frame: avatar?.getAttribute('data-frame') ?? null,
+            painted: (avatar?.querySelectorAll('svg path').length ?? 0) > 0,
           };
         }
         return {
@@ -180,23 +176,6 @@ async function assertNoOverflow(page: Page) {
 }
 
 try {
-  if (!process.env.BLOOM_TEST_ORIGIN) {
-    const require = createRequire(import.meta.url);
-    const source = join(
-      dirname(require.resolve('@oxy.so/bloom/package.json')),
-      'assets/character-runtime',
-    );
-    for (const file of readdirSync(source, { recursive: true, withFileTypes: true })) {
-      if (!file.isFile()) continue;
-      const name = relative(source, join(file.parentPath, file.name));
-      invariant(
-        readFileSync(join(file.parentPath, file.name)).equals(
-          readFileSync(join(ROOT, 'dist', BLOOM_CHARACTER_BASE, name)),
-        ),
-        `published Bloom runtime asset was modified: ${name}`,
-      );
-    }
-  }
   for (let attempt = 0; attempt < 50; attempt++) {
     try {
       if ((await fetch(origin)).ok) break;
@@ -205,35 +184,6 @@ try {
     }
     await Bun.sleep(100);
   }
-  for (const [file, mime] of [
-    ['runtime.mjs', 'text/javascript'],
-    ['manifest.json', 'application/json'],
-  ] as const) {
-    const response = await fetch(`${origin}${BLOOM_CHARACTER_BASE}${file}`, { method: 'HEAD' });
-    invariant(
-      response.ok && response.headers.get('content-type')?.includes(mime),
-      `Bloom runtime asset is missing or served with the wrong MIME type: ${file}`,
-    );
-  }
-  const manifestResponse = await fetch(`${origin}${BLOOM_CHARACTER_BASE}manifest.json`);
-  const manifest = (await manifestResponse.json()) as { files: Record<string, string> };
-  invariant(
-    Object.keys(manifest.files).some(
-      (file) => file.startsWith('assets/') && file.endsWith('.bin'),
-    ) && !Object.keys(manifest.files).some((file) => /\.(wasm|data)$/.test(file)),
-    'Bloom must ship the new geometry assets without the retired runtime',
-  );
-  const geometryFile = Object.keys(manifest.files).find((file) => file.endsWith('.bin'));
-  invariant(geometryFile, 'Bloom geometry manifest is empty');
-  const geometryHead = await fetch(`${origin}${BLOOM_CHARACTER_BASE}${geometryFile}`, {
-    method: 'HEAD',
-  });
-  invariant(
-    geometryHead.ok &&
-      geometryHead.headers.get('content-type')?.includes('application/octet-stream'),
-    'Bloom geometry is served with the wrong MIME type',
-  );
-
   // Framer Motion snapshots reduced-motion at mount. Verify live portraits
   // in a fresh normal-motion page, not by changing media on a paused page.
   const motionContext = await browser.newContext({
@@ -250,45 +200,43 @@ try {
   await renderStage(motionPage, 'nine normal-motion portraits painted', () =>
     motionPage.waitForFunction(
       () => {
-        // Before Bloom 17.1.1 the runtime gave a GPU readback 30 s and then
-        // failed every avatar for good; CI's software GPU queue outlasted it. An
-        // avatar that gives up never paints: say so now, not at the timeout.
+        // An avatar that gives up never paints: say so now, not at the timeout.
         const gaveUp = [...document.querySelectorAll('[data-bloom-agent-presets] li')].filter(
           (item) =>
-            !item.querySelector('canvas') && item.textContent?.includes('Avatar unavailable'),
+            !item.querySelector('[data-bloom-vector-avatar]') &&
+            item.textContent?.includes('Avatar unavailable'),
         );
         if (gaveUp.length)
           throw new Error(`${gaveUp.length} preset avatar(s) gave up: "Avatar unavailable"`);
-        const canvases = [
-          ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+        const avatars = [
+          ...document.querySelectorAll('[data-bloom-agent-presets] [data-bloom-vector-avatar]'),
         ];
         return (
-          canvases.length === 9 &&
-          canvases.every((canvas) => {
-            const pixels = canvas
-              .getContext('2d')
-              ?.getImageData(0, 0, canvas.width, canvas.height).data;
-            return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
-          })
+          avatars.length === 9 &&
+          avatars.every(
+            (avatar) =>
+              avatar.getAttribute('aria-busy') === 'false' &&
+              avatar.querySelectorAll('svg path').length > 0,
+          )
         );
       },
       undefined,
       { timeout: COLD_RENDER_TIMEOUT },
     ),
   );
-  // Observe multiple later presentations, so initial geometry repaint alone
-  // cannot satisfy the animation check.
+  // Observe multiple later presentations, so the first drawing alone cannot
+  // satisfy the animation check: the avatar's frame must keep advancing.
   for (let sample = 0; sample < 3; sample++) {
     const motionBefore = await motionPage
-      .locator('[data-bloom-agent-presets] canvas')
-      .evaluateAll((nodes) => nodes.map((node) => (node as HTMLCanvasElement).toDataURL()));
+      .locator('[data-bloom-agent-presets] [data-bloom-vector-avatar]')
+      .evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-frame')));
     await motionPage.waitForTimeout(200);
     await renderStage(motionPage, `normal-motion presentation ${sample + 1}`, () =>
       motionPage.waitForFunction(
         (previous) =>
           [
-            ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
-          ].some((canvas, index) => canvas.toDataURL() !== previous[index]),
+            ...document.querySelectorAll('[data-bloom-agent-presets] [data-bloom-vector-avatar]'),
+          ].some((avatar, index) => avatar.getAttribute('data-frame') !== previous[index]),
         motionBefore,
       ),
     );
@@ -547,7 +495,8 @@ try {
       `${mode} heading and workspace avatars present`,
       async () => {
         invariant(
-          (await page.locator('[data-agent-preset-marks] canvas').count()) === 4,
+          (await page.locator('[data-agent-preset-marks] [data-bloom-vector-avatar]').count()) ===
+            4,
           'Bloom lost its four heading avatars',
         );
         invariant(
@@ -569,7 +518,7 @@ try {
       name: 'Launch planner, live avatar preview',
       exact: true,
     });
-    // Revealing a cold canvas can itself block on SwiftShader preparation.
+    // Revealing a cold avatar can itself block on preparation.
     // The locator's default 30s expired before the existing 90s paint wait.
     await renderStage(page, `${mode} cold editor brought into view`, () =>
       avatarPreview.evaluate(
@@ -578,19 +527,18 @@ try {
         { timeout: COLD_RENDER_TIMEOUT },
       ),
     );
-    const previewCanvas = avatarPreview.locator('canvas');
-    await previewCanvas.waitFor();
+    const previewDrawing = avatarPreview.locator('svg path').first();
+    await previewDrawing.waitFor({ state: 'attached' });
     await renderStage(page, `${mode} editor preview painted`, async () =>
       page.waitForFunction(
-        (canvas) => {
-          const node = canvas as HTMLCanvasElement;
-          const context = node.getContext('2d');
-          if (!context || !node.width || !node.height) return false;
-          const pixels = context.getImageData(0, 0, node.width, node.height).data;
-          for (let i = 3; i < pixels.length; i += 4) if (pixels[i] > 20) return true;
-          return false;
+        (node) => {
+          const avatar = node as Element;
+          return (
+            avatar.getAttribute('aria-busy') !== 'true' &&
+            avatar.querySelectorAll('svg path').length > 0
+          );
         },
-        await previewCanvas.elementHandle(),
+        await avatarPreview.elementHandle(),
         { timeout: COLD_RENDER_TIMEOUT },
       ),
     );
@@ -737,48 +685,51 @@ try {
         () => {
           const gaveUp = [...document.querySelectorAll('[data-bloom-agent-presets] li')].filter(
             (item) =>
-              !item.querySelector('canvas') && item.textContent?.includes('Avatar unavailable'),
+              !item.querySelector('[data-bloom-vector-avatar]') &&
+              item.textContent?.includes('Avatar unavailable'),
           );
           if (gaveUp.length)
             throw new Error(`${gaveUp.length} preset avatar(s) gave up: "Avatar unavailable"`);
-          const canvases = [
-            ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+          const avatars = [
+            ...document.querySelectorAll('[data-bloom-agent-presets] [data-bloom-vector-avatar]'),
           ];
           return (
-            canvases.length === 9 &&
-            canvases.every((canvas) => {
-              const pixels = canvas
-                .getContext('2d')
-                ?.getImageData(0, 0, canvas.width, canvas.height).data;
-              return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
-            })
+            avatars.length === 9 &&
+            avatars.every(
+              (avatar) =>
+                avatar.getAttribute('aria-busy') === 'false' &&
+                avatar.querySelectorAll('svg path').length > 0,
+            )
           );
         },
         undefined,
         { timeout: COLD_RENDER_TIMEOUT },
       ),
     );
+    // Reduced motion draws one still: the frame must not advance.
+    const stillFrames = () =>
+      presets
+        .locator('[data-bloom-vector-avatar]')
+        .evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-frame')));
+    const stillBefore = await stillFrames();
+    await page.waitForTimeout(400);
+    invariant(
+      JSON.stringify(stillBefore) === JSON.stringify(await stillFrames()),
+      'reduced motion must not animate the preset portraits',
+    );
     const paintedPresets = await presets.locator('li').evaluateAll((items) =>
       items.map((item) => {
-        const canvas = item.querySelector('canvas')!;
-        const pixels = canvas
-          .getContext('2d')!
-          .getImageData(0, 0, canvas.width, canvas.height).data;
-        const rgb = [0, 0, 0];
-        let colored = 0;
-        for (let i = 0; i < pixels.length; i += 4) {
-          const color = [pixels[i], pixels[i + 1], pixels[i + 2]];
-          if (pixels[i + 3] < 128 || Math.max(...color) - Math.min(...color) < 32) continue;
-          colored++;
-          color.forEach((value, channel) => {
-            rgb[channel] += value;
-          });
-        }
+        const drawing = item.querySelector('[data-bloom-vector-avatar] svg')!;
+        // The first fill of the drawing is the chosen body colour.
+        const body = [...drawing.querySelectorAll('[fill]')]
+          .map((node) => node.getAttribute('fill') ?? '')
+          .find((fill) => /^#[0-9a-f]{6}$/i.test(fill));
+        const hex = body ?? '#000000';
         return {
           name: item.textContent?.trim(),
-          pixels: canvas.toDataURL(),
-          colored,
-          rgb: rgb.map((value) => value / Math.max(1, colored)),
+          pixels: drawing.outerHTML,
+          colored: drawing.querySelectorAll('path').length,
+          rgb: [1, 3, 5].map((index) => Number.parseInt(hex.slice(index, index + 2), 16)),
         };
       }),
     );
@@ -789,13 +740,13 @@ try {
     for (const name of ['Todd', 'Iris', 'Felipe']) {
       const preset = paintedPresets.find((item) => item.name === name)!;
       invariant(
-        preset.colored > 100 && preset.rgb[0] > preset.rgb[1] && preset.rgb[0] > preset.rgb[2],
+        preset.colored > 0 && preset.rgb[0] > preset.rgb[1] && preset.rgb[0] > preset.rgb[2],
         `${name} lost its chosen warm body color`,
       );
     }
     const alfred = paintedPresets.find((item) => item.name === 'Alfred')!;
     invariant(
-      alfred.colored > 100 && alfred.rgb[1] > alfred.rgb[0] && alfred.rgb[2] > alfred.rgb[0],
+      alfred.colored > 0 && alfred.rgb[1] > alfred.rgb[0] && alfred.rgb[2] > alfred.rgb[0],
       'Alfred lost its chosen cyan body color',
     );
     const aiChat = page.getByTestId('multi-agent-chat');

@@ -5,16 +5,16 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'icon-circle',
   propTypes: {
-    'IconCircle': {
+    'IconCircleProps': {
       props: [
-        { name: 'icon', type: 'React.ComponentType<IconProps>', optional: false },
-        { name: 'size', type: 'IconProps["size"]', options: ['sm', 'md', 'lg', 'xl', 'xs', '2xs', '2xl', '3xl'], optional: true },
+        { name: 'icon', type: 'BloomIconComponent', optional: false },
+        { name: 'size', type: "IconProps['size']", options: ['sm', 'md', 'lg', 'xl', 'xs', '2xs', '2xl', '3xl'], optional: true },
         { name: 'style', type: 'ViewStyle | ViewStyle[]', optional: true },
-        { name: 'iconStyle', type: 'IconProps["style"]', optional: true },
+        { name: 'iconStyle', type: "IconProps['style']", optional: true },
       ],
     },
   },
   components: [
-    { name: 'IconCircle', propsType: 'IconCircle' },
+    { name: 'IconCircle', propsType: 'IconCircleProps' },
   ],
 }

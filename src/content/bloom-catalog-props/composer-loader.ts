@@ -9,6 +9,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'children', type: 'ReactNode', optional: false },
         { name: 'active', type: 'boolean', optional: true, description: 'Show the light. Fades in/out (450ms) — flip it while awaiting a response. Default `true`.' },
+        { name: 'paused', type: 'boolean', optional: true, description: 'Freeze the decorative light without changing active or the composer. Use native viewability for offscreen content.' },
         { name: 'colors', type: 'ComposerLoaderColors', optional: true, description: 'Four gradient colours, spread across the pill left → right. Default an iridescent set.' },
         { name: 'speed', type: 'number', optional: true, description: 'Seconds per full lap. Default `4.5`.' },
         { name: 'intensity', type: 'number', optional: true, description: 'Overall light opacity. Default `0.7`.' },

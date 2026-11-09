@@ -1,5 +1,17 @@
 /** Modules that need an app host or publish configuration, rather than a standalone visual. */
 export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
+  canvas:
+    'Canvas keeps one interactive scene (a map, graph or drawing surface) mounted while CanvasPanel changes placement around it. It needs the scene your app provides; GoWay maps are its reference host.',
+  'chart-cards/bar-list':
+    'The focused entry for BarListCard and its prop types, so an app that only needs a bar list does not import the whole chart-cards family. See Chart Cards for the rendered cards.',
+  'chart-cards/header':
+    'The focused entry for ChartHeader and ChartHeadline, the header shared by every chart card. See Chart Cards for the rendered cards.',
+  'chart-cards/line':
+    'The focused entry for LineChartCard and its prop types, so an app that only needs a line chart does not import the whole chart-cards family. See Chart Cards for the rendered cards.',
+  'chart-cards/stat-tiles':
+    'The focused entry for ChartStatTiles, the tile row shared by chart cards. See Chart Cards for the rendered cards.',
+  'chart-cards/surface':
+    'The focused entry for ChartCardSurface, the surface every chart card is drawn on. See Chart Cards for the rendered cards.',
   'agent-reply':
     'The pieces of an agent’s reply (bubble, who answered, actions, team profile) need a conversation with agents behind them. See Agent Chat for the composed conversation.',
   'avatar-flight':

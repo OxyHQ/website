@@ -66,14 +66,18 @@ export const props: BloomSurfaceProps = {
     },
     'ScrollSurfaceProps': {
       props: [
+        { name: 'stickyHeader', type: 'ReactNode', optional: true, description: 'Normal-flow chrome retained at the top while it fits alongside the footer.' },
+        { name: 'stickyFooter', type: 'ReactNode', optional: true, description: 'Normal-flow chrome retained at the bottom; oversized chrome scrolls normally.' },
         { name: 'hostStyle', type: 'StyleProp<ViewStyle>', optional: true, description: 'Layout of the outer host. `style` continues to size its inner ScrollArea.' },
         { name: 'fadeColor', type: 'string', optional: true, description: 'Actual backing fill when the semantic surface is composited by a parent.' },
+        { name: 'matchSurfacePaint', type: 'boolean', optional: true, description: 'Opt into the nearest actual material paint. An explicit fadeColor is otherwise preserved.' },
         { name: 'fadeHeight', type: 'number', optional: true, description: 'Depth of each scroll-edge fade, in pixels. Defaults to 24.' },
         { name: 'contentClassName', type: 'string', optional: true },
         { name: 'surface', type: "'primary' | 'secondary' | 'full'", options: ['primary', 'secondary', 'full'], optional: true },
         { name: 'scrollRef', type: 'Ref<ComponentRef<typeof ScrollView>>', optional: true },
         { name: 'label', type: 'string', optional: true },
         { name: 'fadeBottom', type: 'boolean', optional: true },
+        { name: 'viewportOverlay', type: 'ReactNode', optional: true, description: 'Viewport decoration above content and below scroll indicators. It must not handle input.' },
         { name: 'animatedHandler', type: 'ScrollHandlerProcessed<Record<string, unknown>>', optional: true, description: 'Reanimated scroll handler, composed on the UI thread with Bloom metrics. onScroll remains a plain JS observer.' },
         { name: 'className', type: 'string', optional: true, description: "Utilities for the scrolling viewport, resolved by Bloom's own interop." },
         { name: 'containerClassName', type: 'string', optional: true, description: 'Utilities for the outer sized area on web; shares the viewport on native.' },

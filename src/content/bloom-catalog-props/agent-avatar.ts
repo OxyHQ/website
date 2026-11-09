@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'AgentAvatarProps': {
       props: [
+        { name: 'renderer', type: "'svg' | 'webgl'", options: ['svg', 'webgl'], optional: true },
         { name: 'character', type: 'AvatarCharacter', optional: false, description: "What the avatar is. `{ preset: 'blue_beret' }` is a complete one; see `AvatarCharacter`." },
         { name: 'size', type: 'number', optional: true },
         { name: 'paused', type: 'boolean', optional: true },
@@ -14,11 +15,13 @@ export const props: BloomSurfaceProps = {
         { name: 'locale', type: 'string', optional: true },
         { name: 'interactive', type: 'boolean', optional: true, description: 'Enables pointer and touch reactions in the character renderer.' },
         { name: 'portrait', type: 'boolean', optional: true, description: 'Uses a cached still portrait for optional character previews, avoiding a live renderer per thumbnail.' },
-        { name: 'reactionKey', type: 'number', optional: true, description: 'Replays the supported 3D reaction (signature or migrated silhouette wave) when the key changes.' },
+        { name: 'reactionKey', type: 'number', optional: true, description: 'Replays the supported reaction (signature or migrated silhouette wave) when the key changes.' },
+        { name: 'idleKey', type: 'number', optional: true, description: 'Smoothly returns the SVG renderer to idle from its currently displayed pose.' },
         { name: 'entranceKey', type: 'number', optional: true },
         { name: 'workingKey', type: 'number', optional: true },
         { name: 'workingCycles', type: 'number', optional: true },
         { name: 'onReady', type: '() => void', optional: true, description: 'The first picture of the character has been painted. Fires once per mounted renderer.' },
+        { name: 'onLoadingChange', type: '(loading: boolean) => void', optional: true, description: 'Reports selected geometry preparation; paint-only changes do not reload.' },
         { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true },
@@ -27,8 +30,8 @@ export const props: BloomSurfaceProps = {
     },
     'AgentAvatarProviderProps': {
       props: [
-        { name: 'runtimeUrl', type: 'string', optional: true, description: "The runtime module's absolute URL. Defaults to `BLOOM_CHARACTER_RUNTIME_URL` (the SDK's own hosted copy); an app that self-hosts `assets/character-runtime/` passes its own." },
-        { name: 'stillStorage', type: 'BloomThemeStorage', optional: true, description: 'Where drawn stills persist across launches: any `getItem`/`setItem` adapter (the one `BloomThemeProvider` takes). Without it stills live in memory for the session.' },
+        { name: 'runtimeUrl', type: 'string', optional: true },
+        { name: 'stillStorage', type: 'BloomThemeStorage', optional: true },
         { name: 'children', type: 'ReactNode', optional: false },
       ],
     },
