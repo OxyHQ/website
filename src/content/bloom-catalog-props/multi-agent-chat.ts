@@ -24,8 +24,17 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'SelectedAgentPreview': {
+      props: [
+        { name: 'agents', type: 'Agent[]', optional: false },
+        { name: 'flights', type: 'AvatarFlights', optional: false },
+        { name: 'anchor', type: 'string', optional: false, description: "Names this preview's avatars for `flights`: `${anchor}:${agent.id}`." },
+        { name: 'caption', type: 'boolean', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'MultiAgentChat', propsType: 'MultiAgentChatProps' },
+    { name: 'SelectedAgentPreview', propsType: 'SelectedAgentPreview' },
   ],
 }

@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'MapControlsProps': {
       props: [
+        { name: 'orientation', type: "'horizontal' | 'vertical'", options: ['horizontal', 'vertical'], optional: true, description: 'Arrange the same control groups in a row or column. Default vertical.' },
         { name: 'onLocate', type: '() => void', optional: true, description: 'Draws the locate button.' },
         { name: 'following', type: 'boolean', optional: true, description: 'Whether the map is following the reader. It is a TOGGLE — `aria-pressed` on web and the selected state on native — so leave it `undefined` for a locate button that only recentres once.' },
         { name: 'heading', type: 'number', optional: true, description: 'Draws the compass. Degrees clockwise from north.' },
