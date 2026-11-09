@@ -16,11 +16,21 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'voices', type: 'readonly AgentVoice[]', optional: true, description: "Native hosts can supply their speech provider's catalog. Web uses local device voices by default." },
         { name: 'showPreferences', type: 'boolean', optional: true, description: 'Draw the speech preferences (voice, speed, language, notifications) under the profile. Default `true`. A host that does not keep them, because its agents have no voice, turns it off: the editor is then the profile and the look alone, and `agent.preferences` is left untouched.' },
+        { name: 'children', type: 'ReactNode', optional: true, description: "Rows of the host's own, after the description, in the same card. Compose them with `AgentCreatorField` so they match the built-in ones. The editor owns the look, the name, the label and the description; anything else an agent has (a username, a status, a link) is the host's, and is handed in here rather than added to the editor one field at a time." },
         { name: 'onPreviewVoice', type: '(text: string, preferences: AgentPreferences) => void', optional: true, description: 'Host-owned speech preview, used on native and optionally on web.' },
+      ],
+    },
+    'AgentCreatorFieldProps': {
+      props: [
+        { name: 'label', type: 'string', optional: false, description: "The row's name, in the 96px column at its start." },
+        { name: 'children', type: 'ReactNode', optional: false, description: 'The control: a `TextFieldInput`, a `Textarea`, a `Switch`, whatever the row edits.' },
+        { name: 'multiline', type: 'boolean', optional: true, description: 'A taller row whose label sits at the top, for a multi-line control.' },
+        { name: 'divider', type: 'boolean', optional: true, description: 'A hairline above the row. On by default; the first row of a card turns it off.' },
       ],
     },
   },
   components: [
     { name: 'AgentCreator', propsType: 'AgentCreatorProps' },
+    { name: 'AgentCreatorField', propsType: 'AgentCreatorFieldProps' },
   ],
 }

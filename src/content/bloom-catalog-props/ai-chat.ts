@@ -95,9 +95,9 @@ export const props: BloomSurfaceProps = {
     },
     'AiChatShellProps': {
       props: [
-        { name: 'sidebar', type: 'ReactNode', optional: false, description: 'The floating sidebar shown from `lg` (1024).' },
+        { name: 'sidebar', type: 'ReactNode | ((props: SidebarProps) => ReactNode)', optional: false, description: 'The floating sidebar shown from `lg` (1024).' },
         { name: 'sidebarWidth', type: 'number', optional: true, description: "The in-flow sidebar's column width from `lg` up. Omit and the sidebar sizes itself, as it always has." },
-        { name: 'sidebarCollapsed', type: 'boolean', optional: true, description: "Publish the in-flow sidebar's collapsed state. Default `false`; the sidebar owns its size." },
+        { name: 'sidebarCollapsed', type: 'boolean', optional: true, description: "Control the in-flow sidebar's collapsed state. Omitted with a function `sidebar`, the shell owns it; omitted with a node it is `false`." },
         { name: 'collapsedSidebarWidth', type: 'number', optional: true, description: 'Optional collapsed column width override. Omit to let the sidebar size and animate itself.' },
         { name: 'mobileSidebar', type: 'ReactNode', optional: true, description: 'Navigation content for integrations without an in-flow sidebar.' },
         { name: 'children', type: 'ReactNode', optional: false, description: 'The chat container.' },
@@ -107,6 +107,7 @@ export const props: BloomSurfaceProps = {
         { name: 'defaultPanelWidth', type: 'number', optional: true, description: 'Initial panel width. Default `410`; dragging clamps it to 320–560.' },
         { name: 'minPanelWidth', type: 'number', optional: true },
         { name: 'maxPanelWidth', type: 'number', optional: true },
+        { name: 'panelResizable', type: 'boolean', optional: true, description: 'Whether the divider beside the panel can be dragged. Default `true`. A panel with a width of its own (an editor, a form) turns it off, and the panel keeps `defaultPanelWidth`.' },
         { name: 'navOpen', type: 'boolean', optional: true, description: 'Controlled nav drawer (below `lg`).' },
         { name: 'onNavOpenChange', type: '(open: boolean) => void', optional: true },
         { name: 'panelOpen', type: 'boolean', optional: true, description: 'Controlled panel drawer (below `xl`).' },

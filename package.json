@@ -63,7 +63,7 @@
     "test:store:browser": "bun scripts/store.browser.test.ts"
   },
   "dependencies": {
-    "@alia.onl/sdk": "22.10.1",
+    "@alia.onl/sdk": "23.1.0",
     "@aws-sdk/client-cloudwatch": "^3.1130.0",
     "@aws-sdk/client-s3": "^3.1087.0",
     "@aws-sdk/credential-provider-http": "^3.972.80",
@@ -74,7 +74,7 @@
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
     "@mercaria.co/sdk": "~0.2.0",
-    "@oxy.so/bloom": "17.29.0",
+    "@oxy.so/bloom": "17.30.2",
     "@oxy.so/contracts": "6.22.0",
     "@oxy.so/core": "7.44.0",
     "@oxy.so/db": "1.4.0",
@@ -186,10 +186,10 @@
     "@oxy.so/core": "7.44.0",
     "@oxy.so/services": "14.15.2",
     "@oxy.so/mcp": "1.4.2",
-    "@oxy.so/bloom": "17.29.0",
+    "@oxy.so/bloom": "17.30.2",
     "@oxy.so/contracts": "6.22.0",
     "@oxy.so/telemetry": "2.1.0",
     "react-native-css": "3.1.0-rc.0",
-    "@alia.onl/sdk": "22.10.1"
+    "@alia.onl/sdk": "23.1.0"
   }
 }

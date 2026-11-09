@@ -20,6 +20,7 @@ export const props: BloomSurfaceProps = {
         { name: 'actions', type: '(conversation: ConversationSidebarItem) => ConversationSidebarAction[]', optional: true, description: 'The context menu of a conversation; none, none.' },
         { name: 'onAction', type: '(conversation: ConversationSidebarItem, key: string) => void', optional: true },
         { name: 'labels', type: 'ConversationSidebarLabels', optional: true },
+        { name: 'heading', type: 'string', optional: true, description: 'A heading over the rows ("Agents"), drawn like a tree section\'s label; none, none. Not drawn while there are no rows.' },
         { name: 'after', type: 'ReactNode', optional: true, description: 'Under the last row: a loading line, ghost rows while a page of history arrives. With it, the empty text is not drawn.' },
         { name: 'size', type: 'SidebarSize', options: ['sm', 'md', 'lg'], optional: true, description: 'The row size, and the panel width that follows it. Defaults to `md`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
