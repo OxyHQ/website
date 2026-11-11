@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'AddressListProps': {
       props: [
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Inherits the nearest BloomScope; defaults to md.' },
         { name: 'sections', type: 'readonly AddressListSection[]', optional: false },
         { name: 'selectedId', type: 'string', optional: true, description: 'The chosen entry\'s `id`. Only meaningful for `variant="picker"`.' },
         { name: 'onSelect', type: '(id: string) => void', optional: true },
@@ -25,6 +26,7 @@ export const props: BloomSurfaceProps = {
     },
     'AddressRowProps': {
       props: [
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Inherits the nearest BloomScope; defaults to md.' },
         { name: 'title', type: 'string', optional: false, description: 'The line a reader identifies the place by — "Home", "Carrer de l’Om 14".' },
         { name: 'subtitle', type: 'string', optional: true, description: 'The rest of it — "Carrer de l’Om 14, Barcelona", "2nd floor, ring twice".' },
         { name: 'kind', type: 'AddressKind', options: ['place', 'saved', 'recent', 'suggestion'], optional: true, description: 'Chooses the default glyph. Default `place`.' },

@@ -17,6 +17,7 @@ export const props: BloomSurfaceProps = {
         { name: 'voices', type: 'readonly AgentVoice[]', optional: true, description: "Native hosts can supply their speech provider's catalog. Web uses local device voices by default." },
         { name: 'showPreferences', type: 'boolean', optional: true, description: 'Draw the speech preferences (voice, speed, language, notifications) under the profile. Default `true`. A host that does not keep them, because its agents have no voice, turns it off: the editor is then the profile and the look alone, and `agent.preferences` is left untouched.' },
         { name: 'children', type: 'ReactNode', optional: true, description: "Rows of the host's own, after the description, in the same card. Compose them with `AgentCreatorField` so they match the built-in ones. The editor owns the look, the name, the label and the description; anything else an agent has (a username, a status, a link) is the host's, and is handed in here rather than added to the editor one field at a time." },
+        { name: 'sections', type: 'ReactNode', optional: true, description: "Cards of the host's own, below the details card: `AgentCreatorSection`s for what an agent has beyond who it is (its schedule, its inbox, what it remembers). The editor scrolls them with the rest." },
         { name: 'onPreviewVoice', type: '(text: string, preferences: AgentPreferences) => void', optional: true, description: 'Host-owned speech preview, used on native and optionally on web.' },
       ],
     },
@@ -28,9 +29,16 @@ export const props: BloomSurfaceProps = {
         { name: 'divider', type: 'boolean', optional: true, description: 'A hairline above the row. On by default; the first row of a card turns it off.' },
       ],
     },
+    'AgentCreatorSectionProps': {
+      props: [
+        { name: 'title', type: 'string', optional: false, description: "The section's name, above its card." },
+        { name: 'children', type: 'ReactNode', optional: false, description: 'Rows of the card: compose them with `AgentCreatorField`, or hand in a row of your own.' },
+      ],
+    },
   },
   components: [
     { name: 'AgentCreator', propsType: 'AgentCreatorProps' },
     { name: 'AgentCreatorField', propsType: 'AgentCreatorFieldProps' },
+    { name: 'AgentCreatorSection', propsType: 'AgentCreatorSectionProps' },
   ],
 }

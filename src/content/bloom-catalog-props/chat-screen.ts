@@ -187,11 +187,11 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'count', type: 'number', optional: true, description: 'How many mentions are waiting. `0` draws no badge.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: '`"Jump to mention"` in English (localised).' },
-        { name: 'size', type: 'number', optional: true, description: 'Diameter. Default `44`.' },
-        { name: 'onPress', type: '() => void', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
+        { name: 'size', type: 'number', optional: true, description: 'Diameter. Default `44`.' },
         { name: 'visible', type: 'boolean', optional: true, description: '`false` renders NOTHING — no hidden button parked in the focus order.' },
+        { name: 'onPress', type: '() => void', optional: true },
         { name: 'badgeMax', type: 'number', optional: true, description: 'Above this the badge reads `"99+"`. Default `99`.' },
       ],
     },

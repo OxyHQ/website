@@ -29,9 +29,10 @@ export const props: BloomSurfaceProps = {
     },
     'GroupedSectionProps': {
       props: [
-        { name: 'radius', type: "CardProps['radius']", options: ['panel', 'radius-0', 'radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max', 'concentric'], optional: true, description: 'Outer corner radius of the clipped group. Defaults to radius-28.' },
-        { name: 'separator', type: "'space' | 'line' | 'none'", options: ['space', 'line', 'none'], optional: true, description: 'Space between rounded rows (default), legacy divider lines, or no separation.' },
-        { name: 'title', type: 'string', optional: true, description: 'Optional section header text' },
+        { name: 'density', type: 'BloomContentDensity', options: ['comfortable', 'compact'], optional: true, description: "The rows' density: `comfortable` (the touch list) or `compact` (a desktop form: 36-point rows in the body style, hairlines inset at the text, a 12 radius, the title in the headline style as written, no outer margin). Default: the nearest `BloomScope contentDensity`, else `comfortable`. Set here, it reaches the section's rows too." },
+        { name: 'radius', type: "CardProps['radius']", options: ['panel', 'radius-0', 'radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max', 'concentric'], optional: true, description: 'Outer corner radius of the clipped group. Default radius-28 (comfortable), radius-12 (compact).' },
+        { name: 'separator', type: "'space' | 'line' | 'none'", options: ['space', 'line', 'none'], optional: true, description: "Space between rounded rows (comfortable's default), divider lines (compact's default: a hairline inset at the text of the row above), or no separation." },
+        { name: 'title', type: 'string', optional: true, description: 'Optional section header text. Comfortable draws it in small capitals; compact as it is written, so write it as the language writes a title (Title Case in English).' },
         { name: 'footer', type: 'string', optional: true, description: 'Optional section footer text' },
         { name: 'children', type: 'React.ReactNode', optional: false, description: 'Group items' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Override group container style' },

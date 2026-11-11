@@ -42,6 +42,7 @@ export const props: BloomSurfaceProps = {
         { name: 'closeLabel', type: 'string', optional: true, description: 'Names the `mobile` close button (`"Close sidebar"` in English).' },
         { name: 'fluid', type: 'boolean', optional: true, description: "Expanded width fills the container instead of the size's own width." },
         { name: 'surface', type: 'SidebarSurface', options: ['card', 'plain', 'docked'], optional: true, description: "The panel's edge. Defaults to `card`." },
+        { name: 'scrollbarSide', type: 'ScrollAreaScrollbarSide', options: ['start', 'end'], optional: true, description: "Which inline edge the scrolling area's scrollbar sits on. `end` (default) is the right edge in LTR; `start` moves it to the left (right in RTL), away from the neighbour of a flush `plain` sidebar. Web only: a native indicator is the system's and stays where the platform draws it." },
         { name: 'size', type: 'SidebarSize', options: ['sm', 'md', 'lg'], optional: true, description: 'The row size, and the panel width that follows it. Defaults to `md`.' },
         { name: 'showThemeToggle', type: 'boolean', optional: true, description: 'Shows `ThemeToggle` above the secondary rows. Defaults to true.' },
         { name: 'showSearch', type: 'boolean', optional: true, description: 'Quick search over the rows. Defaults to true.' },

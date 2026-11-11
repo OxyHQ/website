@@ -9,9 +9,9 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
-        { name: 'fullWidth', type: 'boolean', optional: true, description: 'When true, the tab bar spans the full container width and each trigger takes an equal share of it (edge to edge), instead of the default content-sized, horizontally scrollable layout. Best for a small, fixed set of tabs (e.g. 2–3). Defaults to `false`.' },
         { name: 'label', type: 'string', optional: true, description: 'The strip\'s accessible name — the `tablist`\'s `aria-label` on web ("Account sections"). The tab labels name the TABS, not the set of them. Ignored on native, where naming the container would fold its tabs into one element.' },
         { name: 'variant', type: 'TabsVariant', options: ['underline', 'pill', 'filled'], optional: true, description: 'Visual variant for the tab bar.' },
+        { name: 'fullWidth', type: 'boolean', optional: true, description: 'When true, the tab bar spans the full container width and each trigger takes an equal share of it (edge to edge), instead of the default content-sized, horizontally scrollable layout. Best for a small, fixed set of tabs (e.g. 2–3). Defaults to `false`.' },
         { name: 'onReorder', type: '(fromValue: string, toValue: string) => void', optional: true, description: 'Web drag or Ctrl+Shift+Arrow requests a move. The owner persists and renders the new order.' },
         { name: 'pressOpenTab', type: "'report' | 'reselect'", options: ['report', 'reselect'], optional: true, description: "What pressing the open tab again does. `report` (the default) calls `onValueChange` with it like any press; `reselect` reselects the screen instead — back to its top, and a reload once it is there — as every social app's inner tabs do. Controlled path only." },
         { name: 'items', type: 'RouterTabItem[]', optional: false },

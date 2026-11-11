@@ -25,6 +25,7 @@ export const props: BloomSurfaceProps = {
         { name: 'minItemWidth', type: 'number', optional: true, description: 'Preferred minimum width of a cell. A narrower container uses one full-width cell. Default 320.' },
         { name: 'maxColumns', type: 'number', optional: true, description: 'Maximum number of columns. Default 2.' },
         { name: 'gap', type: 'number', optional: true, description: 'Horizontal and vertical space between cells. Default 16.' },
+        { name: 'flow', type: "'rows' | 'columns'", options: ['rows', 'columns'], optional: true, description: 'How the cells are laid out once there is more than one column. `rows` (default): equal cells in aligned rows, so a short cell beside a tall one leaves room under it. `columns`: each column is its own stack, filled in turn (cell 1 to column 1, cell 2 to column 2, …), so cells of any height sit one under the other with no gaps between them. In `columns` a cell is moved to another column when the column count changes, so it remounts there.' },
         { name: 'stretchItems', type: 'boolean', optional: true, description: 'Let participating chart surfaces fill the tallest cell in each multi-column row. Default false.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Outer container style; padding is excluded from the measured available width.' },
         { name: 'testID', type: 'string', optional: true },

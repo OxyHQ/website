@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'AccordionProps': {
       props: [
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Inherited size for the whole accordion; nearest BloomScope is used when omitted.' },
         { name: 'value', type: 'string | string[] | undefined', optional: false, description: "Controls which items are expanded. For 'single' type, pass a string or undefined. For 'multiple' type, pass an array of strings." },
         { name: 'onValueChange', type: '(value: string | string[] | undefined) => void', optional: false, description: 'Called when expanded items change.' },
         { name: 'type', type: 'AccordionType', options: ['single', 'multiple'], optional: true, description: 'Whether only one item can be expanded at a time.' },
