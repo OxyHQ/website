@@ -360,7 +360,10 @@ try {
         const rect = node as SVGRectElement;
         // A CSS pill radius (999) becomes an ellipse in SVG: rx is clamped
         // to half the WIDTH while ry is clamped to half the HEIGHT.
-        return rect.rx.baseVal.value === rect.height.baseVal.value / 2;
+        // Bloom follows the composer's own corner radius (a grown pill squares
+        // off), so the rim need not be a full pill, only never past half the height.
+        const rx = rect.rx.baseVal.value;
+        return rx > 0 && rx <= rect.height.baseVal.value / 2;
       }),
       'loader light follows an ellipse instead of the composer rim',
     );
