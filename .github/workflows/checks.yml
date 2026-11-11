@@ -298,9 +298,10 @@ jobs:
     needs: changes
     if: ${{ !cancelled() && needs.changes.result == 'success' && needs.changes.outputs.review == 'true' }}
     runs-on: ubuntu-latest
-    # The full docs build plus cold software-GPU browser checks can exceed 20m.
+    # The Vite build alone takes 12 to 23 minutes on a shared runner (the docs
+    # corpus is 27k modules), then the prerender and the browser gates run.
     # Individual browser actions and animation checks remain bounded.
-    timeout-minutes: 30
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
