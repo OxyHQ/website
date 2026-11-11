@@ -3,6 +3,8 @@ import { join } from 'node:path';
 import { chromium, type Locator, type Page, type Request } from 'playwright';
 
 const ROOT = join(import.meta.dir, '..');
+// Bloom draws every character with its shared SVG renderer (no canvas, no runtime).
+// Page functions are serialized, so the selector is spelled out inside each.
 const reservation = Bun.serve({
   port: 0,
   fetch: () => new Response('reserved'),
@@ -106,7 +108,7 @@ async function renderStage(
             ...document.querySelectorAll('[data-agent-preset-marks] [role="img"]'),
           ].map((avatar) => ({
             label: avatar.getAttribute('aria-label'),
-            canvas: !!avatar.querySelector('canvas'),
+            drawn: !!avatar.querySelector('[data-testid="bloom-vector-drawing"]'),
             text: (avatar as HTMLElement).innerText.trim().slice(0, 80),
           })),
         };
@@ -115,15 +117,12 @@ async function renderStage(
     const diagnostics = await page
       .evaluate(() => {
         function describe(item: Element) {
-          const canvas = item.querySelector('canvas');
-          const pixels = canvas
-            ?.getContext('2d')
-            ?.getImageData(0, 0, canvas.width, canvas.height).data;
+          const svg = item.querySelector('[data-testid="bloom-vector-drawing"]');
           return {
             name: item.getAttribute('aria-label') ?? item.textContent,
             bounds: item.getBoundingClientRect().toJSON(),
-            canvas: canvas ? [canvas.width, canvas.height] : null,
-            painted: pixels?.some((value, index) => index % 4 === 3 && value > 20) ?? false,
+            svg: !!svg,
+            painted: !!svg?.querySelector('path[d]'),
           };
         }
         return {
@@ -207,22 +206,17 @@ try {
         // avatar that gives up never paints: say so now, not at the timeout.
         const gaveUp = [...document.querySelectorAll('[data-bloom-agent-presets] li')].filter(
           (item) =>
-            !item.querySelector('canvas') && item.textContent?.includes('Avatar unavailable'),
+            !item.querySelector('[data-testid="bloom-vector-drawing"]') &&
+            item.textContent?.includes('Avatar unavailable'),
         );
         if (gaveUp.length)
           throw new Error(`${gaveUp.length} preset avatar(s) gave up: "Avatar unavailable"`);
-        const canvases = [
-          ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+        const drawings = [
+          ...document.querySelectorAll(
+            '[data-bloom-agent-presets] [data-testid="bloom-vector-drawing"]',
+          ),
         ];
-        return (
-          canvases.length === 9 &&
-          canvases.every((canvas) => {
-            const pixels = canvas
-              .getContext('2d')
-              ?.getImageData(0, 0, canvas.width, canvas.height).data;
-            return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
-          })
-        );
+        return drawings.length === 9 && drawings.every((svg) => svg.querySelector('path[d]'));
       },
       undefined,
       { timeout: COLD_RENDER_TIMEOUT },
@@ -232,15 +226,28 @@ try {
   // cannot satisfy the animation check.
   for (let sample = 0; sample < 3; sample++) {
     const motionBefore = await motionPage
-      .locator('[data-bloom-agent-presets] canvas')
-      .evaluateAll((nodes) => nodes.map((node) => (node as HTMLCanvasElement).toDataURL()));
+      .locator('[data-bloom-agent-presets] [data-testid="bloom-vector-drawing"]')
+      .evaluateAll((nodes) =>
+        nodes.map((svg) =>
+          [...svg.querySelectorAll('path[d]')]
+            .map((path) => `${path.getAttribute('d')}|${path.getAttribute('fill')}`)
+            .join(';'),
+        ),
+      );
     await motionPage.waitForTimeout(200);
     await renderStage(motionPage, `normal-motion presentation ${sample + 1}`, () =>
       motionPage.waitForFunction(
         (previous) =>
           [
-            ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
-          ].some((canvas, index) => canvas.toDataURL() !== previous[index]),
+            ...document.querySelectorAll(
+              '[data-bloom-agent-presets] [data-testid="bloom-vector-drawing"]',
+            ),
+          ].some(
+            (svg, index) =>
+              [...svg.querySelectorAll('path[d]')]
+                .map((path) => `${path.getAttribute('d')}|${path.getAttribute('fill')}`)
+                .join(';') !== previous[index],
+          ),
         motionBefore,
       ),
     );
@@ -499,7 +506,9 @@ try {
       `${mode} heading and workspace avatars present`,
       async () => {
         invariant(
-          (await page.locator('[data-agent-preset-marks] canvas').count()) === 4,
+          (await page
+            .locator('[data-agent-preset-marks] [data-testid="bloom-vector-drawing"]')
+            .count()) === 4,
           'Bloom lost its four heading avatars',
         );
         invariant(
@@ -521,7 +530,7 @@ try {
       name: 'Launch planner, live avatar preview',
       exact: true,
     });
-    // Revealing a cold canvas can itself block on SwiftShader preparation.
+    // Revealing a cold preview can itself block on slow rendering.
     // The locator's default 30s expired before the existing 90s paint wait.
     await renderStage(page, `${mode} cold editor brought into view`, () =>
       avatarPreview.evaluate(
@@ -530,21 +539,10 @@ try {
         { timeout: COLD_RENDER_TIMEOUT },
       ),
     );
-    const previewCanvas = avatarPreview.locator('canvas');
-    await previewCanvas.waitFor();
+    const previewDrawing = avatarPreview.locator('[data-testid="bloom-vector-drawing"]');
+    await previewDrawing.waitFor();
     await renderStage(page, `${mode} editor preview painted`, async () =>
-      page.waitForFunction(
-        (canvas) => {
-          const node = canvas as HTMLCanvasElement;
-          const context = node.getContext('2d');
-          if (!context || !node.width || !node.height) return false;
-          const pixels = context.getImageData(0, 0, node.width, node.height).data;
-          for (let i = 3; i < pixels.length; i += 4) if (pixels[i] > 20) return true;
-          return false;
-        },
-        await previewCanvas.elementHandle(),
-        { timeout: COLD_RENDER_TIMEOUT },
-      ),
+      previewDrawing.locator('path[d]').first().waitFor({ timeout: COLD_RENDER_TIMEOUT }),
     );
     await chat.getByRole('button', { name: 'Sparkle capsules', exact: true }).click();
     invariant(
@@ -689,22 +687,17 @@ try {
         () => {
           const gaveUp = [...document.querySelectorAll('[data-bloom-agent-presets] li')].filter(
             (item) =>
-              !item.querySelector('canvas') && item.textContent?.includes('Avatar unavailable'),
+              !item.querySelector('[data-testid="bloom-vector-drawing"]') &&
+              item.textContent?.includes('Avatar unavailable'),
           );
           if (gaveUp.length)
             throw new Error(`${gaveUp.length} preset avatar(s) gave up: "Avatar unavailable"`);
-          const canvases = [
-            ...document.querySelectorAll<HTMLCanvasElement>('[data-bloom-agent-presets] canvas'),
+          const drawings = [
+            ...document.querySelectorAll(
+              '[data-bloom-agent-presets] [data-testid="bloom-vector-drawing"]',
+            ),
           ];
-          return (
-            canvases.length === 9 &&
-            canvases.every((canvas) => {
-              const pixels = canvas
-                .getContext('2d')
-                ?.getImageData(0, 0, canvas.width, canvas.height).data;
-              return pixels && pixels.some((value, index) => index % 4 === 3 && value > 20);
-            })
-          );
+          return drawings.length === 9 && drawings.every((svg) => svg.querySelector('path[d]'));
         },
         undefined,
         { timeout: COLD_RENDER_TIMEOUT },
@@ -712,23 +705,27 @@ try {
     );
     const paintedPresets = await presets.locator('li').evaluateAll((items) =>
       items.map((item) => {
-        const canvas = item.querySelector('canvas')!;
-        const pixels = canvas
-          .getContext('2d')!
-          .getImageData(0, 0, canvas.width, canvas.height).data;
+        const svg = item.querySelector('[data-testid="bloom-vector-drawing"]')!;
         const rgb = [0, 0, 0];
         let colored = 0;
-        for (let i = 0; i < pixels.length; i += 4) {
-          const color = [pixels[i], pixels[i + 1], pixels[i + 2]];
-          if (pixels[i + 3] < 128 || Math.max(...color) - Math.min(...color) < 32) continue;
-          colored++;
-          color.forEach((value, channel) => {
-            rgb[channel] += value;
+        const paths = [...svg.querySelectorAll<SVGGraphicsElement>('path[d]')];
+        for (const path of paths) {
+          const match = getComputedStyle(path).fill.match(/rgba?\(([^)]+)\)/);
+          if (!match) continue;
+          const [r, g, b] = match[1].split(',').map((part) => Number.parseFloat(part));
+          const box = path.getBBox();
+          const weight = box.width * box.height;
+          if (Math.max(r, g, b) - Math.min(r, g, b) < 32 || weight <= 0) continue;
+          colored += weight;
+          [r, g, b].forEach((value, channel) => {
+            rgb[channel] += value * weight;
           });
         }
         return {
           name: item.textContent?.trim(),
-          pixels: canvas.toDataURL(),
+          pixels: paths
+            .map((path) => `${path.getAttribute('d')}|${path.getAttribute('fill')}`)
+            .join(';'),
           colored,
           rgb: rgb.map((value) => value / Math.max(1, colored)),
         };
@@ -741,13 +738,13 @@ try {
     for (const name of ['Todd', 'Iris', 'Felipe']) {
       const preset = paintedPresets.find((item) => item.name === name)!;
       invariant(
-        preset.colored > 100 && preset.rgb[0] > preset.rgb[1] && preset.rgb[0] > preset.rgb[2],
+        preset.colored > 0 && preset.rgb[0] > preset.rgb[1] && preset.rgb[0] > preset.rgb[2],
         `${name} lost its chosen warm body color`,
       );
     }
     const alfred = paintedPresets.find((item) => item.name === 'Alfred')!;
     invariant(
-      alfred.colored > 100 && alfred.rgb[1] > alfred.rgb[0] && alfred.rgb[2] > alfred.rgb[0],
+      alfred.colored > 0 && alfred.rgb[1] > alfred.rgb[0] && alfred.rgb[2] > alfred.rgb[0],
       'Alfred lost its chosen cyan body color',
     );
     const aiChat = page.getByTestId('multi-agent-chat');
