@@ -12,6 +12,20 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
     'The React-free colour engine for servers and build scripts: theme roles from a seed colour, and seeds from image pixels. It returns values rather than rendering.',
   'conversation-sidebar':
     'A sidebar of conversations needs the account’s chats and agents. See Sidebar for the live panel it is built on.',
+  canvas:
+    'An infinite pan-and-zoom canvas with a background and snapping panels. It needs a full-screen app layout around it, and its regions are measured on a real screen.',
+  'chart-cards/bar-list':
+    'The ranked bar-list card as its own import, for bundles that avoid the rest of Chart Cards. See Chart Cards for the rendered cards.',
+  'chart-cards/header':
+    'The chart header and headline pieces as their own import. See Chart Cards for the composed cards.',
+  'chart-cards/line':
+    'The line chart card as its own import, for bundles that avoid the rest of Chart Cards. See Chart Cards for the rendered cards.',
+  'chart-cards/stat-tiles':
+    'The row of stat tiles as its own import. See Chart Cards for the composed cards.',
+  'chart-cards/surface':
+    'The chart card surface (frame and padding) the other chart cards sit on. See Chart Cards for the composed cards.',
+  'overlay/back':
+    'Hardware and browser back handling for overlays. It follows the device’s back button and navigation history, so it needs an app around it; see Dialog for an overlay that uses it.',
   voice:
     'Voice mode drives a live audio session (levels, transcript, mute). Pass it the state of your own voice session.',
   'app-shell/hooks':

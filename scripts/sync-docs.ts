@@ -32,6 +32,7 @@ import {
   rewriteStaleDocsVersionLinks,
   unlinkRemovedPageLinks,
 } from './docs-links.ts';
+import { quoteUnsafeFrontMatterScalars } from './frontmatter-safe.ts';
 import { escapeUnclosedProseTags } from './mdx-literal-tags.ts';
 import type {
   DocsConfig,
@@ -389,7 +390,7 @@ async function rewriteCrossPackageRootsInPlace(packages: readonly SyncedPackage[
  */
 function prepareSyncedSource(source: string, filePath: string): string {
   const isMdx = /\.mdx$/i.test(filePath);
-  const rewritten = rewriteDocsLinks(source, isMdx);
+  const rewritten = rewriteDocsLinks(isMdx ? quoteUnsafeFrontMatterScalars(source) : source, isMdx);
   if (!isMdx) return rewritten;
   const { source: escapedSource, escaped } = escapeUnclosedProseTags(rewritten);
   if (escaped.length > 0) {
