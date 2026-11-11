@@ -42,6 +42,7 @@ export const props: BloomSurfaceProps = {
         { name: 'sideOffset', type: 'number', optional: true, description: 'Gap between the anchor and the surface, on the `side` axis.' },
         { name: 'alignOffset', type: 'number', optional: true, description: 'Shift along the `align` axis, applied before the viewport clamp.' },
         { name: 'material', type: "'surface' | 'flat'", options: ['surface', 'flat'], optional: true, description: 'Standard optical surface or plain fill. Default surface.' },
+        { name: 'virtualAnchor', type: '{ getBoundingClientRect: () => { top: number; bottom: number; left: number; right: number; } | null; }', optional: true, description: 'Web selection/caret anchor. Re-measured by the shared owner on scroll and resize. Native presentation remains a sheet; this affects web placement only. Return null when the target is gone.' },
       ],
     },
     'PopoverHeaderProps': {

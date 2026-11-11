@@ -25,6 +25,7 @@ export const props: BloomSurfaceProps = {
         { name: 'selected', type: 'boolean', optional: true },
         { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'loading', type: 'boolean', optional: true, description: 'Busy presentation delegates to the shared Button.' },
         { name: 'iconOnly', type: 'boolean', optional: true, description: 'Square item showing only `leadingIcon` — name it with `accessibilityLabel`.' },
         { name: 'leadingIcon', type: 'ButtonIconComponent', optional: true, description: 'Icon component before the label, sized and coloured by the item.' },
         { name: 'trailingIcon', type: 'ButtonIconComponent', optional: true, description: 'Icon component after the label.' },

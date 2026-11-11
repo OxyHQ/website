@@ -52,10 +52,22 @@ export const props: BloomSurfaceProps = {
       ],
       inheritsFrom: ['TextInputProps'],
     },
+    'HeaderActionsProps': {
+      props: [
+        { name: 'persistentActions', type: 'ReactNode', optional: true, description: 'Stateful custom controls stay mounted and never enter overflow. The row measures and reserves them.' },
+        { name: 'actions', type: 'readonly HeaderAction[]', optional: false },
+        { name: 'availableWidth', type: 'number', optional: true, description: 'Override the local header budget for an intentionally embedded command row.' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Accessible name of the grouped commands; defaults to the shared actions label.' },
+        { name: 'overflowLabel', type: 'string', optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'PageHeader', propsType: 'PageHeaderProps' },
     { name: 'EdgeScrim', propsType: 'EdgeScrimProps' },
     { name: 'PageHeaderTitleInput', propsType: 'PageHeaderTitleInputProps' },
+    { name: 'HeaderActions', propsType: 'HeaderActionsProps' },
   ],
 }
