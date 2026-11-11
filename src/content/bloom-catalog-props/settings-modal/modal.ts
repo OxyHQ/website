@@ -17,6 +17,7 @@ export const props: BloomSurfaceProps = {
         { name: 'defaultPage', type: 'string', optional: true, description: 'Page selected every time the modal opens. Defaults to the first navigable row.' },
         { name: 'onPageChange', type: '(page: string) => void', optional: true },
         { name: 'initialView', type: "'navigation' | 'page'", options: ['navigation', 'page'], optional: true, description: 'Compact layout: start at the section list (default) or open the selected page directly. Resets on each open.' },
+        { name: 'headerPresentation', type: "'bar' | 'floating'", options: ['bar', 'floating'], optional: true, description: "The page header: `bar` (default), Bloom's flat opaque strip, or `floating`, Bloom's transparent header whose buttons are grouped capsules over the scrolling page." },
         { name: 'labels', type: 'SettingsModalLabels', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

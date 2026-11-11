@@ -5,6 +5,26 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'error-boundary',
   propTypes: {
+    'AppErrorFallbackProps': {
+      props: [
+        { name: 'error', type: 'Error', optional: false, description: "From the boundary's render-prop `fallback` context." },
+        { name: 'errorInfo', type: 'ErrorInfo | null', optional: true },
+        { name: 'retry', type: '() => void', optional: false },
+        { name: 'retryCount', type: 'number', optional: true, description: 'How many retries have already happened (`ErrorBoundaryFallbackContext.retryCount`).' },
+        { name: 'maxRetries', type: 'number', optional: true, description: 'After this many retries the retry button gives way to `exhaustedMessage`: a crash that survives three retries is not going away by pressing the same button a fourth time. Default: unlimited.' },
+        { name: 'title', type: 'string', optional: true },
+        { name: 'message', type: 'string', optional: true },
+        { name: 'retryLabel', type: 'string', optional: true },
+        { name: 'exhaustedMessage', type: 'string', optional: true, description: 'Replaces "This keeps failing. Close and reopen the app." once retries are spent.' },
+        { name: 'showDetails', type: 'boolean', optional: true, description: "Show the error's name, message and stacks, scrollable. Default: only in development (`__DEV__`) — a production user is shown the plain message and can still copy the report." },
+        { name: 'copyDetails', type: 'boolean', optional: true, description: 'Show the copy-details button. Default `true`.' },
+        { name: 'deviceInfo', type: 'string | (() => string)', optional: true, description: 'Appended to the copied report under a blank line: app version, device, locale, user id — whatever support needs. A function is called when copying, so it can read fresh state.' },
+        { name: 'onCopied', type: '(report: string) => void', optional: true, description: 'Called with the report text once it has been copied.' },
+        { name: 'actions', type: 'ReactNode', optional: true, description: 'Extra buttons beside retry/copy: "Send feedback", "Report a problem", "Go home".' },
+        { name: 'footer', type: 'ReactNode', optional: true, description: 'Under everything: a support line, a version, a feedback form.' },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
     'ErrorBoundaryProps': {
       props: [
         { name: 'children', type: 'ReactNode', optional: false },
@@ -29,6 +49,7 @@ export const props: BloomSurfaceProps = {
     },
   },
   components: [
+    { name: 'AppErrorFallback', propsType: 'AppErrorFallbackProps' },
     { name: 'ErrorBoundary', propsType: 'ErrorBoundaryProps' },
     { name: 'PanelErrorBoundary', propsType: 'PanelErrorBoundaryProps' },
   ],

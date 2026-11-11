@@ -11,6 +11,8 @@ export const props: BloomSurfaceProps = {
         { name: 'activeId', type: 'string', optional: true, description: '`id` of the active item. An id naming no item (including `undefined`) leaves nothing selected — every item renders in its inactive state.' },
         { name: 'onSelect', type: '(id: string) => void', optional: false, description: "Called with an item's `id` when it is pressed." },
         { name: 'width', type: 'number', optional: true, description: 'Width of the rail, in px. Defaults to `80`, a comfortable column for an icon-plus-label item.' },
+        { name: 'header', type: 'ReactNode', optional: true, description: 'Pinned above the destinations (a brand mark), centred.' },
+        { name: 'footer', type: 'ReactNode', optional: true, description: 'Pinned below the destinations (an account control), centred.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: "Container style override, merged after the rail's own positioning." },
         { name: 'testID', type: 'string', optional: true },
       ],

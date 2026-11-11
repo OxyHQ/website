@@ -7,12 +7,12 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'Search': {
       props: [
-        { name: 'size', type: 'TextFieldSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Size of the self-wrapped field when rendered without a `TextField`.' },
-        { name: 'disabled', type: 'boolean', optional: true, description: 'Disable the input; the field around it paints disabled.' },
         { name: 'value', type: 'string', optional: true },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
+        { name: 'disabled', type: 'boolean', optional: true, description: 'Disable the input; the field around it paints disabled.' },
         { name: 'placeholder', type: 'string | null', optional: true },
         { name: 'inputRef', type: 'React.RefObject<ComponentRef<typeof TextInput> | null> | React.ForwardedRef<ComponentRef<typeof TextInput>>', optional: true },
+        { name: 'size', type: 'TextFieldSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Size of the self-wrapped field when rendered without a `TextField`.' },
         { name: 'locale', type: 'string', optional: true, description: "Locale for the reveal button's names; defaults to the nearest `LocaleProvider`." },
         { name: 'invalid', type: 'boolean', optional: true },
         { name: 'onChangeText', type: '(value: string) => void', optional: true },

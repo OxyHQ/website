@@ -25,7 +25,6 @@ export const props: BloomSurfaceProps = {
         { name: 'toastOptions', type: '{ actionButtonStyle?: ViewStyle; actionButtonTextStyle?: TextStyle; cancelButtonStyle?: ViewStyle; cancelButtonTextStyle?: TextStyle; titleStyle?: TextStyle; descriptionStyle?: TextStyle; style?: ViewStyle; unstyled?: boolean; toastContainerStyle?: ViewStyle; toastContentStyle?: ViewStyle; buttonsStyle?: ViewStyle; closeButtonStyle?: ViewStyle; closeButtonIconStyle?: ViewStyle; textContainerStyle?: ViewStyle; backgroundComponent?: React.ReactNode; success?: ViewStyle; error?: ViewStyle; warning?: ViewStyle; info?: ViewStyle; loading?: ViewStyle; }', optional: true },
         { name: 'gap', type: 'number', optional: true },
         { name: 'loadingIcon', type: 'React.ReactNode', optional: true },
-        { name: 'richColors', type: 'boolean', optional: true },
         { name: 'icons', type: '{ success?: React.ReactNode; error?: React.ReactNode; warning?: React.ReactNode; info?: React.ReactNode; loading?: React.ReactNode; }', optional: true },
         { name: 'swipeToDismissDirection', type: 'ToastSwipeDirection', options: ['left', 'up'], optional: true },
         { name: 'pauseWhenPageIsHidden', type: 'boolean', optional: true },

@@ -8,7 +8,7 @@ export const props: BloomSurfaceProps = {
     'IconCircleProps': {
       props: [
         { name: 'icon', type: 'BloomIconComponent', optional: false },
-        { name: 'size', type: "IconProps['size']", options: ['sm', 'md', 'lg', 'xl', 'xs', '2xs', '2xl', '3xl'], optional: true },
+        { name: 'size', type: "IconProps['size']", options: ['xs', 'sm', 'md', 'lg', 'xl', '2xs', '2xl', '3xl'], optional: true },
         { name: 'style', type: 'ViewStyle | ViewStyle[]', optional: true },
         { name: 'iconStyle', type: "IconProps['style']", optional: true },
       ],

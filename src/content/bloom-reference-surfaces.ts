@@ -26,6 +26,12 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
     'The chart card surface (frame and padding) the other chart cards sit on. See Chart Cards for the composed cards.',
   'overlay/back':
     'Hardware and browser back handling for overlays. It follows the device’s back button and navigation history, so it needs an app around it; see Dialog for an overlay that uses it.',
+  'color-swatch-picker':
+    'A wrapping row of colour swatches with one chosen, built on Choice List (one keyboard stop, arrows move, Space or Return chooses). Pass it colors, value, onValueChange and names for the spoken name of each swatch.',
+  notifications:
+    'The notifications screen and the push-permission gate need your notification data and an operating-system permission adapter behind them. Pass them through props; the screen draws the rows and every loading, error and empty state.',
+  storage:
+    'A typed, best-effort JSON key-value store (createStorage) with no visual output. Use it for per-namespace preferences in your own app code.',
   voice:
     'Voice mode drives a live audio session (levels, transcript, mute). Pass it the state of your own voice session.',
   'app-shell/hooks':

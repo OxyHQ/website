@@ -5,19 +5,24 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'admonition',
   propTypes: {
-    'AdmonitionContent': {
+    'AdmonitionIconProps': {
       props: [
-        { name: 'children', type: 'React.ReactNode', optional: false },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'AdmonitionContentProps': {
+      props: [
+        { name: 'children', type: 'ReactNode', optional: false },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
       ],
     },
-    'AdmonitionText': {
+    'AdmonitionTextProps': {
       props: [
-        { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'children', type: 'ReactNode', optional: true },
         { name: 'style', type: 'TextStyle', optional: true },
       ],
     },
-    'Omit<ButtonProps, "size">': {
+    'ButtonProps': {
       props: [
         { name: 'onFocus', type: '(event: ButtonFocusEvent) => void', optional: true, description: 'Focus lifecycle on the interactive host; does not activate the button.' },
         { name: 'onBlur', type: '(event: ButtonFocusEvent) => void', optional: true },
@@ -41,6 +46,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onPress', type: '(event: GestureResponderEvent) => void', optional: true },
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'size', type: 'ButtonSize', options: ['xs', 'sm', 'md', 'lg'], optional: true },
         { name: 'density', type: 'BloomControlDensity', options: ['default', 'compact'], optional: true, description: "Explicit override of the nearest BloomScope's contextual action geometry." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true },
@@ -89,28 +95,36 @@ export const props: BloomSurfaceProps = {
         { name: 'fullWidth', type: 'boolean', optional: true, description: 'Stretch the button to fill its container\'s main axis (web only). Equivalent to passing `className="w-full"`; provided as a prop for ergonomics.' },
       ],
     },
-    'AdmonitionRoot': {
+    'AdmonitionRowProps': {
       props: [
-        { name: 'children', type: 'React.ReactNode', optional: false },
-        { name: 'type', type: 'AdmonitionType', options: ['info', 'tip', 'warning', 'error', 'apology'], optional: true },
+        { name: 'children', type: 'ReactNode', optional: false },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
       ],
     },
-    'Admonition': {
+    'AdmonitionRootProps': {
       props: [
-        { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'children', type: 'ReactNode', optional: false },
         { name: 'type', type: 'AdmonitionType', options: ['info', 'tip', 'warning', 'error', 'apology'], optional: true },
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+      ],
+    },
+    'AdmonitionProps': {
+      props: [
+        { name: 'children', type: 'ReactNode', optional: true },
+        { name: 'type', type: 'AdmonitionType', options: ['info', 'tip', 'warning', 'error', 'apology'], optional: true },
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
       ],
     },
   },
   components: [
-    { name: 'AdmonitionIcon' },
-    { name: 'AdmonitionContent', propsType: 'AdmonitionContent' },
-    { name: 'AdmonitionText', propsType: 'AdmonitionText' },
-    { name: 'AdmonitionButton', propsType: 'Omit<ButtonProps, "size">' },
-    { name: 'AdmonitionRow', propsType: 'AdmonitionContent' },
-    { name: 'AdmonitionRoot', propsType: 'AdmonitionRoot' },
-    { name: 'Admonition', propsType: 'Admonition' },
+    { name: 'AdmonitionIcon', propsType: 'AdmonitionIconProps' },
+    { name: 'AdmonitionContent', propsType: 'AdmonitionContentProps' },
+    { name: 'AdmonitionText', propsType: 'AdmonitionTextProps' },
+    { name: 'AdmonitionButton', propsType: 'ButtonProps' },
+    { name: 'AdmonitionRow', propsType: 'AdmonitionRowProps' },
+    { name: 'AdmonitionRoot', propsType: 'AdmonitionRootProps' },
+    { name: 'Admonition', propsType: 'AdmonitionProps' },
   ],
 }

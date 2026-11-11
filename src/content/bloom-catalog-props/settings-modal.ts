@@ -17,6 +17,7 @@ export const props: BloomSurfaceProps = {
         { name: 'defaultPage', type: 'string', optional: true, description: 'Page selected every time the modal opens. Defaults to the first navigable row.' },
         { name: 'onPageChange', type: '(page: string) => void', optional: true },
         { name: 'initialView', type: "'navigation' | 'page'", options: ['navigation', 'page'], optional: true, description: 'Compact layout: start at the section list (default) or open the selected page directly. Resets on each open.' },
+        { name: 'headerPresentation', type: "'bar' | 'floating'", options: ['bar', 'floating'], optional: true, description: "The page header: `bar` (default), Bloom's flat opaque strip, or `floating`, Bloom's transparent header whose buttons are grouped capsules over the scrolling page." },
         { name: 'labels', type: 'SettingsModalLabels', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -33,10 +34,15 @@ export const props: BloomSurfaceProps = {
         { name: 'initialView', type: "'navigation' | 'page'", options: ['navigation', 'page'], optional: true, description: 'Compact layout: start at the section list (default) or on the selected page.' },
         { name: 'layout', type: 'SettingsModalLayout', options: ['compact', 'medium', 'regular'], optional: true, description: "The layout, when the host decides it. Default: from the layout's own MEASURED width (the window's until the first layout), never the window's." },
         { name: 'windowControls', type: "'auto' | 'none'", options: ['auto', 'none'], optional: true, description: "`auto` (default): where the platform has windows (`@oxy.so/bloom/window`), the layout is the window's content — the window's controls sit at the rail's top, which keeps their room and moves the window; narrow, the header keeps their room at its leading edge. `none`: the layout is a panel inside an application, away from the window's corner." },
+        { name: 'headerPresentation', type: "'bar' | 'floating'", options: ['bar', 'floating'], optional: true, description: "The page header: `bar` (default), Bloom's flat opaque strip, or `floating`, Bloom's transparent header whose buttons are grouped capsules over the scrolling page." },
+        { name: 'density', type: 'BloomContentDensity', options: ['comfortable', 'compact'], optional: true, description: "`comfortable` (default): the touch settings. `compact`: a desktop's System Settings — 28-point rail rows in the body style and the label's colour, the groups apart by space alone (no group headings), a 20 content inset, and the pages' `GroupedSection`s compact (`BloomScope contentDensity`)." },
+        { name: 'search', type: 'SettingsSearchProps', optional: true, description: 'A search field at the top of the rail (`SettingsSearchProps`).' },
+        { name: 'onHistoryChange', type: '(history: SettingsLayoutHistory) => void', optional: true, description: "Told when going back or forward becomes possible or not (the owner's View menu)." },
         { name: 'labels', type: 'SettingsModalLabels', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
+      inheritsFrom: ['RefAttributes<SettingsLayoutHandle>'],
     },
     'SettingsCardProps': {
       props: [
@@ -209,6 +215,12 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'SettingsPageActions': {
+      props: [
+        { name: 'actions', type: 'readonly SettingsPageAction[]', optional: false },
+        { name: 'label', type: 'string', optional: false },
+      ],
+    },
   },
   components: [
     { name: 'SettingsModal', propsType: 'SettingsModalProps' },
@@ -228,5 +240,6 @@ export const props: BloomSurfaceProps = {
     { name: 'SettingsToolsPage', propsType: 'SettingsToolsPageProps' },
     { name: 'SettingsServerList', propsType: 'SettingsServerListProps' },
     { name: 'SettingsStoragePage', propsType: 'SettingsStoragePageProps' },
+    { name: 'SettingsPageActions', propsType: 'SettingsPageActions' },
   ],
 }
