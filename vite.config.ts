@@ -13,7 +13,6 @@ import remarkFrontmatter from 'remark-frontmatter';
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 import rehypeSlug from 'rehype-slug';
 import mdxHeadings from './scripts/vite-mdx-headings';
-import bloomCharacterAssets from './scripts/vite-bloom-character-assets';
 import docsChunks from './scripts/vite-docs-chunks';
 import oxyosReleasesFeed from './scripts/vite-oxyos-releases-feed';
 import reactNativeWeb from 'vite-plugin-react-native-web';
@@ -140,7 +139,6 @@ function vendorChunk(id: string): string | undefined {
 export default defineConfig(({ mode }) => ({
   plugins: [
     docsChunks(),
-    bloomCharacterAssets(),
     oxyosReleasesFeed(),
     reactNativeWeb(),
     tailwindcss(),
@@ -193,8 +191,7 @@ export default defineConfig(({ mode }) => ({
       // The canonical Kaana SVG is a byte-pinned source asset. Running it
       // through SVGO would both invalidate that identity and crash on its
       // referenced compositing groups.
-      // Bloom's optional runtime must ship byte-for-byte as published.
-      exclude: /kaana\.svg$|(?:^|\/)bloom-character\//,
+      exclude: /kaana\.svg$/,
       jpg: { quality: 80, progressive: true },
       jpeg: { quality: 80, progressive: true },
       png: { quality: 80, effort: 4 },

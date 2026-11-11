@@ -10,7 +10,6 @@ import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxy.so/bl
 import { ImageResolverProvider } from '@oxy.so/bloom/image-resolver';
 import { BloomScope } from '@oxy.so/bloom/appearance';
 import { AgentAvatarProvider } from '@oxy.so/bloom/agent-avatar';
-import { BLOOM_CHARACTER_RUNTIME_URL } from './lib/bloomCharacterRuntime';
 import { OXY_API } from './lib/oxyApi';
 import {
   getSavedMode,
@@ -556,7 +555,7 @@ function AppProviders() {
       >
         {/* The one control size for the whole site. A component does not pick
             its own; change it here and every Bloom control moves together. */}
-        <AgentAvatarProvider runtimeUrl={BLOOM_CHARACTER_RUNTIME_URL}>
+        <AgentAvatarProvider>
           <BloomScope size="md">
             <OxyProvider baseURL={OXY_API} clientId={OXY_CLIENT_ID} queryClient={queryClient}>
               <AppSetup>
