@@ -11,7 +11,6 @@ export const props: BloomSurfaceProps = {
         { name: 'onOpenChange', type: '(open: boolean) => void', optional: false, description: 'Close request — backdrop tap, Escape, cancel, or after confirm — as `onOpenChange(false)`.' },
         { name: 'title', type: 'string', optional: false, description: 'Headline.' },
         { name: 'description', type: 'string', optional: true, description: 'Supporting copy.' },
-        { name: 'icon', type: 'ReactNode', optional: true, description: "Drawn above the title (`DialogProps.icon`): the application's icon on an alert about it, or a caution symbol." },
         { name: 'confirmLabel', type: 'string', optional: true, description: "Confirm button label; `'Confirm'` in English." },
         { name: 'cancelLabel', type: 'string', optional: true, description: "Cancel button label; `'Cancel'` in English." },
         { name: 'onConfirm', type: '() => void', optional: true, description: 'Confirm handler. The dialog closes after it runs (sync).' },

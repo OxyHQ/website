@@ -30,7 +30,6 @@ export const props: BloomSurfaceProps = {
     'TypographyScopeProps': {
       props: [
         { name: 'mode', type: 'TypographyMode', options: ['default', 'system'], optional: true, description: "Change only font family; Bloom's semantic size/weight/spacing scales remain intact." },
-        { name: 'scale', type: 'TypographyScale', options: ['default', 'desktop'], optional: true, description: "The text styles below this scope: `desktop` asks for the desktop text styles off a desktop platform (a web application drawing a desktop's chrome), `default` keeps Bloom's own ramp on one. Inherited when unset." },
       ],
       inheritsFrom: ['PropsWithChildren'],
     },

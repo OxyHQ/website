@@ -10,7 +10,7 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'ReactNode', optional: false },
         { name: 'position', type: "'top' | 'bottom'", options: ['top', 'bottom'], optional: true, description: 'A preference: a bubble near a screen edge is nudged back into view.' },
         { name: 'visible', type: 'boolean', optional: false, description: "The request to show. What sets it (hover, focus, long-press) is the call site's choice." },
-        { name: 'delay', type: 'number', optional: true, description: "Milliseconds `visible` must stay true before the bubble shows, so a pointer that only passes over the trigger opens nothing. Closing is immediate. Default `0`; on a desktop platform (`useDesktopPlatform()`) `DESKTOP_TOOLTIP_DELAY` (1 s), and at once while another tooltip shows or just closed (`TOOLTIP_WARM_WINDOW`), so neighbours read in turn. A tooltip that must show at once (a dock's names) passes `0`." },
+        { name: 'delay', type: 'number', optional: true, description: 'Milliseconds `visible` must stay true before the bubble shows, so a pointer that only passes over the trigger opens nothing. Closing is immediate. Default `0`.' },
         { name: 'onVisibleChange', type: '(visible: boolean) => void', optional: false },
       ],
     },
