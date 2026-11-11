@@ -542,7 +542,10 @@ try {
     const previewDrawing = avatarPreview.locator('[data-testid="bloom-vector-drawing"]');
     await previewDrawing.waitFor();
     await renderStage(page, `${mode} editor preview painted`, async () =>
-      previewDrawing.locator('path[d]').first().waitFor({ timeout: COLD_RENDER_TIMEOUT }),
+      previewDrawing
+        .locator('path[d]')
+        .first()
+        .waitFor({ state: 'attached', timeout: COLD_RENDER_TIMEOUT }),
     );
     await chat.getByRole('button', { name: 'Sparkle capsules', exact: true }).click();
     invariant(
