@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-11T05:08:26.324Z",
+  "generatedAt": "2026-11-12T09:44:56.406Z",
   "packages": [
     {
       "package": "@oxy.so/bloom",
@@ -2133,6 +2133,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/AgentCreatorSection",
+              "title": "AgentCreatorSection()",
+              "file": "bloom/9.0.0/api/functions/AgentCreatorSection.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/AgentLogToolCalls",
               "title": "AgentLogToolCalls()",
               "file": "bloom/9.0.0/api/functions/AgentLogToolCalls.md",
@@ -2297,6 +2304,13 @@
               "slug": "api/functions/animateWithSpec",
               "title": "animateWithSpec()",
               "file": "bloom/9.0.0/api/functions/animateWithSpec.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/AppErrorFallback",
+              "title": "AppErrorFallback()",
+              "file": "bloom/9.0.0/api/functions/AppErrorFallback.md",
               "order": 10000,
               "section": "api"
             },
@@ -2952,6 +2966,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/ColorSwatchPicker",
+              "title": "ColorSwatchPicker()",
+              "file": "bloom/9.0.0/api/functions/ColorSwatchPicker.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/ComboChartCard",
               "title": "ComboChartCard()",
               "file": "bloom/9.0.0/api/functions/ComboChartCard.md",
@@ -3193,6 +3214,20 @@
               "slug": "api/functions/CoverImage",
               "title": "CoverImage()",
               "file": "bloom/9.0.0/api/functions/CoverImage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/createBloomThemeStorage",
+              "title": "createBloomThemeStorage()",
+              "file": "bloom/9.0.0/api/functions/createBloomThemeStorage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/createStorage",
+              "title": "createStorage()",
+              "file": "bloom/9.0.0/api/functions/createStorage.md",
               "order": 10000,
               "section": "api"
             },
@@ -3603,6 +3638,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/formatBytes",
+              "title": "formatBytes()",
+              "file": "bloom/9.0.0/api/functions/formatBytes.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/formatClock",
               "title": "formatClock()",
               "file": "bloom/9.0.0/api/functions/formatClock.md",
@@ -3641,6 +3683,13 @@
               "slug": "api/functions/formatDuration",
               "title": "formatDuration()",
               "file": "bloom/9.0.0/api/functions/formatDuration.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/formatDurationText",
+              "title": "formatDurationText()",
+              "file": "bloom/9.0.0/api/functions/formatDurationText.md",
               "order": 10000,
               "section": "api"
             },
@@ -3704,6 +3753,13 @@
               "slug": "api/functions/formatRecordingTime",
               "title": "formatRecordingTime()",
               "file": "bloom/9.0.0/api/functions/formatRecordingTime.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/formatRelativeTime",
+              "title": "formatRelativeTime()",
+              "file": "bloom/9.0.0/api/functions/formatRelativeTime.md",
               "order": 10000,
               "section": "api"
             },
@@ -4467,6 +4523,20 @@
               "slug": "api/functions/noteTagVariant",
               "title": "noteTagVariant()",
               "file": "bloom/9.0.0/api/functions/noteTagVariant.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/NotificationPermissionGate",
+              "title": "NotificationPermissionGate()",
+              "file": "bloom/9.0.0/api/functions/NotificationPermissionGate.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/NotificationPermissionSheet",
+              "title": "NotificationPermissionSheet()",
+              "file": "bloom/9.0.0/api/functions/NotificationPermissionSheet.md",
               "order": 10000,
               "section": "api"
             },
@@ -5654,6 +5724,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/SettingsPageActions",
+              "title": "SettingsPageActions()",
+              "file": "bloom/9.0.0/api/functions/SettingsPageActions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/SettingsPlanArt",
               "title": "SettingsPlanArt()",
               "file": "bloom/9.0.0/api/functions/SettingsPlanArt.md",
@@ -5776,6 +5853,20 @@
               "slug": "api/functions/Shapes.surfaceStyle",
               "title": "surfaceStyle()",
               "file": "bloom/9.0.0/api/functions/Shapes.surfaceStyle.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/shareFile",
+              "title": "shareFile()",
+              "file": "bloom/9.0.0/api/functions/shareFile.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/shareUrl",
+              "title": "shareUrl()",
+              "file": "bloom/9.0.0/api/functions/shareUrl.md",
               "order": 10000,
               "section": "api"
             },
@@ -6515,6 +6606,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useBloomContentDensity",
+              "title": "useBloomContentDensity()",
+              "file": "bloom/9.0.0/api/functions/useBloomContentDensity.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useBloomLocale",
               "title": "useBloomLocale()",
               "file": "bloom/9.0.0/api/functions/useBloomLocale.md",
@@ -6637,6 +6735,13 @@
               "slug": "api/functions/useCssSafeAreaInsets",
               "title": "useCssSafeAreaInsets()",
               "file": "bloom/9.0.0/api/functions/useCssSafeAreaInsets.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useDebouncedCallback",
+              "title": "useDebouncedCallback()",
+              "file": "bloom/9.0.0/api/functions/useDebouncedCallback.md",
               "order": 10000,
               "section": "api"
             },
@@ -7106,6 +7211,13 @@
               "slug": "api/functions/useSettingsSavedToast",
               "title": "useSettingsSavedToast()",
               "file": "bloom/9.0.0/api/functions/useSettingsSavedToast.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useShare",
+              "title": "useShare()",
+              "file": "bloom/9.0.0/api/functions/useShare.md",
               "order": 10000,
               "section": "api"
             },
@@ -7712,6 +7824,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/AgentCreatorSectionProps",
+              "title": "AgentCreatorSectionProps",
+              "file": "bloom/9.0.0/api/interfaces/AgentCreatorSectionProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/AgentLimitsCardLabels",
               "title": "~~Interface: AgentLimitsCardLabels~~",
               "file": "bloom/9.0.0/api/interfaces/AgentLimitsCardLabels.md",
@@ -8275,6 +8394,13 @@
               "slug": "api/interfaces/AppDestination",
               "title": "AppDestination",
               "file": "bloom/9.0.0/api/interfaces/AppDestination.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AppErrorFallbackProps",
+              "title": "AppErrorFallbackProps",
+              "file": "bloom/9.0.0/api/interfaces/AppErrorFallbackProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -8877,6 +9003,13 @@
               "slug": "api/interfaces/BloomThemeStorage",
               "title": "BloomThemeStorage",
               "file": "bloom/9.0.0/api/interfaces/BloomThemeStorage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/BloomThemeStorageConfig",
+              "title": "BloomThemeStorageConfig",
+              "file": "bloom/9.0.0/api/interfaces/BloomThemeStorageConfig.md",
               "order": 10000,
               "section": "api"
             },
@@ -10190,6 +10323,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/ColorSwatchPickerProps",
+              "title": "ColorSwatchPickerProps",
+              "file": "bloom/9.0.0/api/interfaces/ColorSwatchPickerProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/ComboChartCardProps",
               "title": "ComboChartCardProps",
               "file": "bloom/9.0.0/api/interfaces/ComboChartCardProps.md",
@@ -10638,6 +10778,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/CreateStorageOptions",
+              "title": "CreateStorageOptions",
+              "file": "bloom/9.0.0/api/interfaces/CreateStorageOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/CreatorOption",
               "title": "CreatorOption",
               "file": "bloom/9.0.0/api/interfaces/CreatorOption.md",
@@ -10795,6 +10942,20 @@
               "slug": "api/interfaces/DealOwner",
               "title": "DealOwner",
               "file": "bloom/9.0.0/api/interfaces/DealOwner.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/DebouncedCallback",
+              "title": "DebouncedCallback\\<Args\\>",
+              "file": "bloom/9.0.0/api/interfaces/DebouncedCallback.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/DebouncedCallbackOptions",
+              "title": "DebouncedCallbackOptions",
+              "file": "bloom/9.0.0/api/interfaces/DebouncedCallbackOptions.md",
               "order": 10000,
               "section": "api"
             },
@@ -11950,6 +12111,13 @@
               "slug": "api/interfaces/JobPlace",
               "title": "JobPlace",
               "file": "bloom/9.0.0/api/interfaces/JobPlace.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/JsonStorage",
+              "title": "JsonStorage",
+              "file": "bloom/9.0.0/api/interfaces/JsonStorage.md",
               "order": 10000,
               "section": "api"
             },
@@ -13417,9 +13585,58 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/NotificationPermissionAdapter",
+              "title": "NotificationPermissionAdapter",
+              "file": "bloom/9.0.0/api/interfaces/NotificationPermissionAdapter.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/NotificationPermissionCopy",
+              "title": "NotificationPermissionCopy",
+              "file": "bloom/9.0.0/api/interfaces/NotificationPermissionCopy.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/NotificationPermissionGateProps",
+              "title": "NotificationPermissionGateProps",
+              "file": "bloom/9.0.0/api/interfaces/NotificationPermissionGateProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/NotificationPermissionSheetProps",
+              "title": "NotificationPermissionSheetProps",
+              "file": "bloom/9.0.0/api/interfaces/NotificationPermissionSheetProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/NotificationProps",
               "title": "NotificationProps",
               "file": "bloom/9.0.0/api/interfaces/NotificationProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/NotificationsScreenItem",
+              "title": "NotificationsScreenItem",
+              "file": "bloom/9.0.0/api/interfaces/NotificationsScreenItem.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/NotificationsScreenProps",
+              "title": "NotificationsScreenProps",
+              "file": "bloom/9.0.0/api/interfaces/NotificationsScreenProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/NotificationsScreenPush",
+              "title": "NotificationsScreenPush",
+              "file": "bloom/9.0.0/api/interfaces/NotificationsScreenPush.md",
               "order": 10000,
               "section": "api"
             },
@@ -14866,6 +15083,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/RelativeTimeOptions",
+              "title": "RelativeTimeOptions",
+              "file": "bloom/9.0.0/api/interfaces/RelativeTimeOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/ReleaseAction",
               "title": "ReleaseAction",
               "file": "bloom/9.0.0/api/interfaces/ReleaseAction.md",
@@ -15384,6 +15608,20 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/SettingsLayoutHandle",
+              "title": "SettingsLayoutHandle",
+              "file": "bloom/9.0.0/api/interfaces/SettingsLayoutHandle.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/SettingsLayoutHistory",
+              "title": "SettingsLayoutHistory",
+              "file": "bloom/9.0.0/api/interfaces/SettingsLayoutHistory.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/SettingsLayoutProps",
               "title": "SettingsLayoutProps",
               "file": "bloom/9.0.0/api/interfaces/SettingsLayoutProps.md",
@@ -15447,6 +15685,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/SettingsPageAction",
+              "title": "SettingsPageAction",
+              "file": "bloom/9.0.0/api/interfaces/SettingsPageAction.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/SettingsPageSection",
               "title": "SettingsPageSection",
               "file": "bloom/9.0.0/api/interfaces/SettingsPageSection.md",
@@ -15485,6 +15730,13 @@
               "slug": "api/interfaces/SettingsRowProps",
               "title": "SettingsRowProps",
               "file": "bloom/9.0.0/api/interfaces/SettingsRowProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/SettingsSearchProps",
+              "title": "SettingsSearchProps",
+              "file": "bloom/9.0.0/api/interfaces/SettingsSearchProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -15629,6 +15881,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/ShareFileInput",
+              "title": "ShareFileInput",
+              "file": "bloom/9.0.0/api/interfaces/ShareFileInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/ShareSheetProps",
               "title": "ShareSheetProps",
               "file": "bloom/9.0.0/api/interfaces/ShareSheetProps.md",
@@ -15639,6 +15898,13 @@
               "slug": "api/interfaces/ShareSheetTarget",
               "title": "ShareSheetTarget",
               "file": "bloom/9.0.0/api/interfaces/ShareSheetTarget.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ShareUrlInput",
+              "title": "ShareUrlInput",
+              "file": "bloom/9.0.0/api/interfaces/ShareUrlInput.md",
               "order": 10000,
               "section": "api"
             },
@@ -17099,6 +17365,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/UseShare",
+              "title": "UseShare",
+              "file": "bloom/9.0.0/api/interfaces/UseShare.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/UseVideoPlaybackOptions",
               "title": "UseVideoPlaybackOptions",
               "file": "bloom/9.0.0/api/interfaces/UseVideoPlaybackOptions.md",
@@ -17946,6 +18219,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/BloomContentDensity",
+              "title": "BloomContentDensity",
+              "file": "bloom/9.0.0/api/types/BloomContentDensity.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/BloomControlDensity",
               "title": "BloomControlDensity",
               "file": "bloom/9.0.0/api/types/BloomControlDensity.md",
@@ -17977,6 +18257,13 @@
               "slug": "api/types/BloomSize",
               "title": "BloomSize",
               "file": "bloom/9.0.0/api/types/BloomSize.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/BloomStorageAdapter",
+              "title": "BloomStorageAdapter",
+              "file": "bloom/9.0.0/api/types/BloomStorageAdapter.md",
               "order": 10000,
               "section": "api"
             },
@@ -18950,6 +19237,13 @@
               "slug": "api/types/DropKind",
               "title": "DropKind",
               "file": "bloom/9.0.0/api/types/DropKind.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/DurationStyle",
+              "title": "DurationStyle",
+              "file": "bloom/9.0.0/api/types/DurationStyle.md",
               "order": 10000,
               "section": "api"
             },
@@ -19983,6 +20277,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/NotificationPermissionStatus",
+              "title": "NotificationPermissionStatus",
+              "file": "bloom/9.0.0/api/types/NotificationPermissionStatus.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/NotificationPresence",
               "title": "NotificationPresence",
               "file": "bloom/9.0.0/api/types/NotificationPresence.md",
@@ -20613,6 +20914,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/RelativeTimeStyle",
+              "title": "RelativeTimeStyle",
+              "file": "bloom/9.0.0/api/types/RelativeTimeStyle.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/ReleaseStatus",
               "title": "ReleaseStatus",
               "file": "bloom/9.0.0/api/types/ReleaseStatus.md",
@@ -20879,6 +21187,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/SettingsHeaderPresentation",
+              "title": "SettingsHeaderPresentation",
+              "file": "bloom/9.0.0/api/types/SettingsHeaderPresentation.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/SettingsIcon",
               "title": "SettingsIcon",
               "file": "bloom/9.0.0/api/types/SettingsIcon.md",
@@ -20966,6 +21281,20 @@
               "slug": "api/types/Shapes.Shape",
               "title": "Shape",
               "file": "bloom/9.0.0/api/types/Shapes.Shape.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/ShareFileOutcome",
+              "title": "ShareFileOutcome",
+              "file": "bloom/9.0.0/api/types/ShareFileOutcome.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/ShareOutcome",
+              "title": "ShareOutcome",
+              "file": "bloom/9.0.0/api/types/ShareOutcome.md",
               "order": 10000,
               "section": "api"
             },
@@ -29793,6 +30122,13 @@
               "slug": "api/variables/NotificationCenter",
               "title": "NotificationCenter",
               "file": "bloom/9.0.0/api/variables/NotificationCenter.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/NotificationsScreen",
+              "title": "NotificationsScreen",
+              "file": "bloom/9.0.0/api/variables/NotificationsScreen.md",
               "order": 10000,
               "section": "api"
             },
@@ -42836,6 +43172,13 @@
               "section": "guides"
             },
             {
+              "slug": "adr/0033-durable-autonomous-work",
+              "title": "33. Durable autonomous work, with the original requester's authority",
+              "file": "alia/main/adr/0033-durable-autonomous-work.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "adr/README",
               "title": "Architecture decision records",
               "file": "alia/main/adr/README.md",
@@ -42846,6 +43189,13 @@
               "slug": "agent-embedding",
               "title": "Embedding an agent: the wire contract",
               "file": "alia/main/agent-embedding.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "agent-rules",
+              "title": "Reglas del repo para agentes",
+              "file": "alia/main/agent-rules.md",
               "order": 1000,
               "section": "guides"
             },
@@ -43088,6 +43438,13 @@
               "section": "guides"
             },
             {
+              "slug": "requester-authority",
+              "title": "Requester authority, own tools and external MCP",
+              "file": "alia/main/requester-authority.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "runbooks/clarity-search-2026-09-13",
               "title": "Clarity search outage observed on 2026-09-13",
               "file": "alia/main/runbooks/clarity-search-2026-09-13.md",
@@ -43154,6 +43511,13 @@
               "slug": "superpowers/specs/2026-07-15-memory-screen-redesign-design",
               "title": "Memory screen redesign — design",
               "file": "alia/main/superpowers/specs/2026-07-15-memory-screen-redesign-design.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "testing/group-participation",
+              "title": "Group participation acceptance",
+              "file": "alia/main/testing/group-participation.md",
               "order": 1000,
               "section": "guides"
             }
@@ -44053,6 +44417,13 @@
               "slug": "adr/0004-local-explainable-pricing",
               "title": "ADR 0004 — Local, explainable, versioned pricing assessments",
               "file": "homiio/main/adr/0004-local-explainable-pricing.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "agent-rules",
+              "title": "Agent rules",
+              "file": "homiio/main/agent-rules.md",
               "order": 1000,
               "section": "guides"
             },
@@ -45417,6 +45788,14 @@
               "title": "ADR 0067: Hangs and Force Quit",
               "description": "What OxyOS does when an application stops answering, as a Mac does — the compositor's own wait cursor over it after two seconds, \"Not Responding\" in the Dock, Mission Control and App Exposé, Force Quit Applications on Super+Alt+Escape and in the Oxy menu, and a hang's report, with the application's stack, written before it is ended.",
               "file": "oxyos/main/adr/0067-hangs-and-force-quit.mdx",
+              "order": 76,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0067-the-ui-thread",
+              "title": "ADR 0067: The UI thread",
+              "description": "How the Bloom host keeps everything a person watches moving while an application's JavaScript is busy — a UI thread apart from JavaScript's, as React Native's Fabric runs on Android and iOS and as a Mac's render server keeps animating: the frame clock, Animated's native driver, Reanimated's worklets, scroll physics and gestures, mounting, drawing and presenting on the UI thread; React and its commits on JavaScript's; what crosses between them and in which order.",
+              "file": "oxyos/main/adr/0067-the-ui-thread.mdx",
               "order": 76,
               "section": "guides"
             },
@@ -47485,6 +47864,97 @@
               "description": "The webhook_endpoint object: its attributes, expandable fields and an example.",
               "file": "peable/main/reference/objects/webhook-endpoint-with-secret.mdx",
               "order": 1400,
+              "section": "guides"
+            }
+          ]
+        }
+      ],
+      "versioned": false,
+      "latestVersion": "main",
+      "deprecatedVersions": []
+    },
+    {
+      "package": "kaana",
+      "displayName": "Kaana",
+      "shortName": "kaana",
+      "repo": "https://github.com/OxyHQ/Kaana",
+      "category": "service",
+      "description": "One API for many AI providers and models: chat, responses, Anthropic Messages, embeddings, speech, transcription, images and realtime.",
+      "defaultVersion": "main",
+      "versions": [
+        {
+          "version": "main",
+          "pages": [
+            {
+              "slug": "",
+              "title": "Kaana",
+              "description": "One API for many AI providers and models, at https://kaana.ai/v1.",
+              "file": "kaana/main/index.mdx",
+              "order": 0,
+              "section": "guides"
+            },
+            {
+              "slug": "quickstart",
+              "title": "Quickstart",
+              "description": "Make your first Kaana request with curl, the SDK, the OpenAI SDK or Claude Code.",
+              "file": "kaana/main/quickstart.mdx",
+              "order": 1,
+              "section": "guides"
+            },
+            {
+              "slug": "authentication",
+              "title": "Authentication",
+              "description": "API keys, the headers Kaana reads, idempotency and request ids.",
+              "file": "kaana/main/authentication.mdx",
+              "order": 2,
+              "section": "guides"
+            },
+            {
+              "slug": "models",
+              "title": "Models and power levels",
+              "description": "Exact models, power levels, what each guarantees and how to list them.",
+              "file": "kaana/main/models.mdx",
+              "order": 3,
+              "section": "guides"
+            },
+            {
+              "slug": "provider-preferences",
+              "title": "Provider preferences",
+              "description": "The provider object on chat completions and responses, in OpenRouter's names, and what it can and cannot do.",
+              "file": "kaana/main/provider-preferences.mdx",
+              "order": 4,
+              "section": "guides"
+            },
+            {
+              "slug": "errors",
+              "title": "Errors",
+              "description": "The error body, every public error code, its HTTP status and whether to retry.",
+              "file": "kaana/main/errors.mdx",
+              "order": 5,
+              "section": "guides"
+            },
+            {
+              "slug": "messages-api",
+              "title": "Messages API",
+              "description": "Use Claude Code and Anthropic SDKs against Kaana with POST /v1/messages.",
+              "file": "kaana/main/messages-api.mdx",
+              "order": 6,
+              "section": "guides"
+            },
+            {
+              "slug": "json-repair",
+              "title": "JSON repair",
+              "description": "Ask Kaana to repair nearly valid JSON from a model, deterministically and only when you opt in.",
+              "file": "kaana/main/json-repair.mdx",
+              "order": 7,
+              "section": "guides"
+            },
+            {
+              "slug": "determinism",
+              "title": "Determinism",
+              "description": "What Kaana promises about getting the same answer twice, and what it does not.",
+              "file": "kaana/main/determinism.mdx",
+              "order": 8,
               "section": "guides"
             }
           ]
