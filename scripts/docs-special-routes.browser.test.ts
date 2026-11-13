@@ -178,16 +178,16 @@ try {
   await pairingFilters.getByRole('button', { name: 'All', exact: true }).click();
   await pairingFilters.getByRole('button', { name: 'All', exact: true, pressed: true }).waitFor();
   invariant(
-    (await page.locator('[data-testid^="color-recipe-"]').count()) === 64,
-    'all filter did not render exactly 64 recipes',
+    (await page.locator('[data-testid^="color-recipe-"]').count()) === 65,
+    'all filter did not render exactly 65 recipes',
   );
   await page.getByRole('button', { name: 'Derived', exact: true }).click();
   await pairingFilters
     .getByRole('button', { name: 'Derived', exact: true, pressed: true })
     .waitFor();
   invariant(
-    (await page.locator('[data-testid^="color-recipe-"]').count()) === 17,
-    'derived filter did not render exactly 17 recipes',
+    (await page.locator('[data-testid^="color-recipe-"]').count()) === 18,
+    'derived filter did not render exactly 18 recipes',
   );
   await page.getByRole('radio', { name: 'Public view', exact: true }).click();
   await page.getByText("Don't miss what's happening", { exact: true }).first().waitFor();
