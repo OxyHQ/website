@@ -30,7 +30,7 @@ const SERVICE_ALARMS = {
  * page. Keep each entry paired with the owning service's documented contract.
  */
 const AUTHORITATIVE_PROBES: Readonly<Record<string, string>> = {
-  alia: 'https://api.alia.onl/health/ready',
+  alia: 'https://api.gemies.ai/health/ready',
   allo: 'https://api.allo.you/api/health',
   clarity: 'https://api.clarity.surf/health/ready',
   crowdsource: 'https://api.crowdsource.oxy.so/health/ready',

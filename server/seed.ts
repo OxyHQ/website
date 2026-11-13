@@ -423,7 +423,7 @@ async function seed() {
         'The assistant for people and teams, on web, iOS and Android. A product built on Oxy AI, with its own plans — it is not the inference API.',
       href: 'https://alia.onl/',
       landingUrl: '/alia',
-      healthUrl: 'https://api.alia.onl/health/ready',
+      healthUrl: 'https://api.gemies.ai/health/ready',
       external: true,
       cta: 'Open Alia',
       brand: '#7c3aed',
