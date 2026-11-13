@@ -88,6 +88,12 @@
       "configPaths": ["packages/sdk"]
     },
     {
+      "name": "Kaana",
+      "localPath": "/home/nate/Oxy/Kaana",
+      "git": "https://github.com/OxyHQ/Kaana.git",
+      "ref": "main"
+    },
+    {
       "name": "Website (MCP)",
       "localPath": "/home/nate/Oxy/website",
       "git": "https://github.com/OxyHQ/website.git",

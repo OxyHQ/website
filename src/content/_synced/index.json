@@ -47495,6 +47495,97 @@
       "deprecatedVersions": []
     },
     {
+      "package": "kaana",
+      "displayName": "Kaana",
+      "shortName": "kaana",
+      "repo": "https://github.com/OxyHQ/Kaana",
+      "category": "service",
+      "description": "One API for many AI providers and models: chat, responses, Anthropic Messages, embeddings, speech, transcription, images and realtime.",
+      "defaultVersion": "main",
+      "versions": [
+        {
+          "version": "main",
+          "pages": [
+            {
+              "slug": "",
+              "title": "Kaana",
+              "description": "One API for many AI providers and models, at https://kaana.ai/v1.",
+              "file": "kaana/main/index.mdx",
+              "order": 0,
+              "section": "guides"
+            },
+            {
+              "slug": "quickstart",
+              "title": "Quickstart",
+              "description": "Make your first Kaana request with curl, the SDK, the OpenAI SDK or Claude Code.",
+              "file": "kaana/main/quickstart.mdx",
+              "order": 1,
+              "section": "guides"
+            },
+            {
+              "slug": "authentication",
+              "title": "Authentication",
+              "description": "API keys, the headers Kaana reads, idempotency and request ids.",
+              "file": "kaana/main/authentication.mdx",
+              "order": 2,
+              "section": "guides"
+            },
+            {
+              "slug": "models",
+              "title": "Models and power levels",
+              "description": "Exact models, power levels, what each guarantees and how to list them.",
+              "file": "kaana/main/models.mdx",
+              "order": 3,
+              "section": "guides"
+            },
+            {
+              "slug": "provider-preferences",
+              "title": "Provider preferences",
+              "description": "The provider object on chat completions and responses, in OpenRouter's names, and what it can and cannot do.",
+              "file": "kaana/main/provider-preferences.mdx",
+              "order": 4,
+              "section": "guides"
+            },
+            {
+              "slug": "errors",
+              "title": "Errors",
+              "description": "The error body, every public error code, its HTTP status and whether to retry.",
+              "file": "kaana/main/errors.mdx",
+              "order": 5,
+              "section": "guides"
+            },
+            {
+              "slug": "messages-api",
+              "title": "Messages API",
+              "description": "Use Claude Code and Anthropic SDKs against Kaana with POST /v1/messages.",
+              "file": "kaana/main/messages-api.mdx",
+              "order": 6,
+              "section": "guides"
+            },
+            {
+              "slug": "json-repair",
+              "title": "JSON repair",
+              "description": "Ask Kaana to repair nearly valid JSON from a model, deterministically and only when you opt in.",
+              "file": "kaana/main/json-repair.mdx",
+              "order": 7,
+              "section": "guides"
+            },
+            {
+              "slug": "determinism",
+              "title": "Determinism",
+              "description": "What Kaana promises about getting the same answer twice, and what it does not.",
+              "file": "kaana/main/determinism.mdx",
+              "order": 8,
+              "section": "guides"
+            }
+          ]
+        }
+      ],
+      "versioned": false,
+      "latestVersion": "main",
+      "deprecatedVersions": []
+    },
+    {
       "package": "mcp",
       "displayName": "Oxy MCP",
       "shortName": "mcp",
