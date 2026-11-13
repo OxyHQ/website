@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T05:58:52.944Z",
+  "generatedAt": "2026-11-11T05:08:26.324Z",
   "packages": [
     {
       "package": "@oxy.so/bloom",
@@ -2133,13 +2133,6 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/AgentCreatorSection",
-              "title": "AgentCreatorSection()",
-              "file": "bloom/9.0.0/api/functions/AgentCreatorSection.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/functions/AgentLogToolCalls",
               "title": "AgentLogToolCalls()",
               "file": "bloom/9.0.0/api/functions/AgentLogToolCalls.md",
@@ -2304,13 +2297,6 @@
               "slug": "api/functions/animateWithSpec",
               "title": "animateWithSpec()",
               "file": "bloom/9.0.0/api/functions/animateWithSpec.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/AppErrorFallback",
-              "title": "AppErrorFallback()",
-              "file": "bloom/9.0.0/api/functions/AppErrorFallback.md",
               "order": 10000,
               "section": "api"
             },
@@ -2966,13 +2952,6 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/ColorSwatchPicker",
-              "title": "ColorSwatchPicker()",
-              "file": "bloom/9.0.0/api/functions/ColorSwatchPicker.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/functions/ComboChartCard",
               "title": "ComboChartCard()",
               "file": "bloom/9.0.0/api/functions/ComboChartCard.md",
@@ -3214,20 +3193,6 @@
               "slug": "api/functions/CoverImage",
               "title": "CoverImage()",
               "file": "bloom/9.0.0/api/functions/CoverImage.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/createBloomThemeStorage",
-              "title": "createBloomThemeStorage()",
-              "file": "bloom/9.0.0/api/functions/createBloomThemeStorage.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/createStorage",
-              "title": "createStorage()",
-              "file": "bloom/9.0.0/api/functions/createStorage.md",
               "order": 10000,
               "section": "api"
             },
@@ -3638,13 +3603,6 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/formatBytes",
-              "title": "formatBytes()",
-              "file": "bloom/9.0.0/api/functions/formatBytes.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/functions/formatClock",
               "title": "formatClock()",
               "file": "bloom/9.0.0/api/functions/formatClock.md",
@@ -3683,13 +3641,6 @@
               "slug": "api/functions/formatDuration",
               "title": "formatDuration()",
               "file": "bloom/9.0.0/api/functions/formatDuration.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/formatDurationText",
-              "title": "formatDurationText()",
-              "file": "bloom/9.0.0/api/functions/formatDurationText.md",
               "order": 10000,
               "section": "api"
             },
@@ -3753,13 +3704,6 @@
               "slug": "api/functions/formatRecordingTime",
               "title": "formatRecordingTime()",
               "file": "bloom/9.0.0/api/functions/formatRecordingTime.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/formatRelativeTime",
-              "title": "formatRelativeTime()",
-              "file": "bloom/9.0.0/api/functions/formatRelativeTime.md",
               "order": 10000,
               "section": "api"
             },
@@ -4523,20 +4467,6 @@
               "slug": "api/functions/noteTagVariant",
               "title": "noteTagVariant()",
               "file": "bloom/9.0.0/api/functions/noteTagVariant.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/NotificationPermissionGate",
-              "title": "NotificationPermissionGate()",
-              "file": "bloom/9.0.0/api/functions/NotificationPermissionGate.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/NotificationPermissionSheet",
-              "title": "NotificationPermissionSheet()",
-              "file": "bloom/9.0.0/api/functions/NotificationPermissionSheet.md",
               "order": 10000,
               "section": "api"
             },
@@ -5724,13 +5654,6 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/SettingsPageActions",
-              "title": "SettingsPageActions()",
-              "file": "bloom/9.0.0/api/functions/SettingsPageActions.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/functions/SettingsPlanArt",
               "title": "SettingsPlanArt()",
               "file": "bloom/9.0.0/api/functions/SettingsPlanArt.md",
@@ -5853,20 +5776,6 @@
               "slug": "api/functions/Shapes.surfaceStyle",
               "title": "surfaceStyle()",
               "file": "bloom/9.0.0/api/functions/Shapes.surfaceStyle.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/shareFile",
-              "title": "shareFile()",
-              "file": "bloom/9.0.0/api/functions/shareFile.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/shareUrl",
-              "title": "shareUrl()",
-              "file": "bloom/9.0.0/api/functions/shareUrl.md",
               "order": 10000,
               "section": "api"
             },
@@ -6606,13 +6515,6 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/useBloomContentDensity",
-              "title": "useBloomContentDensity()",
-              "file": "bloom/9.0.0/api/functions/useBloomContentDensity.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/functions/useBloomLocale",
               "title": "useBloomLocale()",
               "file": "bloom/9.0.0/api/functions/useBloomLocale.md",
@@ -6735,13 +6637,6 @@
               "slug": "api/functions/useCssSafeAreaInsets",
               "title": "useCssSafeAreaInsets()",
               "file": "bloom/9.0.0/api/functions/useCssSafeAreaInsets.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/useDebouncedCallback",
-              "title": "useDebouncedCallback()",
-              "file": "bloom/9.0.0/api/functions/useDebouncedCallback.md",
               "order": 10000,
               "section": "api"
             },
@@ -7211,13 +7106,6 @@
               "slug": "api/functions/useSettingsSavedToast",
               "title": "useSettingsSavedToast()",
               "file": "bloom/9.0.0/api/functions/useSettingsSavedToast.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/useShare",
-              "title": "useShare()",
-              "file": "bloom/9.0.0/api/functions/useShare.md",
               "order": 10000,
               "section": "api"
             },
@@ -7824,13 +7712,6 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/AgentCreatorSectionProps",
-              "title": "AgentCreatorSectionProps",
-              "file": "bloom/9.0.0/api/interfaces/AgentCreatorSectionProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/AgentLimitsCardLabels",
               "title": "~~Interface: AgentLimitsCardLabels~~",
               "file": "bloom/9.0.0/api/interfaces/AgentLimitsCardLabels.md",
@@ -8394,13 +8275,6 @@
               "slug": "api/interfaces/AppDestination",
               "title": "AppDestination",
               "file": "bloom/9.0.0/api/interfaces/AppDestination.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/AppErrorFallbackProps",
-              "title": "AppErrorFallbackProps",
-              "file": "bloom/9.0.0/api/interfaces/AppErrorFallbackProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -9003,13 +8877,6 @@
               "slug": "api/interfaces/BloomThemeStorage",
               "title": "BloomThemeStorage",
               "file": "bloom/9.0.0/api/interfaces/BloomThemeStorage.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/BloomThemeStorageConfig",
-              "title": "BloomThemeStorageConfig",
-              "file": "bloom/9.0.0/api/interfaces/BloomThemeStorageConfig.md",
               "order": 10000,
               "section": "api"
             },
@@ -10323,13 +10190,6 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/ColorSwatchPickerProps",
-              "title": "ColorSwatchPickerProps",
-              "file": "bloom/9.0.0/api/interfaces/ColorSwatchPickerProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/ComboChartCardProps",
               "title": "ComboChartCardProps",
               "file": "bloom/9.0.0/api/interfaces/ComboChartCardProps.md",
@@ -10778,13 +10638,6 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/CreateStorageOptions",
-              "title": "CreateStorageOptions",
-              "file": "bloom/9.0.0/api/interfaces/CreateStorageOptions.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/CreatorOption",
               "title": "CreatorOption",
               "file": "bloom/9.0.0/api/interfaces/CreatorOption.md",
@@ -10942,20 +10795,6 @@
               "slug": "api/interfaces/DealOwner",
               "title": "DealOwner",
               "file": "bloom/9.0.0/api/interfaces/DealOwner.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/DebouncedCallback",
-              "title": "DebouncedCallback\\<Args\\>",
-              "file": "bloom/9.0.0/api/interfaces/DebouncedCallback.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/DebouncedCallbackOptions",
-              "title": "DebouncedCallbackOptions",
-              "file": "bloom/9.0.0/api/interfaces/DebouncedCallbackOptions.md",
               "order": 10000,
               "section": "api"
             },
@@ -12111,13 +11950,6 @@
               "slug": "api/interfaces/JobPlace",
               "title": "JobPlace",
               "file": "bloom/9.0.0/api/interfaces/JobPlace.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/JsonStorage",
-              "title": "JsonStorage",
-              "file": "bloom/9.0.0/api/interfaces/JsonStorage.md",
               "order": 10000,
               "section": "api"
             },
@@ -13585,58 +13417,9 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/NotificationPermissionAdapter",
-              "title": "NotificationPermissionAdapter",
-              "file": "bloom/9.0.0/api/interfaces/NotificationPermissionAdapter.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/NotificationPermissionCopy",
-              "title": "NotificationPermissionCopy",
-              "file": "bloom/9.0.0/api/interfaces/NotificationPermissionCopy.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/NotificationPermissionGateProps",
-              "title": "NotificationPermissionGateProps",
-              "file": "bloom/9.0.0/api/interfaces/NotificationPermissionGateProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/NotificationPermissionSheetProps",
-              "title": "NotificationPermissionSheetProps",
-              "file": "bloom/9.0.0/api/interfaces/NotificationPermissionSheetProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/NotificationProps",
               "title": "NotificationProps",
               "file": "bloom/9.0.0/api/interfaces/NotificationProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/NotificationsScreenItem",
-              "title": "NotificationsScreenItem",
-              "file": "bloom/9.0.0/api/interfaces/NotificationsScreenItem.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/NotificationsScreenProps",
-              "title": "NotificationsScreenProps",
-              "file": "bloom/9.0.0/api/interfaces/NotificationsScreenProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/NotificationsScreenPush",
-              "title": "NotificationsScreenPush",
-              "file": "bloom/9.0.0/api/interfaces/NotificationsScreenPush.md",
               "order": 10000,
               "section": "api"
             },
@@ -15083,13 +14866,6 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/RelativeTimeOptions",
-              "title": "RelativeTimeOptions",
-              "file": "bloom/9.0.0/api/interfaces/RelativeTimeOptions.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/ReleaseAction",
               "title": "ReleaseAction",
               "file": "bloom/9.0.0/api/interfaces/ReleaseAction.md",
@@ -15608,20 +15384,6 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/SettingsLayoutHandle",
-              "title": "SettingsLayoutHandle",
-              "file": "bloom/9.0.0/api/interfaces/SettingsLayoutHandle.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/SettingsLayoutHistory",
-              "title": "SettingsLayoutHistory",
-              "file": "bloom/9.0.0/api/interfaces/SettingsLayoutHistory.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/SettingsLayoutProps",
               "title": "SettingsLayoutProps",
               "file": "bloom/9.0.0/api/interfaces/SettingsLayoutProps.md",
@@ -15685,13 +15447,6 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/SettingsPageAction",
-              "title": "SettingsPageAction",
-              "file": "bloom/9.0.0/api/interfaces/SettingsPageAction.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/SettingsPageSection",
               "title": "SettingsPageSection",
               "file": "bloom/9.0.0/api/interfaces/SettingsPageSection.md",
@@ -15730,13 +15485,6 @@
               "slug": "api/interfaces/SettingsRowProps",
               "title": "SettingsRowProps",
               "file": "bloom/9.0.0/api/interfaces/SettingsRowProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/SettingsSearchProps",
-              "title": "SettingsSearchProps",
-              "file": "bloom/9.0.0/api/interfaces/SettingsSearchProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -15881,13 +15629,6 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/ShareFileInput",
-              "title": "ShareFileInput",
-              "file": "bloom/9.0.0/api/interfaces/ShareFileInput.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/ShareSheetProps",
               "title": "ShareSheetProps",
               "file": "bloom/9.0.0/api/interfaces/ShareSheetProps.md",
@@ -15898,13 +15639,6 @@
               "slug": "api/interfaces/ShareSheetTarget",
               "title": "ShareSheetTarget",
               "file": "bloom/9.0.0/api/interfaces/ShareSheetTarget.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ShareUrlInput",
-              "title": "ShareUrlInput",
-              "file": "bloom/9.0.0/api/interfaces/ShareUrlInput.md",
               "order": 10000,
               "section": "api"
             },
@@ -17365,13 +17099,6 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/UseShare",
-              "title": "UseShare",
-              "file": "bloom/9.0.0/api/interfaces/UseShare.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/UseVideoPlaybackOptions",
               "title": "UseVideoPlaybackOptions",
               "file": "bloom/9.0.0/api/interfaces/UseVideoPlaybackOptions.md",
@@ -18219,13 +17946,6 @@
               "section": "api"
             },
             {
-              "slug": "api/types/BloomContentDensity",
-              "title": "BloomContentDensity",
-              "file": "bloom/9.0.0/api/types/BloomContentDensity.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/types/BloomControlDensity",
               "title": "BloomControlDensity",
               "file": "bloom/9.0.0/api/types/BloomControlDensity.md",
@@ -18257,13 +17977,6 @@
               "slug": "api/types/BloomSize",
               "title": "BloomSize",
               "file": "bloom/9.0.0/api/types/BloomSize.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/types/BloomStorageAdapter",
-              "title": "BloomStorageAdapter",
-              "file": "bloom/9.0.0/api/types/BloomStorageAdapter.md",
               "order": 10000,
               "section": "api"
             },
@@ -19237,13 +18950,6 @@
               "slug": "api/types/DropKind",
               "title": "DropKind",
               "file": "bloom/9.0.0/api/types/DropKind.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/types/DurationStyle",
-              "title": "DurationStyle",
-              "file": "bloom/9.0.0/api/types/DurationStyle.md",
               "order": 10000,
               "section": "api"
             },
@@ -20277,13 +19983,6 @@
               "section": "api"
             },
             {
-              "slug": "api/types/NotificationPermissionStatus",
-              "title": "NotificationPermissionStatus",
-              "file": "bloom/9.0.0/api/types/NotificationPermissionStatus.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/types/NotificationPresence",
               "title": "NotificationPresence",
               "file": "bloom/9.0.0/api/types/NotificationPresence.md",
@@ -20914,13 +20613,6 @@
               "section": "api"
             },
             {
-              "slug": "api/types/RelativeTimeStyle",
-              "title": "RelativeTimeStyle",
-              "file": "bloom/9.0.0/api/types/RelativeTimeStyle.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/types/ReleaseStatus",
               "title": "ReleaseStatus",
               "file": "bloom/9.0.0/api/types/ReleaseStatus.md",
@@ -21187,13 +20879,6 @@
               "section": "api"
             },
             {
-              "slug": "api/types/SettingsHeaderPresentation",
-              "title": "SettingsHeaderPresentation",
-              "file": "bloom/9.0.0/api/types/SettingsHeaderPresentation.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/types/SettingsIcon",
               "title": "SettingsIcon",
               "file": "bloom/9.0.0/api/types/SettingsIcon.md",
@@ -21281,20 +20966,6 @@
               "slug": "api/types/Shapes.Shape",
               "title": "Shape",
               "file": "bloom/9.0.0/api/types/Shapes.Shape.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/types/ShareFileOutcome",
-              "title": "ShareFileOutcome",
-              "file": "bloom/9.0.0/api/types/ShareFileOutcome.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/types/ShareOutcome",
-              "title": "ShareOutcome",
-              "file": "bloom/9.0.0/api/types/ShareOutcome.md",
               "order": 10000,
               "section": "api"
             },
@@ -30122,13 +29793,6 @@
               "slug": "api/variables/NotificationCenter",
               "title": "NotificationCenter",
               "file": "bloom/9.0.0/api/variables/NotificationCenter.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/variables/NotificationsScreen",
-              "title": "NotificationsScreen",
-              "file": "bloom/9.0.0/api/variables/NotificationsScreen.md",
               "order": 10000,
               "section": "api"
             },
@@ -42835,7 +42499,7 @@
       "shortName": "alia",
       "repo": "https://github.com/OxyHQ/Alia",
       "category": "app",
-      "description": "Oxy's assistant app (web, iOS, Android), built on @gemies/sdk. The backend and the SDK live in OxyHQ/Gemies.",
+      "description": "Multi-surface context-agent platform with autonomous execution, persistent context graph, and policy controls.",
       "defaultVersion": "main",
       "versions": [
         {
@@ -42844,9 +42508,33 @@
             {
               "slug": "",
               "title": "Alia",
-              "description": "Alia, the Oxy assistant app: what lives in this repository, what lives in OxyHQ/Gemies, and where each topic is documented.",
+              "description": "Alia, the Oxy assistant: what it is, who acts in it, and where each topic is documented.",
               "file": "alia/main/index.mdx",
               "order": 0,
+              "section": "guides"
+            },
+            {
+              "slug": "actors",
+              "title": "Actors: Alia and agents",
+              "description": "Who acts in Alia, on whose account, with what permission — in chat, in the background and on the agents' computer.",
+              "file": "alia/main/actors.mdx",
+              "order": 1,
+              "section": "guides"
+            },
+            {
+              "slug": "chat-runtime",
+              "title": "Chat runtime",
+              "description": "Alia's product runtime and its Kaana inference boundary.",
+              "file": "alia/main/chat-runtime.mdx",
+              "order": 1,
+              "section": "guides"
+            },
+            {
+              "slug": "model-abstraction",
+              "title": "Models in Alia",
+              "description": "Alia has no models of its own: people choose a power level, Oxy picks the model; API callers may name a real model from Oxy's catalogue.",
+              "file": "alia/main/model-abstraction.mdx",
+              "order": 2,
               "section": "guides"
             },
             {
@@ -42855,6 +42543,38 @@
               "description": "How packages/app is laid out: the shell, one folder per feature with ui/runtime/model layers, the shared layers under them, which feature may import which, and the test that keeps it that way.",
               "file": "alia/main/app-architecture.mdx",
               "order": 3,
+              "section": "guides"
+            },
+            {
+              "slug": "integrations",
+              "title": "Integrations and tools",
+              "description": "Alia's tool families, Oxy apps (first party), MCP servers and channel integrations.",
+              "file": "alia/main/integrations.mdx",
+              "order": 3,
+              "section": "guides"
+            },
+            {
+              "slug": "shows",
+              "title": "Shows",
+              "description": "Generated podcast series, written and voiced by Alia and published to Syra.",
+              "file": "alia/main/shows.mdx",
+              "order": 4,
+              "section": "guides"
+            },
+            {
+              "slug": "voice",
+              "title": "Voice",
+              "description": "Voice calls are a realtime speech-to-speech session through Kaana; dictation is Kaana transcription; read-aloud is Oxy speech.",
+              "file": "alia/main/voice.mdx",
+              "order": 5,
+              "section": "guides"
+            },
+            {
+              "slug": "skills",
+              "title": "Skills",
+              "description": "Agent Skills in Alia: the format, the three levels of loading, and what an install actually authorises.",
+              "file": "alia/main/skills.mdx",
+              "order": 6,
               "section": "guides"
             },
             {
@@ -42906,9 +42626,317 @@
               "section": "guides"
             },
             {
-              "slug": "agent-rules",
-              "title": "Reglas del repo para agentes",
-              "file": "alia/main/agent-rules.md",
+              "slug": "adr/0001-alia-oxy-kaana-responsibility-boundary",
+              "title": "1. Alia / Oxy / Kaana responsibility boundary",
+              "file": "alia/main/adr/0001-alia-oxy-kaana-responsibility-boundary.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0002-alia-is-a-kaana-consumer-and-future-model-publisher",
+              "title": "2. Alia is a Kaana consumer, and a future model publisher",
+              "file": "alia/main/adr/0002-alia-is-a-kaana-consumer-and-future-model-publisher.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0003-model-revision-deployment-provider-routing-profile",
+              "title": "3. Model, revision, deployment, provider and routing profile are five distinct things",
+              "file": "alia/main/adr/0003-model-revision-deployment-provider-routing-profile.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0004-product-endpoints-versus-generic-inference-endpoints",
+              "title": "4. Alia product endpoints versus generic inference endpoints",
+              "file": "alia/main/adr/0004-product-endpoints-versus-generic-inference-endpoints.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0005-product-entitlements-versus-financial-ledger",
+              "title": "5. Product entitlements versus the financial ledger",
+              "file": "alia/main/adr/0005-product-entitlements-versus-financial-ledger.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0006-the-destination-of-api-alia-onl-v1-is-recorded-twice",
+              "title": "6. The destination of `api.alia.onl/v1/*` is recorded twice, differently",
+              "file": "alia/main/adr/0006-the-destination-of-api-alia-onl-v1-is-recorded-twice.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0007-a-users-own-machine-as-an-inference-runtime",
+              "title": "7. A user's own machine as an inference runtime",
+              "file": "alia/main/adr/0007-a-users-own-machine-as-an-inference-runtime.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0008-skills-are-agent-skills",
+              "title": "8. A skill is an Agent Skill, not a prompt fragment",
+              "file": "alia/main/adr/0008-skills-are-agent-skills.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0009-agent-threads-are-durable-execution-units",
+              "title": "ADR 0009: Agent threads are durable execution units",
+              "file": "alia/main/adr/0009-agent-threads-are-durable-execution-units.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0010-alia-keeps-a-product-api-credentials-come-from-oxy-console",
+              "title": "10. Alia keeps a product API; credentials come from Oxy Console",
+              "file": "alia/main/adr/0010-alia-keeps-a-product-api-credentials-come-from-oxy-console.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0011-autonomous-agents-run-durably-and-speak-first",
+              "title": "ADR 0011: Autonomous agents run durably and may speak first",
+              "file": "alia/main/adr/0011-autonomous-agents-run-durably-and-speak-first.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0012-alia-uses-real-models",
+              "title": "12. Alia uses real models from Oxy's catalogue",
+              "file": "alia/main/adr/0012-alia-uses-real-models.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0013-voice-runs-on-the-device-livekit-and-cohost-are-retired",
+              "title": "ADR 0013: Voice runs on the device; LiveKit, cohost and voice minutes are retired",
+              "file": "alia/main/adr/0013-voice-runs-on-the-device-livekit-and-cohost-are-retired.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0014-people-choose-power-levels-not-models",
+              "title": "14. People choose power levels, not models",
+              "file": "alia/main/adr/0014-people-choose-power-levels-not-models.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0015-actors-and-identities",
+              "title": "15. Actors and identities: Alia and agents, for the person and as themselves",
+              "file": "alia/main/adr/0015-actors-and-identities.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0017-voice-is-a-realtime-session-through-kaana",
+              "title": "17. Voice is a realtime speech-to-speech session through Kaana; dictation is Kaana transcription",
+              "file": "alia/main/adr/0017-voice-is-a-realtime-session-through-kaana.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0018-the-conversation-screen-is-the-sdks",
+              "title": "18. The conversation screen is the SDK's; the app keeps its layout",
+              "file": "alia/main/adr/0018-the-conversation-screen-is-the-sdks.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0019-alia-stores-files-in-oxy-files",
+              "title": "19. Alia stores files in Oxy Files, behind one seam",
+              "file": "alia/main/adr/0019-alia-stores-files-in-oxy-files.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0020-every-agent-is-the-same-agent",
+              "title": "20. Every agent is the same agent",
+              "file": "alia/main/adr/0020-every-agent-is-the-same-agent.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0021-app-confined-agents",
+              "title": "21. An app's agent may be confined to that app, by Oxy",
+              "file": "alia/main/adr/0021-app-confined-agents.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0022-first-party-platform-authority",
+              "title": "22. Own Oxy apps use platform authority on the requester's account",
+              "file": "alia/main/adr/0022-first-party-platform-authority.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0023-cookie-free-voice-resume",
+              "title": "23. Voice reconnects through its owner without browser cookies",
+              "file": "alia/main/adr/0023-cookie-free-voice-resume.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0024-streaming-dictation-is-a-transcription-session",
+              "title": "24. Streaming dictation is a transcription session through Kaana",
+              "file": "alia/main/adr/0024-streaming-dictation-is-a-transcription-session.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0025-group-rooms",
+              "title": "25. A group chat is a room the agents live in, not a request",
+              "file": "alia/main/adr/0025-group-rooms.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0026-agent-inbox-and-heartbeat",
+              "title": "26. An agent has an inbox and a heartbeat, so it notices things without being asked",
+              "file": "alia/main/adr/0026-agent-inbox-and-heartbeat.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0027-always-on-agents-what-is-decided",
+              "title": "27. Always-on agents: what is decided, and what is deliberately not built",
+              "file": "alia/main/adr/0027-always-on-agents-what-is-decided.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0028-spaces",
+              "title": "28. A Space groups a person's agents: one room, one brief, one computer, and nobody from outside",
+              "file": "alia/main/adr/0028-spaces.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0030-external-agents",
+              "title": "30. A coding-agent CLI on a person's own computer can be one of their agents",
+              "file": "alia/main/adr/0030-external-agents.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0031-external-agents-edit-by-default-and-span-instances",
+              "title": "31. External agents edit their working directory by default and are reachable from any instance",
+              "file": "alia/main/adr/0031-external-agents-edit-by-default-and-span-instances.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0032-external-agents-resume-sessions-and-leave-with-their-link",
+              "title": "32. External agents continue the CLI's own session and are deleted with their link",
+              "file": "alia/main/adr/0032-external-agents-resume-sessions-and-leave-with-their-link.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/README",
+              "title": "Architecture decision records",
+              "file": "alia/main/adr/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "agent-embedding",
+              "title": "Embedding an agent: the wire contract",
+              "file": "alia/main/agent-embedding.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "agents",
+              "title": "Alia Agents",
+              "file": "alia/main/agents.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "api-reference",
+              "title": "Alia API reference",
+              "file": "alia/main/api-reference.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/2026-10-03-final-sdk-preflight/composed-i05/README",
+              "title": "Alia I04/I05/I10 candidate composition",
+              "file": "alia/main/audits/2026-10-03-final-sdk-preflight/composed-i05/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/2026-10-03-final-sdk-preflight/README",
+              "title": "Alia: final SDK manifest preparation",
+              "file": "alia/main/audits/2026-10-03-final-sdk-preflight/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/2026-10-03-i05-mention-internal-mcp/README",
+              "title": "Mention pilot through the common internal MCP transport",
+              "file": "alia/main/audits/2026-10-03-i05-mention-internal-mcp/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/2026-10-03-i05-retirement-outcomes/README",
+              "title": "Internal MCP outcome and temporary-approval retirement",
+              "file": "alia/main/audits/2026-10-03-i05-retirement-outcomes/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/2026-10-04-canonical-catalog-ticket/README",
+              "title": "Canonical catalog and ticket authority",
+              "file": "alia/main/audits/2026-10-04-canonical-catalog-ticket/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/2026-10-04-console-machine-chat/README",
+              "title": "App-only Console machine chat candidate",
+              "file": "alia/main/audits/2026-10-04-console-machine-chat/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/2026-10-04-final-registry-adoption/README",
+              "title": "audits/2026-10-04-final-registry-adoption/README",
+              "file": "alia/main/audits/2026-10-04-final-registry-adoption/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/2026-10-04-machine-chat-registry-adoption/README",
+              "title": "Published machine-chat SDK adoption",
+              "file": "alia/main/audits/2026-10-04-machine-chat-registry-adoption/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/2026-10-04-publisher-concurrency/README",
+              "title": "Reviewed publisher concurrency",
+              "file": "alia/main/audits/2026-10-04-publisher-concurrency/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "audits/2026-10-04-requester-authority-sdk/README",
+              "title": "Canonical requester authority transport",
+              "file": "alia/main/audits/2026-10-04-requester-authority-sdk/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "central-organizations",
+              "title": "Oxy organizations and Alia workspaces",
+              "file": "alia/main/central-organizations.md",
               "order": 1000,
               "section": "guides"
             },
@@ -42920,6 +42948,27 @@
               "section": "guides"
             },
             {
+              "slug": "deployment",
+              "title": "Deployment",
+              "file": "alia/main/deployment.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "developers-portal",
+              "title": "Developer access to Alia",
+              "file": "alia/main/developers-portal.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "explicit-chat-stop",
+              "title": "Explicit Stop for foreground chat",
+              "file": "alia/main/explicit-chat-stop.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "instant-loading",
               "title": "Carga instantánea",
               "file": "alia/main/instant-loading.md",
@@ -42927,9 +42976,184 @@
               "section": "guides"
             },
             {
+              "slug": "machine-chat-contract",
+              "title": "Console machine chat contract",
+              "file": "alia/main/machine-chat-contract.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "memory-system",
+              "title": "Memory and Context Graph",
+              "file": "alia/main/memory-system.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "migration/compatibility-window",
+              "title": "Compatibility window and sunset criteria",
+              "file": "alia/main/migration/compatibility-window.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "migration/epic-139-decisions",
+              "title": "Epic #139: the decisions only a person can make",
+              "file": "alia/main/migration/epic-139-decisions.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "migration/epic-139-status",
+              "title": "Epic #139 status audit",
+              "file": "alia/main/migration/epic-139-status.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "migration/ownership",
+              "title": "Migration ownership: Alia / Oxy / Kaana",
+              "file": "alia/main/migration/ownership.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "onboarding",
+              "title": "Alia Developer Onboarding",
+              "file": "alia/main/onboarding.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "oxy-capability-boundaries",
+              "title": "Oxy tool account boundaries",
+              "file": "alia/main/oxy-capability-boundaries.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "oxy-files",
+              "title": "Alia on Oxy Files",
+              "file": "alia/main/oxy-files.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "oxy-one-adapter-handoff",
+              "title": "Oxy One personal adapter: draft, unconfigured",
+              "file": "alia/main/oxy-one-adapter-handoff.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "oxy-one-allowance-display",
+              "title": "Oxy One allowance display (source draft)",
+              "file": "alia/main/oxy-one-allowance-display.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "oxy-one-funding-parity",
+              "title": "Oxy One allowance funding",
+              "file": "alia/main/oxy-one-funding-parity.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "oxyhq-auth",
               "title": "OxyHQ Authentication & Packages Guide (Alia)",
               "file": "alia/main/oxyhq-auth.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "platform-activity",
+              "title": "Ecosystem activity",
+              "file": "alia/main/platform-activity.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "proactive-intelligence",
+              "title": "Background work and proactive outreach",
+              "file": "alia/main/proactive-intelligence.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "process-reader-transition",
+              "title": "Completed-source process transition and release prerequisite",
+              "file": "alia/main/process-reader-transition.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/clarity-search-2026-09-13",
+              "title": "Clarity search outage observed on 2026-09-13",
+              "file": "alia/main/runbooks/clarity-search-2026-09-13.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/credential-rotation",
+              "title": "Runbook: rotating and revoking Alia credentials",
+              "file": "alia/main/runbooks/credential-rotation.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/groq-token-capacity-2026-09-13",
+              "title": "Long-context refusal recovered on 2026-09-13",
+              "file": "alia/main/runbooks/groq-token-capacity-2026-09-13.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/integrations-service-rollout",
+              "title": "Alia integrations rollout",
+              "file": "alia/main/runbooks/integrations-service-rollout.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/kaana-cutover",
+              "title": "Runbook: Alia to Kaana cutover",
+              "file": "alia/main/runbooks/kaana-cutover.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/provider-credential-exposure",
+              "title": "Runbook: upstream provider credential exposure",
+              "file": "alia/main/runbooks/provider-credential-exposure.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/provider-unavailable-2026-09-12",
+              "title": "Provider unavailability on 2026-09-12",
+              "file": "alia/main/runbooks/provider-unavailable-2026-09-12.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/rollback",
+              "title": "Runbook: rolling Alia back",
+              "file": "alia/main/runbooks/rollback.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/speech-recovery-2026-09-13",
+              "title": "Speech recovery — 2026-09-13",
+              "file": "alia/main/runbooks/speech-recovery-2026-09-13.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "superpowers/specs/2026-07-15-memory-screen-redesign-design",
+              "title": "Memory screen redesign — design",
+              "file": "alia/main/superpowers/specs/2026-07-15-memory-screen-redesign-design.md",
               "order": 1000,
               "section": "guides"
             }
@@ -43829,13 +44053,6 @@
               "slug": "adr/0004-local-explainable-pricing",
               "title": "ADR 0004 — Local, explainable, versioned pricing assessments",
               "file": "homiio/main/adr/0004-local-explainable-pricing.md",
-              "order": 1000,
-              "section": "guides"
-            },
-            {
-              "slug": "agent-rules",
-              "title": "Agent rules",
-              "file": "homiio/main/agent-rules.md",
               "order": 1000,
               "section": "guides"
             },
@@ -45200,14 +45417,6 @@
               "title": "ADR 0067: Hangs and Force Quit",
               "description": "What OxyOS does when an application stops answering, as a Mac does — the compositor's own wait cursor over it after two seconds, \"Not Responding\" in the Dock, Mission Control and App Exposé, Force Quit Applications on Super+Alt+Escape and in the Oxy menu, and a hang's report, with the application's stack, written before it is ended.",
               "file": "oxyos/main/adr/0067-hangs-and-force-quit.mdx",
-              "order": 76,
-              "section": "guides"
-            },
-            {
-              "slug": "adr/0067-the-ui-thread",
-              "title": "ADR 0067: The UI thread",
-              "description": "How the Bloom host keeps everything a person watches moving while an application's JavaScript is busy — a UI thread apart from JavaScript's, as React Native's Fabric runs on Android and iOS and as a Mac's render server keeps animating: the frame clock, Animated's native driver, Reanimated's worklets, scroll physics and gestures, mounting, drawing and presenting on the UI thread; React and its commits on JavaScript's; what crosses between them and in which order.",
-              "file": "oxyos/main/adr/0067-the-ui-thread.mdx",
               "order": 76,
               "section": "guides"
             },
