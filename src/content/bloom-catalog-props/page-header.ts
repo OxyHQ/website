@@ -26,6 +26,7 @@ export const props: BloomSurfaceProps = {
         { name: 'border', type: 'PageHeaderBorder', options: ['auto', 'always', 'none'], optional: true, description: '`presentation="bar"` only. Default `auto`.' },
         { name: 'transparent', type: 'boolean', optional: true, description: '`presentation="bar"` only: the bar\'s background and shadow fade in with scroll instead of showing at rest.' },
         { name: 'scrim', type: 'PageHeaderScrim', options: ['auto', 'always', 'none'], optional: true, description: '`presentation="floating"` only. Default `auto`.' },
+        { name: 'scrimFalloff', type: "'smooth' | 'linear'", options: ['smooth', 'linear'], optional: true, description: 'Floating gradient curve. Default smooth; linear fades uniformly from opaque to transparent.' },
         { name: 'scrimColor', type: 'string', optional: true, description: 'The colour the edge effect fades FROM. Defaults to `theme.colors.background` — the page colour, which is what the content scrolling under the header is disappearing into.' },
         { name: 'scrollY', type: 'SharedValue<number>', optional: true, description: 'The scroll offset driving the scrim, the separator and the shadow.' },
         { name: 'scrollThreshold', type: 'number', optional: true, description: 'The offset (px) over which the scrim, separator and shadow fade in. Default 20.' },
@@ -39,6 +40,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'color', type: 'string', optional: false, description: 'The page colour the ramp starts from — opaque, alpha travels separately.' },
         { name: 'edge', type: "'top' | 'bottom'", options: ['top', 'bottom'], optional: true, description: "The edge the colour is solid at. `top` (default) fades downward; `bottom` fades upward. Mirrored in the gradient's own axis rather than with a `rotate` transform on the host, so the scrim's box stays where its layout put it on every platform." },
+        { name: 'falloff', type: "'smooth' | 'linear'", options: ['smooth', 'linear'], optional: true, description: 'Smooth legibility curve by default; linear has only the opaque and transparent endpoints.' },
         { name: 'testID', type: 'string', optional: true },
       ],
     },

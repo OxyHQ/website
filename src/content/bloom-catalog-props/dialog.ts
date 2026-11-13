@@ -29,6 +29,7 @@ export const props: BloomSurfaceProps = {
         { name: 'minSideGutter', type: 'number', optional: true, description: 'Minimum space beyond a side sheet and its insets. Defaults to 24; zero permits full viewport width.' },
         { name: 'maxWidth', type: 'number', optional: true, description: 'Centered-card max width (px). Defaults to `480`.' },
         { name: 'maxHeightRatio', type: 'number', optional: true, description: 'Bottom-sheet max height as a fraction of the viewport height. Defaults to `0.9`.' },
+        { name: 'sizing', type: "'content' | 'fill'", options: ['content', 'fill'], optional: true, description: 'Bottom placement: content grows intrinsically; fill bounds a Screen or virtualized list.' },
         { name: 'progress', type: 'SharedValue<number>', optional: true, description: 'How far the bottom sheet is presented, mirrored on the UI thread: `0` closed, `1` fully up, every value in between while it is dragged or animating. For content outside the sheet that moves with it (a video that shrinks above a replies sheet) without crossing the JS bridge. Written only while the dialog is a bottom sheet.' },
         { name: 'inset', type: 'DialogInset', optional: true, description: "Side-sheet inset (px) from the root overlay's edges." },
         { name: 'showHandle', type: 'boolean', optional: true, description: 'Whether to render the drag handle in bottom-sheet mode. Defaults to `true`.' },

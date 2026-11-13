@@ -2,6 +2,8 @@
 export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
   'agent-reply':
     'The pieces of an agent’s reply (bubble, who answered, actions, team profile) need a conversation with agents behind them. See Agent Chat for the composed conversation.',
+  'agent-avatar/catalog':
+    'The per-asset avatar catalog: an app builds one from only the characters it draws and hands it to AgentAvatarProvider, so it ships no other avatar assets. It returns a catalog rather than rendering; see Agent Avatar for the drawn avatars.',
   'avatar-flight':
     'Avatars that fly between anchors measure two places on a real screen. It needs an app layout with anchors; the Alia chat sheet is its reference host.',
   'checkout-sheet':
@@ -95,6 +97,24 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
     'Collapsible long text that measures its own clamp on a real screen. Give it the content and a line limit from your own feed.',
   'fact-strip':
     'A strip of key facts for a detail screen. It renders the values your own data supplies.',
+  'icons/BookmarkFillIcon':
+    'One engagement icon as its own import, for bundles that avoid the rest of Icons. See Icons for the rendered icons.',
+  'icons/BookmarkIcon':
+    'One engagement icon as its own import, for bundles that avoid the rest of Icons. See Icons for the rendered icons.',
+  'icons/GifAttachmentIcon':
+    'One engagement icon as its own import, for bundles that avoid the rest of Icons. See Icons for the rendered icons.',
+  'icons/LikeFillIcon':
+    'One engagement icon as its own import, for bundles that avoid the rest of Icons. See Icons for the rendered icons.',
+  'icons/LikeIcon':
+    'One engagement icon as its own import, for bundles that avoid the rest of Icons. See Icons for the rendered icons.',
+  'icons/MediaAttachmentIcon':
+    'One engagement icon as its own import, for bundles that avoid the rest of Icons. See Icons for the rendered icons.',
+  'icons/ReplyIcon':
+    'One engagement icon as its own import, for bundles that avoid the rest of Icons. See Icons for the rendered icons.',
+  'icons/RepostIcon':
+    'One engagement icon as its own import, for bundles that avoid the rest of Icons. See Icons for the rendered icons.',
+  'icons/ShareIcon':
+    'One engagement icon as its own import, for bundles that avoid the rest of Icons. See Icons for the rendered icons.',
   'icons/shared':
     'Shared icon building blocks used by the icon sets. See Icons for the rendered icons.',
   lockup: 'Brand lockup composition for a product header. It takes your own mark and wordmark.',

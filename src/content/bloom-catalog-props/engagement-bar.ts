@@ -7,6 +7,10 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'EngagementBarProps': {
       props: [
+        { name: 'orientation', type: "'horizontal' | 'vertical'", options: ['horizontal', 'vertical'], optional: true, description: 'Vertical rails stack actions and put each count below its glyph. Default horizontal.' },
+        { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Inherits BloomScope (default md). Large uses 28px glyphs for media rails.' },
+        { name: 'tone', type: "'default' | 'onImage'", options: ['default', 'onImage'], optional: true, description: 'White resting glyphs/counts over media; active actions retain their semantic tone.' },
+        { name: 'showZeroCounts', type: 'boolean', optional: true, description: 'Keep zero counts visible, including the first 0→1 roll. Default false.' },
         { name: 'children', type: 'ReactNode', optional: false, description: 'The leading actions, in reading order.' },
         { name: 'trailing', type: 'ReactNode', optional: true, description: 'Actions pushed to the far edge of the row (save, translate, insights).' },
         { name: 'formatCount', type: '(count: number) => string', optional: true, description: "Formats every count in the bar. Defaults to Bloom's locale-aware compact form (`12.5K` in English, `12,5 mil` in Spanish)." },
@@ -22,7 +26,7 @@ export const props: BloomSurfaceProps = {
         { name: 'activeIcon', type: 'BloomIconComponent', optional: true, description: 'The glyph while `active` (a filled heart). Defaults to `icon`.' },
         { name: 'accessibilityLabel', type: 'string', optional: false, description: 'Required: the action is a glyph, so nothing else names it.' },
         { name: 'accessibilityHint', type: 'string', optional: true },
-        { name: 'count', type: 'number | null', optional: true, description: "Drawn beside the glyph through the bar's `formatCount`; hidden when `0` or absent." },
+        { name: 'count', type: 'number | null', optional: true, description: "Beside the glyph, or below in a vertical bar; zero follows the bar's showZeroCounts." },
         { name: 'active', type: 'boolean', optional: true, description: 'Whether the viewer has done this (liked, reposted, saved). Defined makes the action a toggle: it paints in `tone` and announces its pressed state.' },
         { name: 'tone', type: 'EngagementTone', options: ['success', 'warning', 'info', 'primary', 'secondary', 'error', 'tertiary'], optional: true, description: 'The colour while `active`. Defaults to `primary`.' },
         { name: 'onPress', type: '() => unknown', optional: true, description: 'Return `false` to reject the press (the viewer must sign in first): no haptic and no animation follow.' },

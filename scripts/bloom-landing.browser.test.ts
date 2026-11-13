@@ -315,9 +315,15 @@ try {
       await page.evaluate((y) => scrollTo(0, y), y);
       await page.waitForTimeout(100);
     }
+    const failedPreviews = await page.evaluate(() =>
+      [...document.querySelectorAll('.bloom-preview-fallback')].map(
+        (fallback) =>
+          fallback.closest('[data-bloom-preview]')?.getAttribute('data-bloom-preview') ?? '?',
+      ),
+    );
     invariant(
-      (await page.locator('.bloom-preview-fallback').count()) === 0,
-      'a Bloom component failed to render',
+      failedPreviews.length === 0,
+      `a Bloom component failed to render: ${failedPreviews.join(', ')} (${(renderMessages.get(page) ?? []).join('; ')})`,
     );
     invariant(errors.length === 0, `browser errors: ${errors.join('; ')}`);
     // Explicitly enter these lazy previews: a fast sweep can pass the row

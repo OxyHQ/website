@@ -7,6 +7,7 @@ export default function AgentCreatorExample() {
     name: 'Alex',
     label: 'Research assistant',
     description: 'Helps your team explore ideas.',
+    color: 'blue',
     avatar: { preset: 'blue_beret' },
   });
   return (

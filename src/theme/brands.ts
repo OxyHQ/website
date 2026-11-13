@@ -20,7 +20,7 @@ import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-preset
 export const SITE_PRESET: AppColorName = 'oxy';
 
 /** The palette on the FairCoin apex, where the Oxy purple never appears. */
-export const FAIRCOIN_PRESET: AppColorName = 'faircoin';
+export const FAIRCOIN_PRESET = 'faircoin' satisfies AppColorName;
 
 /**
  * `<html data-brand>` values. `index.html` stamps one from the hostname before

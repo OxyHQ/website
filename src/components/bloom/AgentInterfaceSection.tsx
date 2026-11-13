@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { useReducedMotion } from 'framer-motion';
-import { AgentAvatar } from '@oxy.so/bloom/agent-avatar';
+import { AgentAvatar, avatarCharacterInColor } from '@oxy.so/bloom/agent-avatar';
 import { Button } from '@oxy.so/bloom/button';
 import { LocaleProvider } from '@oxy.so/bloom/locale';
 import { BLOOM_AGENT_PRESETS } from '../../content/bloom-agent-presets';
@@ -43,7 +43,7 @@ export default function AgentInterfaceSection({
                       style={{ left, top, transform: `rotate(${index % 2 ? 10 : -10}deg)` }}
                     >
                       <AgentAvatar
-                        character={preset.character}
+                        character={avatarCharacterInColor(preset.character, preset.color)}
                         size={44}
                         paused={Boolean(reduce)}
                         label={preset.name}
@@ -96,7 +96,7 @@ export default function AgentInterfaceSection({
             {BLOOM_AGENT_PRESETS.map((preset) => (
               <li key={preset.name} className="flex min-w-0 flex-col items-center gap-2">
                 <AgentAvatar
-                  character={preset.character}
+                  character={avatarCharacterInColor(preset.character, preset.color)}
                   size={96}
                   paused={Boolean(reduce)}
                   interactive={false}
@@ -120,7 +120,7 @@ export default function AgentInterfaceSection({
                 data-agent-preset-decoration
               >
                 <AgentAvatar
-                  character={preset.character}
+                  character={avatarCharacterInColor(preset.character, preset.color)}
                   size={110}
                   paused={Boolean(reduce)}
                   label={preset.name}
