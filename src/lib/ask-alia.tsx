@@ -7,8 +7,8 @@ import { useTranslation } from './i18n';
 const AskAliaSheet = lazy(() => import('../components/ai/AskAliaSheet'));
 
 /**
- * Owns the one `AliaChatSheet` and the way to open it. The sheet mounts after the first press, so
- * the Alia SDK stays out of the entry chunk. Must sit inside `OxyProvider` (auth), the router and
+ * Owns the one `GemieChatSheet` and the way to open it. The sheet mounts after the first press, so
+ * the Gemies SDK stays out of the entry chunk. Must sit inside `OxyProvider` (auth), the router and
  * the locale provider.
  */
 export function AskAliaProvider({ children }: { children: ReactNode }) {
