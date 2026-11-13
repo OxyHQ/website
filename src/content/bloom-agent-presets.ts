@@ -32,6 +32,7 @@ export const BLOOM_AGENT_PRESETS = [
     name: 'Felipe',
     color: '#ff9547',
     character: {
+      preset: 'blue_beret',
       eyes: 'sleepy_lids',
       eyewear: 'none',
       accessory: 'felipe_beret',
