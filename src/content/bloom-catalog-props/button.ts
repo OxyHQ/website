@@ -166,6 +166,9 @@ export const props: BloomSurfaceProps = {
     },
     'GlyphButtonProps': {
       props: [
+        { name: 'onFocus', type: '(event: ButtonFocusEvent) => void', optional: true, description: 'Original focus events from the interactive host; never activate the button.' },
+        { name: 'onBlur', type: '(event: ButtonFocusEvent) => void', optional: true },
+        { name: 'attention', type: 'number', optional: true, description: 'Opt-in attention token. Initialize it (for example to 0), then change it for each event that should softly pulse the glyph. Mounting is silent; repeated values do nothing. The button and its target keep their size and identity. Reduced motion, disabled and busy suppress the pulse. Supply a label or other visible feedback too: this motion carries no accessibility message.' },
         { name: 'size', type: 'number', optional: true, description: 'Diameter of the round target. Default 36.' },
         { name: 'glyphSize', type: 'number', optional: true, description: "Glyph edge. Defaults to `round(size × 0.6)`; pass it to keep a call site's own measured ratio." },
         { name: 'icon', type: 'ButtonIconComponent', optional: true, description: 'An icon COMPONENT (`icon={RiMoreFill}`), sized and painted by the button so it follows the rest / hover / pressed colours. For anything else — a text glyph, an icon you paint yourself — pass `children` instead.' },

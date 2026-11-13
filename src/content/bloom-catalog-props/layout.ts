@@ -44,7 +44,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'target', type: "RefObject<unknown> | 'document'", optional: false, description: 'Existing scroll owner: DOM element, ScrollView or virtualized list ref. No extra viewport is created.' },
         { name: 'offset', type: 'number', optional: true, description: 'Cross-axis clearance for persistent viewport chrome (document bars).' },
-        { name: 'scrollbar', type: "Exclude<ScrollAreaScrollbar, 'never'>", options: ['hover', 'scroll', 'always'], optional: true, description: "When the bar shows. Default `'scroll'`." },
+        { name: 'scrollbar', type: 'ScrollAreaScrollbar', options: ['scroll', 'hover', 'always', 'never'], optional: true, description: "When the bar shows. Default `'scroll'`; `'never'` hides both indicators on web." },
         { name: 'size', type: "'sm' | 'md'", options: ['sm', 'md'], optional: true, description: "The bar's thickness: `sm` 4px (default) or `md` 6px." },
         { name: 'side', type: 'ScrollAreaScrollbarSide', options: ['start', 'end'], optional: true, description: "Which inline edge a vertical bar sits on. Default `'end'`. Ignored when `horizontal`." },
         { name: 'horizontal', type: 'boolean', optional: true, description: 'The bar lies along the bottom edge instead of the inline end.' },

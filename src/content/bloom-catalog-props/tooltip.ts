@@ -19,7 +19,7 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: false },
       ],
     },
-    'TooltipContent': {
+    'TooltipContentProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: false },
         { name: 'label', type: 'string', optional: false },
@@ -36,7 +36,7 @@ export const props: BloomSurfaceProps = {
   components: [
     { name: 'Tooltip', propsType: 'TooltipProps' },
     { name: 'TooltipTrigger', propsType: 'TooltipTrigger' },
-    { name: 'TooltipContent', propsType: 'TooltipContent' },
+    { name: 'TooltipContent', propsType: 'TooltipContentProps' },
     { name: 'TooltipTextBubble', propsType: 'TooltipTextBubble' },
   ],
 }
