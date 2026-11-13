@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { AliaChatSheet, type AliaChatSheetRef } from '@alia.onl/sdk/text';
+import { GemieChatSheet, type GemieChatSheetRef } from '@gemies/sdk/text';
 
 interface AskAliaSheetProps {
   /** Bumped on every press of Ask Alia; each change presents the sheet. */
@@ -12,22 +12,22 @@ interface AskAliaSheetProps {
  * Alia's chat sheet, in its own module so the provider can load the SDK lazily
  * instead of shipping it in the entry chunk. It mounts on the first press, so the
  * first `present()` runs as soon as the sheet is ready.
- * Text only: `@alia.onl/sdk/text` is the same sheet without the voice call, and
- * without bundling it (the root entry offers a call by default since 21.x).
+ * Text only: `@gemies/sdk/text` is the same sheet without the voice call, and
+ * without bundling it (the root entry offers a call by default).
  */
 export default function AskAliaSheet({
   askId,
   clientContext,
   welcomeSuggestions,
 }: AskAliaSheetProps) {
-  const ref = useRef<AliaChatSheetRef>(null);
+  const ref = useRef<GemieChatSheetRef>(null);
 
   useEffect(() => {
     if (askId > 0) ref.current?.present();
   }, [askId]);
 
   return (
-    <AliaChatSheet
+    <GemieChatSheet
       ref={ref}
       clientContext={clientContext}
       welcomeSuggestions={welcomeSuggestions}

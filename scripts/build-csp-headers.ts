@@ -18,15 +18,15 @@
  * either means the CSP is silently not what it claims to be, and a security
  * header that quietly stops applying is worse than one that was never added.
  *
- * The same policy also receives what the embedded Alia SDK (Ask Alia) loads,
- * from the SDK's own declaration (`@alia.onl/sdk/csp`), so this file never
- * copies Alia's origins: its avatar runtime is a module on `https://alia.onl`.
+ * The same policy also receives what the embedded Gemies SDK (Ask Alia) loads,
+ * from the SDK's own declaration (`@gemies/sdk/csp`), so this file never
+ * copies its origins (the API on `api.gemies.ai`, the worklets on `gemies.ai`).
  */
 import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
-import { ALIA_SDK_CSP } from '@alia.onl/sdk/csp';
+import { GEMIES_SDK_CSP } from '@gemies/sdk/csp';
 
 const WEBSITE_ROOT = path.resolve(import.meta.dir, '..');
 const DIST_DIR = path.join(WEBSITE_ROOT, 'dist');
@@ -104,7 +104,7 @@ function withSources(
 
 const [policyLine] = headers.split('\n').filter((line) => line.includes(PLACEHOLDER));
 const [prefix, policy] = policyLine!.split(/(?<=Content-Security-Policy:)\s*/);
-const composed = `${prefix} ${withSources(policy!, ALIA_SDK_CSP)}`;
+const composed = `${prefix} ${withSources(policy!, GEMIES_SDK_CSP)}`;
 
 await writeFile(
   HEADERS_FILE,
