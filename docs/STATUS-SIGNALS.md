@@ -7,7 +7,7 @@ alarm in `OK`; a missing alarm, an unreadable CloudWatch response or
 
 | Service | Reachability | Functional signal | Dependencies |
 | --- | --- | --- | --- |
-| Alia | `GET https://api.alia.onl/health/ready` (process + PostgreSQL readiness) | `oxy-alia-functional-failures`: repeated passive capability-loading or Kaana inference failures in two of three five-minute periods | Oxy API and Kaana |
+| Alia | `GET https://api.gemies.ai/health/ready` (process + PostgreSQL readiness) | `oxy-alia-functional-failures`: repeated passive capability-loading or Kaana inference failures in two of three five-minute periods | Oxy API and Kaana |
 | Kaana | `GET https://kaana.ai/livez` | `oxy-kaana-routing-readiness-not-confirmed`: the existing free, scheduled routing-score and catalogue proof | none |
 | Allo | `GET https://api.allo.you/api/health` | Backend health contract | Oxy API |
 | Clarity | `GET https://api.clarity.surf/health/ready` | PostgreSQL and attested-cutover readiness | Oxy API and Kaana |
