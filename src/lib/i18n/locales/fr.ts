@@ -1449,6 +1449,10 @@ const fr: Translations = {
     },
   },
   faircoinParticipation: {
+    projectGroup: 'Projet et contact',
+    offerGroup: 'Offre et besoins',
+    logisticsGroup: 'Logistique et conditions',
+
     title: 'Une économie prend vie quand on peut s’en servir.',
     body: 'Nous préparons un projet pilote d’échange entre petites structures indépendantes. Nous commencerons par rapprocher ce que chacune propose de ce dont elle a besoin. Nous testerons ensuite des échanges concrets, dans des limites convenues et sans promesse de rendement.',
     propose: 'Proposer une offre',

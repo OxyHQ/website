@@ -1440,6 +1440,10 @@ const it: Translations = {
     },
   },
   faircoinParticipation: {
+    projectGroup: 'Progetto e contatti',
+    offerGroup: 'Offerta e necessità',
+    logisticsGroup: 'Logistica e condizioni',
+
     title: 'Un’economia nasce quando le persone possono usarla.',
     body: 'Stiamo preparando un piccolo progetto pilota di scambio tra progetti indipendenti. Prima mettiamo in relazione ciò che ciascuno offre con ciò di cui ha bisogno. Poi proviamo scambi concreti, con limiti concordati e senza promesse di rendimento.',
     propose: 'Proponi un’offerta',

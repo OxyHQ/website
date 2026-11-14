@@ -1687,6 +1687,10 @@ const en = {
     },
   },
   faircoinParticipation: {
+    projectGroup: 'Project and contact',
+    offerGroup: 'Offer and needs',
+    logisticsGroup: 'Logistics and conditions',
+
     title: 'An economy begins when people can use it.',
     body: 'We are preparing a small exchange pilot for independent projects. First, we match what people can offer with what they need. Then we test specific exchanges with agreed limits and no promises of returns.',
     propose: 'Propose an offer',

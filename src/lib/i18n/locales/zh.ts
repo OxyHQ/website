@@ -1358,6 +1358,10 @@ const zh: Translations = {
     },
   },
   faircoinParticipation: {
+    projectGroup: '项目与联系方式',
+    offerGroup: '供给与需求',
+    logisticsGroup: '安排与条件',
+
     title: '当人们能够使用它时，经济才真正开始。',
     body: '我们正在为独立的小型项目筹备一项交换试点。首先，将各方能提供的东西与其需求进行匹配。然后，在约定的范围内尝试具体交换，不承诺任何收益。',
     propose: '提交一项提议',

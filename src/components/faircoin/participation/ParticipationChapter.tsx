@@ -20,7 +20,7 @@ export default function ParticipationChapter() {
         aria-labelledby="participation-title"
         className={className}
       >
-        <div className="grid gap-10 border-t border-border pt-12 lg:grid-cols-12 lg:gap-6">
+        <div className="grid gap-10 pt-12 lg:grid-cols-12 lg:gap-6">
           <h2
             id="participation-title"
             className="text-balance text-[length:calc(var(--landing-type)*1.75)] font-normal leading-[1.1] tracking-[-.03em] min-[760px]:text-[length:calc(var(--landing-type)*2)] lg:col-span-6 lg:text-[length:calc(var(--landing-type)*2.5)]"
