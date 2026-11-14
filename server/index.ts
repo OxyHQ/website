@@ -1,5 +1,6 @@
+import { startEcosystemTraffic } from '@oxy.so/core/server';
+import { createAwsWorkloadCredentialProvider } from '@oxy.so/core/server/aws';
 import { closeCareerJobsClient } from './services/careers.js';
-import { startWebsiteActivity } from './services/ecosystemActivity.js';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { and, eq, isNull, sql } from 'drizzle-orm';
@@ -43,9 +44,14 @@ const mcpCatalogRegistration: McpCatalogRegistration | null =
       })
     : null;
 
-const activity = startWebsiteActivity(isBootstrapComplete);
+const activity = startEcosystemTraffic({
+  service: 'website',
+  ready: isBootstrapComplete,
+  baseURL: process.env.OXY_API_BASE,
+  workloadCredentials: createAwsWorkloadCredentialProvider(),
+});
 const app = createApp({
-  activityMiddleware: activity?.middleware,
+  activityMiddleware: activity.middleware,
   catalogRegistrationStatus: () =>
     mcpCatalogRegistration?.status() ?? disabledMcpCatalogRegistrationStatus(WEBSITE_MCP_CATALOG),
 });
@@ -211,7 +217,7 @@ async function shutdown() {
   deadline.unref();
   mcpCatalogRegistration?.stop();
   await new Promise<void>((resolve) => server.close(() => resolve()));
-  await activity?.stop();
+  await activity.stop();
   closeCareerJobsClient();
   oxyTransport.dispose();
   oxyService.dispose();
