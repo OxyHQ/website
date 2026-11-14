@@ -39,7 +39,7 @@ claiming that every product's traffic appears:
 
 1. Publish the updated telemetry/core packages through the established release
    flow and deploy the central API with its shared Redis/socket adapter.
-2. Install `createEcosystemTraffic` in each HTTP service using its existing
+2. Start `startEcosystemTraffic` (`@oxy.so/core/server`) in each HTTP service using its existing
    trusted service credential. Mount its middleware before routes, wrap outbound
    fetch once, report readiness and call `stop` during graceful shutdown.
 3. Add corresponding producers for Kaana's Go transports, queues, socket

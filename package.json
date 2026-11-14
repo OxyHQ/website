@@ -76,7 +76,7 @@
     "@mercaria.co/sdk": "~0.2.0",
     "@oxy.so/bloom": "21.0.0",
     "@oxy.so/contracts": "7.0.0",
-    "@oxy.so/core": "7.49.0",
+    "@oxy.so/core": "7.51.0",
     "@oxy.so/db": "1.5.0",
     "@oxy.so/mcp": "1.4.3",
     "@oxy.so/services": "14.21.0",
@@ -183,7 +183,7 @@
   },
   "overrides": {
     "d3-color": ">=3.1.0",
-    "@oxy.so/core": "7.49.0",
+    "@oxy.so/core": "7.51.0",
     "@oxy.so/services": "14.21.0",
     "@oxy.so/mcp": "1.4.3",
     "@oxy.so/bloom": "21.0.0",
