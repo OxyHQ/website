@@ -1448,6 +1448,79 @@ const fr: Translations = {
       },
     },
   },
+  faircoinParticipation: {
+    title: 'Une économie prend vie quand on peut s’en servir.',
+    body: 'Nous préparons un projet pilote d’échange entre petites structures indépendantes. Nous commencerons par rapprocher ce que chacune propose de ce dont elle a besoin. Nous testerons ensuite des échanges concrets, dans des limites convenues et sans promesse de rendement.',
+    propose: 'Proposer une offre',
+    how: 'Comment fonctionne le pilote',
+    state: 'En préparation. Aucune offre publique n’est encore disponible.',
+    participateTitle: 'Participer au pilote FairCoin',
+    participateDescription:
+      'Expliquez ce que votre projet propose et ce dont il a besoin. Les candidatures sont privées et soumises à un examen humain.',
+    pilotTitle: 'Comment fonctionne le pilote FairCoin',
+    pilotDescription:
+      'Une méthode proposée pour de petits échanges convenus entre projets indépendants. Le pilote est encore en préparation.',
+    methodTitle: 'Partir des besoins de chacun.',
+    matchTitle: 'Trouver une correspondance possible',
+    matchBody:
+      'La première étape proposée consiste à comprendre ce que chaque projet offre, recherche et peut raisonnablement s’engager à fournir.',
+    agreeTitle: 'Convenir d’un petit échange',
+    agreeBody:
+      'Avant tout échange, les participants conviendraient du périmètre, des capacités, des délais, du prix éventuel, des conditions d’annulation et d’un moyen de résoudre les problèmes.',
+    reviewTitle: 'Examiner avant de poursuivre',
+    reviewBody:
+      'Seuls des résultats vérifiés et des offres aux conditions approuvées pourraient être publiés, avec l’accord du participant. Il n’y a pas encore d’offres publiques.',
+    privacyTitle: 'Votre candidature reste privée.',
+    privacyBody:
+      'Les informations de candidature sont destinées à l’équipe d’examen désignée. Envoyer ce formulaire ne publie ni votre projet, ni vos coordonnées, ni votre proposition.',
+    noApproval:
+      'Une candidature ne garantit ni acceptation, ni récompense, ni échange. Aucun portefeuille, achat ou compte n’est nécessaire.',
+    disabled:
+      'Les candidatures ne sont pas encore ouvertes. Vous pouvez consulter la méthode proposée pendant la préparation de l’équipe d’examen et des conditions de réception.',
+    loading: 'Vérification de l’ouverture des candidatures…',
+    configError: 'Impossible de vérifier si les candidatures sont ouvertes. Veuillez réessayer.',
+    retention:
+      'Les candidatures sont supprimées après {days} jours. Vous pouvez demander une suppression anticipée.',
+    deletion: 'Pour demander la suppression, contactez {email}.',
+    noScript:
+      'Vous pouvez vous informer sur le pilote sans JavaScript. L’envoi d’une candidature nécessite JavaScript et l’ouverture des candidatures.',
+    projectName: 'Nom du projet',
+    website: 'Site web public',
+    contactName: 'Nom du contact',
+    contactEmail: 'Adresse e-mail de contact privée',
+    offering: 'Que pouvez-vous proposer ?',
+    needs: 'De quoi avez-vous besoin en échange ?',
+    capacity: 'Capacité',
+    availability: 'Disponibilité',
+    modality: 'Comment participeriez-vous ?',
+    location: 'Lieu',
+    conditions: 'Conditions proposées',
+    remote: 'À distance',
+    local: 'Sur place',
+    both: 'À distance et sur place',
+    optional: 'Facultatif',
+    contactConsent: 'J’accepte d’être contacté en privé au sujet de cette candidature.',
+    updatesConsent:
+      'Je souhaite aussi recevoir les futures nouvelles du pilote. Ce choix est facultatif.',
+    publicationNotice:
+      'La publication nécessite un accord distinct après examen. Aucune case n’autorise la publication de votre projet ou de vos coordonnées.',
+    submit: 'Envoyer une candidature privée',
+    submitting: 'Envoi en cours…',
+    received: 'Candidature reçue',
+    receipt: 'Référence : {reference}',
+    receivedBody:
+      'Votre candidature a été reçue en privé. Elle n’a été ni acceptée ni publiée, et aucune récompense ni aucun échange n’est promis.',
+    validationError: 'Vérifiez les champs signalés et réessayez.',
+    serverError:
+      'Nous n’avons pas pu confirmer la réception. Vos réponses sont conservées dans ce formulaire ; veuillez réessayer.',
+    rateLimited: 'Trop de tentatives. Patientez quelques minutes avant de réessayer.',
+    conflict:
+      'Cette référence d’envoi a déjà été utilisée avec d’autres informations. Réessayez pour envoyer la candidature mise à jour.',
+    retry: 'Réessayer',
+    privacyWarning:
+      'N’incluez pas d’adresses de portefeuille, de clés, de phrases de récupération, de pièces d’identité ou d’informations financières.',
+    backHome: 'Retour à FairCoin',
+  },
 };
 
 export default fr;

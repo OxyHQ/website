@@ -9,7 +9,14 @@ export function marketingCanvasClass(pathname: string, faircoinHost = false): st
     path === '/faircoin' ||
     path === '/faircoin/wallet' ||
     path === '/faircoin/buy' ||
-    (faircoinHost && (path === '/' || path === '/wallet' || path === '/buy'))
+    path === '/faircoin/participate' ||
+    path === '/faircoin/pilot' ||
+    (faircoinHost &&
+      (path === '/' ||
+        path === '/wallet' ||
+        path === '/buy' ||
+        path === '/participate' ||
+        path === '/pilot'))
   ) {
     return 'faircoin-editorial bg-card';
   }

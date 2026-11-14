@@ -9,6 +9,11 @@ const COPY_KEYS: Record<string, readonly [string, string]> = {
   '/store': ['store.title', 'store.description'],
   '/company': ['company.seoTitle', 'company.seoDescription'],
   '/enterprise': ['enterprisePage.seoTitle', 'enterprisePage.seoDescription'],
+  '/faircoin/participate': [
+    'faircoinParticipation.participateTitle',
+    'faircoinParticipation.participateDescription',
+  ],
+  '/faircoin/pilot': ['faircoinParticipation.pilotTitle', 'faircoinParticipation.pilotDescription'],
   '/help': ['help.seoTitle', 'help.seoDescription'],
 };
 

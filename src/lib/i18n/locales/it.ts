@@ -1439,6 +1439,79 @@ const it: Translations = {
       },
     },
   },
+  faircoinParticipation: {
+    title: 'Un’economia nasce quando le persone possono usarla.',
+    body: 'Stiamo preparando un piccolo progetto pilota di scambio tra progetti indipendenti. Prima mettiamo in relazione ciò che ciascuno offre con ciò di cui ha bisogno. Poi proviamo scambi concreti, con limiti concordati e senza promesse di rendimento.',
+    propose: 'Proponi un’offerta',
+    how: 'Come funziona il progetto pilota',
+    state: 'In preparazione. Non ci sono ancora offerte pubbliche disponibili.',
+    participateTitle: 'Partecipa al progetto pilota FairCoin',
+    participateDescription:
+      'Raccontaci cosa può offrire il tuo progetto e di cosa ha bisogno. Le candidature sono private e richiedono una valutazione umana.',
+    pilotTitle: 'Come funziona il progetto pilota FairCoin',
+    pilotDescription:
+      'Un metodo proposto per piccoli scambi concordati tra progetti indipendenti. Il progetto pilota è ancora in preparazione.',
+    methodTitle: 'Partire dai bisogni delle persone.',
+    matchTitle: 'Trovare una possibile corrispondenza',
+    matchBody:
+      'Il primo passo proposto è capire cosa offre e richiede ogni progetto e quali impegni può assumere realisticamente.',
+    agreeTitle: 'Concordare un piccolo scambio',
+    agreeBody:
+      'Prima di qualsiasi scambio, i partecipanti concorderebbero ambito, capacità, tempi, eventuale prezzo, condizioni di annullamento e modalità di risoluzione dei problemi.',
+    reviewTitle: 'Valutare prima di proseguire',
+    reviewBody:
+      'Potrebbero essere pubblicati solo risultati verificati e offerte con condizioni approvate e il permesso del partecipante. Non ci sono ancora offerte pubbliche.',
+    privacyTitle: 'La tua candidatura resta privata.',
+    privacyBody:
+      'I dati della candidatura sono destinati al gruppo di valutazione designato. Inviare questo modulo non pubblica il tuo progetto, i tuoi recapiti o la tua proposta.',
+    noApproval:
+      'Candidarsi non garantisce accettazione, ricompense o scambi. Non servono un portafoglio, un acquisto o una registrazione.',
+    disabled:
+      'Le candidature non sono ancora aperte. Puoi leggere il metodo proposto mentre vengono preparati il gruppo di valutazione e le condizioni di raccolta.',
+    loading: 'Verifica dell’apertura delle candidature…',
+    configError: 'Non è stato possibile verificare se le candidature sono aperte. Riprova.',
+    retention:
+      'Le candidature vengono eliminate dopo {days} giorni. Puoi richiedere l’eliminazione anticipata.',
+    deletion: 'Per richiedere l’eliminazione, contatta {email}.',
+    noScript:
+      'Puoi informarti sul progetto pilota senza JavaScript. Per inviare una candidatura servono JavaScript e l’apertura delle candidature.',
+    projectName: 'Nome del progetto',
+    website: 'Sito web pubblico',
+    contactName: 'Nome del referente',
+    contactEmail: 'Email privata di contatto',
+    offering: 'Cosa puoi offrire?',
+    needs: 'Di cosa hai bisogno in cambio?',
+    capacity: 'Capacità',
+    availability: 'Disponibilità',
+    modality: 'Come parteciperesti?',
+    location: 'Luogo',
+    conditions: 'Condizioni proposte',
+    remote: 'A distanza',
+    local: 'In presenza',
+    both: 'A distanza e in presenza',
+    optional: 'Facoltativo',
+    contactConsent: 'Acconsento a essere contattato privatamente per questa candidatura.',
+    updatesConsent:
+      'Desidero anche ricevere aggiornamenti futuri sul progetto pilota. È facoltativo.',
+    publicationNotice:
+      'La pubblicazione richiede un permesso separato dopo la valutazione. Nessuna casella autorizza la pubblicazione del tuo progetto o dei tuoi recapiti.',
+    submit: 'Invia candidatura privata',
+    submitting: 'Invio in corso…',
+    received: 'Candidatura ricevuta',
+    receipt: 'Riferimento: {reference}',
+    receivedBody:
+      'La tua candidatura è stata ricevuta privatamente. Non è stata accettata né pubblicata e non vengono promessi ricompense o scambi.',
+    validationError: 'Controlla i campi segnalati e riprova.',
+    serverError:
+      'Non abbiamo potuto confermare la ricezione. I tuoi dati sono ancora nel modulo; riprova.',
+    rateLimited: 'Troppi tentativi. Attendi qualche minuto prima di riprovare.',
+    conflict:
+      'Questo riferimento di invio è già stato utilizzato con altri dati. Riprova per inviare la candidatura aggiornata.',
+    retry: 'Riprova',
+    privacyWarning:
+      'Non inserire indirizzi di portafoglio, chiavi, frasi di recupero, documenti d’identità o informazioni finanziarie.',
+    backHome: 'Torna a FairCoin',
+  },
 };
 
 export default it;

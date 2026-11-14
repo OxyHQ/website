@@ -1,5 +1,10 @@
 /// <reference types="@cloudflare/workers-types" />
 import { brandForHost, buildSiteIdentity, resolveSeoOrDefault, type SeoData } from '../src/lib/seo';
+import {
+  faircoinApexHref,
+  faircoinParticipationRoute,
+} from '../src/lib/faircoin-participation-routes';
+import { SUPPORTED_LOCALES } from '../src/lib/i18n/types';
 import { serializeStructuredData } from '../src/lib/structuredData';
 import { hasPrerenderedNewsroomPost, matchNewsroomPostPath } from './newsroom-status';
 import { isSpaFallbackPath, localizedFallbackDocument } from '../src/lib/spaFallback';
@@ -80,7 +85,39 @@ function asNotFound(response: Response, html: string): Response {
 const onRequest: PagesFunction<Env> = async (context) => {
   const { request, next, env } = context;
   const url = new URL(request.url);
-  let response = await next();
+  const faircoinHost = brandForHost(url.hostname) === 'faircoin';
+  if (faircoinHost && url.pathname === '/sitemap.xml') {
+    return next(new Request(new URL('/faircoin-sitemap.xml', url), request));
+  }
+  if (faircoinHost && url.pathname === '/robots.txt') {
+    const response = await next();
+    const headers = new Headers(response.headers);
+    headers.delete('content-length');
+    headers.delete('etag');
+    return new Response(
+      (await response.text()).replace(
+        'https://oxy.so/sitemap.xml',
+        'https://fairco.in/sitemap.xml',
+      ),
+      { status: response.status, headers },
+    );
+  }
+  const participation = faircoinHost ? faircoinParticipationRoute(url.pathname) : null;
+  if (participation && url.pathname !== participation.apex) {
+    return Response.redirect(new URL(participation.apex + url.search, url), 308);
+  }
+  // The approved apex routes reuse their real static document, including its
+  // translated prose. Never send these public explanations through app-shell.
+  const landingLocale = SUPPORTED_LOCALES.find((locale) => url.pathname === `/${locale}/`);
+  const landingDocument =
+    faircoinHost && (url.pathname === '/' || landingLocale)
+      ? `${landingLocale ? `/${landingLocale}` : ''}/faircoin/`
+      : null;
+  let response = landingDocument
+    ? await next(new Request(new URL(landingDocument, url), request))
+    : participation && url.pathname === participation.apex
+      ? await next(new Request(new URL(participation.document, url), request))
+      : await next();
   if (!(response.headers.get('content-type') ?? '').includes('text/html')) return response;
 
   // `_redirects` ends in `/*  /404.html  404`, so an unknown path arrives here
@@ -93,7 +130,7 @@ const onRequest: PagesFunction<Env> = async (context) => {
   // for a document and not found one.
   let needsShell = response.status === 404 && isSpaFallbackPath(url.pathname);
   if (response.status === 404 && !needsShell) {
-    const fallbackDocument = localizedFallbackDocument(url.pathname);
+    const fallbackDocument = localizedFallbackDocument(participation?.document ?? url.pathname);
     if (fallbackDocument) {
       const document = await next(new Request(new URL(fallbackDocument, url), request));
       needsShell =
@@ -137,31 +174,71 @@ const onRequest: PagesFunction<Env> = async (context) => {
       'faircoin',
     );
     const meta = resolveSeoOrDefault(seoData, url.pathname, url.hostname);
+    const participationTitle = (value: string) => value.replace(/ \| Oxy$/, ' | FairCoin');
     const setContent = (value: string) => ({
       element(el: Element) {
         el.setAttribute('content', value);
       },
     });
+    let titleText = '';
     response = new HTMLRewriter()
       .on('title', {
         element(el) {
-          el.setInnerContent(meta.title);
+          if (!participation) el.setInnerContent(meta.title);
+        },
+        text(chunk) {
+          if (participation) {
+            titleText += chunk.text;
+            chunk.replace(chunk.lastInTextNode ? participationTitle(titleText) : '');
+            if (chunk.lastInTextNode) titleText = '';
+          }
         },
       })
-      .on('meta[name="description"]', setContent(meta.description))
-      .on('meta[property="og:title"]', setContent(meta.title))
-      .on('meta[property="og:description"]', setContent(meta.description))
+      .on('meta[name="description"]', participation ? {} : setContent(meta.description))
+      .on(
+        'meta[property="og:title"]',
+        participation
+          ? {
+              element(el) {
+                el.setAttribute('content', participationTitle(el.getAttribute('content') ?? ''));
+              },
+            }
+          : setContent(meta.title),
+      )
+      .on('meta[property="og:description"]', participation ? {} : setContent(meta.description))
       .on('meta[property="og:url"]', setContent(meta.canonical))
       .on('meta[property="og:image"]', setContent(meta.ogImage))
       .on('meta[property="og:image:alt"]', setContent(meta.title))
       .on('meta[property="og:site_name"]', setContent(meta.siteName))
-      .on('meta[name="twitter:title"]', setContent(meta.title))
-      .on('meta[name="twitter:description"]', setContent(meta.description))
+      .on(
+        'meta[name="twitter:title"]',
+        participation
+          ? {
+              element(el) {
+                el.setAttribute('content', participationTitle(el.getAttribute('content') ?? ''));
+              },
+            }
+          : setContent(meta.title),
+      )
+      .on('meta[name="twitter:description"]', participation ? {} : setContent(meta.description))
       .on('meta[name="twitter:image"]', setContent(meta.ogImage))
       .on('meta[name="twitter:image:alt"]', setContent(meta.title))
-      .on('meta[name="twitter:site"], link[hreflang], meta[property="og:locale:alternate"]', {
+      .on('meta[name="twitter:site"], meta[property="og:locale:alternate"]', {
         element(el) {
           el.remove();
+        },
+      })
+      .on('link[hreflang]', {
+        element(el) {
+          const href = participation && faircoinApexHref(el.getAttribute('href') ?? '');
+          if (href) el.setAttribute('href', `https://fairco.in${href}`);
+          else el.remove();
+        },
+      })
+      .on('[data-faircoin-participation] a[href]', {
+        element(el) {
+          const href = faircoinApexHref(el.getAttribute('href') ?? '');
+          if (href) el.setAttribute('href', href);
         },
       })
       .on('script#site-identity', {

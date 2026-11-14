@@ -1686,6 +1686,77 @@ const en = {
       },
     },
   },
+  faircoinParticipation: {
+    title: 'An economy begins when people can use it.',
+    body: 'We are preparing a small exchange pilot for independent projects. First, we match what people can offer with what they need. Then we test specific exchanges with agreed limits and no promises of returns.',
+    propose: 'Propose an offer',
+    how: 'How the pilot works',
+    state: 'In preparation. No public offers are available yet.',
+    participateTitle: 'Take part in the FairCoin pilot',
+    participateDescription:
+      'Tell us what your project can offer and what it needs. Applications are private and require human review.',
+    pilotTitle: 'How the FairCoin pilot works',
+    pilotDescription:
+      'A proposed approach to small, agreed exchanges between independent projects. The pilot is still in preparation.',
+    methodTitle: 'Start with what people need.',
+    matchTitle: 'Find a possible match',
+    matchBody:
+      'The proposed first step is to understand what each project offers, needs and can realistically commit to.',
+    agreeTitle: 'Agree a small exchange',
+    agreeBody:
+      'Before any exchange, the participants would agree the scope, capacity, timing, price if applicable, cancellation terms and a way to resolve problems.',
+    reviewTitle: 'Review before going further',
+    reviewBody:
+      'Only verified results and offers with approved conditions and the participant’s permission could be published. There are no public offers yet.',
+    privacyTitle: 'Your application stays private.',
+    privacyBody:
+      'Application details are for the designated review team. Submitting this form does not publish your project, contact details or proposal.',
+    noApproval:
+      'Applying does not guarantee acceptance, a reward or an exchange. No wallet, purchase or registration is required.',
+    disabled:
+      'Applications are not open yet. You can read the proposed method while the review team and intake conditions are being prepared.',
+    loading: 'Checking whether applications are open…',
+    configError: 'We could not check whether applications are open. Please try again.',
+    retention: 'Applications are deleted after {days} days. You may request earlier deletion.',
+    deletion: 'To request deletion, contact {email}.',
+    noScript:
+      'You can read about the pilot without JavaScript. Sending an application requires JavaScript and an open intake.',
+    projectName: 'Project name',
+    website: 'Public website',
+    contactName: 'Contact name',
+    contactEmail: 'Private contact email',
+    offering: 'What can you offer?',
+    needs: 'What do you need in return?',
+    capacity: 'Capacity',
+    availability: 'Availability',
+    modality: 'How would you take part?',
+    location: 'Location',
+    conditions: 'Proposed conditions',
+    remote: 'Remote',
+    local: 'Local',
+    both: 'Remote and local',
+    optional: 'Optional',
+    contactConsent: 'I agree to be contacted privately about this application.',
+    updatesConsent:
+      'I would also like to receive future updates about the pilot. This is optional.',
+    publicationNotice:
+      'Publication requires separate permission after review. Neither checkbox authorizes publication of your project or contact details.',
+    submit: 'Send private application',
+    submitting: 'Sending…',
+    received: 'Application received',
+    receipt: 'Reference: {reference}',
+    receivedBody:
+      'Your application was received privately. It has not been accepted or published, and no reward or exchange is promised.',
+    validationError: 'Check the highlighted fields and try again.',
+    serverError: 'We could not confirm receipt. Your entries are still here; please try again.',
+    rateLimited: 'Too many attempts. Wait a few minutes before trying again.',
+    conflict:
+      'This submission reference was already used for different details. Please try again to send the updated application.',
+    retry: 'Try again',
+    privacyWarning:
+      'Do not include wallet addresses, keys, recovery phrases, identity documents or financial information.',
+    backHome: 'Back to FairCoin',
+  },
 };
 
 export default en;

@@ -57,6 +57,7 @@ import referralsRouter from './routes/referrals.js';
 import adminAccessRouter from './routes/adminAccess.js';
 import intercomRouter from './routes/intercom.js';
 import salesRouter from './routes/sales.js';
+import createFaircoinApplicationsRouter from './routes/faircoinApplications.js';
 
 /**
  * The HTTP application: middleware order, routes and error handlers, without
@@ -159,6 +160,8 @@ export function createApp(options: AppOptions): express.Express {
     }),
   );
 
+  // Private applications own a smaller body parser and redact parser/DB errors.
+  app.use('/api/faircoin/applications', createFaircoinApplicationsRouter());
   app.use(express.json({ limit: '5mb' }));
 
   // API routes

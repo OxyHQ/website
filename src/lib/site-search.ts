@@ -1,3 +1,6 @@
+import { isFairCoinHost } from './host';
+import { DEFAULT_LOCALE, type Locale } from './i18n/types';
+import en from './i18n/locales/en';
 import { LEGAL_DOCUMENTS, TRANSPARENCY_DOCUMENTS } from './transparency';
 import type MiniSearch from 'minisearch';
 import { buildDocsHref, getIndex } from '../content/docs-loader';
@@ -90,6 +93,8 @@ const SITE_PAGES: Array<{ url: string; title: string; group?: string }> = [
   { url: '/homiio', title: 'Homiio', group: 'apps' },
   { url: appSearchDestination('mercaria'), title: 'Mercaria', group: 'apps' },
   { url: appSearchDestination('faircoin'), title: 'FairCoin', group: 'apps' },
+  { url: '/faircoin/participate/', title: en.faircoinParticipation.participateTitle },
+  { url: '/faircoin/pilot/', title: en.faircoinParticipation.pilotTitle },
   { url: '/inbox', title: 'Inbox', group: 'apps' },
   { url: '/astro', title: 'Astro', group: 'apps' },
   { url: '/os', title: 'OxyOS', group: 'apps' },
@@ -297,10 +302,55 @@ function classifyResult(
 /* ----------------------------- API ------------------------------- */
 
 /** Search the whole site. Uses Pagefind in production, MiniSearch in dev. */
-export async function searchSite(query: string): Promise<SearchResult[]> {
+export async function searchSite(
+  query: string,
+  locale: Locale = DEFAULT_LOCALE,
+): Promise<SearchResult[]> {
   if (!query.trim()) return [];
+  // The apex is a separate public surface. Do not query Oxy's docs, newsroom
+  // or user directory and then present links to pages this host cannot mount.
+  if (isFairCoinHost()) {
+    const dictionary = (await import(`./i18n/locales/${locale}.ts`)).default;
+    return searchFaircoinPages(query, dictionary.faircoinParticipation, locale);
+  }
   const prod = await searchProd(query);
   return prod !== null ? prod : searchDev(query);
+}
+
+/** A small, public editorial index; never reads applications or operational data. */
+export function searchFaircoinPages(
+  query: string,
+  copy: typeof en.faircoinParticipation,
+  locale: Locale = DEFAULT_LOCALE,
+): SearchResult[] {
+  const pages = [
+    { url: '/', title: 'FairCoin', snippet: copy.body },
+    { url: '/participate/', title: copy.participateTitle, snippet: `${copy.propose} ${copy.body}` },
+    {
+      url: '/pilot/',
+      title: copy.pilotTitle,
+      snippet: `${copy.how} ${copy.state} ${copy.matchBody} ${copy.agreeBody} ${copy.reviewBody}`,
+    },
+    { url: '/wallet/', title: 'FAIRWallet', snippet: '' },
+    { url: '/buy/', title: 'Buy FairCoin', snippet: '' },
+    { url: '/bridge/', title: 'WFAIR bridge', snippet: '' },
+    { url: '/unwrap/', title: 'Redeem WFAIR', snippet: '' },
+  ];
+  const terms = query.trim().toLocaleLowerCase(locale).split(/\s+/);
+  return pages
+    .filter((page) =>
+      terms.every((term) =>
+        `${page.title} ${page.snippet}`.toLocaleLowerCase(locale).includes(term),
+      ),
+    )
+    .map((page) => ({
+      ...page,
+      id: page.url,
+      url: `${locale === DEFAULT_LOCALE ? '' : `/${locale}`}${page.url}`,
+      group: 'pages',
+      subtitle: 'FairCoin',
+      kind: 'page',
+    }));
 }
 
 /**

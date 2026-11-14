@@ -1452,6 +1452,79 @@ const de: Translations = {
       },
     },
   },
+  faircoinParticipation: {
+    title: 'Eine Wirtschaft beginnt, wenn Menschen sie nutzen können.',
+    body: 'Wir bereiten einen kleinen Austauschpiloten für unabhängige Projekte vor. Zunächst bringen wir zusammen, was die Projekte anbieten und was sie benötigen. Dann erproben wir konkrete Tauschgeschäfte mit vereinbarten Grenzen und ohne Renditeversprechen.',
+    propose: 'Ein Angebot vorschlagen',
+    how: 'So funktioniert der Pilot',
+    state: 'In Vorbereitung. Es sind noch keine öffentlichen Angebote verfügbar.',
+    participateTitle: 'Am FairCoin-Piloten teilnehmen',
+    participateDescription:
+      'Beschreibe, was dein Projekt anbieten kann und was es braucht. Bewerbungen bleiben privat und werden von Menschen geprüft.',
+    pilotTitle: 'So funktioniert der FairCoin-Pilot',
+    pilotDescription:
+      'Ein vorgeschlagenes Verfahren für kleine, vereinbarte Tauschgeschäfte zwischen unabhängigen Projekten. Der Pilot ist noch in Vorbereitung.',
+    methodTitle: 'Mit dem Bedarf der Menschen beginnen.',
+    matchTitle: 'Eine mögliche Verbindung finden',
+    matchBody:
+      'Im vorgeschlagenen ersten Schritt wird ermittelt, was jedes Projekt anbietet, benötigt und realistisch zusagen kann.',
+    agreeTitle: 'Ein kleines Tauschgeschäft vereinbaren',
+    agreeBody:
+      'Vor jedem Austausch würden die Beteiligten Umfang, Kapazität, Zeitplan, gegebenenfalls Preis, Stornobedingungen und den Umgang mit Problemen vereinbaren.',
+    reviewTitle: 'Vor dem nächsten Schritt prüfen',
+    reviewBody:
+      'Nur überprüfte Ergebnisse und Angebote mit genehmigten Bedingungen und Zustimmung der Beteiligten könnten veröffentlicht werden. Es gibt noch keine öffentlichen Angebote.',
+    privacyTitle: 'Deine Bewerbung bleibt privat.',
+    privacyBody:
+      'Die Bewerbungsdaten sind für das benannte Prüfungsteam bestimmt. Das Absenden dieses Formulars veröffentlicht weder dein Projekt noch deine Kontaktdaten oder deinen Vorschlag.',
+    noApproval:
+      'Eine Bewerbung garantiert weder Annahme noch Belohnung oder Austausch. Wallet, Kauf und Registrierung sind nicht erforderlich.',
+    disabled:
+      'Bewerbungen sind noch nicht möglich. Du kannst das vorgeschlagene Verfahren lesen, während Prüfungsteam und Aufnahmebedingungen vorbereitet werden.',
+    loading: 'Es wird geprüft, ob Bewerbungen möglich sind…',
+    configError: 'Wir konnten nicht prüfen, ob Bewerbungen möglich sind. Bitte versuche es erneut.',
+    retention:
+      'Bewerbungen werden nach {days} Tagen gelöscht. Du kannst eine frühere Löschung beantragen.',
+    deletion: 'Wende dich für eine Löschung an {email}.',
+    noScript:
+      'Du kannst dich ohne JavaScript über den Piloten informieren. Zum Bewerben sind JavaScript und eine geöffnete Bewerbungsphase erforderlich.',
+    projectName: 'Projektname',
+    website: 'Öffentliche Website',
+    contactName: 'Name der Kontaktperson',
+    contactEmail: 'Private Kontakt-E-Mail',
+    offering: 'Was kannst du anbieten?',
+    needs: 'Was brauchst du im Gegenzug?',
+    capacity: 'Kapazität',
+    availability: 'Verfügbarkeit',
+    modality: 'Wie würdest du teilnehmen?',
+    location: 'Ort',
+    conditions: 'Vorgeschlagene Bedingungen',
+    remote: 'Ortsunabhängig',
+    local: 'Vor Ort',
+    both: 'Ortsunabhängig und vor Ort',
+    optional: 'Optional',
+    contactConsent: 'Ich stimme zu, zu dieser Bewerbung privat kontaktiert zu werden.',
+    updatesConsent:
+      'Ich möchte auch künftig Neuigkeiten zum Piloten erhalten. Dies ist freiwillig.',
+    publicationNotice:
+      'Eine Veröffentlichung erfordert nach der Prüfung eine gesonderte Zustimmung. Keines der Kontrollkästchen erlaubt die Veröffentlichung deines Projekts oder deiner Kontaktdaten.',
+    submit: 'Private Bewerbung senden',
+    submitting: 'Wird gesendet…',
+    received: 'Bewerbung eingegangen',
+    receipt: 'Referenz: {reference}',
+    receivedBody:
+      'Deine Bewerbung ist privat eingegangen. Sie wurde weder angenommen noch veröffentlicht. Eine Belohnung oder ein Austausch wird nicht zugesagt.',
+    validationError: 'Prüfe die markierten Felder und versuche es erneut.',
+    serverError:
+      'Wir konnten den Eingang nicht bestätigen. Deine Angaben stehen weiterhin im Formular; bitte versuche es erneut.',
+    rateLimited: 'Zu viele Versuche. Warte einige Minuten, bevor du es erneut versuchst.',
+    conflict:
+      'Diese Sendereferenz wurde bereits für andere Angaben verwendet. Versuche es erneut, um die aktualisierte Bewerbung zu senden.',
+    retry: 'Erneut versuchen',
+    privacyWarning:
+      'Gib keine Wallet-Adressen, Schlüssel, Wiederherstellungsphrasen, Ausweisdokumente oder Finanzdaten an.',
+    backHome: 'Zurück zu FairCoin',
+  },
 };
 
 export default de;

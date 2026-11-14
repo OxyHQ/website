@@ -1441,6 +1441,78 @@ const pt: Translations = {
       },
     },
   },
+  faircoinParticipation: {
+    title: 'Uma economia começa quando as pessoas a podem usar.',
+    body: 'Estamos a preparar um pequeno piloto de trocas entre projetos independentes. Primeiro, ligamos o que cada um oferece ao que precisa. Depois, testamos trocas concretas, com limites acordados e sem promessas de rentabilidade.',
+    propose: 'Propor uma oferta',
+    how: 'Como funciona o piloto',
+    state: 'Em preparação. Ainda não há ofertas públicas disponíveis.',
+    participateTitle: 'Participar no piloto FairCoin',
+    participateDescription:
+      'Conte-nos o que o seu projeto pode oferecer e do que precisa. As candidaturas são privadas e exigem análise humana.',
+    pilotTitle: 'Como funciona o piloto FairCoin',
+    pilotDescription:
+      'Um método proposto para pequenas trocas acordadas entre projetos independentes. O piloto ainda está em preparação.',
+    methodTitle: 'Começar pelas necessidades das pessoas.',
+    matchTitle: 'Encontrar uma possível correspondência',
+    matchBody:
+      'O primeiro passo proposto é compreender o que cada projeto oferece, precisa e pode assumir de forma realista.',
+    agreeTitle: 'Acordar uma pequena troca',
+    agreeBody:
+      'Antes de qualquer troca, os participantes acordariam o âmbito, a capacidade, os prazos, o preço se aplicável, as condições de cancelamento e como resolver problemas.',
+    reviewTitle: 'Analisar antes de avançar',
+    reviewBody:
+      'Só poderiam ser publicados resultados verificados e ofertas com condições aprovadas e autorização do participante. Ainda não há ofertas públicas.',
+    privacyTitle: 'A sua candidatura permanece privada.',
+    privacyBody:
+      'Os dados da candidatura destinam-se à equipa de análise designada. Enviar este formulário não publica o seu projeto, os seus contactos nem a sua proposta.',
+    noApproval:
+      'Uma candidatura não garante aceitação, recompensa ou troca. Não é necessário ter carteira, fazer uma compra ou registar-se.',
+    disabled:
+      'As candidaturas ainda não estão abertas. Pode consultar o método proposto enquanto se preparam a equipa de análise e as condições de receção.',
+    loading: 'A verificar se as candidaturas estão abertas…',
+    configError: 'Não foi possível verificar se as candidaturas estão abertas. Tente novamente.',
+    retention:
+      'As candidaturas são eliminadas após {days} dias. Pode pedir a eliminação antecipada.',
+    deletion: 'Para pedir a eliminação, contacte {email}.',
+    noScript:
+      'Pode informar-se sobre o piloto sem JavaScript. Para enviar uma candidatura, é necessário JavaScript e que as candidaturas estejam abertas.',
+    projectName: 'Nome do projeto',
+    website: 'Site público',
+    contactName: 'Nome de contacto',
+    contactEmail: 'Email privado de contacto',
+    offering: 'O que pode oferecer?',
+    needs: 'O que precisa de receber em troca?',
+    capacity: 'Capacidade',
+    availability: 'Disponibilidade',
+    modality: 'Como participaria?',
+    location: 'Localização',
+    conditions: 'Condições propostas',
+    remote: 'À distância',
+    local: 'Localmente',
+    both: 'À distância e localmente',
+    optional: 'Opcional',
+    contactConsent: 'Aceito ser contactado em privado sobre esta candidatura.',
+    updatesConsent: 'Também quero receber novidades futuras sobre o piloto. É opcional.',
+    publicationNotice:
+      'A publicação exige uma autorização separada após a análise. Nenhuma caixa autoriza a publicação do seu projeto ou dos seus contactos.',
+    submit: 'Enviar candidatura privada',
+    submitting: 'A enviar…',
+    received: 'Candidatura recebida',
+    receipt: 'Referência: {reference}',
+    receivedBody:
+      'A sua candidatura foi recebida em privado. Não foi aceite nem publicada, e não é prometida qualquer recompensa ou troca.',
+    validationError: 'Verifique os campos assinalados e tente novamente.',
+    serverError:
+      'Não foi possível confirmar a receção. Os seus dados continuam aqui; tente novamente.',
+    rateLimited: 'Demasiadas tentativas. Aguarde alguns minutos antes de tentar novamente.',
+    conflict:
+      'Esta referência de envio já foi utilizada com outros dados. Tente novamente para enviar a candidatura atualizada.',
+    retry: 'Tentar novamente',
+    privacyWarning:
+      'Não inclua endereços de carteira, chaves, frases de recuperação, documentos de identificação ou informações financeiras.',
+    backHome: 'Voltar ao FairCoin',
+  },
 };
 
 export default pt;

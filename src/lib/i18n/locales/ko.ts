@@ -1404,6 +1404,76 @@ const ko: Translations = {
       },
     },
   },
+  faircoinParticipation: {
+    title: '경제는 사람들이 사용할 수 있을 때 시작됩니다.',
+    body: '독립적인 소규모 프로젝트 간 교환 시범 운영을 준비하고 있습니다. 먼저 각 프로젝트가 제공할 수 있는 것과 필요한 것을 연결합니다. 그런 다음 합의한 범위 안에서 구체적인 교환을 시험합니다. 수익은 약속하지 않습니다.',
+    propose: '제안하기',
+    how: '시범 운영 방식',
+    state: '준비 중입니다. 아직 공개된 제안이 없습니다.',
+    participateTitle: 'FairCoin 시범 운영에 참여하기',
+    participateDescription:
+      '프로젝트에서 제공할 수 있는 것과 필요한 것을 알려 주세요. 신청 내용은 비공개이며 담당자의 검토가 필요합니다.',
+    pilotTitle: 'FairCoin 시범 운영 방식',
+    pilotDescription:
+      '독립 프로젝트 간 합의에 따른 소규모 교환을 위한 제안입니다. 시범 운영은 아직 준비 중입니다.',
+    methodTitle: '사람들이 필요로 하는 것부터 시작합니다.',
+    matchTitle: '연결 가능성 찾기',
+    matchBody:
+      '제안된 첫 단계는 각 프로젝트가 무엇을 제공하고 필요로 하는지, 현실적으로 어디까지 약속할 수 있는지 파악하는 것입니다.',
+    agreeTitle: '작은 교환에 합의하기',
+    agreeBody:
+      '교환 전에 참여자들은 범위, 제공 가능 규모, 일정, 필요한 경우 가격, 취소 조건, 문제 해결 방법에 합의하게 됩니다.',
+    reviewTitle: '다음 단계로 가기 전에 검토하기',
+    reviewBody:
+      '검증된 결과와 조건이 승인되고 참여자가 허락한 제안만 공개할 수 있습니다. 아직 공개된 제안은 없습니다.',
+    privacyTitle: '신청 내용은 비공개로 유지됩니다.',
+    privacyBody:
+      '신청 정보는 지정된 검토팀을 위한 것입니다. 이 양식을 제출해도 프로젝트, 연락처 또는 제안이 공개되지 않습니다.',
+    noApproval:
+      '신청이 승인, 보상 또는 교환을 보장하지는 않습니다. 지갑, 구매 또는 가입이 필요하지 않습니다.',
+    disabled:
+      '아직 신청을 받지 않습니다. 검토팀과 접수 조건을 준비하는 동안 제안된 방식을 읽어 보실 수 있습니다.',
+    loading: '신청 접수 여부 확인 중…',
+    configError: '신청 접수 여부를 확인하지 못했습니다. 다시 시도해 주세요.',
+    retention: '신청 정보는 {days}일 후 삭제됩니다. 그 전에 삭제를 요청할 수도 있습니다.',
+    deletion: '삭제를 요청하려면 {email}로 연락해 주세요.',
+    noScript:
+      'JavaScript 없이도 시범 운영에 대해 읽을 수 있습니다. 신청을 보내려면 JavaScript가 필요하며 접수가 열려 있어야 합니다.',
+    projectName: '프로젝트 이름',
+    website: '공개 웹사이트',
+    contactName: '담당자 이름',
+    contactEmail: '비공개 연락 이메일',
+    offering: '무엇을 제공할 수 있나요?',
+    needs: '대신 무엇이 필요한가요?',
+    capacity: '제공 가능 규모',
+    availability: '가능한 일정',
+    modality: '어떤 방식으로 참여하나요?',
+    location: '위치',
+    conditions: '제안 조건',
+    remote: '원격',
+    local: '현장',
+    both: '원격 및 현장',
+    optional: '선택 사항',
+    contactConsent: '이 신청에 관해 비공개로 연락받는 데 동의합니다.',
+    updatesConsent: '시범 운영의 향후 소식도 받고 싶습니다. 선택 사항입니다.',
+    publicationNotice:
+      '공개하려면 검토 후 별도의 허락이 필요합니다. 어느 확인란도 프로젝트나 연락처의 공개를 허용하지 않습니다.',
+    submit: '비공개 신청 보내기',
+    submitting: '보내는 중…',
+    received: '신청이 접수되었습니다',
+    receipt: '참조 번호: {reference}',
+    receivedBody:
+      '신청이 비공개로 접수되었습니다. 승인되거나 공개되지 않았으며, 보상이나 교환을 약속하지 않습니다.',
+    validationError: '표시된 항목을 확인하고 다시 시도해 주세요.',
+    serverError:
+      '접수를 확인하지 못했습니다. 입력 내용은 이 양식에 남아 있습니다. 다시 시도해 주세요.',
+    rateLimited: '시도 횟수가 너무 많습니다. 몇 분 후 다시 시도해 주세요.',
+    conflict:
+      '이 제출 참조 번호는 이미 다른 내용에 사용되었습니다. 수정한 신청을 보내려면 다시 시도해 주세요.',
+    retry: '다시 시도',
+    privacyWarning: '지갑 주소, 키, 복구 문구, 신분증 또는 금융 정보를 입력하지 마세요.',
+    backHome: 'FairCoin으로 돌아가기',
+  },
 };
 
 export default ko;

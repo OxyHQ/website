@@ -4,3 +4,4 @@ export * from './games.js';
 export * from './site.js';
 export * from './helpFeedback.js';
 export * from './oxyFiles.js';
+export * from './faircoinApplications.js';

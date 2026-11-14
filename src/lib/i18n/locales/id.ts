@@ -1006,6 +1006,78 @@ const id: Translations = {
       },
     },
   },
+  faircoinParticipation: {
+    title: 'Ekonomi dimulai ketika orang bisa menggunakannya.',
+    body: 'Kami sedang menyiapkan uji coba pertukaran kecil antarproyek independen. Pertama, kami mencocokkan apa yang dapat ditawarkan setiap proyek dengan kebutuhannya. Lalu kami menguji pertukaran nyata dalam batas yang disepakati, tanpa menjanjikan keuntungan.',
+    propose: 'Ajukan penawaran',
+    how: 'Cara kerja uji coba',
+    state: 'Sedang disiapkan. Belum ada penawaran publik yang tersedia.',
+    participateTitle: 'Ikut uji coba FairCoin',
+    participateDescription:
+      'Ceritakan apa yang dapat ditawarkan proyek Anda dan apa yang dibutuhkan. Pengajuan bersifat pribadi dan memerlukan peninjauan oleh manusia.',
+    pilotTitle: 'Cara kerja uji coba FairCoin',
+    pilotDescription:
+      'Usulan metode untuk pertukaran kecil yang disepakati antarproyek independen. Uji coba masih dalam persiapan.',
+    methodTitle: 'Mulai dari kebutuhan orang.',
+    matchTitle: 'Cari kecocokan yang mungkin',
+    matchBody:
+      'Langkah pertama yang diusulkan adalah memahami apa yang ditawarkan dan dibutuhkan setiap proyek, serta komitmen yang realistis untuk dipenuhi.',
+    agreeTitle: 'Sepakati pertukaran kecil',
+    agreeBody:
+      'Sebelum pertukaran, peserta akan menyepakati cakupan, kapasitas, waktu, harga jika berlaku, ketentuan pembatalan, dan cara menyelesaikan masalah.',
+    reviewTitle: 'Tinjau sebelum melanjutkan',
+    reviewBody:
+      'Hanya hasil terverifikasi dan penawaran dengan ketentuan yang disetujui serta izin peserta yang dapat dipublikasikan. Belum ada penawaran publik.',
+    privacyTitle: 'Pengajuan Anda tetap pribadi.',
+    privacyBody:
+      'Rincian pengajuan ditujukan bagi tim peninjau yang ditunjuk. Mengirim formulir ini tidak memublikasikan proyek, kontak, atau usulan Anda.',
+    noApproval:
+      'Pengajuan tidak menjamin penerimaan, imbalan, atau pertukaran. Tidak diperlukan dompet, pembelian, atau pendaftaran.',
+    disabled:
+      'Pengajuan belum dibuka. Anda dapat membaca metode yang diusulkan sementara tim peninjau dan ketentuan penerimaan disiapkan.',
+    loading: 'Memeriksa apakah pengajuan sudah dibuka…',
+    configError: 'Kami tidak dapat memeriksa apakah pengajuan sudah dibuka. Silakan coba lagi.',
+    retention: 'Pengajuan dihapus setelah {days} hari. Anda dapat meminta penghapusan lebih awal.',
+    deletion: 'Untuk meminta penghapusan, hubungi {email}.',
+    noScript:
+      'Anda dapat membaca tentang uji coba tanpa JavaScript. Mengirim pengajuan memerlukan JavaScript dan penerimaan pengajuan yang sudah dibuka.',
+    projectName: 'Nama proyek',
+    website: 'Situs web publik',
+    contactName: 'Nama kontak',
+    contactEmail: 'Email kontak pribadi',
+    offering: 'Apa yang dapat Anda tawarkan?',
+    needs: 'Apa yang Anda butuhkan sebagai gantinya?',
+    capacity: 'Kapasitas',
+    availability: 'Ketersediaan',
+    modality: 'Bagaimana Anda akan berpartisipasi?',
+    location: 'Lokasi',
+    conditions: 'Ketentuan yang diusulkan',
+    remote: 'Jarak jauh',
+    local: 'Lokal',
+    both: 'Jarak jauh dan lokal',
+    optional: 'Opsional',
+    contactConsent: 'Saya setuju untuk dihubungi secara pribadi mengenai pengajuan ini.',
+    updatesConsent:
+      'Saya juga ingin menerima kabar terbaru tentang uji coba ini ke depannya. Ini opsional.',
+    publicationNotice:
+      'Publikasi memerlukan izin terpisah setelah peninjauan. Tidak satu pun kotak centang mengizinkan publikasi proyek atau kontak Anda.',
+    submit: 'Kirim pengajuan pribadi',
+    submitting: 'Mengirim…',
+    received: 'Pengajuan diterima',
+    receipt: 'Referensi: {reference}',
+    receivedBody:
+      'Pengajuan Anda telah diterima secara pribadi. Pengajuan belum disetujui atau dipublikasikan, dan tidak ada janji imbalan atau pertukaran.',
+    validationError: 'Periksa kolom yang ditandai, lalu coba lagi.',
+    serverError:
+      'Kami tidak dapat memastikan penerimaan. Isian Anda masih ada di formulir ini; silakan coba lagi.',
+    rateLimited: 'Terlalu banyak percobaan. Tunggu beberapa menit sebelum mencoba lagi.',
+    conflict:
+      'Referensi pengiriman ini sudah digunakan untuk rincian yang berbeda. Coba lagi untuk mengirim pengajuan yang telah diperbarui.',
+    retry: 'Coba lagi',
+    privacyWarning:
+      'Jangan sertakan alamat dompet, kunci, frasa pemulihan, dokumen identitas, atau informasi keuangan.',
+    backHome: 'Kembali ke FairCoin',
+  },
 };
 
 export default id;

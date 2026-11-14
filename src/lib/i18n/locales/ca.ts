@@ -1443,6 +1443,78 @@ const ca: Translations = {
       },
     },
   },
+  faircoinParticipation: {
+    title: 'Una economia comença quan algú pot fer-la servir.',
+    body: 'Estem preparant una prova pilot d’intercanvi entre petits projectes. Primer connectem el que cadascú ofereix amb el que necessita. Després provem intercanvis concrets, amb límits acordats i sense promeses de rendibilitat.',
+    propose: 'Proposar una oferta',
+    how: 'Com funciona la prova pilot',
+    state: 'En preparació. Encara no hi ha ofertes públiques disponibles.',
+    participateTitle: 'Participa en la prova pilot de FairCoin',
+    participateDescription:
+      'Explica’ns què ofereix el teu projecte i què necessita. Les candidatures són privades i requereixen revisió humana.',
+    pilotTitle: 'Com funciona la prova pilot de FairCoin',
+    pilotDescription:
+      'Una proposta de petits intercanvis acordats entre projectes independents. La prova pilot encara està en preparació.',
+    methodTitle: 'Començar pel que la gent necessita.',
+    matchTitle: 'Trobar una possible coincidència',
+    matchBody:
+      'El primer pas proposat és entendre què ofereix i necessita cada projecte i a què es pot comprometre de manera realista.',
+    agreeTitle: 'Acordar un petit intercanvi',
+    agreeBody:
+      'Abans de qualsevol intercanvi, els participants acordarien l’abast, la capacitat, els terminis, el preu si escau, les condicions de cancel·lació i com resoldre incidències.',
+    reviewTitle: 'Revisar abans d’avançar',
+    reviewBody:
+      'Només es podrien publicar resultats verificats i ofertes amb condicions aprovades i permís del participant. Encara no hi ha ofertes públiques.',
+    privacyTitle: 'La teva candidatura és privada.',
+    privacyBody:
+      'Les dades de la candidatura són per a l’equip de revisió designat. Enviar aquest formulari no publica el teu projecte, les teves dades de contacte ni la teva proposta.',
+    noApproval:
+      'Presentar una candidatura no garanteix acceptació, recompensa ni intercanvi. No cal cartera, compra ni registre.',
+    disabled:
+      'Les candidatures encara no estan obertes. Pots consultar el mètode proposat mentre es preparen l’equip de revisió i les condicions de recepció.',
+    loading: 'Comprovant si s’admeten candidatures…',
+    configError: 'No hem pogut comprovar si s’admeten candidatures. Torna-ho a provar.',
+    retention:
+      'Les candidatures s’eliminen al cap de {days} dies. Pots demanar que s’eliminin abans.',
+    deletion: 'Per demanar-ne l’eliminació, escriu a {email}.',
+    noScript:
+      'Pots informar-te sobre la prova pilot sense JavaScript. Per enviar una candidatura, cal JavaScript i que la recepció estigui oberta.',
+    projectName: 'Nom del projecte',
+    website: 'Lloc web públic',
+    contactName: 'Nom de contacte',
+    contactEmail: 'Correu privat de contacte',
+    offering: 'Què pots oferir?',
+    needs: 'Què necessites rebre?',
+    capacity: 'Capacitat',
+    availability: 'Disponibilitat',
+    modality: 'Com hi participaries?',
+    location: 'Ubicació',
+    conditions: 'Condicions proposades',
+    remote: 'A distància',
+    local: 'Local',
+    both: 'A distància i local',
+    optional: 'Opcional',
+    contactConsent: 'Accepto que se’m contacti de manera privada sobre aquesta candidatura.',
+    updatesConsent: 'També vull rebre novetats futures sobre la prova pilot. És opcional.',
+    publicationNotice:
+      'La publicació requereix un permís separat després de la revisió. Cap casella autoritza a publicar el teu projecte ni les teves dades de contacte.',
+    submit: 'Enviar candidatura privada',
+    submitting: 'Enviant…',
+    received: 'Candidatura rebuda',
+    receipt: 'Referència: {reference}',
+    receivedBody:
+      'Hem rebut la teva candidatura de manera privada. No s’ha acceptat ni publicat, i no es promet cap recompensa ni intercanvi.',
+    validationError: 'Revisa els camps marcats i torna-ho a provar.',
+    serverError:
+      'No hem pogut confirmar la recepció. Les teves dades continuen aquí; torna-ho a provar.',
+    rateLimited: 'Massa intents. Espera uns minuts abans de tornar-ho a provar.',
+    conflict:
+      'Aquesta referència d’enviament ja s’ha utilitzat amb altres dades. Torna-ho a provar per enviar la candidatura actualitzada.',
+    retry: 'Tornar-ho a provar',
+    privacyWarning:
+      'No incloguis adreces de cartera, claus, frases de recuperació, documents d’identitat ni informació financera.',
+    backHome: 'Tornar a FairCoin',
+  },
 };
 
 export default ca;

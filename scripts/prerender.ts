@@ -46,6 +46,11 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { build as viteBuild } from 'vite';
 import { fetchPrerender } from './prerender-fetch';
+import {
+  renderFaircoinParticipation,
+  renderFaircoinPreparationChapter,
+} from './faircoin-participation-prerender';
+import { faircoinParticipationRoute } from '../src/lib/faircoin-participation-routes';
 import { localizedSeoCopy } from './localized-seo';
 import {
   assertDeploymentFileBudget,
@@ -609,6 +614,16 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description:
       'An ethical currency for everyday exchange, local communities and shared projects. Explore FairCoin and manage your own coins with FAIRWallet.',
     canonicalPath: '/faircoin',
+  },
+  '/faircoin/participate': {
+    title: en.faircoinParticipation.participateTitle,
+    description: en.faircoinParticipation.participateDescription,
+    canonicalPath: '/faircoin/participate',
+  },
+  '/faircoin/pilot': {
+    title: en.faircoinParticipation.pilotTitle,
+    description: en.faircoinParticipation.pilotDescription,
+    canonicalPath: '/faircoin/pilot',
   },
   '/faircoin/buy': {
     title: 'Buy FairCoin',
@@ -1719,15 +1734,26 @@ async function writeRoute(
     // Keep the opening surface through static HTML and the lazy route fallback,
     // without leaving a page theme on <body> after client-side navigation.
     const marketingCanvas = marketingCanvasClass(job.seo.canonicalPath);
+    const participation = faircoinParticipationRoute(job.url);
+    const participationCopy =
+      participation || job.seo.canonicalPath === '/faircoin'
+        ? (await import(`../src/lib/i18n/locales/${job.locale ?? DEFAULT_LOCALE}.ts`)).default
+            .faircoinParticipation
+        : null;
     const withHomeVisual =
-      job.seo.canonicalPath === '/'
-        ? injectRootTemplate(localized, HOME_PRERENDER_VISUAL)
-        : marketingCanvas
-          ? injectRootTemplate(
-              localized,
-              `<div data-prerender-canvas class="${marketingCanvas} min-h-screen" aria-hidden="true"></div>`,
-            )
-          : localized;
+      participation && participationCopy
+        ? injectRootTemplate(
+            localized,
+            renderFaircoinParticipation(participation.page, participationCopy, job.locale),
+          )
+        : job.seo.canonicalPath === '/'
+          ? injectRootTemplate(localized, HOME_PRERENDER_VISUAL)
+          : marketingCanvas
+            ? injectRootTemplate(
+                localized,
+                `<div data-prerender-canvas class="${marketingCanvas} min-h-screen" aria-hidden="true"></div>${participationCopy ? renderFaircoinPreparationChapter(participationCopy, job.locale) : ''}`,
+              )
+            : localized;
     const withIndexBootstrap = job.newsroomIndexPosts
       ? injectRootTemplate(
           withHomeVisual,
@@ -1835,6 +1861,18 @@ async function writeSitemap(
     localeCodes: locales,
   });
   await writeFile(path.join(DIST_DIR, 'sitemap.xml'), xml, 'utf8');
+  const faircoinEntries = entries
+    .filter((entry) => entry.path === '/faircoin' || entry.path.startsWith('/faircoin/'))
+    .map((entry) => ({ ...entry, path: entry.path.slice('/faircoin'.length) || '/' }));
+  await writeFile(
+    path.join(DIST_DIR, 'faircoin-sitemap.xml'),
+    buildSitemapXml(faircoinEntries, {
+      siteUrl: 'https://fairco.in',
+      defaultLocale: DEFAULT_LOCALE,
+      localeCodes: locales,
+    }),
+    'utf8',
+  );
   console.log(
     `[prerender] wrote sitemap.xml (${entries.length} urls, ${locales.length} alternate locales)`,
   );

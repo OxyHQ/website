@@ -1,3 +1,4 @@
+import { isFairCoinHost } from '../../lib/host';
 import {
   lazy,
   Suspense,
@@ -427,7 +428,7 @@ export default function Navbar({
   mergePricingSubheader = false,
   transparentOn = 'dark',
 }: NavbarProps = {}) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { locales } = useLocaleContext();
   const { oxyServices } = useOxy();
   const { isAuthenticated, isAuthResolved, signIn } = useAuth();
@@ -992,40 +993,42 @@ export default function Navbar({
         // Avoid sending it through Core at all; native profile search remains
         // available for ordinary names and usernames.
         const looksLikeFederatedHandle = /^@?[^@\s]+@[^@\s]+$/.test(q.trim());
-        const profileSearch = looksLikeFederatedHandle
-          ? Promise.resolve([])
-          : oxyServices.users
-              .search(q, { limit: 8 })
-              .then((response) => response.data)
-              .catch(() => []);
-        void Promise.all([searchSite(q).catch(() => [] as SearchResult[]), profileSearch]).then(
-          ([siteResults, users]) => {
-            if (requestId !== searchRequest.current) return;
-            const nativeUsers = users.filter(
-              (user) =>
-                user.type === 'local' ||
-                (!user.type && !user.isFederated && !user.instance && !user.federation),
-            );
-            const userResults: SearchResult[] = nativeUsers.map((user) => ({
-              id: `user:${user.id}`,
-              url: `/u/${user.username}`,
-              title: user.name.displayName?.trim() || user.username,
-              group: 'users',
-              subtitle: `@${user.username}`,
-              kind: 'user',
-              avatar: user.avatar
-                ? user.avatar.startsWith('http')
-                  ? user.avatar
-                  : oxyServices.assets.publicUrl(user.avatar, 'thumb')
-                : undefined,
-            }));
-            setSearchResults([...siteResults, ...userResults]);
-            setActiveResult(0);
-          },
-        );
+        const profileSearch =
+          isFairCoinHost() || looksLikeFederatedHandle
+            ? Promise.resolve([])
+            : oxyServices.users
+                .search(q, { limit: 8 })
+                .then((response) => response.data)
+                .catch(() => []);
+        void Promise.all([
+          searchSite(q, locale).catch(() => [] as SearchResult[]),
+          profileSearch,
+        ]).then(([siteResults, users]) => {
+          if (requestId !== searchRequest.current) return;
+          const nativeUsers = users.filter(
+            (user) =>
+              user.type === 'local' ||
+              (!user.type && !user.isFederated && !user.instance && !user.federation),
+          );
+          const userResults: SearchResult[] = nativeUsers.map((user) => ({
+            id: `user:${user.id}`,
+            url: `/u/${user.username}`,
+            title: user.name.displayName?.trim() || user.username,
+            group: 'users',
+            subtitle: `@${user.username}`,
+            kind: 'user',
+            avatar: user.avatar
+              ? user.avatar.startsWith('http')
+                ? user.avatar
+                : oxyServices.assets.publicUrl(user.avatar, 'thumb')
+              : undefined,
+          }));
+          setSearchResults([...siteResults, ...userResults]);
+          setActiveResult(0);
+        });
       }, 160);
     },
-    [oxyServices],
+    [oxyServices, locale],
   );
   // Group-ordered results are the source of truth for keyboard navigation.
   const groupedResults = useMemo(

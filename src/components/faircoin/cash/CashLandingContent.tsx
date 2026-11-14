@@ -15,6 +15,7 @@ import LandingPhone from './LandingPhone';
 import ExplorerStats from './ExplorerStats';
 import { useLandingMotion } from './useLandingMotion';
 import './fonts.css';
+import ParticipationChapter from '../participation/ParticipationChapter';
 
 // The reference caps its twelve content columns at 1440px; backgrounds stay full width.
 const GUTTER = 'px-4 lg:px-[max(20px,calc((100%_-_1440px)/2))]';
@@ -572,6 +573,7 @@ export default function CashLandingContent({
           <ExplorerStats />
         </section>
       </BrandScope>
+      <ParticipationChapter />
     </div>
   );
 }
