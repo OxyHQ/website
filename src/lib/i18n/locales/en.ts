@@ -1687,6 +1687,9 @@ const en = {
     },
   },
   faircoinParticipation: {
+    illustrativePhoto: 'Illustrative photo.',
+    bakeryImageAlt: 'A baker standing beside shelves of fresh bread.',
+
     publicationTitle: 'Publication is your choice.',
     dataTitle: 'Only share what is needed.',
     publicationBody:
@@ -1694,7 +1697,6 @@ const en = {
 
     illustrativeImage: 'AI-generated illustrative scene.',
     repairImageAlt: 'Illustrative scene of a bicycle repairer working in a neighborhood workshop.',
-    ceramicsImageAlt: 'Illustrative scene of two makers discussing handmade ceramics.',
 
     projectGroup: 'Project and contact',
     offerGroup: 'Offer and needs',

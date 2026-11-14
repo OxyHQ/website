@@ -1003,6 +1003,9 @@ const ru: Translations = {
     },
   },
   faircoinParticipation: {
+    illustrativePhoto: 'Иллюстративная фотография.',
+    bakeryImageAlt: 'Пекарь стоит рядом с полками свежего хлеба.',
+
     publicationTitle: 'Вы решаете, что публиковать.',
     dataTitle: 'Делитесь только необходимым.',
     publicationBody:
@@ -1010,7 +1013,6 @@ const ru: Translations = {
 
     illustrativeImage: 'Иллюстративная сцена, созданная ИИ.',
     repairImageAlt: 'Иллюстративная сцена: мастер ремонтирует велосипед в местной мастерской.',
-    ceramicsImageAlt: 'Иллюстративная сцена: двое мастеров обсуждают керамику ручной работы.',
 
     projectGroup: 'Проект и контакты',
     offerGroup: 'Предложение и потребности',

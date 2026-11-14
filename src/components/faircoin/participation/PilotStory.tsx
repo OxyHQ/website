@@ -19,7 +19,7 @@ function ScrollReveal({ children, className }: { children: ReactNode; className:
   );
 }
 
-function Photograph({ scene, eager = false }: { scene: 'repair' | 'ceramics'; eager?: boolean }) {
+function Photograph({ scene, eager = false }: { scene: 'repair' | 'bakery'; eager?: boolean }) {
   const { t } = useTranslation();
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
@@ -35,16 +35,24 @@ function Photograph({ scene, eager = false }: { scene: 'repair' | 'ceramics'; ea
     <figure ref={ref} className="pilot-photograph">
       <motion.div className="pilot-photo-crop" style={reduced || eager ? undefined : { clipPath }}>
         <motion.img
-          src={`/faircoin/pilot/${scene === 'repair' ? 'repair' : 'ceramics'}-workshop.webp`}
+          src={
+            scene === 'repair'
+              ? '/faircoin/pilot/repair-workshop.webp'
+              : '/faircoin/pilot/bakery.webp'
+          }
           alt={t(`faircoinParticipation.${scene}ImageAlt`)}
           width={1000}
-          height={1500}
+          height={scene === 'repair' ? 1500 : 949}
           loading={eager ? 'eager' : 'lazy'}
           fetchPriority={eager ? 'high' : undefined}
           style={reduced ? undefined : { y, scale }}
         />
       </motion.div>
-      <figcaption>{t('faircoinParticipation.illustrativeImage')}</figcaption>
+      <figcaption>
+        {t(
+          `faircoinParticipation.${scene === 'repair' ? 'illustrativeImage' : 'illustrativePhoto'}`,
+        )}
+      </figcaption>
     </figure>
   );
 }
@@ -193,7 +201,7 @@ export default function PilotStory({ onToneChange }: { onToneChange: (dark: bool
         <p>{t('faircoinParticipation.matchBody')}</p>
         <p className="pilot-secondary-copy">{t('faircoinParticipation.noApproval')}</p>
       </Chapter>
-      <Chapter step="agree" dark visual={<Photograph scene="ceramics" />}>
+      <Chapter step="agree" dark visual={<Photograph scene="bakery" />}>
         <p>{t('faircoinParticipation.agreeBody')}</p>
         <p className="pilot-secondary-copy">{t('faircoinParticipation.participateDescription')}</p>
       </Chapter>

@@ -1,6 +1,6 @@
 # FairCoin pilot editorial images
 
-Generated with the built-in image generation tool on 2026-11-14, in response to the owner's request for better photographs. These are illustrative scenes, not photographs of confirmed participants. That distinction is visible in each localized caption and alternative text. Final images are encoded as 1000px-wide WebP assets for the website.
+The hero was generated with the built-in image generation tool on 2026-11-14. The exchange photograph was supplied and selected by the site owner. Both illustrate the proposed method, rather than depicting confirmed participants. That distinction is visible in each localized caption and alternative text. Final images are encoded as 1000px-wide WebP assets for the website.
 
 ## Repair workshop
 
@@ -14,10 +14,8 @@ Final edit prompt (built-in tool, original generated photo as input):
 
 > Change only the framing: remove the white border and rounded corners entirely. Extend the photographic scene into all four corners and every edge, full bleed rectangular photo. Preserve the bicycle mechanic, workshop, composition, lighting, colors and all other details. No graphic border of any kind.
 
-## Ceramics workshop
+## Bakery photograph
 
-Asset: `public/faircoin/pilot/ceramics-workshop.webp`
+Asset: `public/faircoin/pilot/bakery.webp`
 
-Generation prompt:
-
-> Use case: photorealistic-natural. Portrait 2:3 full-bleed editorial photograph, edge to edge image with square corners, absolutely no white margin, no rounded corners or graphic frame. For FairCoin landing page about small useful exchanges. Two independent makers at a ceramics workshop table, discussing a small set of handmade olive-green and cream ceramic cups, one woman in dark work clothes and a man in natural linen. Candid and thoughtful, not posing at camera. Hands naturally resting on table, not shaking hands. Strong composition with ceramic pieces in foreground and faces in upper third, modest bright workshop with shelves in soft focus. Premium independent magazine art direction, tactile glazed ceramics and wood, late afternoon side light, true skin texture, subtle analog grain, restrained greens and warm neutrals. Vertical composition legible in narrow portrait crop. No text, logos, symbols, money, watermarks, UI, stock photography smiles. This is an illustrative scene, not identifiable actual pilot participants.
+Provided by the site owner as `hgfhfghfgh.jpg` on 2026-11-14, explicitly selected for “Agree a small exchange”. Encoded as a 1000px-wide WebP; the source photograph is not generated or retouched. The responsive crop and scroll reveal are applied by the page, preserving the original image file content. Its caption says “Illustrative photo”, and does not identify the subject as a confirmed pilot participant.

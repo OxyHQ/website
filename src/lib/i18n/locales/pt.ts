@@ -1442,6 +1442,9 @@ const pt: Translations = {
     },
   },
   faircoinParticipation: {
+    illustrativePhoto: 'Fotografia ilustrativa.',
+    bakeryImageAlt: 'Uma padeira junto a prateleiras de pão fresco.',
+
     publicationTitle: 'A publicação é uma escolha sua.',
     dataTitle: 'Partilhe apenas o necessário.',
     publicationBody:
@@ -1449,7 +1452,6 @@ const pt: Translations = {
 
     illustrativeImage: 'Cena ilustrativa gerada por IA.',
     repairImageAlt: 'Cena ilustrativa de um reparador de bicicletas numa oficina de bairro.',
-    ceramicsImageAlt: 'Cena ilustrativa de dois artesãos a conversar sobre peças de cerâmica.',
 
     projectGroup: 'Projeto e contato',
     offerGroup: 'Oferta e necessidades',

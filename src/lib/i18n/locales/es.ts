@@ -1639,6 +1639,9 @@ const es: Translations = {
     },
   },
   faircoinParticipation: {
+    illustrativePhoto: 'Fotografía ilustrativa.',
+    bakeryImageAlt: 'Una panadera junto a estantes de pan recién hecho.',
+
     publicationTitle: 'Tú decides si se publica.',
     dataTitle: 'Comparte solo lo necesario.',
     publicationBody:
@@ -1647,7 +1650,6 @@ const es: Translations = {
     illustrativeImage: 'Escena ilustrativa generada con IA.',
     repairImageAlt:
       'Escena ilustrativa de un reparador de bicicletas trabajando en un taller de barrio.',
-    ceramicsImageAlt: 'Escena ilustrativa de dos artesanos comentando piezas de cerámica.',
 
     projectGroup: 'Proyecto y contacto',
     offerGroup: 'Oferta y necesidades',

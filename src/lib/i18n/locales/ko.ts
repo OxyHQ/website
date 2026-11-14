@@ -1405,13 +1405,15 @@ const ko: Translations = {
     },
   },
   faircoinParticipation: {
+    illustrativePhoto: '예시 사진입니다.',
+    bakeryImageAlt: '갓 구운 빵이 놓인 선반 옆에 서 있는 제빵사.',
+
     publicationTitle: '공개 여부는 직접 결정하세요.',
     dataTitle: '필요한 정보만 공유하세요.',
     publicationBody: '프로젝트나 연락처를 공개하려면 검토 후 별도의 동의가 필요합니다.',
 
     illustrativeImage: 'AI로 생성한 예시 장면입니다.',
     repairImageAlt: '동네 작업실에서 자전거를 수리하는 기술자의 예시 장면.',
-    ceramicsImageAlt: '수제 도자기에 관해 이야기하는 두 장인의 예시 장면.',
 
     projectGroup: '프로젝트 및 연락처',
     offerGroup: '제공 내용과 필요한 것',

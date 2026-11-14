@@ -1444,6 +1444,9 @@ const ca: Translations = {
     },
   },
   faircoinParticipation: {
+    illustrativePhoto: 'Fotografia il·lustrativa.',
+    bakeryImageAlt: 'Una fornera al costat de prestatges de pa acabat de fer.',
+
     publicationTitle: 'Tu decideixes si es publica.',
     dataTitle: 'Comparteix només el necessari.',
     publicationBody:
@@ -1452,7 +1455,6 @@ const ca: Translations = {
     illustrativeImage: 'Escena il·lustrativa generada amb IA.',
     repairImageAlt:
       'Escena il·lustrativa d’un reparador de bicicletes treballant en un taller de barri.',
-    ceramicsImageAlt: 'Escena il·lustrativa de dos artesans comentant peces de ceràmica.',
 
     projectGroup: 'Projecte i contacte',
     offerGroup: 'Oferta i necessitats',

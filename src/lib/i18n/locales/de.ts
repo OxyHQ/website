@@ -1453,6 +1453,9 @@ const de: Translations = {
     },
   },
   faircoinParticipation: {
+    illustrativePhoto: 'Illustratives Foto.',
+    bakeryImageAlt: 'Eine Bäckerin neben Regalen mit frischem Brot.',
+
     publicationTitle: 'Sie entscheiden über die Veröffentlichung.',
     dataTitle: 'Teilen Sie nur das Nötige.',
     publicationBody:
@@ -1460,8 +1463,6 @@ const de: Translations = {
 
     illustrativeImage: 'Mit KI erzeugte illustrative Szene.',
     repairImageAlt: 'Illustrative Szene eines Fahrradmechanikers in einer Werkstatt im Viertel.',
-    ceramicsImageAlt:
-      'Illustrative Szene zweier Kunsthandwerker, die handgefertigte Keramik besprechen.',
 
     projectGroup: 'Projekt und Kontakt',
     offerGroup: 'Angebot und Bedarf',

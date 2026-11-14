@@ -1007,6 +1007,9 @@ const id: Translations = {
     },
   },
   faircoinParticipation: {
+    illustrativePhoto: 'Foto ilustrasi.',
+    bakeryImageAlt: 'Seorang pembuat roti berdiri di samping rak berisi roti segar.',
+
     publicationTitle: 'Anda yang memutuskan publikasi.',
     dataTitle: 'Bagikan hanya yang diperlukan.',
     publicationBody:
@@ -1014,7 +1017,6 @@ const id: Translations = {
 
     illustrativeImage: 'Adegan ilustrasi yang dibuat dengan AI.',
     repairImageAlt: 'Adegan ilustrasi seorang mekanik sepeda bekerja di bengkel setempat.',
-    ceramicsImageAlt: 'Adegan ilustrasi dua perajin membahas keramik buatan tangan.',
 
     projectGroup: 'Proyek dan kontak',
     offerGroup: 'Penawaran dan kebutuhan',
