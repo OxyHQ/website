@@ -274,9 +274,11 @@ try {
       await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
       await page.goto(`${origin}/faircoin/pilot/`);
       await page.locator('.pilot-story h1').waitFor();
-      await page.locator('.pilot-method-link').focus();
+      await page.locator('.pilot-hero .pilot-action').focus();
       await page.keyboard.press('Enter');
-      await page.waitForFunction(() => location.hash === '#pilot-match');
+      await page.getByLabel('Project name', { exact: true }).waitFor();
+      await page.goBack();
+      await page.locator('.pilot-story h1').waitFor();
       for (const id of [
         'pilot-match',
         'pilot-agree',

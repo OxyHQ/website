@@ -1445,7 +1445,6 @@ const ca: Translations = {
   },
   faircoinParticipation: {
     cafeImageAlt: 'Dues persones amb davantals davant d’una cafeteria.',
-    illustrativePhoto: 'Fotografia il·lustrativa.',
     bakeryImageAlt: 'Una fornera al costat de prestatges de pa acabat de fer.',
 
     publicationTitle: 'Tu decideixes si es publica.',

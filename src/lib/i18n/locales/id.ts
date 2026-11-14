@@ -1008,7 +1008,6 @@ const id: Translations = {
   },
   faircoinParticipation: {
     cafeImageAlt: 'Dua orang mengenakan celemek di depan sebuah kafe.',
-    illustrativePhoto: 'Foto ilustrasi.',
     bakeryImageAlt: 'Seorang pembuat roti berdiri di samping rak berisi roti segar.',
 
     publicationTitle: 'Anda yang memutuskan publikasi.',

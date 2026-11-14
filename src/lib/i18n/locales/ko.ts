@@ -1406,7 +1406,6 @@ const ko: Translations = {
   },
   faircoinParticipation: {
     cafeImageAlt: '카페 앞에 앞치마를 입고 서 있는 두 사람.',
-    illustrativePhoto: '예시 사진입니다.',
     bakeryImageAlt: '갓 구운 빵이 놓인 선반 옆에 서 있는 제빵사.',
 
     publicationTitle: '공개 여부는 직접 결정하세요.',

@@ -972,7 +972,6 @@ const hi: Translations = {
   },
   faircoinParticipation: {
     cafeImageAlt: 'एक कैफ़े के सामने एप्रन पहने दो लोग।',
-    illustrativePhoto: 'उदाहरणात्मक तस्वीर।',
     bakeryImageAlt: 'ताज़ी ब्रेड की अलमारियों के पास खड़ी एक बेकर।',
 
     publicationTitle: 'प्रकाशन का निर्णय आपका है।',
