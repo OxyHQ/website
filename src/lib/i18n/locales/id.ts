@@ -1007,6 +1007,10 @@ const id: Translations = {
     },
   },
   faircoinParticipation: {
+    projectGroup: 'Proyek dan kontak',
+    offerGroup: 'Penawaran dan kebutuhan',
+    logisticsGroup: 'Logistik dan ketentuan',
+
     title: 'Ekonomi dimulai ketika orang bisa menggunakannya.',
     body: 'Kami sedang menyiapkan uji coba pertukaran kecil antarproyek independen. Pertama, kami mencocokkan apa yang dapat ditawarkan setiap proyek dengan kebutuhannya. Lalu kami menguji pertukaran nyata dalam batas yang disepakati, tanpa menjanjikan keuntungan.',
     propose: 'Ajukan penawaran',

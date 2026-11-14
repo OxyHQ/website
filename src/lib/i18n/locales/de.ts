@@ -1453,6 +1453,10 @@ const de: Translations = {
     },
   },
   faircoinParticipation: {
+    projectGroup: 'Projekt und Kontakt',
+    offerGroup: 'Angebot und Bedarf',
+    logisticsGroup: 'Logistik und Bedingungen',
+
     title: 'Eine Wirtschaft beginnt, wenn Menschen sie nutzen können.',
     body: 'Wir bereiten einen kleinen Austauschpiloten für unabhängige Projekte vor. Zunächst bringen wir zusammen, was die Projekte anbieten und was sie benötigen. Dann erproben wir konkrete Tauschgeschäfte mit vereinbarten Grenzen und ohne Renditeversprechen.',
     propose: 'Ein Angebot vorschlagen',

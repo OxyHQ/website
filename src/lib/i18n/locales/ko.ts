@@ -1405,6 +1405,10 @@ const ko: Translations = {
     },
   },
   faircoinParticipation: {
+    projectGroup: '프로젝트 및 연락처',
+    offerGroup: '제공 내용과 필요한 것',
+    logisticsGroup: '진행 방식 및 조건',
+
     title: '경제는 사람들이 사용할 수 있을 때 시작됩니다.',
     body: '독립적인 소규모 프로젝트 간 교환 시범 운영을 준비하고 있습니다. 먼저 각 프로젝트가 제공할 수 있는 것과 필요한 것을 연결합니다. 그런 다음 합의한 범위 안에서 구체적인 교환을 시험합니다. 수익은 약속하지 않습니다.',
     propose: '제안하기',

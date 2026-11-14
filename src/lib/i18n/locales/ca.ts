@@ -1444,6 +1444,10 @@ const ca: Translations = {
     },
   },
   faircoinParticipation: {
+    projectGroup: 'Projecte i contacte',
+    offerGroup: 'Oferta i necessitats',
+    logisticsGroup: 'Logística i condicions',
+
     title: 'Una economia comença quan algú pot fer-la servir.',
     body: 'Estem preparant una prova pilot d’intercanvi entre petits projectes. Primer connectem el que cadascú ofereix amb el que necessita. Després provem intercanvis concrets, amb límits acordats i sense promeses de rendibilitat.',
     propose: 'Proposar una oferta',

@@ -12,6 +12,18 @@ import {
 export function ParticipationExplanation({ page }: { page: 'participate' | 'pilot' }) {
   const { t } = useTranslation();
   const href = useParticipationHref();
+  if (page === 'participate') {
+    return (
+      <section className="mx-auto mb-7 max-w-[800px] px-5 text-center lg:mb-10">
+        <h1 className="text-balance text-[clamp(36px,5vw,72px)] font-normal leading-[1.08] tracking-[-.015em]">
+          {t('faircoinParticipation.participateTitle')}
+        </h1>
+        <p className="mx-auto mt-4 max-w-[590px] text-balance text-[clamp(16px,1.4vw,21px)] leading-[1.4] text-muted-foreground">
+          {t('faircoinParticipation.participateDescription')}
+        </p>
+      </section>
+    );
+  }
   return (
     <>
       <section className={`${PARTICIPATION_GUTTER} pb-16 lg:pb-24`}>

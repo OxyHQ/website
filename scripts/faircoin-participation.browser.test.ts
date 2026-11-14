@@ -131,6 +131,14 @@ try {
   assert.equal(await summary().locator('li').count(), 9);
   assert.equal(applications.length, 0, 'Shared validation prevents invalid API calls');
   assert(await summary().evaluate((element) => element === document.activeElement));
+  assert(
+    await summary().evaluate(
+      (element) =>
+        element.getBoundingClientRect().top >=
+        (document.querySelector('header')?.getBoundingClientRect().bottom ?? 0),
+    ),
+    'The focused error summary must be visible below the fixed header',
+  );
   await summary().getByRole('link', { name: 'Project name', exact: true }).click();
   assert(await field('Project name').evaluate((element) => element === document.activeElement));
   await page.keyboard.type('Independent Workshop');
@@ -210,6 +218,16 @@ try {
   await submit();
   await page.getByRole('heading', { name: 'Application received', exact: true }).waitFor();
   await page.getByText('Reference: abcdefabcdefabcdefabcdef').waitFor();
+  await page.waitForFunction(() => {
+    const receipt = document.querySelector('main [role="status"][tabindex="-1"]');
+    const bounds = receipt?.getBoundingClientRect();
+    return (
+      receipt === document.activeElement &&
+      bounds &&
+      bounds.top >= (document.querySelector('header')?.getBoundingClientRect().bottom ?? 0) &&
+      bounds.bottom <= innerHeight
+    );
+  });
   assert.notEqual(
     applications.at(-1)?.headers()['idempotency-key'],
     keys[0],
