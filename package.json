@@ -75,8 +75,8 @@
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
     "@mercaria.co/sdk": "~0.2.0",
-    "@oxy.so/bloom": "21.0.0",
-    "@oxy.so/contracts": "7.0.0",
+    "@oxy.so/bloom": "21.5.0",
+    "@oxy.so/contracts": "7.1.0",
     "@oxy.so/core": "7.51.0",
     "@oxy.so/db": "1.5.0",
     "@oxy.so/mcp": "1.4.3",
@@ -187,8 +187,8 @@
     "@oxy.so/core": "7.51.0",
     "@oxy.so/services": "14.21.0",
     "@oxy.so/mcp": "1.4.3",
-    "@oxy.so/bloom": "21.0.0",
-    "@oxy.so/contracts": "7.0.0",
+    "@oxy.so/bloom": "21.5.0",
+    "@oxy.so/contracts": "7.1.0",
     "@oxy.so/telemetry": "2.2.0",
     "react-native-css": "3.1.0-rc.0"
   }
