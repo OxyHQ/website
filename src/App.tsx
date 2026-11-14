@@ -38,6 +38,8 @@ import HomePage from './pages/HomePage';
 // which every oxy.so visitor downloads to render a page they never open — the
 // exact outcome `WagmiAppProvider`'s own docstring says it exists to prevent.
 // It is the index route on fairco.in, which pays one extra round trip for it.
+const FairCoinParticipatePage = lazy(() => import('./pages/FairCoinParticipate'));
+const FairCoinPilotPage = lazy(() => import('./pages/FairCoinPilot'));
 const FairCoinLanding = lazy(() => import('./pages/FairCoinLanding'));
 const FairCoinBridgePage = lazy(() => import('./pages/FairCoinBridge'));
 const FairCoinBuyPage = lazy(() => import('./pages/FairCoinBuy'));
@@ -258,6 +260,8 @@ function PublicRoutes() {
         <Route path="redeem" element={<FairCoinUnwrapPage />} />
         <Route path="bridge" element={<FairCoinBridgePage />} />
         <Route path="wallet" element={<FairCoinWalletPage />} />
+        <Route path="participate" element={<FairCoinParticipatePage />} />
+        <Route path="pilot" element={<FairCoinPilotPage />} />
       </>
     );
   }
@@ -271,6 +275,8 @@ function PublicRoutes() {
       <Route path="faircoin/redeem" element={<FairCoinUnwrapPage />} />
       <Route path="faircoin/bridge" element={<FairCoinBridgePage />} />
       <Route path="faircoin/wallet" element={<FairCoinWalletPage />} />
+      <Route path="faircoin/participate" element={<FairCoinParticipatePage />} />
+      <Route path="faircoin/pilot" element={<FairCoinPilotPage />} />
       <Route path="partners" element={<PartnersPage />} />
       <Route path="referrals" element={<ReferralsPage />} />
       <Route path="referrals/dashboard" element={<ReferralsDashboardPage />} />

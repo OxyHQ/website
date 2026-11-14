@@ -21,12 +21,13 @@ export function useLandingMotion(
     const element = root.current;
     if (!element) return;
     const sections = [...element.querySelectorAll<HTMLElement>('[data-section-tone]')];
+    const staticSections = [...element.querySelectorAll<HTMLElement>('[data-static-section-tone]')];
     const syncHeader = () => {
-      const active = sections.find((section) => {
+      const active = [...sections, ...staticSections].find((section) => {
         const rect = section.getBoundingClientRect();
         return rect.top <= 100 && rect.bottom > 100;
       });
-      onToneChange(active?.dataset.sectionTone === 'dark');
+      onToneChange((active?.dataset.sectionTone ?? active?.dataset.staticSectionTone) === 'dark');
     };
     const media = gsap.matchMedia();
     media.add('(max-width: 1023px), (prefers-reduced-motion: reduce)', () => {
@@ -47,6 +48,17 @@ export function useLandingMotion(
     media.add(
       '(min-width: 1024px) and (prefers-reduced-motion: no-preference)',
       () => {
+        // Editorial additions scroll freely, but their header must still be
+        // readable. They never join the phone timelines or magnetic chapters.
+        const syncStaticHeader = () => {
+          for (const section of staticSections) {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= 100) {
+              onToneChange(rect.bottom > 100 && section.dataset.staticSectionTone === 'dark');
+            }
+          }
+        };
+        window.addEventListener('scroll', syncStaticHeader, { passive: true });
         const canvas = element.querySelector<HTMLElement>('[data-landing-canvas]');
         const light = getComputedStyle(element);
         const dark = getComputedStyle(
@@ -91,6 +103,7 @@ export function useLandingMotion(
           observer.observe(section);
           return observer;
         });
+        syncStaticHeader();
         const hero = element.querySelector<HTMLElement>('[data-faircoin-hero]');
         const background = element.querySelector<HTMLElement>('[data-hero-background]');
         if (hero && background) {
@@ -202,6 +215,7 @@ export function useLandingMotion(
           });
         });
         return () => {
+          window.removeEventListener('scroll', syncStaticHeader);
           for (const observer of observers) observer.disconnect();
         };
       },

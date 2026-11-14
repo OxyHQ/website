@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { DEFAULT_LOCALE, useTranslation } from './i18n';
 import Button from '../components/ui/Button';
 import { fc } from './faircoin-links';
 import { isFairCoinHost } from './host';
@@ -96,6 +97,7 @@ export function useFairCoinFooterBrand(): FooterBrand | undefined {
  */
 export function useFairCoinDropdowns(): readonly NavDropdown[] | undefined {
   const onFairCoinHost = isFairCoinHost();
+  const { t, locale } = useTranslation();
   return useMemo(() => {
     if (!onFairCoinHost) return undefined;
 
@@ -246,6 +248,18 @@ export function useFairCoinDropdowns(): readonly NavDropdown[] | undefined {
           heading: 'Community',
           items: [
             {
+              title: t('faircoinParticipation.propose'),
+              description: t('faircoinParticipation.state'),
+              href: `${locale === DEFAULT_LOCALE ? '' : `/${locale}`}${fc('/participate/')}`,
+              icon: 'chat',
+            },
+            {
+              title: t('faircoinParticipation.how'),
+              description: t('faircoinParticipation.pilotDescription'),
+              href: `${locale === DEFAULT_LOCALE ? '' : `/${locale}`}${fc('/pilot/')}`,
+              icon: 'network',
+            },
+            {
               title: 'Reddit',
               description: 'r/FairCoinOfficial — discussions and AMAs.',
               href: 'https://reddit.com/r/FairCoinOfficial',
@@ -269,7 +283,7 @@ export function useFairCoinDropdowns(): readonly NavDropdown[] | undefined {
     };
 
     return [getFair, network, developers, community];
-  }, [onFairCoinHost]);
+  }, [onFairCoinHost, t, locale]);
 }
 
 /**
@@ -308,6 +322,7 @@ export function useFairCoinNavCtaButtons(): React.ReactNode {
 
 export function useFairCoinFooterColumns(): readonly FooterColumnConfig[] | undefined {
   const onFairCoinHost = isFairCoinHost();
+  const { t, locale } = useTranslation();
   return useMemo(
     () =>
       onFairCoinHost
@@ -353,6 +368,14 @@ export function useFairCoinFooterColumns(): readonly FooterColumnConfig[] | unde
               title: 'Community',
               links: [
                 {
+                  label: t('faircoinParticipation.propose'),
+                  href: `${locale === DEFAULT_LOCALE ? '' : `/${locale}`}${fc('/participate/')}`,
+                },
+                {
+                  label: t('faircoinParticipation.how'),
+                  href: `${locale === DEFAULT_LOCALE ? '' : `/${locale}`}${fc('/pilot/')}`,
+                },
+                {
                   label: 'Reddit',
                   href: 'https://reddit.com/r/FairCoinOfficial',
                   isExternal: true,
@@ -364,7 +387,7 @@ export function useFairCoinFooterColumns(): readonly FooterColumnConfig[] | unde
             },
           ]
         : undefined,
-    [onFairCoinHost],
+    [onFairCoinHost, t, locale],
   );
 }
 

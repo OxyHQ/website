@@ -15,6 +15,8 @@ import { startStatusSnapshotInterval } from './services/statusSnapshot.js';
 import { getPriorityTiers } from './constants/featurePriority.js';
 import { isBootstrapComplete, markBootstrapComplete } from './services/startupState.js';
 import { purgeExpiredInquiries } from './routes/sales.js';
+import { purgeExpiredFaircoinApplications } from './routes/faircoinApplications.js';
+import { readFaircoinParticipationConfig } from './services/faircoinParticipationConfig.js';
 import { WEBSITE_MCP_CATALOG } from './mcp.js';
 import { oxyService, oxyTransport } from './services/oxyService.js';
 import { createApp } from './app.js';
@@ -170,6 +172,10 @@ function startInquiryRetentionSweep(): void {
     purgeExpiredInquiries().catch((error: unknown) => {
       console.error('[sales] retention sweep failed:', error);
     });
+    // Also runs while intake is disabled; expiry is never an activation flag.
+    purgeExpiredFaircoinApplications().catch(() => {
+      console.error('[faircoin-applications] retention sweep failed');
+    });
   };
   sweep();
   setInterval(sweep, DAY_MS).unref();
@@ -202,6 +208,7 @@ function startInquiryRetentionSweep(): void {
  * until someone fixes the value.
  */
 getPriorityTiers();
+readFaircoinParticipationConfig();
 
 const server = app.listen(config.port, () => {
   console.log(`Server listening on http://localhost:${config.port}`);
