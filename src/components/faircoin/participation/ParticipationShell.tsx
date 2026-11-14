@@ -20,9 +20,11 @@ import '../cash/fonts.css';
 export default function ParticipationShell({
   page,
   children,
+  darkHeader = false,
 }: {
   page: 'participate' | 'pilot';
   children: ReactNode;
+  darkHeader?: boolean;
 }) {
   const { t } = useTranslation();
   const onFairCoinHost = isFairCoinHost();
@@ -47,7 +49,7 @@ export default function ParticipationShell({
       <Navbar
         transparent
         transparentOnScroll
-        transparentOn="light"
+        transparentOn={darkHeader ? 'dark' : 'light'}
         brand={brand}
         customDropdowns={dropdowns}
         customNavLinks={links}
@@ -56,7 +58,13 @@ export default function ParticipationShell({
         hideBanner={onFairCoinHost}
         hideLocalePicker={onFairCoinHost}
       />
-      <main className="mx-auto w-full max-w-[2600px] flex-1 [--participation-banner-height:0px] [body:has(.site-banner)_&]:[--participation-banner-height:var(--site-header-banner-visible-height)] pt-[calc(var(--site-header-height)+var(--participation-banner-height)+32px)] min-[760px]:pt-[calc(var(--site-header-height)+var(--participation-banner-height)+48px)] lg:pt-[calc(var(--site-header-height)+var(--participation-banner-height)+64px)]">
+      <main
+        className={
+          page === 'pilot'
+            ? 'w-full flex-1'
+            : 'mx-auto w-full max-w-[2600px] flex-1 [--participation-banner-height:0px] [body:has(.site-banner)_&]:[--participation-banner-height:var(--site-header-banner-visible-height)] pt-[calc(var(--site-header-height)+var(--participation-banner-height)+32px)] min-[760px]:pt-[calc(var(--site-header-height)+var(--participation-banner-height)+48px)] lg:pt-[calc(var(--site-header-height)+var(--participation-banner-height)+64px)]'
+        }
+      >
         {children}
       </main>
       <Footer

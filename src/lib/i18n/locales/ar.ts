@@ -1388,6 +1388,14 @@ const ar: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'شخصان يرتديان مئزرين أمام مقهى.',
+    illustrativePhoto: 'صورة توضيحية.',
+    bakeryImageAlt: 'خبّازة تقف بجانب رفوف الخبز الطازج.',
+
+    publicationTitle: 'أنت تقرر ما يُنشر.',
+    dataTitle: 'شارك المعلومات الضرورية فقط.',
+    publicationBody: 'يتطلب نشر مشروعك أو بيانات الاتصال بك إذنًا منفصلًا بعد المراجعة.',
+
     projectGroup: 'المشروع وبيانات الاتصال',
     offerGroup: 'العرض والاحتياجات',
     logisticsGroup: 'التفاصيل اللوجستية والشروط',

@@ -971,6 +971,14 @@ const hi: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'एक कैफ़े के सामने एप्रन पहने दो लोग।',
+    illustrativePhoto: 'उदाहरणात्मक तस्वीर।',
+    bakeryImageAlt: 'ताज़ी ब्रेड की अलमारियों के पास खड़ी एक बेकर।',
+
+    publicationTitle: 'प्रकाशन का निर्णय आपका है।',
+    dataTitle: 'केवल आवश्यक जानकारी साझा करें।',
+    publicationBody: 'समीक्षा के बाद आपके प्रोजेक्ट या संपर्क विवरण प्रकाशित करने के लिए अलग अनुमति आवश्यक है।',
+
     projectGroup: 'परियोजना और संपर्क',
     offerGroup: 'प्रस्ताव और ज़रूरतें',
     logisticsGroup: 'व्यवस्था और शर्तें',

@@ -968,6 +968,14 @@ const bn: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'একটি ক্যাফের সামনে অ্যাপ্রন পরা দুই ব্যক্তি।',
+    illustrativePhoto: 'উদাহরণমূলক ছবি।',
+    bakeryImageAlt: 'তাজা রুটির তাকের পাশে দাঁড়িয়ে থাকা একজন নারী বেকার।',
+
+    publicationTitle: 'প্রকাশের সিদ্ধান্ত আপনার।',
+    dataTitle: 'শুধু প্রয়োজনীয় তথ্য দিন।',
+    publicationBody: 'পর্যালোচনার পর আপনার প্রকল্প বা যোগাযোগের তথ্য প্রকাশ করতে আলাদা অনুমতি প্রয়োজন।',
+
     projectGroup: 'প্রকল্প ও যোগাযোগ',
     offerGroup: 'প্রস্তাব ও প্রয়োজন',
     logisticsGroup: 'ব্যবস্থাপনা ও শর্তাবলি',

@@ -1003,6 +1003,15 @@ const ru: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'Два человека в фартуках перед кафе.',
+    illustrativePhoto: 'Иллюстративная фотография.',
+    bakeryImageAlt: 'Пекарь стоит рядом с полками свежего хлеба.',
+
+    publicationTitle: 'Вы решаете, что публиковать.',
+    dataTitle: 'Делитесь только необходимым.',
+    publicationBody:
+      'Для публикации проекта или контактных данных после проверки потребуется отдельное разрешение.',
+
     projectGroup: 'Проект и контакты',
     offerGroup: 'Предложение и потребности',
     logisticsGroup: 'Организация и условия',

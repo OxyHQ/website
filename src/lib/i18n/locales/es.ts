@@ -1639,6 +1639,15 @@ const es: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'Dos personas con delantales delante de una cafetería.',
+    illustrativePhoto: 'Fotografía ilustrativa.',
+    bakeryImageAlt: 'Una panadera junto a estantes de pan recién hecho.',
+
+    publicationTitle: 'Tú decides si se publica.',
+    dataTitle: 'Comparte solo lo necesario.',
+    publicationBody:
+      'Publicar tu proyecto o tus datos de contacto requiere un permiso independiente tras la revisión.',
+
     projectGroup: 'Proyecto y contacto',
     offerGroup: 'Oferta y necesidades',
     logisticsGroup: 'Logística y condiciones',

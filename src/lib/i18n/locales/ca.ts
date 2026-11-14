@@ -1444,6 +1444,15 @@ const ca: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'Dues persones amb davantals davant d’una cafeteria.',
+    illustrativePhoto: 'Fotografia il·lustrativa.',
+    bakeryImageAlt: 'Una fornera al costat de prestatges de pa acabat de fer.',
+
+    publicationTitle: 'Tu decideixes si es publica.',
+    dataTitle: 'Comparteix només el necessari.',
+    publicationBody:
+      'Publicar el teu projecte o les teves dades de contacte requereix un permís independent després de la revisió.',
+
     projectGroup: 'Projecte i contacte',
     offerGroup: 'Oferta i necessitats',
     logisticsGroup: 'Logística i condicions',

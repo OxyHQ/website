@@ -1358,6 +1358,14 @@ const zh: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: '两位系着围裙的人站在咖啡馆前。',
+    illustrativePhoto: '示意照片。',
+    bakeryImageAlt: '一位面包师站在摆满新鲜面包的货架旁。',
+
+    publicationTitle: '是否公开由你决定。',
+    dataTitle: '仅分享必要信息。',
+    publicationBody: '审核后，公开你的项目或联系方式需要另行征得许可。',
+
     projectGroup: '项目与联系方式',
     offerGroup: '供给与需求',
     logisticsGroup: '安排与条件',

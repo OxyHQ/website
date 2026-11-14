@@ -267,11 +267,87 @@ try {
     );
     await page.waitForFunction(() => !!document.querySelector('header .force-dark'));
   }
+  // The editorial stages must remain readable and navigable in both motion modes.
+  for (const reducedMotion of ['reduce', 'no-preference'] as const) {
+    await page.emulateMedia({ reducedMotion });
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
+      await page.goto(`${origin}/faircoin/pilot/`);
+      await page.locator('.pilot-story h1').waitFor();
+      await page.locator('.pilot-method-link').focus();
+      await page.keyboard.press('Enter');
+      await page.waitForFunction(() => location.hash === '#pilot-match');
+      for (const id of [
+        'pilot-match',
+        'pilot-agree',
+        'pilot-review-title',
+        'pilot-agree',
+        'pilot-match',
+      ]) {
+        const section = page.locator(`#${id}`);
+        await section.evaluate((element) =>
+          window.scrollTo({
+            top: element.getBoundingClientRect().top + scrollY,
+            behavior: 'instant',
+          }),
+        );
+        await page.waitForFunction(
+          (dark) => !!document.querySelector('header .force-dark') === dark,
+          id === 'pilot-agree',
+        );
+      }
+      await page.locator('#pilot-agree').scrollIntoViewIfNeeded();
+      await page.waitForFunction(() =>
+        [...document.querySelectorAll<HTMLImageElement>('.pilot-story img')].every(
+          (image) => image.complete && image.naturalWidth > 0,
+        ),
+      );
+      if (reducedMotion === 'no-preference') {
+        const photo = page.locator('#pilot-agree .pilot-photograph');
+        await photo.evaluate((element) =>
+          window.scrollTo({
+            top: element.getBoundingClientRect().top + scrollY - innerHeight * 0.85,
+            behavior: 'instant',
+          }),
+        );
+        await page.waitForFunction(
+          () =>
+            getComputedStyle(
+              document.querySelector('#pilot-agree .pilot-photo-crop') as HTMLElement,
+            ).clipPath !== 'none',
+        );
+        const before = await photo
+          .locator('.pilot-photo-crop')
+          .evaluate((element) => getComputedStyle(element).clipPath);
+        await page.evaluate(() => window.scrollBy({ top: 300, behavior: 'instant' }));
+        await page.waitForFunction(
+          (previous) =>
+            getComputedStyle(
+              document.querySelector('#pilot-agree .pilot-photo-crop') as HTMLElement,
+            ).clipPath !== previous,
+          before,
+        );
+      }
+      if (reducedMotion === 'reduce') {
+        assert(
+          await page
+            .locator('.pilot-story img')
+            .evaluateAll((images) =>
+              images.every((image) => getComputedStyle(image).transform === 'none'),
+            ),
+          'Reduced motion keeps editorial photos still',
+        );
+      }
+      await page.locator('footer').scrollIntoViewIfNeeded();
+      await page.waitForFunction(() => !document.querySelector('header .force-dark'));
+      assert.equal(await page.locator('main a[href="mailto:oxy@oxy.so"]').count(), 1);
+    }
+  }
   await page.goto(`${origin}/es/faircoin/pilot/`);
   await page
     .getByRole('heading', { name: 'Cómo funciona el piloto de FairCoin', exact: true })
     .waitFor();
-  await page.locator('main a[href="/es/faircoin/participate/"]').click();
+  await page.locator('main a[href="/es/faircoin/participate/"]').first().click();
   await page.locator('main h1').waitFor();
   await page.goBack();
   await page
@@ -295,7 +371,7 @@ try {
     await page.locator('link[rel="canonical"]').getAttribute('href'),
     'https://fairco.in/es/pilot/',
   );
-  await page.locator('main a[href="/es/participate/"]').click();
+  await page.locator('main a[href="/es/participate/"]').first().click();
   await page.reload();
   await page.locator('main h1').waitFor();
   assert.equal(

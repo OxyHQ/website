@@ -1440,6 +1440,15 @@ const it: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'Due persone con grembiuli davanti a una caffetteria.',
+    illustrativePhoto: 'Foto illustrativa.',
+    bakeryImageAlt: 'Una panettiera accanto a scaffali di pane fresco.',
+
+    publicationTitle: 'Decidi tu se pubblicare.',
+    dataTitle: 'Condividi solo il necessario.',
+    publicationBody:
+      'La pubblicazione del progetto o dei recapiti richiede un consenso separato dopo la revisione.',
+
     projectGroup: 'Progetto e contatti',
     offerGroup: 'Offerta e necessità',
     logisticsGroup: 'Logistica e condizioni',

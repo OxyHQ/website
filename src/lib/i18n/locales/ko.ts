@@ -1405,6 +1405,14 @@ const ko: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: '카페 앞에 앞치마를 입고 서 있는 두 사람.',
+    illustrativePhoto: '예시 사진입니다.',
+    bakeryImageAlt: '갓 구운 빵이 놓인 선반 옆에 서 있는 제빵사.',
+
+    publicationTitle: '공개 여부는 직접 결정하세요.',
+    dataTitle: '필요한 정보만 공유하세요.',
+    publicationBody: '프로젝트나 연락처를 공개하려면 검토 후 별도의 동의가 필요합니다.',
+
     projectGroup: '프로젝트 및 연락처',
     offerGroup: '제공 내용과 필요한 것',
     logisticsGroup: '진행 방식 및 조건',

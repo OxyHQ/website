@@ -1423,6 +1423,14 @@ const ja: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'カフェの前に立つ、エプロンを着けた二人。',
+    illustrativePhoto: 'イメージ写真です。',
+    bakeryImageAlt: '焼きたてのパンが並ぶ棚の横に立つパン職人。',
+
+    publicationTitle: '公開するかどうかはあなたが決めます。',
+    dataTitle: '必要な情報だけを共有してください。',
+    publicationBody: 'プロジェクトや連絡先の公開には、審査後に別途許可が必要です。',
+
     projectGroup: 'プロジェクトと連絡先',
     offerGroup: '提供できるものと必要なもの',
     logisticsGroup: '実施方法と条件',

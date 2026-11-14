@@ -1007,6 +1007,15 @@ const id: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'Dua orang mengenakan celemek di depan sebuah kafe.',
+    illustrativePhoto: 'Foto ilustrasi.',
+    bakeryImageAlt: 'Seorang pembuat roti berdiri di samping rak berisi roti segar.',
+
+    publicationTitle: 'Anda yang memutuskan publikasi.',
+    dataTitle: 'Bagikan hanya yang diperlukan.',
+    publicationBody:
+      'Publikasi proyek atau detail kontak Anda memerlukan izin terpisah setelah peninjauan.',
+
     projectGroup: 'Proyek dan kontak',
     offerGroup: 'Penawaran dan kebutuhan',
     logisticsGroup: 'Logistik dan ketentuan',
