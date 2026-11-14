@@ -1688,7 +1688,6 @@ const en = {
   },
   faircoinParticipation: {
     cafeImageAlt: 'Two people wearing aprons in front of a café.',
-    illustrativePhoto: 'Illustrative photo.',
     bakeryImageAlt: 'A baker standing beside shelves of fresh bread.',
 
     publicationTitle: 'Publication is your choice.',

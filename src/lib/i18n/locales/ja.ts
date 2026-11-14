@@ -1424,7 +1424,6 @@ const ja: Translations = {
   },
   faircoinParticipation: {
     cafeImageAlt: 'カフェの前に立つ、エプロンを着けた二人。',
-    illustrativePhoto: 'イメージ写真です。',
     bakeryImageAlt: '焼きたてのパンが並ぶ棚の横に立つパン職人。',
 
     publicationTitle: '公開するかどうかはあなたが決めます。',

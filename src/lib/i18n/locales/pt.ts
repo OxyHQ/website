@@ -1443,7 +1443,6 @@ const pt: Translations = {
   },
   faircoinParticipation: {
     cafeImageAlt: 'Duas pessoas de avental em frente a um café.',
-    illustrativePhoto: 'Fotografia ilustrativa.',
     bakeryImageAlt: 'Uma padeira junto a prateleiras de pão fresco.',
 
     publicationTitle: 'A publicação é uma escolha sua.',

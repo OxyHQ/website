@@ -44,7 +44,6 @@ function Photograph({ scene, eager = false }: { scene: 'cafe' | 'bakery'; eager?
           style={reduced ? undefined : { y, scale }}
         />
       </motion.div>
-      <figcaption>{t('faircoinParticipation.illustrativePhoto')}</figcaption>
     </figure>
   );
 }
@@ -63,7 +62,6 @@ function ProposalMap() {
   const needsRotate = useTransform(scrollYProgress, [0, 1], [7, 0]);
   return (
     <div ref={ref} className="pilot-proposal-map">
-      <p className="pilot-map-label">{t('faircoinParticipation.projectGroup')}</p>
       <motion.div
         className="pilot-map-tile bg-background"
         style={reduced ? undefined : { x: left, y: offerY, rotate: offerRotate }}
@@ -183,9 +181,6 @@ export default function PilotStory({ onToneChange }: { onToneChange: (dark: bool
             <p>{t('faircoinParticipation.body')}</p>
             {apply}
             <p className="pilot-state">{t('faircoinParticipation.state')}</p>
-            <a className="pilot-method-link" href="#pilot-match">
-              {t('faircoinParticipation.how')} <span aria-hidden="true">↓</span>
-            </a>
           </div>
         </div>
       </section>
@@ -195,7 +190,6 @@ export default function PilotStory({ onToneChange }: { onToneChange: (dark: bool
       </Chapter>
       <Chapter step="agree" dark visual={<Photograph scene="bakery" />}>
         <p>{t('faircoinParticipation.agreeBody')}</p>
-        <p className="pilot-secondary-copy">{t('faircoinParticipation.participateDescription')}</p>
       </Chapter>
       <section
         className="pilot-section pilot-review faircoin-editorial bg-card text-foreground"
@@ -222,9 +216,6 @@ export default function PilotStory({ onToneChange }: { onToneChange: (dark: bool
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.65, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
             >
-              <span className="pilot-privacy-number" aria-hidden="true">
-                0{index + 1}
-              </span>
               <h3>
                 {t(
                   `faircoinParticipation.${item === 'privacy' ? 'privacyTitle' : item === 'publication' ? 'publicationTitle' : 'dataTitle'}`,

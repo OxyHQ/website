@@ -1004,7 +1004,6 @@ const ru: Translations = {
   },
   faircoinParticipation: {
     cafeImageAlt: 'Два человека в фартуках перед кафе.',
-    illustrativePhoto: 'Иллюстративная фотография.',
     bakeryImageAlt: 'Пекарь стоит рядом с полками свежего хлеба.',
 
     publicationTitle: 'Вы решаете, что публиковать.',

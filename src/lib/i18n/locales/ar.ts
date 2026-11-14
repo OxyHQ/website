@@ -1389,7 +1389,6 @@ const ar: Translations = {
   },
   faircoinParticipation: {
     cafeImageAlt: 'شخصان يرتديان مئزرين أمام مقهى.',
-    illustrativePhoto: 'صورة توضيحية.',
     bakeryImageAlt: 'خبّازة تقف بجانب رفوف الخبز الطازج.',
 
     publicationTitle: 'أنت تقرر ما يُنشر.',

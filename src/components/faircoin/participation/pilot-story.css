@@ -82,12 +82,6 @@ body:has(.site-banner) .pilot-hero {
   height: 100%;
   object-fit: cover;
 }
-.pilot-photograph figcaption {
-  font-size: 12px;
-  line-height: 1.4;
-  margin-top: 12px;
-  text-align: center;
-}
 .pilot-action {
   display: inline-flex;
   align-items: center;
@@ -114,13 +108,6 @@ body:has(.site-banner) .pilot-hero {
   line-height: 1.5;
   max-width: 280px;
 }
-.pilot-method-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 16px;
-  font-size: 14px;
-  min-height: 44px;
-}
 .pilot-eyebrow {
   margin-bottom: 24px;
   font-size: 14px;
@@ -131,10 +118,6 @@ body:has(.site-banner) .pilot-hero {
   max-width: 440px;
   margin-inline: auto;
   padding: 20px 16px;
-}
-.pilot-map-label {
-  font-size: 14px;
-  margin-bottom: 20px;
 }
 .pilot-map-tile {
   padding: 28px;
@@ -176,17 +159,6 @@ body:has(.site-banner) .pilot-hero {
   gap: 40px;
   max-width: 1440px;
   margin: 64px auto 0;
-}
-.pilot-privacy-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--background);
-  font-size: 13px;
-  margin-bottom: 24px;
 }
 .pilot-privacy-grid h3 {
   font-size: 24px;

@@ -1359,7 +1359,6 @@ const zh: Translations = {
   },
   faircoinParticipation: {
     cafeImageAlt: '两位系着围裙的人站在咖啡馆前。',
-    illustrativePhoto: '示意照片。',
     bakeryImageAlt: '一位面包师站在摆满新鲜面包的货架旁。',
 
     publicationTitle: '是否公开由你决定。',

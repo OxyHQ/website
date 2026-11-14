@@ -969,7 +969,6 @@ const bn: Translations = {
   },
   faircoinParticipation: {
     cafeImageAlt: 'একটি ক্যাফের সামনে অ্যাপ্রন পরা দুই ব্যক্তি।',
-    illustrativePhoto: 'উদাহরণমূলক ছবি।',
     bakeryImageAlt: 'তাজা রুটির তাকের পাশে দাঁড়িয়ে থাকা একজন নারী বেকার।',
 
     publicationTitle: 'প্রকাশের সিদ্ধান্ত আপনার।',
