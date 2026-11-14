@@ -34,6 +34,7 @@ Each is explained in [`docs/agent-rules.md`](docs/agent-rules.md).
 - Primary keys are 24-char hex `_id` from `newObjectId()`; every list query ends on `_id`; use `inArray`, never a JS array in a raw `sql` fragment; map unique violations to 409 with `isUniqueViolation`.
 - Multi-row replacements (pricing, testimonials, navigation, backup import) run in a transaction.
 - Protected routes use `@oxy.so/core/server`; no local auth middleware. Site admin is `website.content.manage`, with no grants or id lists.
+- First-party never asks people for permissions: this app acts for a person with `actingFor` on what oxy's first-party registry declares (oxy ADR 0066); permissions, scopes and consent are only for third parties.
 - Validate deploy-time configuration before `app.listen()`, never inside `connectWithRetry`.
 - Feature board: `active`, `featureBoard` and `acceptsProposals` on `TrackedRepo` are separate switches; the write credential is `FEATURE_BOARD_GITHUB_TOKEN`.
 - Careers are read-only Clarity Jobs (`server/services/careers.ts`); there is no jobs table here.
