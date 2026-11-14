@@ -1453,6 +1453,7 @@ const de: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'Zwei Personen mit Schürzen vor einem Café.',
     illustrativePhoto: 'Illustratives Foto.',
     bakeryImageAlt: 'Eine Bäckerin neben Regalen mit frischem Brot.',
 
@@ -1460,9 +1461,6 @@ const de: Translations = {
     dataTitle: 'Teilen Sie nur das Nötige.',
     publicationBody:
       'Die Veröffentlichung Ihres Projekts oder Ihrer Kontaktdaten erfordert nach der Prüfung eine gesonderte Zustimmung.',
-
-    illustrativeImage: 'Mit KI erzeugte illustrative Szene.',
-    repairImageAlt: 'Illustrative Szene eines Fahrradmechanikers in einer Werkstatt im Viertel.',
 
     projectGroup: 'Projekt und Kontakt',
     offerGroup: 'Angebot und Bedarf',

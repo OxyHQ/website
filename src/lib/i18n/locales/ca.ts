@@ -1444,6 +1444,7 @@ const ca: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'Dues persones amb davantals davant d’una cafeteria.',
     illustrativePhoto: 'Fotografia il·lustrativa.',
     bakeryImageAlt: 'Una fornera al costat de prestatges de pa acabat de fer.',
 
@@ -1451,10 +1452,6 @@ const ca: Translations = {
     dataTitle: 'Comparteix només el necessari.',
     publicationBody:
       'Publicar el teu projecte o les teves dades de contacte requereix un permís independent després de la revisió.',
-
-    illustrativeImage: 'Escena il·lustrativa generada amb IA.',
-    repairImageAlt:
-      'Escena il·lustrativa d’un reparador de bicicletes treballant en un taller de barri.',
 
     projectGroup: 'Projecte i contacte',
     offerGroup: 'Oferta i necessitats',

@@ -19,7 +19,7 @@ function ScrollReveal({ children, className }: { children: ReactNode; className:
   );
 }
 
-function Photograph({ scene, eager = false }: { scene: 'repair' | 'bakery'; eager?: boolean }) {
+function Photograph({ scene, eager = false }: { scene: 'cafe' | 'bakery'; eager?: boolean }) {
   const { t } = useTranslation();
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
@@ -35,24 +35,16 @@ function Photograph({ scene, eager = false }: { scene: 'repair' | 'bakery'; eage
     <figure ref={ref} className="pilot-photograph">
       <motion.div className="pilot-photo-crop" style={reduced || eager ? undefined : { clipPath }}>
         <motion.img
-          src={
-            scene === 'repair'
-              ? '/faircoin/pilot/repair-workshop.webp'
-              : '/faircoin/pilot/bakery.webp'
-          }
+          src={scene === 'cafe' ? '/faircoin/pilot/cafe-team.webp' : '/faircoin/pilot/bakery.webp'}
           alt={t(`faircoinParticipation.${scene}ImageAlt`)}
           width={1000}
-          height={scene === 'repair' ? 1500 : 949}
+          height={scene === 'cafe' ? 1500 : 949}
           loading={eager ? 'eager' : 'lazy'}
           fetchPriority={eager ? 'high' : undefined}
           style={reduced ? undefined : { y, scale }}
         />
       </motion.div>
-      <figcaption>
-        {t(
-          `faircoinParticipation.${scene === 'repair' ? 'illustrativeImage' : 'illustrativePhoto'}`,
-        )}
-      </figcaption>
+      <figcaption>{t('faircoinParticipation.illustrativePhoto')}</figcaption>
     </figure>
   );
 }
@@ -185,7 +177,7 @@ export default function PilotStory({ onToneChange }: { onToneChange: (dark: bool
             {t('faircoinParticipation.pilotTitle')}
           </h1>
           <div className="pilot-visual">
-            <Photograph scene="repair" eager />
+            <Photograph scene="cafe" eager />
           </div>
           <div className="pilot-copy">
             <p>{t('faircoinParticipation.body')}</p>

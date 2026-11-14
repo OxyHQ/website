@@ -1440,6 +1440,7 @@ const it: Translations = {
     },
   },
   faircoinParticipation: {
+    cafeImageAlt: 'Due persone con grembiuli davanti a una caffetteria.',
     illustrativePhoto: 'Foto illustrativa.',
     bakeryImageAlt: 'Una panettiera accanto a scaffali di pane fresco.',
 
@@ -1447,10 +1448,6 @@ const it: Translations = {
     dataTitle: 'Condividi solo il necessario.',
     publicationBody:
       'La pubblicazione del progetto o dei recapiti richiede un consenso separato dopo la revisione.',
-
-    illustrativeImage: 'Scena illustrativa generata con IA.',
-    repairImageAlt:
-      'Scena illustrativa di un riparatore di biciclette in un laboratorio di quartiere.',
 
     projectGroup: 'Progetto e contatti',
     offerGroup: 'Offerta e necessità',
