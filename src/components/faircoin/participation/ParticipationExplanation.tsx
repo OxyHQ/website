@@ -50,7 +50,7 @@ export function ParticipationExplanation({ page }: { page: 'participate' | 'pilo
           </h2>
           <ol className="grid gap-10 lg:grid-cols-12 lg:gap-6">
             {(['match', 'agree', 'review'] as const).map((step, index) => (
-              <li key={step} className="border-t border-border pt-6 lg:col-span-4">
+              <li key={step} className="pt-6 lg:col-span-4">
                 <span aria-hidden="true" className="text-lg">
                   0{index + 1}
                 </span>
