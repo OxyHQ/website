@@ -1639,6 +1639,16 @@ const es: Translations = {
     },
   },
   faircoinParticipation: {
+    publicationTitle: 'Tú decides si se publica.',
+    dataTitle: 'Comparte solo lo necesario.',
+    publicationBody:
+      'Publicar tu proyecto o tus datos de contacto requiere un permiso independiente tras la revisión.',
+
+    illustrativeImage: 'Escena ilustrativa generada con IA.',
+    repairImageAlt:
+      'Escena ilustrativa de un reparador de bicicletas trabajando en un taller de barrio.',
+    ceramicsImageAlt: 'Escena ilustrativa de dos artesanos comentando piezas de cerámica.',
+
     projectGroup: 'Proyecto y contacto',
     offerGroup: 'Oferta y necesidades',
     logisticsGroup: 'Logística y condiciones',

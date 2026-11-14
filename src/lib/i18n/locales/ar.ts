@@ -1388,6 +1388,14 @@ const ar: Translations = {
     },
   },
   faircoinParticipation: {
+    publicationTitle: 'أنت تقرر ما يُنشر.',
+    dataTitle: 'شارك المعلومات الضرورية فقط.',
+    publicationBody: 'يتطلب نشر مشروعك أو بيانات الاتصال بك إذنًا منفصلًا بعد المراجعة.',
+
+    illustrativeImage: 'مشهد توضيحي مولّد بالذكاء الاصطناعي.',
+    repairImageAlt: 'مشهد توضيحي لمصلح دراجات يعمل في ورشة محلية.',
+    ceramicsImageAlt: 'مشهد توضيحي لحرفيَّين يناقشان قطعًا خزفية يدوية الصنع.',
+
     projectGroup: 'المشروع وبيانات الاتصال',
     offerGroup: 'العرض والاحتياجات',
     logisticsGroup: 'التفاصيل اللوجستية والشروط',

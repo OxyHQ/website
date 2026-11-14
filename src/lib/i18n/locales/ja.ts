@@ -1423,6 +1423,14 @@ const ja: Translations = {
     },
   },
   faircoinParticipation: {
+    publicationTitle: '公開するかどうかはあなたが決めます。',
+    dataTitle: '必要な情報だけを共有してください。',
+    publicationBody: 'プロジェクトや連絡先の公開には、審査後に別途許可が必要です。',
+
+    illustrativeImage: 'AIで生成したイメージ画像です。',
+    repairImageAlt: '地域の工房で自転車を修理する職人のイメージ。',
+    ceramicsImageAlt: '手作りの陶器について話し合う二人の職人のイメージ。',
+
     projectGroup: 'プロジェクトと連絡先',
     offerGroup: '提供できるものと必要なもの',
     logisticsGroup: '実施方法と条件',

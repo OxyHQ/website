@@ -1687,6 +1687,15 @@ const en = {
     },
   },
   faircoinParticipation: {
+    publicationTitle: 'Publication is your choice.',
+    dataTitle: 'Only share what is needed.',
+    publicationBody:
+      'Publishing your project or contact details requires separate permission after review.',
+
+    illustrativeImage: 'AI-generated illustrative scene.',
+    repairImageAlt: 'Illustrative scene of a bicycle repairer working in a neighborhood workshop.',
+    ceramicsImageAlt: 'Illustrative scene of two makers discussing handmade ceramics.',
+
     projectGroup: 'Project and contact',
     offerGroup: 'Offer and needs',
     logisticsGroup: 'Logistics and conditions',

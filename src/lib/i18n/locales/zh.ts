@@ -1358,6 +1358,14 @@ const zh: Translations = {
     },
   },
   faircoinParticipation: {
+    publicationTitle: '是否公开由你决定。',
+    dataTitle: '仅分享必要信息。',
+    publicationBody: '审核后，公开你的项目或联系方式需要另行征得许可。',
+
+    illustrativeImage: '由人工智能生成的示意场景。',
+    repairImageAlt: '自行车修理师在社区工作室工作的示意场景。',
+    ceramicsImageAlt: '两位手工艺人讨论手工陶瓷的示意场景。',
+
     projectGroup: '项目与联系方式',
     offerGroup: '供给与需求',
     logisticsGroup: '安排与条件',

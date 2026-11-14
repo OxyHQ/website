@@ -1007,6 +1007,15 @@ const id: Translations = {
     },
   },
   faircoinParticipation: {
+    publicationTitle: 'Anda yang memutuskan publikasi.',
+    dataTitle: 'Bagikan hanya yang diperlukan.',
+    publicationBody:
+      'Publikasi proyek atau detail kontak Anda memerlukan izin terpisah setelah peninjauan.',
+
+    illustrativeImage: 'Adegan ilustrasi yang dibuat dengan AI.',
+    repairImageAlt: 'Adegan ilustrasi seorang mekanik sepeda bekerja di bengkel setempat.',
+    ceramicsImageAlt: 'Adegan ilustrasi dua perajin membahas keramik buatan tangan.',
+
     projectGroup: 'Proyek dan kontak',
     offerGroup: 'Penawaran dan kebutuhan',
     logisticsGroup: 'Logistik dan ketentuan',
