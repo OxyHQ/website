@@ -241,14 +241,12 @@ try {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
     await page.goto(`${origin}/faircoin/#participation`);
     await page.locator('#participation').waitFor();
-    await page
-      .locator('#participation')
-      .evaluate((element) =>
-        window.scrollTo({
-          top: element.getBoundingClientRect().top + scrollY,
-          behavior: 'instant',
-        }),
-      );
+    await page.locator('#participation').evaluate((element) =>
+      window.scrollTo({
+        top: element.getBoundingClientRect().top + scrollY,
+        behavior: 'instant',
+      }),
+    );
     await page.waitForFunction(() => !!document.querySelector('header .force-dark'));
   }
   await page.goto(`${origin}/es/faircoin/pilot/`);

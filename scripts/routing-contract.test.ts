@@ -16,6 +16,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { isSpaFallbackPath } from '../src/lib/spaFallback';
+import { faircoinParticipationRoute } from '../src/lib/faircoin-participation-routes';
 
 const ROOT = path.resolve(import.meta.dir, '..');
 const DIST = path.join(ROOT, 'dist');
@@ -124,6 +125,10 @@ function main(): void {
   const resolves = (pathname: string): boolean => {
     const bare = pathname.replace(/\/+$/, '') || '/';
     if (documents.has(bare)) return true;
+    // These apex paths are declared only in the FairCoin host tree. The
+    // middleware serves their real prefixed document, not an SPA fallback.
+    const faircoin = faircoinParticipationRoute(pathname);
+    if (faircoin && documents.has(faircoin.document.replace(/\/$/, ''))) return true;
     if (reachable.some((rule) => ruleMatches(rule, pathname))) return true;
     // The catch-all 404 is where the edge middleware picks the request up and
     // serves the shell. Coverage there counts as reachable.
