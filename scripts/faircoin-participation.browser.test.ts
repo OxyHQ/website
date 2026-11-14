@@ -302,6 +302,32 @@ try {
           (image) => image.complete && image.naturalWidth > 0,
         ),
       );
+      if (reducedMotion === 'no-preference') {
+        const photo = page.locator('#pilot-agree .pilot-photograph');
+        await photo.evaluate((element) =>
+          window.scrollTo({
+            top: element.getBoundingClientRect().top + scrollY - innerHeight * 0.85,
+            behavior: 'instant',
+          }),
+        );
+        await page.waitForFunction(
+          () =>
+            getComputedStyle(
+              document.querySelector('#pilot-agree .pilot-photo-crop') as HTMLElement,
+            ).clipPath !== 'none',
+        );
+        const before = await photo
+          .locator('.pilot-photo-crop')
+          .evaluate((element) => getComputedStyle(element).clipPath);
+        await page.evaluate(() => window.scrollBy({ top: 300, behavior: 'instant' }));
+        await page.waitForFunction(
+          (previous) =>
+            getComputedStyle(
+              document.querySelector('#pilot-agree .pilot-photo-crop') as HTMLElement,
+            ).clipPath !== previous,
+          before,
+        );
+      }
       if (reducedMotion === 'reduce') {
         assert(
           await page

@@ -5,15 +5,35 @@ import { useTranslation } from '../../../lib/i18n';
 import { useParticipationHref } from './shared';
 import './pilot-story.css';
 
+/** The wrapper remains stationary so transformed content cannot affect scroll progress. */
+function ScrollReveal({ children, className }: { children: ReactNode; className: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 95%', 'start 55%'] });
+  const y = useTransform(scrollYProgress, [0, 1], [72, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.75, 1], [0.2, 1, 1]);
+  return (
+    <div ref={ref} className={className} data-pilot-reveal>
+      <motion.div style={reduced ? undefined : { y, opacity }}>{children}</motion.div>
+    </div>
+  );
+}
+
 function Photograph({ scene, eager = false }: { scene: 'repair' | 'ceramics'; eager?: boolean }) {
   const { t } = useTranslation();
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const y = useTransform(scrollYProgress, [0, 1], ['-4%', '4%']);
+  const y = useTransform(scrollYProgress, [0, 1], ['-8%', '8%']);
+  const scale = useTransform(scrollYProgress, [0, 0.45, 1], [1.32, 1.18, 1.24]);
+  const clipPath = useTransform(
+    scrollYProgress,
+    [0, 0.35],
+    ['inset(14% 12% 14% 12% round 32px)', 'inset(0% 0% 0% 0% round 32px)'],
+  );
   return (
     <figure ref={ref} className="pilot-photograph">
-      <div className="pilot-photo-crop">
+      <motion.div className="pilot-photo-crop" style={reduced || eager ? undefined : { clipPath }}>
         <motion.img
           src={`/faircoin/pilot/${scene === 'repair' ? 'repair' : 'ceramics'}-workshop.webp`}
           alt={t(`faircoinParticipation.${scene}ImageAlt`)}
@@ -21,9 +41,9 @@ function Photograph({ scene, eager = false }: { scene: 'repair' | 'ceramics'; ea
           height={1500}
           loading={eager ? 'eager' : 'lazy'}
           fetchPriority={eager ? 'high' : undefined}
-          style={reduced ? undefined : { y, scale: 1.09 }}
+          style={reduced ? undefined : { y, scale }}
         />
-      </div>
+      </motion.div>
       <figcaption>{t('faircoinParticipation.illustrativeImage')}</figcaption>
     </figure>
   );
@@ -37,12 +57,16 @@ function ProposalMap() {
   const left = useTransform(scrollYProgress, [0, 1], [-16, 0]);
   const right = useTransform(scrollYProgress, [0, 1], [16, 0]);
   const rise = useTransform(scrollYProgress, [0, 1], [40, 0]);
+  const offerY = useTransform(scrollYProgress, [0, 1], [64, 0]);
+  const needsY = useTransform(scrollYProgress, [0, 1], [136, 0]);
+  const offerRotate = useTransform(scrollYProgress, [0, 1], [-7, 0]);
+  const needsRotate = useTransform(scrollYProgress, [0, 1], [7, 0]);
   return (
     <div ref={ref} className="pilot-proposal-map">
       <p className="pilot-map-label">{t('faircoinParticipation.projectGroup')}</p>
       <motion.div
         className="pilot-map-tile bg-background"
-        style={reduced ? undefined : { x: left }}
+        style={reduced ? undefined : { x: left, y: offerY, rotate: offerRotate }}
       >
         <span aria-hidden="true">01</span>
         <h3>{t('faircoinParticipation.offering')}</h3>
@@ -52,7 +76,7 @@ function ProposalMap() {
       </motion.div>
       <motion.div
         className="pilot-map-tile bg-primary text-primary-foreground"
-        style={reduced ? undefined : { x: right }}
+        style={reduced ? undefined : { x: right, y: needsY, rotate: needsRotate }}
       >
         <span aria-hidden="true">02</span>
         <h3>{t('faircoinParticipation.needs')}</h3>
@@ -88,14 +112,16 @@ function Chapter({
       className={`pilot-section ${dark ? 'faircoin-editorial-dark bg-primary-foreground text-foreground' : 'faircoin-editorial bg-card text-foreground'}`}
     >
       <div className="pilot-grid">
-        <div className="pilot-heading">
+        <ScrollReveal className="pilot-heading">
           <p className="pilot-eyebrow" aria-hidden="true">
             {step === 'match' ? '01' : '02'} / 03
           </p>
           <h2 id={`pilot-${step}-title`}>{t(`faircoinParticipation.${step}Title`)}</h2>
-        </div>
+        </ScrollReveal>
         <div className="pilot-visual">{visual}</div>
-        <div className="pilot-copy">{children}</div>
+        <ScrollReveal className="pilot-copy">
+          <div className="pilot-copy">{children}</div>
+        </ScrollReveal>
       </div>
     </section>
   );
@@ -177,15 +203,15 @@ export default function PilotStory({ onToneChange }: { onToneChange: (dark: bool
         aria-labelledby="pilot-review-title"
       >
         <div className="pilot-grid">
-          <div className="pilot-heading">
+          <ScrollReveal className="pilot-heading">
             <p className="pilot-eyebrow" aria-hidden="true">
               03 / 03
             </p>
             <h2 id="pilot-review-title">{t('faircoinParticipation.reviewTitle')}</h2>
-          </div>
-          <div className="pilot-review-body">
+          </ScrollReveal>
+          <ScrollReveal className="pilot-review-body">
             <p>{t('faircoinParticipation.reviewBody')}</p>
-          </div>
+          </ScrollReveal>
         </div>
         <div className="pilot-privacy-grid">
           {(['privacy', 'publication', 'contact'] as const).map((item, index) => (
