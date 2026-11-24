@@ -81,7 +81,11 @@ export default function LoaderDemo({
           ))}
         </div>
       )}
-      <ComposerLoader active={active} colors={colors} style={{ width: '100%' }}>
+      <ComposerLoader
+        phase={active ? 'streaming' : 'idle'}
+        colors={colors}
+        style={{ width: '100%' }}
+      >
         <ComposerPill
           value={value}
           onValueChange={setValue}

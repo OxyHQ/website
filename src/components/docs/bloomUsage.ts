@@ -23,7 +23,7 @@ import { ComposerPill } from '@oxy.so/bloom/composer-panel'
 export default function WorkingComposer() {
   const [value, setValue] = useState('')
   return (
-    <ComposerLoader active>
+    <ComposerLoader phase="streaming">
       <ComposerPill
         value={value}
         onValueChange={setValue}
