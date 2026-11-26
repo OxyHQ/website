@@ -42,9 +42,34 @@ import { useTranslation } from '../lib/i18n';
 import { useCopyToClipboard } from '../lib/useCopyToClipboard';
 import { BLOOM_SEO } from '../content/bloom-landing';
 import AgentInterfaceSection from '../components/bloom/AgentInterfaceSection';
+import CodeBlock from '../content/_components/CodeBlock';
 import '../styles/bloom-landing.css';
 
 const DOCS = '/developers/docs/bloom/components/';
+const LANGUAGE_DOCS = '/developers/docs/bloom-language/';
+const LANGUAGE_POINTS = ['fast', 'native', 'mention'] as const;
+const LANGUAGE_STATS = ['pixels', 'cost', 'speed'] as const;
+/** `.bloom`'s design (ADR 0001) and its specification draft, in Bloom. */
+const BLOOM_LANG_DESIGN =
+  'https://github.com/OxyHQ/Bloom/blob/main/docs/adr/0001-bloom-own-language.md';
+const BLOOM_LANG_SPEC = 'https://github.com/OxyHQ/Bloom/blob/main/docs/bloom-lang-spec.mdx';
+/** The getting-started guide's first view, as the language docs open. */
+const LANGUAGE_EXAMPLE = `import { Avatar, HStack, Spacer, Text, VStack, view } from '@oxy.so/bloom-language';
+
+type Person = { name: string; role: string; avatar: string };
+
+export const PersonRow = view(function PersonRow({ name, role, avatar }: Person) {
+  return HStack(
+    Avatar(avatar).size('lg'),
+    VStack(
+      Text(name).font('body').weight('semibold'),
+      Text(role).foreground('muted'),
+    ).spacing('2xs'),
+    Spacer(),
+  )
+    .spacing('sm')
+    .padding('md');
+});`;
 const CASES = ['chat', 'dashboard', 'health', 'projects', 'profile'] as const;
 const DEVICE_ICONS = {
   desktop: RiComputerLine,
@@ -452,7 +477,7 @@ export default function BloomPage() {
           aria-label="Bloom UI stack"
         >
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2.5 text-body-medium text-text-secondary">
-            {['React', 'NativeWind', 'Expo', 'TypeScript'].map((name, i) => (
+            {['React', 'React Native', 'Expo', 'TypeScript'].map((name, i) => (
               <span key={name} className="inline-flex items-center gap-2">
                 <RiCodeSSlashLine width={18} height={18} aria-hidden />
                 {name}
@@ -763,6 +788,111 @@ export default function BloomPage() {
         </section>
 
         <section
+          id="language"
+          className="mx-auto mt-40 flex w-full max-w-[1276px] scroll-mt-24 flex-col items-center px-3 sm:px-6 xl:px-0"
+          aria-labelledby="bloom-language"
+        >
+          <Heading
+            id="bloom-language"
+            title={text('languageTitle')}
+            description={text('languageDescription')}
+          >
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
+              <Action asChild>
+                <Link to={`${LANGUAGE_DOCS}bloom-language-getting-started/`}>
+                  {text('languageStart')}
+                </Link>
+              </Action>
+              <Action secondary asChild leadingIcon={RiCodeSSlashLine}>
+                <Link to={LANGUAGE_DOCS}>{text('languageDocs')}</Link>
+              </Action>
+            </div>
+          </Heading>
+          <div className="mt-10 grid w-full max-w-[1100px] grid-cols-1 gap-[19px] lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+            <div className="min-w-0 rounded-[26px] border border-border-button-default bg-background-primary-default p-1.5 sm:p-3">
+              <CodeBlock language="tsx" filename="PersonRow.tsx" className="my-0">
+                {LANGUAGE_EXAMPLE}
+              </CodeBlock>
+            </div>
+            <div className="flex flex-col gap-[19px]">
+              {LANGUAGE_POINTS.map((key) => (
+                <article
+                  className="flex flex-1 flex-col gap-1 rounded-[26px] border border-border-button-default bg-background-secondary-default p-6"
+                  key={key}
+                >
+                  <h3 className="text-headline-medium text-text-primary">
+                    {text(`language.${key}.title`)}
+                  </h3>
+                  <p className="text-headline-regular text-pretty text-text-secondary">
+                    {text(`language.${key}.description`)}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div className="mt-[19px] w-full max-w-[1100px] rounded-[28px] border border-border-button-default bg-background-primary-default p-6 sm:p-10">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+              <div className="flex max-w-[600px] flex-col items-start gap-3">
+                <Chip
+                  appearance="outline"
+                  tone="neutral"
+                  style={{ height: 32, borderRadius: 10, backgroundColor: 'var(--card)' }}
+                >
+                  {text('bloomLang.status')}
+                </Chip>
+                <h3 className="text-[24px] leading-[30px] font-medium tracking-[-0.02em] text-text-primary sm:text-[32px] sm:leading-[38px]">
+                  {text('bloomLang.title')}
+                </h3>
+                <p className="text-headline-regular text-pretty text-text-secondary">
+                  {text('bloomLang.description')}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2.5 lg:flex-col lg:items-stretch">
+                <Action
+                  secondary
+                  href={BLOOM_LANG_DESIGN}
+                  target="_blank"
+                  rel="noreferrer"
+                  leadingIcon={RiExternalLinkLine}
+                >
+                  {text('bloomLang.design')}
+                </Action>
+                <Action
+                  secondary
+                  href={BLOOM_LANG_SPEC}
+                  target="_blank"
+                  rel="noreferrer"
+                  leadingIcon={RiExternalLinkLine}
+                >
+                  {text('bloomLang.spec')}
+                </Action>
+              </div>
+            </div>
+            <h4 className="mt-8 text-headline-medium text-text-primary">
+              {text('bloomLang.phaseTitle')}
+            </h4>
+            <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {LANGUAGE_STATS.map((key) => (
+                <div
+                  className="flex flex-col-reverse justify-end gap-1 rounded-[20px] bg-background-secondary-default p-5"
+                  key={key}
+                >
+                  <dt className="text-body-medium text-pretty text-text-secondary">
+                    {text(`bloomLang.stats.${key}.label`)}
+                  </dt>
+                  <dd className="text-[28px] leading-[34px] font-medium tracking-[-0.02em] text-text-primary">
+                    {text(`bloomLang.stats.${key}.value`)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-4 text-body-medium text-pretty text-text-secondary">
+              {text('bloomLang.phaseNote')}
+            </p>
+          </div>
+        </section>
+
+        <section
           id="install"
           className="mx-auto mt-40 flex w-full max-w-[1276px] scroll-mt-24 flex-col items-center px-3 sm:px-6 xl:px-0"
           aria-labelledby="bloom-install"
@@ -852,7 +982,7 @@ export default function BloomPage() {
           </div>
           <div className="mt-[39px] flex w-full max-w-[760px] flex-col gap-[3px] rounded-[26px] bg-background-secondary-default p-[3px] dark:bg-background-primary-default">
             <Accordion type="single" value={faq} onValueChange={setFaq} style={{ gap: 3 }}>
-              {['Install', 'Platforms', 'Theme', 'License'].map((key) => (
+              {['Install', 'Platforms', 'Language', 'Theme', 'License'].map((key) => (
                 <AccordionItem
                   value={key}
                   key={key}

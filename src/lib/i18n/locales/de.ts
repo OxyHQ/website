@@ -118,6 +118,47 @@ const de: Translations = {
   },
 
   bloom: {
+    languageTitle: 'Schreibe Oberflächen als Kette.',
+    languageDescription:
+      'Die Bloom-Sprache bringt Views und Modifier im Stil von SwiftUI nach TypeScript. Jeder Wert ist ein Bloom-Token, und ein Rust-Compiler prüft jede Kette, bevor sie ausgeliefert wird.',
+    languageStart: 'Loslegen',
+    languageDocs: 'Sprachdokumentation',
+    language: {
+      fast: {
+        title: 'Schnell von Grund auf',
+        description:
+          'Der Compiler hebt statische Ketten heraus, sodass sie beim Rendern nichts kosten. Kostenprüfungen halten jeden Knoten bei den Fibers, Hooks und Kontextzugriffen des JSX, das er ersetzt.',
+      },
+      native: {
+        title: 'Nativ auf jeder Plattform',
+        description:
+          'Auf einem Gerät ist jeder Knoten eine React-Native-View. Wo die Plattform eine eigene Komponente hat, zeichnet die Sprache diese: SwiftUI auf iOS, die Linse auf Android und OxyOS und atomares CSS im Web.',
+      },
+      mention: {
+        title: 'Im Einsatz in Mention',
+        description:
+          'Rund 98 % der Oberfläche von Mention sind in den aktuellen Test-Builds in der Sprache geschrieben.',
+      },
+    },
+    bloomLang: {
+      status: 'In Entwicklung',
+      title: '.bloom, Blooms eigene Sprache',
+      description:
+        'Eine eigene Syntax für Oberflächen und Logik, kompiliert von bloomc, geschrieben in Rust: statische Typen, Enums mit match, Result für Fehler, async mit strukturierter Nebenläufigkeit und zur Kompilierzeit aufgelöste Reaktivität. Dazu gehören ein Formatierer, ein Language Server und eine VS-Code-Erweiterung.',
+      design: 'Entwurf (ADR 0001)',
+      spec: 'Spezifikationsentwurf',
+      phaseTitle: 'Phase 0, an einem Bildschirm gemessen',
+      phaseNote:
+        'Ein einzelner Bildschirm: die Benachrichtigungseinstellungen von Mention, verglichen mit ihrer besten handgeschriebenen TypeScript-Fassung in Jest auf einem geteilten Rechner, daher sind die Zeiten Richtwerte. Die native Renderzeit ist noch nicht gemessen. Die Phasen 1 bis 3 laufen.',
+      stats: {
+        pixels: { value: '0', label: 'Pixel weichen vom TypeScript-Bildschirm ab' },
+        cost: { value: 'Gleich', label: 'React-Kosten wie das beste handgeschriebene TypeScript' },
+        speed: { value: '27 %', label: 'schnelleres Umschalten und Speichern, Median' },
+      },
+    },
+    qLanguage: 'Was ist die Bloom-Sprache?',
+    aLanguage:
+      'Eine Art, Bloom-Oberflächen in TypeScript als Views und verkettete Modifier zu schreiben, wobei jeder Wert ein Bloom-Token ist. Sie zeichnet Blooms eigene Komponenten, sodass ein Bildschirm genauso aussieht wie sein JSX, und ein Rust-Compiler prüft und optimiert ihn beim Build.',
     board: {
       backlog: 'Vorgemerkt',
       todo: 'Zu erledigen',

@@ -141,6 +141,47 @@ const id: Translations = {
     storagePerSeat: '{amount} per anggota',
   },
   bloom: {
+    languageTitle: 'Tulis antarmuka sebagai rantai.',
+    languageDescription:
+      'Bahasa Bloom menghadirkan view dan modifier ala SwiftUI ke TypeScript. Setiap nilai adalah token Bloom, dan kompiler Rust memeriksa setiap rantai sebelum dirilis.',
+    languageStart: 'Mulai',
+    languageDocs: 'Dokumentasi bahasa',
+    language: {
+      fast: {
+        title: 'Cepat sejak dirancang',
+        description:
+          'Kompiler mengangkat rantai statis sehingga tidak menambah biaya saat render. Pemeriksaan biaya menjaga setiap node tetap pada jumlah fiber, hook, dan pembacaan konteks JSX yang digantikannya.',
+      },
+      native: {
+        title: 'Native di setiap platform',
+        description:
+          'Di perangkat, setiap node adalah view React Native. Jika platform punya komponennya sendiri, bahasa ini memakainya: SwiftUI di iOS, lensa di Android dan OxyOS, serta CSS atomik di web.',
+      },
+      mention: {
+        title: 'Berjalan di Mention',
+        description:
+          'Sekitar 98% antarmuka Mention ditulis dalam bahasa ini pada build uji coba saat ini.',
+      },
+    },
+    bloomLang: {
+      status: 'Dalam pengembangan',
+      title: '.bloom, bahasa milik Bloom',
+      description:
+        'Sintaksis sendiri untuk antarmuka dan logika, dikompilasi oleh bloomc yang ditulis dalam Rust: tipe statis, enum dengan match, Result untuk error, async dengan konkurensi terstruktur, dan reaktivitas yang ditentukan saat kompilasi. Dilengkapi formatter, language server, dan ekstensi VS Code.',
+      design: 'Desain (ADR 0001)',
+      spec: 'Draf spesifikasi',
+      phaseTitle: 'Fase 0, diukur pada satu layar',
+      phaseNote:
+        'Satu layar: pengaturan notifikasi Mention, dibandingkan dengan versi TypeScript tulisan tangan terbaiknya, di Jest pada mesin bersama, jadi waktunya bersifat indikatif. Waktu render native belum diukur. Fase 1 sampai 3 sedang berjalan.',
+      stats: {
+        pixels: { value: '0', label: 'piksel berbeda dari layar TypeScript' },
+        cost: { value: 'Setara', label: 'biaya React dengan TypeScript tulisan tangan terbaik' },
+        speed: { value: '27%', label: 'lebih cepat saat mengalihkan dan menyimpan, median' },
+      },
+    },
+    qLanguage: 'Apa itu bahasa Bloom?',
+    aLanguage:
+      'Cara menulis antarmuka Bloom di TypeScript sebagai view dan modifier berantai, dengan setiap nilai berupa token Bloom. Bahasa ini menggambar komponen Bloom sendiri, sehingga layar terlihat sama dengan JSX-nya, dan kompiler Rust memeriksa serta mengoptimalkannya saat build.',
     board: {
       backlog: 'Daftar tertunda',
       todo: 'Akan dikerjakan',
