@@ -63,6 +63,7 @@ import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './
 import { hasLocalizedVariants } from '../src/lib/localizedRoute';
 import { buildRedirectsFile } from './redirects.ts';
 import {
+  ACCOUNT_DELETION_PAGE,
   COUNTER_NOTICE_PAGE,
   LEGAL_DOCUMENTS,
   REPORT_CONTENT_PAGE,
@@ -604,10 +605,10 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description: COUNTER_NOTICE_PAGE.description,
     canonicalPath: COUNTER_NOTICE_PAGE.path,
   },
-  '/account-deletion': {
-    title: 'Delete your Oxy account',
-    description: 'How to delete an Oxy account and what happens to your data when you do.',
-    canonicalPath: '/account-deletion',
+  [ACCOUNT_DELETION_PAGE.path]: {
+    title: ACCOUNT_DELETION_PAGE.title,
+    description: ACCOUNT_DELETION_PAGE.description,
+    canonicalPath: ACCOUNT_DELETION_PAGE.path,
   },
   '/faircoin': {
     title: 'FairCoin — ethical, community-run currency',

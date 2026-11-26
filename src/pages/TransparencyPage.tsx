@@ -2,6 +2,7 @@ import TransparencyCollection, {
   type TransparencyCollectionProps,
 } from '../components/transparency/TransparencyCollection';
 import {
+  ACCOUNT_DELETION_PAGE,
   COUNTER_NOTICE_PAGE,
   LEGAL_DOCUMENTS,
   REPORT_CONTENT_PAGE,
@@ -41,6 +42,11 @@ const transparencyCollection: TransparencyCollectionProps = {
       id: 'legal',
       title: 'Legal & policies',
       documents: [{ title: 'Legal documents', path: '/transparency/legal/' }],
+    },
+    {
+      id: 'your-data',
+      title: 'Your data',
+      documents: [{ title: ACCOUNT_DELETION_PAGE.title, path: `${ACCOUNT_DELETION_PAGE.path}/` }],
     },
     {
       id: 'operations',
