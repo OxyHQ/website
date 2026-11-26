@@ -1,5 +1,6 @@
 import { Fragment, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import { errorStatus } from '../api/client';
 import { usePage } from '../api/hooks';
 import { sanitizeCmsHtml } from '../lib/sanitizeCmsHtml';
 import { canonicalHref } from '../lib/canonicalPath';
@@ -14,7 +15,7 @@ const { h2: Heading, h3: Subheading, p: Paragraph } = articleMdxComponents;
 
 function LegalDocument({ document }: { document: (typeof LEGAL_DOCUMENTS)[number] }) {
   // Keep CMS identifiers stable: the public URL does not change the stored page.
-  const { data, isPending, isError, refetch } = usePage(`legal-${document.slug}`);
+  const { data, error, isPending, refetch } = usePage(`legal-${document.slug}`);
   const { sections, entries } = useMemo(() => {
     const entries: TocEntry[] = [];
     const sections = [...(data?.sections ?? [])]
@@ -44,6 +45,9 @@ function LegalDocument({ document }: { document: (typeof LEGAL_DOCUMENTS)[number
       });
     return { sections, entries };
   }, [data?.sections]);
+  // A 404 means the CMS holds no page for this document yet (not published),
+  // which is a state of its own; only other failures are a load error.
+  const loadFailed = error !== null && errorStatus(error) !== 404;
   const title = data?.title || document.title;
 
   return (
@@ -79,7 +83,7 @@ function LegalDocument({ document }: { document: (typeof LEGAL_DOCUMENTS)[number
             )}
           </Fragment>
         ))
-      ) : isError ? (
+      ) : loadFailed ? (
         <>
           <Heading>Document unavailable</Heading>
           <Paragraph>

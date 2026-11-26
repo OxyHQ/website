@@ -60,7 +60,7 @@ const context = await browser.newContext({ viewport: { width: 1440, height: 1000
 const page = await context.newPage();
 const errors: string[] = [];
 page.on('pageerror', (error) => errors.push(error.message));
-let legalState: 'published' | 'empty' | 'error' = 'published';
+let legalState: 'published' | 'empty' | 'missing' | 'error' = 'published';
 let newsroomError = false;
 await context.route('**/*', async (route) => {
   const url = new URL(route.request().url());
@@ -85,6 +85,8 @@ await context.route('**/*', async (route) => {
       : route.fulfill({ json: { posts: [post], total: 1, page: 1, pages: 1 } });
   if (url.pathname === `/api/newsroom/${post.slug}`) return route.fulfill({ json: post });
   if (url.pathname === '/api/pages/legal-privacy') {
+    if (legalState === 'missing')
+      return route.fulfill({ status: 404, json: { error: 'Page not found' } });
     if (legalState === 'error')
       return route.fulfill({ status: 503, json: { error: 'Unavailable' } });
     return route.fulfill({
@@ -191,6 +193,11 @@ try {
   legalState = 'empty';
   await page.getByRole('button', { name: 'Try again' }).click();
   await page.getByRole('heading', { name: 'Publication pending' }).waitFor();
+  // The CMS answers 404 for a document that was never published: pending, not a load error.
+  legalState = 'missing';
+  await visit('/transparency/legal/privacy/', 'Privacy Policy');
+  await page.getByRole('heading', { name: 'Publication pending' }).waitFor();
+  assert.equal(await page.getByRole('heading', { name: 'Document unavailable' }).count(), 0);
   console.log(
     'PASS transparency: shared reader, catalogue, redirects, mobile, sanitization and API states',
   );
