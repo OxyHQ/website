@@ -1,7 +1,12 @@
 import { isFairCoinHost } from './host';
 import { DEFAULT_LOCALE, type Locale } from './i18n/types';
 import en from './i18n/locales/en';
-import { ACCOUNT_DELETION_PAGE, LEGAL_DOCUMENTS, TRANSPARENCY_DOCUMENTS } from './transparency';
+import {
+  ACCOUNT_DELETION_PAGE,
+  CHILD_SAFETY_PAGE,
+  LEGAL_DOCUMENTS,
+  TRANSPARENCY_DOCUMENTS,
+} from './transparency';
 import type MiniSearch from 'minisearch';
 import { buildDocsHref, getIndex } from '../content/docs-loader';
 import { categoryLabels, categoryOrder } from '../components/docs/docsTypes';
@@ -113,6 +118,7 @@ const SITE_PAGES: Array<{ url: string; title: string; group?: string }> = [
   { url: '/transparency/legal/', title: 'Legal documents' },
   ...TRANSPARENCY_DOCUMENTS.map(({ path, title }) => ({ url: `${path}/`, title })),
   ...LEGAL_DOCUMENTS.map(({ slug, title }) => ({ url: `/transparency/legal/${slug}/`, title })),
+  { url: `${CHILD_SAFETY_PAGE.path}/`, title: CHILD_SAFETY_PAGE.title },
   { url: `${ACCOUNT_DELETION_PAGE.path}/`, title: ACCOUNT_DELETION_PAGE.title },
   { url: '/academy', title: 'Academy' },
   { url: '/newsroom', title: 'Newsroom' },
