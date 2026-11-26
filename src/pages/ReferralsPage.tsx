@@ -116,7 +116,7 @@ const DEFAULT_FAQ: Array<{ question: string; answer: string }> = [
   {
     question: 'How long is the attribution window?',
     answer:
-      'Every referral link uses a 30-day cookie plus a server-side code binding. If someone signs up within 30 days of clicking your link — even on a different device where they were already logged in — you still get credit.',
+      "The referral code is kept in the visitor's browser local storage, not in a cookie, and travels with the sign-up. The length of the attribution window is part of the terms agreed with each partner before a link goes live.",
   },
   {
     question: 'Can I share without applying to a program?',

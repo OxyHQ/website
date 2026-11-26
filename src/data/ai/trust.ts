@@ -123,7 +123,7 @@ export const trustStatements: TrustStatement[] = [
     id: 'security-contact',
     heading: 'Reporting a security problem',
     scope: 'oxy',
-    body: 'Security reports reach Oxy through the security contact published in the platform documentation and are acknowledged before they are triaged.',
+    body: 'Security reports go to the address on the Security page (/transparency/legal/security) and are acknowledged before they are triaged.',
     owner: 'Oxy Platform',
     reviewBy: '2027-03-31',
   },

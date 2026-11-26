@@ -37,9 +37,10 @@ const PRIVACY_EMAIL = 'legal@oxy.so';
 const DELETED_SERVER_SIDE = [
   'Your profile and account record — username, display name, avatar, and settings.',
   'All Oxy Mail data: mailboxes, messages, and file attachments stored in our object storage.',
-  'The encrypted backup of your identity, if you chose to store one with us.',
+  'The encrypted backup of your identity and your end-to-end encrypted keychain, if you chose to store them with us.',
   'Every active session, on every device, revoked immediately.',
   'Your social graph: who you follow, who follows you, blocks, and restrictions.',
+  'Files you uploaded and the developer applications you own.',
 ];
 
 const RETAINED = [
@@ -53,7 +54,7 @@ const RETAINED = [
   },
   {
     title: 'Records we are legally required to keep',
-    body: 'Limited transaction and billing records may be retained where law requires it. These are kept separately from your profile and are not used to identify you afterwards.',
+    body: 'Receipts and the financial ledger are never deleted, because the law requires them. If any exist for your account, the account is archived rather than removed, and its profile is not anonymised. If you have no financial records, the account is removed completely.',
   },
 ];
 
@@ -115,7 +116,9 @@ export default function AccountDeletionPage() {
             <li>Type your username to confirm. This has to match exactly.</li>
             <li>
               Approve the request. Your device signs it with your identity key, which is what proves
-              to our servers that the request is really yours.
+              to our servers that the request is really yours. If your account has no identity key,
+              you confirm with an emailed code or your password instead. If you set up an
+              authenticator code, you also enter it.
             </li>
           </ol>
           <p>
@@ -124,11 +127,25 @@ export default function AccountDeletionPage() {
           </p>
         </Section>
 
+        <Section title="When deletion is refused">
+          <p>
+            We refuse the request, and tell you why, while your account has any of these. Resolve
+            them first and try again:
+          </p>
+          <ul className="ml-5 list-disc space-y-2">
+            <li>A live subscription. Cancel it first.</li>
+            <li>A checkout in progress.</li>
+            <li>A reservation held for an AI inference request.</li>
+            <li>A connected provider key. Disconnect it in Console.</li>
+          </ul>
+        </Section>
+
         <Section title="Why we cannot delete it for you">
           <p>
             Because your account is a key you hold, our servers only accept a deletion request that
             carries a valid signature from that key, made within the last few minutes. Without it,
-            the request is rejected.
+            the request is rejected. Accounts that have no identity key confirm the request with an
+            emailed code or a password instead.
           </p>
           <p>
             That means no one can delete your account by impersonating you — not an attacker who
@@ -180,9 +197,10 @@ export default function AccountDeletionPage() {
             all of them and removes the account-level data listed above.
           </p>
           <p>
-            Content you created inside an individual app is deleted along with the account record it
-            belonged to. The one exception is content that already left our systems through
-            federation, described above.
+            Apps that rely on Oxy are told your account was deleted so they can erase what they hold
+            for you. Mention, for example, erases the account's data and keeps the handle reserved
+            for 14 days. The exception is content that already left our systems through federation,
+            described above.
           </p>
           <p>
             Deleting a single app from your phone does not delete your account. It only removes that
