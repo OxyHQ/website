@@ -8,7 +8,7 @@
     {
       "name": "Bloom language",
       "git": "https://github.com/OxyHQ/Bloom.git",
-      "ref": "7ec8d7aa95625d4daaca1f6524c0edb35e083487",
+      "ref": "102b1928a200eed4aa47744b6d3c1362b0edbd95",
       "configPaths": ["bloom-language.docs.config.json"]
     },
     {
