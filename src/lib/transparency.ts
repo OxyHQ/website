@@ -77,6 +77,20 @@ export const ACCOUNT_DELETION_PAGE = {
     'How to permanently delete your Oxy account and identity, what data is removed, and what is kept.',
 } as const;
 
+/**
+ * Child safety standards against child sexual abuse and exploitation (CSAE).
+ * Google Play asks for this public URL, so like {@link ACCOUNT_DELETION_PAGE}
+ * it is a static page, not a CMS document. The Oxy services app and older
+ * links carry `/company/transparency/policies/child-safety`, which redirects here.
+ */
+export const CHILD_SAFETY_PAGE = {
+  slug: 'child-safety',
+  path: '/transparency/child-safety',
+  title: 'Child safety standards',
+  description:
+    'Our standards against child sexual abuse and exploitation, how to report it, and what we do when we find it.',
+} as const;
+
 export const TRANSPARENCY_DOCUMENTS = [
   {
     slug: 'manifesto',
@@ -119,6 +133,7 @@ export const TRANSPARENCY_REDIRECTS: ReadonlyArray<readonly [string, string]> = 
   ['/legal', '/transparency/legal/'],
   ...LEGAL_DOCUMENTS.map(({ slug }) => [`/legal/${slug}`, `/transparency/legal/${slug}/`] as const),
   ['/account-deletion', `${ACCOUNT_DELETION_PAGE.path}/`],
+  ['/company/transparency/policies/child-safety', `${CHILD_SAFETY_PAGE.path}/`],
   ['/company/transparency/policies/privacy', '/transparency/legal/privacy/'],
   ['/company/transparency/policies/terms-of-service', '/transparency/legal/terms/'],
   ['/company/transparency/policies/cookies', '/transparency/legal/cookies/'],

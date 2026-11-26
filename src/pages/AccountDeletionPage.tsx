@@ -1,9 +1,8 @@
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { Link } from '../lib/navigation';
 import { ACCOUNT_DELETION_PAGE } from '../lib/transparency';
 import TransparencyDocument from '../components/slices/TransparencyDocument';
 import { articleMdxComponents } from '../components/slices/articleMdxComponents';
-import { ARTICLE_BLOCK } from '../components/slices/articleBlock';
 import type { TocEntry } from '../components/slices/ArticleToc';
 
 /* ──────────────────────────────────────────────
@@ -36,7 +35,7 @@ import type { TocEntry } from '../components/slices/ArticleToc';
 const SUPPORT_EMAIL = 'support@oxy.so';
 const PRIVACY_EMAIL = 'legal@oxy.so';
 
-const { h2: Heading, h3: Subheading, p: Paragraph } = articleMdxComponents;
+const { h2: Heading, h3: Subheading, p: Paragraph, ul: List } = articleMdxComponents;
 
 const DELETED_SERVER_SIDE = [
   'Your profile and account record — username, display name, avatar, and settings.',
@@ -73,8 +72,6 @@ const ENTRIES: TocEntry[] = [
   { id: 'other-apps', label: 'What happens to the other apps', level: 2 },
   { id: 'questions', label: 'Questions', level: 2 },
 ];
-
-const LIST = `${ARTICLE_BLOCK} w-full min-w-0 text-blog-body text-foreground [&_li]:mb-2 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:ps-5 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:ps-5`;
 
 function Strong({ children }: { children: ReactNode }) {
   return <strong className="text-foreground">{children}</strong>;
@@ -135,20 +132,18 @@ export default function AccountDeletionPage() {
         <Strong>Data → Delete account</Strong> and type your username, which has to match exactly.
         Then confirm:
       </Paragraph>
-      <div className={LIST}>
-        <ul>
-          <li>
-            <Strong>Identity account:</Strong> Accounts opens Commons, and your device signs the
-            request with your identity key, which is what proves to our servers that it is really
-            yours. If you set up an authenticator code, you also enter it.
-          </li>
-          <li>
-            <Strong>Email account:</Strong> you confirm with a code we send to your email (or with
-            your password if the account has no email), plus your authenticator code if you set one
-            up.
-          </li>
-        </ul>
-      </div>
+      <List>
+        <li>
+          <Strong>Identity account:</Strong> Accounts opens Commons, and your device signs the
+          request with your identity key, which is what proves to our servers that it is really
+          yours. If you set up an authenticator code, you also enter it.
+        </li>
+        <li>
+          <Strong>Email account:</Strong> you confirm with a code we send to your email (or with
+          your password if the account has no email), plus your authenticator code if you set one
+          up.
+        </li>
+      </List>
       <Paragraph>
         The deletion runs immediately. There is no waiting period and no way to undo it, so make
         sure you have exported anything you want to keep first.
@@ -159,14 +154,12 @@ export default function AccountDeletionPage() {
         We refuse the request, and tell you why, while your account has any of these. Resolve them
         first and try again:
       </Paragraph>
-      <div className={LIST}>
-        <ul>
-          <li>A live subscription. Cancel it first.</li>
-          <li>A checkout in progress.</li>
-          <li>A reservation held for an AI inference request.</li>
-          <li>A connected provider key. Disconnect it in Console.</li>
-        </ul>
-      </div>
+      <List>
+        <li>A live subscription. Cancel it first.</li>
+        <li>A checkout in progress.</li>
+        <li>A reservation held for an AI inference request.</li>
+        <li>A connected provider key. Disconnect it in Console.</li>
+      </List>
 
       <Heading id="why-not-for-you">Why we cannot delete it for you</Heading>
       <Paragraph>
@@ -189,13 +182,11 @@ export default function AccountDeletionPage() {
 
       <Heading id="what-we-delete">What we delete</Heading>
       <Paragraph>When the request is accepted, we permanently remove:</Paragraph>
-      <div className={LIST}>
-        <ul>
-          {DELETED_SERVER_SIDE.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </div>
+      <List>
+        {DELETED_SERVER_SIDE.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </List>
       <Paragraph>
         Counters on other people&apos;s accounts — follower and following totals — are corrected at
         the same time, so your removal does not leave inconsistent numbers behind.
@@ -206,10 +197,10 @@ export default function AccountDeletionPage() {
         We would rather tell you this than let you discover it later. Three things survive deletion:
       </Paragraph>
       {RETAINED.map((item) => (
-        <div key={item.title}>
+        <Fragment key={item.title}>
           <Subheading>{item.title}</Subheading>
           <Paragraph>{item.body}</Paragraph>
-        </div>
+        </Fragment>
       ))}
 
       <Heading id="other-apps">What happens to the other apps</Heading>
