@@ -15,7 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'wordCount', type: 'number', optional: true, description: "The body's length in words. The header formats it; the app counts it." },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Stops the title being edited and dims it.' },
         { name: 'readOnly', type: 'boolean', optional: true, description: 'A read-only document: the title is not editable and NOT dimmed, because nothing is broken — it is a published note, a shared one, a revision.' },
-        { name: 'actions', type: 'ReactNode', optional: true, description: 'The trailing slot on the title line — a share button, a menu, a `ButtonGroup`.' },
+        { name: 'actions', type: 'ReactNode', optional: true, description: 'The trailing slot on the title line — a share button, a menu, a `Button.Group`.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the header region (`"Note"` in English).' },
         { name: 'labels', type: 'NoteEditorHeaderLabels', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
@@ -26,7 +26,7 @@ export const props: BloomSurfaceProps = {
     'NoteEditorToolbarProps': {
       props: [
         { name: 'actions', type: 'ReadonlyArray<NoteEditorAction>', optional: false, description: 'The actions, in the order they are drawn.' },
-        { name: 'size', type: "'md' | 'sm'", options: ['md', 'sm'], optional: true, description: 'The `ButtonGroup` rung. Default `md` (34px items); `sm` is 30.' },
+        { name: 'size', type: "'md' | 'sm'", options: ['md', 'sm'], optional: true, description: 'The `Button.Group` rung. Default `md` (34px items); `sm` is 30.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Disables every action and the overflow, without each caller writing it per action.' },
         { name: 'accessibilityLabel', type: 'string', optional: false, description: 'Names the toolbar. Required in substance — a row of glyphs has no name of its own.' },
         { name: 'labels', type: 'NoteEditorToolbarLabels', optional: true },

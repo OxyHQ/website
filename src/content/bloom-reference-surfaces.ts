@@ -78,7 +78,6 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
   'tabs/expo-router':
     'Tabs adapter for Expo Router. See Tabs for the router-independent live component.',
   'tailwind-preset': 'Tailwind configuration exports with no standalone visual output.',
-  teleport: 'Named portal hosts transport content between parts of an application.',
   theme:
     'Theme providers used by every live example. The website theme picker changes their appearance.',
   'video-view':
@@ -120,14 +119,16 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
   lockup: 'Brand lockup composition for a product header. It takes your own mark and wordmark.',
   'platform-surface':
     'Platform surface context that BloomProvider mounts from its platform prop. Set it on the provider rather than rendering it.',
-  'share-sheet':
-    'The share sheet drives the system share or a host-supplied target list. It needs an app host to hand the shared content to.',
   'tab-pager':
     'Pager navigation for an app shell, bound to a tab pager provider. It needs your destinations and an app layout; see App Shell for the layout it drives.',
   'tab-pager/expo-router':
     'Tab pager adapter for an Expo Router application. This documentation uses React Router.',
   'video-playback':
     'The app-wide authority that decides which video may play. It needs players and a scrolling list or pager in your own screens.',
+  'window/layouts':
+    'The zoom control’s window-layouts menu (Move & Resize, Fill & Arrange, Move to Desktop). A platform adapter that reports the window-layout capability imports it to register the menu for WindowControls, so it needs a real window host that lays windows out; see Window.',
+  'multi-agent-chat/selected-agent-preview':
+    'The selected-agents preview (one large avatar, a trio, or a ring from four up) as its own import, for apps that show who is in a group without linking the whole multi-agent template. It takes the agents and the avatar flights of a live conversation; see Multi-agent chat, whose empty conversation draws it.',
   window:
     'Window chrome (controls and drag region) for a desktop-style app shell. It needs a real window host; see App Shell for the shell that mounts it.',
   'preferences/haptics-setting-row':
@@ -135,7 +136,7 @@ export const bloomReferenceSurfaces: Readonly<Record<string, string>> = {
   'preferences/video-autoplay-setting-row':
     'A settings row for the video autoplay preference. It reads and writes your app’s own preference store; see Preferences for the composed settings.',
   'row-actions':
-    'Icon buttons and a “⋮” menu for one list row. It needs the row’s own actions and menu entries from your screen; see Settings List for rows it sits in.',
+    'Icon buttons and a “⋮” menu for one list row. It needs the row’s own actions and menu entries from your screen; see Grouped Section for rows it sits in.',
   'settings-modal/select':
     'A select sized to sit inside a settings row. It must be placed inside a Settings Modal row; see Settings Modal Rows for the composed rows.',
 };

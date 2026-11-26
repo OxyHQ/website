@@ -31,8 +31,10 @@ import {
   rewriteRelativeDocLinks,
   rewriteSiblingDocLinks,
   rewriteStaleDocsVersionLinks,
+  rewriteUnpublishedDocsRootLinks,
   unlinkRemovedPageLinks,
 } from './docs-links.ts';
+import { applyRegistryPin } from './docs-registry-pin.ts';
 import { quoteUnsafeFrontMatterScalars } from './frontmatter-safe.ts';
 import { escapeUnclosedProseTags } from './mdx-literal-tags.ts';
 import type {
@@ -132,6 +134,21 @@ function resolveLocalPath(localPath: string): string {
 /** Whether `ref` is a full 40-character commit SHA (vs a branch/tag name). */
 function isFullGitSha(ref: string): boolean {
   return /^[0-9a-f]{40}$/i.test(ref);
+}
+
+/** Whether `repoPath` is a file (`blob`) or folder (`tree`) at `commit`, or `undefined`. */
+function gitObjectType(cwd: string, commit: string, repoPath: string): 'blob' | 'tree' | undefined {
+  if (!isSafeRelativePath(repoPath)) return undefined;
+  try {
+    const kind = execFileSync('git', ['cat-file', '-t', `${commit}:${repoPath}`], {
+      cwd,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    return kind === 'blob' || kind === 'tree' ? kind : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /** The commit `ref` names in `cwd`'s repo, or `undefined` when it is not a git checkout. */
@@ -264,7 +281,11 @@ async function collectConfigs(
       : path.join(sub ? path.join(repoRoot, sub) : repoRoot, 'docs.config.json');
     const dir = path.dirname(configPath);
     const config = await readDocsConfig(configPath);
-    if (config) results.push({ config, rootDir: dir });
+    if (!config) continue;
+    // The entry's pin and `docsIgnore` are checked as the config's own are.
+    const pinned = applyRegistryPin(entry, config);
+    validateDocsConfig(pinned, configPath);
+    results.push({ config: pinned, rootDir: dir });
   }
   return results;
 }
@@ -339,7 +360,13 @@ async function rewriteSiblingLinksInPlace(
   pages: readonly SyncedPage[],
   shortName: string,
   baseUrl: string,
-  source: { versionDir: string; docsPathInRepo: string; sourceUrl?: string },
+  source: {
+    versionDir: string;
+    docsPathInRepo: string;
+    sourceUrl?: string;
+    /** The kind of a path in the repo at the synced commit (see `gitObjectType`). */
+    typeOf?: (repoPath: string) => 'blob' | 'tree' | undefined;
+  },
 ): Promise<void> {
   const slugs = new Set(pages.map((page) => page.slug).filter((slug) => slug.length > 0));
   const fileToSlug = new Map(
@@ -365,12 +392,22 @@ async function rewriteSiblingLinksInPlace(
       docsPathInRepo: source.docsPathInRepo,
       sourceUrl: source.sourceUrl,
     });
-    const rewritten = rewriteStaleDocsVersionLinks(
+    const versioned = rewriteStaleDocsVersionLinks(
       rewriteSiblingDocLinks(relative, slugs, baseUrl),
       slugs,
       shortName,
       baseUrl,
     );
+    const rewritten =
+      source.sourceUrl && source.typeOf
+        ? rewriteUnpublishedDocsRootLinks(versioned, {
+            packages: new Set([shortName]),
+            slugs,
+            docsPathInRepo: source.docsPathInRepo,
+            sourceUrl: source.sourceUrl,
+            typeOf: source.typeOf,
+          })
+        : versioned;
     if (rewritten !== original) await writeFile(full, rewritten);
   }
 }
@@ -1019,6 +1056,10 @@ async function syncPackage(
         sourceUrl: sourceCommit
           ? `${config.repo.replace(/\.git$/, '').replace(/\/+$/, '')}/blob/${sourceCommit}`
           : undefined,
+        typeOf: ((commit) =>
+          commit ? (repoPath: string) => gitObjectType(repoRoot, commit, repoPath) : undefined)(
+          sourceCommit,
+        ),
       },
     );
     // Auto-generate TypeDoc API reference. We only run TypeDoc for the

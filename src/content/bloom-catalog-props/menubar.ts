@@ -18,7 +18,6 @@ export const props: BloomSurfaceProps = {
         { name: 'asChild', type: 'boolean', optional: true, description: "Render the single element child AS the trigger, merging the open handler and a11y props into it (Radix's composition escape hatch). Without it the children render inside Bloom's own `Pressable`." },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'label', type: 'string', optional: true, description: 'Accessible name. Ignored when the `asChild` child carries its own.' },
-        { name: 'className', type: 'string', optional: true, description: 'Bare triggers apply this to the measured anchor wrapper; families whose trigger owns chrome append it to that chrome instead.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

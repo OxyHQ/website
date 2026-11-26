@@ -147,7 +147,6 @@ const bloomDemosByName: ReadonlyMap<string, BloomDemo> = new Map(demos.map((d) =
 
 export function getBloomDemo(name: string): BloomDemo | undefined {
   const aliases: Record<string, string> = {
-    'ChatPeople/ContactRow': 'ChatPeople',
     ZoomableImageGallery: 'ZoomableMediaGallery',
   };
   const resolved = aliases[name] ?? name;

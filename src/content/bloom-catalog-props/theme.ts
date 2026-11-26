@@ -54,6 +54,10 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: false },
       ],
     },
+    'ProviderProps<ColorScopeLayer | null>': {
+      props: [],
+      inheritsFrom: ['ProviderProps<ColorScopeLayer | null>'],
+    },
     'BloomThemeHead': {
       props: [
         { name: 'config', type: 'BloomThemeBootstrapConfig', optional: false },
@@ -65,6 +69,7 @@ export const props: BloomSurfaceProps = {
     { name: 'BloomThemeProvider', propsType: 'BloomThemeProviderProps' },
     { name: 'BloomColorScope', propsType: 'BloomColorScopeProps' },
     { name: 'BloomSeedScope', propsType: 'BloomSeedScopeProps' },
+    { name: 'ColorScopeLayerContext', propsType: 'ProviderProps<ColorScopeLayer | null>' },
     { name: 'BloomThemeHead', propsType: 'BloomThemeHead' },
   ],
 }

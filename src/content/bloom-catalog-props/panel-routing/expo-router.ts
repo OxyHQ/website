@@ -5,14 +5,16 @@ import type { BloomSurfaceProps } from '../../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'panel-routing/expo-router',
   propTypes: {
-    'StackScene': {
+    'StackSceneProps': {
       props: [
         { name: 'children', type: 'ReactNode', optional: false },
+        { name: 'navigation', type: 'SceneNavigation', optional: true, description: "The scene's route navigation and key, as the stack's `screenLayout` receives them." },
+        { name: 'routeKey', type: 'string', optional: true },
       ],
     },
   },
   components: [
     { name: 'Redirect' },
-    { name: 'StackScene', propsType: 'StackScene' },
+    { name: 'StackScene', propsType: 'StackSceneProps' },
   ],
 }

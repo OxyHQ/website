@@ -1,4 +1,5 @@
-import { SettingsModal, SettingsCard, SettingsSection } from '@oxy.so/bloom/settings-modal';
+import { GroupedSection } from '@oxy.so/bloom/grouped-section';
+import { SettingsModal, SettingsSection } from '@oxy.so/bloom/settings-modal';
 import { useBloomTheme } from '@oxy.so/bloom/theme';
 import {
   SegmentedControl,
@@ -8,6 +9,13 @@ import {
 import { RiSettings3Line } from '@oxy.so/bloom/icons/RiSettings3Line';
 import { RiGlobalLine } from '@oxy.so/bloom/icons/RiGlobalLine';
 import { useLocaleContext, useTranslation } from '../../lib/i18n';
+
+// The settings card: the secondary background at radius 16, with no outer margin.
+const CARD = {
+  variant: 'filled',
+  radius: 'radius-16',
+  style: { marginBottom: 0 },
+} as const;
 
 export default function WebsiteSettingsDialog({
   open,
@@ -51,8 +59,8 @@ export default function WebsiteSettingsDialog({
           title: t('common.theme'),
           content: (
             <SettingsSection>
-              <SettingsCard>
-                <div className="p-3">
+              <GroupedSection {...CARD}>
+                <div className="p-3 pl-6">
                   <SegmentedControl
                     label={t('common.theme')}
                     type="radio"
@@ -67,7 +75,7 @@ export default function WebsiteSettingsDialog({
                     ))}
                   </SegmentedControl>
                 </div>
-              </SettingsCard>
+              </GroupedSection>
             </SettingsSection>
           ),
         },
@@ -75,8 +83,8 @@ export default function WebsiteSettingsDialog({
           title: t('common.language'),
           content: (
             <SettingsSection>
-              <SettingsCard>
-                <div className="grid grid-cols-1 gap-1 p-2 sm:grid-cols-2">
+              <GroupedSection {...CARD}>
+                <div className="grid grid-cols-1 gap-1 p-2 pl-5 sm:grid-cols-2">
                   {locales.map((entry) => (
                     <button
                       key={entry.code}
@@ -93,7 +101,7 @@ export default function WebsiteSettingsDialog({
                     </button>
                   ))}
                 </div>
-              </SettingsCard>
+              </GroupedSection>
             </SettingsSection>
           ),
         },

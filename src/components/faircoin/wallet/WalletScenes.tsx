@@ -17,6 +17,7 @@ import { RiKey2Line } from '@oxy.so/bloom/icons/RiKey2Line';
 import { RiPauseFill } from '@oxy.so/bloom/icons/RiPauseFill';
 import { RiPlayFill } from '@oxy.so/bloom/icons/RiPlayFill';
 import { usePrefersReducedMotion } from '@oxy.so/bloom/hooks';
+import { FILL_BOX } from '../../ui/iconBox';
 
 export type WalletScene =
   | 'send'
@@ -335,8 +336,12 @@ export default function WalletScenes({
           <div className="faircoin-editorial-green absolute left-1/2 top-[5.5%] aspect-[.462] w-[41%] -translate-x-1/2 overflow-hidden rounded-[14%/6.5%] bg-ring text-primary-foreground [container-type:inline-size] lg:w-[31.4%]">
             <StatusBar />
             <div className="mt-[9%] flex items-center justify-between px-[8%] text-[7cqw]">
-              <RiQrCodeLine fill="currentColor" className="size-[7cqw]" />
-              <RiSearchLine fill="currentColor" className="ml-auto mr-[8%] size-[7cqw]" />
+              <span className="flex size-[7cqw]">
+                <RiQrCodeLine fill="currentColor" style={FILL_BOX} />
+              </span>
+              <span className="ml-auto mr-[8%] flex size-[7cqw]">
+                <RiSearchLine fill="currentColor" style={FILL_BOX} />
+              </span>
               <Avatar person={0} className="size-[11cqw]" />
             </div>
             <p className="mt-[13%] text-center text-[28cqw] leading-none tracking-[-.06em]">
@@ -612,7 +617,9 @@ export default function WalletScenes({
               </div>
               <div className="mt-[11%] flex items-center justify-between text-[3cqw]">
                 <span className="flex items-center gap-[1cqw]">
-                  <RiCheckLine fill="currentColor" className="faircoin-editorial-green text-ring" />{' '}
+                  <span className="faircoin-editorial-green flex text-ring">
+                    <RiCheckLine fill="currentColor" />
+                  </span>{' '}
                   My wallet
                 </span>
                 <span className="text-muted-foreground">FairCoin ›</span>
@@ -638,9 +645,13 @@ export default function WalletScenes({
             className="absolute bottom-[2.5%] left-[2%] z-10"
           >
             {paused ? (
-              <RiPlayFill fill="currentColor" className="size-3" />
+              <span className="flex size-3">
+                <RiPlayFill fill="currentColor" style={FILL_BOX} />
+              </span>
             ) : (
-              <RiPauseFill fill="currentColor" className="size-3" />
+              <span className="flex size-3">
+                <RiPauseFill fill="currentColor" style={FILL_BOX} />
+              </span>
             )}
           </button>
         </Button>

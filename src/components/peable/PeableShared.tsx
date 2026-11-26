@@ -277,7 +277,7 @@ export function PeablePlans({ dark = false }: { dark?: boolean }) {
               asChild
               appearance={index === 1 ? 'solid' : 'outline'}
               tone="accent"
-              className="mt-auto"
+              style={{ marginTop: 'auto' }}
             >
               <Link to={index === 2 ? '/developers/' : '/peable/payments/#availability'}>
                 {index === 2 ? 'Explore Oxy for developers' : 'Explore the roadmap'}

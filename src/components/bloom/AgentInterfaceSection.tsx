@@ -70,7 +70,7 @@ export default function AgentInterfaceSection({
               asChild
               appearance="outline"
               tone="neutral"
-              className="bloom-landing-action h-9 rounded-2lg p-2"
+              material="flat"
               textVariant="headline-medium"
               textStyle={{ fontSize: 15, fontWeight: '500' }}
               style={{

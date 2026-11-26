@@ -14,7 +14,6 @@ const examples = new Set(
   ),
 );
 const aliases: Record<string, string> = {
-  'chat-people/contact-row': 'ChatPeople',
   'zoomable-image-gallery': 'ZoomableMediaGallery',
 };
 

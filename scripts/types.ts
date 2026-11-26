@@ -127,6 +127,12 @@ export interface DocsRegistryEntry {
    */
   configPaths?: string[];
   /**
+   * Optional: paths (as in `DocsConfig.docsIgnore`) the site leaves out on top
+   * of the config's own, for pages a release's config still publishes and a
+   * later one does not.
+   */
+  docsIgnore?: string[];
+  /**
    * Optional: when true and `localPath` is missing on this machine (and no
    * `git` fallback is set), the sync-docs script logs a notice and skips the
    * entry instead of failing. Used for repos that are not yet on GitHub

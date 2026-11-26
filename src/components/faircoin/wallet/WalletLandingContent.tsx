@@ -11,6 +11,7 @@ import { Button } from '@oxy.so/bloom/button';
 import ExplorerStats from '../cash/ExplorerStats';
 import WalletScenes, { type WalletScene } from './WalletScenes';
 import '../cash/fonts.css';
+import { FILL_BOX } from '../../ui/iconBox';
 import { usePrefersReducedMotion } from '@oxy.so/bloom/hooks';
 
 const DOWNLOAD = 'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest';
@@ -217,10 +218,9 @@ export default function WalletLandingContent({
                 key={text}
                 className="flex items-start gap-[calc(8.28571px+.535714vw)] min-[760px]:mr-[calc(14.2857px+1.78571vw)]"
               >
-                <Icon
-                  fill="currentColor"
-                  className="faircoin-editorial-green mt-1 size-[calc(12px+2.5vw)] shrink-0 text-ring"
-                />
+                <span className="faircoin-editorial-green mt-1 flex size-[calc(12px+2.5vw)] shrink-0 text-ring">
+                  <Icon fill="currentColor" style={FILL_BOX} />
+                </span>
                 <p className="text-[length:var(--wallet-type)] leading-[1.4]">{text}</p>
               </div>
             ))}
@@ -244,13 +244,10 @@ export default function WalletLandingContent({
                 </p>
                 {scene === 'pockets' && (
                   <>
-                    <Button
-                      asChild
-                      appearance="solid"
-                      size="lg"
-                      className="mt-6 hidden lg:inline-flex"
-                    >
-                      <a href="#wallet-download">Explore pockets</a>
+                    <Button asChild appearance="solid" size="lg">
+                      <a href="#wallet-download" className="mt-6 hidden lg:inline-flex">
+                        Explore pockets
+                      </a>
                     </Button>
                     <a
                       href="#wallet-download"
@@ -289,8 +286,10 @@ export default function WalletLandingContent({
               <br className="hidden lg:block" /> built for
               <br className="hidden lg:block" /> security
             </h2>
-            <Button asChild appearance="solid" size="lg" className="hidden lg:mt-6 lg:inline-flex">
-              <a href="#wallet-questions">Learn about security</a>
+            <Button asChild appearance="solid" size="lg">
+              <a href="#wallet-questions" className="hidden lg:mt-6 lg:inline-flex">
+                Learn about security
+              </a>
             </Button>
             <a href="#wallet-questions" className="mt-2 mb-2 block text-sm font-semibold lg:hidden">
               Learn about security →
@@ -354,13 +353,10 @@ export default function WalletLandingContent({
                 <h3 className="text-[calc(var(--wallet-type)*1.28571)] leading-[1.1] tracking-[-.02em] lg:mb-6 lg:mt-4 lg:max-w-[85%]">
                   {label}
                 </h3>
-                <Button
-                  asChild
-                  appearance="solid"
-                  size="lg"
-                  className="hidden lg:inline-flex lg:mt-0"
-                >
-                  <Link to={href}>{cta}</Link>
+                <Button asChild appearance="solid" size="lg">
+                  <Link to={href} className="hidden lg:inline-flex lg:mt-0">
+                    {cta}
+                  </Link>
                 </Button>
                 <Link to={href} className="mt-1 self-start text-sm font-semibold lg:hidden">
                   {cta} →
@@ -388,7 +384,7 @@ export default function WalletLandingContent({
       </BrandScope>
       <div className="faircoin-editorial fixed inset-x-0 bottom-0 z-30 flex justify-center bg-card px-4 pb-[max(24px,env(safe-area-inset-bottom))] pt-6 lg:hidden">
         <span>
-          <Button asChild appearance="solid" size="lg" className="">
+          <Button asChild appearance="solid" size="lg">
             <a href={DOWNLOAD}>Download FAIRWallet</a>
           </Button>
         </span>

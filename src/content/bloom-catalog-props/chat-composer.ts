@@ -9,7 +9,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'barStyle', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style the input bar itself; outer `style` includes suggestions and banners.' },
         { name: 'inputStyle', type: 'StyleProp<TextStyle>', optional: true, description: 'Typography and other text styles on the editable field.' },
-        { name: 'sendIcon', type: 'ChatComposerIcon', optional: true, description: 'Send control glyph. Defaults to the paper plane.' },
+        { name: 'sendIcon', type: 'BloomIconComponent', optional: true, description: 'Send control glyph. Defaults to the paper plane.' },
         { name: 'value', type: 'string', optional: true, description: 'The draft. Works controlled or uncontrolled.' },
         { name: 'defaultValue', type: 'string', optional: true },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
@@ -20,7 +20,7 @@ export const props: BloomSurfaceProps = {
         { name: 'minLines', type: 'number', optional: true, description: 'Lines the field occupies when empty. Default `1`.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Greys the whole bar and stops every callback.' },
         { name: 'notice', type: 'ReactNode', optional: true, description: 'Replaces the input row with a centred, non-interactive line — "You can\'t send messages in this group", "Channel muted". A string is rendered in the notice type; pass a node for your own row.' },
-        { name: 'noticeIcon', type: 'ChatComposerIcon', optional: true, description: 'The glyph beside a string `notice`.' },
+        { name: 'noticeIcon', type: 'BloomIconComponent', optional: true, description: 'The glyph beside a string `notice`.' },
         { name: 'banner', type: 'ReactNode', optional: true, description: 'Anything above the bar: reply/edit/forward previews, a slow-mode line.' },
         { name: 'attachments', type: 'ReadonlyArray<ChatComposerAttachment>', optional: true, description: 'Pending attachments, drawn as a strip between `banner` and the bar.' },
         { name: 'onRemoveAttachment', type: '(id: string) => void', optional: true },
@@ -57,7 +57,7 @@ export const props: BloomSurfaceProps = {
         { name: 'title', type: 'string', optional: false, description: 'The heading line — a sender\'s name, "Edit message", "Forward to Studio".' },
         { name: 'preview', type: 'string', optional: true, description: 'The one-line preview under it. Truncated to a single line.' },
         { name: 'thumbnail', type: 'string', optional: true, description: 'Thumbnail of the quoted media.' },
-        { name: 'icon', type: 'ChatComposerIcon', optional: true, description: 'Overrides the glyph. Defaults per `kind`.' },
+        { name: 'icon', type: 'BloomIconComponent', optional: true, description: 'Overrides the glyph. Defaults per `kind`.' },
         { name: 'accentColor', type: 'string', optional: true, description: 'The accent bar and glyph colour. Defaults to the theme accent; pass a per-sender colour to match the quoted bubble.' },
         { name: 'onClose', type: '() => void', optional: true, description: 'Draws the close button. Omit to draw none.' },
         { name: 'closeLabel', type: 'string', optional: true },
@@ -83,7 +83,7 @@ export const props: BloomSurfaceProps = {
     'ComposerIconButtonProps': {
       props: [
         { name: 'onLayout', type: "import('react-native').ViewProps['onLayout']", optional: true, description: 'Keeps anchored menus positioned when the control lays out.' },
-        { name: 'icon', type: 'ChatComposerIcon', optional: false },
+        { name: 'icon', type: 'BloomIconComponent', optional: false },
         { name: 'accessibilityLabel', type: 'string', optional: false },
         { name: 'onPress', type: '(event?: unknown) => void', optional: true },
         { name: 'onLongPress', type: '(event?: unknown) => void', optional: true },
@@ -239,7 +239,6 @@ export const props: BloomSurfaceProps = {
         { name: 'busy', type: 'boolean', optional: true },
         { name: 'canSubmit', type: 'boolean', optional: true, description: 'Additional application permission; empty or over-limit drafts still cannot submit.' },
         { name: 'labels', type: 'Partial<CompactComposerLabels>', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'testID', type: 'string', optional: true },
         { name: 'style', type: 'ViewStyle | ViewStyle[]', optional: true },
       ],

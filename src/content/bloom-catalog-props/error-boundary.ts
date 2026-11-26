@@ -35,6 +35,7 @@ export const props: BloomSurfaceProps = {
         { name: 'retryLabel', type: 'string', optional: true, description: "Retry button label (`'Try Again'` in English)" },
         { name: 'onError', type: '(error: Error, errorInfo: ErrorInfo) => void', optional: true, description: 'Callback when an error is caught' },
         { name: 'testID', type: 'string', optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: "The boundary's own box: a view that holds the content, and the fallback in its place. Without it the boundary draws no view of its own." },
       ],
     },
     'PanelErrorBoundaryProps': {

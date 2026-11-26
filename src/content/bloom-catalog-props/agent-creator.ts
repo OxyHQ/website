@@ -12,7 +12,6 @@ export const props: BloomSurfaceProps = {
         { name: 'agent', type: 'AgentCreatorAgent', optional: false },
         { name: 'onChange', type: '(agent: AgentCreatorAgent) => void', optional: false },
         { name: 'onClose', type: '() => void', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'voices', type: 'readonly AgentVoice[]', optional: true, description: "Native hosts can supply their speech provider's catalog. Web uses local device voices by default." },
         { name: 'showPreferences', type: 'boolean', optional: true, description: 'Draw the speech preferences (voice, speed, language, notifications) under the profile. Default `true`. A host that does not keep them, because its agents have no voice, turns it off: the editor is then the profile and the look alone, and `agent.preferences` is left untouched.' },

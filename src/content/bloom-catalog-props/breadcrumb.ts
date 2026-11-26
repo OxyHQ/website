@@ -23,7 +23,7 @@ export const props: BloomSurfaceProps = {
         { name: 'hoverMenu', type: 'BreadcrumbHoverMenu', optional: true, description: 'Related navigation on hover/focus or native long press, without replacing the primary action.' },
         { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Explicit size overrides the enclosing Breadcrumb/BloomScope.' },
         { name: 'children', type: 'ReactNode', optional: true, description: 'The label.' },
-        { name: 'icon', type: 'ButtonIconComponent', optional: true, description: 'Leading icon component (14/16/16/20px at xs/sm/md/lg), coloured with the item.' },
+        { name: 'icon', type: 'BloomIconComponent', optional: true, description: 'Leading icon component (14/16/16/20px at xs/sm/md/lg), coloured with the item.' },
         { name: 'leading', type: 'ReactNode', optional: true, description: 'A node before the icon and label, 6px from them — e.g. a 20px `Avatar` for a workspace or member crumb. Not recoloured on hover.' },
         { name: 'href', type: 'string', optional: true, description: 'Makes the item a link. On web it renders a real `<a href>`; with `onPress` as well, ordinary unmodified navigation is prevented and `onPress` runs instead (router links). On native, pressing opens the URL unless `onPress` is set.' },
         { name: 'onPress', type: '() => void', optional: true, description: 'Makes the item a button.' },

@@ -245,7 +245,7 @@ function ProductDetail({ product }: { product: StoreProduct }) {
                   </a>
                 </div>
               ) : (
-                <Button onPress={addToBag} className="w-full !min-h-12">
+                <Button onPress={addToBag} style={{ width: '100%', minHeight: 48 }}>
                   {t('store.add')}
                 </Button>
               )}
@@ -365,7 +365,7 @@ function ProductDetail({ product }: { product: StoreProduct }) {
             <p className="truncate">{name}</p>
             <p className="mt-1">{money(livePrice)}</p>
           </div>
-          <Button onPress={addToBag} className="shrink-0 !min-h-11">
+          <Button onPress={addToBag} style={{ flexShrink: 0, minHeight: 44 }}>
             {t('store.add')}
           </Button>
         </div>

@@ -268,11 +268,13 @@ try {
     (await articleInstall.innerText()).includes('pnpm add @oxy.so/bloom'),
     'MDX install blocks must use the shared package manager switcher',
   );
-  await page.getByRole('note').first().waitFor();
   invariant(
     (await page.locator('main h1:visible').count()) === 1,
     'article duplicates the page title',
   );
+  // A synced <Callout> renders as a note (Bloom's theme guide has one in every release since 1.0).
+  await openRoute(`/developers/docs/bloom/${bloom.latestVersion}/theme/`);
+  await page.getByRole('note').first().waitFor();
 
   for (const mode of ['light', 'dark']) {
     await page.setViewportSize({ width: 1440, height: 1000 });

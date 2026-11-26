@@ -698,7 +698,7 @@ for (const testCase of cases) {
   failed += report(
     'the real catalog carries BloomTone in the order Bloom declares it',
     button.includes(
-      "options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info']",
+      "options: ['neutral', 'accent', 'vivid', 'support', 'action', 'success', 'warning', 'danger', 'info']",
     )
       ? null
       : "BloomTone came back in the checker's internal order, not Bloom's",

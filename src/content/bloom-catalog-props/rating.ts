@@ -29,11 +29,10 @@ export const props: BloomSurfaceProps = {
     'RatingBarProps': {
       props: [
         { name: 'reveal', type: 'MeterReveal', optional: true, description: 'Forwarded to Meter; never changes the accessible measurement.' },
-        { name: 'className', type: 'string', optional: true },
-        { name: 'labelClassName', type: 'string', optional: true },
-        { name: 'displayClassName', type: 'string', optional: true },
-        { name: 'trackClassName', type: 'string', optional: true, description: 'Classes on the underlying Meter track (geometry and paint).' },
-        { name: 'fillClassName', type: 'string', optional: true, description: 'Classes on the underlying Meter fill; its measured fraction stays data-owned.' },
+        { name: 'labelStyle', type: 'StyleProp<TextStyle>', optional: true, description: "The label's style, over its defaults." },
+        { name: 'displayStyle', type: 'StyleProp<TextStyle>', optional: true, description: "The display value's style, over its defaults." },
+        { name: 'trackStyle', type: 'StyleProp<ViewStyle>', optional: true, description: "The underlying Meter track's style (geometry and paint)." },
+        { name: 'fillStyle', type: 'StyleProp<ViewStyle>', optional: true, description: "The underlying Meter fill's style; its measured fraction stays data-owned." },
         { name: 'label', type: 'string', optional: false, description: 'What the row measures ("Cleanliness", "5 stars"). Also the bar\'s accessible name.' },
         { name: 'value', type: 'number', optional: false, description: 'Position on the scale, `0..max`; clamped.' },
         { name: 'max', type: 'number', optional: true, description: 'The scale. Default `5`; pass `1` for a fraction.' },

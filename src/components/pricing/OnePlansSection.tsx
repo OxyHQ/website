@@ -342,80 +342,86 @@ export default function OnePlansSection({
                     tone="support"
                     radius="radius-24"
                     border="none"
-                    className={`flex-1 justify-between px-[23px] pt-[21px] pb-[23px] ${plans.length === 1 ? 'md:grid md:grid-cols-2 md:items-end md:gap-16' : ''}`}
+                    style={{ flex: 1 }}
                   >
-                    <div className="flex flex-col">
-                      <CardHeading data-plan-name>
-                        <CardTitle style={{ fontSize: 20, lineHeight: 28, fontWeight: '400' }}>
-                          {plan.name}
-                        </CardTitle>
-                      </CardHeading>
-                      <CardDescription>
-                        <PlanPrice
-                          price={plan.price}
-                          visible={!!plan.price}
-                          billingPeriod={billingPeriod}
-                          periodLabel={t(
-                            audience === 'business'
-                              ? 'one.teamTotalMonthly'
-                              : family
-                                ? 'one.familyTotalMonthly'
-                                : 'one.monthly',
-                          )}
-                          annualTotal={plan.annualTotal}
-                          unavailable="—"
-                        />
-                      </CardDescription>
-                      {plan.seatPrice && (
+                    {/* The plan's layout (a grid from `md` for a lone plan) is
+                        CSS on the page's own box, so it holds before the app runs. */}
+                    <div
+                      className={`flex flex-1 flex-col justify-between px-[23px] pt-[21px] pb-[23px] ${plans.length === 1 ? 'md:grid md:grid-cols-2 md:items-end md:gap-16' : ''}`}
+                    >
+                      <div className="flex flex-col">
+                        <CardHeading data-plan-name>
+                          <CardTitle style={{ fontSize: 20, lineHeight: 28, fontWeight: '400' }}>
+                            {plan.name}
+                          </CardTitle>
+                        </CardHeading>
                         <CardDescription>
-                          <div data-team-breakdown className="mt-2 min-h-20">
-                            <p className="text-sm">
-                              {plan.basePrice} {t('one.baseMonthly')}
-                            </p>
-                            <p data-seat-price className="mt-1 text-sm font-semibold">
-                              + {plan.seatPrice} {t('one.perSeatMonthly')}
-                            </p>
-                          </div>
+                          <PlanPrice
+                            price={plan.price}
+                            visible={!!plan.price}
+                            billingPeriod={billingPeriod}
+                            periodLabel={t(
+                              audience === 'business'
+                                ? 'one.teamTotalMonthly'
+                                : family
+                                  ? 'one.familyTotalMonthly'
+                                  : 'one.monthly',
+                            )}
+                            annualTotal={plan.annualTotal}
+                            unavailable="—"
+                          />
                         </CardDescription>
-                      )}
-                      <div data-monthly-credits className="mt-5">
-                        <CardDescription style={{ fontWeight: '600' }}>
-                          {plan.creditLabel}
-                        </CardDescription>
-                      </div>
-                      <div className="mt-3">
-                        <CardDescription style={{ fontWeight: '600' }}>
-                          {plan.description}
-                        </CardDescription>
-                      </div>
-                      <ul className="mt-2.5 flex flex-col gap-y-2.5">
-                        {plan.features.map((feature) => (
-                          <li key={feature}>
-                            <CardDescription>
-                              <span className="flex items-start gap-2">
-                                <span
-                                  aria-hidden="true"
-                                  className="mt-px h-[18px] w-[18px] shrink-0 p-0.5"
-                                >
-                                  <RiCheckLine width={14} height={14} fill="currentColor" />
+                        {plan.seatPrice && (
+                          <CardDescription>
+                            <div data-team-breakdown className="mt-2 min-h-20">
+                              <p className="text-sm">
+                                {plan.basePrice} {t('one.baseMonthly')}
+                              </p>
+                              <p data-seat-price className="mt-1 text-sm font-semibold">
+                                + {plan.seatPrice} {t('one.perSeatMonthly')}
+                              </p>
+                            </div>
+                          </CardDescription>
+                        )}
+                        <div data-monthly-credits className="mt-5">
+                          <CardDescription style={{ fontWeight: '600' }}>
+                            {plan.creditLabel}
+                          </CardDescription>
+                        </div>
+                        <div className="mt-3">
+                          <CardDescription style={{ fontWeight: '600' }}>
+                            {plan.description}
+                          </CardDescription>
+                        </div>
+                        <ul className="mt-2.5 flex flex-col gap-y-2.5">
+                          {plan.features.map((feature) => (
+                            <li key={feature}>
+                              <CardDescription>
+                                <span className="flex items-start gap-2">
+                                  <span
+                                    aria-hidden="true"
+                                    className="mt-px h-[18px] w-[18px] shrink-0 p-0.5"
+                                  >
+                                    <RiCheckLine width={14} height={14} fill="currentColor" />
+                                  </span>
+                                  <span>{feature}</span>
                                 </span>
-                                <span>{feature}</span>
-                              </span>
-                            </CardDescription>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="mt-5 flex flex-col items-stretch lg:mt-8">
-                      {plan.href ? (
-                        <Button variant="primary" responsive href={plan.href}>
-                          {plan.cta}
-                        </Button>
-                      ) : (
-                        <Button variant="primary" responsive disabled>
-                          {plan.cta}
-                        </Button>
-                      )}
+                              </CardDescription>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="mt-5 flex flex-col items-stretch lg:mt-8">
+                        {plan.href ? (
+                          <Button variant="primary" responsive href={plan.href}>
+                            {plan.cta}
+                          </Button>
+                        ) : (
+                          <Button variant="primary" responsive disabled>
+                            {plan.cta}
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </Card>
                 </article>

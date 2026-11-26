@@ -8,12 +8,12 @@ export const props: BloomSurfaceProps = {
     'BadgeProps': {
       props: [
         { name: 'appearance', type: 'BloomAppearance', options: ['solid', 'subtle', 'outline', 'plain'], optional: true },
-        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
+        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'vivid', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'content', type: 'string | number', optional: true, description: 'Text or number to display in the badge.' },
         { name: 'variant', type: 'BadgeVariant', options: ['solid', 'subtle', 'outlined', 'onMedia'], optional: true, description: 'How loudly the badge is painted.' },
-        { name: 'color', type: 'AccentTone', options: ['default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'info'], optional: true, description: 'Semantic color. Ignored by `onMedia`, which is a fixed neutral pill.' },
+        { name: 'color', type: 'AccentTone', options: ['default', 'primary', 'vivid', 'secondary', 'tertiary', 'success', 'warning', 'error', 'info'], optional: true, description: 'Semantic color. Ignored by `onMedia`, which is a fixed neutral pill.' },
         { name: 'size', type: 'BadgeSize', options: ['xs', 'sm', 'md', 'lg', 'label-small', 'label-medium'], optional: true, description: 'Size preset. `medium` is the counter size: 18 tall, 12/16 semibold.' },
-        { name: 'icon', type: 'BadgeIcon', optional: true, description: "An icon before the label, drawn at the rung's icon size in the label's own colour and hidden from assistive technology — the badge reads as its text. Its testID is `<testID>-icon`." },
+        { name: 'icon', type: 'BloomIconComponent', optional: true, description: "An icon before the label, drawn at the rung's icon size in the label's own colour and hidden from assistive technology — the badge reads as its text. Its testID is `<testID>-icon`." },
         { name: 'dot', type: 'boolean', optional: true, description: "If true, renders a dot without content — standalone, a status dot (a solid centre on the tone's tint halo); attached, a plain marker. A dot always paints the tone's fill, whatever the `variant`." },
         { name: 'max', type: 'number', optional: true, description: 'Maximum number to display. Values above this show "{max}+".' },
         { name: 'invisible', type: 'boolean', optional: true, description: 'If true, the badge is hidden.' },

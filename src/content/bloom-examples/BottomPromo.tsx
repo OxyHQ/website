@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Text } from 'react-native';
 import { BottomPromo } from '@oxy.so/bloom/bottom-promo';
+import { useColorTokens } from '@oxy.so/bloom/theme';
+import { Text } from '@oxy.so/bloom/typography';
 
 export default function BottomPromoExample() {
   const [taken, setTaken] = useState(false);
+  const tokens = useColorTokens();
   return (
     <div className="w-full max-w-lg space-y-4 text-foreground">
       <BottomPromo
@@ -12,7 +14,11 @@ export default function BottomPromoExample() {
         actionLabel="Get started"
         onAction={() => setTaken(true)}
       />
-      {taken ? <Text className="text-sm text-muted-foreground">Action pressed.</Text> : null}
+      {taken ? (
+        <Text variant="body-2-regular" style={{ color: tokens.mutedForeground }}>
+          Action pressed.
+        </Text>
+      ) : null}
     </div>
   );
 }

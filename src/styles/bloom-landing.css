@@ -8,15 +8,6 @@
 .bloom-landing .text-body-medium {
   font-weight: 500;
 }
-/* BoardUI's landing actions use a flat fill. Keep Bloom's control, states and
-   colours while dropping its default glass material on these actions. */
-.bloom-landing .bloom-landing-action::before {
-  display: none;
-}
-.bloom-landing .bloom-landing-action::after {
-  background-image: none;
-  box-shadow: none;
-}
 .bloom-preview {
   width: 100%;
   min-width: 0;

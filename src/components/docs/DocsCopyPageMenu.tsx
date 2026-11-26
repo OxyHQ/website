@@ -1,4 +1,4 @@
-import { ButtonGroup, ButtonGroupItem } from '@oxy.so/bloom/button-group';
+import { Button } from '@oxy.so/bloom/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,13 +49,13 @@ export function DocsCopyPageMenu({ title, sourceFile }: DocsCopyPageMenuProps) {
 
   return (
     <div className="ml-auto hidden shrink-0 sm:flex">
-      <ButtonGroup accessibilityLabel={t('docs.pageActions')}>
-        <ButtonGroupItem leadingIcon={RiFileCopyLine} onPress={copyPage}>
+      <Button.Group material="surface" accessibilityLabel={t('docs.pageActions')}>
+        <Button leadingIcon={RiFileCopyLine} onPress={copyPage}>
           {page.copied ? t('docs.copied') : t('docs.copyPage')}
-        </ButtonGroupItem>
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild label={t('docs.moreActions')}>
-            <ButtonGroupItem
+            <Button
               iconOnly
               leadingIcon={RiArrowDownSLine}
               accessibilityLabel={t('docs.moreActions')}
@@ -75,7 +75,7 @@ export function DocsCopyPageMenu({ title, sourceFile }: DocsCopyPageMenuProps) {
             ) : null}
           </DropdownMenuContent>
         </DropdownMenu>
-      </ButtonGroup>
+      </Button.Group>
     </div>
   );
 }

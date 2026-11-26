@@ -10,7 +10,6 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'ReactNode', optional: true },
         { name: 'label', type: 'string', optional: true, description: 'Accessible loading description; defaults to the localized Loading message.' },
         { name: 'testID', type: 'string', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
       ],
     },

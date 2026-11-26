@@ -24,7 +24,6 @@ export const props: BloomSurfaceProps = {
         { name: 'onReady', type: '() => void', optional: true, description: 'The first picture of the character has been painted. Fires once per mounted renderer.' },
         { name: 'onLoadingChange', type: '(loading: boolean) => void', optional: true, description: 'Reports selected geometry preparation; paint-only changes do not reload.' },
         { name: 'catalog', type: 'VectorAssetLoader', optional: true, description: "The vector assets to draw from, overriding the provider's. See `createVectorAssetLoader`." },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true },
         { name: 'testID', type: 'string', optional: true },
@@ -34,7 +33,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'runtimeUrl', type: 'string', optional: true },
         { name: 'stillStorage', type: 'BloomThemeStorage', optional: true },
-        { name: 'catalog', type: 'VectorAssetLoader', optional: true, description: "The vector assets this app ships (`createVectorAssetLoader`). Unset: Bloom's full catalog, linked lazily; drop it from the bundle as docs/agent-avatar.mdx describes." },
+        { name: 'catalog', type: 'VectorAssetLoader', optional: true, description: "The vector assets this app ships (`createVectorAssetLoader`). Unset: the catalog of the provider round this one, else Bloom's full catalog, linked lazily; drop it from the bundle as docs/agent-avatar.mdx describes." },
         { name: 'children', type: 'ReactNode', optional: false },
       ],
     },

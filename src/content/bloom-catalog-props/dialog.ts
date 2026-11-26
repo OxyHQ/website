@@ -5,6 +5,40 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'dialog',
   propTypes: {
+    'DetailDialogSectionProps': {
+      props: [
+        { name: 'label', type: 'React.ReactNode', optional: false },
+        { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'accessibilityLabel', type: 'string', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'DetailDialogSectionGroupProps': {
+      props: [
+        { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'DetailDialogProps': {
+      props: [
+        { name: 'open', type: 'boolean', optional: true, description: 'Controlled visibility; omit when the existing Dialog lifecycle owns dismissal.' },
+        { name: 'startOpen', type: 'boolean', optional: true, description: 'Initial open intent; onClose then runs after the shared exit completes.' },
+        { name: 'onClose', type: '() => void', optional: false },
+        { name: 'label', type: 'string', optional: false },
+        { name: 'mode', type: "'side' | 'center'", options: ['side', 'center'], optional: true, description: 'Side detail by default; center retains the same material and slot geometry.' },
+        { name: 'header', type: 'React.ReactNode', optional: true, description: 'Identity/title rendered by the shared PageHeader.' },
+        { name: 'subtitle', type: 'string', optional: true },
+        { name: 'actions', type: 'React.ReactNode', optional: true },
+        { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'scrollFooter', type: 'React.ReactNode', optional: true, description: 'Bottom-aligned content inside the same scroll viewport (activity/composer).' },
+        { name: 'footer', type: 'React.ReactNode', optional: true, description: 'Fixed bottom chrome, sharing the Screen and application providers.' },
+        { name: 'footerKeyboardBehavior', type: "import('../screen/types.js').ScreenProps['bottomBarKeyboardBehavior']", options: ['hide', 'visible', 'follow'], optional: true },
+        { name: 'contentKind', type: "import('../screen/content.js').ScreenKind", options: ['document', 'collection', 'table', 'canvas', 'form'], optional: true },
+        { name: 'scrollable', type: 'boolean', optional: true, description: 'False gives a canvas a bounded body without an extra scroll viewport.' },
+        { name: 'closeLabel', type: 'string', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
     'DialogProps': {
       props: [
         { name: 'frame', type: 'DialogScreenFrame', optional: true, description: 'Screen mode: shared header and animated in-place navigation, independent of the router.' },
@@ -16,6 +50,7 @@ export const props: BloomSurfaceProps = {
         { name: 'control', type: 'DialogControlProps', optional: true, description: 'Imperative open/close handle from `useDialogControl()`. Optional — omit it when driving the dialog with the controlled `open` prop instead.' },
         { name: 'open', type: 'boolean', optional: true, description: 'Controlled open state (opt-in). When provided, the dialog is driven by this boolean and `onClose`, and `control` is ignored.' },
         { name: 'onClose', type: '() => void', optional: true, description: 'Fires after the dialog has finished closing. In controlled mode it is the close request the host must answer by flipping `open` to `false`.' },
+        { name: 'onDismissed', type: '() => void', optional: true, description: 'Fires once the dialog has finished closing, its exit animation done, in either mode: in controlled mode, after the host flipped `open` to `false` and the surface left. The place to unmount what presented it.' },
         { name: 'testID', type: 'string', optional: true },
         { name: 'title', type: 'string', optional: true, description: 'Optional dialog header text. Rendered above `description` / `children`.' },
         { name: 'description', type: 'string', optional: true, description: 'Optional supporting copy, rendered below the title.' },
@@ -41,15 +76,16 @@ export const props: BloomSurfaceProps = {
         { name: 'morph', type: 'boolean', optional: true, description: 'Whether the panel MORPHS across an in-place content swap. Defaults to `true`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style overrides applied to the inner content container on native (the floating bottom-sheet card) and to the modal panel on web.' },
         { name: 'panelStyle', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style overrides for the side/bottom placement panel surface.' },
-        { name: 'panelClassName', type: 'string', optional: true, description: 'NativeWind classes for the side/bottom placement panel surface.' },
         { name: 'containerStyle', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style for the root overlay (theme-var scope, rail offset, etc.).' },
-        { name: 'containerClassName', type: 'string', optional: true, description: 'NativeWind classes for the root overlay (e.g. `"md:left-[4.75rem]"`).' },
         { name: 'label', type: 'string', optional: true, description: 'Accessibility label, applied to the dialog role on web.' },
       ],
       inheritsFrom: ['React.PropsWithChildren<…>'],
     },
   },
   components: [
+    { name: 'DetailDialogSection', propsType: 'DetailDialogSectionProps' },
+    { name: 'DetailDialogSectionGroup', propsType: 'DetailDialogSectionGroupProps' },
+    { name: 'DetailDialog', propsType: 'DetailDialogProps' },
     { name: 'Dialog', propsType: 'DialogProps' },
   ],
 }

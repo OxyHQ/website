@@ -3,7 +3,8 @@
     {
       "name": "Bloom",
       "git": "https://github.com/OxyHQ/Bloom.git",
-      "ref": "@oxy.so/bloom@21.0.0"
+      "ref": "@oxy.so/bloom@23.9.1",
+      "docsIgnore": ["audits", "benchmarks", "bloom-language*.mdx"]
     },
     {
       "name": "Bloom language",

@@ -31,6 +31,7 @@ export const props: BloomSurfaceProps = {
         { name: 'pointerEvents', type: "'auto' | 'none' | 'box-none' | 'box-only'", options: ['auto', 'none', 'box-none', 'box-only'], optional: true, description: 'Passed through as a PROP, never as a style key: react-native-web resolves the RN-only `box-none`/`box-only` values from the prop path only.' },
         { name: 'flightId', type: 'string', optional: true, description: 'Set this on the DESTINATION surface of a media flight, to the same id the flight was started with. When this surface presents its first frame it tells the layer to let the flying copy go.' },
         { name: 'detached', type: 'boolean', optional: true, description: 'Render the video arm with NO player, unbinding this element from it while the element is still in the DOM.' },
+        { name: 'onPicture', type: '() => void', optional: true, description: "Called when the box shows a picture: the image's preview layer or the image itself (whichever paints first; it may be called again for the other), or a failed preview, so a caller waiting on it never waits for ever. A viewer that flies out of an on-screen thumbnail waits for this before it hides the thumbnail and starts to move, so the photo is never missing from the screen for a frame." },
       ],
     },
     'MediaPoster': {

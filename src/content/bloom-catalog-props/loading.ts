@@ -11,8 +11,7 @@ export const props: BloomSurfaceProps = {
         { name: 'spinnerIcon', type: 'ReactNode', optional: true, description: 'Custom spinner icon (defaults to ActivityIndicator)' },
         { name: 'size', type: 'LoadingSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Size of the loading indicator' },
         { name: 'color', type: 'string', optional: true, description: 'Custom color (defaults to theme primary)' },
-        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
-        { name: 'className', type: 'string', optional: true, description: 'NativeWind className for spinner color (e.g. "text-primary"). Overrides color prop.' },
+        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'vivid', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'style', type: 'ViewStyle', optional: true, description: 'Custom container style' },
         { name: 'showLoading', type: 'boolean', optional: true, description: 'Whether loading is active (for animated variants)' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the indicator and makes it an indeterminate `progressbar` to assistive technology (`role="progressbar"` with `aria-label` and `aria-busy` on web; the same role, label and busy state natively). A spinner draws no words, so nothing else can say what is loading.' },
@@ -23,7 +22,6 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'size', type: 'number', optional: true },
         { name: 'color', type: 'string', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'ViewStyle', optional: true },
       ],
     },

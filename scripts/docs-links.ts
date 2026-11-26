@@ -181,3 +181,57 @@ export function rewriteRelativeDocLinks(source: string, context: RelativeDocLink
   }
   return lines.join('\n');
 }
+
+/**
+ * Point a docs-root link at a file this site does not publish to its source on GitHub.
+ *
+ * Bloom writes `[the run](/docs/audits/issue-663/…/)` and names
+ * `/docs/benchmarks/….json`: paths in its own `docs/` folder that a package
+ * leaves out (`docsIgnore`: dated evidence, not docs of a release). After the
+ * `/docs/` rewrite they are `/developers/docs/audits/…` on oxy.so, which is
+ * nothing. When the path is not a package this site serves and `typeOf` says it
+ * is a file or folder in the repo's docs path at the synced commit, the link
+ * becomes that file (`blob`) or folder (`tree`) on GitHub. Anything else is
+ * left alone to be reported. Links inside fenced code are not touched.
+ */
+export function rewriteUnpublishedDocsRootLinks(
+  source: string,
+  context: {
+    /** Packages this site serves: `/developers/docs/<package>/…` is theirs. */
+    packages: ReadonlySet<string>;
+    /** The version's own pages, which the site serves. */
+    slugs: ReadonlySet<string>;
+    docsPathInRepo: string;
+    /** `<repo>/blob/<commit>`. */
+    sourceUrl: string;
+    /** `'blob'`, `'tree'` or `undefined` for a path in the repo at the synced commit. */
+    typeOf: (repoPath: string) => 'blob' | 'tree' | undefined;
+  },
+): string {
+  const lines = source.split('\n');
+  let fence: string | null = null;
+  for (const [index, line] of lines.entries()) {
+    const marker = line.match(/^\s*(`{3,}|~{3,})/)?.[1];
+    if (marker) {
+      if (fence === null) fence = marker[0] as string;
+      else if (marker[0] === fence) fence = null;
+      continue;
+    }
+    if (fence !== null) continue;
+    lines[index] = line.replace(
+      /(\]\()\/developers\/docs\/([A-Za-z0-9_][A-Za-z0-9._/-]*?)\/?(#[^)\s]*)?\)/g,
+      (match, open: string, target: string, anchor: string | undefined) => {
+        if (context.packages.has(target.split('/')[0] as string)) return match;
+        if (context.slugs.has(target)) return match;
+        const repoPath = path.posix.normalize(path.posix.join(context.docsPathInRepo, target));
+        if (repoPath.startsWith('../')) return match;
+        const kind = context.typeOf(repoPath);
+        if (kind === undefined) return match;
+        const url =
+          kind === 'tree' ? context.sourceUrl.replace(/\/blob\//, '/tree/') : context.sourceUrl;
+        return `${open}${url}/${repoPath}${anchor ?? ''})`;
+      },
+    );
+  }
+  return lines.join('\n');
+}

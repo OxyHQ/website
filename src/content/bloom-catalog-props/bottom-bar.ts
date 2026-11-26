@@ -14,6 +14,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onValueLongPress', type: '(value: string) => void', optional: true, description: 'Long press on a destination (for example an account switcher).' },
         { name: 'action', type: 'ReactNode', optional: true, description: 'Static action sibling; outside the navigation scrub detector.' },
         { name: 'actionPlacement', type: "'auto' | 'beside' | 'above'", options: ['auto', 'beside', 'above'], optional: true, description: 'Auto places the action above navigation when side-by-side targets would be cramped.' },
+        { name: 'actionSizing', type: "'intrinsic' | 'fill' | 'adaptive'", options: ['intrinsic', 'fill', 'adaptive'], optional: true, description: 'Intrinsic keeps natural width; fill lends the available lane; adaptive lets Search borrow a full row until its closing motion finishes.' },
         { name: 'actionBehavior', type: "'hide' | 'visible' | 'dock'", options: ['hide', 'visible', 'dock'], optional: true, description: '`hide` fades the accessory on scroll (default), `visible` retains it. `dock` keeps one editable action: above expanded navigation, beside the active destination when minimized. It stays mounted with the keyboard.' },
         { name: 'navigationVisibility', type: "'always' | 'compact' | 'never'", options: ['always', 'compact', 'never'], optional: true, description: 'Keep the same action mounted while navigation is absent (for example on desktop).' },
         { name: 'minimizeProgress', type: 'SharedValue<number>', optional: true },

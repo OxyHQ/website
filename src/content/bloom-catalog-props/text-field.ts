@@ -7,8 +7,8 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'TextFieldProps': {
       props: [
-        { name: 'className', type: 'string', optional: true, description: 'Classes on the layout host: width, height and padding.' },
-        { name: 'chromeClassName', type: 'string', optional: true, description: 'Classes on the inset surface: background, border/ring and radius. State paint remains authoritative.' },
+        { name: 'chromeStyle', type: 'StyleProp<ViewStyle>', optional: true, description: "The inset surface's style: background, border/ring and radius. State paint remains authoritative." },
+        { name: 'chromeInset', type: 'number', optional: true, description: 'Insets all decorative chrome while retaining the field and action hit boxes.' },
         { name: 'invalid', type: 'boolean', optional: true },
         { name: 'isInvalid', type: 'boolean', optional: true },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Paint the whole field disabled: the dimmed fill, no ring, dimmed adornments, and a non-editable input. An input with `disabled` or `editable={false}` reports the same state up on its own.' },

@@ -21,7 +21,7 @@ export const props: BloomSurfaceProps = {
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'label', type: 'string', optional: true, description: 'A visible label above the track. It also serves as the accessible name when `accessibilityLabel` is not given.' },
         { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true },
-        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
+        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'vivid', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'keyboardStep', type: 'number', optional: true, description: "How far the arrow keys (on the web, and wherever the platform's keyboard focus reaches the slider) and an assistive technology's increment and decrement move the value, as AppKit's `altIncrementValue`: a volume stepped in sixteenths while a drag lands anywhere. The result is still rounded to `step`. Defaults to `step`." },
         { name: 'trackHeight', type: 'number', optional: true, description: 'Track thickness in px. Defaults to `6`.' },
         { name: 'thumbSize', type: 'number', optional: true, description: 'Thumb diameter in px. Defaults to `20`.' },
@@ -34,7 +34,7 @@ export const props: BloomSurfaceProps = {
     'SliderProps': {
       props: [
         { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true },
-        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
+        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'vivid', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'value', type: 'number', optional: false, description: 'Current value (controlled).' },
         { name: 'onValueChange', type: '(value: number) => void', optional: false, description: 'Fired continuously as the user drags / steps the thumb.' },
         { name: 'onSlidingComplete', type: '(value: number) => void', optional: true, description: 'Fired once when the drag gesture ends.' },

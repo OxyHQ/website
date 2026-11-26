@@ -13,6 +13,8 @@ export const props: BloomSurfaceProps = {
         { name: 'defaultValue', type: 'string', optional: true, description: 'Initial selection when value is uncontrolled.' },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'open', type: 'boolean', optional: true, description: 'Whether the list is open, controlled (opt-in). Unset, the select keeps its own open state as it always has; set, the list shows while it is true and `onOpenChange` reports the reader opening or dismissing it.' },
+        { name: 'onOpenChange', type: '(open: boolean) => void', optional: true, description: 'The reader opened or dismissed the list.' },
       ],
     },
     'SelectTriggerProps': {
@@ -21,7 +23,6 @@ export const props: BloomSurfaceProps = {
         { name: 'asChild', type: 'boolean', optional: true, description: "Render the single element child AS the trigger, merging the open handler and a11y props into it. Without it the children render inside Bloom's own pressable. The same escape hatch every anchored Bloom family offers." },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'label', type: 'string', optional: true, description: "The trigger's accessible name." },
-        { name: 'className', type: 'string', optional: true, description: "Utility classes APPENDED to the part's own — never substituted for them, so a single layout class cannot strip the chrome." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style for the TRIGGER BOX (the slot around the field). To restyle the bordered field itself, use `fieldStyle`.' },
         { name: 'fieldStyle', type: 'StyleProp<ViewStyle>', optional: true, description: "Inline style on the bordered field itself, applied after its own — the unambiguous override for a trigger embedded in another control (the phone input's country code uses `rounded-lg px-1.5 py-1`). Use longhands (`paddingLeft`, not `paddingHorizontal`), which is what outranks the field's own padding classes on web." },
         { name: 'testID', type: 'string', optional: true },
@@ -32,7 +33,6 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: '(item: T) => React.ReactNode', optional: true, description: "Extracts the display text from the currently-selected ITEM — the entry of `SelectContent`'s `items` whose value is chosen, on both platforms, never the bare value string. A value no item matches shows as itself. Defaults to `item => item.label`." },
         { name: 'leading', type: 'React.ReactNode | ((item: T | undefined) => React.ReactNode)', optional: true, description: 'A node before the value — a status dot, an icon — laid out `gap-[5px]` (`gap-1` on `sm`), the way the trigger shows an option whose content leads with one. A function receives the selected item (`undefined` while nothing is chosen), so the mark can follow the value.' },
         { name: 'placeholder', type: 'string', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'TextStyle', optional: true },
       ],
     },
@@ -49,8 +49,7 @@ export const props: BloomSurfaceProps = {
         { name: 'renderItem', type: '(item: T, index: number, selectedValue?: string | null) => React.ReactElement', optional: false, description: 'Renders a single item. Use `SelectItem` inside this callback.' },
         { name: 'valueExtractor', type: '(item: T) => string', optional: true, description: 'Extracts a unique string key from an item. Defaults to `item => item.value`.' },
         { name: 'maxHeight', type: 'number', optional: true, description: 'Tallest the anchored dropdown grows before its options scroll (web only — the native sheet sizes itself). Defaults to 240.' },
-        { name: 'width', type: 'number', optional: true, description: 'A FIXED width for the web dropdown (`popoverClassName="w-[220px]"`). By default the panel is at least 266px and at least the trigger\'s width. The native sheet sizes itself and ignores it.' },
-        { name: 'className', type: 'string', optional: true, description: "Appended to the dropdown panel's own chrome." },
+        { name: 'width', type: 'number', optional: true, description: "A FIXED width for the web dropdown (`width={220}`). By default the panel is at least 266px and at least the trigger's width. The native sheet sizes itself and ignores it." },
       ],
     },
     'SelectItemProps': {
@@ -61,7 +60,6 @@ export const props: BloomSurfaceProps = {
         { name: 'disabled', type: 'boolean', optional: true, description: 'Not choosable: `text-disabled`, `cursor-not-allowed`, no press.' },
         { name: 'leading', type: 'React.ReactNode', optional: true, description: "A node before the option's content — a status dot, an icon — 8px from it." },
         { name: 'children', type: 'React.ReactNode', optional: false },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
       ],
     },
@@ -85,7 +83,6 @@ export const props: BloomSurfaceProps = {
     'SelectItemTextProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: false },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'TextStyle', optional: true },
       ],
     },
@@ -97,14 +94,12 @@ export const props: BloomSurfaceProps = {
     'SelectGroupProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
       ],
     },
     'SelectLabelProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<TextStyle>', optional: true },
       ],
     },
@@ -115,7 +110,6 @@ export const props: BloomSurfaceProps = {
     'Omit<SelectScrollButtonProps, "direction">': {
       props: [
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'className', type: 'string', optional: true },
       ],
     },
   },

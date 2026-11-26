@@ -44,10 +44,8 @@ export const props: BloomSurfaceProps = {
     'FollowButtonProps': {
       props: [
         { name: 'appearance', type: "ButtonProps['appearance']", options: ['solid', 'subtle', 'outline', 'plain'], optional: true, description: 'Shared Button surface; defaults to subtle.' },
-        { name: 'material', type: "ButtonProps['material']", options: ['surface', 'flat', 'shared'], optional: true, description: 'Shared Button material; preserves the standard surface by default.' },
-        { name: 'className', type: 'string', optional: true, description: 'Classes on the Button layout and surface owner.' },
-        { name: 'labelClassName', type: 'string', optional: true, description: 'Typography classes on both animated labels and their measuring copies. Text mode only; explicit color/textStyle still take precedence.' },
-        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true, description: 'Shared Button tone. Defaults to support (secondary).' },
+        { name: 'material', type: "ButtonProps['material']", options: ['surface', 'flat', 'shared', 'lens'], optional: true, description: "Shared Button material; a follow toggle is a pill on the lens by default (`'lens'`), Bloom's floating size." },
+        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'vivid', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true, description: 'Shared Button tone. Defaults to support (secondary).' },
         { name: 'iconOnly', type: 'boolean', optional: true, description: 'Compact toggle with icons and the same accessible name.' },
         { name: 'following', type: 'boolean', optional: false },
         { name: 'onFollowChange', type: '(following: boolean) => void', optional: false },
@@ -145,7 +143,7 @@ export const props: BloomSurfaceProps = {
         { name: 'progress', type: 'number', optional: true, description: '`0..1`: draws the bar at this opacity — drive it from the scroll position.' },
         { name: 'leading', type: 'ReactNode', optional: true, description: 'Before the play button — a back button.' },
         { name: 'trailing', type: 'ReactNode', optional: true, description: 'At the far right.' },
-        { name: 'height', type: 'number', optional: true, description: 'Default `64`.' },
+        { name: 'height', type: 'number', optional: true, description: 'Optional fixed height. Omitted, the shared PageHeader determines its height.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

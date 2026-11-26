@@ -330,7 +330,9 @@ function Action({
       }
       appearance={secondary ? 'outline' : 'solid'}
       tone={secondary ? 'neutral' : 'accent'}
-      className="bloom-landing-action h-9 rounded-2lg p-2"
+      // The landing's actions are a flat fill: Bloom's own flat material, with
+      // its states and colours.
+      material="flat"
       textVariant="headline-medium"
       textStyle={{ fontSize: 15, fontWeight: '500' }}
       style={{

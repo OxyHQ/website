@@ -7,7 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'GroupedSectionIconProps': {
       props: [
-        { name: 'tone', type: 'AccentTone', options: ['default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'info'], optional: true, description: 'Semantic filled color; default primary.' },
+        { name: 'tone', type: 'AccentTone', options: ['default', 'primary', 'vivid', 'secondary', 'tertiary', 'success', 'warning', 'error', 'info'], optional: true, description: 'Semantic filled color; default primary.' },
         { name: 'color', type: 'string', optional: true, description: 'Optional explicit circle fill; the glyph uses this color darkened by 60%.' },
         { name: 'size', type: 'number', optional: true, description: 'Circle diameter in px; default 28.' },
         { name: 'iconSize', type: 'number', optional: true, description: 'Glyph size passed to the renderer; default 16.' },
@@ -23,6 +23,7 @@ export const props: BloomSurfaceProps = {
         { name: 'title', type: 'string', optional: true, description: 'Optional section header text. Comfortable draws it in small capitals; compact as it is written, so write it as the language writes a title (Title Case in English).' },
         { name: 'footer', type: 'string', optional: true, description: 'Optional section footer text' },
         { name: 'children', type: 'React.ReactNode', optional: false, description: 'Group items' },
+        { name: 'testID', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Override group container style' },
         { name: 'variant', type: 'GroupedSectionVariant', options: ['plain', 'filled'], optional: true, description: 'Explicit legacy fill override. Unset uses the same neutral material as Card/UsageCard.' },
       ],
@@ -37,6 +38,7 @@ export const props: BloomSurfaceProps = {
         { name: 'descriptionLines', type: 'number', optional: true, description: 'Lines the description may take before it truncates. Defaults to `2`; `0` never truncates (a help text or a policy that has to be read whole).' },
         { name: 'value', type: 'string', optional: true, description: 'Right-side value text (e.g. "English", "On")' },
         { name: 'rightElement', type: 'React.ReactNode', optional: true, description: 'Custom right-side element (toggle, badge, etc.)' },
+        { name: 'wrapControl', type: 'boolean', optional: true, description: 'Let a wide trailing control wrap below the label, preserving at least 140px for text.' },
         { name: 'showChevron', type: 'boolean', optional: true, description: 'Show trailing chevron (default: true when onPress is set)' },
         { name: 'destructive', type: 'boolean', optional: true, description: 'Destructive action styling (red text)' },
         { name: 'onPress', type: '() => void', optional: true, description: 'Press handler' },
@@ -47,6 +49,7 @@ export const props: BloomSurfaceProps = {
         { name: 'accessibilityHint', type: 'string', optional: true, description: 'Accessibility hint override' },
         { name: 'accessibilityRole', type: "'button' | 'link' | 'none'", options: ['button', 'link', 'none'], optional: true, description: 'Accessibility role override (defaults to button when pressable)' },
         { name: 'leftInset', type: 'number', optional: true, description: 'Left inset to align text when no icon is provided' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: "The row's own box (its padding, size, fill), after its press styles." },
       ],
     },
     'GroupedSectionDividerProps': {
