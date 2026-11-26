@@ -37,9 +37,10 @@ const PRIVACY_EMAIL = 'legal@oxy.so';
 const DELETED_SERVER_SIDE = [
   'Your profile and account record — username, display name, avatar, and settings.',
   'All Oxy Mail data: mailboxes, messages, and file attachments stored in our object storage.',
-  'The encrypted backup of your identity, if you chose to store one with us.',
+  'The encrypted backup of your identity and your end-to-end encrypted keychain, if you chose to store them with us.',
   'Every active session, on every device, revoked immediately.',
   'Your social graph: who you follow, who follows you, blocks, and restrictions.',
+  'Files you uploaded and the developer applications you own.',
 ];
 
 const RETAINED = [
@@ -53,7 +54,7 @@ const RETAINED = [
   },
   {
     title: 'Records we are legally required to keep',
-    body: 'Limited transaction and billing records may be retained where law requires it. These are kept separately from your profile and are not used to identify you afterwards.',
+    body: 'Receipts and the financial ledger are never deleted, because the law requires them. If any exist for your account, the account is archived rather than removed, and its profile is not anonymised. If you have no financial records, the account is removed completely.',
   },
 ];
 
@@ -86,15 +87,21 @@ export default function AccountDeletionPage() {
 
         <Section title="What an Oxy account actually is">
           <p>
-            An Oxy account is not an email address and a password. It is a{' '}
-            <strong className="text-foreground">cryptographic identity</strong> — a key pair created
-            on your device the first time you sign up.
+            An Oxy account is one of two kinds, and which one you have changes how you delete it.
           </p>
           <p>
-            The private half of that key never leaves your device. It is held in the secure hardware
-            your phone provides (the Android Keystore or the iOS Keychain) by the{' '}
+            <strong className="text-foreground">An identity account</strong> is a{' '}
+            <strong className="text-foreground">cryptographic identity</strong> — a key pair created
+            on your device. The private half of that key never leaves your device. It is held in the
+            secure hardware your phone provides (the Android Keystore or the iOS Keychain) by the{' '}
             <strong className="text-foreground">Commons</strong> app, which is the vault for your
             identity. We never see it, never store it, and cannot recover it for you.
+          </p>
+          <p>
+            <strong className="text-foreground">An email account</strong> signs in with your
+            username or email: we send a code or a link to your inbox, and you can also set a
+            password and an authenticator app. Anyone who can sign in by email can recover access by
+            signing in by email.
           </p>
           <p>
             That single identity is what signs you in to every Oxy app on the same device — Mention,
@@ -104,31 +111,49 @@ export default function AccountDeletionPage() {
         </Section>
 
         <Section title="How to delete it">
-          <p>Deletion is done from the Commons app, on a device where you are signed in:</p>
-          <ol className="ml-5 list-decimal space-y-2">
+          <p>
+            Open <strong className="text-foreground">Accounts</strong> (accounts.oxy.so), go to{' '}
+            <strong className="text-foreground">Data → Delete account</strong> and type your
+            username, which has to match exactly. Then confirm:
+          </p>
+          <ul className="ml-5 list-disc space-y-2">
             <li>
-              Open <strong className="text-foreground">Commons</strong>.
+              <strong className="text-foreground">Identity account:</strong> Accounts opens Commons,
+              and your device signs the request with your identity key, which is what proves to our
+              servers that it is really yours. If you set up an authenticator code, you also enter
+              it.
             </li>
             <li>
-              Go to <strong className="text-foreground">Settings → Delete account</strong>.
+              <strong className="text-foreground">Email account:</strong> you confirm with a code we
+              send to your email (or with your password if the account has no email), plus your
+              authenticator code if you set one up.
             </li>
-            <li>Type your username to confirm. This has to match exactly.</li>
-            <li>
-              Approve the request. Your device signs it with your identity key, which is what proves
-              to our servers that the request is really yours.
-            </li>
-          </ol>
+          </ul>
           <p>
             The deletion runs immediately. There is no waiting period and no way to undo it, so make
             sure you have exported anything you want to keep first.
           </p>
         </Section>
 
+        <Section title="When deletion is refused">
+          <p>
+            We refuse the request, and tell you why, while your account has any of these. Resolve
+            them first and try again:
+          </p>
+          <ul className="ml-5 list-disc space-y-2">
+            <li>A live subscription. Cancel it first.</li>
+            <li>A checkout in progress.</li>
+            <li>A reservation held for an AI inference request.</li>
+            <li>A connected provider key. Disconnect it in Console.</li>
+          </ul>
+        </Section>
+
         <Section title="Why we cannot delete it for you">
           <p>
-            Because your account is a key you hold, our servers only accept a deletion request that
-            carries a valid signature from that key, made within the last few minutes. Without it,
-            the request is rejected.
+            An identity account is a key you hold, so our servers only accept a deletion request
+            that carries a valid signature from that key, made within the last few minutes. Without
+            it, the request is rejected. Email accounts instead confirm with a fresh emailed code or
+            password.
           </p>
           <p>
             That means no one can delete your account by impersonating you — not an attacker who
@@ -136,9 +161,10 @@ export default function AccountDeletionPage() {
             makes the account yours also makes you the only one who can end it.
           </p>
           <p>
-            The trade-off is real and worth stating plainly: if you lose every device holding your
-            key and you never stored an encrypted backup with us, you can no longer sign in and you
-            can no longer issue a deletion request either. In that case write to{' '}
+            The trade-off is real and worth stating plainly: if you have an identity account and
+            lose every device holding your key and you never stored an encrypted backup with us, you
+            can no longer sign in and you can no longer issue a deletion request either. An email
+            account does not have this problem. In that case write to{' '}
             <a className="text-foreground underline" href={`mailto:${SUPPORT_EMAIL}`}>
               {SUPPORT_EMAIL}
             </a>{' '}
@@ -180,9 +206,10 @@ export default function AccountDeletionPage() {
             all of them and removes the account-level data listed above.
           </p>
           <p>
-            Content you created inside an individual app is deleted along with the account record it
-            belonged to. The one exception is content that already left our systems through
-            federation, described above.
+            Apps that rely on Oxy are told your account was deleted so they can erase what they hold
+            for you. Mention, for example, erases the account's data and keeps the handle reserved
+            for 14 days. The exception is content that already left our systems through federation,
+            described above.
           </p>
           <p>
             Deleting a single app from your phone does not delete your account. It only removes that
