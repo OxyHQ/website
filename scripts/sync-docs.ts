@@ -22,12 +22,13 @@
  */
 
 import { readFile, writeFile, mkdir, rm, readdir, rename, cp } from 'node:fs/promises';
-import { existsSync, mkdirSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import {
   removedSlugsOf,
   rewriteCrossPackageDocRootLinks,
+  rewriteRelativeDocLinks,
   rewriteSiblingDocLinks,
   rewriteStaleDocsVersionLinks,
   unlinkRemovedPageLinks,
@@ -95,13 +96,19 @@ function validateDocsConfig(config: DocsConfig, configPath: string): void {
     assertSafeGitRef(config.defaultVersion, `${configPath} defaultVersion`);
   if (typeof config.latestVersion === 'string')
     assertSafeGitRef(config.latestVersion, `${configPath} latestVersion`);
-  for (const pattern of config.docsIgnore ?? []) {
-    if (typeof pattern !== 'string') {
-      throw new Error(`[sync-docs] ${configPath}: docsIgnore must contain only strings.`);
+  for (const field of ['docsIgnore', 'docsInclude'] as const) {
+    const patterns = config[field];
+    if (patterns !== undefined && !Array.isArray(patterns)) {
+      throw new Error(`[sync-docs] ${configPath}: ${field} must be an array.`);
     }
-    const pathPart = pattern.endsWith('/*') ? pattern.slice(0, -2) : pattern;
-    if (pathPart && !isSafeRelativePath(pathPart)) {
-      throw new Error(`[sync-docs] ${configPath}: unsafe docsIgnore path: ${pattern}`);
+    for (const pattern of patterns ?? []) {
+      if (typeof pattern !== 'string') {
+        throw new Error(`[sync-docs] ${configPath}: ${field} must contain only strings.`);
+      }
+      const pathPart = pattern.endsWith('/*') ? pattern.slice(0, -2) : pattern;
+      if (pathPart && !isSafeRelativePath(pathPart)) {
+        throw new Error(`[sync-docs] ${configPath}: unsafe ${field} path: ${pattern}`);
+      }
     }
   }
 }
@@ -125,6 +132,20 @@ function resolveLocalPath(localPath: string): string {
 /** Whether `ref` is a full 40-character commit SHA (vs a branch/tag name). */
 function isFullGitSha(ref: string): boolean {
   return /^[0-9a-f]{40}$/i.test(ref);
+}
+
+/** The commit `ref` names in `cwd`'s repo, or `undefined` when it is not a git checkout. */
+function gitCommitOf(cwd: string, ref: string): string | undefined {
+  try {
+    assertSafeGitRef(ref, 'source ref');
+    return execFileSync('git', ['rev-parse', '--verify', '--quiet', `${ref}^{commit}`], {
+      cwd,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return undefined;
+  }
 }
 
 /**
@@ -234,8 +255,14 @@ async function collectConfigs(
       console.error(`[sync-docs] unsafe config path '${sub}' for ${entry.name}; skipping.`);
       continue;
     }
-    const dir = sub ? path.join(repoRoot, sub) : repoRoot;
-    const configPath = path.join(dir, 'docs.config.json');
+    // A path ending in `.json` names the config file itself, so one directory
+    // can hold several (Bloom's root has its own and the language's); any
+    // other path is a directory holding `docs.config.json`.
+    const named = sub.endsWith('.json');
+    const configPath = named
+      ? path.join(repoRoot, sub)
+      : path.join(sub ? path.join(repoRoot, sub) : repoRoot, 'docs.config.json');
+    const dir = path.dirname(configPath);
     const config = await readDocsConfig(configPath);
     if (config) results.push({ config, rootDir: dir });
   }
@@ -312,16 +339,34 @@ async function rewriteSiblingLinksInPlace(
   pages: readonly SyncedPage[],
   shortName: string,
   baseUrl: string,
+  source: { versionDir: string; docsPathInRepo: string; sourceUrl?: string },
 ): Promise<void> {
   const slugs = new Set(pages.map((page) => page.slug).filter((slug) => slug.length > 0));
-  if (slugs.size === 0) return;
+  const fileToSlug = new Map(
+    pages
+      .filter((page) => page.file)
+      .map((page) => [
+        path.relative(source.versionDir, path.join(SYNCED_DIR, page.file)).replace(/\\/g, '/'),
+        page.slug,
+      ]),
+  );
+  if (fileToSlug.size === 0) return;
   for (const page of pages) {
     if (!page.file) continue;
     const full = path.join(SYNCED_DIR, page.file);
     if (!existsSync(full)) continue;
     const original = await readFile(full, 'utf8');
+    const relative = rewriteRelativeDocLinks(original, {
+      pageDir: path.posix
+        .dirname(path.relative(source.versionDir, full).replace(/\\/g, '/'))
+        .replace(/^\.$/, ''),
+      fileToSlug,
+      baseUrl,
+      docsPathInRepo: source.docsPathInRepo,
+      sourceUrl: source.sourceUrl,
+    });
     const rewritten = rewriteStaleDocsVersionLinks(
-      rewriteSiblingDocLinks(original, slugs, baseUrl),
+      rewriteSiblingDocLinks(relative, slugs, baseUrl),
       slugs,
       shortName,
       baseUrl,
@@ -423,23 +468,45 @@ async function walkMdx(dir: string, base = dir): Promise<string[]> {
   return out;
 }
 
-function isIgnored(relPath: string, ignore: string[]): boolean {
-  if (ignore.length === 0) return false;
+function matchesDocsPattern(relPath: string, pattern: string): boolean {
   const normalized = relPath.replace(/\\/g, '/');
-  for (const pattern of ignore) {
-    const p = pattern.replace(/\\/g, '/').replace(/\/+$/, '');
-    if (!p) continue;
-    if (normalized === p || normalized.startsWith(`${p}/`)) return true;
-    // Support a trailing /* glob.
-    if (p.endsWith('/*') && normalized.startsWith(`${p.slice(0, -2)}/`)) return true;
+  const p = pattern.replace(/\\/g, '/').replace(/\/+$/, '');
+  if (!p) return false;
+  if (normalized === p || normalized.startsWith(`${p}/`)) return true;
+  // A trailing /* is the whole directory.
+  if (p.endsWith('/*')) return normalized.startsWith(`${p.slice(0, -2)}/`);
+  // Any other `*` matches within one path segment (`bloom-language*.mdx`).
+  if (p.includes('*')) {
+    const escaped = p.split('*').map((part) => part.replace(/[.+?^${}()|[\]\\]/g, '\\$&'));
+    return new RegExp(`^${escaped.join('[^/]*')}$`).test(normalized);
   }
   return false;
+}
+
+function isIgnored(relPath: string, ignore: readonly string[]): boolean {
+  return ignore.some((pattern) => matchesDocsPattern(relPath, pattern));
+}
+
+/**
+ * Whether a file under `docsPath` is synced: not ignored and, when the config
+ * lists `docsInclude`, matched by one of its patterns.
+ */
+function isSyncedDocsFile(relPath: string, filter: DocsFileFilter): boolean {
+  if (isIgnored(relPath, filter.ignore)) return false;
+  if (!filter.include) return true;
+  return filter.include.some((pattern) => matchesDocsPattern(relPath, pattern));
+}
+
+interface DocsFileFilter {
+  ignore: readonly string[];
+  /** `undefined` syncs every file; a list syncs only the files it matches. */
+  include?: readonly string[];
 }
 
 async function copyVersionFromTree(
   srcDocsDir: string,
   outDir: string,
-  ignore: string[] = [],
+  filter: DocsFileFilter,
 ): Promise<SyncedPage[]> {
   if (!existsSync(srcDocsDir)) return [];
   await mkdir(outDir, { recursive: true });
@@ -448,7 +515,9 @@ async function copyVersionFromTree(
     filter: (src) => {
       const rel = path.relative(srcDocsDir, src);
       if (!rel) return true;
-      return !isIgnored(rel, ignore);
+      if (isIgnored(rel, filter.ignore)) return false;
+      // Directories are walked; `docsInclude` selects files.
+      return statSync(src).isDirectory() || isSyncedDocsFile(rel, filter);
     },
   });
   const files = await walkMdx(outDir);
@@ -535,7 +604,7 @@ async function copyVersionFromGitTag(
   tag: string,
   docsPath: string,
   outDir: string,
-  ignore: string[] = [],
+  filter: DocsFileFilter,
 ): Promise<SyncedPage[]> {
   // List tracked files under docsPath at the given tag.
   let listing: string;
@@ -561,7 +630,7 @@ async function copyVersionFromGitTag(
   for (const file of files) {
     const relUnderDocs = path.posix.relative(normalizedDocsPath, file.replace(/\\/g, '/'));
     if (!isSafeRelativePath(relUnderDocs)) continue;
-    if (isIgnored(relUnderDocs, ignore)) continue;
+    if (!isSyncedDocsFile(relUnderDocs, filter)) continue;
     let contents: Buffer;
     try {
       contents = execFileSync('git', ['show', `${tag}:${file}`], { cwd: repoRoot });
@@ -881,7 +950,7 @@ async function syncPackage(
   repoRoot: string,
 ): Promise<SyncedPackage> {
   const versions: SyncedVersion[] = [];
-  const ignore = config.docsIgnore ?? [];
+  const filter: DocsFileFilter = { ignore: config.docsIgnore ?? [], include: config.docsInclude };
   const versioned = config.versioned === true;
   // Non-versioned packages may omit `versions[]` entirely — fall back to
   // `defaultVersion` (typically `'main'`) so they still produce a synced
@@ -898,12 +967,14 @@ async function syncPackage(
   for (const version of versionList) {
     const outDir = path.join(SYNCED_DIR, config.shortName, version);
     let pages: SyncedPage[];
+    let sourceCommit: string | undefined;
     if (isWorkingTreeVersion(version) || !versioned) {
       // Working tree: read MDX directly off disk. This is the only path
       // for non-versioned packages (apps) and for the "dev preview" entry
       // on versioned packages.
       const srcDocsDir = path.join(rootDir, config.docsPath);
-      pages = await copyVersionFromTree(srcDocsDir, outDir, ignore);
+      pages = await copyVersionFromTree(srcDocsDir, outDir, filter);
+      sourceCommit = gitCommitOf(rootDir, 'HEAD');
     } else {
       // Versioned tag: resolve to an actual git tag, then `git show` the
       // tree at that tag. If the tag isn't reachable from the working
@@ -921,7 +992,8 @@ async function syncPackage(
         continue;
       }
       const docsPathInRepo = path.relative(repoRoot, path.join(rootDir, config.docsPath));
-      pages = await copyVersionFromGitTag(repoRoot, resolvedTag, docsPathInRepo, outDir, ignore);
+      pages = await copyVersionFromGitTag(repoRoot, resolvedTag, docsPathInRepo, outDir, filter);
+      sourceCommit = gitCommitOf(repoRoot, resolvedTag);
     }
     // Pull the OpenAPI document for service packages so the Scalar viewer
     // can `import` it from `_synced/api/<version>/openapi.json`.
@@ -939,6 +1011,15 @@ async function syncPackage(
       versioned
         ? `/developers/docs/${config.shortName}/${version}`
         : `/developers/docs/${config.shortName}`,
+      {
+        versionDir: path.join(SYNCED_DIR, config.shortName, version),
+        docsPathInRepo: path
+          .relative(repoRoot, path.join(rootDir, config.docsPath))
+          .replace(/\\/g, '/'),
+        sourceUrl: sourceCommit
+          ? `${config.repo.replace(/\.git$/, '').replace(/\/+$/, '')}/blob/${sourceCommit}`
+          : undefined,
+      },
     );
     // Auto-generate TypeDoc API reference. We only run TypeDoc for the
     // configured `latestVersion` (or the lone version on non-versioned

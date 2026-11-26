@@ -48,3 +48,18 @@ test('Bloom examples, runtime and documentation use the same published release',
   expect(bloom?.ref).toBe(`@oxy.so/bloom@${installed.version}`);
   expect(bloom?.localPath).toBeUndefined();
 });
+
+test('the Bloom language docs are pinned to a language release or a Bloom commit', () => {
+  const registry = JSON.parse(
+    readFileSync(new URL('../docs-registry.json', import.meta.url), 'utf8'),
+  );
+  const language = registry.repos.find(
+    (entry: { name: string }) => entry.name === 'Bloom language',
+  );
+  // A tag of the language's own release line, or a full commit until the next
+  // release carries `bloom-language.docs.config.json`; never a moving branch,
+  // and never a local checkout, so the site publishes what was released.
+  expect(language?.ref).toMatch(/^(@oxy\.so\/bloom-language@\d+\.\d+\.\d+|[0-9a-f]{40})$/);
+  expect(language?.localPath).toBeUndefined();
+  expect(language?.configPaths).toEqual(['bloom-language.docs.config.json']);
+});

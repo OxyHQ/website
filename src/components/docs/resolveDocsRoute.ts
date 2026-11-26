@@ -46,8 +46,11 @@ export function resolveDocsRoute(params: DocsRouteParams): ResolveResult {
     // failed segment looks like a version (`tnp/0.1.0` → "not published
     // yet"), or redirect to the package root for typo-shaped slugs.
     if (!stitchedSlug) {
-      const index = getPage(version, '');
-      if (index) return { kind: 'page', pkg, version, slug: '' };
+      // The index page, else the first page, as a versioned package's root
+      // does: a package whose docs have no `index.mdx` would otherwise
+      // redirect to its own root forever.
+      const index = getPage(version, '') ?? version.pages[0];
+      if (index) return { kind: 'page', pkg, version, slug: index.slug };
     }
     if (requestedVersion && !splat && looksLikeVersionSegment(requestedVersion)) {
       const placeholder: SyncedVersion = { version: requestedVersion, pages: [] };
