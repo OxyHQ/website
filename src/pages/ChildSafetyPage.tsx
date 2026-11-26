@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import TransparencyDocument from '../components/slices/TransparencyDocument';
 import { articleMdxComponents } from '../components/slices/articleMdxComponents';
-import { ARTICLE_BLOCK } from '../components/slices/articleBlock';
 import type { TocEntry } from '../components/slices/ArticleToc';
 import { Link } from '../lib/navigation';
 import { CHILD_SAFETY_PAGE } from '../lib/transparency';
@@ -30,7 +29,7 @@ import { CHILD_SAFETY_PAGE } from '../lib/transparency';
  * Keep them in sync: an inaccurate safety page is a policy problem, not a stale doc.
  * ──────────────────────────────────────────── */
 
-const { h2: Heading, p: Paragraph } = articleMdxComponents;
+const { h2: Heading, p: Paragraph, ul: List } = articleMdxComponents;
 
 const ENTRIES: TocEntry[] = [
   { id: 'commitment', label: 'Our commitment', level: 2 },
@@ -43,8 +42,6 @@ const ENTRIES: TocEntry[] = [
   { id: 'law', label: 'The law', level: 2 },
   { id: 'contact', label: 'Child safety contact', level: 2 },
 ];
-
-const LIST = `${ARTICLE_BLOCK} w-full min-w-0 text-blog-body text-foreground [&_li]:mb-2 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:ps-5`;
 
 function Strong({ children }: { children: ReactNode }) {
   return <strong className="text-foreground">{children}</strong>;
@@ -77,27 +74,24 @@ export default function ChildSafetyPage() {
 
       <Heading id="prohibited">What is not allowed</Heading>
       <Paragraph>You may not post, store, send, request or share:</Paragraph>
-      <div className={LIST}>
-        <ul>
-          <li>
-            Child sexual abuse material of any kind, including images, video, text and links, and
-            including material that is synthetic, AI-generated, drawn or edited if it sexualises a
-            minor.
-          </li>
-          <li>Any sexualised depiction of, or sexual content about, a person under 18.</li>
-          <li>
-            Grooming: contacting a minor to build trust for sexual purposes, or to move them to
-            another platform or a private channel for that purpose.
-          </li>
-          <li>Soliciting, requesting or trading sexual content involving minors.</li>
-          <li>
-            Sextortion: threatening or pressuring anyone, in particular a minor, over intimate
-            images.
-          </li>
-          <li>Trafficking, or advertising or arranging the sexual exploitation of a minor.</li>
-          <li>Content that promotes, normalises or gives instructions for any of the above.</li>
-        </ul>
-      </div>
+      <List>
+        <li>
+          Child sexual abuse material of any kind, including images, video, text and links, and
+          including material that is synthetic, AI-generated, drawn or edited if it sexualises a
+          minor.
+        </li>
+        <li>Any sexualised depiction of, or sexual content about, a person under 18.</li>
+        <li>
+          Grooming: contacting a minor to build trust for sexual purposes, or to move them to
+          another platform or a private channel for that purpose.
+        </li>
+        <li>Soliciting, requesting or trading sexual content involving minors.</li>
+        <li>
+          Sextortion: threatening or pressuring anyone, in particular a minor, over intimate images.
+        </li>
+        <li>Trafficking, or advertising or arranging the sexual exploitation of a minor.</li>
+        <li>Content that promotes, normalises or gives instructions for any of the above.</li>
+      </List>
       <Paragraph>
         Accounts that do this are suspended or ended, and the content is removed. This applies the
         same way to everyone, whatever they post and wherever on Oxy they post it.
@@ -105,28 +99,26 @@ export default function ChildSafetyPage() {
 
       <Heading id="report">How to report it</Heading>
       <Paragraph>Tell us as soon as you see something. You can:</Paragraph>
-      <div className={LIST}>
-        <ul>
-          <li>
-            <Strong>Report it in the app.</Strong> In Mention, use Report on a post, a profile or a
-            piece of media and choose <Strong>child safety</Strong>.
-          </li>
-          <li>
-            <Strong>Use the report form</Strong> at{' '}
-            <Link className="text-primary underline" to="/transparency/legal/report-content">
-              Report content
-            </Link>
-            , for anything on Oxy, with a link to where it is.
-          </li>
-          <li>
-            <Strong>Write to us</Strong> at{' '}
-            <a className="text-primary underline" href="mailto:legal@oxy.so">
-              legal@oxy.so
-            </a>{' '}
-            with the subject &ldquo;Child safety&rdquo;.
-          </li>
-        </ul>
-      </div>
+      <List>
+        <li>
+          <Strong>Report it in the app.</Strong> In Mention, use Report on a post, a profile or a
+          piece of media and choose <Strong>child safety</Strong>.
+        </li>
+        <li>
+          <Strong>Use the report form</Strong> at{' '}
+          <Link className="text-primary underline" to="/transparency/legal/report-content">
+            Report content
+          </Link>
+          , for anything on Oxy, with a link to where it is.
+        </li>
+        <li>
+          <Strong>Write to us</Strong> at{' '}
+          <a className="text-primary underline" href="mailto:legal@oxy.so">
+            legal@oxy.so
+          </a>{' '}
+          with the subject &ldquo;Child safety&rdquo;.
+        </li>
+      </List>
       <Paragraph>
         Messages in Allo are end-to-end encrypted, so we cannot see them. If someone sends you
         something that exploits a child, do not forward it; report the person and say what happened
@@ -135,34 +127,31 @@ export default function ChildSafetyPage() {
       </Paragraph>
 
       <Heading id="what-happens">What happens after a report</Heading>
-      <div className={LIST}>
-        <ul>
-          <li>
-            <Strong>A person reviews it.</Strong> A child safety report is not shown to a vote or a
-            jury and is not decided by software. It is referred to Oxy&apos;s reviewed takedown
-            queue, and nothing is blocked until a member of our staff has looked at it and decided.
-          </li>
-          <li>
-            <Strong>Confirmed material is blocked for everyone.</Strong> The file is blocked for
-            every owner and every app that uses it, and its fingerprint goes on a blocklist, so the
-            same file cannot be uploaded again.
-          </li>
-          <li>
-            <Strong>The uploader is not given a way to dispute it in the usual way.</Strong> For
-            child safety, the owner is not sent the claim notice and cannot answer it with a
-            counter-notice. If we blocked something by mistake, our staff record the dispute and
-            reinstate it.
-          </li>
-          <li>
-            <Strong>The account is dealt with.</Strong> Depending on what we find, we restrict,
-            suspend or end the account.
-          </li>
-          <li>
-            <Strong>Your identity stays private.</Strong> The app that refers a report to us does
-            not tell us who made it.
-          </li>
-        </ul>
-      </div>
+      <List>
+        <li>
+          <Strong>A person reviews it.</Strong> A child safety report is not shown to a vote or a
+          jury and is not decided by software. It is referred to Oxy&apos;s reviewed takedown queue,
+          and nothing is blocked until a member of our staff has looked at it and decided.
+        </li>
+        <li>
+          <Strong>Confirmed material is blocked for everyone.</Strong> The file is blocked for every
+          owner and every app that uses it, and its fingerprint goes on a blocklist, so the same
+          file cannot be uploaded again.
+        </li>
+        <li>
+          <Strong>The uploader is not given a way to dispute it in the usual way.</Strong> For child
+          safety, the owner is not sent the claim notice and cannot answer it with a counter-notice.
+          If we blocked something by mistake, our staff record the dispute and reinstate it.
+        </li>
+        <li>
+          <Strong>The account is dealt with.</Strong> Depending on what we find, we restrict,
+          suspend or end the account.
+        </li>
+        <li>
+          <Strong>Your identity stays private.</Strong> The app that refers a report to us does not
+          tell us who made it.
+        </li>
+      </List>
       <Paragraph>
         Reports are the main way we find this material, so please make them. We act on what people
         report and on what we can see.
