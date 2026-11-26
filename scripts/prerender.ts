@@ -64,6 +64,7 @@ import { hasLocalizedVariants } from '../src/lib/localizedRoute';
 import { buildRedirectsFile } from './redirects.ts';
 import {
   ACCOUNT_DELETION_PAGE,
+  CHILD_SAFETY_PAGE,
   COUNTER_NOTICE_PAGE,
   LEGAL_DOCUMENTS,
   REPORT_CONTENT_PAGE,
@@ -604,6 +605,11 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     title: COUNTER_NOTICE_PAGE.title,
     description: COUNTER_NOTICE_PAGE.description,
     canonicalPath: COUNTER_NOTICE_PAGE.path,
+  },
+  [CHILD_SAFETY_PAGE.path]: {
+    title: CHILD_SAFETY_PAGE.title,
+    description: CHILD_SAFETY_PAGE.description,
+    canonicalPath: CHILD_SAFETY_PAGE.path,
   },
   [ACCOUNT_DELETION_PAGE.path]: {
     title: ACCOUNT_DELETION_PAGE.title,

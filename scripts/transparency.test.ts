@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { canonicalTo } from '../src/lib/canonicalPath';
 import {
   ACCOUNT_DELETION_PAGE,
+  CHILD_SAFETY_PAGE,
   COUNTER_NOTICE_PAGE,
   LEGAL_DOCUMENTS,
   REPORT_CONTENT_PAGE,
@@ -56,6 +57,7 @@ describe('transparency document migration', () => {
       REPORT_CONTENT_PAGE.path,
       COUNTER_NOTICE_PAGE.path,
       ACCOUNT_DELETION_PAGE.path,
+      CHILD_SAFETY_PAGE.path,
     ];
     expect(new Set(paths).size).toBe(paths.length);
     for (const path of paths) expect(hasLocalizedVariants(path)).toBe(false);

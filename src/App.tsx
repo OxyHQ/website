@@ -107,6 +107,7 @@ const LegalPage = lazy(() => import('./pages/LegalPage'));
 const ReportContentPage = lazy(() => import('./pages/ReportContentPage'));
 const CounterNoticePage = lazy(() => import('./pages/CounterNoticePage'));
 const AccountDeletionPage = lazy(() => import('./pages/AccountDeletionPage'));
+const ChildSafetyPage = lazy(() => import('./pages/ChildSafetyPage'));
 const UserProfilePage = lazy(() => import('./pages/UserProfilePage'));
 const UserFollowersPage = lazy(() => import('./pages/UserFollowersPage'));
 const FeatureBoardPage = lazy(() => import('./pages/FeatureBoardPage'));
@@ -490,6 +491,7 @@ function PublicRoutes() {
       <Route path="settings" element={<SettingsPage />} />
       <Route path="transparency" element={<TransparencyPage />} />
       <Route path="transparency/account-deletion" element={<AccountDeletionPage />} />
+      <Route path="transparency/child-safety" element={<ChildSafetyPage />} />
       <Route path="transparency/legal" element={<TransparencyPage legal />} />
       {TRANSPARENCY_REDIRECTS.map(([from, to]) => (
         <Route key={from} path={from.slice(1)} element={<TransparencyRedirect to={to} />} />
