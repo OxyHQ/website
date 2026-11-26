@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-26T16:01:08.185Z",
+  "generatedAt": "2026-11-26T16:26:24.994Z",
   "packages": [
     {
       "package": "@oxy.so/bloom",
@@ -2129,6 +2129,14 @@
               "slug": "multi-agent-chat",
               "title": "Multi-agent Chat",
               "file": "bloom/23.9.1/multi-agent-chat.mdx",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "no-nativewind",
+              "title": "Bloom without NativeWind",
+              "description": "The decision and plan that take NativeWind, react-native-css and Tailwind out of Bloom, with the look unchanged.",
+              "file": "bloom/23.9.1/no-nativewind.mdx",
               "order": 1000,
               "section": "guides"
             },

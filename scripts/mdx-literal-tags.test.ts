@@ -31,6 +31,16 @@ describe('escapeUnclosedProseTags', () => {
     expect(escapeUnclosedProseTags(input)).toEqual({ source: input, escaped: [] });
   });
 
+  test('joins a line that wraps inside inline code and starts with a brace', async () => {
+    // The sentence Bloom 23.9.1 shipped in docs/storage.mdx.
+    const input =
+      '# Storage\n\nA try/catch each. `createStorage(namespace,\n{ adapter?, onError? })` from `x` is that file.\n';
+    await expect(compiles(input)).rejects.toThrow('Could not parse expression');
+    const { source } = escapeUnclosedProseTags(input);
+    expect(source).toContain('`createStorage(namespace, { adapter?, onError? })`');
+    expect(await compiles(source)).toBe(true);
+  });
+
   test('does not paper over an unrelated syntax error', () => {
     const input = 'An expression {that never closes\n';
     expect(escapeUnclosedProseTags(input)).toEqual({ source: input, escaped: [] });
