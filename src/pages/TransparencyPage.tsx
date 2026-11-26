@@ -44,6 +44,11 @@ const transparencyCollection: TransparencyCollectionProps = {
       documents: [{ title: 'Legal documents', path: '/transparency/legal/' }],
     },
     {
+      id: 'your-data',
+      title: 'Your data',
+      documents: [{ title: ACCOUNT_DELETION_PAGE.title, path: `${ACCOUNT_DELETION_PAGE.path}/` }],
+    },
+    {
       id: 'operations',
       title: 'Operations & updates',
       documents: [
@@ -74,10 +79,7 @@ const legalCollection: TransparencyCollectionProps = {
     {
       id: 'privacy',
       title: 'Privacy & data',
-      documents: [
-        ...legalDocuments.filter(({ slug }) => ['privacy', 'cookies', 'dpa'].includes(slug)),
-        { path: `${ACCOUNT_DELETION_PAGE.path}/`, title: ACCOUNT_DELETION_PAGE.title },
-      ],
+      documents: legalDocuments.filter(({ slug }) => ['privacy', 'cookies', 'dpa'].includes(slug)),
     },
     {
       id: 'terms',
