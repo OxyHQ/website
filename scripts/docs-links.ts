@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 /**
  * Point a source repo's own root-relative links at this site's docs tree.
  *
@@ -125,4 +127,57 @@ export function removedSlugsOf(
     for (const slug of slugs) if (!versionSlugs.has(slug)) removed.add(slug);
   }
   return removed;
+}
+
+export interface RelativeDocLinkContext {
+  /** The page's directory relative to the version root (`''` at the root). */
+  pageDir: string;
+  /** Every synced file of the version, relative to its root, to its page slug. */
+  fileToSlug: ReadonlyMap<string, string>;
+  /** The version's URL on this site, e.g. `/developers/docs/bloom/9.0.0`. */
+  baseUrl: string;
+  /** The docs directory's path inside the source repo, e.g. `docs`. */
+  docsPathInRepo: string;
+  /** `<repo>/blob/<commit>`: where a file this site does not serve is read. */
+  sourceUrl?: string;
+}
+
+/**
+ * Resolve a doc's relative links to other docs (`[Tokens](tokens.mdx#space)`,
+ * `[Theme](./theme.mdx)`, `[ADR](../adr/0001.md)`) the way its repo resolves
+ * them: against the page's own directory.
+ *
+ * Copied verbatim they resolve against the page's URL instead, so
+ * `/developers/docs/bloom/9.0.0/dialog/` linked `./theme.mdx` as
+ * `/developers/docs/bloom/9.0.0/dialog/theme.mdx`, which is nothing. A target
+ * this version serves becomes its page URL; any other file in the repo becomes
+ * its source on GitHub at the synced commit; a target outside the repo, or any
+ * link inside a fenced code block, is left as written.
+ */
+export function rewriteRelativeDocLinks(source: string, context: RelativeDocLinkContext): string {
+  const lines = source.split('\n');
+  let fence: string | null = null;
+  for (const [index, line] of lines.entries()) {
+    const marker = line.match(/^\s*(`{3,}|~{3,})/)?.[1];
+    if (marker) {
+      if (fence === null) fence = marker[0] as string;
+      else if (marker[0] === fence) fence = null;
+      continue;
+    }
+    if (fence !== null) continue;
+    lines[index] = line.replace(
+      /(\]\()((?:\.{1,2}\/)*[A-Za-z0-9_][A-Za-z0-9._/-]*\.mdx?)(#[^)\s]*)?\)/g,
+      (match, open: string, target: string, anchor: string | undefined) => {
+        const resolved = path.posix.normalize(path.posix.join(context.pageDir || '.', target));
+        const slug = context.fileToSlug.get(resolved);
+        if (slug !== undefined) {
+          return `${open}${context.baseUrl}${slug ? `/${slug}` : ''}${anchor ?? ''})`;
+        }
+        const repoPath = path.posix.normalize(path.posix.join(context.docsPathInRepo, resolved));
+        if (!context.sourceUrl || repoPath.startsWith('../') || repoPath === '..') return match;
+        return `${open}${context.sourceUrl}/${repoPath}${anchor ?? ''})`;
+      },
+    );
+  }
+  return lines.join('\n');
 }
