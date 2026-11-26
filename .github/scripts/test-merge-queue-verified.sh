@@ -52,7 +52,12 @@ jobs_json() { printf '{"jobs":[{"name":"checks","conclusion":"success"},{"name":
 
 fixture verified "{\"workflow_runs\":[$(run_json 11 merge_group success)]}" 11 "$(jobs_json success)"
 fixture none '{"workflow_runs":[]}'
-fixture failed-run "{\"workflow_runs\":[$(run_json 12 merge_group failure)]}" 12 "$(jobs_json success)"
+# A rescued run concludes `failure` and a raced one `cancelled`; their green
+# CI complete vouches. A run still in progress (no conclusion) never does.
+fixture rescued-run "{\"workflow_runs\":[$(run_json 12 merge_group failure)]}" 12 "$(jobs_json success)"
+fixture raced-run "{\"workflow_runs\":[$(run_json 20 merge_group cancelled)]}" 20 "$(jobs_json success)"
+fixture rescued-red-gate "{\"workflow_runs\":[$(run_json 21 merge_group failure)]}" 21 "$(jobs_json failure)"
+fixture unfinished-run "{\"workflow_runs\":[$(run_json 22 merge_group '')]}" 22 "$(jobs_json success)"
 fixture red-gate "{\"workflow_runs\":[$(run_json 13 merge_group success)]}" 13 "$(jobs_json failure)"
 fixture other-sha "{\"workflow_runs\":[$(run_json 14 merge_group success OxyHQ/website .github/workflows/checks.yml fedcba9876543210fedcba9876543210fedcba98)]}" 14 "$(jobs_json success)"
 fixture other-workflow "{\"workflow_runs\":[$(run_json 15 merge_group success OxyHQ/website .github/workflows/evil.yml)]}" 15 "$(jobs_json success)"
@@ -84,7 +89,9 @@ expect() {
 
 expect 'verified' '0 [11] verified=true ' "$(run_predicate verified)"
 expect 'none' '0 [] verified=false ' "$(run_predicate none)"
-for name in failed-run red-gate other-sha other-workflow fork pull-request push-run; do
+expect 'rescued-run' '0 [12] verified=true ' "$(run_predicate rescued-run)"
+expect 'raced-run' '0 [20] verified=true ' "$(run_predicate raced-run)"
+for name in rescued-red-gate unfinished-run red-gate other-sha other-workflow fork pull-request push-run; do
   expect "$name-does-not-verify" '0 [] verified=false ' "$(run_predicate "$name")"
 done
 expect 'api-down-fails' '1 [] ' "$(run_predicate api-down)"
