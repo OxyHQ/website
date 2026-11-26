@@ -62,6 +62,21 @@ export const COUNTER_NOTICE_PAGE = {
     'If Oxy removed your content after a claim and you believe that was a mistake, ask for it to be restored.',
 } as const;
 
+/**
+ * How to delete an Oxy account and what happens to the data. Google Play needs
+ * this URL to render without signing in and on a fresh database, so it is a
+ * static page beside the legal collection, not a CMS document: it is not in
+ * `LEGAL_DOCUMENTS`, so `LegalPage` never asks the CMS for it. `/account-deletion`
+ * is the address the Play Console form and older links carry; it redirects here.
+ */
+export const ACCOUNT_DELETION_PAGE = {
+  slug: 'account-deletion',
+  path: '/transparency/legal/account-deletion',
+  title: 'Delete your Oxy account',
+  description:
+    'How to permanently delete your Oxy account and identity, what data is removed, and what is kept.',
+} as const;
+
 export const TRANSPARENCY_DOCUMENTS = [
   {
     slug: 'manifesto',
@@ -103,6 +118,7 @@ export const TRANSPARENCY_REDIRECTS: ReadonlyArray<readonly [string, string]> = 
   ),
   ['/legal', '/transparency/legal/'],
   ...LEGAL_DOCUMENTS.map(({ slug }) => [`/legal/${slug}`, `/transparency/legal/${slug}/`] as const),
+  ['/account-deletion', `${ACCOUNT_DELETION_PAGE.path}/`],
   ['/company/transparency/policies/privacy', '/transparency/legal/privacy/'],
   ['/company/transparency/policies/terms-of-service', '/transparency/legal/terms/'],
   ['/company/transparency/policies/cookies', '/transparency/legal/cookies/'],

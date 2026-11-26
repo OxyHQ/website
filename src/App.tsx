@@ -494,9 +494,9 @@ function PublicRoutes() {
         <Route key={from} path={from.slice(1)} element={<TransparencyRedirect to={to} />} />
       ))}
       {/* Public, no-auth URL required by the Play Console Data safety form. */}
-      <Route path="account-deletion" element={<AccountDeletionPage />} />
       {/* A form, not a CMS document; declared before `:section` for readability
           (react-router ranks the static segment first either way). */}
+      <Route path="transparency/legal/account-deletion" element={<AccountDeletionPage />} />
       <Route path="transparency/legal/report-content" element={<ReportContentPage />} />
       <Route path="transparency/legal/counter-notice" element={<CounterNoticePage />} />
       <Route path="transparency/legal/:section" element={<LegalPage />} />
