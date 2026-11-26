@@ -34,7 +34,12 @@ if [[ ! "$DEPLOY_SHA" =~ ^([0-9a-f]{40}|[0-9a-f]{64})$ ]]; then
   exit 1
 fi
 
-# Every successful merge_group run of checks.yml for exactly this SHA. The
+# Every finished merge_group run of checks.yml for exactly this SHA that
+# concluded `success`, `cancelled` or `failure`: the Seldon race cancels a
+# losing lane (the run concludes `cancelled`), and a Seldon lane that failed on
+# the house network is rescued by a hosted rerun (the run concludes `failure`).
+# The run's conclusion vouches for nothing either way; its `CI complete`, below,
+# does. The
 # workflow is addressed by FILE, not by the display name "Checks", so a second
 # workflow that happens to share the name cannot vouch for a commit.
 candidate_runs="$(
@@ -47,7 +52,7 @@ candidate_runs="$(
       '.workflow_runs[]
         | select(.head_sha == $sha
             and .event == "merge_group"
-            and .conclusion == "success"
+            and (.conclusion == "success" or .conclusion == "cancelled" or .conclusion == "failure")
             and .head_repository.full_name == $repo
             and (.path == $path or (.path | startswith($path + "@"))))
         | .id'
@@ -72,7 +77,7 @@ done
 if [[ -n "$verified_run" ]]; then
   echo "Merge-queue verified: Checks run $verified_run tested $DEPLOY_SHA in merge_group and '$required_job' passed." >&2
 else
-  echo "Not merge-queue verified: no successful merge_group Checks run with a green '$required_job' exists for $DEPLOY_SHA." >&2
+  echo "Not merge-queue verified: no merge_group Checks run with a green '$required_job' exists for $DEPLOY_SHA." >&2
 fi
 if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
   echo "verified=$([[ -n "$verified_run" ]] && echo true || echo false)" >>"$GITHUB_OUTPUT"
