@@ -6,6 +6,12 @@
       "ref": "@oxy.so/bloom@21.0.0"
     },
     {
+      "name": "Bloom language",
+      "git": "https://github.com/OxyHQ/Bloom.git",
+      "ref": "102b1928a200eed4aa47744b6d3c1362b0edbd95",
+      "configPaths": ["bloom-language.docs.config.json"]
+    },
+    {
       "name": "OxyHQServices",
       "localPath": "/home/nate/Oxy/OxyHQServices",
       "git": "https://github.com/OxyHQ/OxyHQServices.git",

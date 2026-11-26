@@ -116,6 +116,47 @@ const it: Translations = {
   },
 
   bloom: {
+    languageTitle: 'Scrivi le interfacce come una catena.',
+    languageDescription:
+      'Il linguaggio Bloom porta in TypeScript viste e modificatori in stile SwiftUI. Ogni valore è un token di Bloom e un compilatore in Rust controlla ogni catena prima del rilascio.',
+    languageStart: 'Inizia',
+    languageDocs: 'Documentazione del linguaggio',
+    language: {
+      fast: {
+        title: 'Veloce per costruzione',
+        description:
+          'Il compilatore estrae le catene statiche, così non costano nulla in fase di rendering. I controlli sui costi limitano ogni nodo ai fiber, agli hook e alle letture di contesto del JSX che sostituisce.',
+      },
+      native: {
+        title: 'Nativo su ogni piattaforma',
+        description:
+          'Su un dispositivo ogni nodo è una vista React Native. Dove la piattaforma ha un proprio componente, il linguaggio usa quello: SwiftUI su iOS, la lente su Android e OxyOS e CSS atomico sul web.',
+      },
+      mention: {
+        title: 'In funzione in Mention',
+        description:
+          'Circa il 98% dell’interfaccia di Mention è scritto nel linguaggio nelle attuali build di prova.',
+      },
+    },
+    bloomLang: {
+      status: 'In sviluppo',
+      title: '.bloom, il linguaggio di Bloom',
+      description:
+        'Una sintassi propria per interfacce e logica, compilata da bloomc, scritto in Rust: tipi statici, enum con match, Result per gli errori, async con concorrenza strutturata e reattività risolta in fase di compilazione. Include un formattatore, un language server e un’estensione per VS Code.',
+      design: 'Progetto (ADR 0001)',
+      spec: 'Bozza della specifica',
+      phaseTitle: 'Fase 0, misurata su una schermata',
+      phaseNote:
+        'Una sola schermata: le impostazioni delle notifiche di Mention, confrontate con la loro migliore versione TypeScript scritta a mano, in Jest su una macchina condivisa, quindi i tempi sono indicativi. Il tempo di rendering nativo non è ancora misurato. Le fasi da 1 a 3 sono in corso.',
+      stats: {
+        pixels: { value: '0', label: 'pixel diversi dalla schermata in TypeScript' },
+        cost: { value: 'Uguale', label: 'costo React al miglior TypeScript scritto a mano' },
+        speed: { value: '27%', label: 'più veloce ad attivare e salvare, mediana' },
+      },
+    },
+    qLanguage: 'Che cos’è il linguaggio Bloom?',
+    aLanguage:
+      'Un modo di scrivere interfacce Bloom in TypeScript come viste e modificatori concatenati, in cui ogni valore è un token di Bloom. Disegna i componenti di Bloom, quindi una schermata appare uguale al suo JSX, e un compilatore in Rust la controlla e la ottimizza in fase di build.',
     board: {
       backlog: 'Da pianificare',
       todo: 'Da fare',

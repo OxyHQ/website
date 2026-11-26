@@ -40,6 +40,13 @@ export interface DocsConfig {
    * public docs site.
    */
   docsIgnore?: string[];
+  /**
+   * Optional: when present, only the files under `docsPath` that match one of
+   * these patterns are synced (after `docsIgnore`). A `*` matches within one
+   * path segment (`bloom-language*.mdx`); a trailing `/*` is a directory.
+   * Lets one `docs/` folder publish several packages.
+   */
+  docsInclude?: string[];
   /** Optional: TypeScript entry to feed to TypeDoc for API ref extraction. */
   typedoc?: { entry: string };
   /** Optional: Storybook entry for live component examples. */
@@ -114,7 +121,9 @@ export interface DocsRegistryEntry {
    * Optional: when the repo is a monorepo, the path *within* the repo where
    * `docs.config.json` files live. If unset, defaults to the repo root.
    * Multiple paths allow one repo to host many configs (e.g. OxyHQServices
-   * hosts a config per `packages/<name>`).
+   * hosts a config per `packages/<name>`). A path ending in `.json` names
+   * the config file itself (Bloom's `bloom-language.docs.config.json`), for a
+   * repo with more than one config in a directory.
    */
   configPaths?: string[];
   /**

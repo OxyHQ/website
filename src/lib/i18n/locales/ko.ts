@@ -113,6 +113,47 @@ const ko: Translations = {
   },
 
   bloom: {
+    languageTitle: '인터페이스를 체인으로 작성하세요.',
+    languageDescription:
+      'Bloom 언어는 SwiftUI 스타일의 뷰와 모디파이어를 TypeScript로 가져옵니다. 모든 값은 Bloom 토큰이며, Rust 컴파일러가 출시 전에 모든 체인을 검사합니다.',
+    languageStart: '시작하기',
+    languageDocs: '언어 문서',
+    language: {
+      fast: {
+        title: '구조부터 빠르게',
+        description:
+          '컴파일러가 정적 체인을 끌어올려 렌더링 비용이 들지 않습니다. 비용 게이트는 각 노드를 그것이 대체하는 JSX의 fiber, 훅, 컨텍스트 읽기 수준으로 유지합니다.',
+      },
+      native: {
+        title: '모든 플랫폼에서 네이티브',
+        description:
+          '기기에서 각 노드는 React Native 뷰입니다. 플랫폼에 자체 컴포넌트가 있으면 언어가 그것을 그립니다. iOS에서는 SwiftUI, Android와 OxyOS에서는 렌즈, 웹에서는 아토믹 CSS입니다.',
+      },
+      mention: {
+        title: 'Mention에서 실행 중',
+        description:
+          '현재 테스트 빌드에서 Mention 인터페이스의 약 98%가 이 언어로 작성되어 있습니다.',
+      },
+    },
+    bloomLang: {
+      status: '개발 중',
+      title: '.bloom, Bloom의 자체 언어',
+      description:
+        '인터페이스와 로직을 위한 자체 문법으로, Rust로 작성된 bloomc가 컴파일합니다. 정적 타입, match가 있는 enum, 오류를 위한 Result, 구조적 동시성을 갖춘 async, 컴파일 시점에 결정되는 반응성을 제공합니다. 포매터, 언어 서버, VS Code 확장도 함께 제공됩니다.',
+      design: '설계 (ADR 0001)',
+      spec: '명세 초안',
+      phaseTitle: '0단계, 한 화면에서 측정',
+      phaseNote:
+        '한 화면만 측정했습니다: Mention의 알림 설정을 직접 작성한 최고의 TypeScript 버전과 비교했으며, 공유 머신의 Jest에서 측정해 시간은 참고용입니다. 네이티브 렌더링 시간은 아직 측정하지 않았습니다. 1~3단계가 진행 중입니다.',
+      stats: {
+        pixels: { value: '0', label: 'TypeScript 화면과 다른 픽셀' },
+        cost: { value: '동일', label: '직접 작성한 최고의 TypeScript와 같은 React 비용' },
+        speed: { value: '27%', label: '전환과 저장이 더 빠름, 중앙값' },
+      },
+    },
+    qLanguage: 'Bloom 언어란 무엇인가요?',
+    aLanguage:
+      '뷰와 체인으로 연결한 모디파이어로 TypeScript에서 Bloom 인터페이스를 작성하는 방법이며, 모든 값은 Bloom 토큰입니다. Bloom 자체 컴포넌트를 그리므로 화면이 JSX와 똑같이 보이고, Rust 컴파일러가 빌드 시점에 검사하고 최적화합니다.',
     board: {
       backlog: '백로그',
       todo: '할 일',

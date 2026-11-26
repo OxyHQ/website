@@ -117,6 +117,47 @@ const fr: Translations = {
   },
 
   bloom: {
+    languageTitle: 'Écrivez vos interfaces en chaîne.',
+    languageDescription:
+      'Le langage Bloom apporte à TypeScript les vues et les modificateurs à la manière de SwiftUI. Chaque valeur est un token Bloom, et un compilateur en Rust vérifie chaque chaîne avant sa mise en ligne.',
+    languageStart: 'Commencer',
+    languageDocs: 'Documentation du langage',
+    language: {
+      fast: {
+        title: 'Rapide par construction',
+        description:
+          'Le compilateur extrait les chaînes statiques pour qu’elles ne coûtent rien au rendu. Des contrôles de coût limitent chaque nœud aux fibers, hooks et lectures de contexte du JSX qu’il remplace.',
+      },
+      native: {
+        title: 'Natif sur chaque plateforme',
+        description:
+          'Sur un appareil, chaque nœud est une vue React Native. Quand la plateforme a son propre composant, le langage l’utilise : SwiftUI sur iOS, la lentille sur Android et OxyOS, et du CSS atomique sur le web.',
+      },
+      mention: {
+        title: 'En service dans Mention',
+        description:
+          'Environ 98 % de l’interface de Mention est écrite dans le langage dans ses versions de test actuelles.',
+      },
+    },
+    bloomLang: {
+      status: 'En développement',
+      title: '.bloom, le langage propre à Bloom',
+      description:
+        'Une syntaxe propre pour les interfaces et la logique, compilée par bloomc, écrit en Rust : types statiques, enums avec match, Result pour les erreurs, async avec concurrence structurée et réactivité résolue à la compilation. Un formateur, un serveur de langage et une extension VS Code l’accompagnent.',
+      design: 'Conception (ADR 0001)',
+      spec: 'Brouillon de la spécification',
+      phaseTitle: 'Phase 0, mesurée sur un écran',
+      phaseNote:
+        'Un seul écran : les réglages de notifications de Mention, comparés à leur meilleure version TypeScript écrite à la main, dans Jest sur une machine partagée ; les durées sont donc indicatives. Le temps de rendu natif n’est pas encore mesuré. Les phases 1 à 3 sont en cours.',
+      stats: {
+        pixels: { value: '0', label: 'pixel différent de l’écran en TypeScript' },
+        cost: { value: 'Égal', label: 'coût React au meilleur TypeScript écrit à la main' },
+        speed: { value: '27 %', label: 'plus rapide pour activer et enregistrer, médiane' },
+      },
+    },
+    qLanguage: 'Qu’est-ce que le langage Bloom ?',
+    aLanguage:
+      'Une façon d’écrire des interfaces Bloom en TypeScript avec des vues et des modificateurs enchaînés, chaque valeur étant un token Bloom. Il dessine les composants de Bloom, donc un écran a le même rendu que son JSX, et un compilateur en Rust le vérifie et l’optimise à la compilation.',
     board: {
       backlog: 'À prévoir',
       todo: 'À faire',
