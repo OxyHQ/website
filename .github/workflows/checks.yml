@@ -322,7 +322,7 @@ jobs:
 
   # checks's hosted twin in the Seldon race: the same name and steps.
   checks-hosted:
-    name: checks
+    name: ${{ vars.CI_SELDON_RACE == 'true' && 'checks' || 'checks (seldon twin, off)' }}
     needs: [provenance, race]
     # `!cancelled()`: an ancestor skipped on this event (provenance, a twin) must not skip it.
     if: ${{ !cancelled() && needs.race.outputs.race == 'true' }}
@@ -336,7 +336,7 @@ jobs:
   # checks's rescue: reruns it hosted when its Seldon lane failed (the house
   # network drops connections); a genuine failure fails again.
   checks-rescue:
-    name: checks
+    name: ${{ vars.CI_SELDON_RACE == 'true' && 'checks' || 'checks (seldon rescue, off)' }}
     needs: [provenance, checks]
     if: ${{ !cancelled() && needs.checks.result == 'failure' && vars.CI_SELDON_RACE == 'true' && github.run_attempt == 1 && (github.event_name == 'pull_request' || github.event_name == 'merge_group') && !github.event.pull_request.head.repo.fork && needs.provenance.outputs.verified != 'true' }}
     runs-on: ubuntu-latest
@@ -393,7 +393,7 @@ jobs:
 
   # server's hosted twin in the Seldon race: the same name, services and steps.
   server-hosted:
-    name: server
+    name: ${{ vars.CI_SELDON_RACE == 'true' && 'server' || 'server (seldon twin, off)' }}
     needs: [changes, race-2]
     if: ${{ needs.race-2.outputs.race == 'true' && !cancelled() && needs.changes.result == 'success' && needs.changes.outputs.server == 'true' }}
     runs-on: ubuntu-latest
@@ -407,7 +407,7 @@ jobs:
 
   # server's rescue: reruns it hosted when its Seldon lane failed.
   server-rescue:
-    name: server
+    name: ${{ vars.CI_SELDON_RACE == 'true' && 'server' || 'server (seldon rescue, off)' }}
     needs: [changes, server]
     if: ${{ !cancelled() && needs.server.result == 'failure' && vars.CI_SELDON_RACE == 'true' && github.run_attempt == 1 && (github.event_name == 'pull_request' || github.event_name == 'merge_group') && !github.event.pull_request.head.repo.fork && needs.changes.result == 'success' && needs.changes.outputs.server == 'true' }}
     runs-on: ubuntu-latest
@@ -468,7 +468,7 @@ jobs:
 
   # review's hosted twin in the Seldon race: the same name and steps.
   review-hosted:
-    name: review
+    name: ${{ vars.CI_SELDON_RACE == 'true' && 'review' || 'review (seldon twin, off)' }}
     needs: [changes, race-2]
     if: ${{ needs.race-2.outputs.race == 'true' && !cancelled() && needs.changes.result == 'success' && needs.changes.outputs.review == 'true' }}
     runs-on: ubuntu-latest
@@ -480,7 +480,7 @@ jobs:
 
   # review's rescue: reruns it hosted when its Seldon lane failed.
   review-rescue:
-    name: review
+    name: ${{ vars.CI_SELDON_RACE == 'true' && 'review' || 'review (seldon rescue, off)' }}
     needs: [changes, review]
     if: ${{ !cancelled() && needs.review.result == 'failure' && vars.CI_SELDON_RACE == 'true' && github.run_attempt == 1 && (github.event_name == 'pull_request' || github.event_name == 'merge_group') && !github.event.pull_request.head.repo.fork && needs.changes.result == 'success' && needs.changes.outputs.review == 'true' }}
     runs-on: ubuntu-latest
