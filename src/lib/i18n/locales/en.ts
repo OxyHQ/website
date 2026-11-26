@@ -131,6 +131,47 @@ const en = {
   },
 
   bloom: {
+    languageTitle: 'Write interfaces as a chain.',
+    languageDescription:
+      'The Bloom language brings SwiftUI-style views and modifiers to TypeScript. Every value is a Bloom token, and a Rust compiler checks every chain before it ships.',
+    languageStart: 'Get started',
+    languageDocs: 'Language docs',
+    language: {
+      fast: {
+        title: 'Fast by construction',
+        description:
+          'The compiler hoists static chains so they cost nothing to render. Cost gates hold every node to the fibers, hooks and context reads of the JSX it replaces.',
+      },
+      native: {
+        title: 'Native on every platform',
+        description:
+          'On a device each node is a React Native view. Where the platform has its own component, the language draws it: SwiftUI on iOS, the lens on Android and OxyOS, and atomic CSS on the web.',
+      },
+      mention: {
+        title: 'Running in Mention',
+        description:
+          'About 98% of Mention’s interface is written in the language in its current test builds.',
+      },
+    },
+    bloomLang: {
+      status: 'In development',
+      title: '.bloom, Bloom’s own language',
+      description:
+        'Its own syntax for interfaces and logic, compiled by bloomc, written in Rust: static types, enums with match, Result for errors, async with structured concurrency and reactivity resolved at compile time. A formatter, a language server and a VS Code extension come with it.',
+      design: 'Design (ADR 0001)',
+      spec: 'Specification draft',
+      phaseTitle: 'Phase 0, measured on one screen',
+      phaseNote:
+        'One screen: Mention’s notification settings, compared with its best hand-written TypeScript in Jest on a shared machine, so the timings are indicative. Native render time is not measured yet. Phases 1 to 3 are in progress.',
+      stats: {
+        pixels: { value: '0', label: 'pixels differ from the TypeScript screen' },
+        cost: { value: 'Equal', label: 'React cost to the best hand-written TypeScript' },
+        speed: { value: '27%', label: 'faster toggle and save, median' },
+      },
+    },
+    qLanguage: 'What is the Bloom language?',
+    aLanguage:
+      'A way to write Bloom interfaces in TypeScript as views and chained modifiers, every value a Bloom token. It draws Bloom’s own components, so a screen looks the same as its JSX, and a Rust compiler checks and optimises it at build time.',
     board: {
       backlog: 'Backlog',
       todo: 'To do',

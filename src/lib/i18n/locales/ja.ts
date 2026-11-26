@@ -115,6 +115,47 @@ const ja: Translations = {
   },
 
   bloom: {
+    languageTitle: 'インターフェースをチェーンで書く。',
+    languageDescription:
+      'Bloom 言語は、SwiftUI のようなビューとモディファイアを TypeScript にもたらします。すべての値は Bloom のトークンで、Rust 製のコンパイラがリリース前にすべてのチェーンを検査します。',
+    languageStart: 'はじめる',
+    languageDocs: '言語ドキュメント',
+    language: {
+      fast: {
+        title: '設計から速い',
+        description:
+          'コンパイラが静的なチェーンを巻き上げるため、描画時のコストはかかりません。コストゲートが、各ノードを置き換え元の JSX と同じ fiber、フック、コンテキスト読み取りの数に抑えます。',
+      },
+      native: {
+        title: '各プラットフォームでネイティブ',
+        description:
+          'デバイス上では各ノードが React Native のビューです。プラットフォーム独自のコンポーネントがあれば、言語はそれを描画します。iOS では SwiftUI、Android と OxyOS ではレンズ、Web ではアトミック CSS です。',
+      },
+      mention: {
+        title: 'Mention で稼働中',
+        description:
+          '現在のテストビルドでは、Mention のインターフェースの約 98% がこの言語で書かれています。',
+      },
+    },
+    bloomLang: {
+      status: '開発中',
+      title: '.bloom、Bloom 独自の言語',
+      description:
+        'インターフェースとロジックのための独自の構文で、Rust 製の bloomc がコンパイルします。静的型、match を伴う enum、エラーのための Result、構造化並行性を備えた async、コンパイル時に解決されるリアクティビティ。フォーマッタ、言語サーバー、VS Code 拡張機能も備えます。',
+      design: '設計（ADR 0001）',
+      spec: '仕様のドラフト',
+      phaseTitle: 'フェーズ 0、1 画面で計測',
+      phaseNote:
+        '対象は 1 画面のみ：Mention の通知設定を、手書きで最良の TypeScript 版と比較しました。共有マシン上の Jest で計測したため、時間は参考値です。ネイティブの描画時間はまだ計測していません。フェーズ 1〜3 は進行中です。',
+      stats: {
+        pixels: { value: '0', label: 'TypeScript 版の画面と異なるピクセル' },
+        cost: { value: '同等', label: '手書きで最良の TypeScript と同じ React コスト' },
+        speed: { value: '27%', label: '切り替えと保存が高速、中央値' },
+      },
+    },
+    qLanguage: 'Bloom 言語とは？',
+    aLanguage:
+      'Bloom のインターフェースを、ビューとチェーンしたモディファイアで TypeScript に書く方法です。すべての値は Bloom のトークンです。Bloom 自身のコンポーネントを描画するので画面は JSX 版と同じ見た目になり、Rust 製のコンパイラがビルド時に検査と最適化を行います。',
     board: {
       backlog: 'バックログ',
       todo: '未着手',

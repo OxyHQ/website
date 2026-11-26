@@ -112,6 +112,46 @@ const zh: Translations = {
   },
 
   bloom: {
+    languageTitle: '用链式写法构建界面。',
+    languageDescription:
+      'Bloom 语言把 SwiftUI 风格的视图和修饰符带到 TypeScript。每个值都是 Bloom 令牌，用 Rust 编写的编译器会在发布前检查每一条链。',
+    languageStart: '开始使用',
+    languageDocs: '语言文档',
+    language: {
+      fast: {
+        title: '天生高效',
+        description:
+          '编译器会提升静态链，让它们在渲染时零开销。成本门槛让每个节点的 fiber、hook 和上下文读取不超过它所替代的 JSX。',
+      },
+      native: {
+        title: '在每个平台上原生运行',
+        description:
+          '在设备上，每个节点都是 React Native 视图。平台有自己的组件时，语言就使用它：iOS 上是 SwiftUI，Android 和 OxyOS 上是透镜，Web 上是原子化 CSS。',
+      },
+      mention: {
+        title: '已在 Mention 中运行',
+        description: '在当前测试版本中，Mention 约 98% 的界面使用该语言编写。',
+      },
+    },
+    bloomLang: {
+      status: '开发中',
+      title: '.bloom，Bloom 自己的语言',
+      description:
+        '为界面和逻辑设计的专属语法，由 Rust 编写的 bloomc 编译：静态类型、带 match 的枚举、用于错误处理的 Result、支持结构化并发的 async，以及在编译期确定的响应式。还配有格式化工具、语言服务器和 VS Code 扩展。',
+      design: '设计（ADR 0001）',
+      spec: '规范草案',
+      phaseTitle: '第 0 阶段，在一个界面上测量',
+      phaseNote:
+        '仅一个界面：Mention 的通知设置，与其手写的最佳 TypeScript 版本对比，在共享机器上用 Jest 测量，因此时间仅供参考。原生渲染时间尚未测量。第 1 至第 3 阶段正在进行。',
+      stats: {
+        pixels: { value: '0', label: '个像素与 TypeScript 界面不同' },
+        cost: { value: '相同', label: '与手写最佳 TypeScript 的 React 开销相同' },
+        speed: { value: '27%', label: '切换与保存更快，中位数' },
+      },
+    },
+    qLanguage: '什么是 Bloom 语言？',
+    aLanguage:
+      '一种在 TypeScript 中用视图和链式修饰符编写 Bloom 界面的方式，每个值都是 Bloom 令牌。它绘制 Bloom 自己的组件，因此界面与其 JSX 版本完全一致，并由 Rust 编写的编译器在构建时检查和优化。',
     board: {
       backlog: '待规划',
       todo: '待办',
