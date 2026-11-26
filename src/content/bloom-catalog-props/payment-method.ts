@@ -54,7 +54,7 @@ export const props: BloomSurfaceProps = {
         { name: 'stateMessage', type: 'string', optional: true, description: 'The words under the row when `state` is not `ok` — "Declined by your bank", "This card expired in June". Without it the row draws the state\'s own label.' },
         { name: 'selectable', type: 'boolean', optional: true, description: 'Draws the radio dot in the trailing slot and announces the row as a `radio`. `PaymentMethodList variant="picker"` sets it; set it yourself only for a row inside a `radiogroup` of your own.' },
         { name: 'selected', type: 'boolean', optional: true, description: 'Whether this is the chosen one. Announced as `aria-checked` on a `radio`.' },
-        { name: 'action', type: 'ReactNode', optional: true, description: "A trailing control — a `GlyphButton` with the row's menu, a `Button`." },
+        { name: 'action', type: 'ReactNode', optional: true, description: "A trailing control — a `Button` with the row's menu, a `Button`." },
         { name: 'onPress', type: '() => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'density', type: 'PaymentMethodDensity', options: ['comfortable', 'compact'], optional: true, description: 'Default `comfortable`.' },

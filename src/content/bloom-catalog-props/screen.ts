@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'ScreenProps': {
       props: [
+        { name: 'kind', type: 'ScreenKind', options: ['document', 'collection', 'table', 'canvas', 'form'], optional: true, description: 'Body semantics shared with ScreenContent; canvas owns its own viewport.' },
         { name: 'colorPreset', type: 'AppColorName', options: ['teal', 'blue', 'green', 'yellow', 'red', 'purple', 'pink', 'sky', 'orange', 'mint', 'oxy', 'faircoin', 'pumpkin', 'gray', 'brown', 'peach', 'rose', 'mono', 'grove', 'ember', 'merlot', 'cobalt', 'jade', 'pine', 'olive', 'lagoon', 'navy', 'azure', 'violet', 'lavender', 'plum', 'cherry', 'chocolate', 'graphite', 'forest-fire', 'malachite-rush', 'moss-voltage', 'viridian-orbit', 'acid-canopy', 'pacific-flare', 'reef-pulse', 'electric-tide', 'arctic-signal', 'ultramarine-gold', 'midnight-citrus', 'persimmon-wave', 'solar-flux', 'paprika-current', 'crimson-spark', 'flamenco-sun', 'saffron-depth', 'clay-current', 'bronze-neon', 'copper-field', 'umber-signal', 'amethyst-current', 'ruby-current', 'orchid-flare', 'garnet-acid', 'indigo-ember', 'raspberry-gold', 'ink-orange', 'charcoal-lime', 'pewter-current', 'gemies'], optional: true, description: 'Local screen recipe, including its enclosing panel surface. Restored on departure.' },
         { name: 'seed', type: 'string', optional: true, description: "Exact RGB seed (`#rrggbb`). Takes precedence over `colorPreset`; roles use Bloom's colour engine. Claimed like a preset: it themes the same content, panel and shell." },
         { name: 'header', type: 'ReactNode', optional: true },
@@ -19,7 +20,10 @@ export const props: BloomSurfaceProps = {
         { name: 'bottomBar', type: 'ReactNode', optional: true },
         { name: 'underlay', type: 'ReactNode', optional: true, description: "A layer behind everything the screen draws — header, content and bottom bar — filling the whole screen box and never interactive: a wallpaper, a gradient, an animated field. A child laid out `position: absolute; inset: 0` fills only the content area, which stops where an inset bottom bar begins; this one reaches under the bar (and under an overlay header). It is clipped to the screen's box." },
         { name: 'bottomBarKeyboardBehavior', type: "'hide' | 'visible' | 'follow'", options: ['hide', 'visible', 'follow'], optional: true, description: 'Navigation hides by default; `visible` keeps its position while typing. Native `follow` moves bottom chrome with the keyboard and makes ScreenScrollView keep the focused input above it. Requires react-native-keyboard-controller and its root KeyboardProvider. Web retains the ordinary Screen viewport.' },
+        { name: 'replacesBottomBar', type: 'boolean', optional: true, description: "This screen's own bar takes the place of the app's bottom navigation (an `AppShell` bottom bar): a post's reply prompt with the tabs docked beside it. While the screen is in front the app's bar steps aside in one cut, on the UI thread — it stays mounted, nothing re-renders and the screens under it keep their geometry — and this screen's bar and content sit on the window's edge, not on the app's bar. It holds from the screen's first frame, before a `bottomBar` that waits for `useScreenEntered` mounts. Where the app's bar reserves its space in a web document, the shell still has to drop the bar." },
         { name: 'primaryAction', type: 'ReactNode', optional: true, description: 'The page\'s own floating action (a "new folder"). It floats over the content, which scrolls under it and pads its end clear of it, and the shell\'s floating action steps aside while this screen is in front.' },
+        { name: 'primaryActionPlacement', type: "'start' | 'center' | 'end'", options: ['start', 'center', 'end'], optional: true, description: 'Logical alignment of the screen-owned floating action.' },
+        { name: 'primaryActionVisibility', type: "'always' | 'alone'", options: ['always', 'alone'], optional: true, description: 'Show a panel-switch action only while this region is shown alone.' },
         { name: 'reselect', type: "import('./reselect.js').ScreenReselectHandler", optional: true, description: 'What reselecting this screen means — pressing the place the reader is already on: usually `{ refresh }`. Answered only while the screen is active. Content inside the screen can declare it with `useScreenReselectHandler`.' },
         { name: 'headerHeight', type: 'number', optional: true, description: 'Initial footprint before layout; include any safe area in custom values.' },
         { name: 'bottomBarHeight', type: 'number', optional: true },
@@ -30,7 +34,7 @@ export const props: BloomSurfaceProps = {
     'ScreenScrollViewProps': {
       props: [
         { name: 'onScroll', type: "ScrollViewProps['onScroll']", optional: true, description: 'Observes the existing screen viewport on both platforms; creates no scroll owner.' },
-        { name: 'contentContainerClassName', type: 'string', optional: true, description: "Utilities for the content container, resolved by Bloom's own interop." },
+        { name: 'contentView', type: 'boolean', optional: true, description: "Lays the content out in a view of its own inside the scroll's content container: `contentContainerStyle` styles that view, and the chrome footprint pads the container around it (which grows to the viewport), so the content's own padding, gap and alignment are the view's alone. A document scroll's content is one view already, styled the same way." },
         { name: 'onEndReached', type: '() => void', optional: true, description: 'Called once each time the end of the content comes within `onEndReachedThreshold` viewports — on native from the scroll view, in a web `Screen documentScroll` from the window. Re-arms when the user scrolls back out of range or the content changes length, so a page that arrives still short of the viewport asks for the next one. Guard on your own in-flight flag.' },
         { name: 'onEndReachedThreshold', type: 'number', optional: true, description: 'Viewport-relative distance from the end that fires `onEndReached`. Default 2, as `FlatList`.' },
         { name: 'active', type: 'boolean', optional: true, description: 'Only the focused screen/list may drive chrome.' },
@@ -64,6 +68,14 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'ScreenContentProps': {
+      props: [
+        { name: 'kind', type: 'ScreenKind', options: ['document', 'collection', 'table', 'canvas', 'form'], optional: true, description: "Defaults to the enclosing Screen's body kind." },
+        { name: 'width', type: "'readable' | 'full'", options: ['readable', 'full'], optional: true, description: "Full removes the reading measure, preserving the body's edge inset." },
+        { name: 'dataSet', type: 'Record<string, string | number>', optional: true, description: 'React Native Web data attributes; the internal bloomBody marker is reserved.' },
+      ],
+      inheritsFrom: ['ViewProps'],
+    },
   },
   components: [
     { name: 'Screen', propsType: 'ScreenProps' },
@@ -71,5 +83,6 @@ export const props: BloomSurfaceProps = {
     { name: 'ScreenActivity', propsType: 'ScreenActivity' },
     { name: 'ScreenReselectScope', propsType: 'ScreenReselectScope' },
     { name: 'ScreenPager', propsType: 'ScreenPagerProps<Item>' },
+    { name: 'ScreenContent', propsType: 'ScreenContentProps' },
   ],
 }

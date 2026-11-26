@@ -21,7 +21,7 @@ export const props: BloomSurfaceProps = {
         { name: 'direction', type: "'up' | 'down'", options: ['up', 'down'], optional: true, description: "`'whole'` only: `'up'` (default) brings the new text in from below while the old leaves upward — a count going up; `'down'` the other way." },
         { name: 'distance', type: 'number', optional: true, description: "`'whole'` only: px each text travels. Default 10." },
         { name: 'duration', type: 'number', optional: true, description: "Milliseconds. Default 220 (`'whole'`), 350 (`'digits'`)." },
-        { name: 'easing', type: 'EasingFunction | EasingFunctionFactory', optional: true, description: "Default CSS `ease-out` (`'whole'`), ease-out cubic (`'digits'`)." },
+        { name: 'easing', type: 'readonly [number, number, number, number]', optional: true, description: "A cubic-bezier. Default CSS `ease-out` (`'whole'`), ease-out cubic (`'digits'`). The whole roll plays as keyframes on Bloom's motion engine, which takes a curve as data, not a function." },
         { name: 'align', type: "'start' | 'center'", options: ['start', 'center'], optional: true, description: "`'whole'` only: where the text sits in its box. Default `'start'`." },
         { name: 'clip', type: 'boolean', optional: true, description: "`'whole'` only: clip the travelling text to the box, so it reads as a counter tick." },
         { name: 'numberOfLines', type: 'number', optional: true, description: "`'whole'` only: forwarded to the text, for a label that truncates." },
@@ -33,9 +33,51 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'KeyframesValue': {
+      props: [],
+      inheritsFrom: ['readonly Keyframe[]'],
+    },
+    'TransitionValue': {
+      props: [
+        { name: 'source', type: 'readonly Keyframe[]', optional: false },
+        { name: 'frames', type: 'readonly ResolvedFrame[]', optional: false },
+        { name: 'fades', type: 'boolean', optional: false, description: 'Whether any frame sets opacity: what a material host routes to its own layers.' },
+        { name: 'motion', type: 'MotionSpec | undefined', optional: false },
+        { name: 'timing', type: '(fallback?: MotionLike | undefined) => Timing | undefined', optional: false, description: 'The timing that plays these frames: their own motion, else the one given.' },
+        { name: 'animation', type: '(motion: MotionLike) => KeyframesValue', optional: false, description: 'The same frames played by another motion.' },
+        { name: 'merged', type: '(other: KeyframesValue) => KeyframesValue', optional: false, description: 'Both sets of values in one set of frames; the two must stop at the same points.' },
+      ],
+    },
+    'MotionViewProps': {
+      props: [
+        { name: 'play', type: 'Play', optional: true, description: 'Keyframes playing on the view now; each new `id` starts them over.' },
+        { name: 'transition', type: 'Timing', optional: true, description: "Changes of the view's transform and opacity play with this timing." },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'ref', type: 'Ref<unknown>', optional: true },
+        { name: 'children', type: 'ReactNode', optional: true },
+        { name: 'entering', type: 'unknown', optional: true, description: "A consumer's own Reanimated layout animations (a toast's `animation.enter` and `.exit`): with one, the view is Reanimated's `Animated.View` on every platform, so the builder plays as Reanimated plays it." },
+        { name: 'exiting', type: 'unknown', optional: true },
+        { name: 'exit', type: '{ keyframes: KeyframesValue; material: boolean; } | null', optional: true, description: 'How the view leaves when its `Presence` child is removed: keyframes and whether the view holds a material host (see `Play.material`), or `null` for no motion. They play while the `Presence` keeps the view, which then lets it go.' },
+      ],
+      inheritsFrom: ["Omit<ViewProps, 'style'>"],
+    },
+    'Presence': {
+      props: [
+        { name: 'items', type: 'readonly ReactNode[]', optional: false },
+      ],
+    },
+    'ProviderProps<Leaving | undefined>': {
+      props: [],
+      inheritsFrom: ['ProviderProps<Leaving | undefined>'],
+    },
   },
   components: [
     { name: 'ScreenTransition', propsType: 'ScreenTransitionProps' },
     { name: 'RollingText', propsType: 'RollingTextProps' },
+    { name: 'KeyframesValue', propsType: 'KeyframesValue' },
+    { name: 'TransitionValue', propsType: 'TransitionValue' },
+    { name: 'MotionView', propsType: 'MotionViewProps' },
+    { name: 'Presence', propsType: 'Presence' },
+    { name: 'LeavingContext', propsType: 'ProviderProps<Leaving | undefined>' },
   ],
 }

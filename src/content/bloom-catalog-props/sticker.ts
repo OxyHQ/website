@@ -11,7 +11,7 @@ export const props: BloomSurfaceProps = {
         { name: 'fallback', type: 'MessageMediaSource', optional: false, description: 'The still image of the same sticker. Shown while the animation loads, when it cannot play (no Lottie player installed, the file failed), and always when the person asked for reduced motion.' },
         { name: 'size', type: 'number', optional: true, description: 'Square edge. Default 128.' },
         { name: 'loop', type: 'boolean', optional: true, description: 'Default true.' },
-        { name: 'paused', type: 'boolean', optional: true, description: 'Hold the current frame — e.g. while the sticker is scrolled out of view.' },
+        { name: 'paused', type: 'boolean', optional: true, description: 'Hold the current frame — e.g. while the sticker is scrolled out of view. It already holds by itself while its screen is not in front or the app is in the background.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'A sticker IS its meaning; with no name it announces "Sticker" and conveys nothing. Pass what the pack author gave it — its emoji or its word.' },
         { name: 'decorative', type: 'boolean', optional: true, description: 'Hide it from assistive technology because its container already names it — `StickerMessage` does, on its pressable. Default false.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

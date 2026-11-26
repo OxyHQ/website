@@ -13,7 +13,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onPrimary', type: '() => void', optional: true },
         { name: 'primaryDisabled', type: 'boolean', optional: true },
         { name: 'loading', type: 'boolean', optional: true, description: 'Spinner in the primary button.' },
-        { name: 'secondaryIcon', type: 'ButtonIconComponent', optional: true, description: 'An icon-only secondary button left of the primary one (save, share).' },
+        { name: 'secondaryIcon', type: 'BloomIconComponent', optional: true, description: 'An icon-only secondary button left of the primary one (save, share).' },
         { name: 'secondaryLabel', type: 'string', optional: true, description: "The icon button's accessible name — required with `secondaryIcon`." },
         { name: 'onSecondary', type: '() => void', optional: true },
         { name: 'bottomInset', type: 'number', optional: true, description: 'Extra space under the content. Default: the safe-area bottom inset from `react-native-safe-area-context` when a provider is mounted, else 0.' },

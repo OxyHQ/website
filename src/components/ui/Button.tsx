@@ -43,16 +43,16 @@ export default function Button({
     const { href, ...rest } = props as ButtonAsLink;
     if (href.startsWith('/')) {
       return (
-        <BloomButton asChild appearance={appearance} tone={tone} className={classes}>
-          <Link to={href} {...rest}>
+        <BloomButton asChild appearance={appearance} tone={tone}>
+          <Link to={href} {...rest} className={classes}>
             {children}
           </Link>
         </BloomButton>
       );
     }
     return (
-      <BloomButton asChild appearance={appearance} tone={tone} className={classes}>
-        <a href={href} {...rest}>
+      <BloomButton asChild appearance={appearance} tone={tone}>
+        <a href={href} {...rest} className={classes}>
           {children}
         </a>
       </BloomButton>
@@ -61,14 +61,10 @@ export default function Button({
 
   const buttonProps = props as ButtonHTMLAttributes<HTMLButtonElement>;
   return (
-    <BloomButton
-      asChild
-      appearance={appearance}
-      tone={tone}
-      className={classes}
-      disabled={buttonProps.disabled}
-    >
-      <button {...buttonProps}>{children}</button>
+    <BloomButton asChild appearance={appearance} tone={tone} disabled={buttonProps.disabled}>
+      <button {...buttonProps} className={classes}>
+        {children}
+      </button>
     </BloomButton>
   );
 }

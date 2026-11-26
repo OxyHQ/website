@@ -74,7 +74,7 @@ export const props: BloomSurfaceProps = {
         { name: 'formatNewCount', type: '(count: number) => string', optional: true, description: 'The badge\'s text and name. Default `"3 new"` in English; follows the locale.' },
         { name: 'alertFrequency', type: 'string', optional: true, description: 'How often alerts go out, pre-formatted ("Daily alerts"). `undefined` shows `alertsOffLabel`.' },
         { name: 'alertsOffLabel', type: 'string', optional: true, description: '`"Alerts off"` in English; follows the locale.' },
-        { name: 'icon', type: 'SavedSearchIcon', optional: true, description: 'A small icon tile beside the title. Default a search glyph.' },
+        { name: 'icon', type: 'BloomIconComponent', optional: true, description: 'A small icon tile beside the title. Default a search glyph.' },
         { name: 'onPress', type: '() => void', optional: true, description: "Opens the search's results; makes the title block a button." },
         { name: 'onEdit', type: '() => void', optional: true, description: 'Draws an "Edit" button.' },
         { name: 'onDelete', type: '() => void', optional: true, description: 'Draws a delete icon button.' },

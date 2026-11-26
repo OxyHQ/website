@@ -12,6 +12,8 @@ export const props: BloomSurfaceProps = {
         { name: 'source', type: 'ImageSource', optional: false },
         { name: 'alt', type: 'string', optional: true },
         { name: 'onError', type: '(info: BloomImageErrorInfo) => void', optional: true, description: "The image failed to load. Receives `{ error }` — the renderer's message — whichever renderer drew it (expo-image on a device, react-native's `Image` on web)." },
+        { name: 'placeholderColor', type: 'string', optional: true, description: 'Fills the shape until the picture covers it, so a slot whose image is still loading reads as a slot, never as a hole in the layout.' },
+        { name: 'recyclingKey', type: 'string', optional: true, description: 'The identity of the picture, for an image a list reuses for another item: when it changes the previous picture is cleared at once. Pass the URI.' },
       ],
     },
     'FillProps': {

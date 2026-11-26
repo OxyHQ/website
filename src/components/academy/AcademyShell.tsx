@@ -7,6 +7,7 @@ import PageShell from '../layout/PageShell';
 import type { SEOProps } from '../SEO';
 import { useCurrentLocale, useTranslation } from '../../lib/i18n';
 import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { loadCourses } from '../../content/academy-loader';
 import { useAcademyAllProgress } from './useAcademyProgress';
 import { AcademyRail } from './AcademyRail';
@@ -36,6 +37,8 @@ interface AcademyShellProps {
   children: ReactNode;
 }
 
+const OPEN_PANEL = { backgroundColor: 'transparent' } as const;
+
 export default function AcademyShell({
   seo,
   activeCourse,
@@ -55,6 +58,7 @@ export default function AcademyShell({
   const setQuery = onQueryChange ?? setOwnQuery;
   const [menuOpen, setMenuOpen] = useState(false);
   const headerBottom = useSiteHeaderBottom();
+  const framed = useMediaQuery('(min-width: 1024px)');
 
   const railProps = {
     courses,
@@ -104,10 +108,12 @@ export default function AcademyShell({
                 framedFrom={1024}
                 overlaySizing="panel"
                 chrome="border"
-                surfaceClassName="bg-card max-lg:bg-transparent"
-                contentClassName="px-4 pt-6 pb-4 sm:px-6 lg:px-12 lg:pt-10 lg:pb-12"
+                // A card where the panel is framed (`lg`), open on the page below it.
+                surfaceStyle={framed ? undefined : OPEN_PANEL}
               >
-                {children}
+                {/* The lesson's padding grows with the window: CSS on the
+                    page's own box, so the prerendered page has it too. */}
+                <div className="px-4 pt-6 pb-4 sm:px-6 lg:px-12 lg:pt-10 lg:pb-12">{children}</div>
               </ContentPanel>
             </div>
             {aside ? (

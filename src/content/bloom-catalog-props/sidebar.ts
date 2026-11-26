@@ -7,7 +7,6 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'SidebarProps': {
       props: [
-        { name: 'className', type: 'string', optional: true },
         { name: 'header', type: 'ReactNode | ((state: { collapsed: boolean; }) => ReactNode)', optional: true, description: 'Replaces the account/logo header row (logo, account, the collapse control). The panel still owns its fixed chrome and scroll area. `false` draws no header row at all.' },
         { name: 'toolbar', type: 'ReactNode | ((state: { collapsed: boolean; }) => ReactNode)', optional: true, description: 'A sticky row UNDER the header, above the modes and quick search: the header (logo, account, collapse control) stays. A conversations sidebar puts its search and tools here.' },
         { name: 'contentPadding', type: 'number', optional: true, description: "Expanded panel inset, also used to measure app-owned scroll content. Defaults to the size's inset." },
@@ -16,7 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'content', type: 'ReactNode', optional: true, description: 'App-owned destination content after the built-in rows/tree, inside the same scroll viewport. Hidden and noninteractive while collapsed; remains mounted so pagination and disclosure state survive. Not rendered in variant="rail". Compose rows here, never another ScrollView. Quick search filters only the built-in items/tree; disable it when your content owns search.' },
         { name: 'onScroll', type: "ScrollViewProps['onScroll']", optional: true, description: 'Observes the whole-sidebar viewport after Bloom updates its edge fades. Useful for loading another page of history. No separate scroll owner.' },
         { name: 'footer', type: 'ReactNode | ((state: { collapsed: boolean; }) => ReactNode)', optional: true, description: 'Additional sticky bottom content inside the shared sidebar scroll viewport. Receives the rendered state: true in a rail, false in a mobile panel. Existing account/theme/team controls remain; omit account when supplying your own account footer.' },
-        { name: 'primaryAction', type: '{ label: string; icon: SidebarIcon; onPress: (event: GestureResponderEvent) => void; disabled?: boolean; }', optional: true, description: 'Persistent primary action below destinations. Its label collapses to a named icon button.' },
+        { name: 'primaryAction', type: '{ label: string; icon: BloomIconComponent; onPress: (event: GestureResponderEvent) => void; disabled?: boolean; }', optional: true, description: 'Persistent primary action below destinations. Its label collapses to a named icon button.' },
         { name: 'primaryActionPlacement', type: "'bottom' | 'top'", options: ['bottom', 'top'], optional: true, description: 'Where `primaryAction` sits. `bottom` (the default) is the sticky footer, below the destinations. `top` draws the same button in the fixed header, under the header row and `toolbar` and above the modes and search, so the app\'s main command (Compose, New post) leads the sidebar. `variant="rail"` keeps it at the bottom.' },
         { name: 'variant', type: 'SidebarVariant', options: ['panel', 'rail'], optional: true, description: 'Defaults to `panel`.' },
         { name: 'railLabels', type: "'visible' | 'hidden'", options: ['visible', 'hidden'], optional: true, description: 'Rail captions; hidden retains accessible names and native browser tooltips.' },
@@ -86,14 +85,11 @@ export const props: BloomSurfaceProps = {
     },
     'SidebarItemProps': {
       props: [
-        { name: 'icon', type: 'SidebarIcon', optional: true },
+        { name: 'icon', type: 'BloomIconComponent', optional: true },
         { name: 'leading', type: 'ReactNode', optional: true, description: 'An avatar or other visual in place of the icon. Kept visible while collapsed.' },
         { name: 'label', type: 'string', optional: false },
         { name: 'description', type: 'string', optional: true, description: 'Secondary information under the label. Hidden with the label on collapse.' },
         { name: 'selectedAppearance', type: "'accent' | 'neutral'", options: ['accent', 'neutral'], optional: true, description: "Accent selection is the default; neutral uses the sidebar's tertiary surface." },
-        { name: 'className', type: 'string', optional: true },
-        { name: 'labelClassName', type: 'string', optional: true },
-        { name: 'descriptionClassName', type: 'string', optional: true },
         { name: 'ref', type: 'Ref<ComponentRef<typeof View>>', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'nativeID', type: 'string', optional: true },
@@ -151,7 +147,6 @@ export const props: BloomSurfaceProps = {
         { name: 'onPress', type: '() => void', optional: true, description: 'Opens the welcome flow from the header; without it the title is static.' },
         { name: 'onSeeAll', type: '() => void', optional: true, description: 'Opens the full guide. Omit to hide the footer action.' },
         { name: 'seeAllLabel', type: 'string', optional: true, description: 'Localized "See all" by default.' },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -160,8 +155,8 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'labelVisibility', type: "'visible' | 'hidden'", options: ['visible', 'hidden'], optional: true, description: 'Keep the accessible name while hiding the visual caption. Default visible.' },
         { name: 'selectedAppearance', type: "'pill' | 'icon'", options: ['pill', 'icon'], optional: true, description: 'Selected pill, or emphasis on the glyph alone. Default pill.' },
-        { name: 'icon', type: 'SidebarIcon', optional: false },
-        { name: 'activeIcon', type: 'SidebarIcon', optional: true, description: 'The glyph while selected (e.g. the filled icon); defaults to `icon`.' },
+        { name: 'icon', type: 'BloomIconComponent', optional: false },
+        { name: 'activeIcon', type: 'BloomIconComponent', optional: true, description: 'The glyph while selected (e.g. the filled icon); defaults to `icon`.' },
         { name: 'label', type: 'string', optional: false },
         { name: 'href', type: 'string', optional: true },
         { name: 'badge', type: 'ReactNode', optional: true, description: "Sits over the indicator's top-end corner (top-right in LTR)." },

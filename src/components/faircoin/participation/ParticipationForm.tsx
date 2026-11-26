@@ -35,6 +35,19 @@ type FormState = {
   website_confirm: string;
 };
 
+// The form's fields sit on the page's own background, borderless; the
+// submit is a tall pill in the body weight. Colours are Bloom's tokens.
+const FIELD_HEIGHT = { height: 48 } as const;
+const FIELD_CHROME = { borderWidth: 0, backgroundColor: 'var(--background)' } as const;
+const TEXTAREA_CHROME = {
+  borderWidth: 0,
+  backgroundColor: 'var(--background)',
+  borderRadius: 12,
+} as const;
+const TEXTAREA_INPUT = { padding: 12 } as const;
+const SUBMIT_STYLE = { minHeight: 56, borderRadius: 9999 } as const;
+const SUBMIT_TEXT = { fontWeight: '400' } as const;
+
 const EMPTY_FORM: FormState = {
   projectName: '',
   website: '',
@@ -197,7 +210,7 @@ export default function ParticipationForm() {
           error={fieldError(field)}
           required={!optional}
         >
-          <TextField className="h-12" chromeClassName="!border-0 !bg-background" radius={12}>
+          <TextField style={FIELD_HEIGHT} chromeStyle={FIELD_CHROME} radius={12}>
             <TextFieldInput
               label={label}
               placeholder={null}
@@ -238,8 +251,8 @@ export default function ParticipationForm() {
             onValueChange={(value) => update(field, value)}
             maxLength={maxLength}
             rows={4}
-            fieldClassName="!border-0 !bg-background !rounded-xl"
-            inputClassName="!p-3"
+            fieldStyle={TEXTAREA_CHROME}
+            inputStyle={TEXTAREA_INPUT}
             disabled={submitting}
           />
         </Field>
@@ -476,7 +489,9 @@ export default function ParticipationForm() {
                             asChild
                             appearance="solid"
                             size="lg"
-                            className="!min-h-14 !rounded-full !px-7 !font-normal"
+                            paddingHorizontal={28}
+                            style={SUBMIT_STYLE}
+                            textStyle={SUBMIT_TEXT}
                             disabled={submitting}
                           >
                             <button type="submit" disabled={submitting}>

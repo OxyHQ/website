@@ -19,7 +19,6 @@ export const props: BloomSurfaceProps = {
         { name: 'team', type: 'SidebarTeam', optional: true, description: 'The team card at the foot of the sidebar and the menu it opens. None by default.' },
         { name: 'voices', type: 'readonly AgentVoice[]', optional: true },
         { name: 'onPreviewVoice', type: '(text: string, preferences: AgentPreferences) => void', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

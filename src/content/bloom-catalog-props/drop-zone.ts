@@ -18,7 +18,6 @@ export const props: BloomSurfaceProps = {
         { name: 'onDragLeave', type: '() => void', optional: true, description: 'The drag left it, was dropped elsewhere or was cancelled.' },
         { name: 'onDrop', type: '(event: DropTargetDropEvent) => void', optional: false, description: 'Dropped on it: the action and the content, of the kinds it accepts.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'testID', type: 'string', optional: true },
         { name: 'children', type: 'ReactNode', optional: true },
       ],

@@ -46,38 +46,6 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
-    'CallHistoryListProps': {
-      props: [
-        { name: 'sections', type: 'readonly CallHistorySection[]', optional: false },
-        { name: 'onItemPress', type: '(id: string) => void', optional: true },
-        { name: 'onCallBack', type: '(id: string) => void', optional: true },
-        { name: 'divider', type: 'boolean', optional: true, description: 'Hairline between rows inside a section. Default true.' },
-        { name: 'emptyState', type: 'ReactNode', optional: true, description: 'Drawn instead of the sections when every one of them is empty.' },
-        { name: 'header', type: 'ReactNode', optional: true },
-        { name: 'footer', type: 'ReactNode', optional: true },
-        { name: 'labels', type: 'Partial<CallHistoryLabels>', optional: true },
-        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'testID', type: 'string', optional: true },
-      ],
-    },
-    'CallHistoryRowProps': {
-      props: [
-        { name: 'name', type: 'string', optional: false },
-        { name: 'avatar', type: 'CallAvatarSource', optional: true },
-        { name: 'avatarVariant', type: 'string', optional: true },
-        { name: 'direction', type: 'CallDirection', options: ['incoming', 'outgoing', 'missed', 'declined'], optional: false },
-        { name: 'mode', type: 'CallMode', options: ['voice', 'video'], optional: true },
-        { name: 'meta', type: 'string', optional: false, description: 'The whole second line, PRE-FORMATTED — `"Yesterday, 18:40 · 4:32"`.' },
-        { name: 'count', type: 'number', optional: true, description: 'Repeated calls in one entry — drawn as `"(3)"` after the name.' },
-        { name: 'onPress', type: '() => void', optional: true },
-        { name: 'onCallBack', type: '() => void', optional: true, description: 'Draws the trailing call-back button.' },
-        { name: 'selected', type: 'boolean', optional: true, description: 'Tints the row, for a selected entry in a two-pane layout.' },
-        { name: 'labels', type: 'Partial<CallHistoryLabels>', optional: true },
-        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true },
-        { name: 'testID', type: 'string', optional: true },
-      ],
-    },
     'CallMinimisedPillProps': {
       props: [
         { name: 'name', type: 'string', optional: true, description: 'Who the call is with. Truncates to one line.' },
@@ -212,8 +180,6 @@ export const props: BloomSurfaceProps = {
   components: [
     { name: 'CallControlButton', propsType: 'CallControlButtonProps' },
     { name: 'CallControls', propsType: 'CallControlsProps' },
-    { name: 'CallHistoryList', propsType: 'CallHistoryListProps' },
-    { name: 'CallHistoryRow', propsType: 'CallHistoryRowProps' },
     { name: 'CallMinimisedPill', propsType: 'CallMinimisedPillProps' },
     { name: 'CallScreen', propsType: 'CallScreenProps' },
     { name: 'GroupCallBar', propsType: 'GroupCallBarProps' },

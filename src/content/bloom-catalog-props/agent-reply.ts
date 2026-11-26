@@ -26,7 +26,7 @@ export const props: BloomSurfaceProps = {
     },
     'AgentReplyActionProps': {
       props: [
-        { name: 'icon', type: 'ButtonIconComponent', optional: false, description: 'The icon component, sized by the row.' },
+        { name: 'icon', type: 'BloomIconComponent', optional: false, description: 'The icon component, sized by the row.' },
         { name: 'label', type: 'string', optional: false, description: "The tile's name; it draws no text." },
         { name: 'selected', type: 'boolean', optional: true, description: 'Lit as the current choice (a vote, a read-aloud in progress).' },
         { name: 'disabled', type: 'boolean', optional: true },
@@ -45,7 +45,6 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'children', type: 'ReactNode', optional: false },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'text', type: '{ fontSize: number; lineHeight: number; }', optional: true, description: "The font size and line height (px) of the text inside, so the top and bottom padding looks as wide as the sides. Default Bloom's body, 14 on 20." },
       ],
     },
@@ -62,12 +61,6 @@ export const props: BloomSurfaceProps = {
         { name: 'pressLabel', type: 'string', optional: true, description: 'The button\'s name when it is not thinking ("Edit Lumi"); `name` when absent.' },
       ],
     },
-    'AgentStackProps': {
-      props: [
-        { name: 'agents', type: 'AgentReplyAgent[]', optional: false },
-        { name: 'size', type: 'number', optional: true, description: "The box's width and height. Default 40." },
-      ],
-    },
   },
   components: [
     { name: 'AgentProfile', propsType: 'AgentProfileProps' },
@@ -76,6 +69,5 @@ export const props: BloomSurfaceProps = {
     { name: 'AgentReplyActions', propsType: 'AgentReplyActionsProps' },
     { name: 'AgentReplyBubble', propsType: 'AgentReplyBubbleProps' },
     { name: 'AgentReplyIdentity', propsType: 'AgentReplyIdentityProps' },
-    { name: 'AgentStack', propsType: 'AgentStackProps' },
   ],
 }

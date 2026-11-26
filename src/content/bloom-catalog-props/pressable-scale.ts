@@ -8,7 +8,6 @@ export const props: BloomSurfaceProps = {
     'PressableScaleProps': {
       props: [
         { name: 'targetScale', type: 'number', optional: true, description: 'Scale applied while pressed. Defaults to `0.98`.' },
-        { name: 'className', type: 'string', optional: true, description: 'Utility classes for the pressable itself — the node that scales, so a layout class and the transform cannot land on different boxes.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style applied to the pressable itself — the node that scales.' },
       ],
       inheritsFrom: ["Omit<PressableProps, 'style'>", 'RefAttributes<ReactNativeElement>'],

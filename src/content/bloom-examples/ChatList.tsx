@@ -1,9 +1,19 @@
-import { ChatListItem } from '@oxy.so/bloom/chat-list';
+import { List } from '@oxy.so/bloom/list';
 
 export default function ChatListExample() {
   return (
     <div className="w-full max-w-lg space-y-4 text-foreground">
-      <ChatListItem name="Design team" preview={{ text: 'Alex: Ready for the next chapter?' }} />
+      <List
+        items={[
+          {
+            id: 'design',
+            conversation: {
+              name: 'Design team',
+              preview: { sender: 'Alex', text: 'Ready for the next chapter?' },
+            },
+          },
+        ]}
+      />
     </div>
   );
 }

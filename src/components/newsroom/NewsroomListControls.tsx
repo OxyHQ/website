@@ -42,7 +42,7 @@ export function NewsroomFilterMenu<T extends string>({
   const { colors } = useTheme();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild label={label} className="inline-flex">
+      <DropdownMenuTrigger asChild label={label}>
         <Button
           appearance="plain"
           tone="neutral"
@@ -98,7 +98,7 @@ export function NewsroomSortMenu<T extends string>({
   const accessibleLabel = t('newsroom.sortLabel', { option: options[value] });
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild label={accessibleLabel} className="inline-flex">
+      <DropdownMenuTrigger asChild label={accessibleLabel}>
         <Button
           appearance="plain"
           tone="neutral"

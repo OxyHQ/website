@@ -18,7 +18,7 @@ export const props: BloomSurfaceProps = {
         { name: 'max', type: 'number', optional: true, description: 'The ceiling. At the ceiling the input stops accepting and the hint says so.' },
         { name: 'onMaxReached', type: '() => void', optional: true, description: 'Called when a commit was refused because the field is full.' },
         { name: 'normalize', type: '(raw: string) => string', optional: true, description: 'How a raw string becomes a tag before it is compared and stored — trimmed by default. Comparison is done on the NORMALISED form, so `" Design "` and `"Design"` are one tag and the second is dropped in silence.' },
-        { name: 'tone', type: 'AccentTone', options: ['default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'info'], optional: true, description: 'The tone the committed chips are painted in. Default `default`.' },
+        { name: 'tone', type: 'AccentTone', options: ['default', 'primary', 'vivid', 'secondary', 'tertiary', 'success', 'warning', 'error', 'info'], optional: true, description: 'The tone the committed chips are painted in. Default `default`.' },
         { name: 'size', type: 'TagFieldSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Default `medium` (36 tall); `small` is 32. Omitted, it is INHERITED from the nearest `BloomScope` — the same vocabulary `TextField` and `Textarea` take — so a filter row asks for `small` once instead of writing it on five controls.' },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'invalid', type: 'boolean', optional: true, description: "Paints the error shell. Combined with an enclosing `Field`'s, never replaced." },

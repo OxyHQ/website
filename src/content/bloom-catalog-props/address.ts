@@ -34,7 +34,7 @@ export const props: BloomSurfaceProps = {
         { name: 'leading', type: 'ReactNode', optional: true, description: 'An arbitrary leading node — an `Avatar`, a map thumbnail — instead of the glyph tile. Read for PRESENCE: `leading={null}` draws NO media at all, for a row in a list that already has a gutter of its own (`RouteStops`).' },
         { name: 'meta', type: 'string', optional: true, description: 'A short trailing reading — "1.2 km", "12 min". Drawn before `action`.' },
         { name: 'badge', type: 'ReactNode', optional: true, description: 'A node after the title — a `Badge` ("Default"), a `Chip`.' },
-        { name: 'action', type: 'ReactNode', optional: true, description: 'A trailing control — a `GlyphButton`, a `Button`.' },
+        { name: 'action', type: 'ReactNode', optional: true, description: 'A trailing control — a `Button`, a `Button`.' },
         { name: 'selected', type: 'boolean', optional: true, description: 'Highlights the row and announces the selection, for the role it is given.' },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'onPress', type: '() => void', optional: true },

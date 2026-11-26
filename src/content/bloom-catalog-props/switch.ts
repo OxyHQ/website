@@ -13,7 +13,7 @@ export const props: BloomSurfaceProps = {
         { name: 'disabled', type: 'boolean', optional: true, description: 'Whether the switch is disabled' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Container style' },
         { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Size variant' },
-        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
+        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'vivid', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: "The switch's accessible NAME, and the only way to give it one." },
         { name: 'nativeID', type: 'string', optional: true, description: "The switch's id. Inside a `Field` the field supplies one, so the label's `htmlFor` points at the control on web." },
         { name: 'testID', type: 'string', optional: true },

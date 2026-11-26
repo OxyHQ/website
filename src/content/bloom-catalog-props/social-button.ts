@@ -20,7 +20,6 @@ export const props: BloomSurfaceProps = {
         { name: 'disabled', type: 'boolean', optional: true, description: 'Shared Button disabled tint; retains its material and ignores presses.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true, description: 'Label text style override.' },
-        { name: 'className', type: 'string', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Overrides the accessible name. Defaults to the visible label, or to the `action` phrase (`"Continue with <Brand>"`) when `iconOnly`.' },
         { name: 'accessibilityHint', type: 'string', optional: true },
         { name: 'testID', type: 'string', optional: true },

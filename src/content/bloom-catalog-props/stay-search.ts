@@ -71,7 +71,7 @@ export const props: BloomSurfaceProps = {
         { name: 'summary', type: 'string', optional: true, description: 'The secondary line, e.g. `"Anywhere · Any week · Add guests"`.' },
         { name: 'onFilterPress', type: '() => void', optional: true, description: 'Shows a round filter button at the right end when set.' },
         { name: 'filterLabel', type: 'string', optional: true, description: 'The filter button\'s name. `"Filters"` in English; follows the locale.' },
-        { name: 'filterIcon', type: 'ButtonIconComponent', optional: true, description: 'The filter glyph. Default `RiEqualizer3Line`.' },
+        { name: 'filterIcon', type: 'BloomIconComponent', optional: true, description: 'The filter glyph. Default `RiEqualizer3Line`.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the trigger. Default `title` + `summary`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true, description: 'Derives `-filter`.' },

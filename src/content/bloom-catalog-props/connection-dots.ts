@@ -12,7 +12,6 @@ export const props: BloomSurfaceProps = {
         { name: 'dotCount', type: 'number', optional: true, description: 'Number of ellipsis dots animating between the two slots.' },
         { name: 'dotSize', type: 'number', optional: true, description: 'Diameter of each dot in px.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Accessibility label for the whole connection band. Read by screen readers in place of the (decorative) dots.' },
-        { name: 'className', type: 'string', optional: true, description: 'NativeWind className passthrough on the outer row.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style passthrough on the outer row.' },
         { name: 'reducedMotion', type: 'boolean', optional: true, description: 'Force-disable the shimmer regardless of the OS reduced-motion setting. (When omitted, the component reads the platform reduced-motion preference and renders the dots statically when it is on.)' },
       ],

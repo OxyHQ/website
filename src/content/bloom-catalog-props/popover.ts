@@ -20,7 +20,6 @@ export const props: BloomSurfaceProps = {
         { name: 'asChild', type: 'boolean', optional: true, description: "Render the single element child AS the trigger, merging the open handler and a11y props into it (Radix's composition escape hatch). Without it the children render inside Bloom's own `Pressable`." },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'label', type: 'string', optional: true, description: 'Accessible name. Ignored when the `asChild` child carries its own.' },
-        { name: 'className', type: 'string', optional: true, description: 'Bare triggers apply this to the measured anchor wrapper; families whose trigger owns chrome append it to that chrome instead.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -34,7 +33,6 @@ export const props: BloomSurfaceProps = {
         { name: 'dismissible', type: 'boolean', optional: true, description: 'Dismiss on outside press and Escape. Defaults to `true`.' },
         { name: 'minWidth', type: 'number', optional: true },
         { name: 'maxWidth', type: 'number', optional: true },
-        { name: 'className', type: 'string', optional: true, description: "Appended to the surface's own chrome — see FloatingPanelProps.className." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
         { name: 'side', type: 'FloatingSide', options: ['top', 'bottom', 'left', 'right'], optional: true, description: "Preferred side of the anchor. Defaults to `'bottom'`." },
@@ -49,7 +47,6 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'leading', type: 'React.ReactNode', optional: true },
         { name: 'children', type: 'React.ReactNode', optional: true },
-        { name: 'className', type: 'string', optional: true, description: "Utility classes on the part's own node." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -59,7 +56,6 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'tone', type: "'primary' | 'secondary'", options: ['primary', 'secondary'], optional: true, description: '`\'secondary\'` is the group-label colour panels use above a list ("Users with access", "Local Folders"). Defaults to `\'primary\'`.' },
         { name: 'numberOfLines', type: 'number', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -68,7 +64,6 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'numberOfLines', type: 'number', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -76,14 +71,12 @@ export const props: BloomSurfaceProps = {
     'PopoverPartProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
-        { name: 'className', type: 'string', optional: true, description: "Utility classes on the part's own node." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
     },
     'PopoverSeparatorProps': {
       props: [
-        { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -99,7 +92,6 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'variant', type: "'default' | 'destructive'", options: ['default', 'destructive'], optional: true, description: "`'destructive'` paints the row in the theme's negative colour." },
-        { name: 'className', type: 'string', optional: true, description: "Utility classes APPENDED to the row's own — never substituted for them, so a single layout class cannot strip the chrome. Two utilities for one property are then resolved by Tailwind's own emission order, exactly as they are in any shadcn consumer; `style` remains the unambiguous override." },
         { name: 'leading', type: 'React.ReactNode', optional: true, description: "Leading slot (icon, avatar). A Bloom addition over shadcn's children-only row." },
         { name: 'trailing', type: 'React.ReactNode', optional: true, description: 'Trailing slot (shortcut, badge).' },
         { name: 'tone', type: "'neutral' | 'danger'", options: ['neutral', 'danger'], optional: true },

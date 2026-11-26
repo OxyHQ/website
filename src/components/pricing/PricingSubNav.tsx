@@ -40,7 +40,7 @@ export default function PricingSubNav({
               size="sm"
               tone="neutral"
               appearance={value === link.value ? 'subtle' : 'plain'}
-              className="shrink-0"
+              style={{ flexShrink: 0 }}
             >
               <button
                 type="button"

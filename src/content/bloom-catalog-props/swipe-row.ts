@@ -7,6 +7,8 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'SwipeRowProps': {
       props: [
+        { name: 'actionPresentation', type: "'panes' | 'bubbles'", options: ['panes', 'bubbles'], optional: true, description: 'Separate elastic capsules, or the existing edge-to-edge action panes (default).' },
+        { name: 'fullSwipeAction', type: '{ left?: string; right?: string; }', optional: true, description: 'An explicitly chosen action per side to run on RELEASE after a full swipe. Bubbles only. Omitted sides only reveal buttons; action order never selects a default.' },
         { name: 'actions', type: 'SwipeRowActions', optional: false, description: 'What is behind the row on each side. A side with no actions cannot open.' },
         { name: 'onAction', type: '(key: string) => void', optional: true, description: "Called with the action's `key` when one is pressed." },
         { name: 'height', type: 'number', optional: true, description: 'An exact height for the container. Omit it for a row that sizes itself — the panes stretch to whatever the child turns out to be.' },
@@ -17,6 +19,7 @@ export const props: BloomSurfaceProps = {
         { name: 'closeLabel', type: 'string', optional: true, description: "Names the tap target that closes an open pane; `'Close actions'` in English." },
         { name: 'onOpenChange', type: "(side: 'left' | 'right' | null) => void", optional: true, description: 'Fires whenever a pane settles open or closed.' },
         { name: 'children', type: 'ReactNode', optional: false },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Layout of the parent-facing swipe host, including flex, width and margins.' },
         { name: 'testID', type: 'string', optional: true },
       ],
     },

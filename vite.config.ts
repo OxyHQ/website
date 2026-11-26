@@ -397,15 +397,6 @@ export default defineConfig(({ mode }) => ({
       '@expo/vector-icons/Ionicons',
       '@expo/vector-icons/MaterialCommunityIcons',
       'react-native-qrcode-svg',
-      // Reached through the excluded Bloom/services subtree and ships its
-      // components entry as CJS: unbundled, `import { Pressable }` from it
-      // fails at runtime with "does not provide an export named".
-      'react-native-css',
-      // The SDK imports `react-native-css/components`, whose entry is CJS.
-      // `include` only covers the specifier it is given, so the bare package
-      // name above does not cover this one: served unbundled, its named
-      // exports fail at runtime with "does not provide an export named".
-      'react-native-css/components',
       // `@oxy.so/core`'s crypto polyfill default-imports `buffer`, which is CJS.
       'buffer',
       // Depends on zod 3 while the site uses zod 4. Served unbundled, its bare

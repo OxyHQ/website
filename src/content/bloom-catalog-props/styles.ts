@@ -5,6 +5,14 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'styles',
   propTypes: {
+    'ServerStyleSheet': {
+      props: [
+        { name: 'id', type: 'string', optional: false },
+        { name: 'css', type: 'string', optional: false },
+        { name: 'owned', type: 'boolean', optional: true },
+        { name: 'retainServerNode', type: 'boolean', optional: true, description: 'Keep resource-bearing rules (such as loaded font faces) in their original sheet.' },
+      ],
+    },
     'SurfaceLevelProviderProps': {
       props: [
         { name: 'level', type: 'SurfaceLevel', optional: false, description: 'The rung the children are sitting ON. A card on a page publishes `1`.' },
@@ -15,6 +23,7 @@ export const props: BloomSurfaceProps = {
     },
   },
   components: [
+    { name: 'ServerStyleSheet', propsType: 'ServerStyleSheet' },
     { name: 'SurfaceLevelProvider', propsType: 'SurfaceLevelProviderProps' },
   ],
 }

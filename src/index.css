@@ -1,7 +1,6 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css";
-@import "nativewind/theme";
 @import "@oxy.so/bloom/design-tokens/theme.css";
 @plugin "@tailwindcss/typography";
 
@@ -25,12 +24,13 @@
   --text-body-medium--line-height: 20px;
 }
 
-/* Scan the Oxy SDK packages so their react-native-css className LAYOUT utilities
- * (flex-1 / flex-row / gap-* / arbitrary [Npx]) are generated on web. Tailwind v4
- * auto-detects this app's own src/ but excludes node_modules by default, so without
- * these the SDK screens fall back to the RN-Web base View reset (inert layout). */
-@source "../node_modules/@oxy.so/services/lib/**/*.{js,jsx}";
-@source "../node_modules/@oxy.so/bloom/lib/**/*.{js,jsx}";
+/* `leading-N` sets line-height to N × --spacing over the root size (1.75 for
+ * `leading-7`), as it has drawn on this site since NativeWind's theme replaced
+ * Tailwind's `leading-*`. NativeWind is gone (Bloom 23 needs none); the
+ * declaration stays exactly as it was, so the type keeps its line heights. */
+@utility leading-* {
+  line-height: calc(var(--spacing) / 1rem * --value(integer));
+}
 
 :root {
   --build-tag: "2026-04-16T11-cachebust-2";

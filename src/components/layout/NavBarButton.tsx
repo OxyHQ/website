@@ -88,15 +88,16 @@ export function NavBarButton({
     ...children.props.style,
   };
   return (
-    <Button
-      asChild
-      appearance="plain"
-      tone="neutral"
-      // Over a dark hero the control takes the `.force-dark` palette, so
-      // `foreground` is light ink whatever the theme toggle says.
-      className={ink === 'onDark' ? 'force-dark' : undefined}
-    >
-      {cloneElement(children, { style })}
+    <Button asChild appearance="plain" tone="neutral">
+      {cloneElement(children, {
+        style,
+        // Over a dark hero the control takes the `.force-dark` palette, so
+        // `foreground` is light ink whatever the theme toggle says.
+        className:
+          [children.props.className, ink === 'onDark' ? 'force-dark' : undefined]
+            .filter(Boolean)
+            .join(' ') || undefined,
+      })}
     </Button>
   );
 }

@@ -5,10 +5,22 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'project-board',
   propTypes: {
+    'ProjectBoardCardContentProps': {
+      props: [
+        { name: 'preview', type: 'ReactNode', optional: true },
+        { name: 'header', type: 'ReactNode', optional: true },
+        { name: 'actions', type: 'ReactNode', optional: true },
+        { name: 'badges', type: 'ReactNode', optional: true },
+        { name: 'title', type: 'ReactNode', optional: true },
+        { name: 'description', type: 'ReactNode', optional: true },
+        { name: 'children', type: 'ReactNode', optional: true },
+        { name: 'footer', type: 'ReactNode', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
     'ProjectBoardProps<Item>': {
       props: [
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -19,12 +31,12 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'ReactNode', optional: false },
         { name: 'accessibilityLabel', type: 'string', optional: false },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
     },
   },
   components: [
+    { name: 'ProjectBoardCardContent', propsType: 'ProjectBoardCardContentProps' },
     { name: 'ProjectBoard', propsType: 'ProjectBoardProps<Item>' },
     { name: 'BoardDragHandle', propsType: 'BoardDragHandleProps' },
   ],

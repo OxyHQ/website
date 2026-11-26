@@ -44,23 +44,6 @@ export const props: BloomSurfaceProps = {
       ],
       inheritsFrom: ['RefAttributes<SettingsLayoutHandle>'],
     },
-    'SettingsCardProps': {
-      props: [
-        { name: 'className', type: 'string', optional: true },
-        { name: 'children', type: 'ReactNode', optional: true },
-        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'testID', type: 'string', optional: true },
-      ],
-    },
-    'SettingsRowProps': {
-      props: [
-        { name: 'label', type: 'string', optional: false },
-        { name: 'description', type: 'string', optional: true },
-        { name: 'children', type: 'ReactNode', optional: true, description: 'The control on the right.' },
-        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'testID', type: 'string', optional: true },
-      ],
-    },
     'SettingsSectionProps': {
       props: [
         { name: 'label', type: 'string', optional: true },
@@ -225,8 +208,6 @@ export const props: BloomSurfaceProps = {
   components: [
     { name: 'SettingsModal', propsType: 'SettingsModalProps' },
     { name: 'SettingsLayout', propsType: 'SettingsLayoutProps' },
-    { name: 'SettingsCard', propsType: 'SettingsCardProps' },
-    { name: 'SettingsRow', propsType: 'SettingsRowProps' },
     { name: 'SettingsSection', propsType: 'SettingsSectionProps' },
     { name: 'SettingsSectionLabel', propsType: 'SettingsSectionLabelProps' },
     { name: 'SettingsValueField', propsType: 'SettingsValueFieldProps' },

@@ -22,7 +22,6 @@ import { AiProfileCard } from '@oxy.so/bloom/ai-profile-card';
 import { Avatar } from '@oxy.so/bloom/avatar';
 import { Card } from '@oxy.so/bloom/card';
 import { RadioGroup } from '@oxy.so/bloom/radio';
-import { ButtonGroup, ButtonGroupItem } from '@oxy.so/bloom/button-group';
 import TemplateDemo from './TemplateDemo';
 import ProjectBoardDemo from './ProjectBoardDemo';
 import { ComposerAttachments, ComposerPanelStatusTab } from '@oxy.so/bloom/composer-panel';
@@ -744,17 +743,17 @@ export default function BloomDemos({ name, active }: { name: BloomDemoName; acti
       );
     case 'segments':
       return (
-        <ButtonGroup accessibilityLabel={title('calendar')}>
+        <Button.Group material="surface" accessibilityLabel={title('calendar')}>
           {['day', 'week', 'month', 'year'].map((key) => (
-            <ButtonGroupItem
+            <Button
               key={key}
-              selected={filter === key || (filter === 'all' && key === 'day')}
+              pressed={filter === key || (filter === 'all' && key === 'day')}
               onPress={() => setFilter(key)}
             >
               {title(key)}
-            </ButtonGroupItem>
+            </Button>
           ))}
-        </ButtonGroup>
+        </Button.Group>
       );
     case 'checks':
       return (

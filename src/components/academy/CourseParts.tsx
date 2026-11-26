@@ -125,7 +125,7 @@ export function CourseCard({
 
   const body = (
     <Card appearance="outline" radius="radius-16" style={{ height: '100%' }}>
-      <div className="flex h-full flex-col gap-3 p-5">
+      <div className="relative flex h-full flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-base font-semibold leading-snug text-foreground group-hover:text-primary">
             {course.title}

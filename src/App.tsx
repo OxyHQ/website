@@ -565,7 +565,7 @@ function AppProviders() {
             its own; change it here and every Bloom control moves together. */}
         <AgentAvatarProvider>
           <BloomScope size="md">
-            <OxyProvider baseURL={OXY_API} clientId={OXY_CLIENT_ID} queryClient={queryClient}>
+            <OxyProvider baseURL={OXY_API} clientId={OXY_CLIENT_ID}>
               <AppSetup>
                 <ScrollToTop />
                 <IntercomMessenger />

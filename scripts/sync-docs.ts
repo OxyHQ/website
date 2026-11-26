@@ -33,6 +33,7 @@ import {
   rewriteStaleDocsVersionLinks,
   unlinkRemovedPageLinks,
 } from './docs-links.ts';
+import { applyRegistryPin } from './docs-registry-pin.ts';
 import { quoteUnsafeFrontMatterScalars } from './frontmatter-safe.ts';
 import { escapeUnclosedProseTags } from './mdx-literal-tags.ts';
 import type {
@@ -264,7 +265,11 @@ async function collectConfigs(
       : path.join(sub ? path.join(repoRoot, sub) : repoRoot, 'docs.config.json');
     const dir = path.dirname(configPath);
     const config = await readDocsConfig(configPath);
-    if (config) results.push({ config, rootDir: dir });
+    if (!config) continue;
+    // The entry's pin and `docsIgnore` are checked as the config's own are.
+    const pinned = applyRegistryPin(entry, config);
+    validateDocsConfig(pinned, configPath);
+    results.push({ config: pinned, rootDir: dir });
   }
   return results;
 }

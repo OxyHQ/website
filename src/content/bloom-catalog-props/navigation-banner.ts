@@ -47,7 +47,7 @@ export const props: BloomSurfaceProps = {
         { name: 'limit', type: 'string | number', optional: false, description: 'The number as drawn, pre-formatted ("50", "120"). Never converted here.' },
         { name: 'unit', type: 'string', optional: true, description: 'Drawn under the sign ("km/h", "mph"). Announced with the figure.' },
         { name: 'exceeded', type: 'boolean', optional: true, description: 'Whether the vehicle is over it. The sign fills with its tone instead of ringing it — a sign that only got brighter is a sign a driver reads as the same sign.' },
-        { name: 'tone', type: 'AccentTone', options: ['default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'info'], optional: true, description: "The ring's tone. Default `error`." },
+        { name: 'tone', type: 'AccentTone', options: ['default', 'primary', 'vivid', 'secondary', 'tertiary', 'success', 'warning', 'error', 'info'], optional: true, description: "The ring's tone. Default `error`." },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Defaults to `"Speed limit <limit> <unit>"`, plus the over-the-limit word.' },
         { name: 'exceededLabel', type: 'string', optional: true, description: 'Replaces the over-the-limit word. `"over the limit"` in English.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

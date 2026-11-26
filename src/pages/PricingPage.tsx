@@ -85,43 +85,47 @@ export default function PricingPage() {
                 radius="radius-24"
                 border="none"
                 elevation="none"
-                className="min-w-0 flex-1 px-6 py-8 sm:px-8 sm:py-10"
+                style={{ minWidth: 0, flex: 1 }}
               >
-                <CardDescription style={{ fontSize: 13, lineHeight: 20, fontWeight: '500' }}>
-                  {path.audience}
-                </CardDescription>
-                <h2 className="mt-7 mb-5">
-                  <CardTitle style={{ fontSize: 36, lineHeight: 42, fontWeight: '500' }}>
-                    {path.title}
-                  </CardTitle>
-                </h2>
-                <div className="mb-4">
-                  <CardTitle style={{ fontSize: 20, lineHeight: 28, fontWeight: '400' }}>
-                    {path.body}
-                  </CardTitle>
-                </div>
-                <div className="flex-1">
-                  <CardDescription style={{ fontSize: 16, lineHeight: 26 }}>
-                    {path.detail}
+                {/* The card's padding steps up at `sm`: a CSS breakpoint on
+                    the page's own box, so the prerendered page has it too. */}
+                <div className="flex min-w-0 flex-1 flex-col px-6 py-8 sm:px-8 sm:py-10">
+                  <CardDescription style={{ fontSize: 13, lineHeight: 20, fontWeight: '500' }}>
+                    {path.audience}
                   </CardDescription>
-                </div>
-                {path.id === 'inference' && (
-                  <div className="relative mt-5">
-                    <AvailabilityBadge availability={OXY_INFERENCE_AVAILABILITY} />
+                  <h2 className="mt-7 mb-5">
+                    <CardTitle style={{ fontSize: 36, lineHeight: 42, fontWeight: '500' }}>
+                      {path.title}
+                    </CardTitle>
+                  </h2>
+                  <div className="mb-4">
+                    <CardTitle style={{ fontSize: 20, lineHeight: 28, fontWeight: '400' }}>
+                      {path.body}
+                    </CardTitle>
                   </div>
-                )}
-                <div className="mt-10">
-                  <Button
-                    responsive
-                    href={path.href}
-                    variant={path.id === 'one' ? 'primary' : 'outline'}
-                    className="max-w-full"
-                  >
-                    <span className="whitespace-normal text-start">{path.cta}</span>
-                    <span className="shrink-0 rtl:rotate-180" aria-hidden="true">
-                      <RiArrowRightLine width={18} height={18} fill="currentColor" />
-                    </span>
-                  </Button>
+                  <div className="flex-1">
+                    <CardDescription style={{ fontSize: 16, lineHeight: 26 }}>
+                      {path.detail}
+                    </CardDescription>
+                  </div>
+                  {path.id === 'inference' && (
+                    <div className="relative mt-5">
+                      <AvailabilityBadge availability={OXY_INFERENCE_AVAILABILITY} />
+                    </div>
+                  )}
+                  <div className="mt-10">
+                    <Button
+                      responsive
+                      href={path.href}
+                      variant={path.id === 'one' ? 'primary' : 'outline'}
+                      className="max-w-full"
+                    >
+                      <span className="whitespace-normal text-start">{path.cta}</span>
+                      <span className="shrink-0 rtl:rotate-180" aria-hidden="true">
+                        <RiArrowRightLine width={18} height={18} fill="currentColor" />
+                      </span>
+                    </Button>
+                  </div>
                 </div>
               </Card>
             </article>

@@ -11,7 +11,6 @@ export const props: BloomSurfaceProps = {
         { name: 'radius', type: 'ConcentricRadius', optional: true, description: 'Omitted passes geometry through; a fixed radius starts a new chain.' },
         { name: 'reset', type: 'boolean', optional: true, description: 'Isolate this subtree from any rounded ancestor.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'className', type: 'string', optional: true },
       ],
       inheritsFrom: ["Omit<ViewProps, 'style' | 'children'>", 'RefAttributes<ReactNativeElement>'],
     },

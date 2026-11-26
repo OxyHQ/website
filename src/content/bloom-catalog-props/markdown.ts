@@ -13,7 +13,6 @@ export const props: BloomSurfaceProps = {
         { name: 'onLinkPress', type: '(url: string) => void', optional: true, description: "Called with a link's URL (`http(s):`, `mailto:` or relative; never another scheme). Without it, native opens the URL with `Linking` and web follows the anchor." },
         { name: 'renderCodeBlock', type: '(code: string, language?: string) => ReactNode', optional: true, description: 'Draws a fenced block yourself, in place of the default `CodeBlock`; what it returns is drawn as is. Use it to wire `onCopy` (a product clipboard), a filename, or your own code card. Called once per render of the block, so keep its identity stable (module scope or `useCallback`).' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'className', type: 'string', optional: true },
         { name: 'testID', type: 'string', optional: true },
         { name: 'ref', type: 'Ref<ComponentRef<typeof View>>', optional: true },
       ],
