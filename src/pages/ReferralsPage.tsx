@@ -111,7 +111,7 @@ const DEFAULT_FAQ: Array<{ question: string; answer: string }> = [
   {
     question: 'When do payouts happen?',
     answer:
-      'Paid affiliates are paid monthly, on the 15th, for signups that cleared the 30-day refund window. Payouts run via Stripe, bank transfer, or the Oxy wallet — your choice.',
+      'The payout schedule, the conditions a signup has to meet before it is paid and the payout method are set in the terms agreed with each partner before a link goes live.',
   },
   {
     question: 'How long is the attribution window?',
