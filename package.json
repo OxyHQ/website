@@ -75,10 +75,10 @@
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
     "@mercaria.co/sdk": "~0.2.0",
-    "@oxy.so/bloom": "23.9.1",
+    "@oxy.so/bloom": "23.10.1",
     "@oxy.so/bloom-data": "0.1.2",
     "@oxy.so/contracts": "7.5.0",
-    "@oxy.so/core": "7.51.0",
+    "@oxy.so/core": "7.55.0",
     "@oxy.so/db": "1.5.0",
     "@oxy.so/mcp": "1.4.3",
     "@oxy.so/services": "15.0.0",
@@ -183,10 +183,10 @@
   },
   "overrides": {
     "d3-color": ">=3.1.0",
-    "@oxy.so/core": "7.51.0",
+    "@oxy.so/core": "7.55.0",
     "@oxy.so/services": "15.0.0",
     "@oxy.so/mcp": "1.4.3",
-    "@oxy.so/bloom": "23.9.1",
+    "@oxy.so/bloom": "23.10.1",
     "@oxy.so/contracts": "7.5.0",
     "@oxy.so/telemetry": "2.2.0"
   }
