@@ -5,6 +5,8 @@ interface ImportMetaEnv {
   readonly VITE_STORE_PREVIEW?: string;
   readonly VITE_OXY_CLIENT_ID?: string;
   readonly VITE_INTERCOM_APP_ID?: string;
+  /** Public Mention origin. Empty uses https://mention.earth. */
+  readonly VITE_MENTION_URL?: string;
 }
 
 declare module 'swiper/css' {

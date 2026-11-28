@@ -1089,6 +1089,11 @@ const hi: Translations = {
     privacyWarning: 'वॉलेट पते, चाबियाँ, रिकवरी वाक्यांश, पहचान दस्तावेज़ या वित्तीय जानकारी शामिल न करें।',
     backHome: 'FairCoin पर वापस जाएँ',
   },
+
+  mention: {
+    join: 'Mention से जुड़ें',
+    exploreFeed: 'फ़ीड देखें',
+  },
 };
 
 export default hi;

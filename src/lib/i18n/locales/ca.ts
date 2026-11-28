@@ -1568,6 +1568,11 @@ const ca: Translations = {
       'No incloguis adreces de cartera, claus, frases de recuperació, documents d’identitat ni informació financera.',
     backHome: 'Tornar a FairCoin',
   },
+
+  mention: {
+    join: 'Uneix-te a Mention',
+    exploreFeed: 'Explora el fil',
+  },
 };
 
 export default ca;

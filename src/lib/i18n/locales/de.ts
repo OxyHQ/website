@@ -1578,6 +1578,11 @@ const de: Translations = {
       'Gib keine Wallet-Adressen, Schlüssel, Wiederherstellungsphrasen, Ausweisdokumente oder Finanzdaten an.',
     backHome: 'Zurück zu FairCoin',
   },
+
+  mention: {
+    join: 'Mention beitreten',
+    exploreFeed: 'Feed entdecken',
+  },
 };
 
 export default de;

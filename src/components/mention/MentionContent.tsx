@@ -10,7 +10,8 @@ import {
 import { RiFlashlightLine } from '@oxy.so/bloom/icons/RiFlashlightLine';
 import { RiPencilLine } from '@oxy.so/bloom/icons/RiPencilLine';
 import { RiCloudLine } from '@oxy.so/bloom/icons/RiCloudLine';
-import { Link } from '../../lib/navigation';
+import { useTranslation } from '../../lib/i18n';
+import { mentionHomeUrl, mentionSignupUrl } from '../../lib/mentionUrl';
 import mBrushSvg from '../../assets/mention/m-brush.svg?raw';
 import sky from '../../assets/mention/sky.jpg';
 import logo from '../../assets/mention/logo.png';
@@ -143,7 +144,44 @@ function FeedPost({
   );
 }
 
+const joinClassName =
+  'rounded-full bg-card px-7 py-3 font-display text-base font-semibold uppercase tracking-tight text-foreground shadow-xl transition-transform hover:scale-105';
+
+const exploreClassName =
+  'font-display text-sm font-semibold uppercase tracking-wide text-foreground/85 underline decoration-foreground/30 underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground';
+
+/**
+ * Primary signup and secondary home link. While the hero copy is faded out,
+ * the links stop taking clicks so the phone underneath stays usable.
+ */
+function MentionCtas({
+  interactive = true,
+  className = '',
+}: {
+  interactive?: boolean;
+  className?: string;
+}) {
+  const { t } = useTranslation();
+  const events = interactive ? undefined : 'pointer-events-none';
+  const linkClass = (base: string) => [base, events].filter(Boolean).join(' ');
+  return (
+    <div className={`flex flex-wrap items-center gap-x-5 gap-y-3 ${className}`}>
+      <a href={mentionSignupUrl()} className={linkClass(joinClassName)}>
+        {t('mention.join')}
+      </a>
+      <a href={mentionHomeUrl()} className={linkClass(exploreClassName)}>
+        {t('mention.exploreFeed')}
+      </a>
+    </div>
+  );
+}
+
 function HeroCopy({ opacity }: { opacity: MotionValue<number> }) {
+  const [interactive, setInteractive] = useState(() => opacity.get() > 0.5);
+  useMotionValueEvent(opacity, 'change', (value) => {
+    const next = value > 0.5;
+    setInteractive((current) => (current === next ? current : next));
+  });
   return (
     <motion.div
       style={{ opacity }}
@@ -163,6 +201,7 @@ function HeroCopy({ opacity }: { opacity: MotionValue<number> }) {
           <p className="mt-4 max-w-md font-display text-sm font-semibold uppercase tracking-wide text-foreground/85 sm:text-base">
             All your posts to loved ones and peers all around
           </p>
+          <MentionCtas interactive={interactive} className="mt-6" />
         </div>
       </div>
     </motion.div>
@@ -191,10 +230,11 @@ function FeedExperience() {
 
   if (reduce) {
     return (
-      <section className="relative flex flex-col items-center gap-12 px-6 pb-24 pt-32">
+      <section className="relative flex flex-col items-center gap-8 px-6 pb-24 pt-32">
         <Display className="text-center text-[clamp(2rem,5vw,4rem)]">
           Every one of your posts displayed in an intelligent feed
         </Display>
+        <MentionCtas className="justify-center" />
         <MentionPhone />
       </section>
     );
@@ -399,6 +439,7 @@ function UniqueLinkSection() {
 }
 
 function JoinSection() {
+  const { t } = useTranslation();
   return (
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center gap-6 px-6 pb-[12vh] pt-[6vh]">
       <div className="flex items-center gap-4 text-foreground/80 sm:gap-6">
@@ -408,12 +449,9 @@ function JoinSection() {
         <span aria-hidden="true" className="hidden sm:flex">
           <RiPencilLine width={28} height={28} fill="currentColor" />
         </span>
-        <Link
-          to="/inbox"
-          className="rounded-full bg-card px-7 py-3 font-display text-base font-semibold uppercase tracking-tight text-foreground shadow-xl transition-transform hover:scale-105"
-        >
-          Join Mention
-        </Link>
+        <a href={mentionSignupUrl()} className={joinClassName}>
+          {t('mention.join')}
+        </a>
         <span aria-hidden="true" className="hidden -scale-x-100 sm:flex">
           <RiPencilLine width={28} height={28} fill="currentColor" />
         </span>

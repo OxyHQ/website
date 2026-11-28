@@ -1566,6 +1566,11 @@ const pt: Translations = {
       'Não inclua endereços de carteira, chaves, frases de recuperação, documentos de identificação ou informações financeiras.',
     backHome: 'Voltar ao FairCoin',
   },
+
+  mention: {
+    join: 'Junta-te ao Mention',
+    exploreFeed: 'Explorar o feed',
+  },
 };
 
 export default pt;

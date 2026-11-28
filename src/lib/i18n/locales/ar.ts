@@ -1506,6 +1506,11 @@ const ar: Translations = {
       'لا تُدرج عناوين محافظ أو مفاتيح أو عبارات استرداد أو وثائق هوية أو معلومات مالية.',
     backHome: 'العودة إلى FairCoin',
   },
+
+  mention: {
+    join: 'انضم إلى Mention',
+    exploreFeed: 'استكشف الخلاصة',
+  },
 };
 
 export default ar;

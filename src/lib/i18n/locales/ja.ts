@@ -1545,6 +1545,11 @@ const ja: Translations = {
       'ウォレットのアドレス、鍵、復元フレーズ、本人確認書類、金融情報を入力しないでください。',
     backHome: 'FairCoinに戻る',
   },
+
+  mention: {
+    join: 'Mentionに参加',
+    exploreFeed: 'フィードを見る',
+  },
 };
 
 export default ja;

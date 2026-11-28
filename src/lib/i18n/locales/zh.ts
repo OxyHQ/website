@@ -1470,6 +1470,11 @@ const zh: Translations = {
     privacyWarning: '请勿填写钱包地址、密钥、恢复短语、身份证件或财务信息。',
     backHome: '返回 FairCoin',
   },
+
+  mention: {
+    join: '加入 Mention',
+    exploreFeed: '浏览动态',
+  },
 };
 
 export default zh;
