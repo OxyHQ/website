@@ -42,8 +42,8 @@ export type PlanAudience = 'personal' | 'creator' | 'business';
 // Proposed bundle composition. Checkout and entitlement activation live in Accounts.
 const BUNDLE_APPS = {
   personal: ['alia', 'mention', 'inbox', 'noted', 'clarity', 'homiio'],
-  creator: ['alia', 'mention', 'inbox', 'noted', 'clarity', 'schedio', 'mercaria'],
-  business: ['alia', 'mention', 'inbox', 'noted', 'clarity', 'schedio'],
+  creator: ['alia', 'mention', 'inbox', 'noted', 'clarity', 'mercaria'],
+  business: ['alia', 'mention', 'inbox', 'noted', 'clarity'],
 } as const;
 
 export default function OnePlansSection({
