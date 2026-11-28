@@ -1,15 +1,18 @@
 import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { MENTION_URL, mentionHomeUrl, mentionSignupUrl } from '../src/lib/mentionUrl';
+import { mentionHomeUrl, mentionSignupUrl, resolveMentionUrl } from '../src/lib/mentionUrl';
 
 const CAMPAIGN = 'utm_source=oxy.so&utm_medium=website&utm_campaign=mention_landing';
 
 describe('Mention landing URLs', () => {
   test('defaults to mention.earth and builds signup from that origin', () => {
-    expect(MENTION_URL).toBe('https://mention.earth');
-    expect(mentionHomeUrl()).toBe('https://mention.earth/');
-    expect(mentionSignupUrl()).toBe(`https://mention.earth/signup?${CAMPAIGN}`);
+    const base = resolveMentionUrl(undefined);
+    expect(base).toBe('https://mention.earth');
+    expect(resolveMentionUrl('')).toBe('https://mention.earth');
+    expect(resolveMentionUrl('ftp://mention.org')).toBe('https://mention.earth');
+    expect(mentionHomeUrl(base)).toBe('https://mention.earth/');
+    expect(mentionSignupUrl(base)).toBe(`https://mention.earth/signup?${CAMPAIGN}`);
   });
 
   test('builds the same paths when the origin moves to mention.org', () => {

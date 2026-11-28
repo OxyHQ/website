@@ -162,10 +162,16 @@ function MentionCtas({
   className?: string;
 }) {
   const { t } = useTranslation();
-  const events = interactive ? undefined : 'pointer-events-none';
-  const linkClass = (base: string) => [base, events].filter(Boolean).join(' ');
+  // The hero overlay is `pointer-events: none`, and that value is inherited, so
+  // a visible link has to opt back in. Once the copy has faded, `inert` takes
+  // the links out of hit testing and the tab order together.
+  const events = interactive ? 'pointer-events-auto' : 'pointer-events-none';
+  const linkClass = (base: string) => `${base} ${events}`;
   return (
-    <div className={`flex flex-wrap items-center gap-x-5 gap-y-3 ${className}`}>
+    <div
+      inert={interactive ? undefined : true}
+      className={`flex flex-wrap items-center gap-x-5 gap-y-3 ${className}`}
+    >
       <a href={mentionSignupUrl()} className={linkClass(joinClassName)}>
         {t('mention.join')}
       </a>

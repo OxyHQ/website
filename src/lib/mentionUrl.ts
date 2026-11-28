@@ -22,9 +22,13 @@ function configuredMentionUrl(value: unknown): string | null {
   }
 }
 
+/** A configured origin, or `https://mention.earth` when the value is empty or not http(s). */
+export function resolveMentionUrl(value: unknown): string {
+  return configuredMentionUrl(value) ?? DEFAULT_MENTION_URL;
+}
+
 /** Origin (and optional path) with no trailing slash. */
-export const MENTION_URL =
-  configuredMentionUrl(import.meta.env?.VITE_MENTION_URL) ?? DEFAULT_MENTION_URL;
+export const MENTION_URL = resolveMentionUrl(import.meta.env?.VITE_MENTION_URL);
 
 function origin(base: string): string {
   return base.replace(/\/+$/, '');
