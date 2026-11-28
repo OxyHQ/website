@@ -32,14 +32,13 @@ export default function MentionProfileCard({ profile, className = '' }: MentionP
       </div>
       <p className="text-body-sm text-muted-foreground">@{profile.handle}</p>
       <p className="mt-1.5 text-body-xs leading-snug text-muted-foreground">{profile.bio}</p>
-      <div className="mt-2.5 flex gap-4 text-body-xs text-muted-foreground">
-        <span>
-          <span className="font-bold text-foreground">{profile.following}</span> Following
-        </span>
-        <span>
-          <span className="font-bold text-foreground">{profile.followers}</span> Followers
-        </span>
-      </div>
+      {profile.example ? (
+        <p className="mt-2.5">
+          <span className="inline-flex rounded-full border border-border px-2 py-0.5 text-body-xs font-medium uppercase tracking-wide text-muted-foreground">
+            Example
+          </span>
+        </p>
+      ) : null}
     </article>
   );
 }

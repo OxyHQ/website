@@ -98,12 +98,16 @@ export const MENTION_POSTS: readonly MentionPost[] = [
   },
 ];
 
+/**
+ * Illustrative profile card. These are sample layouts for the landing page,
+ * not live Mention accounts, and they carry no follower counts or other metrics.
+ */
 export interface MentionProfile {
   name: string;
   handle: string;
   bio: string;
-  following: string;
-  followers: string;
+  /** Always set: every profile in this list is an example, not a real account. */
+  example: true;
   avatar: string;
 }
 
@@ -112,16 +116,14 @@ export const MENTION_PROFILES: readonly MentionProfile[] = [
     name: 'Nate Isern Alvarez',
     handle: 'nate',
     bio: 'Entrepreneur, programmer and unfiltered. CEO and Founder of Oxy | Developer | Artificial Intelligence and Innovation for social impact.',
-    following: '1603',
-    followers: '723K',
+    example: true,
     avatar: avatarNate,
   },
   {
     name: 'Henry Creel',
     handle: 'vecna',
     bio: 'Formerly Henry Creel. Shaper of worlds. Breaker of illusions. Time tells the truth.',
-    following: '216',
-    followers: '163K',
+    example: true,
     avatar: avatarVecna,
   },
 ];
