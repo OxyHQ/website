@@ -1526,6 +1526,11 @@ const ko: Translations = {
     privacyWarning: '지갑 주소, 키, 복구 문구, 신분증 또는 금융 정보를 입력하지 마세요.',
     backHome: 'FairCoin으로 돌아가기',
   },
+
+  mention: {
+    join: 'Mention 가입하기',
+    exploreFeed: '피드 살펴보기',
+  },
 };
 
 export default ko;

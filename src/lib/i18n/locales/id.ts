@@ -1131,6 +1131,11 @@ const id: Translations = {
       'Jangan sertakan alamat dompet, kunci, frasa pemulihan, dokumen identitas, atau informasi keuangan.',
     backHome: 'Kembali ke FairCoin',
   },
+
+  mention: {
+    join: 'Gabung ke Mention',
+    exploreFeed: 'Jelajahi feed',
+  },
 };
 
 export default id;

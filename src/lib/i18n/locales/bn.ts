@@ -1086,6 +1086,11 @@ const bn: Translations = {
     privacyWarning: 'ওয়ালেটের ঠিকানা, চাবি, পুনরুদ্ধার বাক্যাংশ, পরিচয়পত্র বা আর্থিক তথ্য দেবেন না।',
     backHome: 'FairCoin-এ ফিরে যান',
   },
+
+  mention: {
+    join: 'Mention-এ যোগ দিন',
+    exploreFeed: 'ফিড দেখুন',
+  },
 };
 
 export default bn;

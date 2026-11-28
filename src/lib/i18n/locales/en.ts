@@ -1810,6 +1810,11 @@ const en = {
       'Do not include wallet addresses, keys, recovery phrases, identity documents or financial information.',
     backHome: 'Back to FairCoin',
   },
+
+  mention: {
+    join: 'Join Mention',
+    exploreFeed: 'Explore the feed',
+  },
 };
 
 export default en;

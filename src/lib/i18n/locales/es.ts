@@ -1763,6 +1763,11 @@ const es: Translations = {
       'No incluyas direcciones de cartera, claves, frases de recuperación, documentos de identidad ni información financiera.',
     backHome: 'Volver a FairCoin',
   },
+
+  mention: {
+    join: 'Únete a Mention',
+    exploreFeed: 'Explora el feed',
+  },
 };
 
 export default es;
