@@ -287,7 +287,9 @@ try {
       .evaluate((node) => getComputedStyle(node).backgroundColor);
     await page.unroute('**/*.js');
     await page.reload();
-    await page.locator('main h1').waitFor();
+    // The calendar demo's month title is also an h1, so the page hero is the first one.
+    const hero = page.locator('main h1').first();
+    await hero.waitFor();
     invariant(
       (await page
         .locator('.bloom-landing')
@@ -679,9 +681,10 @@ try {
       'mobile gallery is not one column',
     );
     await page.goto(`${origin}/es/bloom/`);
-    await page.locator('main h1').waitFor();
+    const spanishHero = page.locator('main h1').first();
+    await spanishHero.waitFor();
     invariant(
-      !(await page.locator('main h1').innerText()).includes('React Design System'),
+      !(await spanishHero.innerText()).includes('React Design System'),
       'Spanish hero is not translated',
     );
     await assertNoOverflow(page);
