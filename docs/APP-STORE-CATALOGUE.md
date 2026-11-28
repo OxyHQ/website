@@ -43,8 +43,8 @@ FAIRWallet, Clarity, Astro Browser, Alia, Kaana, Horizon. Some will get one
 (Astro and Alia are programs); some never will (FairCoin is a currency, not a
 client).
 
-**Eleven applications have no product**: Allo, Commons by Oxy, CrowdSource,
-Noted, Schedio, Syra, Oxy Accounts, Oxy Auth, Oxy Console, Oxy Website, and the
+**Ten applications have no product**: Allo, Commons by Oxy, CrowdSource,
+Noted, Syra, Oxy Accounts, Oxy Auth, Oxy Console, Oxy Website, and the
 internal Matrix service. Some are missing from the marketing site by oversight
 (Allo, Syra, Commons); the rest are infrastructure and should stay unlisted.
 
